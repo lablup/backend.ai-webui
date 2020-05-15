@@ -684,8 +684,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="flex"></span>
             </div>
           </div>
-          <div class="horizontal start-justified layout flex" style="max-height:40px;">
+          <div class="horizontal start-justified center layout flex" style="max-height:40px;">
             <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;margin-left:4px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
+            <mwc-icon-button class="full-menu side-menu fg white" id="feedback-icon" icon="question_answer" slot="graphic"></mwc-icon-button>
+            <mwc-icon-button class="full-menu side-menu fg white" id="notification-icon" icon="notification_important" slot="graphic"></mwc-icon-button>
+            <mwc-icon-button class="full-menu side-menu fg white" id="task-icon" icon="ballot" slot="graphic"></mwc-icon-button>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
@@ -770,51 +773,51 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </div>
         </div>
         <div class="mini-menu">
-          <wl-popover anchor="#summary-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#summary-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Summary")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#sessions-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#sessions-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Sessions")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#data-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#data-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Data&Storage")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#statistics-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#statistics-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Statistics")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#usersettings-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#usersettings-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Settings")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#user-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#user-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Users")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#resources-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#resources-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Resources")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#environments-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#environments-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Environments")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#configurations-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#configurations-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Configurations")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#maintenance-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#maintenance-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Maintenance")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#information-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#information-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Information")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#admin-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#admin-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Administration")}</div></wl-popover-card>
           </wl-popover>

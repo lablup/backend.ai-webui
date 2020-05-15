@@ -245,6 +245,10 @@ export const BackendAiConsoleStyles = [
       --mdc-icon-size: 16px;
     }
 
+    mwc-icon-button.side-menu {
+      --mdc-icon-button-size: 44px;
+    }
+
     .mini-ui .full-menu {
       display: none;
       margin: 0 !important;
