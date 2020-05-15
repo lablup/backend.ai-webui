@@ -821,7 +821,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <div slot="actionItems">
               <div class="vertical center-justified flex layout" style="height:48px;">
-                <span class="email" style="font-size: 11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;">User Name</span>
+                <span class="email" style="font-size: 11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;">${_t("console.menu.UserName")}</span>
                 <span class="full_name" style="font-size: 14px;text-align:right;-webkit-font-smoothing:antialiased;">${this.full_name}</span>
                 <div style="font-size: 12px;text-align:right">${this.domain !== 'default' && this.domain !== '' ? html`${this.domain}` : html``}</div>
               </div>
@@ -833,7 +833,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <backend-ai-help-button slot="actionItems" active style="margin-top:4px;"></backend-ai-help-button>
 
             <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=55>
-              <mwc-list-item class="horizontal layout start center" style="border-bottom:1px solid #ccc;">
+              <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
                   ${this.user_id}
               </mwc-list-item>
               <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">

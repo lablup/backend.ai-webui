@@ -34,7 +34,8 @@
       "Project": "Current Project",
       "NoProject": "No Project",
       "SelectProject": "Select Project",
-      "Experiments": "Experiments"
+      "Experiments": "Experiments",
+      "UserName": "User Name"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",

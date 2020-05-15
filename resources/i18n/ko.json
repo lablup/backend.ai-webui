@@ -34,7 +34,8 @@
       "Project": "현재 프로젝트",
       "NoProject": "프로젝트 없음",
       "SelectProject": "프로젝트 선택",
-      "Experiments": "실험"
+      "Experiments": "실험",
+      "UserName": "사용자 이름"
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",
