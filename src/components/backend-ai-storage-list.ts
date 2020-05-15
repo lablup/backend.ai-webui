@@ -39,8 +39,7 @@ import '@material/mwc-icon-button';
 
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
-import tus from '../lib/tus.v2';
-//import {tus} from "tus-js-client";
+import tus from '../lib/tus';
 
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
