@@ -1,5 +1,18 @@
 # Changelog
 
+## v20.05.3 (15/05/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Hover menu description on simple sidebar menu [#528](https://github.com/lablup/backend.ai-console/issues/528)
+- [**UI / UX**][**cloud**][**enhancement**][**minor**] Link online help page on each menu [#524](https://github.com/lablup/backend.ai-console/issues/524)
+- [**enhancement**][**enterprise**][**library / SDK**][**world console**] Change default Dockerfile to use console-server [#523](https://github.com/lablup/backend.ai-console/issues/523)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**] Environment change sometimes does not update presets with GPUs [#525](https://github.com/lablup/backend.ai-console/issues/525)
+
+
 ## v20.05.2 (14/05/2020)
 
 #### Enhancements:
