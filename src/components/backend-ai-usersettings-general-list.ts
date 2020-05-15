@@ -236,6 +236,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   setUserLanguage(e) {
     if (e.target.selected.value !== globalThis.backendaioptions.get('language')) {
       globalThis.backendaioptions.set('language', e.target.selected.value);
+      globalThis.backendaioptions.set('current_language', e.target.selected.value);
       setLanguage(e.target.selected.value);
     }
   }

@@ -22,7 +22,6 @@ import {BackendAIPage} from './backend-ai-page';
 @customElement("backend-ai-help-button")
 export default class BackendAiHelpButton extends BackendAIPage {
   @property({type: String}) lang = 'default';
-  @property({type: Array}) supportLanguageCodes = ["en", "ko"];
   @property({type: String}) manualURL = '';
   @property({type: String}) page;
   @property({type: Boolean}) disabled = false;
@@ -70,9 +69,8 @@ export default class BackendAiHelpButton extends BackendAIPage {
     } else {
       if (this.currentPage in this.URLmatchingTable) {
         postfix = this.URLmatchingTable[this.currentPage];
-        let lang = globalThis.backendaioptions.get('current_language', 'en');
-        console.log(lang);
-        if (this.supportLanguageCodes.includes(lang)) {
+        let lang = globalThis.backendaioptions.get('current_language');
+        if (["ko", 'en'].includes(lang)) {
           this.lang = lang;
         } else {
           this.lang = 'en';
