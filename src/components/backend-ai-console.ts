@@ -744,7 +744,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     ` : html``}
           </mwc-list>
           <footer class="full-menu">
-            <div class="terms-of-use" style="margin-bottom:50px;">
+            <div class="terms-of-use" style="margin-bottom:10px;">
               <small style="font-size:11px;">
                 <a @click="${() => this.showTOSAgreement()}">${_t("console.menu.TermsOfService")}</a>
                 ·
@@ -757,12 +757,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 ` : html``}
               </small>
             </div>
-          </footer>
-          <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
               <small class="sidebar-footer" style="font-size:9px;">20.05.3.200515</small>
             </address>
+          </footer>
+          <div id="sidebar-navbar-footer" class="vertical start start-justified layout">
+            <mwc-icon-button id="information-menu-icon" icon="settings" slot="graphic" class="fg white"></mwc-icon-button>
           </div>
         </div>
         <div class="mini-menu">
@@ -820,18 +821,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <div slot="actionItems">
               <div class="vertical center-justified flex layout" style="height:48px;">
-                <span class="full_name" style="font-size: 14px;text-align:right">${this.full_name}</span>
-                ${this.full_name != this.user_id ? html`
-                <span class="email" style="font-size: 12px;text-align:right">${this.user_id}</span>` : html``}
+                <span class="email" style="font-size: 11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;">User Name</span>
+                <span class="full_name" style="font-size: 14px;text-align:right;-webkit-font-smoothing:antialiased;">${this.full_name}</span>
                 <div style="font-size: 12px;text-align:right">${this.domain !== 'default' && this.domain !== '' ? html`${this.domain}` : html``}</div>
               </div>
             </div>
-            <backend-ai-help-button slot="actionItems" active></backend-ai-help-button>
-            <mwc-icon-button slot="actionItems" id="dropdown-button"
-                             icon="account_circle"
+            <mwc-icon-button slot="actionItems" id="dropdown-button" style="margin-top:4px;"
+                             icon="more_vert"
                              @click="${() => this._toggleDropdown()}">
             </mwc-icon-button>
-            <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=40>
+            <backend-ai-help-button slot="actionItems" active style="margin-top:4px;"></backend-ai-help-button>
+
+            <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=55>
+              <mwc-list-item class="horizontal layout start center" style="border-bottom:1px solid #ccc;">
+                  ${this.user_id}
+              </mwc-list-item>
               <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
                   <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
                   ${_t("console.menu.About")}

@@ -46,8 +46,7 @@ export const BackendAiConsoleStyles = [
       font-weight: 400;
     }
 
-    .mini-ui .site-name,
-    .mini-ui #sidebar-navbar-footer {
+    .mini-ui .site-name {
       display: none;
     }
 
@@ -185,10 +184,10 @@ export const BackendAiConsoleStyles = [
       width: 135px;
       font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --mdc-typography-subtitle1-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-      --mdc-typography-subtitle1-font-size: 16px;
+      --mdc-typography-subtitle1-font-size: 14px;
       --mdc-typography-subtitle1-font-color: white;
       --mdc-typography-subtitle1-font-weight: 400;
-      --mdc-typography-subtitle1-line-height: 20px;
+      --mdc-typography-subtitle1-line-height: 16px;
       --mdc-select-fill-color: transparent;
       --mdc-select-label-ink-color: rgba(255, 255, 255, 1.0);
       --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
@@ -311,16 +310,6 @@ export const BackendAiConsoleStyles = [
       color: var(--general-sidebar-navbar-footer-color);
     }
 
-    #sidebar-navbar-footer:before {
-      content: "";
-      position: absolute;
-      top: -1px;
-      display: block;
-      width: 100%;
-      height: 1px;
-      background-color: rgba(214, 214, 214, 0.4);
-    }
-
     @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
       #main-toolbar {
         /*-webkit-backdrop-filter: saturate(180%) blur(20px);
@@ -331,16 +320,6 @@ export const BackendAiConsoleStyles = [
         -webkit-backdrop-filter: saturate(180%) blur(20px);
         backdrop-filter: saturate(180%) blur(20px);
         border: 0;
-      }
-
-      #sidebar-navbar-footer:before {
-        content: "";
-        position: absolute;
-        top: -1px;
-        display: block;
-        width: 100%;
-        height: 1px;
-        background-color: rgba(214, 214, 214, 0.4);
       }
     }
 
