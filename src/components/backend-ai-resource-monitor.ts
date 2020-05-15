@@ -1184,13 +1184,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         // updated, so in some cases, user cannot launch a session even though
         // there are available resources for the selected image.
         this.version_selector.value = this.versions[0];
-        setTimeout(async () => {
-          this.version_selector.select(0);
-          this.version_selector.select(1);
-          this.version_selector.disabled = false;
-          await this.updateComplete;
-          this.updateResourceAllocationPane('update versions');
-        }, 500);
+        this.version_selector.selectedText = this.version_selector.value;
+        this.version_selector.disabled = false;
+        this.updateResourceAllocationPane('update versions');
       });
     }
   }
