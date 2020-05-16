@@ -588,7 +588,9 @@
     "Signup": "Signup",
     "InvitationToken": "Invitation Token",
     "TermsOfService": "Terms of service",
-    "PrivacyPolicy": "Privacy Policy"
+    "PrivacyPolicy": "Privacy Policy",
+    "ThankYou": "Thank you!",
+    "VerificationMessage": "Verification email is sent to your email address. Please read and follow the steps specified in the email before login with your account."
   },
   "update": {
     "NewConsoleVersionAvailable": "New version is available:"

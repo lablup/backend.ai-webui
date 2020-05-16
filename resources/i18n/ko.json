@@ -586,7 +586,9 @@
     "Signup": "가입",
     "InvitationToken": "초대 토큰",
     "TermsOfService": "약관",
-    "PrivacyPolicy": "개인정보보호정책"
+    "PrivacyPolicy": "개인정보보호정책",
+    "ThankYou": "감사합니다!",
+    "VerificationMessage": "인증 메일을 전송했습니다. 가입하신 계정으로 로그인 하려면, 메일함에서 메일을 읽은 후 적힌 내용을 따라 해주십시오."
   },
   "update": {
     "NewConsoleVersionAvailable": "새 버전이 출시되었습니다:"
