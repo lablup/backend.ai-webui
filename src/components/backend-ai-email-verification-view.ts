@@ -9,11 +9,6 @@ import '@material/mwc-textfield/mwc-textfield';
 import 'weightless/card';
 import 'weightless/dialog';
 
-import * as aiSDK from '../lib/backend.ai-client-es6';
-declare global {
-  const ai: typeof aiSDK;
-}
-
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -26,7 +21,12 @@ import {
 
 @customElement("backend-ai-email-verification-view")
 export default class BackendAIEmailVerificationView extends BackendAIPage {
-  // @property({type: Object}) client = Object();
+  @property({type: Object}) consoleShell = Object();
+  @property({type: Object}) clientConfig = Object();
+  @property({type: Object}) client = Object();
+  @property({type: Object}) notification = Object();
+  @property({type: Object}) successDialog = Object();
+  @property({type: Object}) failDialog = Object();
 
   static get styles() {
     return [
@@ -40,14 +40,14 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         mwc-textfield {
           width: 100%;
         }
-      `;
+      `
     ];
   }
 
   _initClient(apiEndpoint: string) {
-    const consoleShell = document.querySelector('#console-shell');
-    consoleShell.appBody.style.visibility = 'visible';
-    this.notification = consoleShell.notification;
+    this.consoleShell = document.querySelector('#console-shell');
+    this.consoleShell.appBody.style.visibility = 'visible';
+    this.notification = this.consoleShell.notification;
     this.successDialog = this.shadowRoot.querySelector('#verification-success-dialog');
     this.failDialog = this.shadowRoot.querySelector('#verification-fail-dialog');
 
@@ -68,16 +68,15 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
 
     this._initClient(apiEndpoint);
 
-    let dialog;
     if (token) {
       try {
-        const resp = await this.client.cloud.verify_email(token);
+        await this.client.cloud.verify_email(token);
         this.successDialog.show();
       } catch (e) {
         console.error(e);
         this.notification.text = e.message || 'Verification Error';
         this.notification.show();
-        window.setTimeout(() => this.failDialog.show(), 1000);
+        window.setTimeout(() => this.failDialog.show(), 100);
       }
     } else {
       this.failDialog.show();
@@ -112,7 +111,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
           </div>
           <div class="horizontal layout center" style="margin:20px;">
             <wl-button outlined flat class="fg green mini flex" type="button"
-                @click="${(e) => this._redirectToLoginPage(e)}">
+                @click="${() => this._redirectToLoginPage()}">
               ${_t("login.Login")}
             </wl-button>
           </div>
@@ -133,7 +132,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
                 pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
             <div style="height:1em"></div>
             <wl-button outlined flat class="fg red mini flex" type="button"
-                @click="${(e) => this.sendVerificationCode(e)}">
+                @click="${() => this.sendVerificationCode()}">
               ${_t("signup.SendEmail")}
             </wl-button>
           </div>
