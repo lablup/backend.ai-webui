@@ -72,8 +72,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     if (token) {
       try {
         const resp = await this.client.cloud.verify_email(token);
-        console.log('- ', resp)
-        resp.success ? this.successDialog.show() : this.failDialog.show();
+        this.successDialog.show();
       } catch (e) {
         console.error(e);
         this.notification.text = e.message || 'Verification Error';
@@ -87,12 +86,17 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
 
   async sendVerificationCode() {
     const emailEl = this.shadowRoot.querySelector('#email');
-    console.log('email:', emailEl.value)
-    console.log('validity:', emailEl.validity)
     if (!emailEl.value || !emailEl.validity.valid) return;
-
-    const resp = await this.client.cloud.send_verification_email(emailEl.value);
-    console.log('- resp:', resp);
+    try {
+      const resp = await this.client.cloud.send_verification_email(emailEl.value);
+      const text = resp.verification_email_sent ? _text('signup.EmailSent') : _text('signup.EmailNotSent');
+      this.notification.text = text;
+      this.notification.show();
+    } catch (e) {
+      console.error(e);
+      this.notification.text = e.message || 'Send error';
+      this.notification.show();
+    }
   }
 
   render() {
@@ -101,13 +105,16 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
       <wl-dialog id="verification-success-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
         <wl-card class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Email verified!</span>
+            <span>${_t("signup.EmailVerified")}</span>
           </h3>
           <div class="horizontal layout center" style="margin:10px;">
-            <p style="width:256px;">Your email is verified! Now you can login with your account.</p>
+            <p style="width:256px;">${_t("signup.EmailVerifiedMessage")}</p>
           </div>
           <div class="horizontal layout center" style="margin:20px;">
-            <wl-button outlined flat class="fg green mini flex" type="button" @click="${(e) => this._redirectToLoginPage(e)}">${_t("login.Login")}</wl-button>
+            <wl-button outlined flat class="fg green mini flex" type="button"
+                @click="${(e) => this._redirectToLoginPage(e)}">
+              ${_t("login.Login")}
+            </wl-button>
           </div>
         </wl-card>
       </wl-dialog>
@@ -115,20 +122,20 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
       <wl-dialog id="verification-fail-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
         <wl-card class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
-            <span>Email verification failed!</span>
+            <span>${_t("signup.EmailVerificationFailed")}</span>
           </h3>
           <div class="horizontal layout center" style="margin:10px;">
-            <p style="width:256px;">
-              We're unable to verify your email. Your token may be invalid or expired.<br /><br />
-              Write your email address and click send button to get new verification code.
-            </p>
+            <p style="width:256px;">${_t("signup.EmailVerificationFailedMessage")}</p>
           </div>
           <div style="margin:20px;">
             <mwc-textfield id="email" label="${_t('data.explorer.EnterEmailAddress')}"
-                autofocus auto-validate validationMessage="Invalid email address"
+                autofocus auto-validate validationMessage="${_t('signup.InvalidEmail')}"
                 pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
             <div style="height:1em"></div>
-            <wl-button outlined flat class="fg red mini flex" type="button" @click="${(e) => this.sendVerificationCode(e)}">Send verification email</wl-button>
+            <wl-button outlined flat class="fg red mini flex" type="button"
+                @click="${(e) => this.sendVerificationCode(e)}">
+              ${_t("signup.SendEmail")}
+            </wl-button>
           </div>
         </wl-card>
       </wl-dialog>
