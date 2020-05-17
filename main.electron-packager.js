@@ -8,15 +8,15 @@ const BASE_DIR = __dirname;
 const ProxyManager = require('./app/wsproxy/wsproxy.js');
 const versions = require('./app/version');
 process.env.liveDebugMode = false;
-let windowWidth = 1280;
-let windowHeight = 970;
+const windowWidth = 1280;
+const windowHeight = 970;
 
 // ES6 module loader with custom protocol
 const nfs = require('fs');
 const npjoin = require('path').join;
 const es6Path = npjoin(__dirname, 'app');
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'es6', privileges: {  standard: true, secure: true, bypassCSP: true } }
+  {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
 ]);
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -24,14 +24,14 @@ protocol.registerSchemesAsPrivileged([
 let mainWindow;
 let mainContent;
 let devtools;
-let manager = new ProxyManager();
+const manager = new ProxyManager();
 
-var mainIndex = 'app/index.html';
+const mainIndex = 'app/index.html';
 let mainURL;
 
 // Modules to control application life and create native browser window
 app.once('ready', function() {
-  var template;
+  let template;
   if (process.platform === 'darwin') {
     template = [
       {
@@ -39,16 +39,16 @@ app.once('ready', function() {
         submenu: [
           {
             label: 'About Backend.AI Console',
-            click: function () {
+            click: function() {
               mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
                 '    document.dispatchEvent(event);');
             }
           },
           {
             label: 'App version ' + versions.package +' (rev.' + versions.revision + ')',
-            click: function () {
+            click: function() {
               clipboard.writeText(versions.package +' (rev.' + versions.revision + ')');
-              const response = dialog.showMessageBox({type:'info', message:'Version information is copied to clipboard.'});
+              const response = dialog.showMessageBox({type: 'info', message: 'Version information is copied to clipboard.'});
             }
           },
           {
@@ -57,7 +57,7 @@ app.once('ready', function() {
           {
             label: 'Refresh App',
             accelerator: 'Command+R',
-            click: function () {
+            click: function() {
               // mainContent.reloadIgnoringCache();
               const proxyUrl = `http://localhost:${manager.port}/`;
               mainWindow.loadURL(url.format({ // Load HTML into new Window
@@ -165,7 +165,7 @@ app.once('ready', function() {
             label: 'Toggle Full Screen',
             accelerator: 'Ctrl+Command+F',
             click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
+              const focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
               }
@@ -280,18 +280,18 @@ app.once('ready', function() {
     ];
   }
 
-  var appmenu = Menu.buildFromTemplate(template);
+  const appmenu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(appmenu);
 });
 
-function createWindow () {
+function createWindow() {
   // Create the browser window.
   devtools = null;
 
   mainWindow = new BrowserWindow({
     width: windowWidth,
     height: windowHeight,
-    title: "Backend.AI",
+    title: 'Backend.AI',
     frame: true,
     titleBarStyle: 'hiddenInset',
     webPreferences: {
@@ -307,11 +307,11 @@ function createWindow () {
       console.log('No configuration file found.');
       return;
     }
-    let config = toml(data);
+    const config = toml(data);
     if ('wsproxy' in config && 'disableCertCheck' in config.wsproxy && config.wsproxy.disableCertCheck == true) {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     }
-    if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != "") {
+    if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != '') {
       mainURL = config.server.consoleServerURL;
     } else {
       mainURL = url.format({
@@ -322,9 +322,9 @@ function createWindow () {
     }
     mainWindow.loadURL(mainURL);
     mainContent = mainWindow.webContents;
-    //devtools = new BrowserWindow();
-    //mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
-    //mainWindow.webContents.openDevTools({ mode: 'detach' });
+    // devtools = new BrowserWindow();
+    // mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
+    // mainWindow.webContents.openDevTools({ mode: 'detach' });
   });
   // Emitted when the window is closed.
   mainWindow.on('close', (e) => {
@@ -335,25 +335,25 @@ function createWindow () {
   });
 
   mainWindow.webContents.once('did-finish-load', () => {
-    manager.once("ready", () => {
-      let url = 'http://localhost:' + manager.port + "/";
-      console.log("Proxy is ready:" + url);
+    manager.once('ready', () => {
+      const url = 'http://localhost:' + manager.port + '/';
+      console.log('Proxy is ready:' + url);
       mainWindow.webContents.send('proxy-ready', url);
     });
     manager.start();
   });
 
-  ipcMain.on('app-closed', _ => {
-    if (process.platform !== 'darwin') {  // Force close app when it is closed even on macOS.
-      //app.quit()
+  ipcMain.on('app-closed', (_) => {
+    if (process.platform !== 'darwin') { // Force close app when it is closed even on macOS.
+      // app.quit()
     }
     mainWindow = null;
     mainContent = null;
     devtools = null;
-    app.quit()
+    app.quit();
   });
 
-  mainWindow.on('closed', function () {
+  mainWindow.on('closed', function() {
     mainWindow = null;
     mainContent = null;
     devtools = null;
@@ -370,7 +370,7 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
     frame: true,
     show: false,
     backgroundColor: '#EFEFEF',
-    //parent: win,
+    // parent: win,
     titleBarStyle: '',
     width: windowWidth,
     height: windowHeight,
@@ -386,14 +386,14 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   }
   event.newGuest = new BrowserWindow(options);
   event.newGuest.once('ready-to-show', () => {
-    event.newGuest.show()
+    event.newGuest.show();
   });
   event.newGuest.loadURL(url);
-  event.newGuest.webContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
+  event.newGuest.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, event.newGuest);
   });
   event.newGuest.on('close', (e) => {
-    let c = BrowserWindow.getFocusedWindow();
+    const c = BrowserWindow.getFocusedWindow();
     if (c !== null) {
       c.destroy();
     }
@@ -402,39 +402,41 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
 
 app.on('ready', () => {
   protocol.interceptFileProtocol('file', (request, callback) => {
-    const url = request.url.substr(7);    /* all urls start with 'file://' */
-    callback({ path: path.normalize(`${BASE_DIR}/${url}`)});
+    const url = request.url.substr(7); /* all urls start with 'file://' */
+    callback({path: path.normalize(`${BASE_DIR}/${url}`)});
   }, (err) => {
     if (err) console.error('Failed to register protocol');
   });
   protocol.registerBufferProtocol('es6', (req, cb) => {
     nfs.readFile(
-      npjoin(es6Path, req.url.replace('es6://', '')),
-      (e, b) => { cb({ mimeType: 'text/javascript', data: b }) }
-    )
+        npjoin(es6Path, req.url.replace('es6://', '')),
+        (e, b) => {
+          cb({mimeType: 'text/javascript', data: b});
+        }
+    );
   });
-  createWindow()
+  createWindow();
 });
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', function() {
   if (mainWindow) {
     e.preventDefault();
     mainWindow.webContents.send('app-close-window');
   }
 });
 
-app.on('activate', function () {
+app.on('activate', function() {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow();
   }
 });
-app.on('certificate-error', function (event, webContents, url, error,
-                                      certificate, callback) {
-      event.preventDefault();
-      callback(true);
+app.on('certificate-error', function(event, webContents, url, error,
+    certificate, callback) {
+  event.preventDefault();
+  callback(true);
 });
 
 app.on('web-contents-created', (event, contents) => {
@@ -445,6 +447,5 @@ app.on('web-contents-created', (event, contents) => {
 
     // Disable Node.js integration
     webPreferences.nodeIntegration = false;
-
-  })
+  });
 });
