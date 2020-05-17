@@ -270,7 +270,6 @@ class Client {
           controller.abort();
         }, (timeout === 0 ? this.requestTimeout : timeout));
       }
-      let resp;
       resp = await fetch(rqst.uri, rqst);
       if (typeof requestTimer !== "undefined") {
         clearTimeout(requestTimer);
