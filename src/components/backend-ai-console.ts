@@ -795,7 +795,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Settings")}</div></wl-popover-card>
           </wl-popover>
-          ${this.is_superadmin ? html`
+          ${this.is_admin ? html`
             <wl-popover anchor="#user-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
                anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
                <wl-popover-card><div style="padding:5px">${_t("console.menu.Users")}</div></wl-popover-card>
