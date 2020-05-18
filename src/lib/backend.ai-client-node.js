@@ -191,7 +191,6 @@ class Client {
                     controller.abort();
                 }, (timeout === 0 ? this.requestTimeout : timeout));
             }
-            let resp;
             resp = await fetch(rqst.uri, rqst);
             if (typeof requestTimer !== "undefined") {
                 clearTimeout(requestTimer);
@@ -449,10 +448,10 @@ class Client {
             if (result.authenticated === true) {
                 this._config._accessKey = result.data.access_key;
                 this._config._session_id = result.session_id;
-                console.log("login succeed");
+                //console.log("login succeed");
             }
             else {
-                console.log("login failed");
+                //console.log("login failed");
             }
         }
         catch (err) {
@@ -478,7 +477,6 @@ class Client {
                 return this.check_login();
             }
             else if (result.authenticated === false) { // Authentication failed.
-                console.log('qqq');
                 return Promise.resolve(false);
             }
         }
