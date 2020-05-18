@@ -247,6 +247,7 @@ export const BackendAiConsoleStyles = [
 
     mwc-icon-button.side-menu {
       --mdc-icon-button-size: 44px;
+      --mdc-theme-text-disabled-on-light: var(--paper-grey-800);
     }
 
     .mini-ui .full-menu {
