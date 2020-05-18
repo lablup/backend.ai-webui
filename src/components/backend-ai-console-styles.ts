@@ -250,6 +250,10 @@ export const BackendAiConsoleStyles = [
       --mdc-theme-text-disabled-on-light: var(--paper-grey-800);
     }
 
+    #sidebar-navbar-footer mwc-icon-button {
+      --mdc-theme-text-disabled-on-light: var(--paper-grey-800);
+    }
+
     .mini-ui .full-menu {
       display: none;
       margin: 0 !important;
