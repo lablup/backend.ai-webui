@@ -26,7 +26,8 @@ export const BackendAiStyles = [
       --general-panel-width: 280px;
       --general-big-panel-width: 560px;
       --general-content-container-width: 980px;
-      --general-background-color: rgba(244, 245, 247, 1);
+      --general-background-color: rgba(255, 255, 255, 1);
+      --general-background-color-2: rgba(244, 245, 247, 1);
       --general-sidebar-color: #dddddd;
       --general-sidebar-background-color: rgba(24, 24, 24, 1.0);
       --general-sidebar-h3-color: #ccc;
