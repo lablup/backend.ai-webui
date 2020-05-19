@@ -41,6 +41,20 @@ export default class BackendAiDialog extends LitElement {
       IronFlexAlignment,
       // language=CSS
       css`
+        wl-dialog {
+          --dialog-min-width: 350px;
+        }
+
+        wl-dialog > wl-card {
+          --card-elevation: 0;
+        }
+
+        wl-dialog > wl-card > h3 {
+          background-color: var(--general-dialog-background-color, #ffffff);
+        }
+
+        wl-dialog h3 > wl-button {
+        }
       `];
   }
 
@@ -80,7 +94,9 @@ export default class BackendAiDialog extends LitElement {
           <div style="padding:15px;" class="horizontal layout wrap center center-justified">
             <slot name="content"></slot>
           </div>
-          <slot name="footer"></slot>
+          <div style="padding:10px 15px;">
+            <slot name="footer"></slot>
+          </div>
         </wl-card>
       </wl-dialog>
       `;

@@ -418,33 +418,26 @@ export default class BackendAiStorageList extends BackendAIPage {
         </wl-card>
       </wl-dialog>
 
-      <wl-dialog id="delete-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
-        <wl-card class="login-panel intro centered">
-          <h3 class="horizontal center layout">
-            <span>${_t("data.folders.DeleteAFolder")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <section>
-            <div class="warning">${_t("dialog.warning.CannotBeUndone")}</div>
-            <div>
-              <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
-                           pattern="[a-zA-Z0-9_-.]*"
-                           validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
-              <br/>
-              <wl-button class="blue button" type="submit" id="delete-button" outlined @click="${() => this._deleteFolderWithCheck()}">
-                <wl-icon>close</wl-icon>
-                ${_t("data.folders.Delete")}
-              </wl-button>
-            </div>
-            </section>
-        </wl-card>
-      </wl-dialog>
+      <backend-ai-dialog id="delete-folder-dialog">
+        <span slot="title">${_t("data.folders.DeleteAFolder")}</span>
+        <div slot="content" style="width:100%;">
+          <div class="warning">${_t("dialog.warning.CannotBeUndone")}</div>
+          <div>
+            <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
+                         pattern="[a-zA-Z0-9_-.]*"
+                         validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
+          </div>
+        </div>
+        <div slot="footer">
+          <wl-button class="blue button" type="submit" id="delete-button" outlined @click="${() => this._deleteFolderWithCheck()}">
+            <wl-icon>close</wl-icon>
+            ${_t("data.folders.Delete")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
       <backend-ai-dialog id="info-folder-dialog">
         <span slot="title">${this.folderInfo.name}</span>
-        <div slot="content" role="listbox" style="margin: 0;">
+        <div slot="content" role="listbox" style="margin: 0;width:100%;">
           <vaadin-item>
             <div><strong>ID</strong></div>
             <div class="monospace" secondary>${this.folderInfo.id}</div>
@@ -593,61 +586,47 @@ export default class BackendAiStorageList extends BackendAIPage {
           </wl-button>
         </div>
       </backend-ai-dialog>
-      <wl-dialog
-        id="share-folder-dialog"
-        class="dialog-ask"
-        fixed
-        backdrop
-        blockscrolling
-      >
-        <wl-card class="intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span>${_t("data.explorer.ShareFolder")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <div role="listbox" style="margin: 0; padding: 20px 25px 25px 25px;">
-            <div style="margin: 10px 0px">${_t("data.explorer.People")}</div>
-            <div style="display: flex;">
-              <div id="textfields" style="flex-grow: 2">
-                <wl-textfield type="email" label="${_t("data.explorer.EnterEmailAddress")}"></wl-textfield>
-              </div>
-              <div>
-                <wl-button fab flat @click="${(e) => this._addTextField(e)}">
-                  <wl-icon>add</wl-icon>
-                </wl-button>
-                <wl-button fab flat @click="${(e) => this._removeTextField(e)}">
-                  <wl-icon>remove</wl-icon>
-                </wl-button>
-              </div>
+      <backend-ai-dialog id="share-folder-dialog">
+        <span slot="title">${_t("data.explorer.ShareFolder")}</span>
+        <div slot="content" role="listbox" style="margin: 0;width:100%;" >
+          <div style="margin: 10px 0px">${_t("data.explorer.People")}</div>
+          <div style="display: flex;">
+            <div id="textfields" style="flex-grow: 2">
+              <wl-textfield type="email" label="${_t("data.explorer.EnterEmailAddress")}"></wl-textfield>
             </div>
-            <div style="margin: 10px 0px">${_t("data.explorer.Permissions")}</div>
-            <div style="display: flex; justify-content: space-evenly;">
-              <wl-label>
-                <wl-checkbox checked disabled></wl-checkbox>
-                ${_t("button.View")}
-              </wl-label>
-              <wl-label>
-                <wl-checkbox id="share-folder-write"></wl-checkbox>
-                ${_t("button.Edit")}
-              </wl-label>
+            <div>
+              <wl-button fab flat @click="${(e) => this._addTextField(e)}">
+                <wl-icon>add</wl-icon>
+              </wl-button>
+              <wl-button fab flat @click="${(e) => this._removeTextField(e)}">
+                <wl-icon>remove</wl-icon>
+              </wl-button>
             </div>
-
-            <wl-button
-              type="button"
-              outlined
-              id="share-button"
-              style="width: 100%; box-sizing: border-box;"
-              @click=${e => this._shareFolder(e)}
-            >
-              <wl-icon>share</wl-icon>
-              ${_t("button.Share")}
-            </wl-button>
           </div>
-        </wl-card>
-      </wl-dialog>
+          <div style="margin: 10px 0px">${_t("data.explorer.Permissions")}</div>
+          <div style="display: flex; justify-content: space-evenly;">
+            <wl-label>
+              <wl-checkbox checked disabled></wl-checkbox>
+              ${_t("button.View")}
+            </wl-label>
+            <wl-label>
+              <wl-checkbox id="share-folder-write"></wl-checkbox>
+              ${_t("button.Edit")}
+            </wl-label>
+          </div>
+        </div>
+        <wl-button slot="footer"
+          type="button"
+          outlined
+          id="share-button"
+          style="width: 100%; box-sizing: border-box;"
+          @click=${e => this._shareFolder(e)}
+        >
+          <wl-icon>share</wl-icon>
+          ${_t("button.Share")}
+        </wl-button>
+      </backend-ai-dialog>
+
       <wl-dialog
         id="modify-permission-dialog"
         class="dialog-ask"
