@@ -449,6 +449,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   _updateSidebar(view) {
     switch (view) {
       case 'summary':
+      case 'verify-email':
         this.menuTitle = _text("console.menu.Summary");
         this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
@@ -499,10 +500,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       case 'logs':
         this.menuTitle = _text("console.menu.Logs");
         this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
-        break;
-      case 'verify-email':
-        this.menuTitle = _text("console.menu.Summary");
-        this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       default:
         this._page = 'error';
