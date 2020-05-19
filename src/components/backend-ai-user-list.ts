@@ -440,7 +440,7 @@ export default class BackendAIUserList extends BackendAIPage {
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact"
                    aria-label="User list" id="user-grid" .items="${this.userView}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#"
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-sort-column resizable header="${_t("credential.UserID")}" path="email">
           <template>

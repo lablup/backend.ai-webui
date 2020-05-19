@@ -365,7 +365,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <vaadin-grid class="folderlist" theme="row-stripes column-borders compact" aria-label="Folder list" .items="${this.folders}">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
+        <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t("data.folders.Name")}">
           <template>
