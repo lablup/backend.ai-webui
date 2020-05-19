@@ -418,7 +418,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         </wl-card>
       </wl-dialog>
 
-      <backend-ai-dialog id="delete-folder-dialog">
+      <backend-ai-dialog id="delete-folder-dialog" backdrop>
         <span slot="title">${_t("data.folders.DeleteAFolder")}</span>
         <div slot="content" style="width:100%;">
           <div class="warning">${_t("dialog.warning.CannotBeUndone")}</div>
@@ -435,7 +435,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </wl-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="info-folder-dialog">
+      <backend-ai-dialog id="info-folder-dialog" backdrop>
         <span slot="title">${this.folderInfo.name}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;">
           <vaadin-item>
@@ -565,7 +565,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </vaadin-grid>
         </wl-card>
       </wl-dialog>
-      <backend-ai-dialog id="mkdir-dialog">
+      <backend-ai-dialog id="mkdir-dialog" backdrop>
         <span slot="title">${_t("data.explorer.CreateANewFolder")}</span>
         <div slot="content">
           <mwc-textfield id="mkdir-name"
@@ -586,7 +586,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </wl-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="share-folder-dialog">
+      <backend-ai-dialog id="share-folder-dialog" backdrop>
         <span slot="title">${_t("data.explorer.ShareFolder")}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;" >
           <div style="margin: 10px 0px">${_t("data.explorer.People")}</div>

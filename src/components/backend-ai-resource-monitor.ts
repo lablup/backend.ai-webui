@@ -2337,7 +2337,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         </div>
       </div>
       ` : html``}
-      <backend-ai-dialog id="new-session-dialog" narrowLayout>
+      <backend-ai-dialog id="new-session-dialog" narrowLayout backdrop>
         <span slot="title">${_t("session.launcher.StartNewSession")}</span>
         <form slot="content" id="launch-session-form" class="centered">
           <div class="vertical center layout" style="padding-top:15px;">
@@ -2579,7 +2579,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </fieldset>
         </form>
       </backend-ai-dialog>
-      <backend-ai-dialog id="help-description">
+      <backend-ai-dialog id="help-description" backdrop>
         <span slot="title">${this._helpDescriptionTitle}</span>
         <div slot="content" class="horizontal layout center" style="margin:5px;">
         ${this._helpDescriptionIcon == '' ? html`` : html`

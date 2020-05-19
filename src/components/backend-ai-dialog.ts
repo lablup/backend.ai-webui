@@ -30,6 +30,9 @@ export default class BackendAiDialog extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) dialog = Object();
   @property({type: Boolean}) narrowLayout = false;
+  @property({type: Boolean}) scrollable = false;
+  @property({type: Boolean}) backdrop = false;
+
 
   constructor() {
     super();
@@ -43,7 +46,9 @@ export default class BackendAiDialog extends LitElement {
       // language=CSS
       css`
         wl-dialog {
-          --dialog-min-width: 350px;
+          --dialog-min-width: var(--component-min-width, '350px');
+          --dialog-width: var(--component-width, '350px');
+          --dialog-height: var(--component-height, 'auto');
         }
 
         wl-dialog > wl-card {
@@ -96,12 +101,17 @@ export default class BackendAiDialog extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="dialog" fixed backdrop blockscrolling ?narrow="${(this.narrowLayout)}"
+      <wl-dialog id="dialog" fixed
+                    ?narrow="${(this.narrowLayout)}"
+                    ?backdrop="${this.backdrop}"
+                    ?scrollable="${this.scrollable}"
+                    blockscrolling
                     style="padding:0;">
         <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span><slot name="title"></slot></span>
             <div class="flex"></div>
+            <slot name="action"></slot>
             <wl-button fab flat inverted @click="${() => this._hideDialog()}">
               <wl-icon>close</wl-icon>
             </wl-button>
