@@ -29,6 +29,7 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 export default class BackendAiDialog extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) dialog = Object();
+  @property({type: Boolean}) narrowLayout = false;
 
   constructor() {
     super();
@@ -54,6 +55,19 @@ export default class BackendAiDialog extends LitElement {
         }
 
         wl-dialog h3 > wl-button {
+        }
+
+        wl-dialog div.content {
+          padding: 15px;
+        }
+
+        wl-dialog div.footer {
+          padding: 10px 15px;
+        }
+
+        wl-dialog[narrow] div.content,
+        wl-dialog[narrow] div.footer {
+          padding: 0;
         }
       `];
   }
@@ -81,7 +95,7 @@ export default class BackendAiDialog extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="dialog" fixed backdrop blockscrolling
+      <wl-dialog id="dialog" fixed backdrop blockscrolling ?narrow="${(this.narrowLayout)}"
                     style="padding:0;">
         <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
@@ -91,10 +105,10 @@ export default class BackendAiDialog extends LitElement {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <div style="padding:15px;" class="horizontal layout wrap center center-justified">
+          <div class="content horizontal layout wrap center center-justified">
             <slot name="content"></slot>
           </div>
-          <div style="padding:10px 15px;">
+          <div class="footer">
             <slot name="footer"></slot>
           </div>
         </wl-card>

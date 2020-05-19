@@ -31,6 +31,7 @@ import 'weightless/slider';
 import '@material/mwc-linear-progress';
 
 import './lablup-slider';
+import './backend-ai-dialog';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 
@@ -2594,23 +2595,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </form>
         </wl-card>
       </wl-dialog>
-      <wl-dialog id="help-description" fixed backdrop blockscrolling persistent style="padding:0;">
-        <wl-card class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span style="font-size:16px;">${this._helpDescriptionTitle}</span>
-            <div class="flex"></div>
-            <mwc-icon-button icon="close" class="blue close-button"
-              @click="${(e) => this._hideDialog(e)}">
-            </mwc-icon-button>
-          </h3>
-          <div class="horizontal layout center" style="margin:5px;">
-          ${this._helpDescriptionIcon == '' ? html`` : html`
-            <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
-            `}
-            <p style="font-size:14px;">${unsafeHTML(this._helpDescription)}</p>
-          </div>
-        </wl-card>
-      </wl-dialog>
+      <backend-ai-dialog id="help-description">
+        <span slot="title">${this._helpDescriptionTitle}</span>
+        <div slot="content" class="horizontal layout center" style="margin:5px;">
+        ${this._helpDescriptionIcon == '' ? html`` : html`
+          <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
+          `}
+          <p style="font-size:14px;">${unsafeHTML(this._helpDescription)}</p>
+        </div>
+      </backend-ai-dialog>
 `;
   }
 }
