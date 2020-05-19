@@ -31,18 +31,14 @@
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
-import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/iron-icon/iron-icon';
-import '@polymer/iron-icons/iron-icons';
-
-import '@polymer/paper-dialog/paper-dialog';
-import '@polymer/paper-button/paper-button';
 import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-slider/paper-slider';
 import '@polymer/paper-item/paper-item';
+
+import '@material/mwc-icon';
+import '@material/mwc-icon-button';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-menu';
 
 import Sortable from 'sortablejs';
 import '@vaadin/vaadin-dialog/vaadin-dialog';
@@ -57,7 +53,7 @@ import 'weightless/list-item';
 import 'weightless/divider';
 import 'weightless/textfield';
 
-import {BackendAiStyles} from './backend-ai-console-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
@@ -66,7 +62,6 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-session-list';
-import './backend-ai-dropdown-menu';
 import './lablup-codemirror';
 import './lablup-loading-indicator';
 
@@ -110,7 +105,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
   constructor() {
     super();
-    setPassiveTouchGestures(true);
     this.active = false;
     this.supports = {};
     this.aliases = {
@@ -236,7 +230,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.shadowRoot.querySelector('#codemirror-editor').refresh();
     })
 
-    this.notification = window.lablupNotification;
+    this.notification = globalThis.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#loading-indicator');
   }
 
@@ -1053,8 +1047,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
             <wl-tab value="exp-lists" checked @click="${(e) => this._showTab(e.target)}">List</wl-tab>
-            <wl-tab value="running-lists" @click="${(e) => this._showTab(e.target)}">Running</wl-tab>
-            <wl-tab value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
+            <wl-tab disabled value="running-lists" @click="${(e) => this._showTab(e.target)}">Running</wl-tab>
+            <wl-tab disabled value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
           </wl-tab-group>
           <span class="flex"></span>
           <wl-button class="fg blue button" id="edit-pipeline" outlined
@@ -1077,7 +1071,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
                 <wl-list-item class="pipeline-item" @click=${this._selectPipeline}
                     ?active="${item.name === this.pipelineFolderName}"
                     folder-id="${item.id}" folder-name="${item.name}" folder-host="${item.host}">
-                  <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                  <mwc-icon icon="tune" slot="before"></mwc-icon>
                   <wl-title level="4" style="margin: 0">${item.config.title}</wl-title>
                   <span style="font-size: 11px;">${item.config.description}</span>
                 </wl-list-item>
@@ -1085,19 +1079,19 @@ export default class BackendAIPipelineView extends BackendAIPage {
               ${this.pipelineFolderList.length < 1 ? html`<wl-list-item>No pipeline.</wl-list-item>` : ''}
               <h4>Templates</h4>
               <wl-list-item class="sidebar-item" disabled>
-                <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                <mwc-icon icon="tune" slot="before"></mwc-icon>
                   <span slot="after">5<br/><span style="font-size:9px">components</span></span>
                   <wl-title level="4" style="margin: 0">MNIST (PyTorch)</wl-title>
                   <span style="font-size: 11px;">Basic experiment example using PyTorch</span>
               </wl-list-item>
               <wl-list-item class="sidebar-item" disabled>
-                <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                <mwc-icon icon="tune" slot="before"></mwc-icon>
                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
                   <wl-title level="4" style="margin: 0">Fashion MNIST (TensorFlow)</wl-title>
                   <span style="font-size: 11px;">Basic experiment example using TensorFlow</span>
               </wl-list-item>
               <wl-list-item class="sidebar-item" disabled>
-                <iron-icon icon="vaadin:flask" slot="before"></iron-icon>
+                <mwc-icon icon="tune" slot="before"></mwc-icon>
                   <span slot="after">4<br/><span style="font-size:9px">components</span></span>
                   <wl-title level="4" style="margin: 0">Chicago Taxi (TensorFlow)</wl-title>
                   <span style="font-size: 11px;">Basic example for Pipeline</span>
@@ -1127,28 +1121,28 @@ export default class BackendAIPipelineView extends BackendAIPage {
               <div id="pipeline-component-list">
                 ${this.pipelineComponents.map((item, idx) => html`
                   <wl-list-item data-id="${idx}" style="width:calc(100%-55px); height:80px">
-                    <iron-icon icon="vaadin:puzzle-piece" slot="before"></iron-icon>
+                    <mwc-icon icon="extension" slot="before"></mwc-icon>
                     <div slot="after">
                       <div class="horizontal layout">
                         <div class="layout horizontal center" style="width:150px;">
-                            <paper-icon-button class="fg black" icon="vaadin:code" @click="${() => this._editCode(idx)}"></paper-icon-button>
-                            <paper-icon-button class="fg ${item.executed ? 'green' : 'black'}" icon="vaadin:play" @click="${() => this._runComponent(idx)}"></paper-icon-button>
-                            <paper-icon-button class="fg black" icon="vaadin:edit" @click="${() => this._openComponentUpdateDialog(item, idx)}"></paper-icon-button>
-                            <paper-icon-button class="fg black" icon="vaadin:trash" @click="${() => this._openComponentDeleteDialog(idx)}"></paper-icon-button>
+                            <mwc-icon-button class="fg black" icon="code" @click="${() => this._editCode(idx)}"></mwc-icon-button>
+                            <mwc-icon-button class="fg ${item.executed ? 'green' : 'black'}" icon="play_arrow" @click="${() => this._runComponent(idx)}"></mwc-icon-button>
+                            <mwc-icon-button class="fg black" icon="edit" @click="${() => this._openComponentUpdateDialog(item, idx)}"></mwc-icon-button>
+                            <mwc-icon-button class="fg black" icon="delete" @click="${() => this._openComponentDeleteDialog(idx)}"></mwc-icon-button>
                         </div>
                         <div class="layout vertical start flex" style="width:80px!important;">
                           <div class="layout horizontal configuration">
-                            <iron-icon class="fg blue" icon="hardware:developer-board"></iron-icon>
+                            <mwc-icon class="fg blue" icon="developer-board"></mwc-icon>
                             <span>${item.cpu}</span>
                             <span class="indicator">core</span>
                           </div>
                           <div class="layout horizontal configuration">
-                            <iron-icon class="fg blue" icon="hardware:memory"></iron-icon>
+                            <mwc-icon class="fg blue" icon="memory"></mwc-icon>
                             <span>${item.mem}</span>
                             <span class="indicator">GB</span>
                           </div>
                           <div class="layout horizontal configuration">
-                            <iron-icon class="fg blue" icon="icons:view-module"></iron-icon>
+                            <mwc-icon class="fg blue" icon="view-module"></mwc-icon>
                             <span>${item.gpu}</span>
                             <span class="indicator">GPU</span>
                           </div>
