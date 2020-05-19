@@ -181,13 +181,16 @@ export const BackendAiConsoleStyles = [
       color: #ffffff;
     }
 
-    mwc-select {
+    mwc-multi-select {
       width: 135px;
       font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      --mdc-font-typegraphy-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --mdc-theme-primary: var(--paper-grey-600);
       --mdc-select-fill-color: transparent;
       --mdc-select-label-ink-color: rgba(255, 255, 255, 0.75);
-      --mdc-select-dropdown-icon-color: white;
+      --mdc-select-dropdown-icon-color: rgba(255, 255, 255, 1.0);
+      --mdc-select-focused-dropdown-icon-color: rgba(255, 0, 0, 0.42);
+      --mdc-select-disabled-dropdown-icon-color: rgba(255, 0, 0, 0.87);
       --mdc-select-idle-line-color: transparent;
       --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
       --mdc-select-ink-color: rgba(255, 255, 255, 1.0);
@@ -200,6 +203,11 @@ export const BackendAiConsoleStyles = [
         height: 20px;
         color: #222222;
       };
+      --mdc-select-min-width: 100px;
+    }
+
+    wl-popover-card {
+      padding: 5px;
     }
 
     wl-dialog wl-textfield {
@@ -236,6 +244,14 @@ export const BackendAiConsoleStyles = [
     .mini-ui .full-menu {
       display: none;
       margin: 0 !important;
+    }
+
+    .mini-menu {
+      display: none;
+    }
+
+    .mini-ui .mini-menu {
+      display: block;
     }
 
     .sidebar-footer {

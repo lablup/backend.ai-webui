@@ -16,3 +16,10 @@ Icons made by Kiranshastry from www.flaticon.com
 Icons from pngwave https://www.pngwave.com/png-clip-art-cdsrv
  * xfce.png
 
+
+tpu.svg, TPU icon is trademark of google.com
+
+Icons from wikimedia ( https://upload.wikimedia.org/wikipedia/commons/8/83/tpu.svg ) ( licensed under the Creative Commons Attribution-Share Alike 4.0 International license.)
+
+ * tpu.svg
+

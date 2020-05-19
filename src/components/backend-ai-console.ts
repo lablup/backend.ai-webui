@@ -18,15 +18,18 @@ import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu';
-import '@material/mwc-select';
 
 import toml from 'markty-toml';
 
 import 'weightless/progress-spinner';
+import 'weightless/popover';
+import 'weightless/popover-card';
 
 import './backend-ai-settings-store';
 import './backend-ai-splash';
+import './backend-ai-help-button';
 import './lablup-notification';
+import './backend-ai-indicator-pool';
 import './lablup-terms-of-service';
 
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
@@ -38,14 +41,19 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+import '../plastics/mwc/mwc-multi-select';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
+
 import BackendAiSettingsStore from "./backend-ai-settings-store";
+import BackendAiTasker from "./backend-ai-tasker";
 
 registerTranslateConfig({
   loader: lang => fetch(`/resources/i18n/${lang}.json`).then(res => res.json())
 });
 globalThis.backendaioptions = new BackendAiSettingsStore;
+globalThis.tasker = new BackendAiTasker;
+
 /**
  Backend.AI GUI Console
 
@@ -113,6 +121,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   firstUpdated() {
     globalThis.lablupNotification = this.shadowRoot.querySelector('#notification');
+    globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
@@ -216,8 +225,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.plugins['login'] = config.plugin.login;
       }
       if ('page' in config.plugin) {
-        // TODO : multiple sidebar plugins
+        //for (let [key, item] of Object.entries(config.plugin.page)) {
+        //  console.log(key, item);
+        //}
         this.plugins['page'] = config.plugin.page;
+        globalThis.backendaiPages = config.plugin.page;
       }
       if ('sidebar' in config.plugin) {
         // TODO : multiple sidebar plugins
@@ -246,7 +258,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._writeRecentProjectGroup(this.current_group);
     document.body.style.backgroundImage = 'none';
     this.appBody.style.visibility = 'visible';
-    let curtain = this.shadowRoot.getElementById('loading-curtain');
+    let curtain: HTMLElement = this.shadowRoot.getElementById('loading-curtain');
     curtain.classList.add('visuallyhidden');
     curtain.addEventListener('transitionend', () => {
       curtain.classList.add('hidden');
@@ -286,7 +298,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.mini_ui = false;
     }
     globalThis.mini_ui = this.mini_ui;
-    let event = new CustomEvent('backend-ai-ui-changed', {"detail": {"mini-ui": this.mini_ui}});
+    let event: CustomEvent = new CustomEvent('backend-ai-ui-changed', {"detail": {"mini-ui": this.mini_ui}});
     document.dispatchEvent(event);
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
   }
@@ -322,15 +334,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.current_group = this._readRecentProjectGroup();
     globalThis.backendaiclient.current_group = this.current_group;
     this.groups = globalThis.backendaiclient.groups;
-    let groupSelectionBox = this.shadowRoot.getElementById('group-select-box');
+    let groupSelectionBox: HTMLElement = this.shadowRoot.getElementById('group-select-box');
     // Detached from template to support live-update after creating new group (will need it)
     if (groupSelectionBox.hasChildNodes()) {
-      groupSelectionBox.removeChild(groupSelectionBox.firstChild);
+      groupSelectionBox.removeChild(groupSelectionBox.firstChild as ChildNode);
     }
-    let select = document.createElement('mwc-select');
+    let select = document.createElement('mwc-multi-select');
     select.label = _text("console.menu.Project");
     select.id = 'group-select';
     select.value = this.current_group;
+    //select.setAttribute('naturalMenuWidth', 'true');
+    select.setAttribute('fullwidth', 'true');
     select.addEventListener('selected', this.changeGroup.bind(this));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
@@ -484,7 +498,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
       default:
-        this.menuTitle = 'LOGIN REQUIRED';
+        this._page = 'error';
+        this.menuTitle = _text("console.NOTFOUND");
+        this.updateTitleColor('var(--paper-grey-800)', '#efefef');
     }
   }
 
@@ -673,11 +689,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
-              <mwc-icon slot="graphic" id="activities-icon" class="fg green">widgets</mwc-icon>
+              <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg green">widgets</mwc-icon>
               <span class="full-menu">${_t("console.menu.Summary")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}">
-              <mwc-icon slot="graphic" class="fg red">ballot</mwc-icon>
+              <mwc-icon id="sessions-menu-icon" slot="graphic" class="fg red">ballot</mwc-icon>
               <span class="full-menu">${_t("console.menu.Sessions")}</span>
             </mwc-list-item>
             ${true ? html`
@@ -691,45 +707,45 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="full-menu">${_t("console.menu.Experiments")}</span>
             </mwc-list-item>` : html``}
             <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}">
-              <mwc-icon slot="graphic" class="fg orange">cloud_upload</mwc-icon>
+              <mwc-icon id="data-menu-icon" slot="graphic" class="fg orange">cloud_upload</mwc-icon>
               <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}">
-              <mwc-icon slot="graphic" class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
+              <mwc-icon id="statistics-menu-icon" slot="graphic" class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}">
-              <mwc-icon  slot="graphic" class="fg teal" icon="icons:settings">settings</mwc-icon>
+              <mwc-icon id="usersettings-menu-icon" slot="graphic" class="fg teal" icon="icons:settings">settings</mwc-icon>
               <span class="full-menu">${_t("console.menu.Settings")}</span>
             </mwc-list-item>
             ${this.is_admin ?
       html`
             <h3 class="full-menu">${_t("console.menu.Administration")}</h3>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'credential'}" @click="${() => this._moveTo('/credential')}" ?disabled="${!this.is_admin}">
-              <mwc-icon  slot="graphic" class="fg lime" icon="icons:face">face</mwc-icon>
+              <mwc-icon id="user-menu-icon" slot="graphic" class="fg lime" icon="icons:face">face</mwc-icon>
               <span class="full-menu">${_t("console.menu.Users")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'environment'}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}">
-              <mwc-icon slot="graphic" class="fg orange" icon="icons:extension">extension</mwc-icon>
+              <mwc-icon id="environments-menu-icon" slot="graphic" class="fg orange" icon="icons:extension">extension</mwc-icon>
               <span class="full-menu">${_t("console.menu.Environments")}</span>
             </mwc-list-item>
     ` : html``}
             ${this.is_superadmin ?
       html`
             <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
-              <mwc-icon slot="graphic" class="fg blue" icon="hardware:device-hub">device_hub</mwc-icon>
+              <mwc-icon id="resources-menu-icon" slot="graphic" class="fg blue" icon="hardware:device-hub">device_hub</mwc-icon>
               <span class="full-menu">${_t("console.menu.Resources")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
-              <mwc-icon slot="graphic" class="fg green" icon="icons:settings">settings</mwc-icon>
+              <mwc-icon id="configurations-menu-icon" slot="graphic" class="fg green" icon="icons:settings">settings</mwc-icon>
               <span class="full-menu">${_t("console.menu.Configurations")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
-              <mwc-icon slot="graphic" class="fg pink" icon="icons:build">build</mwc-icon>
+              <mwc-icon id="maintenance-menu-icon" slot="graphic" class="fg pink" icon="icons:build">build</mwc-icon>
               <span class="full-menu">${_t("console.menu.Maintenance")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'information'}" @click="${() => this._moveTo('/information')}" ?disabled="${!this.is_superadmin}">
-              <mwc-icon slot="graphic" class="fg purple">info</mwc-icon>
+              <mwc-icon id="information-menu-icon" slot="graphic" class="fg purple">info</mwc-icon>
               <span class="full-menu">${_t("console.menu.Information")}</span>
             </mwc-list-item>
     ` : html``}
@@ -752,9 +768,59 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.04.2.200415</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.05.3.200515</small>
             </address>
           </div>
+        </div>
+        <div class="mini-menu">
+          <wl-popover anchor="#summary-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+             <wl-popover-card><div style="padding:5px">${_t("console.menu.Summary")}</div></wl-popover-card>
+          </wl-popover>
+          <wl-popover anchor="#sessions-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+             <wl-popover-card><div style="padding:5px">${_t("console.menu.Sessions")}</div></wl-popover-card>
+          </wl-popover>
+          <wl-popover anchor="#data-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+             <wl-popover-card><div style="padding:5px">${_t("console.menu.Data&Storage")}</div></wl-popover-card>
+          </wl-popover>
+          <wl-popover anchor="#statistics-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+             <wl-popover-card><div style="padding:5px">${_t("console.menu.Statistics")}</div></wl-popover-card>
+          </wl-popover>
+          <wl-popover anchor="#usersettings-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+             <wl-popover-card><div style="padding:5px">${_t("console.menu.Settings")}</div></wl-popover-card>
+          </wl-popover>
+          ${this.is_admin ? html`
+            <wl-popover anchor="#user-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+               <wl-popover-card><div style="padding:5px">${_t("console.menu.Users")}</div></wl-popover-card>
+            </wl-popover>
+          `: html``}
+          ${this.is_superadmin ? html`
+            <wl-popover anchor="#resources-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+               <wl-popover-card><div style="padding:5px">${_t("console.menu.Resources")}</div></wl-popover-card>
+            </wl-popover>
+            <wl-popover anchor="#environments-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+               <wl-popover-card><div style="padding:5px">${_t("console.menu.Environments")}</div></wl-popover-card>
+            </wl-popover>
+            <wl-popover anchor="#configurations-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+               <wl-popover-card><div style="padding:5px">${_t("console.menu.Configurations")}</div></wl-popover-card>
+            </wl-popover>
+            <wl-popover anchor="#maintenance-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+               <wl-popover-card><div style="padding:5px">${_t("console.menu.Maintenance")}</div></wl-popover-card>
+            </wl-popover>
+            <wl-popover anchor="#information-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+               <wl-popover-card><div style="padding:5px">${_t("console.menu.Information")}</div></wl-popover-card>
+            </wl-popover>
+          `: html``}
         </div>
         <div slot="appContent">
           <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
@@ -764,6 +830,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="email" style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</span>
               <div style="font-size: 12px;text-align:right">${this.domain}</div>
             </div>
+            <backend-ai-help-button slot="actionItems" active></backend-ai-help-button>
             <mwc-icon-button slot="actionItems" id="dropdown-button"
                              icon="account_circle"
                              @click="${() => this._toggleDropdown()}">
@@ -809,17 +876,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
                 <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-information-view>
                 <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
+                <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-error-view>
               </div>
             </section>
           </div>
         </div>
       </mwc-drawer>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
-        You are now ${this._offline ? 'offline' : 'online'}.
+        ${this._offline ? _t("console.YouAreOffline") : _t("console.YouAreOnline")}.
       </backend-ai-offline-indicator>
       <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
+      <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
        <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>

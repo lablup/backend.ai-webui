@@ -71,6 +71,11 @@ export default class BackendAIAgentList extends BackendAIPage {
           padding: 0;
         }
 
+        img.indicator-icon {
+          width: 16px;
+          height: 16px;
+        }
+
         paper-icon-button {
           --paper-icon-button: {
             width: 25px;
@@ -111,7 +116,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     super.connectedCallback();
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
     if (active === false) {
       return;
@@ -128,7 +133,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     }
   }
 
-  _loadAgentList(status = 'running') {
+  _loadAgentList(status: string = 'running') {
     if (this.active !== true) {
       return;
     }
@@ -182,31 +187,31 @@ export default class BackendAIAgentList extends BackendAIPage {
           agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots;
           agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);
           if ('cuda.device' in available_slots) {
-            agents[objectKey].gpu_slots = parseInt(available_slots['cuda.device']);
+            agents[objectKey].cuda_gpu_slots = parseInt(available_slots['cuda.device']);
             if ('cuda.device' in occupied_slots) {
-              agents[objectKey].used_gpu_slots = parseInt(occupied_slots['cuda.device']);
+              agents[objectKey].used_cuda_gpu_slots = parseInt(occupied_slots['cuda.device']);
             } else {
-              agents[objectKey].used_gpu_slots = 0;
+              agents[objectKey].used_cuda_gpu_slots = 0;
             }
-            agents[objectKey].used_gpu_slots_ratio = agents[objectKey].used_gpu_slots / agents[objectKey].gpu_slots;
+            agents[objectKey].used_cuda_gpu_slots_ratio = agents[objectKey].used_cuda_gpu_slots / agents[objectKey].cuda_gpu_slots;
           }
           if ('cuda.shares' in available_slots) {
-            agents[objectKey].vgpu_slots = parseInt(available_slots['cuda.shares']);
+            agents[objectKey].cuda_fgpu_slots = parseInt(available_slots['cuda.shares']);
             if ('cuda.shares' in occupied_slots) {
-              agents[objectKey].used_vgpu_slots = parseInt(occupied_slots['cuda.shares']);
+              agents[objectKey].used_cuda_fgpu_slots = parseInt(occupied_slots['cuda.shares']);
             } else {
-              agents[objectKey].used_vgpu_slots = 0;
+              agents[objectKey].used_cuda_fgpu_slots = 0;
             }
-            agents[objectKey].used_vgpu_slots_ratio = agents[objectKey].used_vgpu_slots / agents[objectKey].vgpu_slots;
+            agents[objectKey].used_cuda_fgpu_slots_ratio = agents[objectKey].used_cuda_fgpu_slots / agents[objectKey].cuda_fgpu_slots;
           }
           if ('rocm.device' in available_slots) {
-            agents[objectKey].gpu_slots = parseInt(available_slots['rocm.device']);
+            agents[objectKey].rocm_gpu_slots = parseInt(available_slots['rocm.device']);
             if ('rocm.device' in occupied_slots) {
-              agents[objectKey].used_gpu_slots = parseInt(occupied_slots['rocm.device']);
+              agents[objectKey].used_rocm_gpu_slots = parseInt(occupied_slots['rocm.device']);
             } else {
-              agents[objectKey].used_gpu_slots = 0;
+              agents[objectKey].used_rocm_gpu_slots = 0;
             }
-            agents[objectKey].used_gpu_slots_ratio = agents[objectKey].used_gpu_slots / agents[objectKey].gpu_slots;
+            agents[objectKey].used_rocm_gpu_slots_ratio = agents[objectKey].used_rocm_gpu_slots / agents[objectKey].rocm_gpu_slots;
           }
         });
       }
@@ -238,11 +243,12 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   _elapsed(start, end) {
-    var startDate = new Date(start);
+    let startDate = new Date(start);
+    let endDate: Date;
     if (this.condition === 'running') {
-      var endDate = new Date();
+      endDate = new Date();
     } else {
-      var endDate = new Date(end);
+      endDate = new Date(end);
     }
     var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
     if (this.condition === 'running') {
@@ -258,15 +264,15 @@ export default class BackendAIAgentList extends BackendAIPage {
     return startDate.toLocaleString('ko-KR');
   }
 
-  _indexFrom1(index) {
+  _indexFrom1(index: number) {
     return index + 1;
   }
 
-  _heartbeatStatus(state) {
+  _heartbeatStatus(state: string) {
     return state;
   }
 
-  _heartbeatColor(state) {
+  _heartbeatColor(state: string) {
     switch (state) {
       case 'ALIVE':
         return 'green';
@@ -435,22 +441,40 @@ export default class BackendAIAgentList extends BackendAIPage {
                                 buffer="[[item.mem_total_usage_ratio]]"></mwc-linear-progress>
 
               </div>
-              <template is="dom-if" if="[[item.gpu_slots]]">
+              <template is="dom-if" if="[[item.cuda_gpu_slots]]">
                 <div class="layout horizontal center flex">
-                  <wl-icon class="fg green">view_module</wl-icon>
-                  <span style="padding-left:5px;">[[item.gpu_slots]]</span>
+                  <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                  <span style="padding-left:5px;">[[item.cuda_gpu_slots]]</span>
                   <span class="indicator">GPU</span>
                   <span class="flex"></span>
-                  <mwc-linear-progress id="gpu-bar" value="[[item.used_gpu_slots_ratio]]" buffer="[[item.used_gpu_slots_ratio]]"></mwc-linear-progress>
+                  <mwc-linear-progress id="gpu-bar" value="[[item.used_cuda_gpu_slots_ratio]]" buffer="[[item.used_cuda_gpu_slots_ratio]]"></mwc-linear-progress>
                 </div>
               </template>
-              <template is="dom-if" if="[[item.vgpu_slots]]">
+              <template is="dom-if" if="[[item.cuda_fgpu_slots]]">
                 <div class="layout horizontal center flex">
-                  <wl-icon class="fg green">view_module</wl-icon>
-                  <span style="padding-left:5px;">[[item.vgpu_slots]]</span>
+                  <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                  <span style="padding-left:5px;">[[item.cuda_fgpu_slots]]</span>
                   <span class="indicator">fGPU</span>
                   <span class="flex"></span>
-                  <mwc-linear-progress id="vgpu-bar" value="[[item.used_vgpu_slots_ratio]]" buffer="[[item.used_vgpu_slots_ratio]]"></mwc-linear-progress>
+                  <mwc-linear-progress id="vgpu-bar" value="[[item.used_cuda_fgpu_slots_ratio]]" buffer="[[item.used_cuda_fgpu_slots_ratio]]"></mwc-linear-progress>
+                </div>
+              </template>
+              <template is="dom-if" if="[[item.rocm_gpu_slots]]">
+                <div class="layout horizontal center flex">
+                  <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
+                  <span style="padding-left:5px;">[[item.rocm_gpu_slots]]</span>
+                  <span class="indicator">ROCm</span>
+                  <span class="flex"></span>
+                  <mwc-linear-progress id="rocm-gpu-bar" value="[[item.used_rocm_gpu_slots_ratio]]" buffer="[[item.used_rocm_gpu_slots_ratio]]"></mwc-linear-progress>
+                </div>
+              </template>
+              <template is="dom-if" if="[[item.tpu_slots]]">
+                <div class="layout horizontal center flex">
+                  <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
+                  <span style="padding-left:5px;">[[item.tpu_slots]]</span>
+                  <span class="indicator">TPU</span>
+                  <span class="flex"></span>
+                  <mwc-linear-progress id="tpu-bar" value="[[item.used_tpu_slots_ratio]]" buffer="[[item.used_tpu_slots_ratio]]"></mwc-linear-progress>
                 </div>
               </template>
             </div>

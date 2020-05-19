@@ -21,16 +21,16 @@ import 'weightless/icon';
 import 'weightless/button';
 import 'weightless/label';
 
-import '@material/mwc-select';
+import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-list/mwc-list-item';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 import './lablup-codemirror';
 
 @customElement("backend-ai-usersettings-general-list")
 export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
-  public indicator: any;
+  public spinner: any;
   public lastSavedBootstrapScript: string = '';
 
   @property({type: Object}) bootstrapDialog = Object();
@@ -46,6 +46,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: Array}) rcfiles = Array();
   @property({type: String}) rcfile = '';
   @property({type: String}) prevRcfile = '';
+  @property({type: String}) preferredSSHPort = '';
 
   constructor() {
     super();
@@ -92,6 +93,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         .setting-select {
           width: 135px;
         }
+
+        .setting-text-desc {
+          width: 260px;
+        }
+
+        .setting-text {
+          width: 75px;
+        }
+
         .setting-item wl-button {
           --button-bg: transparent;
           --button-bg-hover: var(--paper-teal-100);
@@ -133,7 +143,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --dialog-max-height: calc(100vh - 100px);
         }
 
-        mwc-select#select-rcfile-type {
+        mwc-multi-select {
+          --mdc-select-min-width: 140px;
+        }
+
+        mwc-multi-select#select-rcfile-type {
           width: 300px;
           padding-right: 10px;
           --mdc-select-fill-color: transparent;
@@ -161,10 +175,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this.preferredSSHPort = globalThis.backendaioptions.get('custom_ssh_port');
         if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
           this.shell_script_edit = true;
           this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
@@ -173,6 +188,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
       });
     } else { // already connected
+      this.preferredSSHPort = globalThis.backendaioptions.get('custom_ssh_port');
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
         this.shell_script_edit = true;
         this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
@@ -220,7 +236,23 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   setUserLanguage(e) {
     if (e.target.selected.value !== globalThis.backendaioptions.get('language')) {
       globalThis.backendaioptions.set('language', e.target.selected.value);
+      globalThis.backendaioptions.set('current_language', e.target.selected.value);
       setLanguage(e.target.selected.value);
+    }
+  }
+
+  changePreferredSSHPort(e) {
+    const value = Number(e.target.value);
+    if (value !== globalThis.backendaioptions.get('custom_ssh_port', '')) {
+      if (value === 0 || !value) {
+        globalThis.backendaioptions.delete('custom_ssh_port');
+      } else if (value < 1024 || value > 65534) {
+        this.notification.text = _text("usersettings.InvalidPortNumber");
+        this.notification.show();
+        return;
+      } else {
+        globalThis.backendaioptions.set('custom_ssh_port', value);
+      }
     }
   }
 
@@ -258,12 +290,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       this.notification.show();
       return;
     }
-    this.indicator.show();
+    this.spinner.show();
     globalThis.backendaiclient.userConfig.update_bootstrap_script(script)
       .then(res => {
         this.notification.text = 'Bootstrap script updated.';
         this.notification.show();
-        this.indicator.hide();
+        this.spinner.hide();
       });
   }
 
@@ -286,7 +318,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   async _editUserConfigScript() {
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     this.rcfiles = await this._fetchUserConfigScript();
-    let rcfile_names = Array( ".bashrc", ".zshrc" );
+    let rcfile_names = Array(".bashrc", ".zshrc");
     rcfile_names.map(filename => {
       let idx = this.rcfiles.findIndex(item => item.path === filename);
       if (idx == -1) {
@@ -322,7 +354,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     });
   }
 
-  async _saveUserConfigScript(fileName : string = this.rcfile) {
+  async _saveUserConfigScript(fileName: string = this.rcfile) {
     const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     const script = editor.getValue();
     let idx = this.rcfiles.findIndex(item => item.path === fileName);
@@ -339,20 +371,20 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           globalThis.backendaiclient.userConfig.create_dotfile_script(
             script, this.rcfiles[idx]['path'])
             .then(res => {
-              this.indicator.hide();
+              this.spinner.hide();
               this.notification.text = _text("usersettings.DescScriptCreated");
               this.notification.show();
             }).catch(err => {
-              this.indicator.hide();
-              console.log(err);
-              if (err && err.message) {
-                this.notification.text = PainKiller.relieve(err.title);
-                this.notification.detail = err.message;
-                this.notification.show(true, err);
-              }
+            this.spinner.hide();
+            console.log(err);
+            if (err && err.message) {
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+              this.notification.show(true, err);
+            }
           });
         } else {
-          this.indicator.hide();
+          this.spinner.hide();
           this.notification.text = _text("usersettings.DescNewUserConfigFileCreated");
           this.notification.show();
           return;
@@ -362,34 +394,32 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           this.notification.text = 'No changes';
           this.notification.show();
           return;
-        }
-        else if (script === '') {
+        } else if (script === '') {
           this.notification.text = _text("usersettings.DescLetUserUpdateScriptWithNonEmptyValue");
           this.notification.show();
           return;
-        }
-        else {
+        } else {
           await globalThis.backendaiclient.userConfig.update_dotfile_script(script, this.rcfile)
-          .then(res => {
-            this.notification.text = _text("usersettings.DescScriptUpdated");
-            this.notification.show();
-            this.indicator.hide();
-          }).catch(err => {
-            this.indicator.hide();
-            console.log(err);
-            if (err && err.message) {
-              this.notification.text = PainKiller.relieve(err.title);
-              this.notification.detail = err.message;
-              this.notification.show(true, err);
-            }
-          });
+            .then(res => {
+              this.notification.text = _text("usersettings.DescScriptUpdated");
+              this.notification.show();
+              this.spinner.hide();
+            }).catch(err => {
+              this.spinner.hide();
+              console.log(err);
+              if (err && err.message) {
+                this.notification.text = PainKiller.relieve(err.title);
+                this.notification.detail = err.message;
+                this.notification.show(true, err);
+              }
+            });
         }
       }
     }
     await setTimeout(() => {
       this._editUserConfigScript();
     }, 200);
-    this.indicator.show();
+    this.spinner.show();
   }
 
   async _saveUserConfigScriptAndCloseDialog() {
@@ -411,7 +441,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     dialog.hide();
   }
 
-  _updateSelectedRcFileName(fileName : string) {
+  _updateSelectedRcFileName(fileName: string) {
     let rcfiles = this.shadowRoot.querySelector('#select-rcfile-type');
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     if (rcfiles.items.length > 0) {
@@ -452,10 +482,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _deleteRcFile(path: string) {
     if (path) {
       globalThis.backendaiclient.userConfig.delete_dotfile_script(path).then(res => {
-        let message = 'User config script '+ path + 'is deleted.';
+        let message = 'User config script ' + path + 'is deleted.';
         this.notification.text = message;
         this.notification.show();
-        this.indicator.hide();
+        this.spinner.hide();
       }).catch(err => {
         console.log(err);
         if (err && err.message) {
@@ -468,13 +498,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   _deleteRcFileAll() {
-    this.rcfiles.map( item => {
+    this.rcfiles.map(item => {
       let path = item.path;
       globalThis.backendaiclient.userConfig.delete_dotfile_script(item.path).then(res => {
-        let message = 'User config script '+ path + ' is deleted.';
+        let message = 'User config script ' + path + ' is deleted.';
         this.notification.text = message;
         this.notification.show();
-        this.indicator.hide();
+        this.spinner.hide();
       }).catch(err => {
         console.log(err);
         if (err && err.message) {
@@ -521,6 +551,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   render() {
     //languate=HTML
     return html`
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card elevation="1">
         <h3 class="horizontal center layout">
           <span>${_t("usersettings.Preferences")}</span>
@@ -553,14 +584,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               </div>
             </div>
             <div class="vertical center-justified layout setting-select">
-              <mwc-select id="ui-language"
+              <mwc-multi-select id="ui-language"
                           required
                           @selected="${(e) => this.setUserLanguage(e)}">
               ${this.supportLanguages.map(item => html`
                 <mwc-list-item value="${item.code}" ?selected=${globalThis.backendaioptions.get('language') === item.code}>
                   ${item.name}
                 </mwc-list-item>`)}
-              </mwc-select>
+              </mwc-multi-select>
             </div>
           </div>
           ${globalThis.isElectron ? html`
@@ -571,6 +602,16 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </div>
             <div class="vertical center-justified layout setting-button">
               <wl-switch id="preserve-login-switch" @change="${(e) => this.togglePreserveLogin(e)}" ?checked="${globalThis.backendaioptions.get('preserve_login')}"></wl-switch>
+            </div>
+          </div>
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical start center-justified layout setting-text-desc">
+              <div>${_t("usersettings.PreferredSSHPort")}</div>
+              <div class="description">${_tr("usersettings.DescPreferredSSHPort")}</div>
+            </div>
+            <div class="vertical center-justified layout setting-text">
+              <mwc-textfield pattern="[0-9]*" @change="${(e) => this.changePreferredSSHPort(e)}"
+                  value="${this.preferredSSHPort}" validationMessage="Allows numbers only" auto-validate></mwc-textfield>
             </div>
           </div>
           ` : html``}
@@ -635,7 +676,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>` : html``}
       </wl-card>
       <wl-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
         <div slot="header" style="padding: 0px 20px;">
         <h3 class="horizontal center layout">
           <span>${_t("usersettings.BootstrapScript")}</span>
@@ -655,7 +695,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>
       </wl-dialog>
       <wl-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
         <div slot="header" style="padding: 0px 20px;">
           <h3 class="horizontal center layout">
             <span>Edit ${this.rcfile} shell script</span>
@@ -665,7 +704,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </wl-button>
           </h3>
           <div class="vertical layout">
-            <mwc-select id="select-rcfile-type"
+            <mwc-multi-select id="select-rcfile-type"
                         label="config file name"
                         required
                         validationMessage="Please select one option."
@@ -674,7 +713,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                 <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
                   ${item.path}
                 </mwc-list-item>`)}
-            </mwc-select>
+            </mwc-multi-select>
             <div class="horizontal layout">
               <wl-icon class="warning">warning</wl-icon>
               <wl-label class="warning" for="warning">

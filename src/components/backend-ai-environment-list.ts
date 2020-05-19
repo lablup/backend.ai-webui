@@ -17,8 +17,7 @@ import {
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
-import './lablup-loading-indicator';
-import './backend-ai-indicator';
+import './lablup-loading-spinner';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -45,7 +44,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Boolean}) _rocm_gpu_disabled = false;
   @property({type: Boolean}) _tpu_disabled = false;
   @property({type: Object}) alias = Object();
-  @property({type: Object}) loadingIndicator = Object();
+  @property({type: Object}) spinner = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) installImageDialog = Object();
   @property({type: String}) installImageName = '';
@@ -185,7 +184,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     if (cpu !== resource_limits[0].min) input["cpu"] = {"min": cpu};
     let memory = this._symbolicUnit(mem);
     if (memory !== resource_limits[mem_idx].min) input["mem"] = {"min": memory};
-    // TODO : let add options for ROCm devices
+
     if (!this._cuda_gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = {"min": gpu};
     if (!this._cuda_fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = {"min": fgpu};
     if (!this._rocm_gpu_disabled && rocm_gpu !== resource_limits[3].min) input["rocm.device"] = {"min": rocm_gpu};
@@ -228,7 +227,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.installImageDialog.show();
   }
 
-  _installImage() {
+  async _installImage() {
     this.installImageDialog.hide();
     if ('cuda.device' in this.installImageResource && 'cuda.shares' in this.installImageResource) {
       this.installImageResource['gpu'] = 0;
@@ -247,8 +246,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
     this.notification.text = "Installing " + this.installImageName + ". It takes time so have a cup of coffee!";
     this.notification.show();
-    this.indicator.start('indeterminate');
-    this.indicator.set(10, 'Downloading...');
+    let indicator = await this.indicator.start('indeterminate');
+    indicator.set(10, 'Downloading...');
     globalThis.backendaiclient.getResourceSlots().then((response) => {
       let results = response;
       if ('cuda.device' in results && 'cuda.shares' in results) { // Can be possible after 20.03
@@ -265,16 +264,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       }
       return globalThis.backendaiclient.image.install(this.installImageName, this.installImageResource);
     }).then((response) => {
-      this.indicator.set(100, 'Install finished.');
-      this.indicator.end(1000);
+      indicator.set(100, 'Install finished.');
+      indicator.end(1000);
       this._getImages();
     }).catch(err => {
       this._uncheckSelectedRow();
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
-      this.indicator.set(100, _t('environment.DescProblemOccurred'));
-      this.indicator.end(1000);
+      indicator.set(100, _t('environment.DescProblemOccurred'));
+      indicator.end(1000);
     });
   }
 
@@ -329,7 +328,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         ${rowData.item.tpu_device_limit_min ? html`
            <div class="layout horizontal center flex">
               <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">view_module</wl-icon>
+                <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
                 <span>${rowData.item.tpu_device_limit_min}</span> ~
                 <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
                 <span class="indicator">TPU</span>
@@ -346,7 +345,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this._cuda_fgpu_disabled = resource_limits.filter(e => e.key === "cuda_shares").length === 0;
     this._rocm_gpu_disabled = resource_limits.filter(e => e.key === "rocm_device").length === 0;
     this._tpu_disabled = resource_limits.filter(e => e.key === "tpu_device").length === 0;
-
     this.shadowRoot.querySelector("#modify-image-cpu").value = resource_limits[0].min;
     if (!this._cuda_gpu_disabled) {
       this.shadowRoot.querySelector("#modify-image-cuda-gpu").value = resource_limits[1].min;
@@ -468,8 +466,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
-      <backend-ai-indicator id="indicator"></backend-ai-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
         <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundInstallRenderer}">
           <template class="header">
@@ -599,7 +596,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                     ?disabled=${this._cuda_fgpu_disabled}
                     style="flex: 1"
                   >
-                    ${[0.1, 0.2, 0.5, 1.0, 2.0].map(item => html`
+                    ${[0, 0.1, 0.2, 0.5, 1.0, 2.0].map(item => html`
                       <option
                         value=${item}
                       >${item}</option>
@@ -797,8 +794,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.loadingIndicator = this.shadowRoot.querySelector('#loading-indicator');
-    this.indicator = this.shadowRoot.querySelector('#indicator');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
 
@@ -840,7 +837,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _getImages() {
-    this.loadingIndicator.show();
+    this.spinner.show();
 
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
@@ -908,7 +905,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       //let sorted_images = {};
       //image_keys.sort();
       this.images = domainImages;
-      this.loadingIndicator.hide();
+      this.spinner.hide();
     }).catch((err) => {
       console.log(err);
       if (typeof err.message !== 'undefined') {
@@ -918,7 +915,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
       }
       this.notification.show(true, err);
-      this.loadingIndicator.hide();
+      this.spinner.hide();
     });
   }
 

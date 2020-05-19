@@ -84,7 +84,15 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
       import('./components/backend-ai-error-log-view.js');
       break;
     default:
-      import('./components/backend-ai-summary-view.js').then((module) => {
+      if (typeof globalThis.backendaiPage !== 'undefined') {
+        for (let item of globalThis.backendaiPage) {
+          if ('url' in item) {
+            import('./plugins/' + item.url);
+            break;
+          }
+        }
+      }
+      import('./components/backend-ai-error-view.js').then((module) => {
       });
       break;
   }

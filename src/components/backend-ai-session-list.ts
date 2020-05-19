@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 
@@ -25,8 +25,7 @@ import 'weightless/title';
 import '@material/mwc-icon-button';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
-import './lablup-loading-indicator';
-import './backend-ai-indicator';
+import './lablup-loading-spinner';
 import '../plastics/lablup-shields/lablup-shields';
 
 import JsonToCsv from '../lib/json_to_csv';
@@ -65,9 +64,10 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) terminateSelectedSessionsDialog = Object();
   @property({type: Object}) exportToCsvDialog = Object();
   @property({type: Boolean}) enableScalingGroup = false;
-  @property({type: Object}) loadingIndicator = Object();
+  @property({type: Object}) spinner = Object();
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
+  @property({type: Object}) indicator = Object();
   @property({type: Object}) _defaultFileName = '';
   @property({type: Proxy}) statusColorTable = new Proxy({
     'idle-timeout': 'green',
@@ -289,7 +289,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _isPreparing(status) {
-    const preparingStatuses = ['RESTARTING', 'PULLING'];
+    const preparingStatuses = ['RESTARTING', 'PREPARING', 'PULLING'];
     if (preparingStatuses.indexOf(status) === -1) {
       return false;
     }
@@ -297,7 +297,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.loadiingIndicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this._grid = this.shadowRoot.querySelector('#list-grid');
     this._initializeAppTemplate();
     this.refreshTimer = null;
@@ -399,7 +399,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       return;
     }
     this.refreshing = true;
-    this.loadingIndicator.show();
+    this.spinner.show();
     let status: any;
     status = 'RUNNING';
     switch (this.condition) {
@@ -435,7 +435,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     let group_id = globalThis.backendaiclient.current_group_id();
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
-      this.loadingIndicator.hide();
+      this.spinner.hide();
       this.total_session_count = response.compute_session_list.total_count;
       if (this.total_session_count === 0) {
         this.total_session_count = 1;
@@ -531,7 +531,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
       }
     }).catch(err => {
-      this.loadingIndicator.hide();
+      this.spinner.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -707,9 +707,30 @@ export default class BackendAiSessionList extends BackendAIPage {
       let logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
         this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName}`;
-        this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || 'No logs.';
+        this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+        this.shadowRoot.querySelector('#work-dialog').sessionName = sessionName;
+        this.shadowRoot.querySelector('#work-dialog').accessKey = accessKey;
         this.shadowRoot.querySelector('#work-dialog').show();
       }, 100);
+    }).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
+      }
+    });
+  }
+
+  _refreshLogs() {
+    const sessionName = this.shadowRoot.querySelector('#work-dialog').sessionName;
+    const accessKey = this.shadowRoot.querySelector('#work-dialog').accessKey;
+    globalThis.backendaiclient.getLogs(sessionName, accessKey).then((req) => {
+      const ansi_up = new AnsiUp();
+      const logs = ansi_up.ansi_to_html(req.result.logs);
+      this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -759,7 +780,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.shadowRoot.querySelector('#app-dialog').hide();
   }
 
-  async _open_wsproxy(sessionName, app = 'jupyter') {
+  async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null) {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
@@ -777,7 +798,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
     if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
-      this.shadowRoot.querySelector('#indicator').end();
+      this.indicator.end();
       this.notification.text = 'Proxy is not ready yet. Check proxy settings for detail.';
       this.notification.show();
       return Promise.resolve(false);
@@ -791,21 +812,25 @@ export default class BackendAiSessionList extends BackendAIPage {
       },
       uri: this._getProxyURL() + 'conf'
     };
-    this.shadowRoot.querySelector('#indicator').set(20, 'Setting up proxy for the app...');
+    this.indicator.set(20, 'Setting up proxy for the app...');
     try {
       let response = await this.sendRequest(rqst);
       if (response === undefined) {
-        this.shadowRoot.querySelector('#indicator').end();
+        this.indicator.end();
         this.notification.text = 'Proxy configurator is not responding.';
         this.notification.show();
         return Promise.resolve(false);
       }
       let token = response.token;
-      this.shadowRoot.querySelector('#indicator').set(50, 'Adding kernel to socket queue...');
+      let uri = this._getProxyURL() + `proxy/${token}/${sessionName}/add?app=${app}`;
+      if (port !== null && port > 1024 && port < 65535) {
+        uri += `&port=${port}`;
+      }
+      this.indicator.set(50, 'Adding kernel to socket queue...');
       let rqst_proxy = {
         method: 'GET',
         app: app,
-        uri: this._getProxyURL() + 'proxy/' + token + "/" + sessionName + "/add?app=" + app
+        uri: uri
       };
       return await this.sendRequest(rqst_proxy);
     } catch (err) {
@@ -813,7 +838,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  _runApp(e) {
+  async _runApp(e) {
     const controller = e.target;
     let controls = controller.closest('#app-dialog');
     let sessionName = controls.getAttribute('session-name');
@@ -829,30 +854,32 @@ export default class BackendAiSessionList extends BackendAIPage {
 
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
-      this.shadowRoot.querySelector('#indicator').start();
-      this._open_wsproxy(sessionName, appName)
+      this.indicator = await globalThis.lablupIndicator.start();
+      let port = null;
+      if (globalThis.isElectron && appName === 'sshd') {
+        port = globalThis.backendaioptions.get('custom_ssh_port', 0);
+        if (port === '0' || port === 0) { // setting store does not accept null.
+          port = null;
+        }
+      }
+      this._open_wsproxy(sessionName, appName, port)
         .then((response) => {
           if (appName === 'sshd') {
-            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
+            this.indicator.set(100, 'Prepared.');
             this.sshPort = response.port;
             this._readSSHKey(sessionName);
             this._openSSHDialog();
             setTimeout(() => {
-              this.shadowRoot.querySelector('#indicator').end();
+              this.indicator.end();
             }, 1000);
           } else if (appName === 'vnc') {
-            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
+            this.indicator.set(100, 'Prepared.');
             this.vncPort = response.port;
             this._openVNCDialog();
-            setTimeout(() => {
-              this.shadowRoot.querySelector('#indicator').end();
-            }, 1000);
-
           } else if (response.url) {
-            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
+            this.indicator.set(100, 'Prepared.');
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
-              this.shadowRoot.querySelector('#indicator').end();
               console.log(appName + " proxy loaded: ");
               console.log(sessionName);
             }, 1000);
@@ -874,19 +901,19 @@ export default class BackendAiSessionList extends BackendAIPage {
     downloadLinkEl.download = 'id_container';
   }
 
-  _runTerminal(e) {
+  async _runTerminal(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const sessionName = controls['session-name'];
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
-      this.shadowRoot.querySelector('#indicator').start();
+      this.indicator = await globalThis.lablupIndicator.start();
       this._open_wsproxy(sessionName, 'ttyd')
         .then((response) => {
           if (response.url) {
-            this.shadowRoot.querySelector('#indicator').set(100, 'Prepared.');
+            this.indicator.set(100, 'Prepared.');
             setTimeout(() => {
               globalThis.open(response.url, '_blank');
-              this.shadowRoot.querySelector('#indicator').end();
+              this.indicator.end();
               console.log("Terminal proxy loaded: ");
               console.log(sessionName);
             }, 1000);
@@ -1110,12 +1137,12 @@ export default class BackendAiSessionList extends BackendAIPage {
                                @click="${(e) => this._runTerminal(e)}"
                                icon="vaadin:terminal"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
           ` : html``}
-          ${ (this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg red controls-running"
                                @click="${(e) => this._openTerminateSessionDialog(e)}"
                                icon="delete"><wl-icon>delete</wl-icon></wl-button>
           ` : html``}
-          ${this._isRunning || this._APIMajorVersion > 4 ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"
                                on-tap="_showLogs"><wl-icon>assignment</wl-icon></wl-button>
@@ -1200,11 +1227,15 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   checkboxRenderer(root, column?, rowData?) {
-    render(
-      html`
-        <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
-      `, root
-    );
+    if ((this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4) {
+      render(
+        html`
+            <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
+        `, root
+      );
+    } else {
+      render(html``, root);
+    }
   }
 
   userInfoRenderer(root, column?, rowData?) {
@@ -1302,7 +1333,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
           <wl-button outlined class="multiple-action-button" @click="${() => this._openTerminateSelectedSessionsDialog()}">
@@ -1446,13 +1477,15 @@ export default class BackendAiSessionList extends BackendAIPage {
           <wl-icon class="pagination">navigate_next</wl-icon>
         </wl-button>
       </div>
-      <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <wl-dialog id="work-dialog" fixed blockscrolling scrollable
                     style="padding:0;">
         <wl-card elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span id="work-title"></span>
             <div class="flex"></div>
+            <wl-button fab flat inverted @click="${(e) => this._refreshLogs()}">
+              <wl-icon>refresh</wl-icon>
+            </wl-button>
             <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
               <wl-icon>close</wl-icon>
             </wl-button>

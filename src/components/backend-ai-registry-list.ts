@@ -27,8 +27,6 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
-import './backend-ai-indicator';
-
 @customElement("backend-ai-registry-list")
 class BackendAIRegistryList extends BackendAIPage {
   public registryList: any;
@@ -115,7 +113,7 @@ class BackendAIRegistryList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.indicator = this.shadowRoot.querySelector('#indicator');
+    this.indicator = globalThis.lablupIndicator;
   }
 
   _parseRegistryList(obj) {
@@ -244,25 +242,24 @@ class BackendAIRegistryList extends BackendAIPage {
     }
   }
 
-  _rescanImage() {
-    this.indicator.start('indeterminate');
-    this.indicator.set(10, 'Updating registry information...');
+  async _rescanImage() {
+    let indicator = await this.indicator.start('indeterminate');
+    indicator.set(10, 'Updating registry information...');
     globalThis.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
       .then(({rescan_images}) => {
         if (rescan_images.ok) {
-          this.indicator.set(100, 'Registry update finished.');
-          this.indicator.end(1000);
+          indicator.set(100, 'Registry update finished.');
         } else {
-          this.indicator.set(50, 'Registry update failed.');
-          this.indicator.end(1000);
+          indicator.set(50, 'Registry update failed.');
+          indicator.end(1000);
           this.notification.text = PainKiller.relieve(rescan_images.msg);
           this.notification.detail = rescan_images.msg;
           this.notification.show();
         }
       }).catch(err => {
       console.log(err);
-      this.indicator.set(50, 'Rescan failed.');
-      this.indicator.end(1000);
+      indicator.set(50, 'Rescan failed.');
+      indicator.end(1000);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -435,7 +432,6 @@ class BackendAIRegistryList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-indicator id="indicator"></backend-ai-indicator>
       <h4 class="horizontal flex center center-justified layout">
         <span>${_t("registry.Registries")}</span>
         <span class="flex"></span>

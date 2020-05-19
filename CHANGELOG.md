@@ -1,5 +1,93 @@
 # Changelog
 
+## v20.05.3 (15/05/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Hover menu description on simple sidebar menu [#528](https://github.com/lablup/backend.ai-console/issues/528)
+- [**UI / UX**][**cloud**][**enhancement**][**minor**] Link online help page on each menu [#524](https://github.com/lablup/backend.ai-console/issues/524)
+- [**enhancement**][**enterprise**][**library / SDK**][**world console**] Change default Dockerfile to use console-server [#523](https://github.com/lablup/backend.ai-console/issues/523)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**] Environment change sometimes does not update presets with GPUs [#525](https://github.com/lablup/backend.ai-console/issues/525)
+
+
+## v20.05.2 (14/05/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Modified some missing i18n resources.
+
+
+## v20.05.1 (08/05/2020)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**library / SDK**][**major**] Multiple virtual folder does not mount on GUI [#520](https://github.com/lablup/backend.ai-console/issues/520)
+
+
+## v20.05.0 (07/05/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Add description about common storage types [#509](https://github.com/lablup/backend.ai-console/issues/509)
+- [**UI / UX**][**bug**][**enhancement**] More CUDA resource minimum settings for image default [#507](https://github.com/lablup/backend.ai-console/issues/507)
+- [**UI / UX**][**enhancement**][**hard**][**library / SDK**][**major**] Unified event tasker [#498](https://github.com/lablup/backend.ai-console/issues/498)
+
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**easy**]  Hide GPU pane on summary page if it does not exist [#519](https://github.com/lablup/backend.ai-console/issues/519)
+- [**UI / UX**][**bug**][**easy**] Set unlimited concurrent jobs number to 1000000 [#516](https://github.com/lablup/backend.ai-console/issues/516)
+- [**bug**][**library / SDK**][**minor**] Resource indicator sometimes does not refreshed after changing resource group [#513](https://github.com/lablup/backend.ai-console/issues/513)
+- [**UI / UX**][**bug**][**minor**] Version item does not update when environment is changed on session launch panel [#510](https://github.com/lablup/backend.ai-console/issues/510)
+- [**blocker**][**bug**][**library / SDK**][**minor**] etcd broken when image metadata is modified with Harbor registry URL with colon  [#508](https://github.com/lablup/backend.ai-console/issues/508)
+#### UI / UX:
+
+- [**UI / UX**][**easy**][**enterprise**] Folder creation keeps last created folder name [#511](https://github.com/lablup/backend.ai-console/issues/511)
+- [**UI / UX**][**easy**][**minor**] Add refresh button in session logs dialog [#502](https://github.com/lablup/backend.ai-console/issues/502)
+
+
+## v20.04.5 (27/04/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**hard**][**library / SDK**][**major**] Unified event tasker [#498](https://github.com/lablup/backend.ai-console/issues/498)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Support shared memory setting to ResourceTemplate [#494](https://github.com/lablup/backend.ai-console/issues/494)
+
+
+## v20.04.4 (26/04/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**] File rename feature [#434](https://github.com/lablup/backend.ai-console/issues/434)
+- [**enhancement**][**library / SDK**][**major**] Handle heterogeneous resource slots for v1912+ [#407](https://github.com/lablup/backend.ai-console/issues/407)
+- [**UI / UX**][**enhancement**][**hard**][**major**] Detailed kernel selection UI [#258](https://github.com/lablup/backend.ai-console/issues/258)
+
+#### Bug Fixes:
+
+- [**bug**] Blank Data & Storage page [#499](https://github.com/lablup/backend.ai-console/issues/499)
+
+#### UI / UX:
+
+- [**UI / UX**][**easy**][**minor**] Add refresh button in session logs dialog [#502](https://github.com/lablup/backend.ai-console/issues/502)
+
+
+## v20.04.3 (16/04/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**hard**][**library / SDK**][**major**]  add 'automatic download' option to manager [#157](https://github.com/lablup/backend.ai-console/issues/157)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**library / SDK**] Block usage mode / permission setting on Backend.AI 19.09 [#492](https://github.com/lablup/backend.ai-console/issues/492)
+- [**UI / UX**][**bug**][**minor**] FOUC during login on Firefox [#491](https://github.com/lablup/backend.ai-console/issues/491)
+- [**bug**][**enterprise**][**library / SDK**] Image rescan button returns error due to short timeout [#490](https://github.com/lablup/backend.ai-console/issues/490)
+
+---
+
 ## v20.04.2 (15/04/2020)
 
 #### Enhancements:
