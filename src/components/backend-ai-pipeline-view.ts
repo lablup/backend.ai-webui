@@ -28,6 +28,7 @@
   ...
   */
 
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -1047,8 +1048,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
         <h3 class="tab horizontal center layout">
           <wl-tab-group>
             <wl-tab value="exp-lists" checked @click="${(e) => this._showTab(e.target)}">List</wl-tab>
-            <wl-tab disabled value="running-lists" @click="${(e) => this._showTab(e.target)}">Running</wl-tab>
-            <wl-tab disabled value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
+            <wl-tab style="display:none" value="running-lists" @click="${(e) => this._showTab(e.target)}">Running</wl-tab>
+            <wl-tab style="display:none" value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
           </wl-tab-group>
           <span class="flex"></span>
           <wl-button class="fg blue button" id="edit-pipeline" outlined
