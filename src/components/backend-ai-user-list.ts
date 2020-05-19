@@ -161,6 +161,7 @@ export default class BackendAIUserList extends BackendAIPage {
     if (active === false) {
       return;
     }
+    this._updatePageItemSize();
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -177,6 +178,12 @@ export default class BackendAIUserList extends BackendAIPage {
     }
   }
 
+  _updatePageItemSize() {
+    let tableSize = window.innerHeight - 275 - 30;
+    console.log(tableSize);
+    this._pageSize = Math.floor(tableSize / 48);
+  }
+
   _refreshUserData() {
     let is_active = true;
     switch (this.condition) {
@@ -187,6 +194,7 @@ export default class BackendAIUserList extends BackendAIPage {
         is_active = false;
     }
     this.spinner.hide();
+    this._updatePageItemSize();
     let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       let users = response.users;
@@ -452,7 +460,7 @@ export default class BackendAIUserList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
-      <div class="horizontal center-justified layout flex" style="padding: 10px;">
+      <div class="horizontal center-justified layout flex" style="padding: 10px;border-top:1px solid #ccc;">
         <wl-button class="pagination" id="previous-page"
                    ?disabled="${this._currentPage === 1}"
                    @click="${(e) => {
