@@ -71,7 +71,7 @@ export default class BackendAIUserList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 350px);
+          height: calc(100vh - 270px);
         }
 
         wl-card h4,

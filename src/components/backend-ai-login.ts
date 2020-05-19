@@ -603,6 +603,7 @@ export default class BackendAILogin extends BackendAIPage {
       let role = response['user'].role;
       this.domain_name = response['user'].domain_name;
       globalThis.backendaiclient.email = this.email;
+      globalThis.backendaiclient.full_name = response['user'].full_name;
       globalThis.backendaiclient.is_admin = false;
       globalThis.backendaiclient.is_superadmin = false;
 
