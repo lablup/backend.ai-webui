@@ -797,9 +797,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
             <wl-popover-card>
               <div style="padding:5px">
-                <mwc-icon-button disabled class=" side-menu fg white" id="feedback-icon-popover" icon="question_answer" slot="graphic"></mwc-icon-button>
-                <mwc-icon-button disabled class=" side-menu fg white" id="notification-icon-popover" icon="notification_important" slot="graphic"></mwc-icon-button>
-                <mwc-icon-button disabled class=" side-menu fg white" id="task-icon-popover" icon="ballot" slot="graphic"></mwc-icon-button>
+                <mwc-icon-button disabled class="side-menu fg black" id="feedback-icon-popover" icon="question_answer" slot="graphic"></mwc-icon-button>
+                <mwc-icon-button disabled class="side-menu fg black" id="notification-icon-popover" icon="notification_important" slot="graphic"></mwc-icon-button>
+                <mwc-icon-button disabled class="side-menu fg black" id="task-icon-popover" icon="ballot" slot="graphic"></mwc-icon-button>
               </div>
             </wl-popover-card>
           </wl-popover>
