@@ -119,7 +119,7 @@ export default class BackendAiDialog extends LitElement {
           <div class="content">
             <slot name="content"></slot>
           </div>
-          <div class="footer">
+          <div class="footer" style="horizontal flex layout">
             <slot name="footer"></slot>
           </div>
         </wl-card>
