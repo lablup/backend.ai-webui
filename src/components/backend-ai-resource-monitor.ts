@@ -20,7 +20,6 @@ import '@material/mwc-textfield/mwc-textfield';
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/checkbox';
-import 'weightless/dialog';
 import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
@@ -977,13 +976,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   _hideSessionDialog() {
     this.shadowRoot.querySelector('#new-session-dialog').hide();
-  }
-
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
-    e.stopPropagation();
   }
 
   _guessHumanizedNames(kernelName) {
