@@ -2411,7 +2411,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                            style="margin-left:5px;">
             </mwc-textfield>
           </div>
-          <div class="horizontal center layout"  style="display:none;">
+          <div class="horizontal center layout">
             <mwc-multi-select fullwidth id="vfolder" label="${_t("session.launcher.FolderToMount")}" multi
             @selected="${this._updateSelectedFolder}">
             ${this.vfolders.map(item => html`
