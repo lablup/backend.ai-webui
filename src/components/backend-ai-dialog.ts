@@ -116,7 +116,7 @@ export default class BackendAiDialog extends LitElement {
               <wl-icon>close</wl-icon>
             </wl-button>
           </h3>
-          <div class="content horizontal layout wrap center center-justified">
+          <div class="content">
             <slot name="content"></slot>
           </div>
           <div class="footer">

@@ -834,7 +834,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
                <wl-popover-card><div style="padding:5px">${_t("console.menu.Administration")}</div></wl-popover-card>
             </wl-popover>
-          `: html``}
+          ` : html``}
         </div>
         <div slot="appContent">
           <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
