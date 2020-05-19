@@ -10,6 +10,7 @@ import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-item/paper-item';
 import './lablup-loading-spinner';
+import './backend-ai-dialog';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
@@ -441,42 +442,33 @@ export default class BackendAiStorageList extends BackendAIPage {
             </section>
         </wl-card>
       </wl-dialog>
-
-      <wl-dialog id="info-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
-        <wl-card class="intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span>${this.folderInfo.name}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <div role="listbox" style="margin: 0;">
+      <backend-ai-dialog id="info-folder-dialog">
+        <span slot="title">${this.folderInfo.name}</span>
+        <div slot="content" role="listbox" style="margin: 0;">
+          <vaadin-item>
+            <div><strong>ID</strong></div>
+            <div class="monospace" secondary>${this.folderInfo.id}</div>
+          </vaadin-item>
+          <vaadin-item>
+            <div><strong>${_t("data.folders.Location")}</strong></div>
+            <div secondary>${this.folderInfo.host}</div>
+          </vaadin-item>
+          <vaadin-item>
+            <div><strong>${_t("data.folders.NumberOfFiles")}</strong></div>
+            <div secondary>${this.folderInfo.numFiles}</div>
+          </vaadin-item>
+          ${this.folderInfo.is_owner ? html`
             <vaadin-item>
-              <div><strong>ID</strong></div>
-              <div class="monospace" secondary>${this.folderInfo.id}</div>
+              <div><strong>${_t("data.folders.Ownership")}</strong></div>
+              <div secondary>${_t("data.folders.DescYouAreFolderOwner")}</div>
             </vaadin-item>
-            <vaadin-item>
-              <div><strong>${_t("data.folders.Location")}</strong></div>
-              <div secondary>${this.folderInfo.host}</div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>${_t("data.folders.NumberOfFiles")}</strong></div>
-              <div secondary>${this.folderInfo.numFiles}</div>
-            </vaadin-item>
-            ${this.folderInfo.is_owner ? html`
-              <vaadin-item>
-                <div><strong>${_t("data.folders.Ownership")}</strong></div>
-                <div secondary>${_t("data.folders.DescYouAreFolderOwner")}</div>
-              </vaadin-item>
-            ` : html``}
-            <vaadin-item>
-              <div><strong>${_t("data.folders.Permission")}</strong></div>
-              <div secondary>${this.folderInfo.permission}</div>
-            </vaadin-item>
-          </div>
-        </wl-card>
-      </wl-dialog>
+          ` : html``}
+          <vaadin-item>
+            <div><strong>${_t("data.folders.Permission")}</strong></div>
+            <div secondary>${this.folderInfo.permission}</div>
+          </vaadin-item>
+        </div>
+      </backend-ai-dialog>
       <wl-dialog id="folder-explorer-dialog" class="folder-explorer">
         <wl-card>
           <h3 class="horizontal center layout" style="font-weight:bold">
@@ -580,31 +572,27 @@ export default class BackendAiStorageList extends BackendAIPage {
           </vaadin-grid>
         </wl-card>
       </wl-dialog>
-
-      <wl-dialog id="mkdir-dialog" class="dialog-ask" fixed blockscrolling backdrop>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("data.explorer.CreateANewFolder")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <section>
-            <mwc-textfield id="mkdir-name"
-                           label="${_t("data.explorer.Foldername")}"
-                           auto-validate
-                           required
-                           validationMessage="Value is required."></mwc-textfield>
-            <br/>
-            <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
-              <wl-icon>rowing</wl-icon>
-              ${_t("button.Create")}
-            </wl-button>
-          </section>
-        </wl-card>
-      </wl-dialog>
-
+      <backend-ai-dialog id="mkdir-dialog">
+        <span slot="title">${_t("data.explorer.CreateANewFolder")}</span>
+        <div slot="content">
+          <mwc-textfield id="mkdir-name"
+                         label="${_t("data.explorer.Foldername")}"
+                         auto-validate
+                         required
+                         validationMessage="Value is required."></mwc-textfield>
+          <br/>
+          <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
+            <wl-icon>rowing</wl-icon>
+            ${_t("button.Create")}
+          </wl-button>
+        </div>
+        <div slot="footer">
+          <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
+            <wl-icon>rowing</wl-icon>
+            ${_t("button.Create")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
       <wl-dialog
         id="share-folder-dialog"
         class="dialog-ask"
