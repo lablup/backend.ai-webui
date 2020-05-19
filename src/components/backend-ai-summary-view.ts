@@ -663,7 +663,7 @@ export default class BackendAISummary extends BackendAIPage {
                 <div class="layout horizontal center flex" style="margin-top:4px;">
                   <lablup-shields app="Console version" color="${this.update_checker.updateNeeded ? 'red' : 'darkgreen'}" description="${this.console_version}" ui="flat"></lablup-shields>
                   ${this.update_checker.updateNeeded ? html`
-                    <mwc-icon-button class="update-button" icon="error_outline" @click="${() => {
+                    <mwc-icon-button class="update-button" icon="new_releases" @click="${() => {
         window.open(this.update_checker.updateURL, '_blank')
       }}"></mwc-icon-button>
                   ` : html`

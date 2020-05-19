@@ -76,6 +76,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: String}) menuTitle = 'LOGIN REQUIRED';
   @property({type: String}) siteDescription = '';
   @property({type: String}) user_id = 'DISCONNECTED';
+  @property({type: String}) full_name = 'DISCONNECTED';
   @property({type: String}) domain = 'CLICK TO CONNECT';
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) is_admin = false;
@@ -98,6 +99,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) _offline = false;
   @property({type: Object}) config = Object();
   @property({type: Object}) appBody;
+  @property({type: Object}) appPage;
   @property({type: Object}) mainToolbar;
   @property({type: Object}) drawerToggleButton;
   @property({type: Object}) sidebarMenu;
@@ -124,6 +126,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
+    this.appPage = this.shadowRoot.querySelector('#app-page');
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
     this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
     this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
@@ -337,6 +340,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   _refreshUserInfoPanel() {
     this.user_id = globalThis.backendaiclient.email;
+    this.full_name = globalThis.backendaiclient.full_name;
     this.domain = globalThis.backendaiclient._config.domainName;
     this.current_group = this._readRecentProjectGroup();
     globalThis.backendaiclient.current_group = this.current_group;
@@ -356,6 +360,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
     opt.innerHTML = _text("console.menu.SelectProject");
+    opt.style.borderBottom = "1px solid #ccc";
     select.appendChild(opt);
     this.groups.map(group => {
       opt = document.createElement('mwc-list-item');
@@ -687,9 +692,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="flex"></span>
             </div>
           </div>
-          <div class="horizontal start-justified layout">
-            <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;padding-left:5px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
-            <div id="group-select-box" class="full-menu" style="height:50px;"></div>
+          <div class="horizontal start-justified center layout flex" style="max-height:40px;">
+            <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;margin-left:4px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
+            <mwc-icon-button disabled class="full-menu side-menu fg white" id="feedback-icon" icon="question_answer" slot="graphic"></mwc-icon-button>
+            <mwc-icon-button disabled class="full-menu side-menu fg white" id="notification-icon" icon="notification_important" slot="graphic"></mwc-icon-button>
+            <mwc-icon-button disabled class="full-menu side-menu fg white" id="task-icon" icon="ballot" slot="graphic"></mwc-icon-button>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
@@ -714,7 +721,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}">
-              <mwc-icon id="usersettings-menu-icon" slot="graphic" class="fg teal" icon="icons:settings">settings</mwc-icon>
+              <mwc-icon id="usersettings-menu-icon" slot="graphic" class="fg teal" icon="icons:settings">settings_applications</mwc-icon>
               <span class="full-menu">${_t("console.menu.Settings")}</span>
             </mwc-list-item>
             ${this.is_admin ?
@@ -736,7 +743,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="full-menu">${_t("console.menu.Resources")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
-              <mwc-icon id="configurations-menu-icon" slot="graphic" class="fg green" icon="icons:settings">settings</mwc-icon>
+              <mwc-icon id="configurations-menu-icon" slot="graphic" class="fg green" icon="icons:settings">settings_input_component</mwc-icon>
               <span class="full-menu">${_t("console.menu.Configurations")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
@@ -750,7 +757,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     ` : html``}
           </mwc-list>
           <footer class="full-menu">
-            <div class="terms-of-use" style="margin-bottom:50px;">
+            <div class="terms-of-use" style="margin-bottom:10px;">
               <small style="font-size:11px;">
                 <a @click="${() => this.showTOSAgreement()}">${_t("console.menu.TermsOfService")}</a>
                 ·
@@ -763,61 +770,77 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 ` : html``}
               </small>
             </div>
-          </footer>
-          <div id="sidebar-navbar-footer" class="vertical center center-justified layout full-menu">
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
               <small class="sidebar-footer" style="font-size:9px;">20.05.3.200515</small>
             </address>
+          </footer>
+          <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
+            <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
+            <mwc-icon-button disabled id="admin-menu-icon" icon="settings" slot="graphic" class="fg white" style="margin-left:4px;"></mwc-icon-button>
           </div>
         </div>
         <div class="mini-menu">
-          <wl-popover anchor="#summary-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#summary-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Summary")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#sessions-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#sessions-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Sessions")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#data-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#data-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Data&Storage")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#statistics-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#statistics-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
              <wl-popover-card><div style="padding:5px">${_t("console.menu.Statistics")}</div></wl-popover-card>
           </wl-popover>
-          <wl-popover anchor="#usersettings-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+          <wl-popover anchor="#usersettings-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-             <wl-popover-card><div style="padding:5px">${_t("console.menu.Settings")}</div></wl-popover-card>
+            <wl-popover-card><div style="padding:5px">${_t("console.menu.Settings")}</div></wl-popover-card>
+          </wl-popover>
+          <wl-popover anchor="#mini-ui-toggle-button" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+            <wl-popover-card>
+              <div style="padding:5px">
+                <mwc-icon-button disabled class="side-menu fg black" id="feedback-icon-popover" icon="question_answer" slot="graphic"></mwc-icon-button>
+                <mwc-icon-button disabled class="side-menu fg black" id="notification-icon-popover" icon="notification_important" slot="graphic"></mwc-icon-button>
+                <mwc-icon-button disabled class="side-menu fg black" id="task-icon-popover" icon="ballot" slot="graphic"></mwc-icon-button>
+              </div>
+            </wl-popover-card>
           </wl-popover>
           ${this.is_admin ? html`
-            <wl-popover anchor="#user-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+            <wl-popover anchor="#user-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
                anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
                <wl-popover-card><div style="padding:5px">${_t("console.menu.Users")}</div></wl-popover-card>
             </wl-popover>
-          `: html``}
+            ` : html``}
           ${this.is_superadmin ? html`
-            <wl-popover anchor="#resources-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+            <wl-popover anchor="#resources-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
                anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
                <wl-popover-card><div style="padding:5px">${_t("console.menu.Resources")}</div></wl-popover-card>
             </wl-popover>
-            <wl-popover anchor="#environments-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+            <wl-popover anchor="#environments-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
                anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
                <wl-popover-card><div style="padding:5px">${_t("console.menu.Environments")}</div></wl-popover-card>
             </wl-popover>
-            <wl-popover anchor="#configurations-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+            <wl-popover anchor="#configurations-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
                anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
                <wl-popover-card><div style="padding:5px">${_t("console.menu.Configurations")}</div></wl-popover-card>
             </wl-popover>
-            <wl-popover anchor="#maintenance-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+            <wl-popover anchor="#maintenance-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
                anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
                <wl-popover-card><div style="padding:5px">${_t("console.menu.Maintenance")}</div></wl-popover-card>
             </wl-popover>
-            <wl-popover anchor="#information-menu-icon" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+            <wl-popover anchor="#information-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
                anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
                <wl-popover-card><div style="padding:5px">${_t("console.menu.Information")}</div></wl-popover-card>
+            </wl-popover>
+            <wl-popover anchor="#admin-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
+               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+               <wl-popover-card><div style="padding:5px">${_t("console.menu.Administration")}</div></wl-popover-card>
             </wl-popover>
           `: html``}
         </div>
@@ -825,16 +848,29 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
             <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
             <h2 style="font-size:24px!important;" slot="title">${this.menuTitle}</h2>
-            <div slot="actionItems" class="vertical end-justified flex layout">
-              <span class="email" style="margin-top:4px;font-size: 14px;text-align:right">${this.user_id}</span>
-              <div style="font-size: 12px;text-align:right">${this.domain}</div>
+            <div slot="actionItems">
+              <div id="group-select-box" style="height:48px;"></div>
             </div>
-            <backend-ai-help-button slot="actionItems" active></backend-ai-help-button>
-            <mwc-icon-button slot="actionItems" id="dropdown-button"
-                             icon="account_circle"
+            <div slot="actionItems">
+              <div class="vertical center-justified flex layout" style="height:48px;">
+                <span class="email" style="font-size: 11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;">${_t("console.menu.UserName")}</span>
+                <span class="full_name" style="font-size: 14px;text-align:right;-webkit-font-smoothing:antialiased;">${this.full_name}</span>
+                <!--<div style="font-size: 12px;text-align:right">${this.domain !== 'default' && this.domain !== '' ? html`${this.domain}` : html``}</div>-->
+              </div>
+            </div>
+            <mwc-icon-button slot="actionItems" id="dropdown-button" style="margin-top:4px;"
+                             icon="more_vert"
                              @click="${() => this._toggleDropdown()}">
             </mwc-icon-button>
-            <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=40>
+            <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=55>
+              ${this.domain !== 'default' && this.domain !== '' ? html`
+              <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+                  ${this.domain}
+              </mwc-list-item>
+              ` : html``}
+              <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+                  ${this.user_id}
+              </mwc-list-item>
               <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
                   <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
                   ${_t("console.menu.About")}

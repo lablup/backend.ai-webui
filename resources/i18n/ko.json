@@ -31,10 +31,12 @@
       "Environments&Presets": "실행환경 및 프리셋",
       "ComputationResources": "연산 자원",
       "Logs": "로그",
-      "Project": "프로젝트",
+      "Project": "현재 프로젝트",
       "NoProject": "프로젝트 없음",
       "SelectProject": "프로젝트 선택",
-      "Experiments": "실험"
+      "Experiments": "실험",
+      "UserName": "사용자 이름",
+      "Menu": "메뉴"
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",

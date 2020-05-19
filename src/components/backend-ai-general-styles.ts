@@ -26,7 +26,8 @@ export const BackendAiStyles = [
       --general-panel-width: 280px;
       --general-big-panel-width: 560px;
       --general-content-container-width: 980px;
-      --general-background-color: rgba(244, 245, 247, 1);
+      --general-background-color: rgba(255, 255, 255, 1);
+      --general-background-color-2: rgba(244, 245, 247, 1);
       --general-sidebar-color: #dddddd;
       --general-sidebar-background-color: rgba(24, 24, 24, 1.0);
       --general-sidebar-h3-color: #ccc;
@@ -38,7 +39,7 @@ export const BackendAiStyles = [
       --general-sidebar-topbar-background-color: rgba(24, 24, 24, 1);
       --general-sidebar-topbar-color: #efefef;
       --general-sidebar-selected-color: var(--paper-green-400);
-      --general-sidebar-selected-background-color: rgba(244, 245, 247, 1); /* removed transparent */
+      --general-sidebar-selected-background-color: rgba(255, 255, 255, 1); /* removed transparent */
       --general-sidebar-selected-background-gradient-color: transparent;
       --general-sidebar-selected-border-left: 5px solid #2ab6f6;
       --general-sidebar-footer-color: #777777;
@@ -191,7 +192,6 @@ export const BackendAiStyles = [
       display: block;
       background: white;
       box-sizing: border-box;
-      margin: 16px;
       padding: 0;
       border-radius: 2px;
     }
@@ -216,7 +216,13 @@ export const BackendAiStyles = [
     @media screen and (min-width: 450px) {
       #content > wl-card,
       #content > div {
-        width: 95%;
+        width: 100%;
+        --card-elevation: 0;
+        --card-padding: 0;
+      }
+
+      #content > wl-card {
+        margin: 0 !important;
       }
     }
 
