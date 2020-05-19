@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 //import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
-import {customElement, html, property} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 import '@material/mwc-icon-button';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -41,7 +41,11 @@ export default class BackendAiHelpButton extends BackendAIPage {
   }
 
   static get styles() {
-    return [];
+    return [css`
+    mwc-icon-button {
+      color: white;
+    }
+    `];
   }
 
   firstUpdated() {

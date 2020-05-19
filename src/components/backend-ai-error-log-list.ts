@@ -63,7 +63,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
           width: 100%;
           border: 0;
           font-size: 12px;
-          height: calc(100vh - 320px);
+          height: calc(100vh - 275px);
         }
 
         vaadin-grid-cell {
@@ -98,18 +98,24 @@ export default class BackendAiErrorLogList extends BackendAIPage {
 
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this._updatePageItemSize();
     this._grid = this.shadowRoot.querySelector('#list-grid');
     if (!globalThis.backendaiclient || !globalThis.backendaiclient.is_admin) {
-      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 320px)!important';
+      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 275px)!important';
     }
     this.notification = globalThis.lablupNotification;
-
     document.addEventListener('log-message-refresh', () => this._refreshLogData());
     document.addEventListener('log-message-clear', () => this._clearLogData());
   }
 
+  _updatePageItemSize() {
+    let tableSize = window.innerHeight - 275 - 30;
+    this._pageSize = Math.floor(tableSize / 31);
+  }
+
   _refreshLogData() {
     this.spinner.show();
+    this._updatePageItemSize();
     this.logs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
     this._totalLogCount = this.logs.length > 0 ? this.logs.length : 1;
     this._updateItemsFromPage(1);
@@ -136,8 +142,23 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     let start = (this._currentPage - 1) * this._grid.pageSize;
     let end = this._currentPage * this._grid.pageSize;
     if (this.logs.length > 0) {
-      this.logView = this.logs.slice(start, end);
+      let logData = this.logs.slice(start, end);
+      logData.forEach(item => {
+        item.timestamp_hr = this._humanReadableTime(item.timestamp);
+      });
+
+      this.logView = logData; //this.logs.slice(start, end);
     }
+  }
+
+  _humanReadableTime(d: any) {
+    d = new Date(d);
+    return d.toLocaleString();
+  }
+
+  _toISOTime(d: any) {
+    d = new Date(d);
+    return d.toISOString();
   }
 
   render() {
@@ -147,10 +168,10 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       <vaadin-grid id="list-grid" page-size="${this._pageSize}"
                    theme="row-stripes column-borders compact wrap-cell-content"
                    aria-label="Error logs" .items="${this.logView}">
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.TimeStamp")}">
+        <vaadin-grid-column width="250px" flex-grow="0" text-align="start" auto-width header="${_t("logs.TimeStamp")}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
-                <span>[[item.timestamp]]</span>
+                <span class="monospace">[[item.timestamp_hr]]</span>
               </div>
           </template>
         </vaadin-grid-column>
@@ -175,6 +196,13 @@ export default class BackendAiErrorLogList extends BackendAIPage {
               </div>
           </template>
         </vaadin-grid-column>
+        <vaadin-grid-column width="50px" flex-grow="0" text-align="start" auto-width header="${_t("logs.ErrorType")}">
+          <template>
+              <div class="layout vertical" error-cell$="[[item.isError]]">
+                <span>[[item.type]]</span>
+              </div>
+          </template>
+        </vaadin-grid-column>
         <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.Method")}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
@@ -185,26 +213,19 @@ export default class BackendAiErrorLogList extends BackendAIPage {
         <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.RequestUrl")}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
-                <span>[[item.requestUrl]]</span>
+                <span class="monospace">[[item.requestUrl]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.Parameters")}">
+        <vaadin-grid-column resizable auto-width flex-grow="0" text-align="start" header="${_t("logs.Parameters")}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
-                <span>[[item.requestParameters]]</span>
-              </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.ErrorType")}">
-          <template>
-              <div class="layout vertical" error-cell$="[[item.isError]]">
-                <span>[[item.type]]</span>
+                <span class="monospace">[[item.requestParameters]]</span>
               </div>
           </template>
         </vaadin-grid-column>
       </vaadin-grid>
-      <div class="horizontal center-justified layout flex" style="padding: 10px;">
+      <div class="horizontal center-justified layout flex" style="padding: 10px;border-top:1px solid #ccc;">
         <wl-button class="pagination" id="previous-page"
                    ?disabled="${this._currentPage === 1}"
                    @click="${(e) => {this._updateItemsFromPage(e)}}">
