@@ -63,7 +63,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
           width: 100%;
           border: 0;
           font-size: 12px;
-          height: calc(100vh - 320px);
+          height: calc(100vh - 260px);
         }
 
         vaadin-grid-cell {
