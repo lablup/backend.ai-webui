@@ -845,6 +845,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                              @click="${() => this._toggleDropdown()}">
             </mwc-icon-button>
             <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=55>
+              ${this.domain !== 'default' && this.domain !== '' ? html`
+              <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+                  ${this.domain}
+              </mwc-list-item>
+              ` : html``}
               <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
                   ${this.user_id}
               </mwc-list-item>
