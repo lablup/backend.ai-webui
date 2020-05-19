@@ -449,10 +449,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.menuTitle = _text("console.menu.Sessions");
         this.updateTitleColor('var(--paper-red-800)', '#efefef');
         break;
-      case 'pipeline':
-        this.menuTitle = _text("console.menu.Pipeline");
-        this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
-        break;
       case 'experiment':
         this.menuTitle = _text("console.menu.Experiments");
         this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
@@ -460,6 +456,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       case 'data':
         this.menuTitle = _text("console.menu.Data&Storage");
         this.updateTitleColor('var(--paper-orange-800)', '#efefef');
+        break;
+      case 'pipeline':
+        this.menuTitle = _text("console.menu.Pipeline");
+        this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'statistics':
         this.menuTitle = _text("console.menu.Statistics");
@@ -696,11 +696,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <mwc-icon id="sessions-menu-icon" slot="graphic" class="fg red">ballot</mwc-icon>
               <span class="full-menu">${_t("console.menu.Sessions")}</span>
             </mwc-list-item>
-            ${true ? html`
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}">
-              <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
-              <span class="full-menu">${_t("console.menu.Pipeline")}</span>
-            </mwc-list-item>` : html``}
             ${false ? html`
             <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}">
               <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
@@ -710,6 +705,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <mwc-icon id="data-menu-icon" slot="graphic" class="fg orange">cloud_upload</mwc-icon>
               <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
             </mwc-list-item>
+            ${true ? html`
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}">
+              <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Pipeline")}</span>
+            </mwc-list-item>` : html``}
             <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}">
               <mwc-icon id="statistics-menu-icon" slot="graphic" class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
