@@ -180,7 +180,6 @@ export default class BackendAIUserList extends BackendAIPage {
 
   _updatePageItemSize() {
     let tableSize = window.innerHeight - 275 - 30;
-    console.log(tableSize);
     this._pageSize = Math.floor(tableSize / 48);
   }
 

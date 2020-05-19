@@ -98,8 +98,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
 
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
-    let tableSize = window.innerHeight - 275 - 30;
-    this._pageSize = Math.floor(tableSize / 31);
+    this._updatePageItemSize();
     this._grid = this.shadowRoot.querySelector('#list-grid');
     if (!globalThis.backendaiclient || !globalThis.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 275px)!important';
@@ -109,10 +108,14 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     document.addEventListener('log-message-clear', () => this._clearLogData());
   }
 
-  _refreshLogData() {
-    this.spinner.show();
+  _updatePageItemSize() {
     let tableSize = window.innerHeight - 275 - 30;
     this._pageSize = Math.floor(tableSize / 31);
+  }
+
+  _refreshLogData() {
+    this.spinner.show();
+    this._updatePageItemSize();
     this.logs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
     this._totalLogCount = this.logs.length > 0 ? this.logs.length : 1;
     this._updateItemsFromPage(1);
