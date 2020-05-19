@@ -837,7 +837,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <div class="vertical center-justified flex layout" style="height:48px;">
                 <span class="email" style="font-size: 11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;">${_t("console.menu.UserName")}</span>
                 <span class="full_name" style="font-size: 14px;text-align:right;-webkit-font-smoothing:antialiased;">${this.full_name}</span>
-                <div style="font-size: 12px;text-align:right">${this.domain !== 'default' && this.domain !== '' ? html`${this.domain}` : html``}</div>
+                <!--<div style="font-size: 12px;text-align:right">${this.domain !== 'default' && this.domain !== '' ? html`${this.domain}` : html``}</div>-->
               </div>
             </div>
             <mwc-icon-button slot="actionItems" id="dropdown-button" style="margin-top:4px;"
