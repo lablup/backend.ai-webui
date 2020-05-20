@@ -32,14 +32,11 @@ import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-item/paper-item';
-
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu';
+import '@material/mwc-textfield';
 
 import Sortable from 'sortablejs';
 import '@vaadin/vaadin-dialog/vaadin-dialog';
@@ -178,14 +175,58 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
         .pipeline-item,
         .sidebar-item {
-          width: 400px;
+          max-width: 350px;
+        }
+
+        mwc-select {
+          width: 100%;
+          --mdc-theme-primary: var(--paper-blue-600);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-dropdown-icon-color: rgba(255, 0, 0, 0.87);
+          --mdc-select-focused-dropdown-icon-color: rgba(255, 0, 0, 0.42);
+          --mdc-select-disabled-dropdown-icon-color: rgba(255, 0, 0, 0.87);
+          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
+          --mdc-select-hover-line-color: rgba(0, 0, 255, 0.87);
+          --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
+          --mdc-select-outlined-hover-border-color: rgba(255, 0, 0, 0.87);
+          --mdc-theme-surface: white;
+          --mdc-list-vertical-padding: 5px;
+          --mdc-list-side-padding: 25px;
+          --mdc-list-item__primary-text: {
+            height: 20px;
+          };
+        }
+
+        mwc-textfield {
+          width: 100%;
+          --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0.42);
+          --mdc-text-field-hover-line-color: rgba(0, 0, 255, 0.87);
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--paper-blue-600);
+        }
+
+        #pipeline-environment {
+          --mdc-menu-item-height: 40px;
+          z-index: 10000;
+          max-height: 300px;
+        }
+
+        #pipeline-environment-tag {
+          --mdc-menu-item-height: 35px;
         }
 
         #pipeline-create-dialog {
-          --dialog-min-width: 400px;
-          --dialog-max-width: 600px;
-          --dialog-min-height: 600px;
-          --dialog-max-height: 700px;
+          --dialog-max-width: 500px;
+          --dialog-max-height: 800px;
+        }
+
+        #component-add-dialog {
+          --dialog-max-width: 500px;
+        }
+
+        #pipeline-component-list wl-list-item {
+          height: 80px;
         }
 
         #codemirror-dialog {
@@ -223,7 +264,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
         }
       }
     );
-    this.shadowRoot.querySelector('#pipeline-environment').addEventListener('selected-item-label-changed', this.updateLanguage.bind(this));
+    this.shadowRoot.querySelector('#pipeline-environment').addEventListener('selected', this.updateLanguage.bind(this));
     this._refreshImageList();
 
     const dialog = this.shadowRoot.querySelector('#codemirror-dialog');
@@ -312,20 +353,23 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   updateLanguage() {
-    let selectedItem = this.shadowRoot.querySelector('#pipeline-environment').selectedItem;
+    const selectedItem = this.shadowRoot.querySelector('#pipeline-environment').selected;
     if (selectedItem === null) return;
     let kernel = selectedItem.id;
     this._updateVersions(kernel);
   }
 
   _updateVersions(kernel) {
+    const tagEl = this.shadowRoot.querySelector('#pipeline-environment-tag');
     if (kernel in this.supports) {
-      this.versions = this.supports[kernel];
-      this.versions.sort();
-      this.versions.reverse(); // New version comes first.
+      let versions = this.supports[kernel];
+      versions.sort();
+      versions.reverse(); // New version comes first.
+      this.versions = versions;
     }
     if (this.versions !== undefined) {
-      this.shadowRoot.querySelector('#pipeline-environment-tag').value = this.versions[0];
+      tagEl.value = this.versions[0];
+      tagEl.selectedText = tagEl.value;
       // this.updateMetric('update versions');
     }
   }
@@ -534,10 +578,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this.pipelineCreateMode = 'create';
     window.backendaiclient.vfolder.list_hosts()
         .then((resp) => {
-          const listbox = this.shadowRoot.querySelector('#pipeline-folder-host paper-listbox');
+          const folderHostEl = this.shadowRoot.querySelector('#pipeline-folder-host');
           this.vhosts = resp.allowed.slice();
           this.vhost = resp.default;
-          listbox.selected = this.vhost;
+          folderHostEl.value = this.vhost;
         })
         .catch((err) => {
           if (err && err.message) {
@@ -557,7 +601,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   async _createPipeline() {
     const title = this.shadowRoot.querySelector('#pipeline-title').value;
     const description = this.shadowRoot.querySelector('#pipeline-description').value;
-    const environment = this.shadowRoot.querySelector('#pipeline-environment').selectedItem.id;
+    const environment = this.shadowRoot.querySelector('#pipeline-environment').value;
     const version = this.shadowRoot.querySelector('#pipeline-environment-tag').value;
     const scaling_group = this.shadowRoot.querySelector('#pipeline-scaling-group').value;
     const folder_host = this.shadowRoot.querySelector('#pipeline-folder-host').value;
@@ -619,10 +663,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this.pipelineCreateMode = 'update';
     window.backendaiclient.vfolder.list_hosts()
         .then((resp) => {
-          const listbox = this.shadowRoot.querySelector('#pipeline-folder-host paper-listbox');
+          const folderHostEl = this.shadowRoot.querySelector('#pipeline-folder-host');
           this.vhosts = resp.allowed.slice();
           this.vhost = config.folder_host;
-          listbox.selected = this.vhost;
+          folderHostEl.value = this.vhost;
         })
         .catch((err) => {
           if (err && err.message) {
@@ -640,23 +684,31 @@ export default class BackendAIPipelineView extends BackendAIPage {
     const dialog = this.shadowRoot.querySelector('#pipeline-create-dialog');
     dialog.querySelector('#pipeline-title').value = config.title || '';
     dialog.querySelector('#pipeline-description').value = config.description || '';
-    if (config.environment) dialog.querySelector('#pipeline-environment paper-listbox').selected = config.environment;
-    if (config.version) dialog.querySelector('#pipeline-environment-tag').value = config.version;
-    if (config.scaling_group) dialog.querySelector('#pipeline-scaling-group').value = config.scaling_group;
-    if (config.folder_host) dialog.querySelector('#pipeline-folder-host').value = config.folder_host;
+    if (config.environment) {
+      dialog.querySelector('#pipeline-environment').value = config.environment;
+    }
+    if (config.version) {
+      dialog.querySelector('#pipeline-environment-tag').value = config.version;
+    }
+    if (config.scaling_group) {
+      dialog.querySelector('#pipeline-scaling-group').value = config.scaling_group;
+    }
+    if (config.folder_host) {
+      dialog.querySelector('#pipeline-folder-host').value = config.folder_host;
+    }
   }
 
   async _uploadPipelineConfig(folder_name, configObj) {
     const vfpath = 'config.json';
     const blob = new Blob([JSON.stringify(configObj, null, 2)], {type: 'application/json'});
     window.backendaiclient.vfolder.upload(vfpath, blob, folder_name)
-        .then((resp) => {
-        })
-        .catch((err) => {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true);
-        });
+      .then((resp) => {
+      })
+      .catch((err) => {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true);
+      });
   }
 
   async _downloadPipelineConfig(folder_name) {
@@ -1055,13 +1107,13 @@ export default class BackendAIPipelineView extends BackendAIPage {
           <wl-button class="fg blue button" id="edit-pipeline" outlined
               @click="${this._openPipelineUpdateDialog}">
             <wl-icon>edit</wl-icon>
-            Edit pipeline
+            Edit
           </wl-button>
           <span style="width:5px;"></span>
           <wl-button class="fg blue button" id="add-experiment" outlined
               @click="${this._openPipelineCreateDialog}">
             <wl-icon>add</wl-icon>
-            Add pipeline
+            Add
           </wl-button>
         </h3>
         <div id="exp-lists" class="tab-content" style="margin:0;padding:0;height:calc(100vh - 235px);">
@@ -1121,11 +1173,11 @@ export default class BackendAIPipelineView extends BackendAIPage {
               </div>
               <div id="pipeline-component-list">
                 ${this.pipelineComponents.map((item, idx) => html`
-                  <wl-list-item data-id="${idx}" style="width:calc(100%-55px); height:80px">
+                  <wl-list-item data-id="${idx}">
                     <mwc-icon icon="extension" slot="before"></mwc-icon>
                     <div slot="after">
                       <div class="horizontal layout">
-                        <div class="layout horizontal center" style="width:150px;">
+                        <div class="layout horizontal center" style="margin-right:1em;">
                             <mwc-icon-button class="fg black" icon="code" @click="${() => this._editCode(idx)}"></mwc-icon-button>
                             <mwc-icon-button class="fg ${item.executed ? 'green' : 'black'}" icon="play_arrow" @click="${() => this._runComponent(idx)}"></mwc-icon-button>
                             <mwc-icon-button class="fg black" icon="edit" @click="${() => this._openComponentUpdateDialog(item, idx)}"></mwc-icon-button>
@@ -1184,45 +1236,44 @@ export default class BackendAIPipelineView extends BackendAIPage {
       <wl-dialog id="pipeline-create-dialog" fixed blockscrolling backdrop>
         <div slot="header">${this.pipelineCreateMode === 'create' ? 'Create' : 'Update'} pipeline config</div>
         <div slot="content">
-          <wl-textfield id="pipeline-title" label="Pipeline title" maxLength="30"></wl-textfield>
-          <wl-textfield id="pipeline-description" label="Pipeline description" maxLength="200"></wl-textfield>
-          <div class="layout horizontal">
-            <paper-dropdown-menu id="pipeline-environment" label="Environments" horizontal-align="left">
-              <paper-listbox slot="dropdown-content" attr-for-selected="id"
-                             selected="${this.defaultLanguage}">
-                ${this.languages.map(item => html`
-                  <paper-item id="${item.name}" label="${item.alias}">${item.basename}
-                    ${item.tags ? item.tags.map(item => html`
-                      <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
-                    `) : ''}
-                  </paper-item>
-                `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
-            <paper-dropdown-menu id="pipeline-environment-tag" label="Version">
-              <paper-listbox slot="dropdown-content" selected="0">
-                ${this.versions.map(item => html`
-                  <paper-item id="${item}" label="${item}">${item}</paper-item>
-                `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
-          </div>
-          <div class="layout horizontal">
-            <paper-dropdown-menu id="pipeline-scaling-group" label="Resource Group" horizontal-align="left">
-              <paper-listbox selected="${this.scalingGroup}" slot="dropdown-content" attr-for-selected="id">
-                ${this.scalingGroups.map(item => html`
-                  <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
-                `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
-            <paper-dropdown-menu id="pipeline-folder-host" label="Folder host">
-              <paper-listbox slot="dropdown-content" attr-for-selected="label">
-                ${this.vhosts.map(item => html`
-                  <paper-item label="${item}">${item}</paper-item>
-                `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
-          </div>
+          <mwc-textfield id="pipeline-title" type="text" autofocus
+              label="Pipeline title" maxLength="30">
+          </mwc-textfield>
+          <mwc-textfield id="pipeline-description" type="text"
+              label="Pipeline description" maxLength="200">
+          </mwc-textfield>
+          <mwc-select id="pipeline-environment" label="Environments">
+            <mwc-list-item style="display:none;" value="None">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
+            ${this.languages.map((item) => html`
+              <mwc-list-item id="${item.name}" value="${item.name}"
+                  ?selected="${item.name === this.defaultLanguage}">
+                <div class="layout horizontal">
+                  ${item.basename}
+                  ${item.tags ? item.tags.map(item => html`
+                    <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
+                  `) : ''}
+                </div>
+              </mwc-list-item>
+            `)}
+          </mwc-select>
+          <mwc-select id="pipeline-environment-tag" label="Version">
+            <mwc-list-item style="display:none"></mwc-list-item>
+            ${this.versions.map((item, idx) => html`
+              <mwc-list-item id="${item}" value="${item}"
+                  ?selected="${idx === 0}">${item}</mwc-list-item>
+            `)}
+          </mwc-select>
+          <mwc-select id="pipeline-scaling-group" label="Resource Group">
+            ${this.scalingGroups.map((item) => html`
+              <mwc-list-item id="${item.name}" value="${item.name}"
+                ?selected="${item.name === this.scalingGroup}">${item.name}</mwc-list-item>
+            `)}
+          </mwc-select>
+          <mwc-select id="pipeline-folder-host" label="Folder host">
+            ${this.vhosts.map((item, idx) => html`
+              <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+            `)}
+          </mwc-select>
         </div>
         <div slot="footer">
           <wl-button inverted flat id="" @click="${this._hidePipelineCreateDialog}">Cancel</wl-button>
@@ -1235,14 +1286,16 @@ export default class BackendAIPipelineView extends BackendAIPage {
       <wl-dialog id="component-add-dialog" fixed blockscrolling backdrop>
         <div slot="header">${this.componentCreateMode === 'create' ? 'Add' : 'Update'} component</div>
         <div slot="content">
-          <wl-textfield id="component-title" label="Component title" maxLength="30"></wl-textfield>
-          <wl-textfield id="component-description" label="Component description" maxLength="200"></wl-textfield>
-          <wl-textfield id="component-path" label="Component path in folder"
-              placeHolder="001-load-and-process-data" maxLength="300"></wl-textfield>
+          <mwc-textfield id="component-title" type="text" autofocus
+              label="Component title" maxLength="30"></mwc-textfield>
+          <mwc-textfield id="component-description" type="text"
+              label="Component description" maxLength="200"></mwc-textfield>
+          <mwc-textfield id="component-path" type="text"
+              label="Component path in folder" maxLength="300"></mwc-textfield>
           <div class="layout horizontal">
-            <wl-textfield id="component-cpu" label="CPU" type="number" value="1" min="1"></wl-textfield>
-            <wl-textfield id="component-mem" label="Memory (GiB)" type="number" value="1" min="0"></wl-textfield>
-            <wl-textfield id="component-gpu" label="GPU" type="number" value="0" min="0"></wl-textfield>
+            <mwc-textfield id="component-cpu" label="CPU" type="number" value="1" min="1"></mwc-textfield>
+            <mwc-textfield id="component-mem" label="Memory (GiB)" type="number" value="1" min="0"></mwc-textfield>
+            <mwc-textfield id="component-gpu" label="GPU" type="number" value="0" min="0"></mwc-textfield>
           </div>
         </div>
         <div slot="footer">
