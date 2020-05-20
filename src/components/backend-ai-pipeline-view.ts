@@ -1269,7 +1269,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
           <mwc-textfield id="pipeline-description" type="text"
               label="Pipeline description" maxLength="200">
           </mwc-textfield>
-          <mwc-select id="pipeline-environment" label="Environments">
+          <mwc-select id="pipeline-environment" label="Environments" fullwidth>
             <mwc-list-item style="display:none;" value="None">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
             ${this.languages.map((item) => html`
               <mwc-list-item id="${item.name}" value="${item.name}"
@@ -1283,20 +1283,20 @@ export default class BackendAIPipelineView extends BackendAIPage {
               </mwc-list-item>
             `)}
           </mwc-select>
-          <mwc-select id="pipeline-environment-tag" label="Version">
+          <mwc-select id="pipeline-environment-tag" label="Version" fullwidth>
             <mwc-list-item style="display:none"></mwc-list-item>
             ${this.versions.map((item, idx) => html`
               <mwc-list-item id="${item}" value="${item}"
                   ?selected="${idx === 0}">${item}</mwc-list-item>
             `)}
           </mwc-select>
-          <mwc-select id="pipeline-scaling-group" label="Resource Group">
+          <mwc-select id="pipeline-scaling-group" label="Resource Group" fullwidth>
             ${this.scalingGroups.map((item) => html`
               <mwc-list-item id="${item.name}" value="${item.name}"
                 ?selected="${item.name === this.scalingGroup}">${item.name}</mwc-list-item>
             `)}
           </mwc-select>
-          <mwc-select id="pipeline-folder-host" label="Folder host">
+          <mwc-select id="pipeline-folder-host" label="Folder host" fullwidth>
             ${this.vhosts.map((item, idx) => html`
               <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
             `)}
