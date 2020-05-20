@@ -71,7 +71,7 @@ export default class BackendAIUserList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 270px);
+          height: calc(100vh - 275px);
         }
 
         backend-ai-dialog h4,
@@ -185,7 +185,7 @@ export default class BackendAIUserList extends BackendAIPage {
 
   _updatePageItemSize() {
     let tableSize = window.innerHeight - 275 - 30;
-    this._pageSize = Math.floor(tableSize / 48);
+    this._pageSize = Math.floor(tableSize / 50);
   }
 
   _refreshUserData() {
@@ -494,7 +494,7 @@ export default class BackendAIUserList extends BackendAIPage {
           <wl-button class="ok" outlined @click="${() => this._signoutUser()}">${_t("button.Okay")}</wl-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="user-info-dialog" backdrop>
+      <backend-ai-dialog id="user-info-dialog" backdrop narrowLayout>
         <div slot="title" class="horizontal center layout">
           <span style="margin-right:15px;">${_t("credential.UserDetail")}</span>
           <lablup-shields app="" description="user" ui="flat"></lablup-shields>
@@ -521,8 +521,8 @@ export default class BackendAIUserList extends BackendAIPage {
                 value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}">
               </wl-textfield>
               ${this.editMode ? html`
-                          <wl-textfield type="password" label="${_t("general.NewPassword")}" id="password"></wl-textfield>
-                          <wl-textfield type="password" label="${_t("general.ConfirmPassword")}" id="confirm"></wl-textfield>`
+                <wl-textfield type="password" label="${_t("general.NewPassword")}" id="password"></wl-textfield>
+                <wl-textfield type="password" label="${_t("general.ConfirmPassword")}" id="confirm"></wl-textfield>`
       : html``}
               <wl-textarea label="${_t("credential.Description")}" id="description"
                            value="${this.userInfo.description ? this.userInfo.description : ' '}"
