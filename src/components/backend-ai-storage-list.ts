@@ -342,6 +342,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         #modify-permission-dialog {
           --dialog-min-width: 600px;
+          --component-min-width: 600px;
         }
 
       `];
@@ -627,37 +628,29 @@ export default class BackendAiStorageList extends BackendAIPage {
         </wl-button>
       </backend-ai-dialog>
 
-      <wl-dialog
+      <backend-ai-dialog
         id="modify-permission-dialog"
         class="dialog-ask"
-        fixed backdrop blockscrolling
-      >
-        <wl-card class="intro" style="margin: 0; width: 100%;">
-          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span>${_t("data.explorer.ModifyPermissions")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <div role="listbox" style="margin: 0; padding: 10px;">
-            <vaadin-grid theme="row-stripes column-borders compact" .items="${this.invitees}">
-              <vaadin-grid-column
-                width="30px"
-                flex-grow="0"
-                header="#"
-                .renderer="${this._boundIndexRenderer}"
-              ></vaadin-grid-column>
-              <vaadin-grid-column header="${_t("data.explorer.InviteeEmail")}">
-                <template>
-                  <div>[[item.shared_to.email]]</div>
-                </template>
-              </vaadin-grid-column>
-              <vaadin-grid-column header="${_t("data.explorer.Permission")}" .renderer="${this._boundPermissionRenderer}">
-              </vaadin-grid-column>
-            </vaadin-grid>
-          </div>
-        </wl-card>
+        backdrop>
+        <span slot="title">${_t("data.explorer.ModifyPermissions")}</span>
+
+        <div slot="content" role="listbox" style="margin: 0; padding: 10px;">
+          <vaadin-grid theme="row-stripes column-borders compact" .items="${this.invitees}">
+            <vaadin-grid-column
+              width="30px"
+              flex-grow="0"
+              header="#"
+              .renderer="${this._boundIndexRenderer}"
+            ></vaadin-grid-column>
+            <vaadin-grid-column header="${_t("data.explorer.InviteeEmail")}">
+              <template>
+                <div>[[item.shared_to.email]]</div>
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column header="${_t("data.explorer.Permission")}" .renderer="${this._boundPermissionRenderer}">
+            </vaadin-grid-column>
+          </vaadin-grid>
+        </div>
         <div slot="footer">
           <wl-button
             type="button"
@@ -669,7 +662,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             ${_t("button.SaveChanges")}
           </wl-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
       <wl-dialog id="rename-file-dialog" class="dialog-ask" fixed backdrop blockscrolling>
         <wl-card class="login-panel intro centered">
           <h3 class="horizontal center layout">
