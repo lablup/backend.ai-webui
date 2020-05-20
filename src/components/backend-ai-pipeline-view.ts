@@ -322,6 +322,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
                 pipelines.push(folder);
               })
               .catch((err) => {
+                console.error(err)
                 if (err && err.message) {
                   this.notification.text = PainKiller.relieve(err.title);
                   this.notification.detail = err.message;
@@ -337,6 +338,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
             this.indicator.hide();
           })
           .catch((err) => {
+            console.error(err)
             if (err && err.message) {
               this.notification.text = PainKiller.relieve(err.title);
               this.notification.detail = err.message;
@@ -345,6 +347,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
             this.indicator.hide();
           });
     } catch (err) {
+      console.error(err)
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true);
@@ -404,6 +407,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this._updateEnvironment();
     }).catch((err) => {
       // this.metadata_updating = false;
+      console.error(err)
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -538,6 +542,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
           this.pipelineConfig = resp;
         })
         .catch((err) => {
+          console.error(err)
           if (err && err.message) {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
@@ -550,6 +555,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
           this.pipelineComponents = resp;
         })
         .catch((err) => {
+          console.error(err)
           if (err && err.message) {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
@@ -562,6 +568,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
           itemEl.active = true;
         })
         .catch((err) => {
+          console.error(err)
           if (err && err.message) {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
@@ -584,6 +591,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
           folderHostEl.value = this.vhost;
         })
         .catch((err) => {
+          console.error(err)
           if (err && err.message) {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
@@ -627,6 +635,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
         this.notification.text = 'Pipeline created';
         this.notification.show();
       } catch (err) {
+        console.error(err)
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
@@ -642,6 +651,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
         this._selectPipeline(this.pipelineFolderName);
         this.indicator.hide();
       } catch (err) {
+        console.error(err)
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
@@ -669,6 +679,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
           folderHostEl.value = this.vhost;
         })
         .catch((err) => {
+          console.error(err)
           if (err && err.message) {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
@@ -705,9 +716,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
       .then((resp) => {
       })
       .catch((err) => {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true);
+        console.error(err)
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true);
       });
   }
 
@@ -718,6 +730,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       const config = JSON.parse(await configBlob.text());
       return config;
     } catch (err) {
+      console.error(err)
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true);
@@ -836,6 +849,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
           this.indicator.hide();
         })
         .catch((err) => {
+          console.error(err)
           this.indicator.hide();
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
@@ -852,6 +866,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.indicator.hide();
       return config;
     } catch (err) {
+      console.error(err)
       this.indicator.hide();
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
@@ -892,6 +907,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     try {
       await window.backendaiclient.vfolder.mkdir(folder, this.pipelineFolderName);
     } catch (err) {
+      console.error(err)
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true);
@@ -905,6 +921,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       const blob = await window.backendaiclient.vfolder.download(filepath, this.pipelineFolderName);
       return await blob.text();
     } catch (err) {
+      console.error(err)
       if (err.title && err.title.split(' ')[0] === '404') {
         // Code file not found. upload empty code.
         const blob = new Blob([''], {type: 'plain/text'});
@@ -969,6 +986,9 @@ export default class BackendAIPipelineView extends BackendAIPage {
   _subscribeKernelEventStream(sessionId, idx, component, kernelId) {
     const url = window.backendaiclient._config.endpoint + `/func/stream/kernel/_/events?sessionId=${sessionId}`;
     const sse = new EventSource(url, {withCredentials: true});
+
+    this.indicator.show();
+
     sse.addEventListener('kernel_pulling', (e) => {
       this.notification.text = `Pulling kernel image. This may take several minutes...`;
       this.notification.show();
@@ -978,6 +998,19 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.notification.text = `Kernel started (${data.sessionId}). Running component...`;
       this.notification.show();
     });
+    sse.addEventListener('kernel_success', async (e) => {
+      const data = JSON.parse((<any>e).data);
+
+      // Store execution logs in the component folder for convenience.
+      const logs = await window.backendaiclient.getTaskLogs(kernelId);
+      console.log(logs.substring(0, 4000)); // for debugging
+      const filepath = `${component.path}/execution_logs.txt`;
+      const blob = new Blob([logs], {type: 'plain/text'});
+      await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
+
+      // Terminate the kernel.
+      await window.backendaiclient.destroyKernel(data.sessionId);
+    });
     sse.addEventListener('kernel_terminated', async (e) => {
       const data = JSON.parse((<any>e).data);
 
@@ -986,13 +1019,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.pipelineComponents[idx] = component;
       await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
       this.pipelineComponents = this.pipelineComponents.slice();
-
-      // Store execution logs in the component folder for convenience.
-      const logs = await window.backendaiclient.getTaskLogs(kernelId);
-      console.log(logs.substring(0, 4000)); // for debugging
-      const filepath = `${component.path}/execution_logs.txt`;
-      const blob = new Blob([logs], {type: 'plain/text'});
-      await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
 
       // Final handling.
       sse.close();
@@ -1040,12 +1066,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
       domain: window.backendaiclient._config.domainName,
       group_name: window.backendaiclient.current_group,
       type: 'batch',
-      enqueueOnly: true,
+      // enqueueOnly: true,
       startupCommand: `
         cd /home/work/${this.pipelineFolderName}/;
         python /home/work/${this.pipelineFolderName}/${component.path}/main.py
       `,
-      maxWaitSeconds: 5,
+      maxWaitSeconds: 20,
       mounts: [this.pipelineFolderName],
       scaling_group: component.scaling_group,
       cpu: component.cpu,
@@ -1059,11 +1085,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
     await this._ensureComponentMainCode(component);
     try {
       const kernel = await window.backendaiclient.createKernel(image, undefined, opts);
-      const sessionId = kernel.kernelId;
-      const kinfo = await window.backendaiclient.computeSession.get(sessionId, ['id']);
+      const sessionName = kernel.kernelId;
+      const kinfo = await window.backendaiclient.computeSession.get(sessionName, ['id']);
       const kernelId = kinfo.compute_session.id;
-      sse = this._subscribeKernelEventStream(sessionId, idx, component, kernelId);
+      sse = this._subscribeKernelEventStream(sessionName, idx, component, kernelId);
     } catch (err) {
+      console.error(err)
       if (sse) sse.close();
       this.indicator.hide();
       this.notification.text = PainKiller.relieve(err.title);
@@ -1151,8 +1178,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
               </wl-list-item>
             </div>
             <div class="layout vertical flex">
-              <div class="layout horizontal" style="padding:5px 20px">
-                <div class="layout vertical flex">
+              <div class="layout vertical" style="padding:5px 20px">
+                <div class="layout vertical flex" style="margin-bottom:0.5em;">
                   ${this.pipelineConfig.environment && this.pipelineConfig.version ? html`
                     <span>Environment: ${this.pipelineConfig.environment}:${this.pipelineConfig.version}</span>
                   ` : ''}
