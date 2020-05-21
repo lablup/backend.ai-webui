@@ -21,9 +21,7 @@ import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
 import 'weightless/button';
-import 'weightless/card';
 import 'weightless/checkbox';
-import 'weightless/divider';
 import 'weightless/icon';
 import 'weightless/select';
 import 'weightless/textfield';
