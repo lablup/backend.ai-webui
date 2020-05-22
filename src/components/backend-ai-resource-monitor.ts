@@ -1548,6 +1548,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     } else {
       this.metric_updating = true;
       await this._aggregateResourceUse('update-metric');
+      await this._updateVirtualFolderList();
       // Resource limitation is not loaded yet.
       if (Object.keys(this.resourceLimits).length === 0) {
         this.metric_updating = false;
@@ -1567,7 +1568,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.metric_updating = false;
         return;
       }
-      await this._updateVirtualFolderList();
       let available_slot = this.available_slot;
 
       // Post-UI markup to disable unchangeable values
