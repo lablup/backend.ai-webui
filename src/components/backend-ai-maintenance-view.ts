@@ -164,6 +164,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     let indicator = await this.indicator.start('indeterminate');
     indicator.set(10, 'Scanning...');
     globalThis.tasker.add(
+      _text("maintenance.RescanImages"),
       globalThis.backendaiclient.maintenance.rescan_images().then((response) => {
         this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = _text("maintenance.RescanImages");
         this.scanning = false;
