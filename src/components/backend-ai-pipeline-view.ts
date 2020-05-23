@@ -998,7 +998,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.notification.text = `Kernel started (${data.sessionId}). Running component...`;
       this.notification.show();
     });
-    sse.addEventListener('kernel_success', async (e) => {
+    sse.addEventListener('kernel_terminated', async (e) => {
       const data = JSON.parse((<any>e).data);
 
       // Store execution logs in the component folder for convenience.
@@ -1007,12 +1007,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
       const filepath = `${component.path}/execution_logs.txt`;
       const blob = new Blob([logs], {type: 'plain/text'});
       await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
-
-      // Terminate the kernel.
-      await window.backendaiclient.destroyKernel(data.sessionId);
-    });
-    sse.addEventListener('kernel_terminated', async (e) => {
-      const data = JSON.parse((<any>e).data);
 
       // Mark component executed.
       component.executed = true;
