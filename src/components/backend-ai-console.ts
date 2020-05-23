@@ -130,6 +130,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.appPage = this.shadowRoot.querySelector('#app-page');
     this.contentBody = this.shadowRoot.querySelector('#content-body');
+    this.contentBody.type = 'dismissible';
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
     this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
     this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
@@ -317,6 +318,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  toggleSidePanelType() {
+    if (this.contentBody.type === 'dismissible') {
+      this.contentBody.type === 'modal';
+    } else {
+      this.contentBody.type === 'dismissible';
+    }
+  }
+
   _changeDrawerLayout(width, height) {
     if (width < 700) {  // Close drawer
       this.appBody.style.setProperty('--mdc-drawer-width', '190px');
@@ -341,7 +350,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.drawerToggleButton.style.display = 'none';
     }
     this.contentBody.open = false;
-    this.contentBody.type = 'dismissible';
     if (this.contentBody.open) {
       this.contentBody.style.setProperty('--mdc-drawer-width', '150px');
     }
