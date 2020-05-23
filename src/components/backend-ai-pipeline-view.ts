@@ -1118,6 +1118,34 @@ export default class BackendAIPipelineView extends BackendAIPage {
     }
   }
 
+  async _showComponentLogs(idx) {
+    if (idx < 0) {
+      this.notification.text = 'Invalid component';
+      this.notification.show();
+      return;
+    }
+
+    const component = this.pipelineComponents[idx];
+    const filepath = `${component.path}/execution_logs.txt`; // TODO: hard-coded file name
+    try {
+      const blob = await window.backendaiclient.vfolder.download(filepath, this.pipelineFolderName);
+      const logs = await blob.text();
+      const newWindow = window.open('', `Component ${idx} log`, 'width=800,height=600');
+      newWindow.document.body.innerHTML = `<pre>${logs}</pre>`
+    } catch (err) {
+      console.error(err)
+      if (err.title && err.title.split(' ')[0] === '404') {
+        this.notification.text = 'No logs for this component';
+        this.notification.detail = err.message;
+        this.notification.show(true);
+      } else {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true);
+      }
+    }
+  }
+
   async _savePipeline() {
     await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
     this.notification.text = 'Saved pipeline components structure';
@@ -1228,6 +1256,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
                         <div class="layout horizontal center" style="margin-right:1em;">
                             <mwc-icon-button class="fg black" icon="code" @click="${() => this._editCode(idx)}"></mwc-icon-button>
                             <mwc-icon-button class="fg ${item.executed ? 'green' : 'black'}" icon="play_arrow" @click="${() => this._runComponent(idx)}"></mwc-icon-button>
+                            <mwc-icon-button class="fg black" icon="assignment" @click="${() => this._showComponentLogs(idx)}"></mwc-icon-button>
                             <mwc-icon-button class="fg black" icon="edit" @click="${() => this._openComponentUpdateDialog(item, idx)}"></mwc-icon-button>
                             <mwc-icon-button class="fg black" icon="delete" @click="${() => this._openComponentDeleteDialog(idx)}"></mwc-icon-button>
                         </div>
@@ -1357,7 +1386,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       <wl-dialog id="codemirror-dialog" fixed backdrop scrollable blockScrolling persistent>
         <div slot="header"></div>
         <div slot="content">
-          <lablup-codemirror id="codemirror-editor"></lablup-codemirror>
+          <lablup-codemirror id="codemirror-editor" mode="python"></lablup-codemirror>
         </div>
         <div slot="footer">
           <wl-button inverted flat id="discard-code" @click="${this._hideCodeDialog}">Close without save</wl-button>
