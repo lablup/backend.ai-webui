@@ -316,6 +316,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.contentBody.open = false;
     } else {
       this.contentBody.open = true;
+      this.contentBody.style.setProperty('--mdc-drawer-width', '150px');
     }
   }
 
@@ -350,7 +351,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.appBody.open = true;
       this.drawerToggleButton.style.display = 'none';
     }
-    this.contentBody.open = false;
     if (this.contentBody.open) {
       this.contentBody.style.setProperty('--mdc-drawer-width', '150px');
     }
@@ -837,18 +837,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button disabled id="admin-menu-icon" icon="settings" slot="graphic" class="fg white" style="margin-left:4px;"></mwc-icon-button>
           </div>
         </div>
-        <div id="mini-tooltips" class="mini-menu">
-          <wl-popover anchor="#mini-ui-toggle-button" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
-             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-            <wl-popover-card>
-              <div style="padding:5px">
-                <mwc-icon-button disabled class="side-menu fg black" id="feedback-icon-popover" icon="question_answer" slot="graphic"></mwc-icon-button>
-                <mwc-icon-button disabled class="side-menu fg black" id="notification-icon-popover" icon="notification_important" slot="graphic"></mwc-icon-button>
-                <mwc-icon-button disabled class="side-menu fg black" id="task-icon-popover" icon="ballot" slot="graphic"></mwc-icon-button>
-              </div>
-            </wl-popover-card>
-          </wl-popover>
-        </div>
         <div slot="appContent">
           <mwc-drawer id="content-body" style="height:100vh;">
             <div>
@@ -928,6 +916,18 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </mwc-drawer>
         </div>
       </mwc-drawer>
+      <div id="mini-tooltips" class="${this.mini_ui ? "mini-ui" : ""}">
+        <wl-popover anchor="#mini-ui-toggle-button" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+           anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+          <wl-popover-card>
+            <div style="padding:5px">
+              <mwc-icon-button disabled class="side-menu fg black" id="feedback-icon-popover" icon="question_answer" slot="graphic"></mwc-icon-button>
+              <mwc-icon-button disabled class="side-menu fg black" id="notification-icon-popover" icon="notification_important" slot="graphic"></mwc-icon-button>
+              <mwc-icon-button class="side-menu fg black" id="task-icon-popover" icon="ballot" slot="graphic" @click="${() => this.toggleSidePanelUI()}"></mwc-icon-button>
+            </div>
+          </wl-popover-card>
+        </wl-popover>
+      </div>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         ${this._offline ? _t("console.YouAreOffline") : _t("console.YouAreOnline")}.
       </backend-ai-offline-indicator>
