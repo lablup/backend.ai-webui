@@ -275,6 +275,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       once: true,
       passive: false
     });
+    this.addTooltips();
   }
 
   showUpdateNotifier() {
@@ -686,6 +687,46 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  async addTooltips() {
+    this._createPopover("#summary-menu-icon", _text("console.menu.Summary"));
+    this._createPopover("#sessions-menu-icon", _text("console.menu.Sessions"));
+    this._createPopover("#data-menu-icon", _text("console.menu.Data&Storage"));
+    this._createPopover("#statistics-menu-icon", _text("console.menu.Statistics"));
+    this._createPopover("#usersettings-menu-icon", _text("console.menu.Settings"));
+    if (this.is_admin) {
+      this._createPopover("#user-menu-icon", _text("console.menu.Users"));
+    }
+    if (this.is_superadmin) {
+      this._createPopover("#resources-menu-icon", _text("console.menu.Resources"));
+      this._createPopover("#environments-menu-icon", _text("console.menu.Environments"));
+      this._createPopover("#configurations-menu-icon", _text("console.menu.Configurations"));
+      this._createPopover("#maintenance-menu-icon", _text("console.menu.Maintenance"));
+      this._createPopover("#information-menu-icon", _text("console.menu.Information"));
+      this._createPopover("#admin-menu-icon", _text("console.menu.Administration"));
+    }
+  }
+
+  _createPopover(anchor: string, title: string) {
+    let popover = document.createElement('wl-popover');
+    popover.anchor = anchor;
+    popover.setAttribute('fixed', '');
+    popover.setAttribute('disablefocustrap', '');
+    popover.setAttribute('anchororiginx', 'right');
+    popover.setAttribute('anchororiginy', 'center');
+    popover.setAttribute('transformoriginx', 'left');
+    popover.setAttribute('transformoriginy', 'center');
+    popover.anchorOpenEvents = ["mouseover"];
+    popover.anchorCloseEvents = ["mouseout"];
+    let card = document.createElement('wl-popover-card');
+    let carddiv = document.createElement('div');
+    carddiv.style.padding = '5px';
+    carddiv.innerText = title;
+    card.appendChild(carddiv);
+    popover.appendChild(card);
+    let tooltipBox = this.shadowRoot.querySelector('#mini-tooltips');
+    tooltipBox.appendChild(popover);
+  }
+
   protected render() {
     // language=HTML
     return html`
@@ -796,27 +837,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button disabled id="admin-menu-icon" icon="settings" slot="graphic" class="fg white" style="margin-left:4px;"></mwc-icon-button>
           </div>
         </div>
-        <div class="mini-menu">
-          <wl-popover anchor="#summary-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
-             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-             <wl-popover-card><div style="padding:5px">${_t("console.menu.Summary")}</div></wl-popover-card>
-          </wl-popover>
-          <wl-popover anchor="#sessions-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
-             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-             <wl-popover-card><div style="padding:5px">${_t("console.menu.Sessions")}</div></wl-popover-card>
-          </wl-popover>
-          <wl-popover anchor="#data-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
-             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-             <wl-popover-card><div style="padding:5px">${_t("console.menu.Data&Storage")}</div></wl-popover-card>
-          </wl-popover>
-          <wl-popover anchor="#statistics-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
-             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-             <wl-popover-card><div style="padding:5px">${_t("console.menu.Statistics")}</div></wl-popover-card>
-          </wl-popover>
-          <wl-popover anchor="#usersettings-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
-             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-            <wl-popover-card><div style="padding:5px">${_t("console.menu.Settings")}</div></wl-popover-card>
-          </wl-popover>
+        <div id="mini-tooltips" class="mini-menu">
           <wl-popover anchor="#mini-ui-toggle-button" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
              anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
             <wl-popover-card>
@@ -827,38 +848,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               </div>
             </wl-popover-card>
           </wl-popover>
-          ${this.is_admin ? html`
-            <wl-popover anchor="#user-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
-               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-               <wl-popover-card><div style="padding:5px">${_t("console.menu.Users")}</div></wl-popover-card>
-            </wl-popover>
-            ` : html``}
-          ${this.is_superadmin ? html`
-            <wl-popover anchor="#resources-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
-               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-               <wl-popover-card><div style="padding:5px">${_t("console.menu.Resources")}</div></wl-popover-card>
-            </wl-popover>
-            <wl-popover anchor="#environments-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
-               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-               <wl-popover-card><div style="padding:5px">${_t("console.menu.Environments")}</div></wl-popover-card>
-            </wl-popover>
-            <wl-popover anchor="#configurations-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
-               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-               <wl-popover-card><div style="padding:5px">${_t("console.menu.Configurations")}</div></wl-popover-card>
-            </wl-popover>
-            <wl-popover anchor="#maintenance-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
-               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-               <wl-popover-card><div style="padding:5px">${_t("console.menu.Maintenance")}</div></wl-popover-card>
-            </wl-popover>
-            <wl-popover anchor="#information-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
-               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-               <wl-popover-card><div style="padding:5px">${_t("console.menu.Information")}</div></wl-popover-card>
-            </wl-popover>
-            <wl-popover anchor="#admin-menu-icon" .anchorOpenEvents="${["mouseover"]}" .anchorCloseEvents="${["mouseout"]}" fixed disablefocustrap
-               anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-               <wl-popover-card><div style="padding:5px">${_t("console.menu.Administration")}</div></wl-popover-card>
-            </wl-popover>
-          `: html``}
         </div>
         <div slot="appContent">
           <mwc-drawer id="content-body" style="height:100vh;">
