@@ -309,6 +309,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
   }
 
+  toggleSidePanelUI() {
+    if (this.contentBody.open) {
+      this.contentBody.open = false;
+    } else {
+      this.contentBody.open = true;
+    }
+  }
+
   _changeDrawerLayout(width, height) {
     if (width < 700) {  // Close drawer
       this.appBody.style.setProperty('--mdc-drawer-width', '190px');
@@ -332,6 +340,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.appBody.open = true;
       this.drawerToggleButton.style.display = 'none';
     }
+    this.contentBody.open = false;
+    this.contentBody.type = 'dismissible';
     if (this.contentBody.open) {
       this.contentBody.style.setProperty('--mdc-drawer-width', '150px');
     }
@@ -694,7 +704,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;margin-left:4px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
             <mwc-icon-button disabled class="full-menu side-menu fg white" id="feedback-icon" icon="question_answer" slot="graphic"></mwc-icon-button>
             <mwc-icon-button disabled class="full-menu side-menu fg white" id="notification-icon" icon="notification_important" slot="graphic"></mwc-icon-button>
-            <mwc-icon-button disabled class="full-menu side-menu fg white" id="task-icon" icon="ballot" slot="graphic"></mwc-icon-button>
+            <mwc-icon-button class="full-menu side-menu fg white" id="task-icon" icon="ballot" slot="graphic" @click="${() => this.toggleSidePanelUI()}"></mwc-icon-button>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
@@ -843,7 +853,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           `: html``}
         </div>
         <div slot="appContent">
-          <mwc-drawer id="content-body">
+          <mwc-drawer id="content-body" style="height:100vh;">
+            <div>
+              <backend-ai-task-view active></backend-ai-task-view>
+            </div>
             <div slot="appContent">
               <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
                 <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
@@ -926,7 +939,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
-      <backend-ai-task-view></backend-ai-task-view>
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
        <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>
        <div slot="content">

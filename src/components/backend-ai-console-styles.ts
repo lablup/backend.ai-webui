@@ -142,6 +142,12 @@ export const BackendAiConsoleStyles = [
       display: block;
     }
 
+    #content-body {
+      background-color: #ffffff;
+      color: var(--general-sidepanel-color, #fafafa);
+      --mdc-drawer-background-color: var(--sidepanel-background-color, var(--general-sidepanel-background-color, #fafafa));
+    }
+
     wl-progress-spinner {
       --progress-spinner-size: 48px;
       --progress-spinner-stroke-width: 12px;
