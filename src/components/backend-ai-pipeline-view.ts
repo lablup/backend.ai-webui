@@ -843,18 +843,17 @@ export default class BackendAIPipelineView extends BackendAIPage {
   async _uploadPipelineComponents(folder_name, cinfo) {
     const vfpath = 'components.json';
     const blob = new Blob([JSON.stringify(cinfo, null, 2)], {type: 'application/json'});
-    this.indicator.show();
-    window.backendaiclient.vfolder.upload(vfpath, blob, folder_name)
-        .then((resp) => {
-          this.indicator.hide();
-        })
-        .catch((err) => {
-          console.error(err)
-          this.indicator.hide();
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true);
-        });
+    try {
+      this.indicator.show();
+      const resp = await window.backendaiclient.vfolder.upload(vfpath, blob, folder_name);
+      this.indicator.hide();
+    } catch (err) {
+      console.error(err)
+      this.indicator.hide();
+      this.notification.text = PainKiller.relieve(err.title);
+      this.notification.detail = err.message;
+      this.notification.show(true);
+    }
   }
 
   async _downloadPipelineComponents(folder_name) {
@@ -986,6 +985,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   _subscribeKernelEventStream(sessionId, idx, component, kernelId) {
     const url = window.backendaiclient._config.endpoint + `/func/stream/kernel/_/events?sessionId=${sessionId}`;
     const sse = new EventSource(url, {withCredentials: true});
+    let execSuccess;
 
     this.indicator.show();
 
@@ -998,31 +998,41 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.notification.text = `Kernel started (${data.sessionId}). Running component...`;
       this.notification.show();
     });
-    sse.addEventListener('kernel_terminated', async (e) => {
-      const data = JSON.parse((<any>e).data);
-
-      // Store execution logs in the component folder for convenience.
-      const logs = await window.backendaiclient.getTaskLogs(kernelId);
-      console.log(logs.substring(0, 4000)); // for debugging
-      const filepath = `${component.path}/execution_logs.txt`;
-      const blob = new Blob([logs], {type: 'plain/text'});
-      await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
-
+    sse.addEventListener('kernel_success', async (e) => {
       // Mark component executed.
       component.executed = true;
       this.pipelineComponents[idx] = component;
       await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
       this.pipelineComponents = this.pipelineComponents.slice();
 
+      execSuccess = true;
+    })
+    sse.addEventListener('kernel_failure', (e) => {
+      execSuccess = false;
+    })
+    sse.addEventListener('kernel_terminated', async (e) => {
+      const data = JSON.parse((<any>e).data);
+
+      // Store execution logs in the component folder for convenience.
+      const logs = await window.backendaiclient.getTaskLogs(kernelId);
+      console.log(logs.substring(0, 500)); // for debugging
+      const filepath = `${component.path}/execution_logs.txt`;
+      const blob = new Blob([logs], {type: 'plain/text'});
+      await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
+
       // Final handling.
       sse.close();
-      this.notification.text = `Kernel terminated (${data.sessionId})`;
+      if (execSuccess) {
+        this.notification.text = `Execution succeed (${data.sessionId})`;
+      } else {
+        this.notification.text = `Execution error (${data.sessionId})`;
+      }
       this.notification.show();
       this.indicator.hide();
 
       // If there are further components to be run (eg. whole pipeline is ran),
       // run next component from the job queue.
-      if (this.componentsToBeRun.length > 0) {
+      if (execSuccess && this.componentsToBeRun.length > 0) {
         const nextId = this.componentsToBeRun.shift();
         const allComponentIds = this.pipelineComponents.map((c) => c.id);
         const cidx = allComponentIds.indexOf(nextId);
@@ -1032,6 +1042,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
           this._runComponent(cidx);
         }
       }
+
+      execSuccess = undefined;
     });
 
     return sse;
@@ -1065,7 +1077,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
         cd /home/work/${this.pipelineFolderName}/;
         python /home/work/${this.pipelineFolderName}/${component.path}/main.py
       `,
-      maxWaitSeconds: 20,
+      maxWaitSeconds: 10,
       mounts: [this.pipelineFolderName],
       scaling_group: component.scaling_group,
       cpu: component.cpu,
@@ -1080,9 +1092,22 @@ export default class BackendAIPipelineView extends BackendAIPage {
     try {
       const kernel = await window.backendaiclient.createKernel(image, undefined, opts);
       const sessionName = kernel.kernelId;
-      const kinfo = await window.backendaiclient.computeSession.get(sessionName, ['id']);
-      const kernelId = kinfo.compute_session.id;
-      sse = this._subscribeKernelEventStream(sessionName, idx, component, kernelId);
+      let kernelId = undefined;
+      for (let i = 0; i < 10; i++) {
+        // Wait 10 s for kernel id to make enqueueOnly option work.
+        // TODO: make wait time configurable?
+        const kinfo = await window.backendaiclient.computeSession.get(sessionName, ['id']);
+        if (kinfo.compute_session && kinfo.compute_session.id) {
+          kernelId = kinfo.compute_session.id;
+          break;
+        }
+        await new Promise(r => setTimeout(r, 1000)); // wait 1 second
+      }
+      if (kernelId) {
+        sse = this._subscribeKernelEventStream(sessionName, idx, component, kernelId);
+      } else {
+        throw new Error('Unable to get information on compute session');
+      }
     } catch (err) {
       console.error(err)
       if (sse) sse.close();
@@ -1106,6 +1131,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.pipelineComponents[i] = component;
     });
     await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
+
+    this.indicator.show();
 
     // Push all components in job queue and initiate the first run
     const allComponentIds = this.pipelineComponents.map((c) => c.id);
