@@ -850,7 +850,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     const blob = new Blob([JSON.stringify(cinfo, null, 2)], {type: 'application/json'});
     try {
       this.indicator.show();
-      const resp = await window.backendaiclient.vfolder.upload(vfpath, blob, folder_name);
+      await window.backendaiclient.vfolder.upload(vfpath, blob, folder_name);
       this.indicator.hide();
     } catch (err) {
       console.error(err)
@@ -1137,7 +1137,9 @@ export default class BackendAIPipelineView extends BackendAIPage {
       const blob = await window.backendaiclient.vfolder.download(filepath, this.pipelineFolderName);
       const logs = await blob.text();
       const newWindow = window.open('', `Component ${idx} log`, 'width=800,height=600');
-      newWindow.document.body.innerHTML = `<pre style="color:#ccc; background:#222; padding:1em; overflow:auto;">${logs}</pre>`
+      if (newWindow) {
+        newWindow.document.body.innerHTML = `<pre style="color:#ccc; background:#222; padding:1em; overflow:auto;">${logs}</pre>`
+      }
     } catch (err) {
       console.error(err)
       if (err.title && err.title.split(' ')[0] === '404') {
