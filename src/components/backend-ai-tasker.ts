@@ -78,8 +78,6 @@ export default class BackendAiTasker extends LitElement {
   }
 
   firstUpdated() {
-
-    this.indicator = this.shadowRoot.querySelector('#indicator');
   }
 
   connectedCallback() {
@@ -111,6 +109,7 @@ export default class BackendAiTasker extends LitElement {
     }
     this.taskstore.push(item);
     console.log(item);
+    this.signal();
     return true;
   }
 
@@ -134,6 +133,7 @@ export default class BackendAiTasker extends LitElement {
       if (index > -1) {
         this.finished.splice(index, 1);
       }
+      this.signal();
     }
   }
 
@@ -166,6 +166,12 @@ export default class BackendAiTasker extends LitElement {
         this.remove(item);
       });
     }
+  }
+
+  signal() {
+    console.log("signal");
+    let event: CustomEvent = new CustomEvent('backend-ai-task-changed', {"detail": {"tasks": this.taskstore}});
+    document.dispatchEvent(event);
   }
 }
 declare global {

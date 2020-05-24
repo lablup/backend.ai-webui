@@ -47,7 +47,7 @@ export const BackendAiStyles = [
       --general-sidebar-item-even-background-color: transparent;
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
       --general-sidepanel-color: #dddddd;
-      --general-sidepanel-background-color: rgba(48, 48, 48, 1.0);
+      --general-sidepanel-background-color: rgba(244, 245, 247, 1); /*rgba(48, 48, 48, 1.0);*/
       --general-dialog-background-color: #ffffff;
       --app-drawer-width: 190px;
       --general-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;

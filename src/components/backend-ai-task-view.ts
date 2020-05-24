@@ -6,6 +6,10 @@
 import {css, customElement, html, property} from "lit-element";
 import '../plastics/mwc/mwc-drawer';
 import '@material/mwc-dialog';
+import '@material/mwc-icon';
+import '@material/mwc-list';
+import '@material/mwc-list/mwc-list-item';
+
 import {BackendAIPage} from './backend-ai-page';
 
 /**
@@ -23,7 +27,7 @@ export default class BackendAiTaskView extends BackendAIPage {
   public updateComplete: any;
 
   @property({type: Boolean}) active = true;
-  @property({type: Object}) tasker;
+  @property({type: Array}) tasks = Array();
 
   /**
    *  Backend.AI Task manager for Console
@@ -51,9 +55,17 @@ export default class BackendAiTaskView extends BackendAIPage {
     // language=HTML
     return html`
      <div id="container">
-       ${this.tasker.taskstore.map(item => {
-      html`${item.taskid}`
-    })}
+       <mwc-list>
+       ${this.tasks.map(item =>
+      html`
+         <mwc-list-item graphic="icon" twoline>
+           <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg green">widgets</mwc-icon>
+           <span>${item.tasktitle}</span>
+           <span slot="secondary">${item.taskid}</span>
+         </mwc-list-item>
+         <li divider role="separator"></li>`
+    )}
+       </mwc-list>
      </div>
     `;
   }
@@ -63,8 +75,8 @@ export default class BackendAiTaskView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.tasker = globalThis.tasker;
-    console.log(this.tasker);
+    this.tasks = [];
+    document.addEventListener('backend-ai-task-changed', () => this.refresh());
   }
 
   connectedCallback() {
@@ -75,8 +87,9 @@ export default class BackendAiTaskView extends BackendAIPage {
     super.disconnectedCallback();
   }
 
-  refresh() {
-
+  async refresh() {
+    this.tasks = globalThis.tasker.taskstore;
+    await this.requestUpdate();
   }
 
 }

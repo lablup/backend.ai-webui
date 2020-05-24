@@ -16,6 +16,7 @@ import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
+import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu';
 
@@ -322,11 +323,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }
     } else {
       this.contentBody.open = true;
-      this.contentBody.style.setProperty('--mdc-drawer-width', '150px');
+      this.contentBody.style.setProperty('--mdc-drawer-width', '250px');
       if (this.mini_ui) {
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', '204px');// 190+54
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '304px');// 54+250
       } else {
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', '340px');// 190+150
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '440px');// 190+250
       }
     }
   }
@@ -356,13 +357,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.appBody.style.setProperty('--mdc-drawer-width', '54px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', '54px');
         if (this.contentBody.open) {
-          this.mainToolbar.style.setProperty('--mdc-drawer-width', '204px');// 190+54
+          this.mainToolbar.style.setProperty('--mdc-drawer-width', '304px');// 54+250
         }
       } else {
         this.appBody.style.setProperty('--mdc-drawer-width', '190px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
         if (this.contentBody.open) {
-          this.mainToolbar.style.setProperty('--mdc-drawer-width', '340px'); // 190+150
+          this.mainToolbar.style.setProperty('--mdc-drawer-width', '440px'); // 190+250
         }
       }
       this.appBody.type = 'dismissible';
@@ -370,7 +371,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.drawerToggleButton.style.display = 'none';
     }
     if (this.contentBody.open) {
-      this.contentBody.style.setProperty('--mdc-drawer-width', '150px');
+      this.contentBody.style.setProperty('--mdc-drawer-width', '250px');
     }
   }
 
