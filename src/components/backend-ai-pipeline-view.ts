@@ -229,6 +229,11 @@ export default class BackendAIPipelineView extends BackendAIPage {
           height: 80px;
         }
 
+        .pipeline-item,
+        .sidebar-item {
+          cursor: pointer;
+        }
+
         #codemirror-dialog {
           --dialog-min-width: calc(100vw - 200px);
           --dialog-max-width: calc(100vw - 200px);
@@ -1131,7 +1136,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       const blob = await window.backendaiclient.vfolder.download(filepath, this.pipelineFolderName);
       const logs = await blob.text();
       const newWindow = window.open('', `Component ${idx} log`, 'width=800,height=600');
-      newWindow.document.body.innerHTML = `<pre>${logs}</pre>`
+      newWindow.document.body.innerHTML = `<pre style="color:#ccc; background:#222; padding:1em;">${logs}</pre>`
     } catch (err) {
       console.error(err)
       if (err.title && err.title.split(' ')[0] === '404') {
