@@ -54,19 +54,23 @@ export default class BackendAiTaskView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-     <div id="container">
-       <mwc-list>
-       ${this.tasks.map(item =>
+      <div id="container">
+        <mwc-list>
+        ${this.tasks.map(item =>
       html`
-         <mwc-list-item graphic="icon" twoline>
-           <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg green">widgets</mwc-icon>
-           <span>${item.tasktitle}</span>
-           <span slot="secondary">${item.taskid}</span>
-         </mwc-list-item>
-         <li divider role="separator"></li>`
-    )}
-       </mwc-list>
-     </div>
+          <mwc-list-item graphic="icon" twoline>
+            <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg green">widgets</mwc-icon>
+            <span>${item.tasktitle}</span>
+            <span slot="secondary">${item.taskid}</span>
+          </mwc-list-item>
+          <li divider role="separator"></li>`)}
+          ${this.tasks.length === 0 ? html`
+            <div style="padding:15px 0;width:100%;text-align:center;">
+              No background task.
+            </div>
+        ` : html``}
+        </mwc-list>
+      </div>
     `;
   }
 

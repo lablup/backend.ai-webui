@@ -108,7 +108,6 @@ export default class BackendAiTasker extends LitElement {
       return false;
     }
     this.taskstore.push(item);
-    console.log(item);
     this.signal();
     return true;
   }
@@ -169,7 +168,6 @@ export default class BackendAiTasker extends LitElement {
   }
 
   signal() {
-    console.log("signal");
     let event: CustomEvent = new CustomEvent('backend-ai-task-changed', {"detail": {"tasks": this.taskstore}});
     document.dispatchEvent(event);
   }
