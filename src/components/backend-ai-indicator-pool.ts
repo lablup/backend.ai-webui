@@ -18,7 +18,7 @@ import './backend-ai-indicator';
 
  Example:
  @group Backend.AI Console
- @element backend-ai-tasker
+ @element backend-ai-indicator-pool
  */
 @customElement("backend-ai-indicator-pool")
 export default class BackendAIIndicatorPool extends LitElement {
