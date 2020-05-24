@@ -132,7 +132,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.contentBody = this.shadowRoot.querySelector('#content-body');
     this.contentBody.type = 'dismissible';
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
-    this.mainToolbar.scrollTarget = this.appPage;
+    //this.mainToolbar.scrollTarget = this.appPage;
     this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
     this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
     this.splash = this.shadowRoot.querySelector('#about-panel');
@@ -315,9 +315,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   toggleSidePanelUI() {
     if (this.contentBody.open) {
       this.contentBody.open = false;
+      if (this.mini_ui) {
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '54px');// 54
+      } else {
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');// 190
+      }
     } else {
       this.contentBody.open = true;
       this.contentBody.style.setProperty('--mdc-drawer-width', '150px');
+      if (this.mini_ui) {
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '204px');// 190+54
+      } else {
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '340px');// 190+150
+      }
     }
   }
 
@@ -335,6 +345,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.appBody.style.setProperty('--mdc-drawer-width', '190px');
       this.appBody.type = 'modal';
       this.appBody.open = false;
+      this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
       this.drawerToggleButton.style.display = 'block';
       if (this.mini_ui) {
         this.mini_ui = false;
@@ -343,9 +354,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     } else { // Open drawer
       if (this.mini_ui) {
         this.appBody.style.setProperty('--mdc-drawer-width', '54px');
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '54px');
+        if (this.contentBody.open) {
+          this.mainToolbar.style.setProperty('--mdc-drawer-width', '204px');// 190+54
+        }
       } else {
         this.appBody.style.setProperty('--mdc-drawer-width', '190px');
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
+        if (this.contentBody.open) {
+          this.mainToolbar.style.setProperty('--mdc-drawer-width', '340px'); // 190+150
+        }
       }
       this.appBody.type = 'dismissible';
       this.appBody.open = true;
