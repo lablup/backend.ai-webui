@@ -42,7 +42,6 @@ export default class BackendAiTasker extends LitElement {
   public updateComplete: any;
 
   @property({type: Object}) indicator;
-  @property({type: Object}) notification;
   @property({type: Array}) taskstore;
   @property({type: Array}) finished;
   @property({type: Object}) pooler;
@@ -56,7 +55,6 @@ export default class BackendAiTasker extends LitElement {
     super();
     this.taskstore = [];
     this.finished = [];
-    this.notification = globalThis.lablupNotification;
     this.indicator = globalThis.lablupIndicator;
     this.pooler = setInterval(() => {
       this.gc();
@@ -80,7 +78,6 @@ export default class BackendAiTasker extends LitElement {
   }
 
   firstUpdated() {
-    this.notification = globalThis.lablupNotification;
 
     this.indicator = this.shadowRoot.querySelector('#indicator');
   }
