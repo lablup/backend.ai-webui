@@ -1116,6 +1116,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     } catch (err) {
       console.error(err)
       if (sse) sse.close();
+      this.componentsToBeRun = [];
       this.indicator.hide();
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
@@ -1136,7 +1137,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       const blob = await window.backendaiclient.vfolder.download(filepath, this.pipelineFolderName);
       const logs = await blob.text();
       const newWindow = window.open('', `Component ${idx} log`, 'width=800,height=600');
-      newWindow.document.body.innerHTML = `<pre style="color:#ccc; background:#222; padding:1em;">${logs}</pre>`
+      newWindow.document.body.innerHTML = `<pre style="color:#ccc; background:#222; padding:1em; overflow:auto;">${logs}</pre>`
     } catch (err) {
       console.error(err)
       if (err.title && err.title.split(' ')[0] === '404') {
