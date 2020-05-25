@@ -96,6 +96,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) splash = Object();
   @property({type: Object}) loginPanel = Object();
   @property({type: String}) _page = '';
+  @property({type: String}) _sidepanel = '';
   @property({type: Boolean}) _drawerOpened = false;
   @property({type: Boolean}) _offlineIndicatorOpened = false;
   @property({type: Boolean}) _offline = false;
@@ -338,6 +339,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     } else {
       this.contentBody.type === 'dismissible';
     }
+  }
+
+  _openSidePanel(panel) {
+    this._sidepanel = panel;
+    this.toggleSidePanelUI();
   }
 
   _changeDrawerLayout(width, height) {
@@ -772,7 +778,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;margin-left:4px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
             <mwc-icon-button disabled class="full-menu side-menu fg white" id="feedback-icon" icon="question_answer" slot="graphic"></mwc-icon-button>
             <mwc-icon-button disabled class="full-menu side-menu fg white" id="notification-icon" icon="notification_important" slot="graphic"></mwc-icon-button>
-            <mwc-icon-button class="full-menu side-menu fg white" id="task-icon" icon="ballot" slot="graphic" @click="${() => this.toggleSidePanelUI()}"></mwc-icon-button>
+            <mwc-icon-button class="full-menu side-menu fg white" id="task-icon" icon="ballot" slot="graphic" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
@@ -859,7 +865,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         <div slot="appContent">
           <mwc-drawer id="content-body" style="height:100vh;">
             <div>
-              <backend-ai-task-view active></backend-ai-task-view>
+              <backend-ai-task-view ?active="${this._sidepanel === 'task'}"></backend-ai-task-view>
             </div>
             <div slot="appContent">
               <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">

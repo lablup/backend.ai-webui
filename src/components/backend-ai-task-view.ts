@@ -71,6 +71,18 @@ export default class BackendAiTaskView extends BackendAIPage {
     }
   }
 
+  _taskIcon(type) {
+    switch (type) {
+      case "session":
+        return 'subject';
+        break;
+      case "general":
+      default:
+        return 'widget';
+        break;
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -80,7 +92,7 @@ export default class BackendAiTaskView extends BackendAIPage {
         ${this.tasks.map(item =>
       html`
           <mwc-list-item graphic="icon" twoline>
-            <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg green">widgets</mwc-icon>
+            <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg green">${this._taskIcon(item.tasktype)}</mwc-icon>
             <span>${item.tasktitle}</span>
             <span slot="secondary">${item.taskid}</span>
           </mwc-list-item>
