@@ -628,8 +628,9 @@ class Client {
    * @param {string} kernelType - the kernel type (usually language runtimes)
    * @param {string} sessionId - user-defined session ID
    * @param {object} resources - Per-session resource
+   * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
    */
-  createIfNotExists(kernelType, sessionId, resources = {}) {
+  createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0) {
     if (typeof sessionId === 'undefined' || sessionId === null)
       sessionId = this.generateSessionId();
     let params = {
@@ -708,6 +709,7 @@ class Client {
       rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
     }
     return this._wrapWithPromise(rqst);
+    return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
   /**
@@ -1936,7 +1938,7 @@ class ContainerImage {
     if (Object.keys(resource).length === 0) {
       resource = {'cpu': '1', 'mem': '512m'};
     }
-    return this.client.createIfNotExists(registry + name, sessionId, resource).then((response) => {
+    return this.client.createIfNotExists(registry + name, sessionId, resource, 600000).then((response) => {
       return this.client.destroyKernel(sessionId);
     }).catch(err => {
       throw err;
