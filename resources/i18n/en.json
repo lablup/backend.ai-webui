@@ -606,7 +606,8 @@
     "NewConsoleVersionAvailable": "New version is available:"
   },
   "sidepanel": {
-    "BackgroundTasks": "Background Tasks",
-    "NoBackgroundTask": "No Background Task."
+    "BackgroundTasks": "Running Tasks",
+    "NoBackgroundTask": "No Task.",
+    "Running": "Running..."
   }
 }

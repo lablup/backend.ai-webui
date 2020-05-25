@@ -180,7 +180,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
           this.notification.detail = err.message;
           this.notification.show(true, err);
         }
-      }));
+      }), '', 'image');
   }
 
   async recalculate_usage() {
@@ -205,7 +205,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
           this.notification.detail = err.message;
           this.notification.show(true, err);
         }
-      }));
+      }), '', 'database');
   }
 }
 

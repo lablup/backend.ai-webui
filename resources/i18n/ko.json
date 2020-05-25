@@ -605,6 +605,7 @@
   },
   "sidepanel": {
     "BackgroundTasks": "작업",
-    "NoBackgroundTask": "실행중인 작업이 없습니다."
+    "NoBackgroundTask": "실행중인 작업이 없습니다.",
+    "Running": "실행중..."
   }
 }

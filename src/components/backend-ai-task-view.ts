@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from "lit-translate";
+import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import '../plastics/mwc/mwc-drawer';
 import '@material/mwc-dialog';
@@ -51,16 +51,23 @@ export default class BackendAiTaskView extends BackendAIPage {
       IronFlexAlignment,
       IronFlexFactors,
       IronPositioning,
+      // language=css
       css`
-      h3 {
-        font-size:16px;
-        color: #242424;
-        display: block;
-        width: 100%;
-        height: 33px;
-        padding: 5px 15px;
-        border-bottom: 1px solid #ccc;
-      }`
+        h3 {
+          font-size: 16px;
+          color: #242424;
+          display: block;
+          width: 100%;
+          height: 33px;
+          padding: 5px 15px;
+          border-bottom: 1px solid #cccccc;
+        }
+
+        mwc-list {
+          padding: 0;
+          margin: 0;
+        }
+      `
     ];
   }
 
@@ -75,6 +82,12 @@ export default class BackendAiTaskView extends BackendAIPage {
     switch (type) {
       case "session":
         return 'subject';
+        break;
+      case "database":
+        return 'dns';
+        break;
+      case "image":
+        return 'extension';
         break;
       case "general":
       default:
@@ -92,9 +105,9 @@ export default class BackendAiTaskView extends BackendAIPage {
         ${this.tasks.map(item =>
       html`
           <mwc-list-item graphic="icon" twoline>
-            <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg green">${this._taskIcon(item.tasktype)}</mwc-icon>
+            <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg black">${this._taskIcon(item.tasktype)}</mwc-icon>
             <span>${item.tasktitle}</span>
-            <span slot="secondary">${item.taskid}</span>
+            <span slot="secondary">${_t("sidepanel.Running")}</span>
           </mwc-list-item>
           <li divider role="separator"></li>`)}
           ${this.tasks.length === 0 ? html`
