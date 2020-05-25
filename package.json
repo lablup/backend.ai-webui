@@ -7,7 +7,7 @@
   "main": "main.js",
   "scripts": {
     "lint": "eslint *.js",
-    "test": "node ./src/wsproxy/local_proxy.js",
+    "test": "./node_modules/testcafe/bin/testcafe-with-v8-flag-filter.js chrome ./tests/*.js",
     "wsproxy": "node ./src/wsproxy/local_proxy.js",
     "build": "rm -rf build/rollup && mkdir -p build/rollup/src/components && npm run copyindex && npm run copywc && npm run copywa && npm run copyresource && npm run copyconfig && rollup -c rollup.config.ts",
     "server:p": "./node_modules/serve/bin/serve.js build/rollup",
@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@material/mwc-button": "^0.15.0",
+    "@material/mwc-dialog": "^0.15.0",
     "@material/mwc-drawer": "^0.15.0",
     "@material/mwc-formfield": "^0.15.0",
     "@material/mwc-icon-button": "^0.15.0",

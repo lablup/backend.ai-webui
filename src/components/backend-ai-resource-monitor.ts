@@ -926,7 +926,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
 
     const createSessionQueue = sessions.map(item => {
-      return this._createKernel(item.kernelName, item.sessionName, item.config);
+      //return this._createKernel(item.kernelName, item.sessionName, item.config);
+      return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
     });
     Promise.all(createSessionQueue).then((res) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
@@ -1541,6 +1542,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     } else {
       this.metric_updating = true;
       await this._aggregateResourceUse('update-metric');
+      await this._updateVirtualFolderList();
       // Resource limitation is not loaded yet.
       if (Object.keys(this.resourceLimits).length === 0) {
         this.metric_updating = false;
@@ -1560,7 +1562,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.metric_updating = false;
         return;
       }
-      await this._updateVirtualFolderList();
       let available_slot = this.available_slot;
 
       // Post-UI markup to disable unchangeable values
