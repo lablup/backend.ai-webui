@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
+import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import '../plastics/mwc/mwc-drawer';
 import '@material/mwc-dialog';
@@ -11,6 +11,13 @@ import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 
 import {BackendAIPage} from './backend-ai-page';
+import {BackendAiConsoleStyles} from './backend-ai-console-styles';
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning
+} from "../plastics/layout/iron-flex-layout-classes";
 
 /**
  Backend.AI Task viewer for Console
@@ -39,9 +46,22 @@ export default class BackendAiTaskView extends BackendAIPage {
 
   static get styles() {
     return [
-      // language=CSS
+      BackendAiConsoleStyles,
+      IronFlex,
+      IronFlexAlignment,
+      IronFlexFactors,
+      IronPositioning,
       css`
-      `];
+      h3 {
+        font-size:16px;
+        color: #242424;
+        display: block;
+        width: 100%;
+        height: 33px;
+        padding: 5px 15px;
+        border-bottom: 1px solid #ccc;
+      }`
+    ];
   }
 
   async _viewStateChanged(active: boolean) {
@@ -55,6 +75,7 @@ export default class BackendAiTaskView extends BackendAIPage {
     // language=HTML
     return html`
       <div id="container">
+        <h3>${_t("sidepanel.BackgroundTasks")}</h3>
         <mwc-list>
         ${this.tasks.map(item =>
       html`
@@ -66,7 +87,7 @@ export default class BackendAiTaskView extends BackendAIPage {
           <li divider role="separator"></li>`)}
           ${this.tasks.length === 0 ? html`
             <div style="padding:15px 0;width:100%;text-align:center;">
-              No background task.
+              ${_t("sidepanel.NoBackgroundTask")}
             </div>
         ` : html``}
         </mwc-list>

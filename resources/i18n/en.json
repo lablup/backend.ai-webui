@@ -594,5 +594,9 @@
   },
   "update": {
     "NewConsoleVersionAvailable": "New version is available:"
+  },
+  "sidepanel": {
+    "BackgroundTasks": "Background Tasks",
+    "NoBackgroundTask": "No Background Task."
   }
 }
