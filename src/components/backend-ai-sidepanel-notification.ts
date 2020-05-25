@@ -22,19 +22,19 @@ import {
 /**
  Backend.AI Task viewer for Console
 
- `backend-ai-task-view` is a background task view for console.
+ `backend-ai-sidepanel-notification` is a background task view for console.
 
  Example:
  @group Backend.AI Console
  @element backend-ai-view
  */
-@customElement("backend-ai-task-view")
-export default class BackendAiTaskView extends BackendAIPage {
+@customElement("backend-ai-sidepanel-notification")
+export default class BackendAiSidepanelNotification extends BackendAIPage {
   public shadowRoot: any;
   public updateComplete: any;
 
   @property({type: Boolean}) active = true;
-  @property({type: Array}) tasks = Array();
+  @property({type: Array}) notifications = Array();
 
   /**
    *  Backend.AI Task manager for Console
@@ -78,41 +78,22 @@ export default class BackendAiTaskView extends BackendAIPage {
     }
   }
 
-  _taskIcon(type) {
-    switch (type) {
-      case "session":
-        return 'subject';
-        break;
-      case "database":
-        return 'dns';
-        break;
-      case "image":
-        return 'extension';
-        break;
-      case "general":
-      default:
-        return 'widget';
-        break;
-    }
-  }
-
   render() {
     // language=HTML
     return html`
       <div id="container">
-        <h3>${_t("sidepanel.BackgroundTasks")}</h3>
+        <h3>${_t("sidepanel.Notification")}</h3>
         <mwc-list>
-        ${this.tasks.map(item =>
+        ${this.notifications.map(item =>
       html`
-          <mwc-list-item graphic="icon" twoline>
-            <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg black">${this._taskIcon(item.tasktype)}</mwc-icon>
-            <span>${item.tasktitle}</span>
-            <span slot="secondary">${_t("sidepanel.Running")}</span>
+          <mwc-list-item twoline>
+            <span>${item.outerText}</span>
+            <span slot="secondary">${item.getAttribute('created')}</span>
           </mwc-list-item>
           <li divider role="separator"></li>`)}
-          ${this.tasks.length === 0 ? html`
+          ${this.notifications.length === 0 ? html`
             <div style="padding:15px 0;width:100%;text-align:center;">
-              ${_t("sidepanel.NoBackgroundTask")}
+              ${_t("sidepanel.NoNotification")}
             </div>
         ` : html``}
         </mwc-list>
@@ -125,8 +106,8 @@ export default class BackendAiTaskView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.tasks = [];
-    document.addEventListener('backend-ai-task-changed', () => this.refresh());
+    this.notifications = globalThis.lablupNotification.notifications;
+    document.addEventListener('backend-ai-notification-changed', () => this.refresh());
   }
 
   connectedCallback() {
@@ -138,13 +119,13 @@ export default class BackendAiTaskView extends BackendAIPage {
   }
 
   async refresh() {
-    this.tasks = globalThis.tasker.taskstore;
+    this.notifications = globalThis.lablupNotification.notifications;
     await this.requestUpdate();
   }
 
 }
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-task-view": BackendAiTaskView;
+    "backend-ai-sidepanel-notification": BackendAiSidepanelNotification;
   }
 }

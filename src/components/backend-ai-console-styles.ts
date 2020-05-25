@@ -142,6 +142,14 @@ export const BackendAiConsoleStyles = [
       display: block;
     }
 
+    .sidepanel {
+      display: none;
+    }
+
+    .sidepanel[active] {
+      display: block;
+    }
+
     #content-body {
       background-color: #ffffff;
       color: var(--general-sidepanel-color, #fafafa);

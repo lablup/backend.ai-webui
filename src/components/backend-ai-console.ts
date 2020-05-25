@@ -32,7 +32,8 @@ import './backend-ai-help-button';
 import './lablup-notification';
 import './backend-ai-indicator-pool';
 import './lablup-terms-of-service';
-import './backend-ai-task-view';
+import './backend-ai-sidepanel-task';
+import './backend-ai-sidepanel-notification';
 
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 import '../lib/backend.ai-client-es6';
@@ -349,8 +350,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _openSidePanel(panel) {
-    this._sidepanel = panel;
-    this.toggleSidePanelUI();
+    if (this.contentBody.open === true && panel != this._sidepanel) { // change panel only.
+      this._sidepanel = panel;
+    } else {
+      this._sidepanel = panel;
+      this.toggleSidePanelUI();
+    }
   }
 
   _changeDrawerLayout(width, height) {
@@ -785,7 +790,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <div class="horizontal start-justified center layout flex" style="max-height:40px;">
             <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;margin-left:4px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
             <mwc-icon-button disabled class="full-menu side-menu fg white" id="feedback-icon" icon="question_answer" slot="graphic"></mwc-icon-button>
-            <mwc-icon-button disabled class="full-menu side-menu fg white" id="notification-icon" icon="notification_important" slot="graphic"></mwc-icon-button>
+            <mwc-icon-button class="full-menu side-menu fg white" id="notification-icon" icon="notification_important" slot="graphic" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg white" id="task-icon" icon="ballot" slot="graphic" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
@@ -873,7 +878,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         <div slot="appContent">
           <mwc-drawer id="content-body" style="height:100vh;">
             <div>
-              <backend-ai-task-view ?active="${this._sidepanel === 'task'}"></backend-ai-task-view>
+              <backend-ai-sidepanel-notification class="sidepanel" ?active="${this._sidepanel === 'notification'}"></backend-ai-sidepanel-notification>
+              <backend-ai-sidepanel-task class="sidepanel" ?active="${this._sidepanel === 'task'}"></backend-ai-sidepanel-task>
             </div>
             <div slot="appContent">
               <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
