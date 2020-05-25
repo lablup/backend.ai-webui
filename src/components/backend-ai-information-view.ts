@@ -211,12 +211,11 @@ export default class BackendAiInformationView extends BackendAIPage {
     this.pgsql_version = _text('information.Compatible');
     this.redis_version = _text('information.Compatible');
     this.etcd_version = _text('information.Compatible');
-    if (location.protocol !== 'https:') {
-      this.use_ssl = false;
-    } else {
+    if (globalThis.backendaiclient._config.endpoint.startsWith('https:')) {
       this.use_ssl = true;
+    } else {
+      this.use_ssl = false;
     }
-    console.log(this.use_ssl);
   }
 }
 
