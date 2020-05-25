@@ -177,7 +177,7 @@ export default class BackendAiInformationView extends BackendAIPage {
               </div>
             </div>
             <div class="vertical center-justified layout">
-            ${this.use_ssl ? html`<wl-icon>done</wl-icon>` : html`<wl-icon>warning</wl-icon>`}
+            ${this.use_ssl ? html`<wl-icon>done</wl-icon>` : html`<wl-icon class="fg red">warning</wl-icon>`}
             </div>
           </div>
         </div>
@@ -211,6 +211,12 @@ export default class BackendAiInformationView extends BackendAIPage {
     this.pgsql_version = _text('information.Compatible');
     this.redis_version = _text('information.Compatible');
     this.etcd_version = _text('information.Compatible');
+    if (location.protocol !== 'https:') {
+      this.use_ssl = false;
+    } else {
+      this.use_ssl = true;
+    }
+    console.log(this.use_ssl);
   }
 }
 
