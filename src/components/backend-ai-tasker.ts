@@ -48,6 +48,7 @@ export default class BackendAiTasker extends LitElement {
   @property({type: Array}) finished;
   @property({type: Object}) pooler;
   @property({type: Boolean}) active = true;
+  @property({type: Boolean}) isGCworking = false;
 
   /**
    *  Backend.AI Task manager for Console
@@ -103,7 +104,8 @@ export default class BackendAiTasker extends LitElement {
     let item = new Task(title, task, taskid, tasktype);
     if (task != null && typeof task.then === 'function') { // For Promise type task
       task.then(() => {
-          this.finished.push(taskid);
+        this.finished.push(taskid);
+        this.gc();
         }
       );
     } else { // For function type task (not supported yet)
@@ -162,11 +164,16 @@ export default class BackendAiTasker extends LitElement {
    *
    */
   async gc() {
+    if (this.isGCworking) {
+      return;
+    }
+    this.isGCworking = true;
     if (this.finished.length > 0) {
       this.finished.forEach((item) => {
         this.remove(item);
       });
     }
+    this.isGCworking = false;
   }
 
   signal() {
