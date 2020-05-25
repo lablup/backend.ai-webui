@@ -58,7 +58,7 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
           color: #242424;
           display: block;
           width: 100%;
-          height: 33px;
+          height: 25px;
           padding: 5px 15px;
           border-bottom: 1px solid #cccccc;
         }
