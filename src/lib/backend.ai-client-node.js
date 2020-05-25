@@ -139,6 +139,7 @@ class Client {
         this.setting = new Setting(this);
         this.userConfig = new UserConfig(this);
         this.domain = new Domain(this);
+        this.cloud = new Cloud(this);
         this._features = {}; // feature support list
         this.abortController = new AbortController();
         this.abortSignal = this.abortController.signal;
@@ -2657,6 +2658,44 @@ class UserConfig {
             "path": path
         };
         const rqst = this.client.newSignedRequest("DELETE", "/user-config/dotfiles", params);
+        return this.client._wrapWithPromise(rqst);
+    }
+}
+class Cloud {
+    /**
+     * Setting API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+        this.config = null;
+    }
+    /**
+     * Check if cloud endpoint is available.
+     */
+    ping() {
+        const rqst = this.client.newSignedRequest('GET', '/cloud/ping');
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Verify signup email by JWT token.
+     *
+     * @param {string} token - JWT token which is delivered to user's email.
+     */
+    verify_email(token) {
+        const body = { "verification_code": token };
+        const rqst = this.client.newSignedRequest("POST", "/cloud/verify-email", body);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Send verification email.
+     *
+     * @param {string} email - user's email.
+     */
+    send_verification_email(email) {
+        const body = { email };
+        const rqst = this.client.newSignedRequest("POST", "/cloud/send-verification-email", body);
         return this.client._wrapWithPromise(rqst);
     }
 }
