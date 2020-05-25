@@ -240,6 +240,9 @@ export default class BackendAiSignup extends BackendAIPage {
       this.notification.show();
       setTimeout(() => {
         this.signupPanel.hide();
+        if (response.verification_email_sent) {
+          this.shadowRoot.querySelector('#email-sent-dialog').show();
+        }
       }, 1000);
     }).catch((e) => {
       if (e.message) {
@@ -317,6 +320,15 @@ export default class BackendAiSignup extends BackendAIPage {
           ${this.errorMsg}
           </div>
         </wl-card>
+      </wl-dialog>
+      <wl-dialog id="email-sent-dialog" fixed backdrop blockscrolling persistent>
+        <wl-card>
+          <h3>${_t("signup.ThankYou")}</h3>
+          <div style="max-width:350px">${_t("signup.VerificationMessage")}</div>
+        </wl-card>
+        <div slot="footer">
+          <wl-button class="ok" @click="${(e) => {e.target.closest('wl-dialog').hide()}}">${_t("button.Okay")}</wl-button>
+        </div>
       </wl-dialog>
       <lablup-terms-of-service id="terms-of-service"></lablup-terms-of-service>
     `;
