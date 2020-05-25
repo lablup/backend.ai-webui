@@ -148,12 +148,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     let configPath;
     if (globalThis.isElectron) {
       configPath = './config.toml';
-      document.addEventListener('backend-ai-logout', this.logout.bind(this, true));
-      document.addEventListener('backend-ai-app-close', this.close_app_window.bind(this, true));
-      document.addEventListener('backend-ai-show-splash', this.splash.show.bind(this));
+      document.addEventListener('backend-ai-logout', ()=> this.logout(true));
+      document.addEventListener('backend-ai-app-close', ()=> this.close_app_window(true));
+      document.addEventListener('backend-ai-show-splash', ()=> this.splash.show());
     } else {
       configPath = '../../config.toml';
-      document.addEventListener('backend-ai-logout', this.logout.bind(this, false));
+      document.addEventListener('backend-ai-logout', ()=>this.logout(false));
     }
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
@@ -184,7 +184,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   async connectedCallback() {
     super.connectedCallback();
-    document.addEventListener('backend-ai-connected', this.refreshPage.bind(this));
+    document.addEventListener('backend-ai-connected', ()=>this.refreshPage());
     if (globalThis.backendaioptions.get('language') === "default" && this.supportLanguageCodes.includes(globalThis.navigator.language)) { // Language is not set and
       this.lang = globalThis.navigator.language;
     } else if (this.supportLanguageCodes.includes(globalThis.backendaioptions.get('language'))) {
@@ -198,7 +198,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   disconnectedCallback() {
-    document.removeEventListener('backend-ai-connected', this.refreshPage.bind(this));
+    document.removeEventListener('backend-ai-connected', ()=>this.refreshPage());
     super.disconnectedCallback();
   }
 
@@ -406,7 +406,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     select.value = this.current_group;
     //select.setAttribute('naturalMenuWidth', 'true');
     select.setAttribute('fullwidth', 'true');
-    select.addEventListener('selected', this.changeGroup.bind(this));
+    select.addEventListener('selected', (e)=>this.changeGroup(e));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
     opt.innerHTML = _text("console.menu.SelectProject");
