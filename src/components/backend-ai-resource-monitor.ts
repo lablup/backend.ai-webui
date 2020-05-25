@@ -926,7 +926,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
 
     const createSessionQueue = sessions.map(item => {
-      return this._createKernel(item.kernelName, item.sessionName, item.config);
+      //return this._createKernel(item.kernelName, item.sessionName, item.config);
+      return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
     });
     Promise.all(createSessionQueue).then((res) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();

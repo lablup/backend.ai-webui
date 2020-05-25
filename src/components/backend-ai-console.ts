@@ -16,6 +16,7 @@ import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
+import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu';
 
@@ -31,6 +32,7 @@ import './backend-ai-help-button';
 import './lablup-notification';
 import './backend-ai-indicator-pool';
 import './lablup-terms-of-service';
+import './backend-ai-task-view';
 
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 import '../lib/backend.ai-client-es6';
@@ -94,12 +96,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) splash = Object();
   @property({type: Object}) loginPanel = Object();
   @property({type: String}) _page = '';
+  @property({type: String}) _sidepanel = '';
   @property({type: Boolean}) _drawerOpened = false;
   @property({type: Boolean}) _offlineIndicatorOpened = false;
   @property({type: Boolean}) _offline = false;
   @property({type: Object}) config = Object();
   @property({type: Object}) appBody;
   @property({type: Object}) appPage;
+  @property({type: Object}) contentBody;
   @property({type: Object}) mainToolbar;
   @property({type: Object}) drawerToggleButton;
   @property({type: Object}) sidebarMenu;
@@ -127,7 +131,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.appPage = this.shadowRoot.querySelector('#app-page');
+    this.contentBody = this.shadowRoot.querySelector('#content-body');
+    this.contentBody.type = 'dismissible';
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
+    //this.mainToolbar.scrollTarget = this.appPage;
     this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
     this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
     this.splash = this.shadowRoot.querySelector('#about-panel');
@@ -314,7 +321,40 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
   }
 
+  toggleSidePanelUI() {
+    if (this.contentBody.open) {
+      this.contentBody.open = false;
+      if (this.mini_ui) {
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '54px');// 54
+      } else {
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');// 190
+      }
+    } else {
+      this.contentBody.open = true;
+      this.contentBody.style.setProperty('--mdc-drawer-width', '250px');
+      if (this.mini_ui) {
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '304px');// 54+250
+      } else {
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '440px');// 190+250
+      }
+    }
+  }
+
+  toggleSidePanelType() {
+    if (this.contentBody.type === 'dismissible') {
+      this.contentBody.type === 'modal';
+    } else {
+      this.contentBody.type === 'dismissible';
+    }
+  }
+
+  _openSidePanel(panel) {
+    this._sidepanel = panel;
+    this.toggleSidePanelUI();
+  }
+
   _changeDrawerLayout(width, height) {
+    this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
     if (width < 700) {  // Close drawer
       this.appBody.style.setProperty('--mdc-drawer-width', '190px');
       this.appBody.type = 'modal';
@@ -329,13 +369,22 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (this.mini_ui) {
         this.appBody.style.setProperty('--mdc-drawer-width', '54px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', '54px');
+        if (this.contentBody.open) {
+          this.mainToolbar.style.setProperty('--mdc-drawer-width', '304px');// 54+250
+        }
       } else {
         this.appBody.style.setProperty('--mdc-drawer-width', '190px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
+        if (this.contentBody.open) {
+          this.mainToolbar.style.setProperty('--mdc-drawer-width', '440px'); // 190+250
+        }
       }
       this.appBody.type = 'dismissible';
       this.appBody.open = true;
       this.drawerToggleButton.style.display = 'none';
+    }
+    if (this.contentBody.open) {
+      this.contentBody.style.setProperty('--mdc-drawer-width', '250px');
     }
   }
 
@@ -737,7 +786,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;margin-left:4px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
             <mwc-icon-button disabled class="full-menu side-menu fg white" id="feedback-icon" icon="question_answer" slot="graphic"></mwc-icon-button>
             <mwc-icon-button disabled class="full-menu side-menu fg white" id="notification-icon" icon="notification_important" slot="graphic"></mwc-icon-button>
-            <mwc-icon-button disabled class="full-menu side-menu fg white" id="task-icon" icon="ballot" slot="graphic"></mwc-icon-button>
+            <mwc-icon-button class="full-menu side-menu fg white" id="task-icon" icon="ballot" slot="graphic" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
@@ -821,91 +870,98 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button disabled id="admin-menu-icon" icon="settings" slot="graphic" class="fg white" style="margin-left:4px;"></mwc-icon-button>
           </div>
         </div>
-        <div id="mini-tooltips" class="mini-menu">
-          <wl-popover anchor="#mini-ui-toggle-button" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
-             anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-            <wl-popover-card>
-              <div style="padding:5px">
-                <mwc-icon-button disabled class="side-menu fg black" id="feedback-icon-popover" icon="question_answer" slot="graphic"></mwc-icon-button>
-                <mwc-icon-button disabled class="side-menu fg black" id="notification-icon-popover" icon="notification_important" slot="graphic"></mwc-icon-button>
-                <mwc-icon-button disabled class="side-menu fg black" id="task-icon-popover" icon="ballot" slot="graphic"></mwc-icon-button>
-              </div>
-            </wl-popover-card>
-          </wl-popover>
-        </div>
         <div slot="appContent">
-          <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
-            <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
-            <h2 style="font-size:24px!important;" slot="title">${this.menuTitle}</h2>
-            <div slot="actionItems">
-              <div id="group-select-box" style="height:48px;"></div>
+          <mwc-drawer id="content-body" style="height:100vh;">
+            <div>
+              <backend-ai-task-view ?active="${this._sidepanel === 'task'}"></backend-ai-task-view>
             </div>
-            <div slot="actionItems">
-              <div class="vertical center-justified flex layout" style="height:48px;">
-                <span class="email" style="font-size: 11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;">${_t("console.menu.UserName")}</span>
-                <span class="full_name" style="font-size: 14px;text-align:right;-webkit-font-smoothing:antialiased;">${this.full_name}</span>
-                <!--<div style="font-size: 12px;text-align:right">${this.domain !== 'default' && this.domain !== '' ? html`${this.domain}` : html``}</div>-->
-              </div>
-            </div>
-            <mwc-icon-button slot="actionItems" id="dropdown-button" style="margin-top:4px;"
-                             icon="more_vert"
-                             @click="${() => this._toggleDropdown()}">
-            </mwc-icon-button>
-            <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=55>
-              ${this.domain !== 'default' && this.domain !== '' ? html`
-              <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                  ${this.domain}
-              </mwc-list-item>
-              ` : html``}
-              <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                  ${this.user_id}
-              </mwc-list-item>
-              <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
-                  <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
-                  ${_t("console.menu.About")}
-              </mwc-list-item>
-              <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
-                  <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
-                  ${_t("console.menu.ChangePassword")}
-              </mwc-list-item>
-              <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
-                  <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
-                  ${_t("console.menu.Preferences")}
-              </mwc-list-item>
-              <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
-                  <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
-                  ${_t("console.menu.LogsErrors")}
-              </mwc-list-item>
-              <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
-                  <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
-                  ${_t("console.menu.LogOut")}
-              </mwc-list-item>
-            </mwc-menu>
-          </mwc-top-app-bar-fixed>
+            <div slot="appContent">
+              <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
+                <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
+                <h2 style="font-size:24px!important;" slot="title">${this.menuTitle}</h2>
+                <div slot="actionItems">
+                  <div id="group-select-box" style="height:48px;"></div>
+                </div>
+                <div slot="actionItems">
+                  <div class="vertical center-justified flex layout" style="height:48px;">
+                    <span class="email" style="font-size: 11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;">${_t("console.menu.UserName")}</span>
+                    <span class="full_name" style="font-size: 14px;text-align:right;-webkit-font-smoothing:antialiased;">${this.full_name}</span>
+                    <!--<div style="font-size: 12px;text-align:right">${this.domain !== 'default' && this.domain !== '' ? html`${this.domain}` : html``}</div>-->
+                  </div>
+                </div>
+                <mwc-icon-button slot="actionItems" id="dropdown-button" style="margin-top:4px;"
+                                 icon="more_vert"
+                                 @click="${() => this._toggleDropdown()}">
+                </mwc-icon-button>
+                <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=55>
+                  ${this.domain !== 'default' && this.domain !== '' ? html`
+                  <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+                      ${this.domain}
+                  </mwc-list-item>
+                  ` : html``}
+                  <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+                      ${this.user_id}
+                  </mwc-list-item>
+                  <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
+                      <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
+                      ${_t("console.menu.About")}
+                  </mwc-list-item>
+                  <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
+                      <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
+                      ${_t("console.menu.ChangePassword")}
+                  </mwc-list-item>
+                  <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
+                      <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
+                      ${_t("console.menu.Preferences")}
+                  </mwc-list-item>
+                  <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
+                      <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
+                      ${_t("console.menu.LogsErrors")}
+                  </mwc-list-item>
+                  <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
+                      <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
+                      ${_t("console.menu.LogOut")}
+                  </mwc-list-item>
+                </mwc-menu>
+              </mwc-top-app-bar-fixed>
 
-          <div class="content">
-            <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
-            <section role="main" id="content" class="container layout vertical center">
-              <div id="app-page">
-                <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-summary-view>
-                <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-session-view>
-                <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-experiment-view>
-                <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usersettings-view>
-                <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-credential-view>
-                <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-agent-view>
-                <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-data-view>
-                <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-environment-view>
-                <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-settings-view>
-                <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
-                <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-information-view>
-                <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
-                <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-email-verification-view>
-                <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-error-view>
+              <div class="content">
+                <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
+                <section role="main" id="content" class="container layout vertical center">
+                  <div id="app-page">
+                    <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-summary-view>
+                    <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-session-view>
+                    <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-experiment-view>
+                    <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usersettings-view>
+                    <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-credential-view>
+                    <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-agent-view>
+                    <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-data-view>
+                    <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-environment-view>
+                    <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-settings-view>
+                    <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
+                    <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-information-view>
+                    <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
+                    <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-email-verification-view>
+                    <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-error-view>
+                  </div>
+                </section>
               </div>
-            </section>
-          </div>
+            </div>
+          </mwc-drawer>
         </div>
       </mwc-drawer>
+      <div id="mini-tooltips" style="display:${this.mini_ui ? "block" : "none"};">
+        <wl-popover anchor="#mini-ui-toggle-button" .anchorOpenEvents="${["mouseover"]}" fixed disablefocustrap
+           anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
+          <wl-popover-card>
+            <div style="padding:5px">
+              <mwc-icon-button disabled class="side-menu fg black" id="feedback-icon-popover" icon="question_answer" slot="graphic"></mwc-icon-button>
+              <mwc-icon-button disabled class="side-menu fg black" id="notification-icon-popover" icon="notification_important" slot="graphic"></mwc-icon-button>
+              <mwc-icon-button class="side-menu fg black" id="task-icon-popover" icon="ballot" slot="graphic" @click="${() => this.toggleSidePanelUI()}"></mwc-icon-button>
+            </div>
+          </wl-popover-card>
+        </wl-popover>
+      </div>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         ${this._offline ? _t("console.YouAreOffline") : _t("console.YouAreOnline")}.
       </backend-ai-offline-indicator>
@@ -915,16 +971,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
       <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
-       <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>
-       <div slot="content">
-        <wl-textfield id="pref-original-password" type="password" label="${_t("console.menu.OriginalPassword")}" maxLength="30"></wl-textfield>
-        <wl-textfield id="pref-new-password" type="password" label="${_t("console.menu.NewPassword")}" maxLength="30"></wl-textfield>
-        <wl-textfield id="pref-new-password2" type="password" label="${_t("console.menu.NewPasswordAgain")}" maxLength="30"></wl-textfield>
-       </div>
-       <div slot="footer">
-        <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>
-        <wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>
-       </div>
+        <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>
+        <div slot="content">
+          <wl-textfield id="pref-original-password" type="password" label="${_t("console.menu.OriginalPassword")}" maxLength="30"></wl-textfield>
+          <wl-textfield id="pref-new-password" type="password" label="${_t("console.menu.NewPassword")}" maxLength="30"></wl-textfield>
+          <wl-textfield id="pref-new-password2" type="password" label="${_t("console.menu.NewPasswordAgain")}" maxLength="30"></wl-textfield>
+        </div>
+        <div slot="footer">
+          <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>
+          <wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>
+        </div>
       </wl-dialog>
     `;
   }

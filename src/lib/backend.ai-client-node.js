@@ -626,7 +626,7 @@ class Client {
         else {
             rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
         }
-        return this._wrapWithPromise(rqst);
+        //return this._wrapWithPromise(rqst);
         return this._wrapWithPromise(rqst, false, null, timeout);
     }
     /**
