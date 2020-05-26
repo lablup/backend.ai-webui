@@ -157,8 +157,14 @@ export const BackendAiConsoleStyles = [
     }
 
     .sidepanel-drawer {
-      border-right: 1px solid #ccc;
+      border-right: 1px solid #cccccc;
       height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overflow: -moz-scrollbars-none;
+      -ms-overflow-style: none;
+      will-change: transform;
     }
 
     wl-progress-spinner {
@@ -312,6 +318,10 @@ export const BackendAiConsoleStyles = [
 
     #portrait-bar {
       height: 48px;
+    }
+
+    #content-body {
+      height: 100vh;
     }
 
     #main-toolbar {

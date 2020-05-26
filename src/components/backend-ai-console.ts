@@ -876,7 +876,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </div>
         </div>
         <div slot="appContent">
-          <mwc-drawer id="content-body" style="height:100vh;">
+          <mwc-drawer id="content-body">
             <div class="sidepanel-drawer">
               <backend-ai-sidepanel-notification class="sidepanel" ?active="${this._sidepanel === 'notification'}"></backend-ai-sidepanel-notification>
               <backend-ai-sidepanel-task class="sidepanel" ?active="${this._sidepanel === 'task'}"></backend-ai-sidepanel-task>
