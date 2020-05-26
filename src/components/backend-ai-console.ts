@@ -350,9 +350,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _openSidePanel(panel) {
-    if (this.contentBody.open === true && panel != this._sidepanel) { // change panel only.
-      this._sidepanel = panel;
-    } else {
+    if (this.contentBody.open === true) {
+      if (panel != this._sidepanel) { // change panel only.
+        this._sidepanel = panel;
+      } else { // just close panel. (disable icon amp.)
+        this._sidepanel = '';
+        this.toggleSidePanelUI();
+      }
+    } else { // open new panel.
       this._sidepanel = panel;
       this.toggleSidePanelUI();
     }
