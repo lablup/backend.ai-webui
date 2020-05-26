@@ -590,9 +590,26 @@
     "Signup": "Signup",
     "InvitationToken": "Invitation Token",
     "TermsOfService": "Terms of service",
-    "PrivacyPolicy": "Privacy Policy"
+    "PrivacyPolicy": "Privacy Policy",
+    "ThankYou": "Thank you!",
+    "VerificationMessage": "Verification email is sent to your email address. Please read and follow the steps specified in the email before login with your account.",
+    "EmailVerified": "Email verified",
+    "EmailVerifiedMessage": "Your email is verified! Now you can login with your account.",
+    "EmailVerificationFailed": "Email verification failed",
+    "EmailVerificationFailedMessage": "We're unable to verify your email. Your token may be invalid or expired. Write your email address and click send button to get new verification code.",
+    "InvalidEmail": "Invalid email address",
+    "SendEmail": "Send verification email",
+    "EmailSent": "Email sent",
+    "EmailNotSent": "Unable to send email"
   },
   "update": {
     "NewConsoleVersionAvailable": "New version is available:"
+  },
+  "sidepanel": {
+    "BackgroundTasks": "Running Tasks",
+    "NoBackgroundTask": "No Task.",
+    "Running": "Running...",
+    "Notification": "Notification",
+    "NoNotification": "No Notification."
   }
 }

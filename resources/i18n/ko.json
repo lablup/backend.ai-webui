@@ -588,9 +588,26 @@
     "Signup": "가입",
     "InvitationToken": "초대 토큰",
     "TermsOfService": "약관",
-    "PrivacyPolicy": "개인정보보호정책"
+    "PrivacyPolicy": "개인정보보호정책",
+    "ThankYou": "감사합니다!",
+    "VerificationMessage": "인증 메일을 전송했습니다. 가입하신 계정으로 로그인 하기 전에 전송된 메일을 읽고 인증을 완료해 주십시오.",
+    "EmailVerified": "이메일이 인증되었습니다",
+    "EmailVerifiedMessage": "이메일 인증이 완료되었습니다. 가입하신 계정으로 로그인 하실 수 있습니다.",
+    "EmailVerificationFailed": "이메일 인증에 실패했습니다",
+    "EmailVerificationFailedMessage": "이메일을 인증할 수 없습니다. 인증 토큰에 문제가 있거나 만료되었을 가능성이 있습니다. 이메일을 입력하고 버튼을 클릭하면 새로운 인증 링크를 받을 수 있습니다.",
+    "InvalidEmail": "정상적인 이메일 주소가 아닙니다",
+    "SendEmail": "인증 메일 전송",
+    "EmailSent": "이메일을 보냈습니다",
+    "EmailNotSent": "이메일을 보내는 데 실패했습니다"
   },
   "update": {
     "NewConsoleVersionAvailable": "새 버전이 출시되었습니다:"
+  },
+  "sidepanel": {
+    "BackgroundTasks": "작업",
+    "NoBackgroundTask": "실행중인 작업이 없습니다.",
+    "Running": "실행중...",
+    "Notification": "알림",
+    "NoNotification": "알림이 없습니다."
   }
 }

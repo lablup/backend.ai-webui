@@ -111,6 +111,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Number}) mem_request;
   @property({type: Number}) shmem_request;
   @property({type: Number}) gpu_request;
+  @property({type: String}) gpu_request_type;
   @property({type: Number}) session_request;
   @property({type: Boolean}) _status;
   @property({type: Number}) num_sessions;
@@ -132,6 +133,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) project_resource_monitor = false;
   @property({type: Object}) version_selector = Object();
   @property({type: Boolean}) _default_language_updated = false;
+  @property({type: Boolean}) _default_version_updated = false;
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
@@ -527,6 +529,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.mem_request = 1;
     this.shmem_request = 0.0625;
     this.gpu_request = 0;
+    this.gpu_request_type = 'cuda.device';
     this.session_request = 1;
     this.scaling_groups = [{name: ''}]; // if there is no scaling group, set the name as empty string
     this.scaling_group = '';
@@ -786,8 +789,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.text = 'Please wait while initializing...';
       this.notification.show();
     } else {
-      this.selectDefaultLanguage();
-      await this.updateResourceAllocationPane('launch session dialog');
+      await this.selectDefaultLanguage();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
       if (gpu_resource.value > 0) {
@@ -873,12 +875,21 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
     }
     config['cpu'] = this.cpu_request;
-    if (this.gpu_mode == 'cuda.shares') {
-      config['cuda.shares'] = this.gpu_request;
-    } else {
-      config['cuda.device'] = this.gpu_request;
+    switch (this.gpu_request_type) {
+      case 'cuda.shares':
+        config['cuda.shares'] = this.gpu_request;
+        break;
+      case 'cuda.device':
+        config['cuda.device'] = this.gpu_request;
+        break;
+      case 'rocm.device':
+        config['rocm.device'] = this.gpu_request;
+        break;
+      case 'tpu.device':
+        config['tpu.device'] = this.gpu_request;
+        break;
+      default:
     }
-
     if (String(this.shadowRoot.querySelector('#mem-resource').value) === "Infinity") {
       config['mem'] = String(this.shadowRoot.querySelector('#mem-resource').value);
     } else {
@@ -926,7 +937,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
 
     const createSessionQueue = sessions.map(item => {
-      return this._createKernel(item.kernelName, item.sessionName, item.config);
+      console.log(item.config);
+      //return this._createKernel(item.kernelName, item.sessionName, item.config);
+      return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
     });
     Promise.all(createSessionQueue).then((res) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
@@ -1183,6 +1196,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         // updateResourceAllocationPane method. Without this, LAUNCH button's disabled state is not
         // updated, so in some cases, user cannot launch a session even though
         // there are available resources for the selected image.
+        this.version_selector.select(1);
         this.version_selector.value = this.versions[0];
         this.version_selector.selectedText = this.version_selector.value;
         this.version_selector.disabled = false;
@@ -1528,7 +1542,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       });
     }
     let selectedItem = this.shadowRoot.querySelector('#environment').selected;
-    let selectedVersionItem = this.shadowRoot.querySelector('#version').selected;
+    let selectedVersionItem = this.version_selector.selected;
     // Pulldown is not ready yet.
     if (selectedVersionItem === null) {
       this.metric_updating = false;
@@ -1551,6 +1565,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       await this._updateVirtualFolderList();
       // Resource limitation is not loaded yet.
       if (Object.keys(this.resourceLimits).length === 0) {
+        //console.log("No resource limit loaded");
         this.metric_updating = false;
         return;
       }
@@ -1922,7 +1937,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     let gpu_type, gpu_value;
     if ((typeof cuda_gpu !== 'undefined' || typeof cuda_fgpu !== 'undefined')) {
       if (typeof cuda_gpu === 'undefined') { // FGPU
-        gpu_type = 'cuda.share';
+        gpu_type = 'cuda.shares';
         gpu_value = cuda_fgpu;
       } else {
         gpu_type = 'cuda.device';
@@ -1949,19 +1964,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.cpu_request = cpu;
     this.mem_request = mem;
     this.gpu_request = gpu_value;
+    this.gpu_request_type = gpu_type;
   }
 
-  selectDefaultLanguage() {
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._selectDefaultLanguage();
-      }, true);
-    } else {
-      this._selectDefaultLanguage();
-    }
-  }
-
-  _selectDefaultLanguage() {
+  async selectDefaultLanguage() {
     if (this._default_language_updated === true) {
       return;
     }
@@ -1982,14 +1988,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (typeof obj === 'undefined') { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
-        this._selectDefaultLanguage();
+        return this.selectDefaultLanguage();
       }, 500);
-      return true;
+      return Promise.resolve(true);
     }
     let idx = environment.items.indexOf(obj);
     environment.select(idx);
     this._default_language_updated = true;
-    return true;
+    return Promise.resolve(true);
   }
 
   _selectDefaultVersion(version) {

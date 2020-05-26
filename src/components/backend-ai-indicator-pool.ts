@@ -18,7 +18,7 @@ import './backend-ai-indicator';
 
  Example:
  @group Backend.AI Console
- @element backend-ai-tasker
+ @element backend-ai-indicator-pool
  */
 @customElement("backend-ai-indicator-pool")
 export default class BackendAIIndicatorPool extends LitElement {
@@ -54,8 +54,6 @@ export default class BackendAIIndicatorPool extends LitElement {
    */
   async start(mode = 'determinate') {
     this.gc();
-    console.log("cleaned");
-    console.log("start spawn");
     let indicator = document.createElement('backend-ai-indicator');
     indicator.value = 0;
     indicator.text = 'Initializing...';

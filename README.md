@@ -13,7 +13,7 @@ View [changelog](https://github.com/lablup/backend.ai-console/master/CHANGELOG.m
 Backend.AI console focuses to
 
  * Serve as desktop app (windows, macOS and Linux) and web service
- * Provide both basic administration and user mode 
+ * Provide both basic administration and user mode
     * Use CLI for detailed administration features such as domain administation
  * Versatile devices ready such as mobile, tablet and desktop.
  * Built-in websocket proxy feature for apps
@@ -142,7 +142,17 @@ $ npm run build:d # To watch source changes
 $ npm run wsproxy # To run websocket proxy
 ```
 
-### Electron testing
+### Unit Testing
+
+The project uses `testcafe` as testing framework.
+To perform functional tests, you must run complete Backend.AI cluster before starting test.
+
+```
+$ npm run server:d # To run dev. web server
+$ npm run test # Run tests (tests are located in `tests` directory)
+```
+
+### Electron (app mode) development / testing
 
 #### Live testing
 

@@ -164,6 +164,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     let indicator = await this.indicator.start('indeterminate');
     indicator.set(10, 'Scanning...');
     globalThis.tasker.add(
+      _text("maintenance.RescanImages"),
       globalThis.backendaiclient.maintenance.rescan_images().then((response) => {
         this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = _text("maintenance.RescanImages");
         this.scanning = false;
@@ -179,7 +180,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
           this.notification.detail = err.message;
           this.notification.show(true, err);
         }
-      }));
+      }), '', 'image');
   }
 
   async recalculate_usage() {
@@ -188,6 +189,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     let indicator = await this.indicator.start('indeterminate');
     indicator.set(10, 'Recalculating...');
     this.tasker.add(
+      _text('maintenance.RecalculateUsage'),
       globalThis.backendaiclient.maintenance.recalculate_usage().then((response) => {
         this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.RecalculateUsage');
         this.recalculating = false;
@@ -203,7 +205,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
           this.notification.detail = err.message;
           this.notification.show(true, err);
         }
-      }));
+      }), '', 'database');
   }
 }
 

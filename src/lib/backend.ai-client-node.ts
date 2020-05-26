@@ -160,6 +160,7 @@ class Client {
   public registry: Registry;
   public setting: Setting;
   public userConfig: UserConfig;
+  public cloud: Cloud;
   public _features: any;
   public ready: boolean = false;
   public abortController: any;
@@ -213,6 +214,7 @@ class Client {
     this.setting = new Setting(this);
     this.userConfig = new UserConfig(this);
     this.domain = new Domain(this);
+    this.cloud = new Cloud(this);
 
     this._features = {}; // feature support list
     this.abortController = new AbortController();
@@ -626,8 +628,9 @@ class Client {
    * @param {string} kernelType - the kernel type (usually language runtimes)
    * @param {string} sessionId - user-defined session ID
    * @param {object} resources - Per-session resource
+   * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
    */
-  createIfNotExists(kernelType, sessionId, resources = {}) {
+  createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0) {
     if (typeof sessionId === 'undefined' || sessionId === null)
       sessionId = this.generateSessionId();
     let params = {
@@ -705,7 +708,8 @@ class Client {
     } else {
       rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
     }
-    return this._wrapWithPromise(rqst);
+    //return this._wrapWithPromise(rqst);
+    return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
   /**
@@ -1934,7 +1938,7 @@ class ContainerImage {
     if (Object.keys(resource).length === 0) {
       resource = {'cpu': '1', 'mem': '512m'};
     }
-    return this.client.createIfNotExists(registry + name, sessionId, resource).then((response) => {
+    return this.client.createIfNotExists(registry + name, sessionId, resource, 600000).then((response) => {
       return this.client.destroyKernel(sessionId);
     }).catch(err => {
       throw err;
@@ -2871,12 +2875,57 @@ class UserConfig {
    */
   delete_dotfile_script(path: string) {
     let params = {
-      "path" : path
+      "path": path
     }
     const rqst = this.client.newSignedRequest("DELETE", "/user-config/dotfiles", params);
     return this.client._wrapWithPromise(rqst);
   }
 
+}
+
+class Cloud {
+  public client: any;
+  public config: any;
+
+  /**
+   * Setting API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client: Client) {
+    this.client = client;
+    this.config = null;
+  }
+
+  /**
+   * Check if cloud endpoint is available.
+   */
+  ping() {
+    const rqst = this.client.newSignedRequest('GET', '/cloud/ping');
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Verify signup email by JWT token.
+   *
+   * @param {string} token - JWT token which is delivered to user's email.
+   */
+  verify_email(token: string) {
+    const body = {"verification_code": token};
+    const rqst = this.client.newSignedRequest("POST", "/cloud/verify-email", body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Send verification email.
+   *
+   * @param {string} email - user's email.
+   */
+  send_verification_email(email: string) {
+    const body = {email};
+    const rqst = this.client.newSignedRequest("POST", "/cloud/send-verification-email", body);
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class utils {
