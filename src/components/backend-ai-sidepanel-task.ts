@@ -20,16 +20,16 @@ import {
 } from "../plastics/layout/iron-flex-layout-classes";
 
 /**
- Backend.AI Task viewer for Console
+ Backend.AI Sidepanel task viewer for Console
 
- `backend-ai-task-view` is a background task view for console.
+ `backend-ai-sidepanel-task` is a sidepanel task viewer for console.
 
  Example:
  @group Backend.AI Console
- @element backend-ai-view
+ @element backend-ai-sidepanel-task
  */
-@customElement("backend-ai-task-view")
-export default class BackendAiTaskView extends BackendAIPage {
+@customElement("backend-ai-sidepanel-task")
+export default class BackendAiSidepanelTask extends BackendAIPage {
   public shadowRoot: any;
   public updateComplete: any;
 
@@ -58,7 +58,7 @@ export default class BackendAiTaskView extends BackendAIPage {
           color: #242424;
           display: block;
           width: 100%;
-          height: 33px;
+          height: 25px;
           padding: 5px 15px;
           border-bottom: 1px solid #cccccc;
         }
@@ -78,7 +78,7 @@ export default class BackendAiTaskView extends BackendAIPage {
     }
   }
 
-  _taskIcon(type) {
+  _taskIcon(type: string) {
     switch (type) {
       case "session":
         return 'subject';
@@ -145,6 +145,6 @@ export default class BackendAiTaskView extends BackendAIPage {
 }
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-task-view": BackendAiTaskView;
+    "backend-ai-task-view": BackendAiSidepanelTask;
   }
 }

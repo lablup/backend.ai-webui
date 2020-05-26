@@ -32,7 +32,8 @@ import './backend-ai-help-button';
 import './lablup-notification';
 import './backend-ai-indicator-pool';
 import './lablup-terms-of-service';
-import './backend-ai-task-view';
+import './backend-ai-sidepanel-task';
+import './backend-ai-sidepanel-notification';
 
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 import '../lib/backend.ai-client-es6';
@@ -349,8 +350,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   _openSidePanel(panel) {
-    this._sidepanel = panel;
-    this.toggleSidePanelUI();
+    if (this.contentBody.open === true) {
+      if (panel != this._sidepanel) { // change panel only.
+        this._sidepanel = panel;
+      } else { // just close panel. (disable icon amp.)
+        this._sidepanel = '';
+        this.toggleSidePanelUI();
+      }
+    } else { // open new panel.
+      this._sidepanel = panel;
+      this.toggleSidePanelUI();
+    }
   }
 
   _changeDrawerLayout(width, height) {
@@ -784,9 +794,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </div>
           <div class="horizontal start-justified center layout flex" style="max-height:40px;">
             <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;margin-left:4px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
-            <mwc-icon-button disabled class="full-menu side-menu fg white" id="feedback-icon" icon="question_answer" slot="graphic"></mwc-icon-button>
-            <mwc-icon-button disabled class="full-menu side-menu fg white" id="notification-icon" icon="notification_important" slot="graphic"></mwc-icon-button>
-            <mwc-icon-button class="full-menu side-menu fg white" id="task-icon" icon="ballot" slot="graphic" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
+            <mwc-icon-button disabled class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'yellow' : 'white'}" id="feedback-icon" icon="question_answer"></mwc-icon-button>
+            <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
+            <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
@@ -871,9 +881,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </div>
         </div>
         <div slot="appContent">
-          <mwc-drawer id="content-body" style="height:100vh;">
-            <div>
-              <backend-ai-task-view ?active="${this._sidepanel === 'task'}"></backend-ai-task-view>
+          <mwc-drawer id="content-body">
+            <div class="sidepanel-drawer">
+              <backend-ai-sidepanel-notification class="sidepanel" ?active="${this._sidepanel === 'notification'}"></backend-ai-sidepanel-notification>
+              <backend-ai-sidepanel-task class="sidepanel" ?active="${this._sidepanel === 'task'}"></backend-ai-sidepanel-task>
             </div>
             <div slot="appContent">
               <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
@@ -955,9 +966,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
            anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
           <wl-popover-card>
             <div style="padding:5px">
-              <mwc-icon-button disabled class="side-menu fg black" id="feedback-icon-popover" icon="question_answer" slot="graphic"></mwc-icon-button>
-              <mwc-icon-button disabled class="side-menu fg black" id="notification-icon-popover" icon="notification_important" slot="graphic"></mwc-icon-button>
-              <mwc-icon-button class="side-menu fg black" id="task-icon-popover" icon="ballot" slot="graphic" @click="${() => this.toggleSidePanelUI()}"></mwc-icon-button>
+              <mwc-icon-button disabled class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'red' : 'black'}" id="feedback-icon-popover" icon="question_answer"></mwc-icon-button>
+              <mwc-icon-button class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'red' : 'black'}" id="notification-icon-popover" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
+              <mwc-icon-button class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'red' : 'black'}" id="task-icon-popover" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
             </div>
           </wl-popover-card>
         </wl-popover>
