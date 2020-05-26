@@ -875,13 +875,21 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
     }
     config['cpu'] = this.cpu_request;
-    console.log(this.gpu_request_type);
-    if (this.gpu_request_type === 'cuda.shares') {
-      config['cuda.shares'] = this.gpu_request;
-    } else {
-      config['cuda.device'] = this.gpu_request;
+    switch (this.gpu_request_type) {
+      case 'cuda.shares':
+        config['cuda.shares'] = this.gpu_request;
+        break;
+      case 'cuda.device':
+        config['cuda.device'] = this.gpu_request;
+        break;
+      case 'rocm.device':
+        config['rocm.device'] = this.gpu_request;
+        break;
+      case 'tpu.device':
+        config['tpu.device'] = this.gpu_request;
+        break;
+      default:
     }
-
     if (String(this.shadowRoot.querySelector('#mem-resource').value) === "Infinity") {
       config['mem'] = String(this.shadowRoot.querySelector('#mem-resource').value);
     } else {
