@@ -603,5 +603,12 @@
   },
   "update": {
     "NewConsoleVersionAvailable": "새 버전이 출시되었습니다:"
+  },
+  "sidepanel": {
+    "BackgroundTasks": "작업",
+    "NoBackgroundTask": "실행중인 작업이 없습니다.",
+    "Running": "실행중...",
+    "Notification": "알림",
+    "NoNotification": "알림이 없습니다."
   }
 }

@@ -711,7 +711,7 @@ class Client {
     } else {
       rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
     }
-    return this._wrapWithPromise(rqst);
+    //return this._wrapWithPromise(rqst);
     return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
@@ -2924,7 +2924,7 @@ class UserConfig {
    */
   delete_dotfile_script(path: string) {
     let params = {
-      "path" : path
+      "path": path
     }
     const rqst = this.client.newSignedRequest("DELETE", "/user-config/dotfiles", params);
     return this.client._wrapWithPromise(rqst);
@@ -2960,7 +2960,7 @@ class Cloud {
    * @param {string} token - JWT token which is delivered to user's email.
    */
   verify_email(token: string) {
-    const body = {"verification_code" : token};
+    const body = {"verification_code": token};
     const rqst = this.client.newSignedRequest("POST", "/cloud/verify-email", body);
     return this.client._wrapWithPromise(rqst);
   }

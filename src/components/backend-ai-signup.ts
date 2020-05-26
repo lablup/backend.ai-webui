@@ -327,7 +327,9 @@ export default class BackendAiSignup extends BackendAIPage {
           <div style="max-width:350px">${_t("signup.VerificationMessage")}</div>
         </wl-card>
         <div slot="footer">
-          <wl-button class="ok" @click="${(e) => {e.target.closest('wl-dialog').hide()}}">${_t("button.Okay")}</wl-button>
+          <wl-button class="ok" @click="${(e) => {
+      e.target.closest('wl-dialog').hide()
+    }}">${_t("button.Okay")}</wl-button>
         </div>
       </wl-dialog>
       <lablup-terms-of-service id="terms-of-service"></lablup-terms-of-service>

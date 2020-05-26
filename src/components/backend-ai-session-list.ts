@@ -101,7 +101,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 300px);
+          height: calc(100vh - 260px);
         }
 
         paper-item {
@@ -343,7 +343,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         if (!globalThis.backendaiclient.is_admin) {
           this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-          this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)!important';
+          this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 220px)!important';
         } else {
           this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
         }
@@ -360,7 +360,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     } else { // already connected
       if (!globalThis.backendaiclient.is_admin) {
         this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-        this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)!important';
+        this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 220px)!important';
       } else {
         this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
       }

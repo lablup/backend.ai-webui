@@ -100,7 +100,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
 
   render() {
     // language=HTML
-    return html `
+    return html`
       <wl-dialog id="verification-success-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
         <wl-card class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">

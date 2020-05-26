@@ -605,5 +605,12 @@
   },
   "update": {
     "NewConsoleVersionAvailable": "New version is available:"
+  },
+  "sidepanel": {
+    "BackgroundTasks": "Running Tasks",
+    "NoBackgroundTask": "No Task.",
+    "Running": "Running...",
+    "Notification": "Notification",
+    "NoNotification": "No Notification."
   }
 }

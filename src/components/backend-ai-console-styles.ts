@@ -142,6 +142,31 @@ export const BackendAiConsoleStyles = [
       display: block;
     }
 
+    .sidepanel {
+      display: none;
+    }
+
+    .sidepanel[active] {
+      display: block;
+    }
+
+    #content-body {
+      background-color: #ffffff;
+      color: var(--general-sidepanel-color, #fafafa);
+      --mdc-drawer-background-color: var(--sidepanel-background-color, var(--general-sidepanel-background-color, #fafafa));
+    }
+
+    .sidepanel-drawer {
+      border-right: 1px solid #cccccc;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overflow: -moz-scrollbars-none;
+      -ms-overflow-style: none;
+      will-change: transform;
+    }
+
     wl-progress-spinner {
       --progress-spinner-size: 48px;
       --progress-spinner-stroke-width: 12px;
@@ -293,6 +318,10 @@ export const BackendAiConsoleStyles = [
 
     #portrait-bar {
       height: 48px;
+    }
+
+    #content-body {
+      height: 100vh;
     }
 
     #main-toolbar {
