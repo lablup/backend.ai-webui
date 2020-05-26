@@ -20,13 +20,13 @@ import {
 } from "../plastics/layout/iron-flex-layout-classes";
 
 /**
- Backend.AI Task viewer for Console
+ Backend.AI Sidepanel task viewer for Console
 
- `backend-ai-task-view` is a background task view for console.
+ `backend-ai-sidepanel-task` is a sidepanel task viewer for console.
 
  Example:
  @group Backend.AI Console
- @element backend-ai-view
+ @element backend-ai-sidepanel-task
  */
 @customElement("backend-ai-sidepanel-task")
 export default class BackendAiSidepanelTask extends BackendAIPage {
