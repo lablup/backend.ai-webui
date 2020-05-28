@@ -951,7 +951,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
 
     const createSessionQueue = sessions.map(item => {
-      console.log(item.config);
       //return this._createKernel(item.kernelName, item.sessionName, item.config);
       return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
     });
@@ -1980,6 +1979,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.mem_request = mem;
     this.gpu_request = gpu_value;
     this.gpu_request_type = gpu_type;
+    //console.log(this.cpu_request, this.mem_request, this.shmem_request, this.gpu_request, this.gpu_request_type);
   }
 
   async selectDefaultLanguage() {

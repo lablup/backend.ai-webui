@@ -109,10 +109,12 @@ export default class LablupSlider extends LitElement {
   updated(changedProperties) {
     changedProperties.forEach((oldVal, propName) => {
       if (propName === 'value') {
-        if (this.editable) {
-          this.syncToSlider();
-        }
-        this.slider.layout();
+        setTimeout(()=>{
+          if (this.editable) {
+            this.syncToSlider();
+          }
+          this.slider.layout();
+        }, 500);
         const event = new CustomEvent('value-changed', {'detail': {}});
         this.dispatchEvent(event);
       }
