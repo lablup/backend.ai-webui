@@ -1975,6 +1975,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   _updateResourceIndicator(cpu, mem, gpu_type, gpu_value) {
     this.shadowRoot.querySelector('#gpu-resource').value = gpu_value;
     this.shadowRoot.querySelector('#shmem-resource').value = this.shmem_request;
+
     this.cpu_request = cpu;
     this.mem_request = mem;
     this.gpu_request = gpu_value;

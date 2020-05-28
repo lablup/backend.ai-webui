@@ -109,6 +109,9 @@ export default class LablupSlider extends LitElement {
   updated(changedProperties) {
     changedProperties.forEach((oldVal, propName) => {
       if (propName === 'value') {
+        if (this.editable) {
+          this.syncToSlider();
+        }
         this.slider.layout();
         const event = new CustomEvent('value-changed', {'detail': {}});
         this.dispatchEvent(event);
@@ -139,6 +142,7 @@ export default class LablupSlider extends LitElement {
       this.textfield.value = this.min;
     }
     this.value = this.textfield.value;
+    this.slider.value = this.textfield.value;
     // updated function will be automatically called.
   }
 
