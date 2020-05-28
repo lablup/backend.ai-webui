@@ -45,6 +45,7 @@ import {
 
 @customElement("backend-ai-resource-monitor")
 export default class BackendAiResourceMonitor extends BackendAIPage {
+  @property({type: Boolean}) is_connected = false;
   @property({type: String}) direction = "horizontal";
   @property({type: String}) location = '';
   @property({type: Object}) supports = Object();
@@ -369,6 +370,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --button-bg-active: var(--paper-red-600);
         }
 
+        #launch-session[disabled] {
+          --button-bg: var(--paper-gray-50);
+          --button-bg-hover: var(--paper-gray-100);
+          --button-bg-active: var(--paper-gray-600);
+        }
+
         wl-button.launch-button {
           width: 335px;
           --button-bg: var(--paper-red-50);
@@ -607,6 +614,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       // this.scaling_group = '';
       this._updatePageVariables(true);
     });
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this.is_connected = true;
+      }, true);
+    } else {
+      this.is_connected = true;
+    }
   }
 
   _initAliases() {
@@ -2281,7 +2295,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </div>
         </div>
         <div class="layout vertical" style="align-self: center;">
-          <wl-button class="fg red" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
+          <wl-button ?disabled="${!this.is_connected}" class="fg red" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
             <wl-icon>add</wl-icon>
             ${_t("session.launcher.Start")}
           </wl-button>
