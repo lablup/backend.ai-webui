@@ -2491,7 +2491,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   </div>
                 </wl-button>
               `)}
-              ${this.isEmpty(this.resource_templates) ? html`
+              ${this.isEmpty(this.resource_templates_filtered) ? html`
                 <wl-button class="resource-button vertical center start layout" role="option"
                            style="height:140px;width:350px;" type="button"
                            flat inverted outlined disabled>
