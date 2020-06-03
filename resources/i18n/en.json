@@ -609,6 +609,8 @@
   "sidepanel": {
     "BackgroundTasks": "Running Tasks",
     "NoBackgroundTask": "No Task.",
-    "Running": "Running..."
+    "Running": "Running...",
+    "Notification": "Notification",
+    "NoNotification": "No Notification."
   }
 }

@@ -607,6 +607,8 @@
   "sidepanel": {
     "BackgroundTasks": "작업",
     "NoBackgroundTask": "실행중인 작업이 없습니다.",
-    "Running": "실행중..."
+    "Running": "실행중...",
+    "Notification": "알림",
+    "NoNotification": "알림이 없습니다."
   }
 }

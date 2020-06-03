@@ -519,7 +519,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       return;
     }
     let input = this._readResourcePresetInput();
-    if (input.shared_memory >= mem) {
+    if (parseInt(input.shared_memory) >= parseInt(mem)) {
       this.notification.text = 'Memory should be larger than shared memory';
       this.notification.show();
       return;

@@ -102,7 +102,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 260px);
+          height: calc(100vh - 265px);
         }
 
         paper-item {
@@ -116,6 +116,10 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         wl-icon.pagination {
           color: var(--paper-grey-700);
+        }
+
+        wl-button.pagination[disabled] wl-icon.pagination {
+          color: var(--paper-grey-300);
         }
 
         wl-icon.warning {
@@ -137,6 +141,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
           --button-bg-active-flat: var(--paper-red-600);
+          --button-bg-disabled: var(--paper-grey-50);
+          --button-color-disabled: var(--paper-grey-200);
+        }
+
+        wl-button.pagination[disabled] {
+          --button-shadow-color: transparent;
         }
 
         wl-button.controls-running {
@@ -344,7 +354,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         if (!globalThis.backendaiclient.is_admin) {
           this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-          this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)!important';
+          this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
         } else {
           this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
         }
@@ -361,7 +371,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     } else { // already connected
       if (!globalThis.backendaiclient.is_admin) {
         this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-        this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)!important';
+        this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
       } else {
         this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
       }
