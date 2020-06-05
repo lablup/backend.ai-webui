@@ -46,6 +46,7 @@ import {
 @customElement("backend-ai-resource-monitor")
 export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) is_connected = false;
+  @property({type: Boolean}) enableLaunchButton = false;
   @property({type: String}) direction = "horizontal";
   @property({type: String}) location = '';
   @property({type: Object}) supports = Object();
@@ -365,12 +366,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         #launch-session {
+          --button-color: var(--paper-red-600);
           --button-bg: var(--paper-red-50);
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
         }
 
         #launch-session[disabled] {
+          --button-color: var(--paper-gray-600);
+          --button-color-disabled: var(--paper-gray-600);
           --button-bg: var(--paper-gray-50);
           --button-bg-hover: var(--paper-gray-100);
           --button-bg-active: var(--paper-gray-600);
@@ -617,9 +621,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_connected = true;
+        setTimeout(() => {this.enableLaunchButton = true}, 1000);
       }, true);
     } else {
       this.is_connected = true;
+      setTimeout(() => {this.enableLaunchButton = true}, 1000);
     }
   }
 
@@ -1249,7 +1255,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (this.aggregate_updating === true) {
       return;
     }
-    if (Date.now() - this.lastQueryTime < 2000) {
+    if (Date.now() - this.lastQueryTime < 1000) {
       return;
     }
     //console.log('aggregate from:', from);
@@ -1972,6 +1978,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _updateResourceIndicator(cpu, mem, gpu_type, gpu_value) {
+    this.shadowRoot.querySelector('#cpu-resource').value = cpu;
+    this.shadowRoot.querySelector('#mem-resource').value = mem;
     this.shadowRoot.querySelector('#gpu-resource').value = gpu_value;
     this.shadowRoot.querySelector('#shmem-resource').value = this.shmem_request;
 
@@ -2296,7 +2304,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </div>
         </div>
         <div class="layout vertical" style="align-self: center;">
-          <wl-button ?disabled="${!this.is_connected}" class="fg red" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
+          <wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
             <wl-icon>add</wl-icon>
             ${_t("session.launcher.Start")}
           </wl-button>
@@ -2486,7 +2494,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   </div>
                 </wl-button>
               `)}
-              ${this.isEmpty(this.resource_templates) ? html`
+              ${this.isEmpty(this.resource_templates_filtered) ? html`
                 <wl-button class="resource-button vertical center start layout" role="option"
                            style="height:140px;width:350px;" type="button"
                            flat inverted outlined disabled>

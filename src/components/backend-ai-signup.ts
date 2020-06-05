@@ -324,7 +324,7 @@ export default class BackendAiSignup extends BackendAIPage {
       <wl-dialog id="email-sent-dialog" fixed backdrop blockscrolling persistent>
         <wl-card>
           <h3>${_t("signup.ThankYou")}</h3>
-          <div style="max-width:350px">${_t("signup.VerificationMessage")}</div>
+          <div style="max-width:350px; padding:1em">${_t("signup.VerificationMessage")}</div>
         </wl-card>
         <div slot="footer">
           <wl-button class="ok" @click="${(e) => {
