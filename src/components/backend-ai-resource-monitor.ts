@@ -366,12 +366,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         #launch-session {
+          --button-color: var(--paper-red-600);
           --button-bg: var(--paper-red-50);
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
         }
 
         #launch-session[disabled] {
+          --button-color: var(--paper-gray-600);
+          --button-color-disabled: var(--paper-gray-600);
           --button-bg: var(--paper-gray-50);
           --button-bg-hover: var(--paper-gray-100);
           --button-bg-active: var(--paper-gray-600);
@@ -2294,7 +2297,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </div>
         </div>
         <div class="layout vertical" style="align-self: center;">
-          <wl-button ?disabled="${!this.enableLaunchButton}" class="fg red" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
+          <wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
             <wl-icon>add</wl-icon>
             ${_t("session.launcher.Start")}
           </wl-button>
