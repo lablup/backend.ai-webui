@@ -164,6 +164,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           window.setTimeout(() => {
             emailVerifyView.verify(this.loginPanel.api_endpoint);
           }, 1000);
+        } else if (this._page === 'change-password') {
+          const changePasswordView = this.shadowRoot.querySelector('backend-ai-change-forgot-password-view');
+          window.setTimeout(() => {
+            changePasswordView.open(this.loginPanel.api_endpoint);
+          }, 1000);
         } else {
           this.loginPanel.login();
         }
@@ -515,6 +520,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     switch (view) {
       case 'summary':
       case 'verify-email':
+      case 'change-password':
         this.menuTitle = _text("console.menu.Summary");
         this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
@@ -953,6 +959,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                     <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-information-view>
                     <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
                     <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-email-verification-view>
+                    <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${this._page === 'change-password'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-change-forgot-password-view>
                     <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-error-view>
                   </div>
                 </section>
