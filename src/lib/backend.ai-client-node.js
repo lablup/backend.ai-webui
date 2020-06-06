@@ -2698,6 +2698,16 @@ class Cloud {
         const rqst = this.client.newSignedRequest("POST", "/cloud/send-verification-email", body);
         return this.client._wrapWithPromise(rqst);
     }
+    /**
+     * Send password change email to assist users who forgot their password.
+     *
+     * @param {string} email - user's email.
+     */
+    send_password_change_email(email) {
+        const body = { email };
+        const rqst = this.client.newSignedRequest("POST", "/cloud/send-password-change-email", body);
+        return this.client._wrapWithPromise(rqst);
+    }
 }
 class utils {
     constructor(client) {

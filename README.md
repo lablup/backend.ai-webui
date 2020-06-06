@@ -87,6 +87,7 @@ connectionMode = "[Connection mode. Default is API. Currenly supports API and SE
 allowChangeSigninMode = false # Allows user to change signin mode between `API` and `SESSION`
 signupSupport = false # Enable / disable signup feature support. Manager plugin is required.
 allowSignout = false # Let users signout from service. Signup plugin is required.
+allowAnonymousChangePassword = false # Enable / disable anonymous user can send change password email. Manager plugin is required.
 allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
 debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
 
