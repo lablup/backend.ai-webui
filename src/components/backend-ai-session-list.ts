@@ -27,6 +27,7 @@ import '@material/mwc-icon-button';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
 import '../plastics/lablup-shields/lablup-shields';
+import './backend-ai-dialog';
 
 import JsonToCsv from '../lib/json_to_csv';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -162,36 +163,36 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
 
         #work-dialog {
-          --dialog-height: calc(100vh - 130px);
+          --component-height: calc(100vh - 50px);
           right: 0;
           top: 50px;
         }
 
         #app-dialog {
-          --dialog-width: 330px;
+          --component-width: 330px;
         }
 
         #ssh-dialog {
-          --dialog-width: 330px;
+          --component-width: 330px;
         }
 
         @media screen and (max-width: 899px) {
           #work-dialog,
           #work-dialog.mini_ui {
-            left: 0;
-            --dialog-width: 100%;
+            --left: 0;
+            --component-width: 100%;
           }
         }
 
         @media screen and (min-width: 900px) {
           #work-dialog {
-            left: 100px;
-            --dialog-width: calc(100% - 220px);
+            --left: 100px;
+            --component-width: calc(100% - 50px);
           }
 
           #work-dialog.mini_ui {
-            left: 40px;
-            --dialog-width: calc(100% - 102px);
+            --left: 40px;
+            --component-width: calc(100% - 50px);
           }
         }
 
@@ -1487,48 +1488,32 @@ export default class BackendAiSessionList extends BackendAIPage {
           <wl-icon class="pagination">navigate_next</wl-icon>
         </wl-button>
       </div>
-      <wl-dialog id="work-dialog" fixed blockscrolling scrollable
-                    style="padding:0;">
-        <wl-card elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
-          <h3 class="horizontal center layout" style="font-weight:bold">
-            <span id="work-title"></span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._refreshLogs()}">
-              <wl-icon>refresh</wl-icon>
-            </wl-button>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <div id="work-area" style="overflow:scroll;"></div>
-          <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
-                  style="border-style: none;width: 100%;"></iframe>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="app-dialog" fixed backdrop blockscrolling
-                    style="padding:0;">
-        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h4 class="horizontal center layout" style="font-weight:bold">
-            <span>App</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h4>
-          <div style="padding:15px;" class="horizontal layout wrap center center-justified">
-          ${this.appSupportList.map(item => html`
-            <div class="vertical layout center center-justified app-icon">
-              <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
-                                 .url-postfix="${item.redirect}"
-                                 @click="${(e) => this._runApp(e)}">
-                <img src="${item.src}" />
-              </mwc-icon-button>
-              <span class="label">${item.title}</span>
-            </div>
-          `)}
-           </div>
-        </wl-card>
-      </wl-dialog>
+      <backend-ai-dialog id="work-dialog" narrowLayout scrollable backdrop>
+        <span slot="title" id="work-title"></span>
+        <div slot="action">
+          <wl-button fab flat inverted @click="${(e) => this._refreshLogs()}">
+            <wl-icon>refresh</wl-icon>
+          </wl-button>
+        </div>
+        <div slot="content" id="work-area" style="overflow:scroll;"></div>
+        <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
+                style="border-style: none;width: 100%;"></iframe>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="app-dialog" backdrop>
+        <span slot="title">App</span>
+        <div slot="content" style="padding:15px;" class="horizontal layout wrap center center-justified">
+        ${this.appSupportList.map(item => html`
+          <div class="vertical layout center center-justified app-icon">
+            <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
+                               .url-postfix="${item.redirect}"
+                               @click="${(e) => this._runApp(e)}">
+              <img src="${item.src}" />
+            </mwc-icon-button>
+            <span class="label">${item.title}</span>
+          </div>
+        `)}
+         </div>
+      </backend-ai-dialog>
       <wl-dialog id="ssh-dialog" fixed backdrop blockscrolling persistent
                  style="padding:0;">
         <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">

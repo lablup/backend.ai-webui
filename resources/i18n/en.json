@@ -248,7 +248,8 @@
       "PolicyName": "Policy name Required.",
       "LetterNumber-_dot": "Allows letters, numbers and -_.",
       "NameAlreadyExists": "Policy Name Already Exists!"
-    }
+    },
+    "ProjectAndGroup": "Projects & Groups"
   },
   "data": {
     "Folders": "Folders",

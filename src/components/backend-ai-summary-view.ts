@@ -596,9 +596,6 @@ export default class BackendAISummary extends BackendAIPage {
               </div>` : html``}
             </div>
           </lablup-activity-panel>
-        </div>
-        <h3 class="plastic-material-title">${_t('summary.Actions')}</h3>
-        <div class="horizontal wrap layout">
           <lablup-activity-panel title="${_t('summary.Shortcut')}" elevation="1">
             <div slot="message">
               <ul>
