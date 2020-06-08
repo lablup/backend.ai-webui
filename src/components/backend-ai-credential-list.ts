@@ -518,7 +518,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     return html`
       <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact" aria-label="Credential list"
                    id="keypair-grid" .items="${this.keypairView}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
 
         <vaadin-grid-column resizable>
           <template class="header">

@@ -32,6 +32,8 @@ import './backend-ai-help-button';
 import './lablup-notification';
 import './backend-ai-indicator-pool';
 import './lablup-terms-of-service';
+import './backend-ai-dialog';
+import './backend-ai-task-view';
 import './backend-ai-sidepanel-task';
 import './backend-ai-sidepanel-notification';
 
@@ -981,18 +983,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
-      <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
-        <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>
+      <backend-ai-dialog id="user-preference-dialog" backdrop>
+        <span slot="title">${_t("console.menu.ChangePassword")}</span>
         <div slot="content">
           <wl-textfield id="pref-original-password" type="password" label="${_t("console.menu.OriginalPassword")}" maxLength="30"></wl-textfield>
           <wl-textfield id="pref-new-password" type="password" label="${_t("console.menu.NewPassword")}" maxLength="30"></wl-textfield>
           <wl-textfield id="pref-new-password2" type="password" label="${_t("console.menu.NewPasswordAgain")}" maxLength="30"></wl-textfield>
         </div>
-        <div slot="footer">
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <div class="flex"></div>
           <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>
           <wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `;
   }
 

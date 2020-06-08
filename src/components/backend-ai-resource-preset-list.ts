@@ -226,7 +226,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         <div>
           <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
                       .items="${this.resourcePresets}">
-            <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+            <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
 
             <vaadin-grid-column resizable>
               <template class="header">

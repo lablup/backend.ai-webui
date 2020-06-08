@@ -244,7 +244,8 @@
       "PolicyName": "정책 이름이 필요합니다.",
       "LetterNumber-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
       "NameAlreadyExists": "그 이름은 이미 사용중입니다."
-    }
+    },
+    "ProjectAndGroup": "프로젝트 및 그룹"
   },
   "data": {
     "Folders": "폴더",

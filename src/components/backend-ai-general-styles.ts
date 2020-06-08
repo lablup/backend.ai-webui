@@ -30,7 +30,7 @@ export const BackendAiStyles = [
       --general-background-color-2: rgba(244, 245, 247, 1);
       --general-sidebar-color: #dddddd;
       --general-sidebar-background-color: rgba(24, 24, 24, 1.0);
-      --general-sidebar-h3-color: #ccc;
+      --general-sidebar-h3-color: #cccccc;
       --general-sidebar-h3-border-color: 1px solid #444444;
       --general-sidebar-topbar-background-color-3: #383e48;
       --general-sidebar-topbar-background-color-2: rgba(103, 172, 91, 1.00);
@@ -505,7 +505,8 @@ export const BackendAiStyles = [
     }
 
     wl-button,
-    wl-expansion {
+    wl-expansion,
+    wl-textfield {
       --font-family-serif: var(--general-font-family);
       --font-family-sans-serif: var(--general-font-family);
     }
