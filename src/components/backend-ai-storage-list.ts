@@ -575,10 +575,6 @@ export default class BackendAiStorageList extends BackendAIPage {
                          required
                          validationMessage="Value is required."></mwc-textfield>
           <br/>
-          <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
-            <wl-icon>rowing</wl-icon>
-            ${_t("button.Create")}
-          </wl-button>
         </div>
         <div slot="footer">
           <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
