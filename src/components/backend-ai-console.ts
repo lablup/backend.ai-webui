@@ -166,6 +166,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           window.setTimeout(() => {
             emailVerifyView.verify(this.loginPanel.api_endpoint);
           }, 1000);
+        } else if (this._page === 'change-password') {
+          const changePasswordView = this.shadowRoot.querySelector('backend-ai-change-forgot-password-view');
+          window.setTimeout(() => {
+            changePasswordView.open(this.loginPanel.api_endpoint);
+          }, 1000);
         } else {
           this.loginPanel.login();
         }
@@ -458,24 +463,24 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   _updateUserPassword() {
     const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
     const oldPassword = dialog.querySelector('#pref-original-password').value;
-    const newPassword = dialog.querySelector('#pref-new-password').value;
-    const newPassword2 = dialog.querySelector('#pref-new-password2').value;
+    const newPassword1El = dialog.querySelector('#pref-new-password');
+    const newPassword2El = dialog.querySelector('#pref-new-password2');
     if (!oldPassword) {
       this.notification.text = 'Enter old password';
       this.notification.show();
       return;
     }
-    if (!newPassword) {
-      this.notification.text = 'Enter new password';
+    if (!newPassword1El.value || !newPassword1El.validity.valid) {
+      this.notification.text = 'Invalid new password';
       this.notification.show();
       return;
     }
-    if (newPassword !== newPassword2) {
+    if (newPassword1El.value !== newPassword2El.value) {
       this.notification.text = 'Two new passwords do not match';
       this.notification.show();
       return;
     }
-    const p = globalThis.backendaiclient.updatePassword(oldPassword, newPassword, newPassword2);
+    const p = globalThis.backendaiclient.updatePassword(oldPassword, newPassword1El.value, newPassword2El.value);
     p.then((resp) => {
       this.notification.text = 'Password updated';
       this.notification.show();
@@ -517,6 +522,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     switch (view) {
       case 'summary':
       case 'verify-email':
+      case 'change-password':
         this.menuTitle = _text("console.menu.Summary");
         this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
@@ -955,6 +961,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                     <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-information-view>
                     <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
                     <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-email-verification-view>
+                    <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${this._page === 'change-password'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-change-forgot-password-view>
                     <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-error-view>
                   </div>
                 </section>
@@ -985,10 +992,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
       <backend-ai-dialog id="user-preference-dialog" backdrop>
         <span slot="title">${_t("console.menu.ChangePassword")}</span>
-        <div slot="content">
-          <wl-textfield id="pref-original-password" type="password" label="${_t("console.menu.OriginalPassword")}" maxLength="30"></wl-textfield>
-          <wl-textfield id="pref-new-password" type="password" label="${_t("console.menu.NewPassword")}" maxLength="30"></wl-textfield>
-          <wl-textfield id="pref-new-password2" type="password" label="${_t("console.menu.NewPasswordAgain")}" maxLength="30"></wl-textfield>
+        <div slot="content" class="layout vertical" style="width:300px;">
+          <mwc-textfield id="pref-original-password" type="password"
+              label="${_t('console.menu.OriginalPassword')}" max-length="30" autofocus
+              style="margin-bottom:20px">
+          </mwc-textfield>
+          <mwc-textfield id="pref-new-password" label="${_t('console.menu.NewPassword')}"
+              type="password" min-length="8" max-length="30"
+              auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
+              pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$">
+          </mwc-textfield>
+          <mwc-textfield id="pref-new-password2" label="${_t('console.menu.NewPasswordAgain')}"
+              type="password" min-length="8" max-length="30">
+          </mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>

@@ -7,6 +7,7 @@ connectionMode = "SESSION" #connectionMode = API
 allowChangeSigninMode = false # Allows user to change signin mode
 allowSignout = true
 signupSupport = false
+allowAnonymousChangePassword = false
 debug = false
 allowProjectResourceMonitor = false
 AllowBetaFeatures = false
