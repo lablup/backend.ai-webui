@@ -1913,13 +1913,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.supportImages[supportsKey].group = 'Custom Environments';
         }
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
-        this.imageRequirements[`${supportsKey}:${item.tag}`] = [];
+        this.imageRequirements[`${supportsKey}:${item.tag}`] = {};
         item.labels.forEach(label => {
           if (label['key'] === 'com.nvidia.tensorflow.version') {
-            this.imageRequirements[`${supportsKey}:${item.tag}`].push('TF:' + label['value']);
+            this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'TensorFlow ' + label['value'];
           }
           if (label['key'] === 'com.nvidia.pytorch.version') {
-            this.imageRequirements[`${supportsKey}:${item.tag}`].push('PyTorch:' + label['value']);
+            this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'PyTorch ' + label['value'];
           }
           //if (label['key'] === 'com.nvidia.cuda.version') {
           //  this.imageRequirements[`${supportsKey}:${item.tag}`].push('CUDA:'+label['value']);
@@ -2163,11 +2163,20 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       size: '80px'
     });
     if (fragment.length > 1) {
-      info.push({ // Language
-        tag: this._aliasName(fragment[1]),
-        color: 'red',
-        size: '120px'
-      });
+      //Image requirement overrides language information.
+      if (this.kernel + ':' + version in this.imageRequirements && 'framework' in this.imageRequirements[this.kernel + ':' + version]) {
+        info.push({ // Language
+          tag: this.imageRequirements[this.kernel + ':' + version]['framework'],
+          color: 'red',
+          size: '120px'
+        });
+      } else {
+        info.push({ // Language
+          tag: this._aliasName(fragment[1]),
+          color: 'red',
+          size: '120px'
+        });
+      }
     }
     if (fragment.length > 2) {
       let requirements = this._aliasName(fragment[2]).split(':');
@@ -2187,22 +2196,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
     }
     return info;
-  }
-
-  _getRequirementInfo(version) {
-    return [];
-    if (this.kernel + ':' + version in this.imageRequirements && this.imageRequirements[this.kernel + ':' + version].length > 0) {
-      console.log('exists');
-      let info: any = [];
-      info.push({ // Version
-        tag: this.imageRequirements[this.kernel + ':' + version][0],
-        color: 'blue',
-        size: '80px'
-      });
-      return info;
-    } else {
-      return [];
-    }
   }
 
   _disableEnterKey() {
@@ -2445,13 +2438,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <span style="display:none">${item}</span>
                 <div class="horizontal layout end-justified">
                   ${this._getVersionInfo(item).map(item => html`
-                    <lablup-shields style="width:${item.size}!important;"
-                                    color="${item.color}"
-                                    app="${typeof item.app != 'undefined' && item.app != "" && item.app != " " ? item.app : ''}"
-                                    description="${item.tag}">
-                    </lablup-shields>
-                  `)}
-                  ${this._getRequirementInfo(item).map(item => html`
                     <lablup-shields style="width:${item.size}!important;"
                                     color="${item.color}"
                                     app="${typeof item.app != 'undefined' && item.app != "" && item.app != " " ? item.app : ''}"
