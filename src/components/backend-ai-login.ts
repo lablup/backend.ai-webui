@@ -372,10 +372,10 @@ export default class BackendAILogin extends BackendAIPage {
     }
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION') {
-      this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
+      //this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       this._connectUsingSession();
     } else if (this.connection_mode === 'API') {
-      this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
+      //this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       this._connectUsingAPI();
     } else {
       this.open();
@@ -511,8 +511,9 @@ export default class BackendAILogin extends BackendAIPage {
     if (isLogon === false) { // Not authenticated yet.
       this.client.login().then(response => {
         if (response === false) {
-          this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
-          this.notification.show();
+          this.open();
+          //this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
+          //this.notification.show();
         } else {
           this.is_connected = true;
           return this._connectGQL();
