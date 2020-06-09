@@ -732,7 +732,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog wl-select');
     const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as any)[idx].perm)
       .map((pulldown, idx) => ({
-        'perm': pulldown.value,
+        'perm': pulldown.value === 'kickout' ? null : pulldown.value,
         'user': (this.invitees as any)[idx].shared_to.uuid,
         'vfolder': (this.invitees as any)[idx].vfolder_id
       }));
@@ -757,6 +757,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
             <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
             <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
+            <option value="kickout">${_t('data.folders.KickOut')}</option>
           </wl-select>
         </div>
       `, root
