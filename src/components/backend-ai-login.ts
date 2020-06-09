@@ -435,7 +435,7 @@ export default class BackendAILogin extends BackendAIPage {
         'Backend.AI Console.',
       );
 
-      const resp = await client.cloud.send_password_change_email(emailEl.value);
+      await client.cloud.send_password_change_email(emailEl.value);
       this.shadowRoot.querySelector('#change-password-confirm-dialog').hide();
       this.notification.text = _text('signup.EmailSent');
       this.notification.show();
