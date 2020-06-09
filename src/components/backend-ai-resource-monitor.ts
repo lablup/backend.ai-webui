@@ -502,7 +502,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         #help-description {
-          --dialog-width: 350px;
+          --component-width: 350px;
         }
 
         #help-description p {
