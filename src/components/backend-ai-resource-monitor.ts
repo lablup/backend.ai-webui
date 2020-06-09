@@ -581,6 +581,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             });
           }
         }
+        this._refreshImageList();
       }
     );
     this.shadowRoot.querySelector('#environment').addEventListener('selected', this.updateLanguage.bind(this));
@@ -786,8 +787,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
       //this._refreshResourceTemplate('refresh-resource-policy');
-      return this._refreshImageList();
-    }).then(() => {
+      //return this._refreshImageList();
+    //}).then(() => {
       this._updateGPUMode();
       this.updateResourceAllocationPane('refresh resource policy');
     }).catch((err) => {
@@ -1857,7 +1858,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   async _refreshImageList() {
     const fields = [
       'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
-      'resource_limits { key min max }'
+      'resource_limits { key min max }', 'labels { key value }'
     ];
     return globalThis.backendaiclient.image.list(fields, true, false).then((response) => {
       const images: Array<object> = [];
