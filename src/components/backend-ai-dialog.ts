@@ -32,6 +32,7 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) narrowLayout = false;
   @property({type: Boolean}) scrollable = false;
   @property({type: Boolean}) backdrop = false;
+  @property({type: Boolean}) noclosebutton = false;
 
 
   constructor() {
@@ -64,7 +65,7 @@ export default class BackendAiDialog extends LitElement {
         }
 
         wl-dialog div.content {
-          padding: 15px;
+          padding: var(--component-padding, '15px');
         }
 
         wl-dialog div.footer {
@@ -113,9 +114,11 @@ export default class BackendAiDialog extends LitElement {
             <span><slot name="title"></slot></span>
             <div class="flex"></div>
             <slot name="action"></slot>
+            ${this.noclosebutton ? html`` : html`
             <wl-button fab flat inverted @click="${() => this._hideDialog()}">
               <wl-icon>close</wl-icon>
             </wl-button>
+            `}
           </h3>
           <div class="content">
             <slot name="content"></slot>

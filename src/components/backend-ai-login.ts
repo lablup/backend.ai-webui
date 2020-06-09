@@ -101,6 +101,11 @@ export default class BackendAILogin extends BackendAIPage {
           color: red;
         }
 
+        backend-ai-dialog {
+          --component-width: 400px;
+          --component-padding: 0;
+        }
+
         fieldset input {
           width: 100%;
           border: 0;
@@ -349,7 +354,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.blockType = type;
     console.log(this.blockPanel);
     setTimeout(() => {
-      if (this.blockPanel.open === false && this.is_connected === false) {
+      if (this.blockPanel.open === false && this.is_connected === false && this.loginPanel.open === false) {
         this.blockPanel.show();
       }
     }, 2000);
@@ -509,6 +514,7 @@ export default class BackendAILogin extends BackendAIPage {
     let isLogon = await this.client.check_login();
     console.log(isLogon);
     if (isLogon === false) { // Not authenticated yet.
+      this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       this.client.login().then(response => {
         if (response === false) {
           this.open();
@@ -719,18 +725,18 @@ export default class BackendAILogin extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="login-panel" fixed blockscrolling persistent disablefocustrap>
-        <div class="horizontal center layout">
-          <img src="manifest/backend.ai-text.svg" style="height:35px;padding:15px 0 15px 20px;" />
+      <backend-ai-dialog id="login-panel" noclosebutton fixed blockscrolling persistent disablefocustrap>
+        <div slot="title" class="horizontal center layout">
+          <img src="manifest/backend.ai-text.svg" style="height:35px;padding:15px 0 15px 5px;" />
           <div class="flex"></div>
         </div>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
+        <div slot="content" class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;">
             <div>${this.connection_mode == 'SESSION' ? _t("login.LoginWithE-mail") : _t("login.LoginWithIAM")}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
                 <div class="vertical center-justified layout">
-                  <div style="font-size:12px;margin:0 10px;text-align:center;">${_t("login.LoginAnotherway")}</div>
+                  <div style="font-size:12px;margin:0 10px;text-align:center;font-weight:400;">${_t("login.LoginAnotherway")}</div>
                   <wl-button class="change-login-mode-button fg blue mini" outlined type="button" @click="${() => this._changeSigninMode()}">
                     ${this.connection_mode == 'SESSION' ? _t("login.ClickToUseIAM") : _t("login.ClickToUseID")}
                   </wl-button>
@@ -785,9 +791,9 @@ export default class BackendAILogin extends BackendAIPage {
                 ${this.signup_support ? html`
                   <div class="vertical center-justified layout" style="width:100%;">
                     <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.NotAUser")}</div>
-                    <wl-button style="font-weight:500;" class="signup-button fg green mini signup"
+                    <wl-button style="font-weight:500;" class="signup-button fg green signup"
                         outlined type="button" @click="${() => this._showSignupDialog()}">
-                      ${_t("login.SignUp")}
+                        ${_t("login.SignUp")}
                     </wl-button>
                   </div>
                 `: html``}
@@ -806,8 +812,8 @@ export default class BackendAILogin extends BackendAIPage {
               </div>
             </fieldset>
           </form>
-        </wl-card>
-      </wl-dialog>
+        </div>
+      </backend-ai-dialog>
       <wl-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
