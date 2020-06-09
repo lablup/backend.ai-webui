@@ -51,6 +51,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: String}) location = '';
   @property({type: Object}) supports = Object();
   @property({type: Object}) supportImages = Object();
+  @property({type: Object}) imageRequirements = Object();
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) userResourceLimit = Object();
   @property({type: Object}) aliases = Object();
@@ -58,6 +59,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) icons = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Object}) imageNames = Object();
+  @property({type: String}) kernel = '';
   @property({type: Array}) versions;
   @property({type: Array}) languages;
   @property({type: Number}) marker_limit = 25;
@@ -1088,6 +1090,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       '2020': '2020',
       '2021': '2021',
       '2022': '2022',
+      'tpu': 'TPU:TPUv3',
       'rocm': 'GPU:ROCm',
       'cuda9': 'GPU:CUDA9',
       'cuda10': 'GPU:CUDA10',
@@ -1097,11 +1100,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'cuda10.3': 'GPU:CUDA10.3',
       'cuda11': 'GPU:CUDA11',
       'cuda11.0': 'GPU:CUDA11',
+      'cuda11.1': 'GPU:CUDA11.1',
+      'cuda11.2': 'GPU:CUDA11.2',
       'miniconda': 'Miniconda',
       'anaconda2018.12': 'Anaconda 2018.12',
       'anaconda2019.12': 'Anaconda 2019.12',
       'alpine3.8': 'Alpine Linux 3.8',
-      'ngc': 'NVidia GPU Cloud',
+      'ngc': 'Nvidia GPU Cloud',
       'ff': 'Research Env.',
     };
     if (value in alias) {
@@ -1200,6 +1205,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       versions.sort();
       versions.reverse(); // New version comes first.
       this.versions = versions;
+      this.kernel = kernel;
     } else {
       return;
     }
@@ -1861,21 +1867,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'resource_limits { key min max }', 'labels { key value }'
     ];
     return globalThis.backendaiclient.image.list(fields, true, false).then((response) => {
-      const images: Array<object> = [];
-      Object.keys(response.images).map((objectKey, index) => {
-        const item = response.images[objectKey];
-        if (item.installed === true) {
-          images.push(item);
-        }
-      });
-      if (images.length === 0) {
+      //const images: Array<object> = [];
+      //Object.keys(response.images).map((objectKey, index) => {
+      //  const item = response.images[objectKey];
+      //  images.push(item);
+      //});
+      if (response.images.length === 0) {
         return;
       }
-      this.images = images;
+      //this.images = images;
+      this.images = response.images;
       this.supports = {};
       this.supportImages = {};
+      this.imageRequirements = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
+        //console.log(item);
         const supportsKey = `${item.registry}/${item.name}`;
         if (!(supportsKey in this.supports)) {
           this.supports[supportsKey] = [];
@@ -1906,6 +1913,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.supportImages[supportsKey].group = 'Custom Environments';
         }
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
+        this.imageRequirements[`${supportsKey}:${item.tag}`] = [];
+        item.labels.forEach(label => {
+          if (label['key'] === 'com.nvidia.tensorflow.version') {
+            this.imageRequirements[`${supportsKey}:${item.tag}`].push('TF:' + label['value']);
+          }
+          if (label['key'] === 'com.nvidia.pytorch.version') {
+            this.imageRequirements[`${supportsKey}:${item.tag}`].push('PyTorch:' + label['value']);
+          }
+          //if (label['key'] === 'com.nvidia.cuda.version') {
+          //  this.imageRequirements[`${supportsKey}:${item.tag}`].push('CUDA:'+label['value']);
+          //}
+        });
       });
       //console.log("update image list.", this.resourceLimits);
       this._updateEnvironment();
@@ -2170,6 +2189,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return info;
   }
 
+  _getRequirementInfo(version) {
+    return [];
+    if (this.kernel + ':' + version in this.imageRequirements && this.imageRequirements[this.kernel + ':' + version].length > 0) {
+      console.log('exists');
+      let info: any = [];
+      info.push({ // Version
+        tag: this.imageRequirements[this.kernel + ':' + version][0],
+        color: 'blue',
+        size: '80px'
+      });
+      return info;
+    } else {
+      return [];
+    }
+  }
+
   _disableEnterKey() {
     this.shadowRoot.querySelectorAll('wl-expansion').forEach(element => {
       element.onKeyDown = (e) => {
@@ -2412,7 +2447,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   ${this._getVersionInfo(item).map(item => html`
                     <lablup-shields style="width:${item.size}!important;"
                                     color="${item.color}"
-                                    app="${item.app && item.app != "" && item.app != " " ? item.app : ''}"
+                                    app="${typeof item.app != 'undefined' && item.app != "" && item.app != " " ? item.app : ''}"
+                                    description="${item.tag}">
+                    </lablup-shields>
+                  `)}
+                  ${this._getRequirementInfo(item).map(item => html`
+                    <lablup-shields style="width:${item.size}!important;"
+                                    color="${item.color}"
+                                    app="${typeof item.app != 'undefined' && item.app != "" && item.app != " " ? item.app : ''}"
                                     description="${item.tag}">
                     </lablup-shields>
                   `)}
