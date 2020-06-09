@@ -19,7 +19,7 @@ import '@material/mwc-select';
 import '@material/mwc-textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
-
+import './backend-ai-dialog';
 import './backend-ai-signup';
 import {default as PainKiller} from './backend-ai-painkiller';
 
@@ -344,8 +344,10 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   block(message = '', type = '') {
+    console.log('asdasd');
     this.blockMessage = message;
     this.blockType = type;
+    console.log(this.blockPanel);
     setTimeout(() => {
       if (this.blockPanel.open === false && this.is_connected === false) {
         this.blockPanel.show();
@@ -362,30 +364,6 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   login() {
-    let api_key: any = localStorage.getItem('backendaiconsole.login.api_key');
-    let secret_key: any = localStorage.getItem('backendaiconsole.login.secret_key');
-    let user_id: any = localStorage.getItem('backendaiconsole.login.user_id');
-    let password: any = localStorage.getItem('backendaiconsole.login.password');
-    if (api_key != null) {
-      this.api_key = api_key.replace(/^\"+|\"+$/g, '');
-    } else {
-      this.api_key = '';
-    }
-    if (secret_key != null) {
-      this.secret_key = secret_key.replace(/^\"+|\"+$/g, '');
-    } else {
-      this.secret_key = '';
-    }
-    if (user_id != null) {
-      this.user_id = user_id.replace(/^\"+|\"+$/g, '');
-    } else {
-      this.user_id = '';
-    }
-    if (password != null) {
-      this.password = password.replace(/^\"+|\"+$/g, '');
-    } else {
-      this.password = '';
-    }
     if (this.api_endpoint === '') {
       let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
       if (api_endpoint != null) {
@@ -393,10 +371,10 @@ export default class BackendAILogin extends BackendAIPage {
       }
     }
     this.api_endpoint = this.api_endpoint.trim();
-    if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
+    if (this.connection_mode === 'SESSION') {
       this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       this._connectUsingSession();
-    } else if (this.connection_mode === 'API' && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
+    } else if (this.connection_mode === 'API') {
       this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       this._connectUsingAPI();
     } else {
@@ -506,8 +484,6 @@ export default class BackendAILogin extends BackendAIPage {
       this.notification.show();
       return;
     }
-    //this.notification.text = 'Connecting...';
-    //this.notification.show();
     if (this.connection_mode === 'SESSION') {
       this.user_id = (this.shadowRoot.querySelector('#id_user_id') as any).value;
       this.password = (this.shadowRoot.querySelector('#id_password') as any).value;
@@ -531,6 +507,7 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     let isLogon = await this.client.check_login();
+    console.log(isLogon);
     if (isLogon === false) { // Not authenticated yet.
       this.client.login().then(response => {
         if (response === false) {
@@ -711,10 +688,10 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   async _saveLoginInfo() {
-    localStorage.setItem('backendaiconsole.login.api_key', this.api_key);
-    localStorage.setItem('backendaiconsole.login.secret_key', this.secret_key);
-    localStorage.setItem('backendaiconsole.login.user_id', this.user_id);
-    localStorage.setItem('backendaiconsole.login.password', this.password);
+    localStorage.removeItem('backendaiconsole.login.api_key');
+    localStorage.removeItem('backendaiconsole.login.secret_key');
+    localStorage.removeItem('backendaiconsole.login.user_id');
+    localStorage.removeItem('backendaiconsole.login.password');
   }
 
   _toggleEndpoint() {
