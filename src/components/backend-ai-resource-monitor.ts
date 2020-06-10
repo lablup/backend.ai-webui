@@ -692,7 +692,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       await this._updatePageVariables(true);
       this._disableEnterKey();
     }
-    //this.run_after_connection(this._updatePageVariables());
   }
 
   async _updatePageVariables(isChanged) {
@@ -789,8 +788,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
       //this._refreshResourceTemplate('refresh-resource-policy');
-      //return this._refreshImageList();
-    //}).then(() => {
       this._updateGPUMode();
       this.updateResourceAllocationPane('refresh resource policy');
     }).catch((err) => {
@@ -857,7 +854,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _newSession() {
-    //let kernel = this.shadowRoot.querySelector('#environment').value;
     let selectedItem = this.shadowRoot.querySelector('#environment').selected;
     let kernel = selectedItem.id;
     let version = this.shadowRoot.querySelector('#version').value;
@@ -960,7 +956,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
 
     const createSessionQueue = sessions.map(item => {
-      //return this._createKernel(item.kernelName, item.sessionName, item.config);
       return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
     });
     Promise.all(createSessionQueue).then((res) => {
@@ -1117,8 +1112,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _updateEnvironment() {
-    // this.languages = Object.keys(this.supports);
-    // this.languages.sort();
     const langs = Object.keys(this.supports);
     if (langs === undefined) return;
     langs.sort((a, b) => (this.supportImages[a].group > this.supportImages[b].group) ? 1 : -1); // TODO: fix this to rearrange kernels
@@ -1170,7 +1163,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         icon = this.icons[kernelName];
       }
       if (interCategory !== this.supportImages[item].group) {
-        //console.log(item);
         this.languages.push({
           name: "",
           registry: "",
@@ -1281,7 +1273,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       //console.log('check resource preset from : aggregate resource use, ', from);
       return globalThis.backendaiclient.resourcePreset.check(param);
-      //console.log(this.resource_templates);
       //return {'preset': this.resource_templates};
 
     }).then((response) => {
@@ -1330,7 +1321,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
 
       //let scaling_group_resource_remaining = response.scaling_group_remaining;
-      //console.log('current:', this.scaling_group);
       if (this.scaling_group === '') { // no scaling group in the current project
         response.scaling_groups[''] = {
           using: {'cpu': 0, 'mem': 0},
