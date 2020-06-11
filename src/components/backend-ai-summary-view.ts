@@ -73,6 +73,8 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
+  @property({type: String}) announcement = '';
+
   public invitations: any;
 
   constructor() {
@@ -401,6 +403,21 @@ export default class BackendAISummary extends BackendAIPage {
     }
   }
 
+  _readAnnouncement() {
+    if (!this.activeConnected) {
+      return;
+    }
+    globalThis.backendaiclient.service.get_announcement()
+      .then(res => {
+        console.log(res);
+        if ('message' in res) {
+          this.announcement = res.message;
+        }
+      }).catch(err=>{
+
+    });
+  }
+
   _toInt(value: number) {
     return Math.ceil(value);
   }
@@ -450,7 +467,7 @@ export default class BackendAISummary extends BackendAIPage {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true, err);
-      })
+      });
   }
 
   _deleteInvitation(e, invitation: any) {
@@ -467,7 +484,7 @@ export default class BackendAISummary extends BackendAIPage {
         this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();
         this._refreshInvitations(true);
-      })
+      });
   }
 
   render() {
@@ -613,6 +630,13 @@ export default class BackendAISummary extends BackendAIPage {
       : html``}
             </div>
           </lablup-activity-panel>
+          ${this.announcement != '' ? html`
+          <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1">
+            <div slot="message">
+              ${this.announcement}
+            </div>
+          </lablup-activity-panel>
+          `:html``}
       ${this.invitations ? this.invitations.map(invitation =>
       html`
             <lablup-activity-panel title="${_t('summary.Invitation')}">

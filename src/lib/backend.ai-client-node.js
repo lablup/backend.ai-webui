@@ -138,6 +138,7 @@ class Client {
         this.registry = new Registry(this);
         this.setting = new Setting(this);
         this.userConfig = new UserConfig(this);
+        this.service = new Service(this);
         this.domain = new Domain(this);
         this.cloud = new Cloud(this);
         this._features = {}; // feature support list
@@ -2570,6 +2571,38 @@ class Setting {
         const rqst = this.client.newSignedRequest("POST", "/config/delete", {
             "key": `${key}`,
             "prefix": prefix
+        });
+        return this.client._wrapWithPromise(rqst);
+    }
+}
+class Service {
+    /**
+     * Service-specific API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+        this.config = null;
+    }
+    /**
+     * Get announcements
+     *
+     */
+    get_announcement() {
+        const rqst = this.client.newSignedRequest("GET", "/manager/announcement", null);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Update announcement
+     *
+     * @param {boolean} enabled - Enable / disable announcement. Default is True.
+     * @param {string} message - Announcement content. Usually in Markdown syntax.
+     */
+    update_announcement(enabled = true, message) {
+        const rqst = this.client.newSignedRequest("POST", "/manager/announcement", {
+            "enabled": enabled,
+            "message": message
         });
         return this.client._wrapWithPromise(rqst);
     }
