@@ -33,7 +33,7 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) scrollable = false;
   @property({type: Boolean}) backdrop = false;
   @property({type: Boolean}) noclosebutton = false;
-
+  @property({type: Boolean}) open = false;
 
   constructor() {
     super();
@@ -83,6 +83,7 @@ export default class BackendAiDialog extends LitElement {
 
   firstUpdated() {
     this.dialog = this.shadowRoot.querySelector('#dialog');
+    this.open = this.dialog.open;
   }
 
   connectedCallback() {
@@ -91,14 +92,17 @@ export default class BackendAiDialog extends LitElement {
 
   _hideDialog() {
     this.dialog.hide();
+    this.open = this.dialog.open;
   }
 
   show() {
     this.dialog.show();
+    this.open = this.dialog.open;
   }
 
   hide() {
     this.dialog.hide();
+    this.open = this.dialog.open;
   }
 
   render() {

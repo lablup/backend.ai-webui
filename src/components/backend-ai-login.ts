@@ -349,10 +349,8 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   block(message = '', type = '') {
-    console.log('asdasd');
     this.blockMessage = message;
     this.blockType = type;
-    console.log(this.blockPanel);
     setTimeout(() => {
       if (this.blockPanel.open === false && this.is_connected === false && this.loginPanel.open === false) {
         this.blockPanel.show();
@@ -512,14 +510,15 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     let isLogon = await this.client.check_login();
-    console.log(isLogon);
     if (isLogon === false) { // Not authenticated yet.
       this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       this.client.login().then(response => {
         if (response === false) {
           this.open();
-          //this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
-          //this.notification.show();
+          if (this.user_id != '' && this.password != '') {
+            this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
+            this.notification.show();
+          }
         } else {
           this.is_connected = true;
           return this._connectGQL();
