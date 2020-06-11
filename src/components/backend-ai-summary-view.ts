@@ -4,6 +4,7 @@
  */
 
 import {translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
+import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -22,6 +23,7 @@ import './backend-ai-resource-monitor';
 import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
 import '../plastics/lablup-piechart/lablup-piechart';
+import marked from "marked/lib/marked.esm.js";
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -418,7 +420,7 @@ export default class BackendAISummary extends BackendAIPage {
       .then(res => {
         console.log(res);
         if ('message' in res) {
-          this.announcement = res.message;
+          this.announcement = marked(res.message);
         }
       }).catch(err=>{
 
@@ -640,7 +642,7 @@ export default class BackendAISummary extends BackendAIPage {
           ${this.announcement != '' ? html`
           <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1">
             <div slot="message">
-              ${this.announcement}
+              ${unsafeHTML(this.announcement)}
             </div>
           </lablup-activity-panel>
           `:html``}
