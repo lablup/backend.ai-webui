@@ -196,6 +196,13 @@ export default class BackendAISummary extends BackendAIPage {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.update_checker = this.shadowRoot.querySelector('#update-checker');
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._readAnnouncement();
+      }, true);
+    } else {
+      this._readAnnouncement();
+    }
   }
 
   _refreshHealthPanel() {
