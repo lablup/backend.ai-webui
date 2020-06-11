@@ -51,6 +51,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: String}) location = '';
   @property({type: Object}) supports = Object();
   @property({type: Object}) supportImages = Object();
+  @property({type: Object}) imageRequirements = Object();
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) userResourceLimit = Object();
   @property({type: Object}) aliases = Object();
@@ -58,6 +59,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) icons = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Object}) imageNames = Object();
+  @property({type: String}) kernel = '';
   @property({type: Array}) versions;
   @property({type: Array}) languages;
   @property({type: Number}) marker_limit = 25;
@@ -500,7 +502,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         #help-description {
-          --dialog-width: 350px;
+          --component-width: 350px;
         }
 
         #help-description p {
@@ -581,6 +583,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             });
           }
         }
+        this._refreshImageList();
       }
     );
     this.shadowRoot.querySelector('#environment').addEventListener('selected', this.updateLanguage.bind(this));
@@ -689,7 +692,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       await this._updatePageVariables(true);
       this._disableEnterKey();
     }
-    //this.run_after_connection(this._updatePageVariables());
   }
 
   async _updatePageVariables(isChanged) {
@@ -786,8 +788,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
       //this._refreshResourceTemplate('refresh-resource-policy');
-      return this._refreshImageList();
-    }).then(() => {
       this._updateGPUMode();
       this.updateResourceAllocationPane('refresh resource policy');
     }).catch((err) => {
@@ -854,7 +854,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _newSession() {
-    //let kernel = this.shadowRoot.querySelector('#environment').value;
     let selectedItem = this.shadowRoot.querySelector('#environment').selected;
     let kernel = selectedItem.id;
     let version = this.shadowRoot.querySelector('#version').value;
@@ -957,7 +956,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
 
     const createSessionQueue = sessions.map(item => {
-      //return this._createKernel(item.kernelName, item.sessionName, item.config);
       return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
     });
     Promise.all(createSessionQueue).then((res) => {
@@ -1087,6 +1085,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       '2020': '2020',
       '2021': '2021',
       '2022': '2022',
+      'tpu': 'TPU:TPUv3',
       'rocm': 'GPU:ROCm',
       'cuda9': 'GPU:CUDA9',
       'cuda10': 'GPU:CUDA10',
@@ -1096,11 +1095,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'cuda10.3': 'GPU:CUDA10.3',
       'cuda11': 'GPU:CUDA11',
       'cuda11.0': 'GPU:CUDA11',
+      'cuda11.1': 'GPU:CUDA11.1',
+      'cuda11.2': 'GPU:CUDA11.2',
       'miniconda': 'Miniconda',
       'anaconda2018.12': 'Anaconda 2018.12',
       'anaconda2019.12': 'Anaconda 2019.12',
       'alpine3.8': 'Alpine Linux 3.8',
-      'ngc': 'NVidia GPU Cloud',
+      'ngc': 'Nvidia GPU Cloud',
       'ff': 'Research Env.',
     };
     if (value in alias) {
@@ -1111,8 +1112,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _updateEnvironment() {
-    // this.languages = Object.keys(this.supports);
-    // this.languages.sort();
     const langs = Object.keys(this.supports);
     if (langs === undefined) return;
     langs.sort((a, b) => (this.supportImages[a].group > this.supportImages[b].group) ? 1 : -1); // TODO: fix this to rearrange kernels
@@ -1164,7 +1163,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         icon = this.icons[kernelName];
       }
       if (interCategory !== this.supportImages[item].group) {
-        //console.log(item);
         this.languages.push({
           name: "",
           registry: "",
@@ -1199,6 +1197,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       versions.sort();
       versions.reverse(); // New version comes first.
       this.versions = versions;
+      this.kernel = kernel;
     } else {
       return;
     }
@@ -1274,7 +1273,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       //console.log('check resource preset from : aggregate resource use, ', from);
       return globalThis.backendaiclient.resourcePreset.check(param);
-      //console.log(this.resource_templates);
       //return {'preset': this.resource_templates};
 
     }).then((response) => {
@@ -1323,7 +1321,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
 
       //let scaling_group_resource_remaining = response.scaling_group_remaining;
-      //console.log('current:', this.scaling_group);
       if (this.scaling_group === '') { // no scaling group in the current project
         response.scaling_groups[''] = {
           using: {'cpu': 0, 'mem': 0},
@@ -1857,24 +1854,25 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   async _refreshImageList() {
     const fields = [
       'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
-      'resource_limits { key min max }'
+      'resource_limits { key min max }', 'labels { key value }'
     ];
     return globalThis.backendaiclient.image.list(fields, true, false).then((response) => {
-      const images: Array<object> = [];
-      Object.keys(response.images).map((objectKey, index) => {
-        const item = response.images[objectKey];
-        if (item.installed === true) {
-          images.push(item);
-        }
-      });
-      if (images.length === 0) {
+      //const images: Array<object> = [];
+      //Object.keys(response.images).map((objectKey, index) => {
+      //  const item = response.images[objectKey];
+      //  images.push(item);
+      //});
+      if (response.images.length === 0) {
         return;
       }
-      this.images = images;
+      //this.images = images;
+      this.images = response.images;
       this.supports = {};
       this.supportImages = {};
+      this.imageRequirements = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
+        //console.log(item);
         const supportsKey = `${item.registry}/${item.name}`;
         if (!(supportsKey in this.supports)) {
           this.supports[supportsKey] = [];
@@ -1905,6 +1903,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.supportImages[supportsKey].group = 'Custom Environments';
         }
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
+        this.imageRequirements[`${supportsKey}:${item.tag}`] = {};
+        item.labels.forEach(label => {
+          if (label['key'] === 'com.nvidia.tensorflow.version') {
+            this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'TensorFlow ' + label['value'];
+          }
+          if (label['key'] === 'com.nvidia.pytorch.version') {
+            this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'PyTorch ' + label['value'];
+          }
+          //if (label['key'] === 'com.nvidia.cuda.version') {
+          //  this.imageRequirements[`${supportsKey}:${item.tag}`].push('CUDA:'+label['value']);
+          //}
+        });
       });
       //console.log("update image list.", this.resourceLimits);
       this._updateEnvironment();
@@ -2143,11 +2153,20 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       size: '80px'
     });
     if (fragment.length > 1) {
-      info.push({ // Language
-        tag: this._aliasName(fragment[1]),
-        color: 'red',
-        size: '120px'
-      });
+      //Image requirement overrides language information.
+      if (this.kernel + ':' + version in this.imageRequirements && 'framework' in this.imageRequirements[this.kernel + ':' + version]) {
+        info.push({ // Language
+          tag: this.imageRequirements[this.kernel + ':' + version]['framework'],
+          color: 'red',
+          size: '120px'
+        });
+      } else {
+        info.push({ // Language
+          tag: this._aliasName(fragment[1]),
+          color: 'red',
+          size: '120px'
+        });
+      }
     }
     if (fragment.length > 2) {
       let requirements = this._aliasName(fragment[2]).split(':');
@@ -2411,7 +2430,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                   ${this._getVersionInfo(item).map(item => html`
                     <lablup-shields style="width:${item.size}!important;"
                                     color="${item.color}"
-                                    app="${item.app && item.app != "" && item.app != " " ? item.app : ''}"
+                                    app="${typeof item.app != 'undefined' && item.app != "" && item.app != " " ? item.app : ''}"
                                     description="${item.tag}">
                     </lablup-shields>
                   `)}
