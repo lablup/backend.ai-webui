@@ -584,7 +584,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             });
           }
         }
-        this._refreshImageList();
+        if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+          document.addEventListener('backend-ai-connected', () => {
+            this._refreshImageList();
+          }, true);
+        } else {
+          this._refreshImageList();
+        }
       }
     );
     this.shadowRoot.querySelector('#environment').addEventListener('selected', this.updateLanguage.bind(this));
