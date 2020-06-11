@@ -141,6 +141,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
+  @property({type: Number}) max_cpu_core_per_session = 64;
 
   constructor() {
     super();
@@ -1618,15 +1619,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           cpu_metric.min = parseInt(cpu_metric.min);
           if ('cpu' in this.userResourceLimit) {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
-              cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot']);
+              cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot'], this.max_cpu_core_per_session);
             } else {
-              cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot']);
+              cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot'], this.max_cpu_core_per_session);
             }
           } else {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
-              cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu_slot']);
+              cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu_slot'], this.max_cpu_core_per_session);
             } else {
-              cpu_metric.max = this.available_slot['cpu_slot'];
+              cpu_metric.max = Math.min(this.available_slot['cpu_slot'], this.max_cpu_core_per_session);
             }
           }
           if (cpu_metric.min >= cpu_metric.max) {
