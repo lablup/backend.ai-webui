@@ -969,7 +969,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
-      this.aggregateResource('session-creation');
+      setTimeout(() => {
+        this.metadata_updating = true;
+        this.aggregateResource('session-creation');
+        this.metadata_updating = false;
+      }, 1500);
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
