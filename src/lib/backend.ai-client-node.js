@@ -24,7 +24,7 @@ class ClientConfig {
     constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
         // default configs.
         this._apiVersionMajor = '4';
-        this._apiVersion = 'v4.20190315'; // For compatibility with 19.03 / 1.4
+        this._apiVersion = 'v4.20190615'; // For compatibility with 19.03 / 1.4
         this._hashType = 'sha256';
         if (endpoint === undefined || endpoint === null)
             endpoint = 'https://api.backend.ai';
