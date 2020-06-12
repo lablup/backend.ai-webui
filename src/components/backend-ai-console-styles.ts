@@ -107,6 +107,12 @@ export const BackendAiConsoleStyles = [
       font-weight: 900;
     }
 
+    mwc-list.sidebar mwc-list-item[disabled],
+    mwc-list.sidebar mwc-list-item[disabled] mwc-icon {
+      --mdc-theme-on-surface: #888;
+      color: #888 !important;
+    }
+
     .mini-ui mwc-list.sidebar mwc-list-item {
       --mdc-list-item-graphic-margin: 0;
     }

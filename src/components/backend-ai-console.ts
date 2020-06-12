@@ -114,6 +114,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) mini_ui = false;
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ["en", "ko"];
+  @property({type: Array}) blockedMenuitem = [];
 
   constructor() {
     super();
@@ -232,8 +233,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
     if (typeof config.license !== "undefined" && 'edition' in config.license) {
       this.edition = config.license.edition;
-      //console.log(this.edition);
     }
+    if (typeof config.menu !== "undefined" && 'blocklist' in config.menu) {
+      this.blockedMenuitem = config.menu.blocklist.split(",");
+    }
+
     globalThis.packageEdition = this.edition;
     if (typeof config.license !== "undefined" && 'validUntil' in config.license) {
       this.validUntil = config.license.validUntil;
@@ -824,7 +828,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <mwc-icon id="data-menu-icon" slot="graphic" class="fg orange">cloud_upload</mwc-icon>
               <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}">
+            <mwc-list-item ?disabled="${this.blockedMenuitem.includes('statistics')}"  graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}">
               <mwc-icon id="statistics-menu-icon" slot="graphic" class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
