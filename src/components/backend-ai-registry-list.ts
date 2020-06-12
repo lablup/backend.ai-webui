@@ -447,7 +447,7 @@ class BackendAIRegistryList extends BackendAIPage {
       </h4>
 
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this.registryList}">
-        <vaadin-grid-column flex-grow="0" width="40px" header="#" .renderer=${this._indexRenderer}>
+        <vaadin-grid-column flex-grow="0" width="40px" header="#" text-align="center" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t("registry.Hostname")}" .renderer=${this._hostRenderer}>
         </vaadin-grid-column>

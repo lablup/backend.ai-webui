@@ -19,7 +19,7 @@ import '@material/mwc-select';
 import '@material/mwc-textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
-
+import './backend-ai-dialog';
 import './backend-ai-signup';
 import {default as PainKiller} from './backend-ai-painkiller';
 
@@ -76,6 +76,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Object}) notification;
   @property({type: Object}) user_groups;
   @property({type: Boolean}) signup_support = false;
+  @property({type: Boolean}) allowAnonymousChangePassword = false;
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
@@ -98,6 +99,11 @@ export default class BackendAILogin extends BackendAIPage {
       css`
         .warning {
           color: red;
+        }
+
+        backend-ai-dialog {
+          --component-width: 400px;
+          --component-padding: 0;
         }
 
         fieldset input {
@@ -254,6 +260,11 @@ export default class BackendAILogin extends BackendAIPage {
       this.signup_support = true;
       (this.shadowRoot.querySelector('#signup-dialog') as any).active = true;
     }
+    if (typeof config.general === "undefined" || typeof config.general.allowAnonymousChangePassword === "undefined" || config.general.allowAnonymousChangePassword === '' || config.general.allowAnonymousChangePassword == false) {
+      this.allowAnonymousChangePassword = false;
+    } else {
+      this.allowAnonymousChangePassword = true;
+    }
     if (typeof config.general === "undefined" || typeof config.general.allowChangeSigninMode === "undefined" || config.general.allowChangeSigninMode === '' || config.general.allowChangeSigninMode == false) {
       this.change_signin_support = false;
     } else {
@@ -341,7 +352,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.blockMessage = message;
     this.blockType = type;
     setTimeout(() => {
-      if (this.blockPanel.open === false && this.is_connected === false) {
+      if (this.blockPanel.open === false && this.is_connected === false && this.loginPanel.open === false) {
         this.blockPanel.show();
       }
     }, 2000);
@@ -356,30 +367,6 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   login() {
-    let api_key: any = localStorage.getItem('backendaiconsole.login.api_key');
-    let secret_key: any = localStorage.getItem('backendaiconsole.login.secret_key');
-    let user_id: any = localStorage.getItem('backendaiconsole.login.user_id');
-    let password: any = localStorage.getItem('backendaiconsole.login.password');
-    if (api_key != null) {
-      this.api_key = api_key.replace(/^\"+|\"+$/g, '');
-    } else {
-      this.api_key = '';
-    }
-    if (secret_key != null) {
-      this.secret_key = secret_key.replace(/^\"+|\"+$/g, '');
-    } else {
-      this.secret_key = '';
-    }
-    if (user_id != null) {
-      this.user_id = user_id.replace(/^\"+|\"+$/g, '');
-    } else {
-      this.user_id = '';
-    }
-    if (password != null) {
-      this.password = password.replace(/^\"+|\"+$/g, '');
-    } else {
-      this.password = '';
-    }
     if (this.api_endpoint === '') {
       let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
       if (api_endpoint != null) {
@@ -387,11 +374,11 @@ export default class BackendAILogin extends BackendAIPage {
       }
     }
     this.api_endpoint = this.api_endpoint.trim();
-    if (this.connection_mode === 'SESSION' && this._validate_data(this.user_id) && this._validate_data(this.password) && this._validate_data(this.api_endpoint)) {
-      this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
+    if (this.connection_mode === 'SESSION') {
+      //this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       this._connectUsingSession();
-    } else if (this.connection_mode === 'API' && this._validate_data(this.api_key) && this._validate_data(this.secret_key) && this._validate_data(this.api_endpoint)) {
-      this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
+    } else if (this.connection_mode === 'API') {
+      //this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       this._connectUsingAPI();
     } else {
       this.open();
@@ -412,6 +399,32 @@ export default class BackendAILogin extends BackendAIPage {
     (this.shadowRoot.querySelector('#signup-dialog') as any).endpoint = this.api_endpoint;
     //this.shadowRoot.querySelector('#signup-dialog').receiveAgreement();
     (this.shadowRoot.querySelector('#signup-dialog') as any).open();
+  }
+
+  _showChangePasswordEmailDialog() {
+    this.shadowRoot.querySelector('#change-password-confirm-dialog').show();
+  }
+
+  async _sendChangePasswordEmail() {
+    const emailEl = this.shadowRoot.querySelector('#password-change-email');
+    if (!emailEl.value || !emailEl.validity.valid) return;
+    try {
+      // Create an anonymous client.
+      const clientConfig = new ai.backend.ClientConfig('', '', this.api_endpoint, 'SESSION');
+      const client = new ai.backend.Client(
+        clientConfig,
+        'Backend.AI Console.',
+      );
+
+      await client.cloud.send_password_change_email(emailEl.value);
+      this.shadowRoot.querySelector('#change-password-confirm-dialog').hide();
+      this.notification.text = _text('signup.EmailSent');
+      this.notification.show();
+    } catch (e) {
+      console.error(e);
+      this.notification.text = e.message || 'Send error';
+      this.notification.show();
+    }
   }
 
   _hideDialog(e) {
@@ -474,8 +487,6 @@ export default class BackendAILogin extends BackendAIPage {
       this.notification.show();
       return;
     }
-    //this.notification.text = 'Connecting...';
-    //this.notification.show();
     if (this.connection_mode === 'SESSION') {
       this.user_id = (this.shadowRoot.querySelector('#id_user_id') as any).value;
       this.password = (this.shadowRoot.querySelector('#id_password') as any).value;
@@ -500,10 +511,14 @@ export default class BackendAILogin extends BackendAIPage {
     );
     let isLogon = await this.client.check_login();
     if (isLogon === false) { // Not authenticated yet.
+      this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       this.client.login().then(response => {
         if (response === false) {
-          this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
-          this.notification.show();
+          this.open();
+          if (this.user_id != '' && this.password != '') {
+            this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
+            this.notification.show();
+          }
         } else {
           this.is_connected = true;
           return this._connectGQL();
@@ -679,10 +694,10 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   async _saveLoginInfo() {
-    localStorage.setItem('backendaiconsole.login.api_key', this.api_key);
-    localStorage.setItem('backendaiconsole.login.secret_key', this.secret_key);
-    localStorage.setItem('backendaiconsole.login.user_id', this.user_id);
-    localStorage.setItem('backendaiconsole.login.password', this.password);
+    localStorage.removeItem('backendaiconsole.login.api_key');
+    localStorage.removeItem('backendaiconsole.login.secret_key');
+    localStorage.removeItem('backendaiconsole.login.user_id');
+    localStorage.removeItem('backendaiconsole.login.password');
   }
 
   _toggleEndpoint() {
@@ -709,24 +724,18 @@ export default class BackendAILogin extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="login-panel" fixed blockscrolling persistent disablefocustrap>
-        <div class="horizontal center layout">
-          <img src="manifest/backend.ai-text.svg" style="height:35px;padding:15px 0 15px 20px;" />
+      <backend-ai-dialog id="login-panel" noclosebutton fixed blockscrolling persistent disablefocustrap>
+        <div slot="title" class="horizontal center layout">
+          <img src="manifest/backend.ai-text.svg" style="height:35px;padding:15px 0 15px 5px;" />
           <div class="flex"></div>
-          ${this.signup_support ? html`
-          <div class="vertical center-justified layout" style="padding-right:20px;">
-            <div style="font-size:12px;margin:0 10px;text-align:center;">${_t("login.NotAUser")}</div>
-            <wl-button style="width:80px;font-weight:500;" class="signup-button fg green mini signup" outlined type="button" @click="${() => this._showSignupDialog()}">${_t("login.SignUp")}</wl-button>
-          </div>
-          ` : html``}
         </div>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
+        <div slot="content" class="login-panel intro centered" style="margin: 0;">
+          <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;">
             <div>${this.connection_mode == 'SESSION' ? _t("login.LoginWithE-mail") : _t("login.LoginWithIAM")}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
                 <div class="vertical center-justified layout">
-                  <div style="font-size:12px;margin:0 10px;text-align:center;">${_t("login.LoginAnotherway")}</div>
+                  <div style="font-size:12px;margin:0 10px;text-align:center;font-weight:400;">${_t("login.LoginAnotherway")}</div>
                   <wl-button class="change-login-mode-button fg blue mini" outlined type="button" @click="${() => this._changeSigninMode()}">
                     ${this.connection_mode == 'SESSION' ? _t("login.ClickToUseIAM") : _t("login.ClickToUseID")}
                   </wl-button>
@@ -777,10 +786,33 @@ export default class BackendAILogin extends BackendAIPage {
                           @click="${() => this._login()}">
                           <wl-icon>check</wl-icon>
                           ${_t("login.Login")}</wl-button>
+              <div class="layout horizontal" style="margin-top:2em;">
+                ${this.signup_support ? html`
+                  <div class="vertical center-justified layout" style="width:100%;">
+                    <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.NotAUser")}</div>
+                    <wl-button style="font-weight:500;" class="signup-button fg green signup"
+                        outlined type="button" @click="${() => this._showSignupDialog()}">
+                        ${_t("login.SignUp")}
+                    </wl-button>
+                  </div>
+                `: html``}
+                ${this.signup_support && this.allowAnonymousChangePassword ? html`
+                  <span class="flex" style="min-width:1em;"></span>
+                `: html``}
+                ${this.allowAnonymousChangePassword ? html`
+                  <div class="vertical center-justified layout" style="width:100%;">
+                    <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.ForgotPassword")}</div>
+                    <wl-button style="font-weight:500;" class="signup-button fg green mini signup"
+                        outlined type="button" @click="${() => this._showChangePasswordEmailDialog()}">
+                      ${_t("login.ChangePassword")}
+                    </wl-button>
+                  </div>
+                `: html``}
+              </div>
             </fieldset>
           </form>
-        </wl-card>
-      </wl-dialog>
+        </div>
+      </backend-ai-dialog>
       <wl-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout">
@@ -804,6 +836,34 @@ export default class BackendAILogin extends BackendAIPage {
                           @click="${() => this._signout()}">
                           <wl-icon>check</wl-icon>
                           ${_t("login.LeaveService")}</wl-button>
+            </fieldset>
+          </form>
+        </wl-card>
+      </wl-dialog>
+      <wl-dialog id="change-password-confirm-dialog" fixed backdrop blockscrolling persistent disablefocustrap>
+        <wl-card elevation="1" class="login-panel intro centered" style="margin:0;">
+          <h3 class="horizontal center layout">
+            <div>${_t("login.SendChangePasswordEmail")}</div>
+            <div class="flex"></div>
+            <wl-button class="red" fab flat inverted @click="${(e) => this._hideDialog(e)}">
+              <wl-icon>close</wl-icon>
+            </wl-button>
+          </h3>
+          <section>
+            <div>${_t("login.DescChangePasswordEmail")}</div>
+          </section>
+          <form>
+            <fieldset>
+              <mwc-textfield type="email" id="password-change-email" maxlength="30"
+                  label="E-mail" value="" autofocus auto-validate
+                  validationMessage="${_t('signup.InvalidEmail')}"
+                  pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
+              <br/><br/>
+              <wl-button class="fg red full" outlined type="button"
+                  @click="${() => this._sendChangePasswordEmail()}">
+                <wl-icon>check</wl-icon>
+                ${_t("login.EmailSendButton")}
+              </wl-button>
             </fieldset>
           </form>
         </wl-card>

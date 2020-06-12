@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 import {render} from 'lit-html';
@@ -18,16 +18,14 @@ import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-spinner';
+import './backend-ai-dialog';
 
 import 'weightless/button';
-import 'weightless/card';
 import 'weightless/checkbox';
-import 'weightless/divider';
 import 'weightless/icon';
 import 'weightless/select';
 import 'weightless/textfield';
 
-import './backend-ai-resource-preset-list';
 import {default as PainKiller} from "./backend-ai-painkiller";
 
 @customElement("backend-ai-environment-list")
@@ -100,12 +98,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           color: var(--paper-orange-900);
         }
 
-        wl-dialog {
-          --dialog-min-width: 350px;
+        backend-ai-dialog {
+          --component-min-width: 350px;
         }
 
-        wl-dialog#modify-image-dialog wl-select,
-        wl-dialog#modify-image-dialog wl-textfield {
+        backend-ai-dialog#modify-image-dialog wl-select,
+        backend-ai-dialog#modify-image-dialog wl-textfield {
           margin-bottom: 20px;
         }
 
@@ -113,17 +111,17 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           --input-font-family: Quicksand, Roboto;
         }
 
-        wl-dialog wl-textfield {
+        backend-ai-dialog wl-textfield {
           --input-font-size: 14px;
         }
 
         #modify-app-dialog {
-          --dialog-height: 500px;
-          --dialog-max-height: 550px;
-          --dialog-min-width: 600px;
+          --component-height: 500px;
+          --component-max-height: 550px;
+          --component-min-width: 600px;
         }
 
-        wl-dialog vaadin-grid {
+        backend-ai-dialog vaadin-grid {
           margin: 0px 20px;
         }
 
@@ -155,7 +153,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
@@ -400,9 +398,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     globalThis.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
       .then(({result}) => {
         if (result === "ok") {
-          this.notification.text = _t("environment.DescServicePortModified");
+          this.notification.text = _text("environment.DescServicePortModified");
         } else {
-          this.notification.text = _t("dialog.ErrorOccurred");
+          this.notification.text = _text("dialog.ErrorOccurred");
         }
         this._getImages();
         this.requestUpdate();
@@ -531,7 +529,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
           <template>
             <div class="layout vertical">
-              <span class="indicator">[[item.digest]]</span>
+              <span class="indicator monospace">[[item.digest]]</span>
             </div>
           </template>
         </vaadin-grid-column>
@@ -541,17 +539,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer=${this._boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
-      <wl-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("environment.ModifyImage")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <form>
-            <fieldset>
+      <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t("environment.ModifyImage")}</span>
+        <div slot="content" style="margin: 0;">
               <div style="display: flex; flex-direction: column;">
                 <div style="display: flex;">
                   <wl-select
@@ -635,26 +625,15 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 outlined
                 type="button"
                 style="box-sizing: border-box; width: 100%"
-                @click=${this.modifyImage}
+                @click=${() => this.modifyImage()}
               >
                 <wl-icon>check</wl-icon>
                 ${_t("button.SaveChanges")}
               </wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="modify-app-dialog" fixed backdrop blockscrolling>
-        <div slot="header" class="gutterBottom">
-          <div class="horizontal center layout">
-            <span style="font-family: Quicksand, Roboto; font-size: 20px;">${_t("environment.ManageApps")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${e => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </div>
-          <wl-divider></wl-divider>
         </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="modify-app-dialog" backdrop>
+        <span slot="title">${_t("environment.ManageApps")}</span>
         <div slot="content" id="modify-app-container" class="container">
           <div class="row header">
             <div> ${_t("environment.AppName")} </div>
@@ -698,36 +677,35 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             </wl-button>
           </div>
         </div>
-        <div slot="footer">
-          <wl-button
-            class="fg orange"
-            outlined
-            type="button"
-            style="box-sizing: border-box; width: 100%;"
-            @click=${this.modifyServicePort}
-          >
-            <wl-icon>check</wl-icon>
-            ${_t("button.Finish")}
-          </wl-button>
+        <wl-button slot="footer"
+          class="fg orange"
+          outlined
+          type="button"
+          style="box-sizing: border-box; width: 100%;"
+          @click=${this.modifyServicePort}
+        >
+          <wl-icon>check</wl-icon>
+          ${_t("button.Finish")}
+        </wl-button>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="install-image-dialog" backdrop persistent>
+        <span slot="title">Let's double-check</span>
+        <div slot="content">
+          <p>${_t("environment.DescDownloadImage")} <span style="color:blue;">${this.installImageName}</span></p>
+          <p>${_t("environment.DescSignificantDownloadTime")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
         </div>
-      </wl-dialog>
-      <wl-dialog id="install-image-dialog" fixed backdrop blockscrolling persistent>
-         <wl-title level="3" slot="header">Let's double-check</wl-title>
-         <div slot="content">
-            <p>${_t("environment.DescDownloadImage")} <span style="color:blue;">${this.installImageName}</span></p>
-            <p>${_t("environment.DescSignificantDownloadTime")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
-         </div>
-         <div slot="footer">
-            <wl-button class="cancel" inverted flat
-                @click="${(e) => {
+        <div slot="footer" class="horizontal flex layout">
+          <div class="flex"></div>
+          <wl-button class="cancel" inverted flat
+              @click="${(e) => {
       this._hideDialog(e)
       this._uncheckSelectedRow();
     }}">
-              ${_t("button.Cancel")}
-            </wl-button>
-            <wl-button class="ok" @click="${() => this._installImage()}">${_t("button.Okay")}</wl-button>
-         </div>
-      </wl-dialog>
+            ${_t("button.Cancel")}
+          </wl-button>
+          <wl-button class="ok" @click="${() => this._installImage()}">${_t("button.Okay")}</wl-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 

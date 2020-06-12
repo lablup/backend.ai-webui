@@ -388,7 +388,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     // language=HTML
     return html`
       <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="80px">
           <template class="header">${_t("agent.Endpoint")}</template>
           <template>

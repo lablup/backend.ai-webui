@@ -32,6 +32,7 @@ import './backend-ai-help-button';
 import './lablup-notification';
 import './backend-ai-indicator-pool';
 import './lablup-terms-of-service';
+import './backend-ai-dialog';
 import './backend-ai-sidepanel-task';
 import './backend-ai-sidepanel-notification';
 
@@ -112,9 +113,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) mini_ui = false;
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ["en", "ko"];
+  @property({type: Array}) blockedMenuitem;
 
   constructor() {
     super();
+    this.blockedMenuitem = [];
   }
 
   static get styles() {
@@ -163,6 +166,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           const emailVerifyView = this.shadowRoot.querySelector('backend-ai-email-verification-view');
           window.setTimeout(() => {
             emailVerifyView.verify(this.loginPanel.api_endpoint);
+          }, 1000);
+        } else if (this._page === 'change-password') {
+          const changePasswordView = this.shadowRoot.querySelector('backend-ai-change-forgot-password-view');
+          window.setTimeout(() => {
+            changePasswordView.open(this.loginPanel.api_endpoint);
           }, 1000);
         } else {
           this.loginPanel.login();
@@ -225,8 +233,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
     if (typeof config.license !== "undefined" && 'edition' in config.license) {
       this.edition = config.license.edition;
-      //console.log(this.edition);
     }
+    if (typeof config.menu !== "undefined" && 'blocklist' in config.menu) {
+      this.blockedMenuitem = config.menu.blocklist.split(",");
+    }
+
     globalThis.packageEdition = this.edition;
     if (typeof config.license !== "undefined" && 'validUntil' in config.license) {
       this.validUntil = config.license.validUntil;
@@ -456,24 +467,24 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   _updateUserPassword() {
     const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
     const oldPassword = dialog.querySelector('#pref-original-password').value;
-    const newPassword = dialog.querySelector('#pref-new-password').value;
-    const newPassword2 = dialog.querySelector('#pref-new-password2').value;
+    const newPassword1El = dialog.querySelector('#pref-new-password');
+    const newPassword2El = dialog.querySelector('#pref-new-password2');
     if (!oldPassword) {
       this.notification.text = 'Enter old password';
       this.notification.show();
       return;
     }
-    if (!newPassword) {
-      this.notification.text = 'Enter new password';
+    if (!newPassword1El.value || !newPassword1El.validity.valid) {
+      this.notification.text = 'Invalid new password';
       this.notification.show();
       return;
     }
-    if (newPassword !== newPassword2) {
+    if (newPassword1El.value !== newPassword2El.value) {
       this.notification.text = 'Two new passwords do not match';
       this.notification.show();
       return;
     }
-    const p = globalThis.backendaiclient.updatePassword(oldPassword, newPassword, newPassword2);
+    const p = globalThis.backendaiclient.updatePassword(oldPassword, newPassword1El.value, newPassword2El.value);
     p.then((resp) => {
       this.notification.text = 'Password updated';
       this.notification.show();
@@ -515,6 +526,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     switch (view) {
       case 'summary':
       case 'verify-email':
+      case 'change-password':
         this.menuTitle = _text("console.menu.Summary");
         this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
@@ -799,28 +811,28 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}">
               <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg green">widgets</mwc-icon>
               <span class="full-menu">${_t("console.menu.Summary")}</span>
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}" ?disabled="${this.blockedMenuitem.includes('job')}">
               <mwc-icon id="sessions-menu-icon" slot="graphic" class="fg red">ballot</mwc-icon>
               <span class="full-menu">${_t("console.menu.Sessions")}</span>
             </mwc-list-item>
             ${false ? html`
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}">
               <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
               <span class="full-menu">${_t("console.menu.Experiments")}</span>
             </mwc-list-item>` : html``}
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}" ?disabled="${this.blockedMenuitem.includes('data')}">
               <mwc-icon id="data-menu-icon" slot="graphic" class="fg orange">cloud_upload</mwc-icon>
               <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}" ?disabled="${this.blockedMenuitem.includes('statistics')}">
               <mwc-icon id="statistics-menu-icon" slot="graphic" class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}" ?disabled="${this.blockedMenuitem.includes('usersettings')}">
               <mwc-icon id="usersettings-menu-icon" slot="graphic" class="fg teal" icon="icons:settings">settings_applications</mwc-icon>
               <span class="full-menu">${_t("console.menu.Settings")}</span>
             </mwc-list-item>
@@ -872,7 +884,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.05.5.200526</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.06.0.200612</small>
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
@@ -953,6 +965,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                     <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-information-view>
                     <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
                     <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-email-verification-view>
+                    <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${this._page === 'change-password'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-change-forgot-password-view>
                     <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-error-view>
                   </div>
                 </section>
@@ -981,18 +994,28 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
-      <wl-dialog id="user-preference-dialog" fixed backdrop blockscrolling>
-        <wl-title level="3" slot="header">${_t("console.menu.ChangePassword")}</wl-title>
-        <div slot="content">
-          <wl-textfield id="pref-original-password" type="password" label="${_t("console.menu.OriginalPassword")}" maxLength="30"></wl-textfield>
-          <wl-textfield id="pref-new-password" type="password" label="${_t("console.menu.NewPassword")}" maxLength="30"></wl-textfield>
-          <wl-textfield id="pref-new-password2" type="password" label="${_t("console.menu.NewPasswordAgain")}" maxLength="30"></wl-textfield>
+      <backend-ai-dialog id="user-preference-dialog" backdrop>
+        <span slot="title">${_t("console.menu.ChangePassword")}</span>
+        <div slot="content" class="layout vertical" style="width:300px;">
+          <mwc-textfield id="pref-original-password" type="password"
+              label="${_t('console.menu.OriginalPassword')}" max-length="30" autofocus
+              style="margin-bottom:20px">
+          </mwc-textfield>
+          <mwc-textfield id="pref-new-password" label="${_t('console.menu.NewPassword')}"
+              type="password" min-length="8" max-length="30"
+              auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
+              pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$">
+          </mwc-textfield>
+          <mwc-textfield id="pref-new-password2" label="${_t('console.menu.NewPasswordAgain')}"
+              type="password" min-length="8" max-length="30">
+          </mwc-textfield>
         </div>
-        <div slot="footer">
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <div class="flex"></div>
           <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>
           <wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `;
   }
 

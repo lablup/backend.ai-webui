@@ -4,6 +4,7 @@
  */
 
 import {translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
+import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -22,6 +23,7 @@ import './backend-ai-resource-monitor';
 import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
 import '../plastics/lablup-piechart/lablup-piechart';
+import marked from "marked/lib/marked.esm.js";
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -73,6 +75,8 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
+  @property({type: String}) announcement = '';
+
   public invitations: any;
 
   constructor() {
@@ -194,6 +198,13 @@ export default class BackendAISummary extends BackendAIPage {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.update_checker = this.shadowRoot.querySelector('#update-checker');
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._readAnnouncement();
+      }, true);
+    } else {
+      this._readAnnouncement();
+    }
   }
 
   _refreshHealthPanel() {
@@ -401,6 +412,20 @@ export default class BackendAISummary extends BackendAIPage {
     }
   }
 
+  _readAnnouncement() {
+    if (!this.activeConnected) {
+      return;
+    }
+    globalThis.backendaiclient.service.get_announcement()
+      .then(res => {
+        if ('message' in res) {
+          this.announcement = marked(res.message);
+        }
+      }).catch(err=>{
+
+    });
+  }
+
   _toInt(value: number) {
     return Math.ceil(value);
   }
@@ -450,7 +475,7 @@ export default class BackendAISummary extends BackendAIPage {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true, err);
-      })
+      });
   }
 
   _deleteInvitation(e, invitation: any) {
@@ -467,7 +492,7 @@ export default class BackendAISummary extends BackendAIPage {
         this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();
         this._refreshInvitations(true);
-      })
+      });
   }
 
   render() {
@@ -596,9 +621,6 @@ export default class BackendAISummary extends BackendAIPage {
               </div>` : html``}
             </div>
           </lablup-activity-panel>
-        </div>
-        <h3 class="plastic-material-title">${_t('summary.Actions')}</h3>
-        <div class="horizontal wrap layout">
           <lablup-activity-panel title="${_t('summary.Shortcut')}" elevation="1">
             <div slot="message">
               <ul>
@@ -616,6 +638,13 @@ export default class BackendAISummary extends BackendAIPage {
       : html``}
             </div>
           </lablup-activity-panel>
+          ${this.announcement != '' ? html`
+          <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1">
+            <div slot="message">
+              ${unsafeHTML(this.announcement)}
+            </div>
+          </lablup-activity-panel>
+          `:html``}
       ${this.invitations ? this.invitations.map(invitation =>
       html`
             <lablup-activity-panel title="${_t('summary.Invitation')}">
