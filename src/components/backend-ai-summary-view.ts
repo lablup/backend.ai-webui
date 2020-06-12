@@ -418,7 +418,6 @@ export default class BackendAISummary extends BackendAIPage {
     }
     globalThis.backendaiclient.service.get_announcement()
       .then(res => {
-        console.log(res);
         if ('message' in res) {
           this.announcement = marked(res.message);
         }
