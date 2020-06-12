@@ -33,7 +33,6 @@ import './lablup-notification';
 import './backend-ai-indicator-pool';
 import './lablup-terms-of-service';
 import './backend-ai-dialog';
-import './backend-ai-task-view';
 import './backend-ai-sidepanel-task';
 import './backend-ai-sidepanel-notification';
 
@@ -885,7 +884,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.05.5.200528</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.05.5.200612</small>
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
