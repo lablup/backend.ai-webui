@@ -1,5 +1,11 @@
 # Changelog
 
+## v20.06.1 (13/06/2020)
+
+#### Bug Fixes:
+- [**UI / UX**][**bug**][**major**][**blocker**] Sometimes environment list did not refreshed correctly [#576](https://github.com/lablup/backend.ai-console/issues/576)
+
+
 ## v20.06.0 (12/06/2020)
 
 #### Enhancements:

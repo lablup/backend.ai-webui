@@ -126,6 +126,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) metric_updating;
   @property({type: Boolean}) metadata_updating;
   @property({type: Boolean}) aggregate_updating = false;
+  @property({type: Boolean}) image_updating = true;
   @property({type: Object}) scaling_group_selection_box;
   @property({type: Object}) resourceGauge = Object();
   /* Parameters required to launch a session on behalf of other user */
@@ -550,6 +551,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
+    this.image_updating = true;
     /* Parameters required to launch a session on behalf of other user */
     this.ownerFeatureInitialized = false;
     this.ownerDomain = '';
@@ -631,11 +633,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_connected = true;
-        setTimeout(() => {this.enableLaunchButton = true}, 1000);
+        this._enableLaunchButton();
       }, true);
     } else {
       this.is_connected = true;
-      setTimeout(() => {this.enableLaunchButton = true}, 1000);
+      this._enableLaunchButton();
+    }
+  }
+
+  _enableLaunchButton() {
+    // Check preconditions and enable it via pooling
+    if (!this.image_updating) { // Image information is successfully updated.
+      this.enableLaunchButton = true;
+    } else {
+      setTimeout(() => {
+        this._enableLaunchButton();
+      }, 1000);
     }
   }
 
@@ -812,7 +825,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async _launchSessionDialog() {
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false || this.image_updating === true) {
       this.notification.text = 'Please wait while initializing...';
       this.notification.show();
     } else {
@@ -1199,6 +1212,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       });
     });
     this._initAliases();
+    this.image_updating = false;
   }
 
   _updateVersions(kernel) {
