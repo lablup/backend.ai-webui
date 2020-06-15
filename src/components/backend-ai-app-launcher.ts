@@ -215,12 +215,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshWorkDialogUI(e));
-    this._refreshWorkDialogUI({"detail": {"mini-ui": globalThis.mini_ui}});
-
-    /* TODO: json to csv file converting */
-    document.addEventListener('backend-ai-csv-file-export-session', () => {
-      this._openExportToCsvDialog();
-    });
   }
 
   async _viewStateChanged(active) {

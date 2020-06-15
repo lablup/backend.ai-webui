@@ -28,7 +28,6 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
 import '../plastics/lablup-shields/lablup-shields';
 import './backend-ai-dialog';
-import './backend-ai-app-launcher';
 
 import JsonToCsv from '../lib/json_to_csv';
 import {BackendAiStyles} from './backend-ai-general-styles';
