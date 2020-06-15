@@ -4,11 +4,6 @@
  */
 import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
-import {render} from 'lit-html';
-
-import '@vaadin/vaadin-icons/vaadin-icons';
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
-import '@material/mwc-textfield/mwc-textfield';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -21,7 +16,6 @@ import '@material/mwc-icon-button';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
-import '../plastics/lablup-shields/lablup-shields';
 import './backend-ai-dialog';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -35,46 +29,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Boolean}) active = true;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
-  @property({type: Array}) compute_sessions = Array();
-  @property({type: Array}) terminationQueue = Array();
-  @property({type: String}) filterAccessKey = '';
-  @property({type: String}) sessionNameField = 'session_name';
   @property({type: Array}) appSupportList = Array();
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Array}) _selected_items = Array();
   @property({type: Boolean}) refreshing = false;
-  @property({type: Boolean}) is_admin = false;
-  @property({type: Boolean}) is_superadmin = false;
-  @property({type: String}) _connectionMode = 'API';
-  @property({type: Object}) _grid = Object();
   @property({type: Object}) notification = Object();
-  @property({type: Object}) terminateSessionDialog = Object();
-  @property({type: Object}) terminateSelectedSessionsDialog = Object();
-  @property({type: Object}) exportToCsvDialog = Object();
-  @property({type: Boolean}) enableScalingGroup = false;
   @property({type: Object}) spinner = Object();
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) indicator = Object();
-  @property({type: Object}) _defaultFileName = '';
-  @property({type: Proxy}) statusColorTable = new Proxy({
-    'idle-timeout': 'green',
-    'user-requested': 'green',
-    'failed-to-start': 'red',
-    'creation-failed': 'red',
-    'self-terminated': 'green'
-  }, {
-    get: (obj, prop) => {
-      return obj.hasOwnProperty(prop) ? obj[prop] : 'lightgrey';
-    }
-  });
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
-  @property({type: Number}) current_page = 1;
-  @property({type: Number}) session_page_limit = 50;
-  @property({type: Number}) total_session_count = 0;
-  @property({type: Number}) _APIMajorVersion = 5;
 
   constructor() {
     super();
@@ -89,18 +55,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       css`
         wl-icon.indicator {
           --icon-size: 16px;
-        }
-
-        wl-icon.pagination {
-          color: var(--paper-grey-700);
-        }
-
-        wl-button.pagination[disabled] wl-icon.pagination {
-          color: var(--paper-grey-300);
-        }
-
-        wl-icon.warning {
-          color: red;
         }
 
         img.indicator-icon {
@@ -187,8 +141,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
-    this._grid = this.shadowRoot.querySelector('#list-grid');
     this._initializeAppTemplate();
     this.refreshTimer = null;
     fetch('resources/image_metadata.json').then(
@@ -207,54 +159,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
     );
     this.notification = globalThis.lablupNotification;
-    this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
-    this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
-    this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
-    this._defaultFileName = new Date().toISOString().substring(0, 10) + '_'
-      + new Date().toTimeString().slice(0, 8).replace(/:/gi, '-');
-
-    document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
-    document.addEventListener('backend-ai-ui-changed', (e) => this._refreshWorkDialogUI(e));
   }
 
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
       return;
-    }
-    // If disconnected
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        if (!globalThis.backendaiclient.is_admin) {
-          this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-          this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
-        } else {
-          this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
-        }
-        if (globalThis.backendaiclient.APIMajorVersion < 5) {
-          this.sessionNameField = 'sess_id';
-        }
-        this.is_admin = globalThis.backendaiclient.is_admin;
-        this.is_superadmin = globalThis.backendaiclient.is_superadmin;
-        this._connectionMode = globalThis.backendaiclient._config._connectionMode;
-        this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
-        this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
-      }, true);
-    } else { // already connected
-      if (!globalThis.backendaiclient.is_admin) {
-        this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-        this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
-      } else {
-        this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
-      }
-      if (globalThis.backendaiclient.APIMajorVersion < 5) {
-        this.sessionNameField = 'sess_id';
-      }
-      this.is_admin = globalThis.backendaiclient.is_admin;
-      this.is_superadmin = globalThis.backendaiclient.is_superadmin;
-      this._connectionMode = globalThis.backendaiclient._config._connectionMode;
-      this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
-      this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
     }
   }
 
@@ -265,94 +175,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       json => {
         this.appTemplate = json.appTemplate;
       }
-    );
-  }
-
-  refreshList(refresh = true, repeat = true) {
-    return this._refreshJobData(refresh, repeat);
-  }
-
-  _humanReadableTime(d: any) {
-    d = new Date(d);
-    return d.toLocaleString();
-  }
-
-  _getKernelInfo(lang) {
-    let tags: any = [];
-    if (lang === undefined) return [];
-    const specs = lang.split('/');
-    let name = (specs[2] || specs[1]).split(':')[0];
-    if (name in this.kernel_labels) {
-      tags.push(this.kernel_labels[name]);
-    } else {
-      const imageParts = lang.split('/');
-      // const registry = imageParts[0]; // hide registry (ip of docker registry is exposed)
-      let namespace;
-      let langName;
-      if (imageParts.length === 3) {
-        namespace = imageParts[1];
-        langName = imageParts[2];
-      } else {
-        namespace = '';
-        langName = imageParts[1];
-      }
-      langName = langName.split(':')[0];
-      langName = namespace ? namespace + '/' + langName : langName;
-      tags.push([
-        {'category': 'Env', 'tag': `${langName}`, 'color': 'lightgrey'}
-      ]);
-    }
-    return tags;
-  }
-
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  _byteToGB(value) {
-    return Math.floor(value / 1000000000);
-  }
-
-  _MBToGB(value) {
-    return value / 1024;
-  }
-
-  _automaticScaledTime(value: number) { // number: msec.
-    let result = Object();
-    let unitText = ['D', 'H', 'M', 'S'];
-    let unitLength = [(1000 * 60 * 60 * 24), (1000 * 60 * 60), (1000 * 60), 1000];
-
-    for (let i = 0; i < unitLength.length; i++) {
-      if (Math.floor(value / unitLength[i]) > 0) {
-        result[unitText[i]] = Math.floor(value / unitLength[i]);
-        value = value % unitLength[i];
-      }
-    }
-    if (Object.keys(result).length === 0) { // only prints msec. when time is shorter than 1sec.
-      if (value > 0) {
-        result = {'MS': value};
-      } else { // No data.
-        result = {'NODATA': 1};
-      }
-    }
-    return result;
-  }
-
-  _msecToSec(value) {
-    return Number(value / 1000).toFixed(0);
-  }
-
-  _elapsed(start, end) {
-    return globalThis.backendaiclient.utils.elapsedTime(start, end);
-  }
-
-  _indexRenderer(root, column, rowData) {
-    let idx = rowData.index + 1;
-    render(
-      html`
-        <div>${idx}</div>
-      `,
-      root
     );
   }
 
@@ -419,9 +241,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     return url;
   }
 
-  _showAppLauncher(e) {
-    const controller = e.target;
-    const controls = controller.closest('#controls');
+  showLauncher(detail) {
+    return this._showAppLauncher(detail);
+  }
+
+  _showAppLauncher(detail) {
+    //const controller = e.target;
+    //const controls = controller.closest('#controls');
+    const controls = detail;
     const sessionName = controls['session-name'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
@@ -447,7 +274,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let dialog = this.shadowRoot.querySelector('#app-dialog');
     dialog.setAttribute('session-name', sessionName);
     dialog.setAttribute('access-key', accessKey);
-    dialog.positionTarget = e.target;
+    //dialog.positionTarget = e.target;
 
     this.shadowRoot.querySelector('#app-dialog').show();
   }
