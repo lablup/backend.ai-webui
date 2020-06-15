@@ -694,6 +694,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   async _viewStateChanged(active) {
     await this.updateComplete;
+
     if (!this.active) {
       return;
     }
@@ -820,8 +821,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async _launchSessionDialog() {
-    console.log(this.image_updating);
-
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false || this.image_updating === true) {
       this.notification.text = 'Please wait while initializing...';
       this.notification.show();
