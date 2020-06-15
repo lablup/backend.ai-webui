@@ -126,7 +126,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) metric_updating;
   @property({type: Boolean}) metadata_updating;
   @property({type: Boolean}) aggregate_updating = false;
-  @property({type: Boolean}) image_updating = true;
+  @property({type: Boolean}) image_updating;
   @property({type: Object}) scaling_group_selection_box;
   @property({type: Object}) resourceGauge = Object();
   /* Parameters required to launch a session on behalf of other user */
@@ -825,6 +825,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async _launchSessionDialog() {
+    console.log(this.image_updating);
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false || this.image_updating === true) {
       this.notification.text = 'Please wait while initializing...';
       this.notification.show();
@@ -978,7 +979,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     const createSessionQueue = sessions.map(item => {
       return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
     });
-    Promise.all(createSessionQueue).then((res) => {
+    Promise.all(createSessionQueue).then((res: any) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
@@ -989,16 +990,20 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }, 1500);
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
-      if (this.direction === 'vertical' && sessions.length === 1) {
-        // TODO: App launcher here (sessions[0].sessionName). We need to have a way to read app services on the kernel.
-        const appOptions = {
-          'sessionName': sessions[0].sessionName,
-          'accessKey': '',
-          'appServices': []
-        };
-        //console.log(sessions[0].kernelName);
-        //console.log(sessions[0], appOptions);
-        //globalThis.appLauncher.showLauncher(appOptions);
+      if (this.direction === 'vertical' && res.length === 1) {
+        res[0].taskobj.then(res => {
+          const appOptions = {
+            'session-name': res.kernelId,
+            'access-key': ''
+          };
+          let service_info = res.servicePorts;
+          if (Array.isArray(service_info) === true) {
+            appOptions['app-services'] = service_info.map(a => a.name);
+          } else {
+            appOptions['app-services'] = [];
+          }
+          globalThis.appLauncher.showLauncher(appOptions);
+        });
       }
     }).catch((err) => {
       this.metadata_updating = false;
