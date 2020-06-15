@@ -210,7 +210,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
-
     let param = {
       endpoint: globalThis.backendaiclient._config.endpoint
     };
@@ -327,10 +326,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     downloadLinkEl.download = 'id_container';
   }
 
-  async _runTerminal(e) {
-    const controller = e.target;
-    const controls = controller.closest('#controls');
-    const sessionName = controls['session-name'];
+  async runTerminal(sessionName: string) {
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
       this.indicator = await globalThis.lablupIndicator.start();
       this._open_wsproxy(sessionName, 'ttyd')

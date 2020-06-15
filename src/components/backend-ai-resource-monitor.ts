@@ -990,7 +990,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
       if (this.direction === 'vertical' && sessions.length === 1) {
-        // App launcher here (sessions[0].sessionName)
+        // TODO: App launcher here (sessions[0].sessionName)
+        const appOptions = {
+          'sessionName': sessions[0].sessionName,
+          'accessKey': '',
+          'appServices': sessions[0].sessionName
+        };
+        console.log(sessions[0], appOptions);
+        //globalThis.appLauncher.showLauncher(appOptions);
       }
     }).catch((err) => {
       this.metadata_updating = false;

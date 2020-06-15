@@ -735,83 +735,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     return globalThis.appLauncher.showLauncher(controls);
   }
 
-  async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null) {
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      return false;
-    }
-
-    let param = {
-      endpoint: globalThis.backendaiclient._config.endpoint
-    };
-    if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
-      param['mode'] = "SESSION";
-      param['session'] = globalThis.backendaiclient._config._session_id;
-    } else {
-      param['mode'] = "DEFAULT";
-      param['access_key'] = globalThis.backendaiclient._config.accessKey;
-      param['secret_key'] = globalThis.backendaiclient._config.secretKey;
-    }
-    param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
-    if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
-      this.indicator.end();
-      this.notification.text = 'Proxy is not ready yet. Check proxy settings for detail.';
-      this.notification.show();
-      return Promise.resolve(false);
-    }
-    let rqst = {
-      method: 'PUT',
-      body: JSON.stringify(param),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      uri: this._getProxyURL() + 'conf'
-    };
-    this.indicator.set(20, 'Setting up proxy for the app...');
-    try {
-      let response = await this.sendRequest(rqst);
-      if (response === undefined) {
-        this.indicator.end();
-        this.notification.text = 'Proxy configurator is not responding.';
-        this.notification.show();
-        return Promise.resolve(false);
-      }
-      let token = response.token;
-      let uri = this._getProxyURL() + `proxy/${token}/${sessionName}/add?app=${app}`;
-      if (port !== null && port > 1024 && port < 65535) {
-        uri += `&port=${port}`;
-      }
-      this.indicator.set(50, 'Adding kernel to socket queue...');
-      let rqst_proxy = {
-        method: 'GET',
-        app: app,
-        uri: uri
-      };
-      return await this.sendRequest(rqst_proxy);
-    } catch (err) {
-      throw err;
-    }
-  }
-
   async _runTerminal(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const sessionName = controls['session-name'];
-    if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
-      this.indicator = await globalThis.lablupIndicator.start();
-      this._open_wsproxy(sessionName, 'ttyd')
-        .then((response) => {
-          if (response.url) {
-            this.indicator.set(100, 'Prepared.');
-            setTimeout(() => {
-              globalThis.open(response.url, '_blank');
-              this.indicator.end();
-              console.log("Terminal proxy loaded: ");
-              console.log(sessionName);
-            }, 1000);
-          }
-        });
-    }
+    return globalThis.appLauncher.runTerminal(sessionName);
   }
 
   // Single session closing
