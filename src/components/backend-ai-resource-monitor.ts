@@ -990,13 +990,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
       if (this.direction === 'vertical' && sessions.length === 1) {
-        // TODO: App launcher here (sessions[0].sessionName)
+        // TODO: App launcher here (sessions[0].sessionName). We need to have a way to read app services on the kernel.
         const appOptions = {
           'sessionName': sessions[0].sessionName,
           'accessKey': '',
-          'appServices': sessions[0].sessionName
+          'appServices': []
         };
-        console.log(sessions[0], appOptions);
+        //console.log(sessions[0].kernelName);
+        //console.log(sessions[0], appOptions);
         //globalThis.appLauncher.showLauncher(appOptions);
       }
     }).catch((err) => {
