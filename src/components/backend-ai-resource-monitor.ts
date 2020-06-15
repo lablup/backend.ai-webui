@@ -551,16 +551,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
-    this.image_updating = true;
     /* Parameters required to launch a session on behalf of other user */
     this.ownerFeatureInitialized = false;
     this.ownerDomain = '';
     this.ownerKeypairs = [];
     this.ownerGroups = [];
     this.ownerScalingGroups = [];
+    this.image_updating = true;
   }
 
   firstUpdated() {
+    // TODO : use sessionstore to query the image metadata only once.
     fetch('resources/image_metadata.json').then(
       response => response.json()
     ).then(
@@ -588,10 +589,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
         if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
           document.addEventListener('backend-ai-connected', () => {
+            this.is_connected = true;
             this._refreshImageList();
-          }, true);
+            this._enableLaunchButton();
+          }, {once: true});
         } else {
+          this.is_connected = true;
           this._refreshImageList();
+          this._enableLaunchButton();
         }
       }
     );
@@ -630,15 +635,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       // this.scaling_group = '';
       this._updatePageVariables(true);
     });
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this.is_connected = true;
-        this._enableLaunchButton();
-      }, true);
-    } else {
-      this.is_connected = true;
-      this._enableLaunchButton();
-    }
   }
 
   _enableLaunchButton() {
@@ -706,7 +702,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
         this._updatePageVariables(true);
         this._disableEnterKey();
-      }, true);
+      }, {once: true});
     } else {
       this.project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
       await this._updatePageVariables(true);
@@ -772,7 +768,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         .then(res => {
           this.sessions_list = res.compute_session_list.items.map(e => e.created_at);
         });
-
       this._initAliases();
       await this._refreshResourcePolicy();
       this.aggregateResource('update-page-variable');
@@ -826,6 +821,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   async _launchSessionDialog() {
     console.log(this.image_updating);
+
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false || this.image_updating === true) {
       this.notification.text = 'Please wait while initializing...';
       this.notification.show();
