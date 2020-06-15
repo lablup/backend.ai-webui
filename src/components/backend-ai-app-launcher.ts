@@ -13,8 +13,8 @@ import 'weightless/icon';
 import 'weightless/textfield';
 import 'weightless/title';
 import '@material/mwc-icon-button';
+import '@material/mwc-button';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
@@ -53,68 +53,20 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        wl-icon.indicator {
-          --icon-size: 16px;
-        }
-
-        img.indicator-icon {
-          width: 16px;
-          height: 16px;
-          padding-right: 5px;
-        }
-
         mwc-icon-button.apps {
           --mdc-icon-button-size: 48px;
           --mdc-icon-size: 36px;
           padding: 3px;
-          margin-right: 5px;
         }
 
         #app-dialog {
           --component-width: 330px;
+          --component-width: auto;
+          --component-max-width: 70%;
         }
 
         #ssh-dialog {
           --component-width: 330px;
-        }
-
-        @media screen and (max-width: 899px) {
-          #work-dialog,
-          #work-dialog.mini_ui {
-            --left: 0;
-            --component-width: 100%;
-          }
-        }
-
-        @media screen and (min-width: 900px) {
-          #work-dialog {
-            --left: 100px;
-            --component-width: calc(100% - 50px);
-          }
-
-          #work-dialog.mini_ui {
-            --left: 40px;
-            --component-width: calc(100% - 50px);
-          }
-        }
-
-        #work-area {
-          width: 100%;
-          padding: 5px;
-          height: calc(100vh - 120px);
-          background-color: #222222;
-          color: #efefef;
-        }
-
-        div.indicator,
-        span.indicator {
-          font-size: 9px;
-          margin-right: 5px;
-        }
-
-        div.label,
-        span.label {
-          font-size: 12px;
         }
 
         .app-icon {
@@ -122,19 +74,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           margin-right: 5px;
         }
 
-        div.configuration {
-          width: 70px !important;
-        }
-
-        div.configuration wl-icon {
-          padding-right: 5px;
-        }
-
         .app-icon .label {
           display: block;
           width: 80px;
           text-align: center;
           height: 25px;
+          font-size: 13px;
         }
       `];
   }
@@ -203,34 +148,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     return body;
   }
 
-  _terminateApp(sessionName) {
-    let accessKey = globalThis.backendaiclient._config.accessKey;
-    let rqst = {
-      method: 'GET',
-      uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + sessionName
-    };
-    return this.sendRequest(rqst)
-      .then((response) => {
-        this.total_session_count -= 1;
-        let accessKey = globalThis.backendaiclient._config.accessKey;
-        if (response !== undefined && response.code !== 404) {
-          let rqst = {
-            method: 'GET',
-            uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + sessionName + '/delete'
-          };
-          return this.sendRequest(rqst);
-        }
-        return Promise.resolve(true);
-      }).catch((err) => {
-        console.log(err);
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      });
-  }
-
   _getProxyURL() {
     let url = 'http://127.0.0.1:5050/';
     if (globalThis.__local_proxy !== undefined) {
@@ -253,6 +170,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
     this.appSupportList = [];
+    this.appSupportList.push({ // Force push terminal
+      'name': 'ttyd',
+      'title': 'Console',
+      'redirect': "",
+      'src': './resources/icons/terminal.svg'
+    });
     appServices.forEach((elm) => {
       if (elm in this.appTemplate) {
         if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
@@ -451,7 +374,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     return html`
       <backend-ai-dialog id="app-dialog" backdrop>
         <span slot="title">App</span>
-        <div slot="content" style="padding:15px;" class="horizontal layout wrap center center-justified">
+        <div slot="content" style="padding:15px;" class="horizontal layout wrap center start-justified">
         ${this.appSupportList.map(item => html`
           <div class="vertical layout center center-justified app-icon">
             <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
@@ -464,43 +387,31 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         `)}
          </div>
       </backend-ai-dialog>
-      <wl-dialog id="ssh-dialog" fixed backdrop blockscrolling persistent
-                 style="padding:0;">
-        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h4 class="horizontal center layout" style="font-weight:bold">
-            <span>SSH / SFTP connection</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h4>
-          <div style="padding:0 15px;" >Use your favorite SSH/SFTP application to connect.</div>
+      <backend-ai-dialog id="ssh-dialog" backdrop>
+        <span slot="title">SSH / SFTP connection</span>
+        <div slot="content" style="padding:15px;">
+          <div style="padding:15px 0;" >Use your favorite SSH/SFTP application to connect.</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t("session.ConnectionInformation")}</h4>
             <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a></div>
             <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
             <div><span>Port:</span> ${this.sshPort}</div>
-            <div><a id="sshkey-download-link" href="">Download SSH key file (id_container)</a></div>
+            <a id="sshkey-download-link" style="margin-top:15px;" href="">
+              <mwc-button class="fg apps green">Download SSH key file (id_container)</mwc-button>
+            </a>
           </section>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="vnc-dialog" fixed backdrop blockscrolling
-                    style="padding:0;">
-        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h4 class="horizontal center layout" style="font-weight:bold">
-            <span>${_t("session.VNCconnection")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h4>
-          <div style="padding:0 15px;" >${_t("session.UseYourFavoriteSSHApp")}</div>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="vnc-dialog" backdrop>
+        <span slot="title">${_t("session.VNCconnection")}</span>
+        <div slot="content" style="padding:15px;">
+          <div style="padding:15px 0;">${_t("session.UseYourFavoriteSSHApp")}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t("session.ConnectionInformation")}</h4>
             <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a></div>
           </section>
-        </wl-card>
-      </wl-dialog>
+        </div>
+      </backend-ai-dialog>
       `;
   }
 

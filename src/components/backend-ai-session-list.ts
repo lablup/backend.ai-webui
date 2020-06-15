@@ -105,11 +105,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           height: calc(100vh - 265px);
         }
 
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
-
         wl-icon.indicator {
           --icon-size: 16px;
         }
@@ -168,14 +163,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           top: 50px;
         }
 
-        #app-dialog {
-          --component-width: 330px;
-        }
-
-        #ssh-dialog {
-          --component-width: 330px;
-        }
-
         @media screen and (max-width: 899px) {
           #work-dialog,
           #work-dialog.mini_ui {
@@ -215,24 +202,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           font-size: 12px;
         }
 
-        .app-icon {
-          margin-left: 5px;
-          margin-right: 5px;
-        }
-
         div.configuration {
           width: 70px !important;
         }
 
         div.configuration wl-icon {
           padding-right: 5px;
-        }
-
-        .app-icon .label {
-          display: block;
-          width: 80px;
-          text-align: center;
-          height: 25px;
         }
 
         wl-button.multiple-action-button {
@@ -760,10 +735,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     return globalThis.appLauncher.showLauncher(controls);
   }
 
-  _hideAppLauncher() {
-    this.shadowRoot.querySelector('#app-dialog').hide();
-  }
-
   async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null) {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
@@ -820,19 +791,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     } catch (err) {
       throw err;
     }
-  }
-
-  async _readSSHKey(sessionName) {
-    const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
-    const file = '/home/work/id_container';
-    const blob = await globalThis.backendaiclient.download_single(sessionName, file);
-    // TODO: This blob has additional leading letters in front of key texts.
-    //       Manually trim those letters.
-    const rawText = await blob.text();
-    const index = rawText.indexOf('-----');
-    const trimmedBlob = await blob.slice(index, blob.size, blob.type);
-    downloadLinkEl.href = globalThis.URL.createObjectURL(trimmedBlob);
-    downloadLinkEl.download = 'id_container';
   }
 
   async _runTerminal(e) {
@@ -1412,23 +1370,6 @@ export default class BackendAiSessionList extends BackendAIPage {
         <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
                 style="border-style: none;width: 100%;"></iframe>
       </backend-ai-dialog>
-      <wl-dialog id="vnc-dialog" fixed backdrop blockscrolling
-                    style="padding:0;">
-        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h4 class="horizontal center layout" style="font-weight:bold">
-            <span>${_t("session.VNCconnection")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h4>
-          <div style="padding:0 15px;" >${_t("session.UseYourFavoriteSSHApp")}</div>
-          <section class="vertical layout wrap start start-justified">
-            <h4>${_t("session.ConnectionInformation")}</h4>
-            <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a></div>
-          </section>
-        </wl-card>
-      </wl-dialog>
       <wl-dialog id="terminate-session-dialog" fixed backdrop blockscrolling>
          <wl-title level="3" slot="header">${_t("dialog.title.LetsDouble-Check")}</wl-title>
          <div slot="content">
