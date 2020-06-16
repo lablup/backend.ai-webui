@@ -89,7 +89,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this._initializeAppTemplate();
     this.refreshTimer = null;
     fetch('resources/image_metadata.json').then(
-      response => response.json()
+      response => response.json();
     ).then(
       json => {
         this.imageInfo = json.imageInfo;
@@ -115,7 +115,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
   _initializeAppTemplate() {
     fetch('resources/app_template.json').then(
-      response => response.json()
+      response => response.json();
     ).then(
       json => {
         this.appTemplate = json.appTemplate;
