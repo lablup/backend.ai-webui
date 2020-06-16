@@ -126,7 +126,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) metric_updating;
   @property({type: Boolean}) metadata_updating;
   @property({type: Boolean}) aggregate_updating = false;
-  @property({type: Boolean}) image_updating = true;
+  @property({type: Boolean}) image_updating;
   @property({type: Object}) scaling_group_selection_box;
   @property({type: Object}) resourceGauge = Object();
   /* Parameters required to launch a session on behalf of other user */
@@ -551,16 +551,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
-    this.image_updating = true;
     /* Parameters required to launch a session on behalf of other user */
     this.ownerFeatureInitialized = false;
     this.ownerDomain = '';
     this.ownerKeypairs = [];
     this.ownerGroups = [];
     this.ownerScalingGroups = [];
+    this.image_updating = true;
   }
 
   firstUpdated() {
+    // TODO : use sessionstore to query the image metadata only once.
     fetch('resources/image_metadata.json').then(
       response => response.json()
     ).then(
@@ -588,10 +589,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
         if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
           document.addEventListener('backend-ai-connected', () => {
+            this.is_connected = true;
             this._refreshImageList();
-          }, true);
+            this._enableLaunchButton();
+          }, {once: true});
         } else {
+          this.is_connected = true;
           this._refreshImageList();
+          this._enableLaunchButton();
         }
       }
     );
@@ -630,15 +635,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       // this.scaling_group = '';
       this._updatePageVariables(true);
     });
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this.is_connected = true;
-        this._enableLaunchButton();
-      }, true);
-    } else {
-      this.is_connected = true;
-      this._enableLaunchButton();
-    }
   }
 
   _enableLaunchButton() {
@@ -698,6 +694,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   async _viewStateChanged(active) {
     await this.updateComplete;
+
     if (!this.active) {
       return;
     }
@@ -706,7 +703,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
         this._updatePageVariables(true);
         this._disableEnterKey();
-      }, true);
+      }, {once: true});
     } else {
       this.project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
       await this._updatePageVariables(true);
@@ -772,7 +769,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         .then(res => {
           this.sessions_list = res.compute_session_list.items.map(e => e.created_at);
         });
-
       this._initAliases();
       await this._refreshResourcePolicy();
       this.aggregateResource('update-page-variable');
@@ -978,7 +974,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     const createSessionQueue = sessions.map(item => {
       return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
     });
-    Promise.all(createSessionQueue).then((res) => {
+    Promise.all(createSessionQueue).then((res: any) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
@@ -989,6 +985,21 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }, 1500);
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
+      if (this.direction === 'vertical' && res.length === 1) {
+        res[0].taskobj.then(res => {
+          const appOptions = {
+            'session-name': res.kernelId,
+            'access-key': ''
+          };
+          let service_info = res.servicePorts;
+          if (Array.isArray(service_info) === true) {
+            appOptions['app-services'] = service_info.map(a => a.name);
+          } else {
+            appOptions['app-services'] = [];
+          }
+          globalThis.appLauncher.showLauncher(appOptions);
+        });
+      }
     }).catch((err) => {
       this.metadata_updating = false;
       if (err && err.message) {

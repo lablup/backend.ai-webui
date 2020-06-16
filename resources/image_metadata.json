@@ -132,6 +132,20 @@
         }
       ]
     },
+    "python-mxnet": {
+      "name": "MXNet",
+      "description": "MXNet is an open source deep learning framework suited for flexible research prototyping and production.",
+      "group": "Machine Learning / Deep Learning",
+      "tags": [],
+      "icon": "mxnet.svg",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Amazon MXNet",
+          "color": "blue"
+        }
+      ]
+    },
     "julia-tensorflow": {
       "name": "TensorFlow (Julia)",
       "description": "This is Julia-integrated TensorFlow environment. TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications.",

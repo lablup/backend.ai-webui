@@ -330,7 +330,6 @@ export default class BackendAISummary extends BackendAIPage {
     this.mem_current_usage_percent = "0";
     this.is_admin = false;
     this.is_superadmin = false;
-    (this.shadowRoot.querySelector('#resource-monitor') as any).init_resource();
   }
 
   _sync_resource_values() {
@@ -505,7 +504,7 @@ export default class BackendAISummary extends BackendAIPage {
           <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
-                <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active}" direction="vertical"></backend-ai-resource-monitor>
+                <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>
               </div>
             </div>
           </lablup-activity-panel>

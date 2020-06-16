@@ -1,5 +1,12 @@
 # Changelog
 
+## v20.06.2 (16/06/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**hard**][**major**][**UI / UX**][**library / SDK**] Show app launcher after launch a session on summary page (#575) [#575](https://github.com/lablup/backend.ai-console/issues/575)
+
+
 ## v20.06.1 (13/06/2020)
 
 #### Bug Fixes:

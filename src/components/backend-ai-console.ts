@@ -35,6 +35,7 @@ import './lablup-terms-of-service';
 import './backend-ai-dialog';
 import './backend-ai-sidepanel-task';
 import './backend-ai-sidepanel-notification';
+import './backend-ai-app-launcher';
 
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 import '../lib/backend.ai-client-es6';
@@ -132,6 +133,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   firstUpdated() {
     globalThis.lablupNotification = this.shadowRoot.querySelector('#notification');
     globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
+    globalThis.appLauncher = this.shadowRoot.querySelector('#app-launcher');
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.appPage = this.shadowRoot.querySelector('#app-page');
@@ -884,7 +886,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.06.1.200613</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.06.2.200616</small>
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
@@ -1016,6 +1018,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>
         </div>
       </backend-ai-dialog>
+      <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
     `;
   }
 
