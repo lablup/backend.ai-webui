@@ -48,6 +48,7 @@ export default class BackendAiDialog extends LitElement {
       css`
         wl-dialog {
           --dialog-min-width: var(--component-min-width, '350px');
+          --dialog-max-width: var(--component-max-width, '350px');
           --dialog-max-height: var(--component-max-height, '95vh');
           --dialog-width: var(--component-width, '350px');
           --dialog-height: var(--component-height, 'auto');
