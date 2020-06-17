@@ -212,10 +212,17 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    * @param {boolean} isChanged - set to true to reset query interval.
    */
   async _updatePageVariables(isChanged: boolean) {
-    if (this.active && this.metadata_updating === false) {
+    if (this.metadata_updating === false) {
       this.metadata_updating = true;
       if (isChanged) {
         this.lastQueryTime = 0; // Reset query interval
+      }
+      if (this.scaling_group === '' || isChanged) {
+        const currentGroup = globalThis.backendaiclient.current_group || null;
+        let sgs = await globalThis.backendaiclient.scalingGroup.list(currentGroup);
+        // Make empty scaling group item if there is no scaling groups.
+        this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
+        this.scaling_group = this.scaling_groups[0].name;
       }
 
       // Reload number of sessions
@@ -228,6 +235,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       await this._refreshResourcePolicy();
       this.aggregateResource('update-page-variable');
       this.metadata_updating = false;
+      return Promise.resolve(true);
+    } else {
+      return Promise.resolve(false);
     }
   }
 
@@ -328,10 +338,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    */
   async _aggregateCurrentResource(from: string = '') {
     if (this.aggregate_updating) {
-      return;
+      return Promise.resolve(false);
     }
     if (Date.now() - this.lastQueryTime < 1000) {
-      return;
+      return Promise.resolve(false);
     }
     //console.log('aggregate from:', from);
     this.aggregate_updating = true;
@@ -593,7 +603,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.used_resource_group_slot_percent = used_resource_group_slot_percent;
       this.lastQueryTime = Date.now();
       this.aggregate_updating = false;
-      return this.available_slot;
+      console.log("ok");
+      return Promise.resolve(true);
+      //return this.available_slot;
     }).catch(err => {
       this.lastQueryTime = Date.now();
       this.aggregate_updating = false;
@@ -676,10 +688,114 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           }
         });
       });
+      this._updateEnvironment();
     }).catch((err) => {
       this.metadata_updating = false;
       throw err;
     });
+  }
+
+  _guessHumanizedNames(kernelName) {
+    const candidate = this.imageNames;
+    let imageName = '';
+    let humanizedName = null;
+    let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
+    Object.keys(candidate).forEach((item, index) => {
+      let specs = kernelName.split('/');
+      if (specs.length == 2) {
+        imageName = specs[1];
+      } else {
+        imageName = specs[2];
+      }
+      if (imageName === item) {
+        humanizedName = candidate[item];
+        matchedString = item;
+      } else if (imageName === '' && kernelName.endsWith(item) && item.length < matchedString.length) {
+        humanizedName = candidate[item];
+        matchedString = item;
+      }
+    });
+    return humanizedName;
+  }
+
+  _updateEnvironment() {
+    const langs = Object.keys(this.supports);
+    if (langs === undefined) return;
+    langs.sort((a, b) => (this.supportImages[a].group > this.supportImages[b].group) ? 1 : -1); // TODO: fix this to rearrange kernels
+    // TODO: add category indicator between groups
+    let interCategory: string = '';
+    this.languages = [];
+    langs.forEach((item, index) => {
+      if (!(Object.keys(this.aliases).includes(item))) {
+        const humanizedName = this._guessHumanizedNames(item);
+        if (humanizedName !== null) {
+          this.aliases[item] = humanizedName;
+        } else {
+          this.aliases[item] = item;
+        }
+      }
+      let specs = item.split('/');
+      let registry = specs[0];
+      let prefix, kernelName;
+      if (specs.length == 2) {
+        prefix = '';
+        kernelName = specs[1];
+      } else {
+        prefix = specs[1];
+        kernelName = specs[2];
+      }
+      let alias = this.aliases[item];
+      let basename;
+      if (alias !== undefined) {
+        basename = alias.split(' (')[0];
+      } else {
+        basename = kernelName;
+      }
+      // Remove registry and namespace from alias and basename.
+      alias = alias.split('/').slice(-1)[0];
+      basename = basename.split('/').slice(-1)[0];
+
+      let tags: object[] = [];
+      if (kernelName in this.tags) {
+        tags = tags.concat(this.tags[kernelName]);
+      }
+      if (prefix != '' && prefix != 'lablup') {
+        tags.push({
+          tag: prefix,
+          color: 'purple'
+        });
+      }
+      let icon: string = "default.png";
+      if (kernelName in this.icons) {
+        icon = this.icons[kernelName];
+      }
+      if (interCategory !== this.supportImages[item].group) {
+        this.languages.push({
+          name: "",
+          registry: "",
+          prefix: "",
+          kernelname: "",
+          alias: "",
+          icon: "",
+          basename: this.supportImages[item].group,
+          tags: [],
+          clickable: false
+        });
+        interCategory = this.supportImages[item].group;
+      }
+      this.languages.push({
+        name: item,
+        registry: registry,
+        prefix: prefix,
+        kernelname: kernelName,
+        alias: alias,
+        basename: basename,
+        tags: tags,
+        icon: icon
+      });
+    });
+    //this._initAliases();
+    this.image_updating = false;
   }
 
   /**

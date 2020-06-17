@@ -622,6 +622,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async updateScalingGroup(forceUpdate = false, e) {
+    console.log(e.target.value);
     this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
     if (this.active) {
       if (this.direction === 'vertical') {
@@ -674,12 +675,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if (isChanged) {
         this.lastQueryTime = 0; // Reset query interval
       }
-      if (this.scaling_group === '' || isChanged) {
-        const currentGroup = globalThis.backendaiclient.current_group || null;
-        let sgs = await globalThis.backendaiclient.scalingGroup.list(currentGroup);
-        // Make empty scaling group item if there is no scaling groups.
-        this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
-        this.scaling_group = this.scaling_groups[0].name;
+      if (this.resourceBroker.scaling_group === '' || isChanged) {
         if (this.direction === 'vertical') {
           const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
           // Detached from template to support live-update after creating new group (will need it)
@@ -697,7 +693,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           opt.setAttribute('disabled', 'true');
           opt.innerHTML = _text('session.launcher.SelectResourceGroup');
           scaling_select.appendChild(opt);
-          this.scaling_groups.map(group => {
+          this.resourceBroker.scaling_groups.map(group => {
             opt = document.createElement('option');
             opt.value = group.name;
             if (this.scaling_group === group.name) {
@@ -720,13 +716,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       // update selected Scaling Group depends on project group
       this._updateSelectedScalingGroup();
-      // Reload number of sessions
-      let fields = ["created_at"];
-      globalThis.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
-        .then(res => {
-          this.sessions_list = res.compute_session_list.items.map(e => e.created_at);
-        });
-      //this._initAliases();
+      this.sessions_list = this.resourceBroker.sessions_list;
       await this._refreshResourcePolicy();
       this.aggregateResource('update-page-variable');
       this.metadata_updating = false;
@@ -734,6 +724,28 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async _refreshResourcePolicy() {
+    return this.resourceBroker._refreshResourcePolicy().then(() => {
+      this.concurrency_used = this.resourceBroker.concurrency_used;
+      this.defaultResourcePolicy = this.resourceBroker.defaultResourcePolicy;
+      this.userResourceLimit = this.resourceBroker.userResourceLimit;
+      this.concurrency_max = this.resourceBroker.concurrency_max;
+      this.gpu_mode = this.resourceBroker.gpu_mode;
+      this.gpu_step = this.resourceBroker.gpu_step;
+      this.gpu_modes = this.resourceBroker.gpu_modes;
+      this.updateResourceAllocationPane('refresh resource policy');
+    }).catch((err) => {
+      console.log(err);
+      this.metadata_updating = false;
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
+      }
+    });
+    /*
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['resource_policy', 'concurrency_used']).then((response) => {
       let policyName = response.keypair.resource_policy;
       this.concurrency_used = response.keypair.concurrency_used;
@@ -768,7 +780,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.show(true, err);
       }
-    });
+    });*/
   }
 
   async _launchSessionDialog() {
@@ -796,24 +808,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.requestUpdate();
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
-  }
-
-  _updateGPUMode() {
-    globalThis.backendaiclient.getResourceSlots().then((response) => {
-      let results = response;
-
-      ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
-        if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
-          this.gpu_mode = item;
-          (this.gpu_modes as Array<string>).push(item);
-          if (item === 'cuda.shares') {
-            this.gpu_step = 0.05;
-          } else {
-            this.gpu_step = 1;
-          }
-        }
-      });
-    });
   }
 
   _generateKernelIndex(kernel, version) {
@@ -1101,90 +1095,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  _updateEnvironment() {
-    const langs = Object.keys(this.supports);
-    if (langs === undefined) return;
-    langs.sort((a, b) => (this.supportImages[a].group > this.supportImages[b].group) ? 1 : -1); // TODO: fix this to rearrange kernels
-    // TODO: add category indicator between groups
-    let interCategory: string = '';
-    this.languages = [];
-    langs.forEach((item, index) => {
-      if (!(Object.keys(this.aliases).includes(item))) {
-        const humanizedName = this._guessHumanizedNames(item);
-        if (humanizedName !== null) {
-          this.aliases[item] = humanizedName;
-        } else {
-          this.aliases[item] = item;
-        }
-      }
-      let specs = item.split('/');
-      let registry = specs[0];
-      let prefix, kernelName;
-      if (specs.length == 2) {
-        prefix = '';
-        kernelName = specs[1];
-      } else {
-        prefix = specs[1];
-        kernelName = specs[2];
-      }
-      let alias = this.aliases[item];
-      let basename;
-      if (alias !== undefined) {
-        basename = alias.split(' (')[0];
-      } else {
-        basename = kernelName;
-      }
-      // Remove registry and namespace from alias and basename.
-      alias = alias.split('/').slice(-1)[0];
-      basename = basename.split('/').slice(-1)[0];
-
-      let tags: object[] = [];
-      if (kernelName in this.tags) {
-        tags = tags.concat(this.tags[kernelName]);
-      }
-      if (prefix != '' && prefix != 'lablup') {
-        tags.push({
-          tag: prefix,
-          color: 'purple'
-        });
-      }
-      let icon: string = "default.png";
-      if (kernelName in this.icons) {
-        icon = this.icons[kernelName];
-      }
-      if (interCategory !== this.supportImages[item].group) {
-        this.languages.push({
-          name: "",
-          registry: "",
-          prefix: "",
-          kernelname: "",
-          alias: "",
-          icon: "",
-          basename: this.supportImages[item].group,
-          tags: [],
-          clickable: false
-        });
-        interCategory = this.supportImages[item].group;
-      }
-      this.languages.push({
-        name: item,
-        registry: registry,
-        prefix: prefix,
-        kernelname: kernelName,
-        alias: alias,
-        basename: basename,
-        tags: tags,
-        icon: icon
-      });
-    });
-    //this._initAliases();
-    this.image_updating = false;
-  }
-
   _updateVersions(kernel) {
-    if (kernel in this.supports) {
+    if (kernel in this.resourceBroker.supports) {
       this.version_selector.disabled = true;
-      let versions = this.supports[kernel];
+      let versions = this.resourceBroker.supports[kernel];
       versions.sort();
       versions.reverse(); // New version comes first.
       this.versions = versions;
@@ -1235,285 +1149,38 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async _aggregateResourceUse(from: string = '') {
-    if (this.aggregate_updating === true) {
-      return;
-    }
-    if (Date.now() - this.lastQueryTime < 1000) {
-      return;
-    }
-    //console.log('aggregate from:', from);
-    this.aggregate_updating = true;
-    let total_slot = {};
-    let total_sg_slot = {};
-    let total_pj_slot = {};
-
-    return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
-      this.concurrency_used = response.keypair.concurrency_used;
-      const param: any = {group: globalThis.backendaiclient.current_group};
-      if (this.scaling_groups.length > 0) {
-        let scaling_group: string = '';
-        if (this.scaling_group !== '') {
-          scaling_group = this.scaling_group;
-        } else {
-          scaling_group = this.scaling_groups[0]['name'];
-          this.scaling_group = scaling_group;
-        }
-        if (scaling_group) {
-          param['scaling_group'] = scaling_group;
-        }
+    return this.resourceBroker._aggregateCurrentResource(from).then((res) => {
+      if (res === false) {
+        return Promise.resolve(false);
       }
-      //console.log('check resource preset from : aggregate resource use, ', from);
-      return globalThis.backendaiclient.resourcePreset.check(param);
-      //return {'preset': this.resource_templates};
-
-    }).then((response) => {
-      if (response.presets) {
-        let presets = response.presets;
-        let available_presets: any = [];
-        presets.forEach((item) => {
-          if (item.allocatable === true) {
-            if ('cuda.shares' in item.resource_slots) {
-              item.cuda_fgpu = item.resource_slots['cuda.shares'];
-            } else if ('cuda.device' in item.resource_slots) {
-              item.cuda_gpu = item.resource_slots['cuda.device'];
-            }
-            if ('rocm.device' in item.resource_slots) {
-              item.rocm_gpu = item.resource_slots['rocm.device'];
-            }
-            if ('tpu.device' in item.resource_slots) {
-              item.tpu = item.resource_slots['tpu.device'];
-            }
-            item.cpu = item.resource_slots.cpu;
-            item.mem = globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
-            if (item.shared_memory) {
-              item.shmem = globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g');
-            } else {
-              item.shmem = null;
-            }
-            available_presets.push(item);
-          }
-        });
-        this.resource_templates = available_presets;
-        if (this.resource_templates_filtered.length === 0) {
-          this.resource_templates_filtered = this.resource_templates;
-        }
-      }
-
-      let resource_remaining = response.keypair_remaining;
-      let resource_using = response.keypair_using;
-      let project_resource_total = response.group_limits;
-      let project_resource_using = response.group_using;
-      let device_list = {
-        'cuda.device': 'cuda_device_slot',
-        'cuda.shares': 'cuda_shares_slot',
-        'rocm.device': 'tpu_device_slot',
-        'tpu.device': 'tpu_device_slot'
-      }
-
-
-      //let scaling_group_resource_remaining = response.scaling_group_remaining;
-      if (this.scaling_group === '') { // no scaling group in the current project
-        response.scaling_groups[''] = {
-          using: {'cpu': 0, 'mem': 0},
-          remaining: {'cpu': 0, 'mem': 0},
-        }
-      }
-      let scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
-      let scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
-
-      let keypair_resource_limit = response.keypair_limits;
-      if ('cpu' in keypair_resource_limit) {
-        total_sg_slot['cpu_slot'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
-        total_pj_slot['cpu_slot'] = Number(project_resource_total.cpu);
-        if (keypair_resource_limit['cpu'] === 'Infinity') { // When resource is infinity, use scaling group limit instead.
-          total_slot['cpu_slot'] = total_sg_slot['cpu_slot'];
-        } else {
-          total_slot['cpu_slot'] = keypair_resource_limit['cpu'];
-        }
-      }
-      if ('mem' in keypair_resource_limit) {
-        total_sg_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining.mem, 'g')) + parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using.mem, 'g'));
-        total_pj_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(project_resource_total.mem, 'g'));
-        if (keypair_resource_limit['mem'] === 'Infinity') {
-          total_slot['mem_slot'] = total_sg_slot['mem_slot'];
-        } else {
-          total_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(keypair_resource_limit['mem'], 'g'));
-        }
-      }
-      total_slot['mem_slot'] = total_slot['mem_slot'].toFixed(2);
-      total_sg_slot['mem_slot'] = total_sg_slot['mem_slot'].toFixed(2);
-
-      for (let [slot_key, slot_name] of Object.entries(device_list)) {
-        if (slot_key in keypair_resource_limit) {
-          total_sg_slot[slot_name] = Number(scaling_group_resource_remaining[slot_key]) + Number(scaling_group_resource_using[slot_key]);
-          total_pj_slot[slot_name] = Number(project_resource_total[slot_key]);
-          if (keypair_resource_limit[slot_key] === 'Infinity') {
-            total_slot[slot_name] = total_sg_slot[slot_name];
-          } else {
-            total_slot[slot_name] = keypair_resource_limit[slot_key];
-          }
-        }
-      }
-
-      let remaining_slot: Object = Object();
-      let used_slot: Object = Object();
-      let remaining_sg_slot: Object = Object();
-      let used_sg_slot: Object = Object();
-      let used_pj_slot: Object = Object();
-
-      if ('cpu' in resource_remaining) { // Monkeypatch: manager reports Infinity to cpu.
-        if ('cpu' in resource_using) {
-          used_slot['cpu_slot'] = resource_using['cpu'];
-        } else {
-          used_slot['cpu_slot'] = 0;
-        }
-        if (resource_remaining['cpu'] === 'Infinity') {  // Monkeypatch: manager reports Infinity to mem.
-          remaining_slot['cpu_slot'] = total_slot['cpu_slot'] - used_slot['cpu_slot'];
-        } else {
-          remaining_slot['cpu_slot'] = resource_remaining['cpu'];
-        }
-      }
-      if ('cpu' in scaling_group_resource_remaining) {
-        if ('cpu' in scaling_group_resource_using) {
-          used_sg_slot['cpu_slot'] = scaling_group_resource_using['cpu'];
-        } else {
-          used_sg_slot['cpu_slot'] = 0;
-        }
-        remaining_sg_slot['cpu_slot'] = scaling_group_resource_remaining['cpu'];
-      }
-      if ('cpu' in project_resource_using) {
-        used_pj_slot['cpu_slot'] = project_resource_using['cpu'];
-      } else {
-        used_pj_slot['cpu_slot'] = 0;
-      }
-
-      if ('mem' in resource_remaining) {
-        if ('mem' in resource_using) {
-          used_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resource_using['mem'], 'g'));
-        } else {
-          used_slot['mem_slot'] = 0.0;
-        }
-        if (resource_remaining['mem'] === 'Infinity') {  // Monkeypatch: manager reports Infinity to mem.
-          remaining_slot['mem_slot'] = total_slot['mem_slot'] - used_slot['mem_slot'];
-        } else {
-          remaining_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resource_remaining['mem'], 'g'));
-        }
-      }
-      used_slot['mem_slot'] = used_slot['mem_slot'].toFixed(2);
-      if ('mem' in scaling_group_resource_remaining) {
-        if ('mem' in scaling_group_resource_using) {
-          used_sg_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using['mem'], 'g'));
-        } else {
-          used_sg_slot['mem_slot'] = 0.0;
-        }
-        remaining_sg_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining['mem'], 'g'));
-      }
-      used_sg_slot['mem_slot'] = used_sg_slot['mem_slot'].toFixed(2);
-
-      if ('mem' in project_resource_using) {
-        used_pj_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(project_resource_using['mem'], 'g'));
-      } else {
-        used_pj_slot['mem_slot'] = 0.0;
-      }
-      used_pj_slot['mem_slot'] = used_pj_slot['mem_slot'].toFixed(2);
-
-      for (let [slot_key, slot_name] of Object.entries(device_list)) {
-        if (slot_key in resource_remaining) {
-          remaining_slot[slot_name] = resource_remaining[slot_key];
-          if (slot_key in resource_using) {
-            used_slot[slot_name] = resource_using[slot_key];
-          } else {
-            used_slot[slot_name] = 0;
-          }
-        }
-        if (slot_key in scaling_group_resource_remaining) {
-          remaining_sg_slot[slot_name] = scaling_group_resource_remaining[slot_key];
-          if (slot_key in scaling_group_resource_using) {
-            used_sg_slot[slot_name] = scaling_group_resource_using[slot_key];
-          } else {
-            used_sg_slot[slot_name] = 0;
-          }
-        }
-        if (slot_key in project_resource_using) {
-          used_pj_slot[slot_name] = project_resource_using[slot_key];
-        } else {
-          used_pj_slot[slot_name] = 0;
-        }
-      }
-
-      if ('cuda_shares_slot' in used_slot) {
-        total_slot['cuda_shares_slot'] = parseFloat(total_slot['cuda_shares_slot']).toFixed(2);
-      }
-      if ('cuda_shares_slot' in used_sg_slot) {
-        total_sg_slot['cuda_shares_slot'] = parseFloat(total_sg_slot['cuda_shares_slot']).toFixed(2);
-      }
-      if ('cuda_shares_slot' in used_pj_slot) {
-        total_pj_slot['cuda_shares_slot'] = parseFloat(total_pj_slot['cuda_shares_slot']).toFixed(2);
-      }
-
-      this.total_slot = total_slot;
-      this.total_sg_slot = total_sg_slot;
-      this.total_pj_slot = total_pj_slot;
-      this.used_slot = used_slot;
-      this.used_sg_slot = used_sg_slot;
-      this.used_pj_slot = used_pj_slot;
-
-      let used_slot_percent = {};
-      let used_sg_slot_percent = {};
-      let used_pj_slot_percent = {};
-
-      ['cpu_slot', 'mem_slot', 'cuda_device_slot', 'cuda_shares_slot', 'rocm_device_slot', 'tpu_device_slot'].forEach((slot) => {
-        if (slot in used_slot) {
-          if (Number(total_slot[slot]) < Number(used_slot[slot])) { // Modify maximum resources when user have infinite resource
-            total_slot[slot] = used_slot[slot];
-          }
-          if (total_slot[slot] != 0) {
-            used_slot_percent[slot] = (used_slot[slot] / total_slot[slot]) * 100.0;
-          } else {
-            used_slot_percent[slot] = 0;
-          }
-          if (total_sg_slot[slot] != 0) {
-            used_sg_slot_percent[slot] = (used_sg_slot[slot] / total_sg_slot[slot]) * 100.0;
-          } else {
-            used_sg_slot_percent[slot] = 0;
-          }
-          if (total_pj_slot[slot] != 0) {
-            used_pj_slot_percent[slot] = (used_pj_slot[slot] / total_pj_slot[slot]) * 100.0;
-          } else {
-            used_pj_slot_percent[slot] = 0;
-          }
-        } else {
-        }
-        if (slot in remaining_slot) {
-          if (remaining_slot[slot] === 'Infinity') {
-            remaining_slot[slot] = remaining_sg_slot[slot];
-          }
-        }
-      });
-      this.used_pj_slot_percent = used_pj_slot_percent;
-      if (this.concurrency_max === 0) {
-        used_slot_percent['concurrency'] = 0;
-        remaining_slot['concurrency'] = this.concurrency_max;
-      } else {
-        used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
-        remaining_slot['concurrency'] = this.concurrency_max - this.concurrency_used;
-      }
-      this.concurrency_limit = Math.min(remaining_slot['concurrency'], 5);
-      this.available_slot = remaining_sg_slot;
-      this.used_slot_percent = used_slot_percent;
-      this.used_sg_slot_percent = used_sg_slot_percent;
+      this.concurrency_used = this.resourceBroker.concurrency_used;
+      this.scaling_group = this.resourceBroker.scaling_group;
+      this.resource_templates = this.resourceBroker.resource_templates;
+      this.resource_templates_filtered = this.resourceBroker.resource_templates_filtered;
+      this.total_slot = this.resourceBroker.total_slot;
+      this.total_sg_slot = this.resourceBroker.total_resource_group_slot;
+      this.total_pj_slot = this.resourceBroker.total_project_slot;
+      this.used_slot = this.resourceBroker.used_slot;
+      this.used_sg_slot = this.resourceBroker.used_resource_group_slot;
+      this.used_pj_slot = this.resourceBroker.used_project_slot;
+      this.used_pj_slot_percent = this.resourceBroker.used_project_slot_percent;
+      this.concurrency_limit = this.resourceBroker.concurrency_limit;
+      this.available_slot = this.resourceBroker.available_slot;
+      this.used_slot_percent = this.resourceBroker.used_slot_percent;
+      this.used_sg_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
       this.lastQueryTime = Date.now();
-      this.aggregate_updating = false;
+      //this.requestUpdate();
+      return Promise.resolve(true);
       return this.available_slot;
     }).catch(err => {
       this.lastQueryTime = Date.now();
-      this.aggregate_updating = false;
       if (err && err.message) {
         console.log(err);
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true, err);
       }
+      return Promise.resolve(false);
     });
   }
 
@@ -1841,84 +1508,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this._updateVersions(kernel);
   }
 
-  // Manager requests
-  async _refreshImageList() {
-    const fields = [
-      'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
-      'resource_limits { key min max }', 'labels { key value }'
-    ];
-    return globalThis.backendaiclient.image.list(fields, true, false).then((response) => {
-      //const images: Array<object> = [];
-      //Object.keys(response.images).map((objectKey, index) => {
-      //  const item = response.images[objectKey];
-      //  images.push(item);
-      //});
-      if (response.images.length === 0) {
-        return;
-      }
-      //this.images = images;
-      this.images = response.images;
-      this.supports = {};
-      this.supportImages = {};
-      this.imageRequirements = {};
-      Object.keys(this.images).map((objectKey, index) => {
-        const item = this.images[objectKey];
-        //console.log(item);
-        const supportsKey = `${item.registry}/${item.name}`;
-        if (!(supportsKey in this.supports)) {
-          this.supports[supportsKey] = [];
-        }
-        this.supports[supportsKey].push(item.tag);
-        let imageName: string;
-        let specs: string[] = item.name.split('/');
-        if (specs.length === 1) {
-          imageName = specs[0];
-        } else {
-          imageName = specs[1];
-        }
-        this.supportImages[supportsKey] = this.imageInfo[imageName] || {
-          name: 'Custom Environments',
-          description: 'Custom-built images.',
-          group: 'Custom Environments',
-          tags: [],
-          label: [
-            {
-              'category': 'Custom',
-              'tag': 'Custom',
-              'color': 'black'
-            }
-          ]
-        };
-        // Fallback routine if image has no metadata
-        if (!('group' in this.supportImages[supportsKey])) {
-          this.supportImages[supportsKey].group = 'Custom Environments';
-        }
-        this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
-        this.imageRequirements[`${supportsKey}:${item.tag}`] = {};
-        item.labels.forEach(label => {
-          if (label['key'] === 'com.nvidia.tensorflow.version') {
-            this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'TensorFlow ' + label['value'];
-          }
-          if (label['key'] === 'com.nvidia.pytorch.version') {
-            this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'PyTorch ' + label['value'];
-          }
-          //if (label['key'] === 'com.nvidia.cuda.version') {
-          //  this.imageRequirements[`${supportsKey}:${item.tag}`].push('CUDA:'+label['value']);
-          //}
-        });
-      });
-      //console.log("update image list.", this.resourceLimits);
-      this._updateEnvironment();
-    }).catch((err) => {
-      this.metadata_updating = false;
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
-  }
-
   changed(e) {
     console.log(e);
   }
@@ -2215,10 +1804,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <div class="gauge-name">CPU</div>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_sg_slot.cpu_slot}/${this.total_sg_slot.cpu_slot}</span>
-              <mwc-linear-progress id="cpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.cpu_slot / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="cpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cpu_slot / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.cpu_slot}/${this.total_slot.cpu_slot}</span>
+              <span class="gauge-label">${this.used_sg_slot.cpu}/${this.total_sg_slot.cpu}</span>
+              <mwc-linear-progress id="cpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.cpu / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="cpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cpu / 100.0}"></mwc-linear-progress>
+              <span class="gauge-label">${this.used_slot.cpu}/${this.total_slot.cpu}</span>
             </div>
           </div>
           <div class="layout horizontal center-justified monitor">
@@ -2227,13 +1816,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">RAM</span>
             </div>
             <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_sg_slot.mem_slot}/${this.total_sg_slot.mem_slot}GB</span>
-              <mwc-linear-progress id="mem-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.mem_slot / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="mem-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.mem_slot / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.mem_slot}/${this.total_slot.mem_slot}GB</span>
+              <span class="gauge-label">${this.used_sg_slot.mem}/${this.total_sg_slot.mem}GB</span>
+              <mwc-linear-progress id="mem-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.mem / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="mem-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.mem / 100.0}"></mwc-linear-progress>
+              <span class="gauge-label">${this.used_slot.mem}/${this.total_slot.mem}GB</span>
             </div>
           </div>
-          ${this.total_slot.cuda_device_slot ?
+          ${this.total_slot.cuda_device ?
       html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
@@ -2241,14 +1830,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">GPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_sg_slot.cuda_device_slot}/${this.total_sg_slot.cuda_device_slot}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.cuda_device_slot / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_device_slot / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.cuda_device_slot}/${this.total_slot.cuda_device_slot}</span>
+              <span class="gauge-label">${this.used_sg_slot.cuda_device}/${this.total_sg_slot.cuda_device}</span>
+              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
+              <span class="gauge-label">${this.used_slot.cuda_device}/${this.total_slot.cuda_device}</span>
             </div>
           </div>` :
       html``}
-          ${this.total_slot.cuda_shares_slot && this.total_slot.cuda_shares_slot > 0 ?
+          ${this.total_slot.cuda_shares && this.total_slot.cuda_shares > 0 ?
       html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified" style="margin-right:5px;">
@@ -2256,10 +1845,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">FGPU</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_sg_slot.cuda_shares_slot}/${this.total_sg_slot.cuda_shares_slot}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.cuda_shares_slot / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_shares_slot / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.cuda_shares_slot}/${this.total_slot.cuda_shares_slot}</span>
+              <span class="gauge-label">${this.used_sg_slot.cuda_shares}/${this.total_sg_slot.cuda_shares}</span>
+              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
+              <span class="gauge-label">${this.used_slot.cuda_shares}/${this.total_slot.cuda_shares}</span>
             </div>
           </div>` :
       html``}
@@ -2327,7 +1916,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       </div>
       ` : html``}
       ${this.direction === 'vertical' && this.project_resource_monitor === true &&
-    (this.total_pj_slot.cpu_slot > 0 || this.total_pj_slot.cpu_slot === Infinity) ? html`
+    (this.total_pj_slot.cpu > 0 || this.total_pj_slot.cpu === Infinity) ? html`
       <hr />
       <div class="vertical start-justified layout">
         <div class="flex"></div>
@@ -2339,37 +1928,37 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="layout vertical start-justified wrap short-indicator">
             <div class="layout horizontal">
               <span style="width:35px; margin-left:5px; margin-right:5px;">CPU</span>
-              <mwc-linear-progress id="cpu-project-usage-bar" class="start-bar project-bar" progress="${this.used_pj_slot_percent.cpu_slot / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.cpu_slot}/${this.total_pj_slot.cpu_slot === Infinity ? '∞' : this.total_pj_slot.cpu_slot}</span>
+              <mwc-linear-progress id="cpu-project-usage-bar" class="start-bar project-bar" progress="${this.used_pj_slot_percent.cpu / 100.0}"></mwc-linear-progress>
+              <span style="margin-left:5px;">${this.used_pj_slot.cpu}/${this.total_pj_slot.cpu === Infinity ? '∞' : this.total_pj_slot.cpu}</span>
             </div>
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">RAM</span>
-              <mwc-linear-progress id="mem-project-usage-bar" class="middle-bar project-bar" progress="${this.used_pj_slot_percent.mem_slot / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.mem_slot}/${this.total_pj_slot.mem_slot === Infinity ? '∞' : this.total_pj_slot.mem_slot}</span>
+              <mwc-linear-progress id="mem-project-usage-bar" class="middle-bar project-bar" progress="${this.used_pj_slot_percent.mem / 100.0}"></mwc-linear-progress>
+              <span style="margin-left:5px;">${this.used_pj_slot.mem}/${this.total_pj_slot.mem === Infinity ? '∞' : this.total_pj_slot.mem}</span>
             </div>
-            ${this.total_pj_slot.cuda_device_slot ? html`
+            ${this.total_pj_slot.cuda_device ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.cuda_device_slot / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.cuda_device_slot}/${this.total_pj_slot.cuda_device_slot === 'Infinity' ? '∞' : this.total_pj_slot.cuda_device_slot}</span>
+              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
+              <span style="margin-left:5px;">${this.used_pj_slot.cuda_device}/${this.total_pj_slot.cuda_device === 'Infinity' ? '∞' : this.total_pj_slot.cuda_device}</span>
             </div>` : html``}
-            ${this.total_pj_slot.cuda_shares_slot ? html`
+            ${this.total_pj_slot.cuda_shares ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">fGPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.cuda_shares_slot / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.cuda_shares_slot}/${this.total_pj_slot.cuda_shares_slot === 'Infinity' ? '∞' : this.total_pj_slot.cuda_shares_slot}</span>
+              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
+              <span style="margin-left:5px;">${this.used_pj_slot.cuda_shares}/${this.total_pj_slot.cuda_shares === 'Infinity' ? '∞' : this.total_pj_slot.cuda_shares}</span>
             </div>` : html``}
-            ${this.total_pj_slot.rocm_device_slot ? html`
+            ${this.total_pj_slot.rocm_device ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.rocm_device_slot / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.rocm_device_slot}/${this.total_pj_slot.rocm_device_slot === 'Infinity' ? '∞' : this.total_pj_slot.rocm_device_slot}</span>
+              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.rocm_device / 100.0}"></mwc-linear-progress>
+              <span style="margin-left:5px;">${this.used_pj_slot.rocm_device}/${this.total_pj_slot.rocm_device === 'Infinity' ? '∞' : this.total_pj_slot.rocm_device}</span>
             </div>` : html``}
-            ${this.total_pj_slot.tpu_device_slot ? html`
+            ${this.total_pj_slot.tpu_device ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.tpu_device_slot / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.tpu_device_slot}/${this.total_pj_slot.tpu_device_slot === 'Infinity' ? '∞' : this.total_pj_slot.cuda_device_slot}</span>
+              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.tpu_device / 100.0}"></mwc-linear-progress>
+              <span style="margin-left:5px;">${this.used_pj_slot.tpu_device}/${this.total_pj_slot.tpu_device === 'Infinity' ? '∞' : this.total_pj_slot.cuda_device}</span>
             </div>` : html``}
           </div>
           <div class="flex"></div>
