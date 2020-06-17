@@ -5,12 +5,8 @@
 import {customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
-
-
 @customElement("backend-ai-resource-broker")
 export default class BackendAiResourceBroker extends BackendAIPage {
-  @property({type: Boolean}) is_connected = false;
   @property({type: Object}) supports = Object();
   // Environment-image information
   @property({type: Object}) images;
@@ -59,9 +55,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Number}) shmem_request;
   @property({type: Number}) gpu_request;
   @property({type: String}) gpu_request_type;
-  @property({type: Number}) session_request;
   @property({type: Boolean}) _status;
-  @property({type: Number}) num_sessions;
   @property({type: Number}) lastQueryTime = 0;
   @property({type: String}) scaling_group;
   @property({type: Array}) scaling_groups;
@@ -104,7 +98,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   }
 
   init_resource() {
-    this.versions = ['Not Selected'];
     this.languages = [];
     this.defaultResourcePolicy = 'UNLIMITED';
     this.total_slot = {};
@@ -130,7 +123,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.shmem_request = 0.0625;
     this.gpu_request = 0;
     this.gpu_request_type = 'cuda.device';
-    this.session_request = 1;
     this.scaling_groups = [{name: ''}]; // if there is no scaling group, set the name as empty string
     this.scaling_group = '';
     this.sessions_list = [];
@@ -173,11 +165,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         }
         if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
           document.addEventListener('backend-ai-connected', () => {
-            this.is_connected = true;
             this._refreshImageList();
           }, {once: true});
         } else {
-          this.is_connected = true;
           this._refreshImageList();
         }
       }
@@ -194,6 +184,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     });
   }
 
+  /**
+   * Copy forward aliases to backward aliases.
+   *
+   */
   _initAliases() {
     for (let item in this.aliases) {
       this.aliases[this.aliases[item]] = item;
@@ -255,12 +249,20 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     }
   }
 
+  /**
+   * Refresh keypair concurrency.
+   *
+   */
   _refreshConcurrency() {
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
       this.concurrency_used = response.keypair.concurrency_used;
     });
   }
 
+  /**
+   * Refresh resource policy from manager.
+   *
+   */
   async _refreshResourcePolicy() {
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['resource_policy', 'concurrency_used']).then((response) => {
       let policyName = response.keypair.resource_policy;
@@ -286,21 +288,13 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this._updateGPUMode();
     }).catch((err) => {
       this.metadata_updating = false;
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      } else if (err && err.title) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show(true, err);
-      }
+      throw err;
     });
   }
 
   _updateGPUMode() {
     globalThis.backendaiclient.getResourceSlots().then((response) => {
       let results = response;
-
       ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
         if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
           this.gpu_mode = item;
@@ -323,10 +317,13 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     return text + "-console";
   }
 
-  async _updateVirtualFolderList() {
+  /**
+   * Update virtual folder list. Also divide automount folders from general ones.
+   *
+   */
+  async updateVirtualFolderList() {
     let l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id());
     l.then((value) => {
-      //this.vfolders = value;
       let selectableFolders: object[] = [];
       let automountFolders: object[] = [];
       value.forEach((item) => {
@@ -342,8 +339,13 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     });
   }
 
+  /**
+   * Aggregate resources from manager and update the store.
+   *
+   * @param {string} from - set the value for debugging purpose.
+   */
   async _aggregateCurrentResource(from: string = '') {
-    if (this.aggregate_updating === true) {
+    if (this.aggregate_updating) {
       return;
     }
     if (Date.now() - this.lastQueryTime < 1000) {
@@ -370,10 +372,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           param['scaling_group'] = scaling_group;
         }
       }
-      //console.log('check resource preset from : aggregate resource use, ', from);
       return globalThis.backendaiclient.resourcePreset.check(param);
-      //return {'preset': this.resource_templates};
-
     }).then((response) => {
       if (response.presets) {
         let presets = response.presets;
@@ -412,10 +411,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       let project_resource_total = response.group_limits;
       let project_resource_using = response.group_using;
       let device_list = {
-        'cuda.device': 'cuda_device_slot',
-        'cuda.shares': 'cuda_shares_slot',
-        'rocm.device': 'tpu_device_slot',
-        'tpu.device': 'tpu_device_slot'
+        'cuda.device': 'cuda_device',
+        'cuda.shares': 'cuda_shares',
+        'rocm.device': 'rocm_device',
+        'tpu.device': 'tpu_device'
       }
 
 
@@ -431,25 +430,25 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
       let keypair_resource_limit = response.keypair_limits;
       if ('cpu' in keypair_resource_limit) {
-        total_resource_group_slot['cpu_slot'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
-        total_project_slot['cpu_slot'] = Number(project_resource_total.cpu);
+        total_resource_group_slot['cpu'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
+        total_project_slot['cpu'] = Number(project_resource_total.cpu);
         if (keypair_resource_limit['cpu'] === 'Infinity') { // When resource is infinity, use scaling group limit instead.
-          total_slot['cpu_slot'] = total_resource_group_slot['cpu_slot'];
+          total_slot['cpu'] = total_resource_group_slot['cpu'];
         } else {
-          total_slot['cpu_slot'] = keypair_resource_limit['cpu'];
+          total_slot['cpu'] = keypair_resource_limit['cpu'];
         }
       }
       if ('mem' in keypair_resource_limit) {
-        total_resource_group_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining.mem, 'g')) + parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using.mem, 'g'));
-        total_project_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(project_resource_total.mem, 'g'));
+        total_resource_group_slot['mem'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining.mem, 'g')) + parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using.mem, 'g'));
+        total_project_slot['mem'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(project_resource_total.mem, 'g'));
         if (keypair_resource_limit['mem'] === 'Infinity') {
-          total_slot['mem_slot'] = total_resource_group_slot['mem_slot'];
+          total_slot['mem'] = total_resource_group_slot['mem'];
         } else {
-          total_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(keypair_resource_limit['mem'], 'g'));
+          total_slot['mem'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(keypair_resource_limit['mem'], 'g'));
         }
       }
-      total_slot['mem_slot'] = total_slot['mem_slot'].toFixed(2);
-      total_resource_group_slot['mem_slot'] = total_resource_group_slot['mem_slot'].toFixed(2);
+      total_slot['mem'] = total_slot['mem'].toFixed(2);
+      total_resource_group_slot['mem'] = total_resource_group_slot['mem'].toFixed(2);
 
       for (let [slot_key, slot_name] of Object.entries(device_list)) {
         if (slot_key in keypair_resource_limit) {
@@ -471,59 +470,59 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
       if ('cpu' in resource_remaining) { // Monkeypatch: manager reports Infinity to cpu.
         if ('cpu' in resource_using) {
-          used_slot['cpu_slot'] = resource_using['cpu'];
+          used_slot['cpu'] = resource_using['cpu'];
         } else {
-          used_slot['cpu_slot'] = 0;
+          used_slot['cpu'] = 0;
         }
         if (resource_remaining['cpu'] === 'Infinity') {  // Monkeypatch: manager reports Infinity to mem.
-          remaining_slot['cpu_slot'] = total_slot['cpu_slot'] - used_slot['cpu_slot'];
+          remaining_slot['cpu'] = total_slot['cpu'] - used_slot['cpu'];
         } else {
-          remaining_slot['cpu_slot'] = resource_remaining['cpu'];
+          remaining_slot['cpu'] = resource_remaining['cpu'];
         }
       }
       if ('cpu' in scaling_group_resource_remaining) {
         if ('cpu' in scaling_group_resource_using) {
-          used_resource_group_slot['cpu_slot'] = scaling_group_resource_using['cpu'];
+          used_resource_group_slot['cpu'] = scaling_group_resource_using['cpu'];
         } else {
-          used_resource_group_slot['cpu_slot'] = 0;
+          used_resource_group_slot['cpu'] = 0;
         }
-        remaining_sg_slot['cpu_slot'] = scaling_group_resource_remaining['cpu'];
+        remaining_sg_slot['cpu'] = scaling_group_resource_remaining['cpu'];
       }
       if ('cpu' in project_resource_using) {
-        used_project_slot['cpu_slot'] = project_resource_using['cpu'];
+        used_project_slot['cpu'] = project_resource_using['cpu'];
       } else {
-        used_project_slot['cpu_slot'] = 0;
+        used_project_slot['cpu'] = 0;
       }
 
       if ('mem' in resource_remaining) {
         if ('mem' in resource_using) {
-          used_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resource_using['mem'], 'g'));
+          used_slot['mem'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resource_using['mem'], 'g'));
         } else {
-          used_slot['mem_slot'] = 0.0;
+          used_slot['mem'] = 0.0;
         }
         if (resource_remaining['mem'] === 'Infinity') {  // Monkeypatch: manager reports Infinity to mem.
-          remaining_slot['mem_slot'] = total_slot['mem_slot'] - used_slot['mem_slot'];
+          remaining_slot['mem'] = total_slot['mem'] - used_slot['mem'];
         } else {
-          remaining_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resource_remaining['mem'], 'g'));
+          remaining_slot['mem'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resource_remaining['mem'], 'g'));
         }
       }
-      used_slot['mem_slot'] = used_slot['mem_slot'].toFixed(2);
+      used_slot['mem'] = used_slot['mem'].toFixed(2);
       if ('mem' in scaling_group_resource_remaining) {
         if ('mem' in scaling_group_resource_using) {
-          used_resource_group_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using['mem'], 'g'));
+          used_resource_group_slot['mem'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using['mem'], 'g'));
         } else {
-          used_resource_group_slot['mem_slot'] = 0.0;
+          used_resource_group_slot['mem'] = 0.0;
         }
-        remaining_sg_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining['mem'], 'g'));
+        remaining_sg_slot['mem'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining['mem'], 'g'));
       }
-      used_resource_group_slot['mem_slot'] = used_resource_group_slot['mem_slot'].toFixed(2);
+      used_resource_group_slot['mem'] = used_resource_group_slot['mem'].toFixed(2);
 
       if ('mem' in project_resource_using) {
-        used_project_slot['mem_slot'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(project_resource_using['mem'], 'g'));
+        used_project_slot['mem'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(project_resource_using['mem'], 'g'));
       } else {
-        used_project_slot['mem_slot'] = 0.0;
+        used_project_slot['mem'] = 0.0;
       }
-      used_project_slot['mem_slot'] = used_project_slot['mem_slot'].toFixed(2);
+      used_project_slot['mem'] = used_project_slot['mem'].toFixed(2);
 
       for (let [slot_key, slot_name] of Object.entries(device_list)) {
         if (slot_key in resource_remaining) {
@@ -549,14 +548,14 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         }
       }
 
-      if ('cuda_shares_slot' in used_slot) {
-        total_slot['cuda_shares_slot'] = parseFloat(total_slot['cuda_shares_slot']).toFixed(2);
+      if ('cuda_shares' in used_slot) {
+        total_slot['cuda_shares'] = parseFloat(total_slot['cuda_shares']).toFixed(2);
       }
-      if ('cuda_shares_slot' in used_resource_group_slot) {
-        total_resource_group_slot['cuda_shares_slot'] = parseFloat(total_resource_group_slot['cuda_shares_slot']).toFixed(2);
+      if ('cuda_shares' in used_resource_group_slot) {
+        total_resource_group_slot['cuda_shares'] = parseFloat(total_resource_group_slot['cuda_shares']).toFixed(2);
       }
-      if ('cuda_shares_slot' in used_project_slot) {
-        total_project_slot['cuda_shares_slot'] = parseFloat(total_project_slot['cuda_shares_slot']).toFixed(2);
+      if ('cuda_shares' in used_project_slot) {
+        total_project_slot['cuda_shares'] = parseFloat(total_project_slot['cuda_shares']).toFixed(2);
       }
 
       this.total_slot = total_slot;
@@ -570,7 +569,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       let used_resource_group_slot_percent = {};
       let used_project_slot_percent = {};
 
-      ['cpu_slot', 'mem_slot', 'cuda_device_slot', 'cuda_shares_slot', 'rocm_device_slot', 'tpu_device_slot'].forEach((slot) => {
+      ['cpu', 'mem', 'cuda_device', 'cuda_shares', 'rocm_device', 'tpu_device'].forEach((slot) => {
         if (slot in used_slot) {
           if (Number(total_slot[slot]) < Number(used_slot[slot])) { // Modify maximum resources when user have infinite resource
             total_slot[slot] = used_slot[slot];
@@ -620,7 +619,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     });
   }
 
-  // Get available / total resources from manager
+  /**
+   * Get available / total resources from manager
+   *
+   * @param {string} from - set the value for debugging purpose.
+   */
   aggregateResource(from: string = '') {
     //console.log('aggregate resource called - ', from);
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
@@ -632,8 +635,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     }
   }
 
-
-  // Manager requests
+  /**
+   * Refresh environment image information from manager.
+   *
+   */
   async _refreshImageList() {
     const fields = [
       'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
@@ -695,6 +700,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     });
   }
 
+  /**
+   * Initialize default language from configuration.
+   *
+   */
   async initDefaultLanguage() {
     if (this._default_language_updated) {
       return;
@@ -712,10 +721,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     }
     this._default_language_updated = true;
     return this.default_language;
-  }
-
-  _selectDefaultVersion(version) {
-    return false;
   }
 
   render() {
