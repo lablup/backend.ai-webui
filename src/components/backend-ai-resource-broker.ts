@@ -315,7 +315,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    */
   async updateVirtualFolderList() {
     let l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id());
-    l.then((value) => {
+    return l.then((value) => {
       let selectableFolders: object[] = [];
       let automountFolders: object[] = [];
       value.forEach((item) => {
@@ -380,7 +380,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
               item.rocm_device = item.resource_slots['rocm.device'];
             }
             if ('tpu.device' in item.resource_slots) {
-              item.tpu = item.resource_slots['tpu.device'];
+              item.tpu_device = item.resource_slots['tpu.device'];
             }
             item.cpu = item.resource_slots.cpu;
             item.mem = globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
@@ -603,7 +603,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.used_resource_group_slot_percent = used_resource_group_slot_percent;
       this.lastQueryTime = Date.now();
       this.aggregate_updating = false;
-      console.log("ok");
       return Promise.resolve(true);
       //return this.available_slot;
     }).catch(err => {
