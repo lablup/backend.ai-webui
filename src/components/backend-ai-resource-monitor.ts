@@ -143,6 +143,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Number}) max_cpu_core_per_session = 64;
+  @property({type: Object}) resourceBroker;
+
 
   constructor() {
     super();
@@ -150,6 +152,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.ownerKeypairs = [];
     this.ownerGroups = [];
     this.ownerScalingGroups = [];
+    this.resourceBroker = globalThis.resourceBroker;
+    this.notification = globalThis.lablupNotification;
     this.init_resource();
   }
 
@@ -561,45 +565,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   firstUpdated() {
-    // TODO : use sessionstore to query the image metadata only once.
-    fetch('resources/image_metadata.json').then(
-      response => response.json()
-    ).then(
-      json => {
-        this.imageInfo = json.imageInfo;
-        for (let key in this.imageInfo) {
-          this.tags[key] = [];
-          if ("name" in this.imageInfo[key]) {
-            this.aliases[key] = this.imageInfo[key].name;
-            this.imageNames[key] = this.imageInfo[key].name;
-          }
-          if ("icon" in this.imageInfo[key]) {
-            this.icons[key] = this.imageInfo[key].icon;
-          } else {
-            this.icons[key] = 'default.png';
-          }
-
-          if ("label" in this.imageInfo[key]) {
-            this.imageInfo[key].label.forEach((item) => {
-              if (!("category" in item)) {
-                this.tags[key].push(item);
-              }
-            });
-          }
-        }
-        if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-          document.addEventListener('backend-ai-connected', () => {
-            this.is_connected = true;
-            this._refreshImageList();
-            this._enableLaunchButton();
-          }, {once: true});
-        } else {
-          this.is_connected = true;
-          this._refreshImageList();
-          this._enableLaunchButton();
-        }
-      }
-    );
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this.is_connected = true;
+        this._enableLaunchButton();
+      }, {once: true});
+    } else {
+      this.is_connected = true;
+      this._enableLaunchButton();
+    }
     this.shadowRoot.querySelector('#environment').addEventListener('selected', this.updateLanguage.bind(this));
     this.version_selector = this.shadowRoot.querySelector('#version');
     this.version_selector.addEventListener('selected', this.updateResourceAllocationPane.bind(this));
@@ -608,15 +582,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (document.body.clientWidth < 750 && this.direction == 'horizontal') {
       this.resourceGauge.style.display = 'none';
     }
-    this.notification = globalThis.lablupNotification;
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
-    document.addEventListener('backend-ai-resource-refreshed', () => {
-      if (this.active && this.metadata_updating === false) {
-        this.metadata_updating = true;
-        this.aggregateResource('resource-refreshed');
-        this.metadata_updating = false;
-      }
-    });
     gpu_resource.addEventListener('value-changed', () => {
       if (gpu_resource.value > 0) {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
@@ -639,7 +605,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   _enableLaunchButton() {
     // Check preconditions and enable it via pooling
-    if (!this.image_updating) { // Image information is successfully updated.
+    if (!this.resourceBroker.image_updating) { // Image information is successfully updated.
       this.enableLaunchButton = true;
     } else {
       setTimeout(() => {
@@ -648,32 +614,23 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  _initAliases() {
-    for (let item in this.aliases) {
-      this.aliases[this.aliases[item]] = item;
-    }
-  }
-
   _updateSelectedScalingGroup() {
     let Sgroups = this.shadowRoot.querySelector('#scaling-groups');
-    let selectedSgroup = Sgroups.items.find(item => item.value === this.scaling_group);
+    let selectedSgroup = Sgroups.items.find(item => item.value === this.resourceBroker.scaling_group);
     let idx = Sgroups.items.indexOf(selectedSgroup);
     Sgroups.select(idx);
   }
 
   async updateScalingGroup(forceUpdate = false, e) {
-    if (this.scaling_group == '' || e.target.value === '' || e.target.value === this.scaling_group) {
-      return;
-    }
-    this.scaling_group = e.target.value;
+    this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
     if (this.active) {
       if (this.direction === 'vertical') {
         const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
-        scaling_group_selection_box.firstChild.value = this.scaling_group;
+        scaling_group_selection_box.firstChild.value = this.resourceBroker.scaling_group;
       }
       this.lastQueryTime = 0; // Reset query interval
       if (forceUpdate === true) {
-        await this._refreshResourcePolicy();
+        //await this._refreshResourcePolicy();
       } else {
         this.updateResourceAllocationPane('session dialog');
       }
@@ -769,7 +726,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         .then(res => {
           this.sessions_list = res.compute_session_list.items.map(e => e.created_at);
         });
-      this._initAliases();
+      //this._initAliases();
       await this._refreshResourcePolicy();
       this.aggregateResource('update-page-variable');
       this.metadata_updating = false;
@@ -1226,7 +1183,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         icon: icon
       });
     });
-    this._initAliases();
+    //this._initAliases();
     this.image_updating = false;
   }
 

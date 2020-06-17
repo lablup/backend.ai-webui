@@ -176,11 +176,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     }
   }
 
-  async updateScalingGroup(forceUpdate = false, e) {
-    if (this.scaling_group == '' || e.target.value === '' || e.target.value === this.scaling_group) {
+  async updateScalingGroup(forceUpdate = false, scaling_group: string) {
+    if (this.scaling_group == '' || scaling_group === '' || scaling_group === this.scaling_group) {
       return;
     }
-    this.scaling_group = e.target.value;
+    this.scaling_group = scaling_group;
     if (this.active) {
       this.lastQueryTime = 0; // Reset query interval
       if (forceUpdate === true) {
