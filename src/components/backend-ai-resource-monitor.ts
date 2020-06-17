@@ -90,7 +90,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     'max': '1'
   };
   @property({type: Object}) images;
-  @property({type: String}) defaultResourcePolicy;
   @property({type: Object}) total_slot;
   @property({type: Object}) total_resource_group_slot;
   @property({type: Object}) total_project_slot;
@@ -520,7 +519,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.versions = ['Not Selected'];
     this.languages = [];
     this.gpu_mode = 'no';
-    this.defaultResourcePolicy = 'UNLIMITED';
     this.total_slot = {};
     this.total_resource_group_slot = {};
     this.total_project_slot = {};
@@ -717,7 +715,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   async _refreshResourcePolicy() {
     return this.resourceBroker._refreshResourcePolicy().then(() => {
       this.concurrency_used = this.resourceBroker.concurrency_used;
-      this.defaultResourcePolicy = this.resourceBroker.defaultResourcePolicy;
       this.userResourceLimit = this.resourceBroker.userResourceLimit;
       this.concurrency_max = this.resourceBroker.concurrency_max;
       this.gpu_mode = this.resourceBroker.gpu_mode;

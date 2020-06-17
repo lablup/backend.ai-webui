@@ -28,8 +28,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Array}) gpu_modes = [];
   @property({type: Number}) gpu_step = 0.05;
 
-  @property({type: String}) defaultResourcePolicy;
-
   // Resource slot information
   @property({type: Object}) total_slot;
   @property({type: Object}) total_resource_group_slot;
@@ -50,7 +48,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Array}) resource_templates;
   @property({type: Array}) resource_templates_filtered;
   @property({type: String}) default_language;
-  @property({type: Boolean}) _status;
   @property({type: Object}) cpu_metric = {
     'min': '1',
     'max': '1'
@@ -85,10 +82,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Boolean}) metadata_updating;
   @property({type: Boolean}) aggregate_updating = false;
   @property({type: Boolean}) image_updating;
-  @property({type: Object}) scaling_group_selection_box;
-  @property({type: Object}) resourceGauge = Object();
-
-  @property({type: Object}) version_selector = Object();
   // Flags
   @property({type: Boolean}) _default_language_updated = false;
   @property({type: Boolean}) _default_version_updated = false;
@@ -114,7 +107,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
   init_resource() {
     this.languages = [];
-    this.defaultResourcePolicy = 'UNLIMITED';
     this.total_slot = {};
     this.total_resource_group_slot = {};
     this.total_project_slot = {};
@@ -132,7 +124,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.concurrency_used = 0;
     this.concurrency_max = 0;
     this.concurrency_limit = 0;
-    this._status = 'inactive';
     this.scaling_groups = [{name: ''}]; // if there is no scaling group, set the name as empty string
     this.scaling_group = '';
     this.sessions_list = [];
@@ -297,12 +288,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       ]);
     }).then((response) => {
       let resource_policy = response.keypair_resource_policy;
-      if (resource_policy.default_for_unspecified === 'UNLIMITED' ||
-        resource_policy.default_for_unspecified === 'DefaultForUnspecified.UNLIMITED') {
-        this.defaultResourcePolicy = 'UNLIMITED';
-      } else {
-        this.defaultResourcePolicy = 'LIMITED';
-      }
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
       //this._refreshResourceTemplate('refresh-resource-policy');
