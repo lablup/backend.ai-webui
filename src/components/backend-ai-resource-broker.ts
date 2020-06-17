@@ -158,6 +158,12 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     document.addEventListener("backend-ai-group-changed", (e) => {
       this._updatePageVariables(true);
     });
+    /*setInterval(()=>{
+      this.metadata_updating = true;
+      this.aggregateResource('resource-refreshed');
+      this.metadata_updating = false;
+      console.log(this.used_slot);
+    }, 3000);*/
   }
 
   /**

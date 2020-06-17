@@ -1020,7 +1020,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         </div>
       </backend-ai-dialog>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
-      <backend-ai-resource-broker id="resource-broker"></backend-ai-resource-broker>
+      <backend-ai-resource-broker id="resource-broker" ?active="${this.is_connected}"></backend-ai-resource-broker>
     `;
   }
 
