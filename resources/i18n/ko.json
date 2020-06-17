@@ -74,7 +74,8 @@
     "SystemMaintenance": "시스템 유지보수",
     "Invitation": "초대",
     "FolderName": "폴더 이름",
-    "Permission": "권한"
+    "Permission": "권한",
+    "Announcement": "공지"
   },
   "session": {
     "launcher": {

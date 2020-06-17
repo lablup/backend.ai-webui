@@ -32,7 +32,8 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) narrowLayout = false;
   @property({type: Boolean}) scrollable = false;
   @property({type: Boolean}) backdrop = false;
-
+  @property({type: Boolean}) noclosebutton = false;
+  @property({type: Boolean}) open = false;
 
   constructor() {
     super();
@@ -47,6 +48,7 @@ export default class BackendAiDialog extends LitElement {
       css`
         wl-dialog {
           --dialog-min-width: var(--component-min-width, '350px');
+          --dialog-max-width: var(--component-max-width, '350px');
           --dialog-max-height: var(--component-max-height, '95vh');
           --dialog-width: var(--component-width, '350px');
           --dialog-height: var(--component-height, 'auto');
@@ -64,7 +66,8 @@ export default class BackendAiDialog extends LitElement {
         }
 
         wl-dialog div.content {
-          padding: 15px;
+          padding: var(--component-padding, '15px');
+          word-break: keep-all;
         }
 
         wl-dialog div.footer {
@@ -81,6 +84,7 @@ export default class BackendAiDialog extends LitElement {
 
   firstUpdated() {
     this.dialog = this.shadowRoot.querySelector('#dialog');
+    this.open = this.dialog.open;
   }
 
   connectedCallback() {
@@ -89,14 +93,17 @@ export default class BackendAiDialog extends LitElement {
 
   _hideDialog() {
     this.dialog.hide();
+    this.open = this.dialog.open;
   }
 
   show() {
     this.dialog.show();
+    this.open = this.dialog.open;
   }
 
   hide() {
     this.dialog.hide();
+    this.open = this.dialog.open;
   }
 
   render() {
@@ -113,9 +120,11 @@ export default class BackendAiDialog extends LitElement {
             <span><slot name="title"></slot></span>
             <div class="flex"></div>
             <slot name="action"></slot>
+            ${this.noclosebutton ? html`` : html`
             <wl-button fab flat inverted @click="${() => this._hideDialog()}">
               <wl-icon>close</wl-icon>
             </wl-button>
+            `}
           </h3>
           <div class="content">
             <slot name="content"></slot>

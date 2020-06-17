@@ -65,7 +65,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
 
   open(apiEndpoint: string) {
     const queryParams = new URLSearchParams(window.location.search);
-    this.token = queryParams.get('token');
+    this.token = queryParams.get('token') || '';
 
     this._initClient(apiEndpoint);
 
@@ -87,7 +87,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
       return;
     }
     try {
-      const resp = await this.client.cloud.change_password(emailEl.value, passwordEl1.value, this.token);
+      await this.client.cloud.change_password(emailEl.value, passwordEl1.value, this.token);
       this.notification.text = _text('login.PasswordChanged');
       this.notification.show();
       setTimeout(() => {

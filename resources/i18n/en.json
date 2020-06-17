@@ -74,7 +74,8 @@
     "SystemMaintenance": "System maintenance",
     "Invitation": "Invitation",
     "FolderName": "Folder Name",
-    "Permission": "Permission"
+    "Permission": "Permission",
+    "Announcement": "Announcement"
   },
   "session": {
     "launcher": {

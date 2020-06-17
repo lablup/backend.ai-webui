@@ -24,7 +24,7 @@ class ClientConfig {
     constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
         // default configs.
         this._apiVersionMajor = '4';
-        this._apiVersion = 'v4.20190315'; // For compatibility with 19.03 / 1.4
+        this._apiVersion = 'v4.20190615'; // For compatibility with 19.03 / 1.4
         this._hashType = 'sha256';
         if (endpoint === undefined || endpoint === null)
             endpoint = 'https://api.backend.ai';
@@ -138,6 +138,7 @@ class Client {
         this.registry = new Registry(this);
         this.setting = new Setting(this);
         this.userConfig = new UserConfig(this);
+        this.service = new Service(this);
         this.domain = new Domain(this);
         this.cloud = new Cloud(this);
         this._features = {}; // feature support list
@@ -1893,6 +1894,29 @@ class ComputeSession {
         }
         return this.client.gql(q, v);
     }
+    /**
+     * get compute session with specific condition.
+     *
+     * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
+     * @param {string} sessionName - session name to query specific compute session.
+     * @param {string} domainName - domain name to query specific compute session.
+     * @param {string} accessKey - access key that is used to start compute sessions.
+     */
+    async get(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], sessionName = '', domainName = '', accessKey = '') {
+        fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
+        let q, v;
+        q = `query($ak:String, $domain_name:String, $session_name:String!) {
+      compute_session(access_key:$ak, domain_name:$domain_name, sess_id:$session_name) {
+        ${fields.join(" ")}
+      }
+    }`;
+        v = {
+            'ak': accessKey,
+            'domain_name': domainName,
+            'session_name': sessionName
+        };
+        return this.client.gql(q, v);
+    }
 }
 class Resources {
     constructor(client) {
@@ -2573,6 +2597,38 @@ class Setting {
         const rqst = this.client.newSignedRequest("POST", "/config/delete", {
             "key": `${key}`,
             "prefix": prefix
+        });
+        return this.client._wrapWithPromise(rqst);
+    }
+}
+class Service {
+    /**
+     * Service-specific API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+        this.config = null;
+    }
+    /**
+     * Get announcements
+     *
+     */
+    get_announcement() {
+        const rqst = this.client.newSignedRequest("GET", "/manager/announcement", null);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Update announcement
+     *
+     * @param {boolean} enabled - Enable / disable announcement. Default is True.
+     * @param {string} message - Announcement content. Usually in Markdown syntax.
+     */
+    update_announcement(enabled = true, message) {
+        const rqst = this.client.newSignedRequest("POST", "/manager/announcement", {
+            "enabled": enabled,
+            "message": message
         });
         return this.client._wrapWithPromise(rqst);
     }

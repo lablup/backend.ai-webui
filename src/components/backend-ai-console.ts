@@ -33,9 +33,9 @@ import './lablup-notification';
 import './backend-ai-indicator-pool';
 import './lablup-terms-of-service';
 import './backend-ai-dialog';
-import './backend-ai-task-view';
 import './backend-ai-sidepanel-task';
 import './backend-ai-sidepanel-notification';
+import './backend-ai-app-launcher';
 
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 import '../lib/backend.ai-client-es6';
@@ -114,9 +114,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) mini_ui = false;
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ["en", "ko"];
+  @property({type: Array}) blockedMenuitem;
 
   constructor() {
     super();
+    this.blockedMenuitem = [];
   }
 
   static get styles() {
@@ -131,6 +133,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   firstUpdated() {
     globalThis.lablupNotification = this.shadowRoot.querySelector('#notification');
     globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
+    globalThis.appLauncher = this.shadowRoot.querySelector('#app-launcher');
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.appPage = this.shadowRoot.querySelector('#app-page');
@@ -232,8 +235,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
     if (typeof config.license !== "undefined" && 'edition' in config.license) {
       this.edition = config.license.edition;
-      //console.log(this.edition);
     }
+    if (typeof config.menu !== "undefined" && 'blocklist' in config.menu) {
+      this.blockedMenuitem = config.menu.blocklist.split(",");
+    }
+
     globalThis.packageEdition = this.edition;
     if (typeof config.license !== "undefined" && 'validUntil' in config.license) {
       this.validUntil = config.license.validUntil;
@@ -807,28 +813,28 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}">
               <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg green">widgets</mwc-icon>
               <span class="full-menu">${_t("console.menu.Summary")}</span>
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}" ?disabled="${this.blockedMenuitem.includes('job')}">
               <mwc-icon id="sessions-menu-icon" slot="graphic" class="fg red">ballot</mwc-icon>
               <span class="full-menu">${_t("console.menu.Sessions")}</span>
             </mwc-list-item>
             ${false ? html`
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}">
               <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
               <span class="full-menu">${_t("console.menu.Experiments")}</span>
             </mwc-list-item>` : html``}
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}" ?disabled="${this.blockedMenuitem.includes('data')}">
               <mwc-icon id="data-menu-icon" slot="graphic" class="fg orange">cloud_upload</mwc-icon>
               <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}" ?disabled="${this.blockedMenuitem.includes('statistics')}">
               <mwc-icon id="statistics-menu-icon" slot="graphic" class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}" ?disabled="${this.blockedMenuitem.includes('usersettings')}">
               <mwc-icon id="usersettings-menu-icon" slot="graphic" class="fg teal" icon="icons:settings">settings_applications</mwc-icon>
               <span class="full-menu">${_t("console.menu.Settings")}</span>
             </mwc-list-item>
@@ -880,7 +886,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.05.5.200528</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.06.2.200616</small>
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
@@ -1012,6 +1018,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>
         </div>
       </backend-ai-dialog>
+      <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
     `;
   }
 
