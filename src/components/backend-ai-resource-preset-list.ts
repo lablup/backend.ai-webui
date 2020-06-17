@@ -56,7 +56,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 265px);
+          height: calc(100vh - 225px);
         }
 
         paper-dropdown-menu {
@@ -226,7 +226,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         <div>
           <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
                       .items="${this.resourcePresets}">
-            <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+            <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
 
             <vaadin-grid-column resizable>
               <template class="header">
@@ -519,7 +519,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       return;
     }
     let input = this._readResourcePresetInput();
-    if (input.shared_memory >= mem) {
+    if (parseInt(input.shared_memory) >= parseInt(mem)) {
       this.notification.text = 'Memory should be larger than shared memory';
       this.notification.show();
       return;

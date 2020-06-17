@@ -9,6 +9,7 @@ import {BackendAIPage} from './backend-ai-page';
 import {render} from 'lit-html';
 
 import './lablup-loading-spinner';
+import './backend-ai-dialog';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -33,7 +34,6 @@ import {
   IronFlexFactors,
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
-
 
 @customElement("backend-ai-user-list")
 export default class BackendAIUserList extends BackendAIPage {
@@ -71,11 +71,11 @@ export default class BackendAIUserList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 350px);
+          height: calc(100vh - 275px);
         }
 
-        wl-card h4,
-        wl-card wl-label {
+        backend-ai-dialog h4,
+        backend-ai-dialog wl-label {
           font-size: 14px;
           padding: 5px 15px 5px 12px;
           margin: 0 0 10px 0;
@@ -83,7 +83,7 @@ export default class BackendAIUserList extends BackendAIPage {
           height: 20px;
         }
 
-        wl-card h4 {
+        backend-ai-dialog h4 {
           border-bottom: 1px solid #DDD;
         }
 
@@ -110,14 +110,19 @@ export default class BackendAIUserList extends BackendAIPage {
           width: 70px !important;
         }
 
-        wl-dialog wl-textfield,
-        wl-dialog wl-textarea {
+        backend-ai-dialog wl-textfield,
+        backend-ai-dialog wl-textarea {
           padding-left: 15px;
-          --input-font-family: Roboto, Noto, sans-serif;
+          --input-font-family: var(--general-font-family);
           --input-color-disabled: #222;
           --input-label-color-disabled: #222;
           --input-label-font-size: 12px;
           --input-border-style-disabled: 1px solid #ccc;
+        }
+
+        backend-ai-dialog li {
+          font-family: var(--general-font-family);
+          font-size: 16px;
         }
 
         wl-textfield:not([disabled]),
@@ -161,6 +166,7 @@ export default class BackendAIUserList extends BackendAIPage {
     if (active === false) {
       return;
     }
+    this._updatePageItemSize();
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -177,6 +183,11 @@ export default class BackendAIUserList extends BackendAIPage {
     }
   }
 
+  _updatePageItemSize() {
+    let tableSize = window.innerHeight - 275 - 30;
+    this._pageSize = Math.floor(tableSize / 50);
+  }
+
   _refreshUserData() {
     let is_active = true;
     switch (this.condition) {
@@ -187,6 +198,7 @@ export default class BackendAIUserList extends BackendAIPage {
         is_active = false;
     }
     this.spinner.hide();
+    this._updatePageItemSize();
     let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       let users = response.users;
@@ -358,7 +370,7 @@ export default class BackendAIUserList extends BackendAIPage {
 
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
@@ -433,7 +445,7 @@ export default class BackendAIUserList extends BackendAIPage {
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact"
                    aria-label="User list" id="user-grid" .items="${this.userView}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#"
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-sort-column resizable header="${_t("credential.UserID")}" path="email">
           <template>
@@ -452,7 +464,7 @@ export default class BackendAIUserList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
-      <div class="horizontal center-justified layout flex" style="padding: 10px;">
+      <div class="horizontal center-justified layout flex" style="padding: 10px;border-top:1px solid #ccc;">
         <wl-button class="pagination" id="previous-page"
                    ?disabled="${this._currentPage === 1}"
                    @click="${(e) => {
@@ -470,117 +482,113 @@ export default class BackendAIUserList extends BackendAIPage {
           <wl-icon class="pagination">navigate_next</wl-icon>
         </wl-button>
       </div>
-      <wl-dialog id="signout-user-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">Let's double-check</wl-title>
-         <div slot="content">
-            <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>. ${_t("dialog.ask.DoYouWantToProceed")}</p>
-         </div>
-         <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
-            <wl-button class="ok" @click="${() => this._signoutUser()}">${_t("button.Okay")}</wl-button>
-         </div>
-      </wl-dialog>
-      <wl-dialog id="user-info-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="0" class="intro" style="margin: 0;">
-          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span style="margin-right:15px;">${_t("credential.UserDetail")}</span>
-            <lablup-shields app="" description="user" ui="flat"></lablup-shields>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <div class="horizontal layout">
-            <div style="width:335px;">
-              <h4>${_t("credential.Information")}</h4>
-              <div role="listbox" style="margin: 0;">
-                <wl-textfield
-                  label="${_t("credential.UserID")}"
-                  disabled
-                  value="${this.userInfo.email}">
-                </wl-textfield>
-                <wl-textfield
-                  label="${_t("credential.UserName")}"
-                  id="username"
-                  ?disabled=${!this.editMode}
-                  value="${this.userInfo.username}">
-                </wl-textfield>
-                <wl-textfield
-                  label="${_t("credential.FullName")}"
-                  id="full_name"
-                  ?disabled=${!this.editMode}
-                  value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}">
-                </wl-textfield>
-                ${this.editMode ? html`
-                            <wl-textfield type="password" label="${_t("general.NewPassword")}" id="password"></wl-textfield>
-                            <wl-textfield type="password" label="${_t("general.ConfirmPassword")}" id="confirm"></wl-textfield>`
+      <backend-ai-dialog id="signout-user-dialog" backdrop>
+        <span slot="title">Let's double-check</span>
+        <div slot="content">
+          <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>.</p>
+          <p>${_t("dialog.ask.DoYouWantToProceed")}</p>
+        </div>
+        <div slot="footer" class="horizontal layout">
+          <div class="flex"></div>
+          <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
+          <wl-button class="ok" outlined @click="${() => this._signoutUser()}">${_t("button.Okay")}</wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="user-info-dialog" backdrop narrowLayout>
+        <div slot="title" class="horizontal center layout">
+          <span style="margin-right:15px;">${_t("credential.UserDetail")}</span>
+          <lablup-shields app="" description="user" ui="flat"></lablup-shields>
+        </div>
+        <div slot="content" class="horizontal layout">
+          <div style="width:335px;">
+            <h4>${_t("credential.Information")}</h4>
+            <div role="listbox" style="margin: 0;">
+              <wl-textfield
+                label="${_t("credential.UserID")}"
+                disabled
+                value="${this.userInfo.email}">
+              </wl-textfield>
+              <wl-textfield
+                label="${_t("credential.UserName")}"
+                id="username"
+                ?disabled=${!this.editMode}
+                value="${this.userInfo.username}">
+              </wl-textfield>
+              <wl-textfield
+                label="${_t("credential.FullName")}"
+                id="full_name"
+                ?disabled=${!this.editMode}
+                value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}">
+              </wl-textfield>
+              ${this.editMode ? html`
+                <wl-textfield type="password" label="${_t("general.NewPassword")}" id="password"></wl-textfield>
+                <wl-textfield type="password" label="${_t("general.ConfirmPassword")}" id="confirm"></wl-textfield>`
       : html``}
-                <wl-textarea label="${_t("credential.Description")}" id="description"
-                             value="${this.userInfo.description ? this.userInfo.description : ' '}"
-                             ?disabled=${!this.editMode}>
-                </wl-textarea>
-                ${this.editMode ? html`
-                  <wl-label label for="is_active_label" style="margin-bottom: auto">
-                   ${_t("credential.DescActiveUser")}
-                  </wl-label>
-                  <wl-label label id="is_active_label">
-                    <wl-switch
-                      id="is_active"
-                      ?checked=${this.userInfo.is_active}>
-                    </wl-switch>
-                  </wl-label>
-                  <wl-label label for="need_password_change_label" style="margin-bottom: auto">
-                    ${_t("credential.DescRequirePasswordChange")}
-                  </wl-label>
-                  <wl-label label id="need_password_change_label">
-                    <wl-switch id="need_password_change" ?checked=${this.userInfo.need_password_change}></wl-switch>
-                  </wl-label>
-                  <wl-button
-                    class="fg green"
-                    type="button"
-                    outlined
-                    @click=${e => this._saveChanges(e)}
-                    style="width: 305px; margin: 0 15px 10px 15px; box-sizing: border-box;">
-                    <wl-icon>check</wl-icon>
-                    ${_t("button.SaveChanges")}
-                  </wl-button>` : html`
-                      <wl-textfield label="${_t("credential.DescActiveUser")}" disabled
-                                    value="${this.userInfo.is_active ? `Yes` : `No`}">
-                      </wl-textfield>
-                      <wl-textfield label="${_t("credential.DescRequirePasswordChange")}" disabled
-                                    value="${this.userInfo.need_password_change ? `Yes` : `No`}">
-                      </wl-textfield>
-              `}
+              <wl-textarea label="${_t("credential.Description")}" id="description"
+                           value="${this.userInfo.description ? this.userInfo.description : ' '}"
+                           ?disabled=${!this.editMode}>
+              </wl-textarea>
+              ${this.editMode ? html`
+                <wl-label label for="is_active_label" style="margin-bottom: auto">
+                 ${_t("credential.DescActiveUser")}
+                </wl-label>
+                <wl-label label id="is_active_label">
+                  <wl-switch
+                    id="is_active"
+                    ?checked=${this.userInfo.is_active}>
+                  </wl-switch>
+                </wl-label>
+                <wl-label label for="need_password_change_label" style="margin-bottom: auto">
+                  ${_t("credential.DescRequirePasswordChange")}
+                </wl-label>
+                <wl-label label id="need_password_change_label">
+                  <wl-switch id="need_password_change" ?checked=${this.userInfo.need_password_change}></wl-switch>
+                </wl-label>
+                <wl-button
+                  class="fg green"
+                  type="button"
+                  outlined
+                  @click=${e => this._saveChanges(e)}
+                  style="width: 305px; margin: 0 15px 10px 15px; box-sizing: border-box;">
+                  <wl-icon>check</wl-icon>
+                  ${_t("button.SaveChanges")}
+                </wl-button>` : html`
+                    <wl-textfield label="${_t("credential.DescActiveUser")}" disabled
+                                  value="${this.userInfo.is_active ? `Yes` : `No`}">
+                    </wl-textfield>
+                    <wl-textfield label="${_t("credential.DescRequirePasswordChange")}" disabled
+                                  value="${this.userInfo.need_password_change ? `Yes` : `No`}">
+                    </wl-textfield>
+            `}
+          </div>
+        </div>
+        ${this.editMode ? html`` : html`
+          <div style="width:270px;">
+            <h4>${_t("credential.Association")}</h4>
+            <div role="listbox" style="margin: 0;">
+              <wl-textfield
+                label="${_t("credential.Domain")}"
+                disabled
+                value="${this.userInfo.domain_name}">
+              </wl-textfield>
+              <wl-textfield
+                label="${_t("credential.Role")}"
+                disabled
+                value="${this.userInfo.role}">
+              </wl-textfield>
+            </div>
+            <h4>${_t("credential.ProjectAndGroup")}</h4>
+            <div role="listbox" style="margin: 0;">
+              <ul>
+              ${this.userInfoGroups.map(item => html`
+                <li>${item}</li>
+              `)}
+              </ul>
             </div>
           </div>
-          ${this.editMode ? html``: html`
-            <div style="width:270px;">
-              <h4>${_t("credential.Association")}</h4>
-              <div role="listbox" style="margin: 0;">
-                <vaadin-item>
-                  <div><strong>${_t("credential.Domain")}</strong></div>
-                  <div secondary>${this.userInfo.domain_name}</div>
-                </vaadin-item>
-                <vaadin-item>
-                  <div><strong>${_t("credential.Role")}</strong></div>
-                  <div secondary>${this.userInfo.role}</div>
-                </vaadin-item>
-                <vaadin-item>
-                  <div><strong>${_t("credential.Groups")}</strong></div>
-                  <div secondary>
-                    <ul>
-                    ${this.userInfoGroups.map(item => html`
-                      <li>${item}</li>
-                    `)}
-                    </ul>
-                  </div>
-                </vaadin-item>
-              </div>
-            </div>
-          `}
-          </div>
-        </wl-card>
-      </wl-dialog>
+        `}
+        </div>
+      </backend-ai-dialog>
     `;
   }
 }

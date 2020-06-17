@@ -41,6 +41,7 @@ export default class LablupActivityPanel extends LitElement {
           margin: 16px;
           padding: 0;
           border-radius: 5px;
+          --card-elevation: rgba(4, 7, 22, 0.15) 0px 5px 10px -2px;
         }
 
         wl-card > h4 {

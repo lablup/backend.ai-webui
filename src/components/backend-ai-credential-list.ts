@@ -147,6 +147,10 @@ export default class BackendAICredentialList extends BackendAIPage {
           color: var(--paper-grey-700);
         }
 
+        wl-button.pagination[disabled] wl-icon.pagination {
+          color: var(--paper-grey-300);
+        }
+
         wl-button.pagination {
           width: 15px;
           height: 15px;
@@ -156,6 +160,8 @@ export default class BackendAICredentialList extends BackendAIPage {
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
           --button-bg-active-flat: var(--paper-red-600);
+          --button-bg-disabled: var(--paper-grey-50);
+          --button-color-disabled: var(--paper-grey-200);
         }
 
       `];
@@ -512,7 +518,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     return html`
       <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact" aria-label="Credential list"
                    id="keypair-grid" .items="${this.keypairView}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
 
         <vaadin-grid-column resizable>
           <template class="header">

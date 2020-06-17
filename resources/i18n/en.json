@@ -23,6 +23,8 @@
       "OriginalPassword": "Original password",
       "NewPassword": "New password",
       "NewPasswordAgain": "New password (again)",
+      "InvalidPasswordMessage": "At least 1 alphabet, 1 number and 1 special character is required with at least 8 chars.",
+      "PasswordMismatch": "Password mismatch",
       "TermsOfService": "Terms of Service",
       "PrivacyPolicy": "Privacy Policy",
       "LeaveService": "Leave service",
@@ -31,20 +33,23 @@
       "Environments&Presets": "Environments & Presets",
       "ComputationResources": "Computation Resources",
       "Logs": "Logs",
-      "Project": "Project",
+      "Project": "Current Project",
       "NoProject": "No Project",
       "SelectProject": "Select Project",
-      "Experiments": "Experiments"
+      "Experiments": "Experiments",
+      "UserName": "User Name",
+      "Menu": "Menu"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
-    "YouAreOnline": "You are now online"
+    "YouAreOnline": "You are now online",
+    "NOTFOUND": "Page Not Found."
   },
   "summary": {
     "Dashboard": "Dashboard",
     "StartMenu": "Start Menu",
     "SystemHealth": "System Health",
-    "ConnectedNodes": "Connected Nodes",
+    "ConnectedNodes": "Connected<br/>Nodes",
     "ActiveSessions": "Active Sessions",
     "ResourceStatistics": "Resource Statistics",
     "CoresReserved": "Cores reserved",
@@ -69,7 +74,8 @@
     "SystemMaintenance": "System maintenance",
     "Invitation": "Invitation",
     "FolderName": "Folder Name",
-    "Permission": "Permission"
+    "Permission": "Permission",
+    "Announcement": "Announcement"
   },
   "session": {
     "launcher": {
@@ -243,7 +249,8 @@
       "PolicyName": "Policy name Required.",
       "LetterNumber-_dot": "Allows letters, numbers and -_.",
       "NameAlreadyExists": "Policy Name Already Exists!"
-    }
+    },
+    "ProjectAndGroup": "Projects & Groups"
   },
   "data": {
     "Folders": "Folders",
@@ -273,15 +280,18 @@
       "Delete": "Delete",
       "RenameAFolder": "Rename a folder",
       "TypeNewFolderName": "Type new folder name",
+      "FolderCreated": "Folder created",
       "Rename": "Rename",
       "FolderRenamed": "Folder renamed",
+      "FolderDeleted": "Folder deleted",
       "NumberOfFiles": "Number of files",
       "Ownership": "Ownership",
       "DescYouAreFolderOwner": "You are the owner of this folder.",
       "SelectPermission": "Select permission",
       "View": "View",
       "Edit": "Edit",
-      "EditDelete": "Edit+Delete"
+      "EditDelete": "Edit+Delete",
+      "KickOut": "Kick out user"
     },
     "explorer": {
       "Delete": "Delete...",
@@ -305,7 +315,8 @@
       "EnterEmailAddress": "Enter E-Mail address",
       "DownloadFile": "Download File",
       "TouchToDownload": "Touch to Download file"
-    }
+    },
+    "NoStorageDescriptionFound": "No description."
   },
   "dialog": {
     "warning": {
@@ -381,7 +392,10 @@
     "DescNewUserConfigFileCreated": "New User config file can be created with non-empty data.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Please update script with non empty value.",
     "AutomaticUpdateCheck": "Automatic Update Check",
-    "DescAutomaticUpdateCheck": "Notify when a new console version is released.<br />In where the Internet is unstable or offline, this option will be automatically turned off. You can toggle this switch to start the automatic update check again."
+    "DescAutomaticUpdateCheck": "Notify when a new console version is released.<br />In where the Internet is unstable or offline, this option will be automatically turned off. You can toggle this switch to start the automatic update check again.",
+    "PreferredSSHPort": "Preferred SSH Port",
+    "DescPreferredSSHPort": "Use this value as an SSH/SFTP port if possible. <br />If the port is already in use, assign another random port to SSH/SFTP. Leave blank to auto-assign.",
+    "InvalidPortNumber": "Port number should be positive number between 1025~65534"
   },
   "logs": {
     "LogMessages": "Log Messages",
@@ -570,7 +584,16 @@
     "SignoutFinished": "Signout finished.",
     "APIEndpointEmpty": "API Endpoint is empty. Please specify API endpoint to login.",
     "PleaseWait": "Please wait to login.",
-    "ConnectingToCluster": "Connecting to Backend.AI Cluster..."
+    "ConnectingToCluster": "Connecting to Backend.AI Cluster...",
+    "ForgotPassword": "Forgot password?",
+    "ChangePassword": "Change password",
+    "SendChangePasswordEmail": "Send change password email",
+    "DescChangePasswordEmail": "To send an email for changing your password, please type your E-mail and press SEND button.",
+    "EmailSendButton": "Send",
+    "UpdatePasswordMessage": "Type your email and a new password, and then press Update button.",
+    "PasswordChanged": "Password is successfully changed",
+    "InvalidChangePasswordToken": "Invalid Token",
+    "InvalidChangePasswordTokenMessage": "Issued token to change password has error. Please send another email for changing password and try again."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",
@@ -581,9 +604,26 @@
     "Signup": "Signup",
     "InvitationToken": "Invitation Token",
     "TermsOfService": "Terms of service",
-    "PrivacyPolicy": "Privacy Policy"
+    "PrivacyPolicy": "Privacy Policy",
+    "ThankYou": "Thank you!",
+    "VerificationMessage": "Verification email is sent to your email address. Please read and follow the steps specified in the email before login with your account.",
+    "EmailVerified": "Email verified",
+    "EmailVerifiedMessage": "Your email is verified! Now you can login with your account.",
+    "EmailVerificationFailed": "Email verification failed",
+    "EmailVerificationFailedMessage": "We're unable to verify your email. Your token may be invalid or expired. Write your email address and click send button to get new verification code.",
+    "InvalidEmail": "Invalid email address",
+    "SendEmail": "Send verification email",
+    "EmailSent": "Email sent",
+    "EmailNotSent": "Unable to send email"
   },
   "update": {
     "NewConsoleVersionAvailable": "New version is available:"
+  },
+  "sidepanel": {
+    "BackgroundTasks": "Running Tasks",
+    "NoBackgroundTask": "No Task.",
+    "Running": "Running...",
+    "Notification": "Notification",
+    "NoNotification": "No Notification."
   }
 }

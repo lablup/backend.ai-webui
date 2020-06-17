@@ -36,7 +36,7 @@ export default class BackendAiReleaseCheck extends LitElement {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    if (globalThis.isElectron && globalThis.backendaioptions.get("automatic_update_check", true)) {
+    if (globalThis.isElectron && typeof globalThis.backendaioptions != 'undefined' && globalThis.backendaioptions.get("automatic_update_check", true)) {
       this.checkRelease();
     }
   }

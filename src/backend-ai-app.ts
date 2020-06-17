@@ -80,8 +80,22 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
     case 'logs':
       import('./components/backend-ai-error-log-view.js');
       break;
+    case 'verify-email':
+      import('./components/backend-ai-email-verification-view.js');
+      break;
+    case 'change-password':
+      import('./components/backend-ai-change-forgot-password-view.js');
+      break;
     default:
-      import('./components/backend-ai-summary-view.js').then((module) => {
+      if (typeof globalThis.backendaiPage !== 'undefined') {
+        for (let item of globalThis.backendaiPage) {
+          if ('url' in item) {
+            import('./plugins/' + item.url);
+            break;
+          }
+        }
+      }
+      import('./components/backend-ai-error-view.js').then((module) => {
       });
       break;
   }

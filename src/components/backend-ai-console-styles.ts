@@ -46,8 +46,7 @@ export const BackendAiConsoleStyles = [
       font-weight: 400;
     }
 
-    .mini-ui .site-name,
-    .mini-ui #sidebar-navbar-footer {
+    .mini-ui .site-name {
       display: none;
     }
 
@@ -108,6 +107,12 @@ export const BackendAiConsoleStyles = [
       font-weight: 900;
     }
 
+    mwc-list.sidebar mwc-list-item[disabled],
+    mwc-list.sidebar mwc-list-item[disabled] mwc-icon {
+      --mdc-theme-on-surface: #888;
+      color: #888 !important;
+    }
+
     .mini-ui mwc-list.sidebar mwc-list-item {
       --mdc-list-item-graphic-margin: 0;
     }
@@ -141,6 +146,31 @@ export const BackendAiConsoleStyles = [
 
     .page[active] {
       display: block;
+    }
+
+    .sidepanel {
+      display: none;
+    }
+
+    .sidepanel[active] {
+      display: block;
+    }
+
+    #content-body {
+      background-color: #ffffff;
+      color: var(--general-sidepanel-color, #fafafa);
+      --mdc-drawer-background-color: var(--sidepanel-background-color, var(--general-sidepanel-background-color, #fafafa));
+    }
+
+    .sidepanel-drawer {
+      border-right: 1px solid #cccccc;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overflow: -moz-scrollbars-none;
+      -ms-overflow-style: none;
+      will-change: transform;
     }
 
     wl-progress-spinner {
@@ -181,25 +211,38 @@ export const BackendAiConsoleStyles = [
       color: #ffffff;
     }
 
-    mwc-select {
+    mwc-multi-select {
       width: 135px;
       font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-      --mdc-theme-primary: var(--paper-grey-600);
+      --mdc-typography-subtitle1-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      --mdc-typography-subtitle1-font-size: 14px;
+      --mdc-typography-subtitle1-font-color: white;
+      --mdc-typography-subtitle1-font-weight: 400;
+      --mdc-typography-subtitle1-line-height: 16px;
       --mdc-select-fill-color: transparent;
-      --mdc-select-label-ink-color: rgba(255, 255, 255, 0.75);
-      --mdc-select-dropdown-icon-color: white;
+      --mdc-select-label-ink-color: rgba(255, 255, 255, 1.0);
+      --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
+      --mdc-select-dropdown-icon-color: rgba(255, 255, 255, 1.0);
+      --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
+      --mdc-select-disabled-dropdown-icon-color: rgba(255, 255, 255, 0.87);
       --mdc-select-idle-line-color: transparent;
-      --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
+      --mdc-select-hover-line-color: rgba(255, 255, 255, 0.87);
       --mdc-select-ink-color: rgba(255, 255, 255, 1.0);
-      --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
-      --mdc-select-outlined-hover-border-color: rgba(255, 0, 0, 0.87);
+      --mdc-select-outlined-idle-border-color: rgba(255, 255, 255, 0.42);
+      --mdc-select-outlined-hover-border-color: rgba(255, 255, 255, 0.87);
       --mdc-theme-surface: white;
       --mdc-list-vertical-padding: 5px;
       --mdc-list-side-padding: 10px;
+      --mdc-menu-item-height: 28px;
       --mdc-list-item__primary-text: {
         height: 20px;
         color: #222222;
       };
+      --mdc-select-min-width: 100px;
+    }
+
+    wl-popover-card {
+      padding: 5px;
     }
 
     wl-dialog wl-textfield {
@@ -233,9 +276,26 @@ export const BackendAiConsoleStyles = [
       --mdc-icon-size: 16px;
     }
 
+    mwc-icon-button.side-menu {
+      --mdc-icon-button-size: 44px;
+      --mdc-theme-text-disabled-on-light: var(--paper-grey-800);
+    }
+
+    #sidebar-navbar-footer mwc-icon-button {
+      --mdc-theme-text-disabled-on-light: var(--paper-grey-800);
+    }
+
     .mini-ui .full-menu {
       display: none;
       margin: 0 !important;
+    }
+
+    .mini-menu {
+      display: none;
+    }
+
+    .mini-ui .mini-menu {
+      display: block;
     }
 
     .sidebar-footer {
@@ -266,6 +326,10 @@ export const BackendAiConsoleStyles = [
       height: 48px;
     }
 
+    #content-body {
+      height: 100vh;
+    }
+
     #main-toolbar {
       background-color: var(--general-menu-background-color);
       color: var(--general-menu-color);
@@ -278,26 +342,20 @@ export const BackendAiConsoleStyles = [
       font-weight: 300;
     }
 
+    #content {
+      padding-top: 0;
+    }
+
     #sidebar-navbar-footer {
       position: absolute;
       right: 0;
       left: 0;
       bottom: 0 !important; /* Workaround to prevent miscalculated height */
       text-align: center;
-      height: 45px;
+      height: 100px;
       border-top: 1px solid #eeeeee;
       background-color: var(--general-navbar-footer-background-color);
       color: var(--general-sidebar-navbar-footer-color);
-    }
-
-    #sidebar-navbar-footer:before {
-      content: "";
-      position: absolute;
-      top: -1px;
-      display: block;
-      width: 100%;
-      height: 1px;
-      background-color: rgba(214, 214, 214, 0.4);
     }
 
     @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
@@ -310,16 +368,6 @@ export const BackendAiConsoleStyles = [
         -webkit-backdrop-filter: saturate(180%) blur(20px);
         backdrop-filter: saturate(180%) blur(20px);
         border: 0;
-      }
-
-      #sidebar-navbar-footer:before {
-        content: "";
-        position: absolute;
-        top: -1px;
-        display: block;
-        width: 100%;
-        height: 1px;
-        background-color: rgba(214, 214, 214, 0.4);
       }
     }
 

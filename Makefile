@@ -76,7 +76,6 @@ mac: dep
 win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=win32 --icon=manifest/backend-ai.ico
-	#cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-win32-x64 ./backend.ai-console-win32-x64-$(BUILD_DATE).zip
 	cd app; zip ./backend.ai-console-win32-x64-$(BUILD_DATE).zip -r ./backend.ai-console-win32-x64
 	mv ./app/backend.ai-console-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-console-x64-$(BUILD_VERSION)-$(site).zip
 linux: dep
