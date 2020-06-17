@@ -565,15 +565,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   firstUpdated() {
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this.is_connected = true;
-        this._enableLaunchButton();
-      }, {once: true});
-    } else {
-      this.is_connected = true;
-      this._enableLaunchButton();
-    }
     this.shadowRoot.querySelector('#environment').addEventListener('selected', this.updateLanguage.bind(this));
     this.version_selector = this.shadowRoot.querySelector('#version');
     this.version_selector.addEventListener('selected', this.updateResourceAllocationPane.bind(this));
@@ -601,6 +592,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       // this.scaling_group = '';
       this._updatePageVariables(true);
     });
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this.is_connected = true;
+        this._enableLaunchButton();
+      }, {once: true});
+    } else {
+      this.is_connected = true;
+      this._enableLaunchButton();
+    }
   }
 
   _enableLaunchButton() {
@@ -630,7 +630,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       this.lastQueryTime = 0; // Reset query interval
       if (forceUpdate === true) {
-        //await this._refreshResourcePolicy();
+        await this._refreshResourcePolicy();
       } else {
         this.updateResourceAllocationPane('session dialog');
       }
@@ -657,12 +657,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
+        this.project_resource_monitor = this.resourceBroker.allow_project_resource_monitor;
         this._updatePageVariables(true);
         this._disableEnterKey();
       }, {once: true});
     } else {
-      this.project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
+      this.project_resource_monitor = this.resourceBroker.allow_project_resource_monitor;
       await this._updatePageVariables(true);
       this._disableEnterKey();
     }
@@ -731,12 +731,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.aggregateResource('update-page-variable');
       this.metadata_updating = false;
     }
-  }
-
-  _refreshConcurrency() {
-    return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
-      this.concurrency_used = response.keypair.concurrency_used;
-    });
   }
 
   async _refreshResourcePolicy() {
