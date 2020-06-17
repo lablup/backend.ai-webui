@@ -680,7 +680,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
       this.TOSdialog.tosLanguage = this.lang;
-      this.TOSdialog.title = _t("console.menu.TermsOfService");
+      this.TOSdialog.title = _text("console.menu.TermsOfService");
       this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
     }
@@ -690,7 +690,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
       this.TOSdialog.tosLanguage = this.lang;
-      this.TOSdialog.title = _t("console.menu.PrivacyPolicy");
+      this.TOSdialog.title = _text("console.menu.PrivacyPolicy");
       this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();
     }

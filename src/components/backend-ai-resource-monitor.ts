@@ -92,19 +92,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) images;
   @property({type: String}) defaultResourcePolicy;
   @property({type: Object}) total_slot;
-  @property({type: Object}) total_sg_slot;
-  @property({type: Object}) total_pj_slot;
+  @property({type: Object}) total_resource_group_slot;
+  @property({type: Object}) total_project_slot;
   @property({type: Object}) used_slot;
-  @property({type: Object}) used_sg_slot;
-  @property({type: Object}) used_pj_slot;
+  @property({type: Object}) used_resource_group_slot;
+  @property({type: Object}) used_project_slot;
   @property({type: Object}) available_slot;
   @property({type: Number}) concurrency_used;
   @property({type: Number}) concurrency_max;
   @property({type: Number}) concurrency_limit;
   @property({type: Array}) vfolders;
   @property({type: Object}) used_slot_percent;
-  @property({type: Object}) used_sg_slot_percent;
-  @property({type: Object}) used_pj_slot_percent;
+  @property({type: Object}) used_resource_group_slot_percent;
+  @property({type: Object}) used_project_slot_percent;
   @property({type: Array}) resource_templates;
   @property({type: Array}) resource_templates_filtered;
   @property({type: String}) default_language;
@@ -522,15 +522,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.gpu_mode = 'no';
     this.defaultResourcePolicy = 'UNLIMITED';
     this.total_slot = {};
-    this.total_sg_slot = {};
-    this.total_pj_slot = {};
+    this.total_resource_group_slot = {};
+    this.total_project_slot = {};
     this.used_slot = {};
-    this.used_sg_slot = {};
-    this.used_pj_slot = {};
+    this.used_resource_group_slot = {};
+    this.used_project_slot = {};
     this.available_slot = {};
     this.used_slot_percent = {};
-    this.used_sg_slot_percent = {};
-    this.used_pj_slot_percent = {};
+    this.used_resource_group_slot_percent = {};
+    this.used_project_slot_percent = {};
     this.resource_templates = [];
     this.resource_templates_filtered = [];
     this.vfolders = [];
@@ -740,7 +740,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   async _launchSessionDialog() {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false || this.resourceBroker.image_updating === true) {
-      this.notification.text = 'Please wait while initializing...';
+      this.notification.text = _text('session.launcher.PleaseWaitInitializing');
       this.notification.show();
     } else {
       await this.selectDefaultLanguage();
@@ -787,7 +787,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       return;
     }
     if (kernel === "" || version === "" || version === "Not Selected") {
-      this.notification.text = "You must specify Environment and Version.";
+      this.notification.text = _text("session.launcher.MustSpecifyVersion");
       this.notification.show();
       return;
     }
@@ -804,7 +804,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').selectedItemLabel;
       config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').selectedItemLabel;
       if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
-        this.notification.text = 'Not enough ownership information';
+        this.notification.text = _text("session.launcher.NotEnoughOwnershipInfo");
         this.notification.show();
         return;
       }
@@ -1078,16 +1078,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.resource_templates = this.resourceBroker.resource_templates;
       this.resource_templates_filtered = this.resourceBroker.resource_templates_filtered;
       this.total_slot = this.resourceBroker.total_slot;
-      this.total_sg_slot = this.resourceBroker.total_resource_group_slot;
-      this.total_pj_slot = this.resourceBroker.total_project_slot;
+      this.total_resource_group_slot = this.resourceBroker.total_resource_group_slot;
+      this.total_project_slot = this.resourceBroker.total_project_slot;
       this.used_slot = this.resourceBroker.used_slot;
-      this.used_sg_slot = this.resourceBroker.used_resource_group_slot;
-      this.used_pj_slot = this.resourceBroker.used_project_slot;
-      this.used_pj_slot_percent = this.resourceBroker.used_project_slot_percent;
+      this.used_resource_group_slot = this.resourceBroker.used_resource_group_slot;
+      this.used_project_slot = this.resourceBroker.used_project_slot;
+      this.used_project_slot_percent = this.resourceBroker.used_project_slot_percent;
       this.concurrency_limit = this.resourceBroker.concurrency_limit;
       this.available_slot = this.resourceBroker.available_slot;
       this.used_slot_percent = this.resourceBroker.used_slot_percent;
-      this.used_sg_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
+      this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
       //this.requestUpdate();
       return Promise.resolve(true);
       return this.available_slot;
@@ -1600,7 +1600,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       } else {
         this._helpDescriptionTitle = name;
       }
-      this._helpDescription = "No description found.";
+      this._helpDescription = _text("session.launcher.NoDescriptionFound");
     }
   }
 
@@ -1717,8 +1717,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <div class="gauge-name">CPU</div>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_sg_slot.cpu}/${this.total_sg_slot.cpu}</span>
-              <mwc-linear-progress id="cpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.cpu / 100.0}"></mwc-linear-progress>
+              <span class="gauge-label">${this.used_resource_group_slot.cpu}/${this.total_resource_group_slot.cpu}</span>
+              <mwc-linear-progress id="cpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cpu / 100.0}"></mwc-linear-progress>
               <mwc-linear-progress id="cpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cpu / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.cpu}/${this.total_slot.cpu}</span>
             </div>
@@ -1729,8 +1729,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">RAM</span>
             </div>
             <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_sg_slot.mem}/${this.total_sg_slot.mem}GB</span>
-              <mwc-linear-progress id="mem-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.mem / 100.0}"></mwc-linear-progress>
+              <span class="gauge-label">${this.used_resource_group_slot.mem}/${this.total_resource_group_slot.mem}GB</span>
+              <mwc-linear-progress id="mem-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.mem / 100.0}"></mwc-linear-progress>
               <mwc-linear-progress id="mem-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.mem / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.mem}/${this.total_slot.mem}GB</span>
             </div>
@@ -1743,8 +1743,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">GPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_sg_slot.cuda_device}/${this.total_sg_slot.cuda_device}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
+              <span class="gauge-label">${this.used_resource_group_slot.cuda_device}/${this.total_resource_group_slot.cuda_device}</span>
+              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
               <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.cuda_device}/${this.total_slot.cuda_device}</span>
             </div>
@@ -1758,8 +1758,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">FGPU</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_sg_slot.cuda_shares}/${this.total_sg_slot.cuda_shares}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
+              <span class="gauge-label">${this.used_resource_group_slot.cuda_shares}/${this.total_resource_group_slot.cuda_shares}</span>
+              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
               <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.cuda_shares}/${this.total_slot.cuda_shares}</span>
             </div>
@@ -1773,8 +1773,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">ROCm<br/>GPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_sg_slot.rocm_device_slot}/${this.total_sg_slot.rocm_device_slot}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.rocm_device_slot / 100.0}"></mwc-linear-progress>
+              <span class="gauge-label">${this.used_resource_group_slot.rocm_device_slot}/${this.total_resource_group_slot.rocm_device_slot}</span>
+              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.rocm_device_slot / 100.0}"></mwc-linear-progress>
               <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.rocm_device_slot / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.rocm_device_slot}/${this.total_slot.rocm_device_slot}</span>
             </div>
@@ -1788,8 +1788,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">TPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_sg_slot.tpu_device_slot}/${this.total_sg_slot.tpu_device_slot}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_sg_slot_percent.tpu_device_slot / 100.0}"></mwc-linear-progress>
+              <span class="gauge-label">${this.used_resource_group_slot.tpu_device_slot}/${this.total_resource_group_slot.tpu_device_slot}</span>
+              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.tpu_device_slot / 100.0}"></mwc-linear-progress>
               <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.tpu_device_slot / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.tpu_device_slot}/${this.total_slot.tpu_device_slot}</span>
             </div>
@@ -1829,7 +1829,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       </div>
       ` : html``}
       ${this.direction === 'vertical' && this.project_resource_monitor === true &&
-    (this.total_pj_slot.cpu > 0 || this.total_pj_slot.cpu === Infinity) ? html`
+    (this.total_project_slot.cpu > 0 || this.total_project_slot.cpu === Infinity) ? html`
       <hr />
       <div class="vertical start-justified layout">
         <div class="flex"></div>
@@ -1841,37 +1841,37 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="layout vertical start-justified wrap short-indicator">
             <div class="layout horizontal">
               <span style="width:35px; margin-left:5px; margin-right:5px;">CPU</span>
-              <mwc-linear-progress id="cpu-project-usage-bar" class="start-bar project-bar" progress="${this.used_pj_slot_percent.cpu / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.cpu}/${this.total_pj_slot.cpu === Infinity ? '∞' : this.total_pj_slot.cpu}</span>
+              <mwc-linear-progress id="cpu-project-usage-bar" class="start-bar project-bar" progress="${this.used_project_slot_percent.cpu / 100.0}"></mwc-linear-progress>
+              <span style="margin-left:5px;">${this.used_project_slot.cpu}/${this.total_project_slot.cpu === Infinity ? '∞' : this.total_project_slot.cpu}</span>
             </div>
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">RAM</span>
-              <mwc-linear-progress id="mem-project-usage-bar" class="middle-bar project-bar" progress="${this.used_pj_slot_percent.mem / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.mem}/${this.total_pj_slot.mem === Infinity ? '∞' : this.total_pj_slot.mem}</span>
+              <mwc-linear-progress id="mem-project-usage-bar" class="middle-bar project-bar" progress="${this.used_project_slot_percent.mem / 100.0}"></mwc-linear-progress>
+              <span style="margin-left:5px;">${this.used_project_slot.mem}/${this.total_project_slot.mem === Infinity ? '∞' : this.total_project_slot.mem}</span>
             </div>
-            ${this.total_pj_slot.cuda_device ? html`
+            ${this.total_project_slot.cuda_device ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.cuda_device}/${this.total_pj_slot.cuda_device === 'Infinity' ? '∞' : this.total_pj_slot.cuda_device}</span>
+              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
+              <span style="margin-left:5px;">${this.used_project_slot.cuda_device}/${this.total_project_slot.cuda_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}</span>
             </div>` : html``}
-            ${this.total_pj_slot.cuda_shares ? html`
+            ${this.total_project_slot.cuda_shares ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">fGPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.cuda_shares}/${this.total_pj_slot.cuda_shares === 'Infinity' ? '∞' : this.total_pj_slot.cuda_shares}</span>
+              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
+              <span style="margin-left:5px;">${this.used_project_slot.cuda_shares}/${this.total_project_slot.cuda_shares === 'Infinity' ? '∞' : this.total_project_slot.cuda_shares}</span>
             </div>` : html``}
-            ${this.total_pj_slot.rocm_device ? html`
+            ${this.total_project_slot.rocm_device ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.rocm_device / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.rocm_device}/${this.total_pj_slot.rocm_device === 'Infinity' ? '∞' : this.total_pj_slot.rocm_device}</span>
+              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.rocm_device / 100.0}"></mwc-linear-progress>
+              <span style="margin-left:5px;">${this.used_project_slot.rocm_device}/${this.total_project_slot.rocm_device === 'Infinity' ? '∞' : this.total_project_slot.rocm_device}</span>
             </div>` : html``}
-            ${this.total_pj_slot.tpu_device ? html`
+            ${this.total_project_slot.tpu_device ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_pj_slot_percent.tpu_device / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_pj_slot.tpu_device}/${this.total_pj_slot.tpu_device === 'Infinity' ? '∞' : this.total_pj_slot.cuda_device}</span>
+              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.tpu_device / 100.0}"></mwc-linear-progress>
+              <span style="margin-left:5px;">${this.used_project_slot.tpu_device}/${this.total_project_slot.tpu_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}</span>
             </div>` : html``}
           </div>
           <div class="flex"></div>

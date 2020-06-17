@@ -119,7 +119,11 @@
       "CPU": "CPU",
       "Memory": "Memory",
       "GPU": "GPU",
-      "TitleSession": "Session (Backend.AI)"
+      "TitleSession": "Session (Backend.AI)",
+      "PleaseWaitInitializing": "Please wait while initializing...",
+      "MustSpecifyVersion": "You must specify Environment and Version.",
+      "NotEnoughOwnershipInfo": "Not enough ownership information",
+      "NoDescriptionFound": "No description found."
     },
     "Running": "Running",
     "Finished": "Finished",
