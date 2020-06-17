@@ -119,14 +119,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Number}) session_request;
   @property({type: Boolean}) _status;
   @property({type: Number}) num_sessions;
-  @property({type: Number}) lastQueryTime = 0;
   @property({type: String}) scaling_group;
   @property({type: Array}) scaling_groups;
   @property({type: Array}) sessions_list;
   @property({type: Boolean}) metric_updating;
   @property({type: Boolean}) metadata_updating;
   @property({type: Boolean}) aggregate_updating = false;
-  @property({type: Boolean}) image_updating;
   @property({type: Object}) scaling_group_selection_box;
   @property({type: Object}) resourceGauge = Object();
   /* Parameters required to launch a session on behalf of other user */
@@ -561,7 +559,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.ownerKeypairs = [];
     this.ownerGroups = [];
     this.ownerScalingGroups = [];
-    this.image_updating = true;
   }
 
   firstUpdated() {
@@ -606,6 +603,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   _enableLaunchButton() {
     // Check preconditions and enable it via pooling
     if (!this.resourceBroker.image_updating) { // Image information is successfully updated.
+      this.languages = this.resourceBroker.languages;
       this.enableLaunchButton = true;
     } else {
       setTimeout(() => {
@@ -623,13 +621,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   async updateScalingGroup(forceUpdate = false, e) {
     console.log(e.target.value);
-    this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
+    await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
     if (this.active) {
       if (this.direction === 'vertical') {
         const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
         scaling_group_selection_box.firstChild.value = this.resourceBroker.scaling_group;
       }
-      this.lastQueryTime = 0; // Reset query interval
       if (forceUpdate === true) {
         await this._refreshResourcePolicy();
       } else {
@@ -672,9 +669,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   async _updatePageVariables(isChanged) {
     if (this.active && this.metadata_updating === false) {
       this.metadata_updating = true;
-      if (isChanged) {
-        this.lastQueryTime = 0; // Reset query interval
-      }
+      await this.resourceBroker._updatePageVariables(isChanged);
       if (this.resourceBroker.scaling_group === '' || isChanged) {
         if (this.direction === 'vertical') {
           const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
@@ -745,46 +740,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
-    /*
-    return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['resource_policy', 'concurrency_used']).then((response) => {
-      let policyName = response.keypair.resource_policy;
-      this.concurrency_used = response.keypair.concurrency_used;
-      // Workaround: We need a new API for user mode resource policy access, and current resource usage.
-      // TODO: Fix it to use API-based resource max.
-      return globalThis.backendaiclient.resourcePolicy.get(policyName, ['default_for_unspecified',
-        'total_resource_slots',
-        'max_concurrent_sessions',
-        'max_containers_per_session',
-      ]);
-    }).then((response) => {
-      let resource_policy = response.keypair_resource_policy;
-      if (resource_policy.default_for_unspecified === 'UNLIMITED' ||
-        resource_policy.default_for_unspecified === 'DefaultForUnspecified.UNLIMITED') {
-        this.defaultResourcePolicy = 'UNLIMITED';
-      } else {
-        this.defaultResourcePolicy = 'LIMITED';
-      }
-      this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
-      this.concurrency_max = resource_policy.max_concurrent_sessions;
-      //this._refreshResourceTemplate('refresh-resource-policy');
-      this._updateGPUMode();
-      this.updateResourceAllocationPane('refresh resource policy');
-    }).catch((err) => {
-      console.log(err);
-      this.metadata_updating = false;
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      } else if (err && err.title) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show(true, err);
-      }
-    });*/
   }
 
   async _launchSessionDialog() {
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false || this.image_updating === true) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false || this.resourceBroker.image_updating === true) {
       this.notification.text = 'Please wait while initializing...';
       this.notification.show();
     } else {
@@ -1168,12 +1127,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.available_slot = this.resourceBroker.available_slot;
       this.used_slot_percent = this.resourceBroker.used_slot_percent;
       this.used_sg_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
-      this.lastQueryTime = Date.now();
       //this.requestUpdate();
       return Promise.resolve(true);
       return this.available_slot;
     }).catch(err => {
-      this.lastQueryTime = Date.now();
       if (err && err.message) {
         console.log(err);
         this.notification.text = PainKiller.relieve(err.title);
