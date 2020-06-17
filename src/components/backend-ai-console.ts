@@ -36,7 +36,7 @@ import './backend-ai-dialog';
 import './backend-ai-sidepanel-task';
 import './backend-ai-sidepanel-notification';
 import './backend-ai-app-launcher';
-
+import './backend-ai-resource-broker';
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 import '../lib/backend.ai-client-es6';
 
