@@ -46,11 +46,37 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Object}) used_slot_percent;
   @property({type: Object}) used_resource_group_slot_percent;
   @property({type: Object}) used_project_slot_percent;
-
+  // Environment images and templates
   @property({type: Array}) resource_templates;
   @property({type: Array}) resource_templates_filtered;
   @property({type: String}) default_language;
   @property({type: Boolean}) _status;
+  @property({type: Object}) cpu_metric = {
+    'min': '1',
+    'max': '1'
+  };
+  @property({type: Object}) mem_metric = {
+    'min': '1',
+    'max': '1'
+  };
+  @property({type: Object}) shmem_metric = {
+    'min': 0.0625,
+    'max': 1,
+    'preferred': 0.0625
+  };
+  @property({type: Object}) cuda_device_metric = {
+    'min': 0,
+    'max': 0
+  };
+  @property({type: Object}) cuda_shares_metric;
+  @property({type: Object}) rocm_device_metric = {
+    'min': '0',
+    'max': '0'
+  };
+  @property({type: Object}) tpu_device_metric = {
+    'min': '1',
+    'max': '1'
+  };
   @property({type: Number}) lastQueryTime = 0;
   @property({type: String}) scaling_group;
   @property({type: Array}) scaling_groups;
@@ -67,6 +93,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Boolean}) _default_language_updated = false;
   @property({type: Boolean}) _default_version_updated = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
+  @property({type: Array}) disableLaunch;
+
   // Custom information
   @property({type: Number}) max_cpu_core_per_session = 64;
 
@@ -111,6 +139,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.metric_updating = false;
     this.metadata_updating = false;
     this.image_updating = true;
+    this.disableLaunch = [];
   }
 
   firstUpdated() {
@@ -625,6 +654,223 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     } else {
       this._aggregateCurrentResource(from);
     }
+  }
+
+  /**
+   * Update Resource allocation variable for chosen kernel
+   *
+   * @param {string} kernelName - kernel name to calculate the resource metric.
+   */
+  async updateResourceAllocationForImage(kernelName: string = '') {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) { // Not connected yet.
+      return Promise.resolve(false);
+    }
+    if (kernelName === '') {
+      return Promise.resolve(false);
+    }
+    if (this.metric_updating == true) {
+      return Promise.resolve(false);
+    }
+    this.metric_updating = true;
+    await this._aggregateCurrentResource('update-metric');
+    await this.updateVirtualFolderList();
+    // Resource limitation is not loaded yet.
+    if (Object.keys(this.resourceLimits).length === 0) { // resource limits are not loaded yet.
+      this.metric_updating = false;
+      return Promise.resolve(false);
+    }
+    if (!(kernelName in this.resourceLimits)) {
+      return Promise.resolve(false);
+    }
+    let currentResource = this.resourceLimits[kernelName];
+    let available_slot = this.available_slot;
+    let shmem_metric: any = {
+      'min': 0.0625,
+      'max': 1,
+      'preferred': 0.125
+    };
+    this.cuda_device_metric = {
+      'min': 0,
+      'max': 0
+    };
+    this.disableLaunch = [];
+    currentResource.forEach((item) => {
+      if (item.key === 'cpu') {
+        let cpu_metric = {...item};
+        cpu_metric.min = parseInt(cpu_metric.min);
+        if ('cpu' in this.userResourceLimit) {
+          if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
+            cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu'], this.max_cpu_core_per_session);
+          } else {
+            cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu'], this.max_cpu_core_per_session);
+          }
+        } else {
+          if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
+            cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu'], this.max_cpu_core_per_session);
+          } else {
+            cpu_metric.max = Math.min(this.available_slot['cpu'], this.max_cpu_core_per_session);
+          }
+        }
+        if (cpu_metric.min >= cpu_metric.max) {
+          if (cpu_metric.min > cpu_metric.max) {
+            cpu_metric.min = cpu_metric.max;
+            cpu_metric.max = cpu_metric.max + 1;
+            this.disableLaunch.push('cpu');
+          } else { // min == max
+            cpu_metric.max = cpu_metric.max + 1;
+          }
+        }
+        this.cpu_metric = cpu_metric;
+      }
+      if (item.key === 'cuda.device' && this.gpu_mode == 'cuda.device') {
+        let cuda_device_metric = {...item};
+        cuda_device_metric.min = parseInt(cuda_device_metric.min);
+        if ('cuda.device' in this.userResourceLimit) {
+          if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && cuda_device_metric.max !== NaN) {
+            cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_shares']);
+          } else {
+            cuda_device_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device']);
+          }
+        } else {
+          if (parseInt(cuda_device_metric.max) !== 0) {
+            cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), available_slot['cuda_device']);
+          } else {
+            cuda_device_metric.max = this.available_slot['cuda_device'];
+          }
+        }
+        if (cuda_device_metric.min >= cuda_device_metric.max) {
+          if (cuda_device_metric.min > cuda_device_metric.max) {
+            cuda_device_metric.min = cuda_device_metric.max;
+            this.disableLaunch.push('cuda_device');
+          } else {
+            cuda_device_metric.max = cuda_device_metric.max + 1;
+          }
+        }
+        this.cuda_device_metric = cuda_device_metric;
+      }
+      if (item.key === 'cuda.shares' && this.gpu_mode === 'cuda.shares') {
+        let cuda_shares_metric = {...item};
+        cuda_shares_metric.min = parseFloat(cuda_shares_metric.min);
+        if ('cuda.shares' in this.userResourceLimit) {
+          if (parseFloat(cuda_shares_metric.max) !== 0 && cuda_shares_metric.max !== 'Infinity' && cuda_shares_metric.max !== NaN) {
+            cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares']);
+          } else {
+            cuda_shares_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares']);
+          }
+        } else {
+          if (parseFloat(cuda_shares_metric.max) !== 0) {
+            cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), available_slot['cuda_shares']);
+          } else {
+            cuda_shares_metric.max = 0;
+          }
+        }
+        if (cuda_shares_metric.min >= cuda_shares_metric.max) {
+          if (cuda_shares_metric.min > cuda_shares_metric.max) {
+            cuda_shares_metric.min = cuda_shares_metric.max;
+            this.disableLaunch.push('cuda_shares');
+          } else {
+            cuda_shares_metric.max = cuda_shares_metric.max + 1;
+          }
+        }
+
+        this.cuda_shares_metric = cuda_shares_metric;
+        if (cuda_shares_metric.max > 0) {
+          this.cuda_device_metric = cuda_shares_metric;
+        }
+      }
+      if (item.key === 'rocm.device' && this.gpu_mode === 'rocm.device') {
+        let rocm_metric = {...item};
+        rocm_metric.min = parseInt(rocm_metric.min);
+        rocm_metric.max = parseInt(rocm_metric.max);
+        this.rocm_device_metric = rocm_metric;
+      }
+      if (item.key === 'tpu.device') {
+        let tpu_device_metric = {...item};
+        tpu_device_metric.min = parseInt(tpu_device_metric.min);
+        tpu_device_metric.max = parseInt(tpu_device_metric.max);
+        this.tpu_device_metric = tpu_device_metric;
+      }
+      if (item.key === 'mem') {
+        let mem_metric = {...item};
+        mem_metric.min = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g');
+        if (mem_metric.min < 0.1) {
+          mem_metric.min = 0.1;
+        }
+        let image_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
+        if ('mem' in this.userResourceLimit) {
+          let user_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g');
+          if (parseInt(image_mem_max) !== 0) {
+            mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem']);
+          } else {
+            mem_metric.max = parseFloat(user_mem_max);
+          }
+        } else {
+          if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity' && isNaN(mem_metric.max) !== true) {
+            mem_metric.max = Math.min(parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem']);
+          } else {
+            mem_metric.max = available_slot['mem']; // TODO: set to largest memory size
+          }
+        }
+        if (mem_metric.min >= mem_metric.max) {
+          if (mem_metric.min > mem_metric.max) {
+            mem_metric.min = mem_metric.max;
+            mem_metric.max = mem_metric.max + 1;
+            this.disableLaunch.push('mem');
+          } else {
+            mem_metric.max = mem_metric.max + 1;
+          }
+        }
+        mem_metric.min = Number(mem_metric.min.toFixed(2));
+        mem_metric.max = Number(mem_metric.max.toFixed(2));
+        this.mem_metric = mem_metric;
+      }
+      if (item.key === 'shmem') { // Shared memory is preferred value. No min/max is required.
+        shmem_metric = {...item};
+        if ('preferred' in shmem_metric) {
+          shmem_metric.preferred = globalThis.backendaiclient.utils.changeBinaryUnit(shmem_metric.preferred, 'g', 'g');
+        } else {
+          shmem_metric.preferred = 0.0625;
+        }
+      }
+    });
+    // Shared memory setting
+    shmem_metric.max = this.mem_metric.max;
+    shmem_metric.min = 0.0625; // 64m
+    if (shmem_metric.min >= shmem_metric.max) {
+      if (shmem_metric.min > shmem_metric.max) {
+        shmem_metric.min = shmem_metric.max;
+        shmem_metric.max = shmem_metric.max + 1;
+        this.disableLaunch.push('shmem');
+      } else {
+        shmem_metric.max = shmem_metric.max + 1;
+      }
+    }
+    shmem_metric.min = Number(shmem_metric.min.toFixed(2));
+    shmem_metric.max = Number(shmem_metric.max.toFixed(2));
+    this.shmem_metric = shmem_metric;
+
+    // GPU metric
+    if (this.cuda_device_metric.min == 0 && this.cuda_device_metric.max == 0) { // GPU is disabled (by image,too). cuda_shares is copied into cuda_device.
+      if (this.resource_templates !== [] && this.resource_templates.length > 0) { // Remove mismatching templates
+        let new_resource_templates: any = [];
+        for (let i = 0; i < this.resource_templates.length; i++) {
+          if (!('cuda_device' in this.resource_templates[i]) &&
+            !('cuda_shares' in this.resource_templates[i])) {
+            new_resource_templates.push(this.resource_templates[i]);
+          } else if (parseFloat(this.resource_templates[i].cuda_device) <= 0.0 &&
+            parseFloat(this.resource_templates[i].cuda_shares) <= 0.0) {
+            new_resource_templates.push(this.resource_templates[i]);
+          }
+        }
+        this.resource_templates_filtered = new_resource_templates;
+      } else {
+        this.resource_templates_filtered = this.resource_templates;
+      }
+    } else {
+      this.resource_templates_filtered = this.resource_templates;
+    }
+    this.metric_updating = false;
+    return Promise.resolve(true);
   }
 
   /**
