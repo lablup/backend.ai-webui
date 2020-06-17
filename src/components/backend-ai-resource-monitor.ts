@@ -924,6 +924,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         config['tpu.device'] = this.gpu_request;
         break;
       default:
+        // Fallback to current gpu mode if there is a gpu request, but without gpu type.
+        if (this.gpu_request > 0 && this.gpu_mode) {
+          config[this.gpu_mode] = this.gpu_request;
+        }
     }
     if (String(this.shadowRoot.querySelector('#mem-resource').value) === "Infinity") {
       config['mem'] = String(this.shadowRoot.querySelector('#mem-resource').value);
