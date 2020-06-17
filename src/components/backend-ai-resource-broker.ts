@@ -409,7 +409,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'tpu.device': 'tpu_device'
       }
 
-
       //let scaling_group_resource_remaining = response.scaling_group_remaining;
       if (this.scaling_group === '') { // no scaling group in the current project
         response.scaling_groups[''] = {
