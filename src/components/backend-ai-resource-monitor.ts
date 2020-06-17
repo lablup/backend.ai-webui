@@ -49,8 +49,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) enableLaunchButton = false;
   @property({type: String}) direction = "horizontal";
   @property({type: String}) location = '';
-  @property({type: Object}) supports = Object();
-  @property({type: Object}) supportImages = Object();
   @property({type: Object}) imageRequirements = Object();
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) userResourceLimit = Object();
@@ -58,7 +56,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) tags = Object();
   @property({type: Object}) icons = Object();
   @property({type: Object}) imageInfo = Object();
-  @property({type: Object}) imageNames = Object();
   @property({type: String}) kernel = '';
   @property({type: Array}) versions;
   @property({type: Array}) languages;
@@ -620,7 +617,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async updateScalingGroup(forceUpdate = false, e) {
-    console.log(e.target.value);
     await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
     if (this.active) {
       if (this.direction === 'vertical') {
@@ -951,29 +947,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#new-session-dialog').hide();
   }
 
-  _guessHumanizedNames(kernelName) {
-    const candidate = this.imageNames;
-    let imageName = '';
-    let humanizedName = null;
-    let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
-    Object.keys(candidate).forEach((item, index) => {
-      let specs = kernelName.split('/');
-      if (specs.length == 2) {
-        imageName = specs[1];
-      } else {
-        imageName = specs[2];
-      }
-      if (imageName === item) {
-        humanizedName = candidate[item];
-        matchedString = item;
-      } else if (imageName === '' && kernelName.endsWith(item) && item.length < matchedString.length) {
-        humanizedName = candidate[item];
-        matchedString = item;
-      }
-    });
-    return humanizedName;
-  }
-
   _aliasName(value) {
     let alias = {
       'python': 'Python',
@@ -1210,7 +1183,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         'max': 1,
         'preferred': 0.125
       };
-      //console.log(currentResource);
       this.cuda_device_metric = {
         'min': 0,
         'max': 0
@@ -1221,15 +1193,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           cpu_metric.min = parseInt(cpu_metric.min);
           if ('cpu' in this.userResourceLimit) {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
-              cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot'], this.max_cpu_core_per_session);
+              cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu'], this.max_cpu_core_per_session);
             } else {
-              cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot'], this.max_cpu_core_per_session);
+              cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu'], this.max_cpu_core_per_session);
             }
           } else {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
-              cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu_slot'], this.max_cpu_core_per_session);
+              cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu'], this.max_cpu_core_per_session);
             } else {
-              cpu_metric.max = Math.min(this.available_slot['cpu_slot'], this.max_cpu_core_per_session);
+              cpu_metric.max = Math.min(this.available_slot['cpu'], this.max_cpu_core_per_session);
             }
           }
           if (cpu_metric.min >= cpu_metric.max) {
@@ -1246,64 +1218,63 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.cpu_metric = cpu_metric;
         }
         if (item.key === 'cuda.device' && this.gpu_mode == 'cuda.device') {
-          let gpu_metric = {...item};
-          gpu_metric.min = parseInt(gpu_metric.min);
+          let cuda_device_metric = {...item};
+          cuda_device_metric.min = parseInt(cuda_device_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
-            if (parseInt(gpu_metric.max) !== 0 && gpu_metric.max !== 'Infinity' && gpu_metric.max !== NaN) {
-              gpu_metric.max = Math.min(parseInt(gpu_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_shares_slot']);
+            if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && cuda_device_metric.max !== NaN) {
+              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_shares']);
             } else {
-              gpu_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device_slot']);
+              cuda_device_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device']);
             }
           } else {
-            if (parseInt(gpu_metric.max) !== 0) {
-              gpu_metric.max = Math.min(parseInt(gpu_metric.max), available_slot['cuda_device_slot']);
+            if (parseInt(cuda_device_metric.max) !== 0) {
+              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), available_slot['cuda_device']);
             } else {
-              gpu_metric.max = this.available_slot['cuda_device_slot'];
+              cuda_device_metric.max = this.available_slot['cuda_device'];
             }
           }
-          if (gpu_metric.min >= gpu_metric.max) {
-            if (gpu_metric.min > gpu_metric.max) {
-              gpu_metric.min = gpu_metric.max;
+          if (cuda_device_metric.min >= cuda_device_metric.max) {
+            if (cuda_device_metric.min > cuda_device_metric.max) {
+              cuda_device_metric.min = cuda_device_metric.max;
               disableLaunch = true;
               this.shadowRoot.querySelector('#gpu-resource').disabled = true
             } else {
-              gpu_metric.max = gpu_metric.max + 1;
+              cuda_device_metric.max = cuda_device_metric.max + 1;
               this.shadowRoot.querySelector('#gpu-resource').disabled = true
             }
           }
-          this.cuda_device_metric = gpu_metric;
+          this.cuda_device_metric = cuda_device_metric;
         }
         if (item.key === 'cuda.shares' && this.gpu_mode === 'cuda.shares') {
-          let fgpu_metric = {...item};
-          fgpu_metric.min = parseFloat(fgpu_metric.min);
+          let cuda_shares_metric = {...item};
+          cuda_shares_metric.min = parseFloat(cuda_shares_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
-            if (parseFloat(fgpu_metric.max) !== 0 && fgpu_metric.max !== 'Infinity' && fgpu_metric.max !== NaN) {
-              fgpu_metric.max = Math.min(parseFloat(fgpu_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares_slot']);
+            if (parseFloat(cuda_shares_metric.max) !== 0 && cuda_shares_metric.max !== 'Infinity' && cuda_shares_metric.max !== NaN) {
+              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares']);
             } else {
-
-              fgpu_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares_slot']);
+              cuda_shares_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares']);
             }
           } else {
-            if (parseFloat(fgpu_metric.max) !== 0) {
-              fgpu_metric.max = Math.min(parseFloat(fgpu_metric.max), available_slot['cuda_shares_slot']);
+            if (parseFloat(cuda_shares_metric.max) !== 0) {
+              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), available_slot['cuda_shares']);
             } else {
-              fgpu_metric.max = 0;
+              cuda_shares_metric.max = 0;
             }
           }
-          if (fgpu_metric.min >= fgpu_metric.max) {
-            if (fgpu_metric.min > fgpu_metric.max) {
-              fgpu_metric.min = fgpu_metric.max;
+          if (cuda_shares_metric.min >= cuda_shares_metric.max) {
+            if (cuda_shares_metric.min > cuda_shares_metric.max) {
+              cuda_shares_metric.min = cuda_shares_metric.max;
               disableLaunch = true;
               this.shadowRoot.querySelector('#gpu-resource').disabled = true
             } else {
-              fgpu_metric.max = fgpu_metric.max + 1;
+              cuda_shares_metric.max = cuda_shares_metric.max + 1;
               this.shadowRoot.querySelector('#gpu-resource').disabled = true
             }
           }
 
-          this.cuda_shares_metric = fgpu_metric;
-          if (fgpu_metric.max > 0) {
-            this.cuda_device_metric = fgpu_metric;
+          this.cuda_shares_metric = cuda_shares_metric;
+          if (cuda_shares_metric.max > 0) {
+            this.cuda_device_metric = cuda_shares_metric;
           }
         }
         if (item.key === 'rocm.device' && this.gpu_mode === 'rocm.device') {
@@ -1334,15 +1305,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           if ('mem' in this.userResourceLimit) {
             let user_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g');
             if (parseInt(image_mem_max) !== 0) {
-              mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem_slot']);
+              mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem']);
             } else {
               mem_metric.max = parseFloat(user_mem_max);
             }
           } else {
             if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity' && isNaN(mem_metric.max) !== true) {
-              mem_metric.max = Math.min(parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem_slot']);
+              mem_metric.max = Math.min(parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem']);
             } else {
-              mem_metric.max = available_slot['mem_slot']; // TODO: set to largest memory size
+              mem_metric.max = available_slot['mem']; // TODO: set to largest memory size
             }
           }
           if (mem_metric.min >= mem_metric.max) {
@@ -1369,7 +1340,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
         }
       });
-      //console.log(this.cuda_device_metric);
       // Shared memory setting
       shmem_metric.max = this.mem_metric.max;
       shmem_metric.min = 0.0625; // 64m
@@ -1389,7 +1359,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shmem_metric = shmem_metric;
 
       // GPU metric
-      if (this.cuda_device_metric.min == 0 && this.cuda_device_metric.max == 0) { // GPU is disabled (by image,too)
+      if (this.cuda_device_metric.min == 0 && this.cuda_device_metric.max == 0) { // GPU is disabled (by image,too). cuda_shares is copied into cuda_device.
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').value = 0;
@@ -1514,7 +1484,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.mem_request = mem;
     this.gpu_request = gpu_value;
     this.gpu_request_type = gpu_type;
-    //console.log(this.cpu_request, this.mem_request, this.shmem_request, this.gpu_request, this.gpu_request_type);
   }
 
   async selectDefaultLanguage() {
