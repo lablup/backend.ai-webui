@@ -50,11 +50,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Array}) resource_templates;
   @property({type: Array}) resource_templates_filtered;
   @property({type: String}) default_language;
-  @property({type: Number}) cpu_request;
-  @property({type: Number}) mem_request;
-  @property({type: Number}) shmem_request;
-  @property({type: Number}) gpu_request;
-  @property({type: String}) gpu_request_type;
   @property({type: Boolean}) _status;
   @property({type: Number}) lastQueryTime = 0;
   @property({type: String}) scaling_group;
@@ -66,26 +61,18 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Boolean}) image_updating;
   @property({type: Object}) scaling_group_selection_box;
   @property({type: Object}) resourceGauge = Object();
-  /* Parameters required to launch a session on behalf of other user */
-  @property({type: Boolean}) ownerFeatureInitialized = false;
-  @property({type: String}) ownerDomain = '';
-  @property({type: Array}) ownerKeypairs;
-  @property({type: Array}) ownerGroups;
-  @property({type: Array}) ownerScalingGroups;
-  @property({type: Boolean}) project_resource_monitor = false;
+
   @property({type: Object}) version_selector = Object();
   // Flags
   @property({type: Boolean}) _default_language_updated = false;
   @property({type: Boolean}) _default_version_updated = false;
+  @property({type: Boolean}) allow_project_resource_monitor = false;
   // Custom information
   @property({type: Number}) max_cpu_core_per_session = 64;
 
   constructor() {
     super();
     this.active = false;
-    this.ownerKeypairs = [];
-    this.ownerGroups = [];
-    this.ownerScalingGroups = [];
     this.init_resource();
   }
 
@@ -118,22 +105,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.concurrency_max = 0;
     this.concurrency_limit = 0;
     this._status = 'inactive';
-    this.cpu_request = 1;
-    this.mem_request = 1;
-    this.shmem_request = 0.0625;
-    this.gpu_request = 0;
-    this.gpu_request_type = 'cuda.device';
     this.scaling_groups = [{name: ''}]; // if there is no scaling group, set the name as empty string
     this.scaling_group = '';
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
-    /* Parameters required to launch a session on behalf of other user */
-    this.ownerFeatureInitialized = false;
-    this.ownerDomain = '';
-    this.ownerKeypairs = [];
-    this.ownerGroups = [];
-    this.ownerScalingGroups = [];
     this.image_updating = true;
   }
 
@@ -215,11 +191,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     }
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
+        this.allow_project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
         this._updatePageVariables(true);
       }, {once: true});
     } else {
-      this.project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
+      this.allow_project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
       await this._updatePageVariables(true);
     }
   }
