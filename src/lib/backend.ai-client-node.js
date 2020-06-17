@@ -1224,9 +1224,10 @@ class VFolder {
      * @param {string} file - File to download. Should contain full path.
      * @param {string} name - Virtual folder name that files are in.
      */
-    download(file, name = false) {
+    download(file, name = false, archive = false) {
         let params = {
-            'file': file
+            file,
+            archive
         };
         let q = querystring.stringify(params);
         let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
@@ -1237,10 +1238,12 @@ class VFolder {
      *
      * @param {string} file - File to download. Should contain full path.
      * @param {string} name - Virtual folder name that files are in.
+     * @param {string} archive - Download target directory as an archive.
      */
-    request_download_token(file, name = false) {
+    request_download_token(file, name = false, archive = false) {
         let body = {
-            'file': file
+            file,
+            archive
         };
         let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
         return this.client._wrapWithPromise(rqst);

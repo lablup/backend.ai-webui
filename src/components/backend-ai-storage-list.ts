@@ -858,8 +858,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
-            filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
+        ${this._isDir(rowData.item) ? html`
+          <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
+              filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e, true)}"></mwc-icon-button>
+        ` : html`
+          <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
+              filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
+        `}
         <mwc-icon-button id="rename-btn" class="tiny fg green" icon="edit" required
             filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
         <mwc-icon-button id="delete-btn" class="tiny fg red" icon="delete_forever"
@@ -1348,13 +1353,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._uploadFlag = false;
   }
 
-  _downloadFile(e) {
+  _downloadFile(e, archive = false) {
     let fn = e.target.getAttribute("filename");
     let path = this.explorer.breadcrumb.concat(fn).join("/");
-    let job = globalThis.backendaiclient.vfolder.request_download_token(path, this.explorer.id);
+    let job = globalThis.backendaiclient.vfolder.request_download_token(path, this.explorer.id, archive);
     job.then(res => {
       const token = res.token;
-      const url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
+      const url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token, archive);
       if (globalThis.iOSSafari) {
         this.downloadURL = url;
         this.downloadFileDialog.show();
