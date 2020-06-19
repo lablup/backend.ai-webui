@@ -269,42 +269,39 @@ export default class BackendAiSignup extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="signup-panel" narrowLayout fixed blockscrolling persistent disablefocustrap>
+      <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <span slot="title">${_t("signup.SignupBETA")}</span>
         <div slot="content">
-          <form id="signup-form">
-            <fieldset>
-              <mwc-textfield type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
-                           label="${_t("signup.E-mail")}" value="${this.user_email}"
-                           @change="${() => this._clear_info()}"></mwc-textfield>
-              <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
-                           label="${_t("signup.UserName")}" value="${this.user_name}"></mwc-textfield>
-              <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
-                           label="${_t("signup.InvitationToken")}"></mwc-textfield>
-              <mwc-textfield type="password" name="password1" id="id_password1"
-                           label="${_t("signup.Password")}" minlength="8"
-                           pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                           error-message="At least 1 alphabet, 1 number and 1 special character is required."
-                           auto-validate
-                           value=""></mwc-textfield>
-              <mwc-textfield type="password" name="password2" id="id_password2"
-                           label="${_t("signup.PasswordAgain")}" minlength="8"
-                           pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                           error-message="At least 1 alphabet, 1 number and 1 special character is required."
-                           auto-validate
-                           value=""></mwc-textfield>
-              <div style="margin-top:10px;">
-                <wl-checkbox id="approve-terms-of-service">
-                </wl-checkbox>
-                 I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">${_t("signup.TermsOfService")}</a> and <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">${_t("signup.PrivacyPolicy")}</a>.
-              </div>
-              <br/><br/>
-              <wl-button class="full" id="signup-button" outlined type="button"
-                          @click="${() => this._signup()}">
-                          <wl-icon>check</wl-icon>
-                          <span id="signup-button-message">${_t("signup.Signup")}</span></wl-button>
-            </fieldset>
-          </form>
+          <mwc-textfield type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
+                       label="${_t("signup.E-mail")}" value="${this.user_email}"
+                       @change="${() => this._clear_info()}"></mwc-textfield>
+          <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
+                       label="${_t("signup.UserName")}" value="${this.user_name}"></mwc-textfield>
+          <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
+                       label="${_t("signup.InvitationToken")}"></mwc-textfield>
+          <mwc-textfield type="password" name="password1" id="id_password1"
+                       label="${_t("signup.Password")}" minlength="8"
+                       pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                       error-message="At least 1 alphabet, 1 number and 1 special character is required."
+                       auto-validate
+                       value=""></mwc-textfield>
+          <mwc-textfield type="password" name="password2" id="id_password2"
+                       label="${_t("signup.PasswordAgain")}" minlength="8"
+                       pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                       error-message="At least 1 alphabet, 1 number and 1 special character is required."
+                       auto-validate
+                       value=""></mwc-textfield>
+          <div style="margin-top:10px;">
+            <wl-checkbox id="approve-terms-of-service">
+            </wl-checkbox>
+             I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">${_t("signup.TermsOfService")}</a> and <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">${_t("signup.PrivacyPolicy")}</a>.
+          </div>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button class="full" id="signup-button" outlined type="button"
+                      @click="${() => this._signup()}">
+                      <wl-icon>check</wl-icon>
+                      <span id="signup-button-message">${_t("signup.Signup")}</span></wl-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="block-panel" fixed type="error" backdrop blockscrolling persistent>

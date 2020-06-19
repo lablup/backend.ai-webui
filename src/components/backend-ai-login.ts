@@ -812,20 +812,16 @@ export default class BackendAILogin extends BackendAIPage {
           </form>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="signout-panel" narrowLayout fixed backdrop blockscrolling persistent disablefocustrap>
+      <backend-ai-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <span slot="title">${_t("login.LeaveService")}</span>
         <div slot="content" class="login-panel intro centered">
           <section>
             <div class="warning">${_t("login.DescConfirmLeave")}</div>
           </section>
-          <form id="signout-form">
-            <fieldset>
-              <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
-                           label="E-mail" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
-              <mwc-textfield type="password" name="signout_password" id="id_signout_password"
-                           label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
-            </fieldset>
-          </form>
+          <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
+                       label="E-mail" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
+          <mwc-textfield type="password" name="signout_password" id="id_signout_password"
+                       label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button class="fg red full login-button" id="signout-button" outlined type="button"
@@ -834,20 +830,16 @@ export default class BackendAILogin extends BackendAIPage {
                       ${_t("login.LeaveService")}</wl-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="change-password-confirm-dialog" narrowLayout fixed backdrop blockscrolling persistent disablefocustrap>
+      <backend-ai-dialog id="change-password-confirm-dialog" fixed backdrop blockscrolling persistent disablefocustrap>
         <span slot="title">${_t("login.SendChangePasswordEmail")}</span>
         <div slot="content" class="login-panel intro centered">
           <section>
             <div>${_t("login.DescChangePasswordEmail")}</div>
           </section>
-          <form>
-            <fieldset>
-              <mwc-textfield type="email" id="password-change-email" maxlength="30"
-                  label="E-mail" value="" autofocus auto-validate
-                  validationMessage="${_t('signup.InvalidEmail')}"
-                  pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
-            </fieldset>
-          </form>
+          <mwc-textfield type="email" id="password-change-email" maxlength="30"
+              label="E-mail" value="" autofocus auto-validate
+              validationMessage="${_t('signup.InvalidEmail')}"
+              pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button class="fg red full" outlined type="button"
