@@ -869,6 +869,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return kernel + ':' + version;
   }
 
+  _newSessionWithConfirmation() {
+    return this._newSession();
+  }
+
   _newSession() {
     let selectedItem = this.shadowRoot.querySelector('#environment').selected;
     let kernel = selectedItem.id;
@@ -2660,7 +2664,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         </wl-expansion>
         <fieldset slot="footer" style="padding-top:0;">
           <wl-button class="launch-button" type="button" id="launch-button"
-                                       outlined @click="${() => this._newSession()}">
+                                       outlined @click="${() => this._newSessionWithConfirmation()}">
                                       <wl-icon>rowing</wl-icon>
             <span id="launch-button-msg">Launch</span>
           </wl-button>
