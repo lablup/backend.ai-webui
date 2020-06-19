@@ -165,6 +165,9 @@ export default class BackendAICredentialList extends BackendAIPage {
           --button-color-disabled: var(--paper-grey-200);
         }
 
+        backend-ai-dialog {
+          --component-min-width: 400px;
+        }
       `];
   }
 
@@ -703,7 +706,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       <backend-ai-dialog id="keypair-modify-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('credential.ModifyKeypairResourcePolicy')}</span>
 
-        <div slot="content" class="vertical layout" style="padding: 20px">
+        <div slot="content" class="vertical layout">
           <div class="vertical layout center-justified gutterBottom">
             <wl-label>
               Resource Policy

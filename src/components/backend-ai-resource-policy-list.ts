@@ -155,6 +155,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--paper-green-600);
         }
+
+        backend-ai-dialog {
+          --component-min-width: 400px;
+        }
       `];
   }
 
@@ -208,8 +212,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       </vaadin-grid>
       <backend-ai-dialog id="modify-policy-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("resourcePolicy.UpdateResourcePolicy")}</span>
-
-        <div slot="content" class="login-panel intro centered">
+        <div slot="content">
           <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}" pattern="^[a-zA-Z0-9_-]+$"
                          validationMessage="Policy name is Required."
                          required></mwc-textfield>
