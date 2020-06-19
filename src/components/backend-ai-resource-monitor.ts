@@ -395,6 +395,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --button-color-hover: red;
         }
 
+        wl-button.launch-confirmation-button {
+          width: 335px;
+          --button-bg: var(--paper-red-50);
+          --button-bg-active: var(--paper-red-300);
+          --button-bg-hover: var(--paper-red-300);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-color: var(--paper-red-600);
+          --button-color-active: red;
+          --button-color-hover: red;
+        }
+
         wl-button.resource-button {
           --button-bg: white;
           --button-bg-active: var(--paper-red-600);
@@ -509,6 +520,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         #help-description p {
           padding: 5px !important;
+        }
+
+        #launch-confirmation-dialog {
+          --component-width: 400px;
+          --component-font-size: 14px;
         }
 
         mwc-icon-button.info {
@@ -870,10 +886,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _newSessionWithConfirmation() {
-    return this._newSession();
+    let vfolder = this.shadowRoot.querySelector('#vfolder').value;
+    if (vfolder.length === 0) {
+      let confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
+      confirmationDialog.show();
+    } else {
+      return this._newSession();
+    }
   }
 
   _newSession() {
+    let confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
+    confirmationDialog.hide();
     let selectedItem = this.shadowRoot.querySelector('#environment').selected;
     let kernel = selectedItem.id;
     let version = this.shadowRoot.querySelector('#version').value;
@@ -985,7 +1009,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     Promise.all(createSessionQueue).then((res: any) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
       setTimeout(() => {
         this.metadata_updating = true;
         this.aggregateResource('session-creation');
@@ -1021,7 +1045,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
       this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
     });
   }
 
@@ -1644,7 +1668,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#gpu-resource').disabled = false;
       this.shadowRoot.querySelector('#session-resource').disabled = false;
       this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
       let disableLaunch = false;
       let shmem_metric: any = {
         'min': 0.0625,
@@ -2666,7 +2690,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <wl-button class="launch-button" type="button" id="launch-button"
                                        outlined @click="${() => this._newSessionWithConfirmation()}">
                                       <wl-icon>rowing</wl-icon>
-            <span id="launch-button-msg">Launch</span>
+            <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
           </wl-button>
         </fieldset>
       </form>
@@ -2678,6 +2702,21 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
         `}
         <p style="font-size:14px;">${unsafeHTML(this._helpDescription)}</p>
+      </div>
+    </backend-ai-dialog>
+    <backend-ai-dialog id="launch-confirmation-dialog" warning backdrop>
+      <span slot="title">${_t('session.launcher.NoFolderMounted')}</span>
+      <div slot="content" class="vertical layout">
+        <p>${_t('session.launcher.HomeDirectoryDeletionDialog')}</p>
+        <p>${_t('session.launcher.LaunchConfirmationDialog')}</p>
+        <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+      </div>
+      <div slot="footer" style="padding-top:0;margin:0 5px;">
+        <wl-button class="launch-confirmation-button" type="button" id="launch-confirmation-button"
+                                     outlined @click="${() => this._newSession()}">
+                                    <wl-icon>rowing</wl-icon>
+          <span>${_t('session.launcher.LaunchWithoutMount')}</span>
+        </wl-button>
       </div>
     </backend-ai-dialog>
 `;
