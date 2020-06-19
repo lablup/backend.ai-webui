@@ -73,7 +73,7 @@ export default class BackendAiDialog extends LitElement {
 
         wl-dialog div.content {
           padding: var(--component-padding, 15px);
-          font-size: var(--component-font-size, 12px);
+          font-size: var(--component-font-size, 13px);
           word-break: keep-all;
         }
 
@@ -142,7 +142,7 @@ export default class BackendAiDialog extends LitElement {
             </wl-button>
             `}
           </h3>
-          <div class="content">
+          <div class="content" class="content-area">
             <slot name="content"></slot>
           </div>
           <div class="footer horizontal flex layout">

@@ -104,7 +104,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
       <backend-ai-dialog id="verification-success-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
         <span slot="title">${_t("signup.EmailVerified")}</span>
 
-        <div slot="content" class="login-panel intro centered">
+        <div slot="content">
           <div class="horizontal layout center">
             <p style="width:256px;">${_t("signup.EmailVerifiedMessage")}</p>
           </div>
@@ -120,8 +120,8 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
       <backend-ai-dialog id="verification-fail-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
         <span slot="title">${_t("signup.EmailVerificationFailed")}</span>
 
-        <div slot="content" class="login-panel intro centered">
-          <div class="horizontal layout center" style="margin:10px;">
+        <div slot="content">
+          <div class="horizontal layout center">
             <p style="width:256px;">${_t("signup.EmailVerificationFailedMessage")}</p>
           </div>
           <div style="margin:20px;">
