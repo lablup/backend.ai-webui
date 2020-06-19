@@ -399,7 +399,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
             pattern="[a-zA-Z0-9_-.]*"
             validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
-          <br/>
+        </div>
+        <div slot="footer">
           <wl-button class="blue button" type="submit" id="rename-button" outlined @click="${() => this._renameFolder()}">
             <wl-icon>edit</wl-icon>
             ${_t('data.folders.Rename')}
@@ -454,6 +455,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
         <span slot="title">${this.explorer.id}</span>
         <div slot="action" class="horizontal layout flex folder-action-buttons">
+          <div class="flex"></div>
           <wl-button outlined class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
             <div class="horizontal center layout">
             <wl-icon style="--icon-size: 20px;margin-right:5px;">delete</wl-icon><span>${_t("data.explorer.Delete")}</span></div>
@@ -643,7 +645,9 @@ export default class BackendAiStorageList extends BackendAIPage {
         <div slot="content">
           <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"></mwc-textfield>
           <div id="old-file-name" style="height:2.5em"></div>
-          <wl-button class="blue button" type="submit" id="rename-file-button" outlined @click="${(e) => this._renameFile(e)}">
+        </div>
+        <div slot="footer">
+          <wl-button class="blue button" type="button" id="rename-file-button" outlined @click="${(e) => this._renameFile(e)}">
             <wl-icon>edit</wl-icon>
             ${_t('data.explorer.RenameAFile')}
           </wl-button>
