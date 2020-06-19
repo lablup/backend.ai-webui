@@ -111,7 +111,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         vaadin-grid.folderlist {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 200px);
+          height: calc(100vh - 165px);
         }
 
         vaadin-grid.explorer {
@@ -194,8 +194,8 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         @media screen and (min-width: 900px) {
           #folder-explorer-dialog {
-            left: 150px;
-            --component-width: calc(100% - 100px);
+            left: 190px;
+            --component-width: calc(100% - 30px);
           }
 
           #folder-explorer-dialog.mini_ui {
@@ -453,6 +453,20 @@ export default class BackendAiStorageList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
         <span slot="title">${this.explorer.id}</span>
+        <div slot="action" class="horizontal layout flex folder-action-buttons">
+          <wl-button outlined class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
+            <div class="horizontal center layout">
+            <wl-icon style="--icon-size: 20px;margin-right:5px;">delete</wl-icon><span>${_t("data.explorer.Delete")}</span></div>
+          </wl-button>
+          <wl-button outlined id="add-btn" @click="${(e) => this._uploadFileBtnClick(e)}">
+            <wl-icon style="--icon-size: 20px;margin-right:5px;">cloud_upload</wl-icon>
+            ${_t("data.explorer.UploadFiles")}
+          </wl-button>
+          <wl-button outlined id="mkdir" @click="${() => this._mkdirDialog()}">
+            <wl-icon style="--icon-size: 20px;margin-right:5px;">create_new_folder</wl-icon>
+            ${_t("data.explorer.NewFolder")}
+          </wl-button>
+        </div>
         <div slot="content">
           <div class="breadcrumb">
             ${this.explorer.breadcrumb ? html`
@@ -471,20 +485,6 @@ export default class BackendAiStorageList extends BackendAIPage {
                 `)}
               </ul>
             ` : html``}
-          </div>
-          <div class="horizontal layout folder-action-buttons">
-            <wl-button outlined class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
-              <div class="horizontal center layout">
-              <wl-icon style="--icon-size: 20px;margin-right:5px;">delete</wl-icon><span>${_t("data.explorer.Delete")}</span></div>
-            </wl-button>
-            <wl-button outlined id="add-btn" @click="${(e) => this._uploadFileBtnClick(e)}">
-              <wl-icon style="--icon-size: 20px;margin-right:5px;">cloud_upload</wl-icon>
-              ${_t("data.explorer.UploadFiles")}
-            </wl-button>
-            <wl-button outlined id="mkdir" @click="${() => this._mkdirDialog()}">
-              <wl-icon style="--icon-size: 20px;margin-right:5px;">create_new_folder</wl-icon>
-              ${_t("data.explorer.NewFolder")}
-            </wl-button>
           </div>
           <div id="dropzone"><p>drag</p></div>
           <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
