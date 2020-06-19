@@ -19,8 +19,10 @@ import 'weightless/button';
 import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/label';
+import 'weightless/select';
 import 'weightless/textfield';
 
+import './backend-ai-dialog';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {default as PainKiller} from './backend-ai-painkiller';
@@ -478,7 +480,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
@@ -631,24 +633,22 @@ export default class BackendAICredentialList extends BackendAIPage {
         </wl-button>
         <wl-label style="padding: 5px 15px 0px 15px;"> ${this._currentPage} / ${Math.ceil(this._totalCredentialCount / this._pageSize)} </wl-label>
         <wl-button class="pagination" id="next-page"
-                   ?disabled="${ this._totalCredentialCount <= this._pageSize * this._currentPage}"
-                   @click="${(e) => {this._updateItemsFromPage(e)}}">
+                   ?disabled="${this._totalCredentialCount <= this._pageSize * this._currentPage}"
+                   @click="${(e) => {
+      this._updateItemsFromPage(e)
+    }}">
           <wl-icon class="pagination">navigate_next</wl-icon>
         </wl-button>
       </div>
-      <wl-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
-        <wl-card elevation="0" class="intro" style="margin: 0;">
-          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span style="margin-right:15px;">Keypair Detail</span>
-            ${this.keypairInfo.is_admin ? html`
-              <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
-              ` : html``}
-            <lablup-shields app="" description="user" ui="flat"></lablup-shields>
-            <div class="flex"></div>
-            <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
+      <backend-ai-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
+        <span slot="title">Keypair Detail</span>
+        <div slot="action" class="horizontal end-justified flex layout">
+        ${this.keypairInfo.is_admin ? html`
+          <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
+          ` : html``}
+          <lablup-shields app="" description="user" ui="flat"></lablup-shields>
+        </div>
+        <div slot="content" class="intro">
           <div class="horizontal layout">
             <div style="width:335px;">
               <h4>${_t("credential.Information")}</h4>
@@ -699,55 +699,51 @@ export default class BackendAICredentialList extends BackendAIPage {
               </div>
             </div>
           </div>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="keypair-modify-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="0" class="intro" style="margin: 0;">
-          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span>Modify Keypair Resource Policy</span>
-            <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <div class="vertical layout" style="padding: 20px">
-            <div class="vertical layout center-justified gutterBottom">
-              <wl-label>
-                Resource Policy
-                <wl-select id="policy-list" label="Select Policy">
-                  ${Object.keys(this.resourcePolicy).map(rp =>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="keypair-modify-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t('credential.ModifyKeypairResourcePolicy')}</span>
+
+        <div slot="content" class="vertical layout" style="padding: 20px">
+          <div class="vertical layout center-justified gutterBottom">
+            <wl-label>
+              Resource Policy
+              <wl-select id="policy-list" label="${_t('credential.SelectPolicy')}">
+                ${Object.keys(this.resourcePolicy).map(rp =>
       html`
-                      <option value=${this.resourcePolicy[rp].name}>
-                        ${this.resourcePolicy[rp].name}
-                      </option>
-                    `
+                    <option value=${this.resourcePolicy[rp].name}>
+                      ${this.resourcePolicy[rp].name}
+                    </option>
+                  `
     )}
-                </wl-select>
-              </wl-label>
-            </div>
-            <div class="vertical layout center-justified gutterBottom">
-              <wl-label>
-                Rate Limit
-                <wl-textfield
-                  type="number"
-                  id="rate-limit"
-                  min="1"
-                  label="Rate Limit"
-                  value="${this.keypairInfo.rate_limit}"
-                ></wl-textfield>
-              </wl-label>
-            </div>
-            <wl-button
-              id="keypair-modify-save"
-              class="fg green"
-              outlined
-              @click=${e => this._saveKeypairModification(e)}
-            >
-              <wl-icon>check</wl-icon>
-              Save Changes
-            </wl-button>
+              </wl-select>
+            </wl-label>
           </div>
-        </wl-card>
-      </wl-dialog>
+          <div class="vertical layout center-justified gutterBottom">
+            <wl-label>
+              Rate Limit
+              <wl-textfield
+                type="number"
+                id="rate-limit"
+                min="1"
+                label="${_t('credential.RateLimit')}"
+                value="${this.keypairInfo.rate_limit}"
+              ></wl-textfield>
+            </wl-label>
+          </div>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button
+            id="keypair-modify-save"
+            class="fg green"
+            outlined
+            @click=${e => this._saveKeypairModification(e)}
+          >
+            <wl-icon>check</wl-icon>
+            ${_t('button.SaveChanges')}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 }

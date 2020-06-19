@@ -81,6 +81,14 @@ export default class BackendAiDialog extends LitElement {
           padding: 5px 15px 10px 15px;
         }
 
+        wl-dialog wl-button.cancel {
+          margin-right: 5px;
+        }
+
+        wl-dialog wl-button.ok {
+          margin-right: 5px;
+        }
+
         wl-dialog[narrow] div.content,
         wl-dialog[narrow] div.footer {
           padding: 0;

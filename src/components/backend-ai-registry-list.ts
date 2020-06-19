@@ -23,6 +23,7 @@ import 'weightless/title';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
+import './backend-ai-dialog';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
@@ -73,14 +74,14 @@ class BackendAIRegistryList extends BackendAIPage {
           --button-bg-active: var(--paper-red-600);
         }
 
-        wl-dialog wl-textfield {
+        backend-ai-dialog wl-textfield {
           --input-font-family: Roboto, Noto, sans-serif;
           --input-state-color-invalid: #b00020;
           margin-bottom: 20px;
         }
 
-        wl-dialog {
-          --dialog-min-width: 350px;
+        backend-ai-dialog {
+          --component-min-width: 350px;
         }
 
         wl-textfield.helper-text {
@@ -274,12 +275,6 @@ class BackendAIRegistryList extends BackendAIPage {
 
   _hideDialogById(id) {
     this.shadowRoot.querySelector(id).hide();
-  }
-
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
   }
 
   _toggleProjectNameInput() {
@@ -477,96 +472,89 @@ class BackendAIRegistryList extends BackendAIPage {
         <vaadin-grid-column flex-grow="1" header="${_t("general.Control")}" .renderer=${this.boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
-      <wl-dialog id="add-registry-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("registry.AddRegistry")}</span>
-            <div class="flex"></div>
-            <wl-button class="fab" fab flat inverted @click=${e => this._hideDialog(e)}>
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <form>
-            <fieldset>
-              <wl-textfield
-                id="add-registry-hostname"
-                class="helper-text"
-                type="text"
-                label="${_t("registry.RegistryHostname")}"
-                required
-                @click=${this._validateHostname}
-                @change=${this._validateHostname}
-              ></wl-textfield>
-              <wl-label class="helper-text" id="registry-hostname-validation" style="display:none;">${_t("registry.DescHostnameIsEmpty")}</wl-label>
-              <wl-textfield
-                id="add-registry-url"
-                class="helper-text"
-                label="${_t("registry.RegistryURL")}"
-                required
-                pattern="^(http|https)\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$"
-                @click=${this._validateUrl}
-                @change=${this._validateUrl}
-              ></wl-textfield>
-              <wl-label class="helper-text" id="registry-url-validation" style="display:none;">${_t("registry.DescURLStartString")}</wl-label>
-             <div class="horizontal layout flex">
-              <wl-textfield
-                id="add-registry-username"
-                type="text"
-                label="${_t("registry.UsernameOptional")}"
-                style="padding-right:10px;"
-              ></wl-textfield>
-              <wl-textfield
-                id="add-registry-password"
-                type="password"
-                label="${_t("registry.PasswordOptional")}"
-                style="padding-left:10px;"
-              ></wl-textfield>
-             </div>
-             <div class="horizontal layout" style="padding-bottom:10px;">
-              <mwc-select id="select-registry-type" label="${_t("registry.RegistryType")}"
-                          @change=${this._toggleProjectNameInput} required
-                          validationMessage="Please select one option.">
-                ${this._registryType.map(item => html`
-                  <mwc-list-item value="${item}" ?selected="${item === 'docker'}">${item}</mwc-list-item>
-                `)}
-              </mwc-select>
-               <div class="vertical layout" style="padding-left:10px;">
-                  <wl-textfield
-                  id="add-project-name"
-                  class="helper-text"
-                  type="text"
-                  label="${_t("registry.ProjectName")}"
-                  required
-                  @change=${this._validateProjectName}
-                  ></wl-textfield>
-                  <wl-label class="helper-text" id="project-name-validation" style="display:block;">${_t("registry.ForHarborOnly")}</wl-label>
-              </div>
-             </div>
-              <div class="horizontal layout center-justified">
-                <wl-button
-                  class="fg orange"
-                  outlined
-                  type="button"
-                  style="box-sizing: border-box; width: 100%"
-                  @click=${this._addRegistry}
-                >
-                  <wl-icon>add</wl-icon>
-                  ${_t("button.Add")}
-                </wl-button>
-              </div>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
+      <backend-ai-dialog id="add-registry-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t("registry.AddRegistry")}</span>
 
-      <wl-dialog id="delete-registry-dialog" fixed backdrop blockscrolling>
-        <wl-title level="3" slot="header" style="color: rgb(242, 100, 85)">${_t("dialog.warning.CannotBeUndone")}</wl-title>
+        <div slot="content" class="login-panel intro centered">
+          <wl-textfield
+            id="add-registry-hostname"
+            class="helper-text"
+            type="text"
+            label="${_t("registry.RegistryHostname")}"
+            required
+            @click=${this._validateHostname}
+            @change=${this._validateHostname}
+          ></wl-textfield>
+          <wl-label class="helper-text" id="registry-hostname-validation" style="display:none;">${_t("registry.DescHostnameIsEmpty")}</wl-label>
+          <wl-textfield
+            id="add-registry-url"
+            class="helper-text"
+            label="${_t("registry.RegistryURL")}"
+            required
+            pattern="^(http|https)\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$"
+            @click=${this._validateUrl}
+            @change=${this._validateUrl}
+          ></wl-textfield>
+          <wl-label class="helper-text" id="registry-url-validation" style="display:none;">${_t("registry.DescURLStartString")}</wl-label>
+         <div class="horizontal layout flex">
+          <wl-textfield
+            id="add-registry-username"
+            type="text"
+            label="${_t("registry.UsernameOptional")}"
+            style="padding-right:10px;"
+          ></wl-textfield>
+          <wl-textfield
+            id="add-registry-password"
+            type="password"
+            label="${_t("registry.PasswordOptional")}"
+            style="padding-left:10px;"
+          ></wl-textfield>
+         </div>
+         <div class="horizontal layout" style="padding-bottom:10px;">
+          <mwc-select id="select-registry-type" label="${_t("registry.RegistryType")}"
+                      @change=${this._toggleProjectNameInput} required
+                      validationMessage="Please select one option.">
+            ${this._registryType.map(item => html`
+              <mwc-list-item value="${item}" ?selected="${item === 'docker'}">${item}</mwc-list-item>
+            `)}
+          </mwc-select>
+           <div class="vertical layout" style="padding-left:10px;">
+              <wl-textfield
+              id="add-project-name"
+              class="helper-text"
+              type="text"
+              label="${_t("registry.ProjectName")}"
+              required
+              @change=${this._validateProjectName}
+              ></wl-textfield>
+              <wl-label class="helper-text" id="project-name-validation" style="display:block;">${_t("registry.ForHarborOnly")}</wl-label>
+          </div>
+         </div>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button
+            class="fg orange"
+            outlined
+            type="button"
+            style="box-sizing: border-box; width: 100%"
+            @click=${this._addRegistry}
+          >
+            <wl-icon>add</wl-icon>
+            ${_t("button.Add")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
+
+      <backend-ai-dialog id="delete-registry-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t("dialog.warning.CannotBeUndone")}</span>
         <div slot="content">
           <wl-textfield
             id="delete-registry"
             type="text"
             label="${_t("registry.TypeRegistryNameToDelete")}"
           ></wl-textfield>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button
             class="fg red delete"
             type="button"
@@ -578,7 +566,7 @@ class BackendAIRegistryList extends BackendAIPage {
             ${_t("button.Delete")}
           </wl-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `
   }
 }

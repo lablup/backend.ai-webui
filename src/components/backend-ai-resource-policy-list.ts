@@ -206,121 +206,112 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         </vaadin-grid-column>
 
       </vaadin-grid>
-      <wl-dialog id="modify-policy-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("resourcePolicy.UpdateResourcePolicy")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <form id="login-form">
-            <fieldset>
-              <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}" pattern="^[a-zA-Z0-9_-]+$"
-                             validationMessage="Policy name is Required."
-                             required></mwc-textfield>
-              <h4>${_t("resourcePolicy.ResourcePolicy")}</h4>
-              <div class="horizontal center layout">
-                  <div class="vertical layout" style="margin: 0px 10px 0px 0px;">
-                    <wl-label>CPU</wl-label>
-                    <wl-textfield id="cpu-resource" type="number"
-                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                      <wl-label class="unlimited">
-                        <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                        ${_t("resourcePolicy.Unlimited")}
-                      </wl-label>
-                  </div>
-                  <div class="vertical layout" style="margin: 0px 10px 0px 10px;">
-                    <wl-label>RAM(GB)</wl-label>
-                    <wl-textfield id="ram-resource" type="number"
-                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                    <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      ${_t("resourcePolicy.Unlimited")}
-                    </wl-label>
-                  </div>
-                  <div class="vertical layout" style="margin: 0px 10px 0px 10px;">
-                    <wl-label>GPU</wl-label>
-                    <wl-textfield id="gpu-resource" type="number"
-                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                    <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      ${_t("resourcePolicy.Unlimited")}
-                    </wl-label>
-                  </div>
-                  <div class="vertical layout" style="margin: 0px 0px 0px 10px;">
-                    <wl-label>fGPU</wl-label>
-                    <wl-textfield id="fgpu-resource" type="number"
-                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                    <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      ${_t("resourcePolicy.Unlimited")}
-                    </wl-label>
-                  </div>
-              </div>
-              <h4>${_t("resourcePolicy.Sessions")}</h4>
-              <div class="horizontal center layout">
-                <div class="vertical left layout">
-                    <wl-label>${_t("resourcePolicy.ContainerPerSession")}</wl-label>
-                    <wl-textfield id="container-per-session-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                    <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      ${_t("resourcePolicy.Unlimited")}
-                    </wl-label>
-                  </div>
-                  <div class="vertical left layout" style="margin: 0px 15px;">
-                    <wl-label>${_t("resourcePolicy.IdleTimeoutSec")}</wl-label>
-                    <wl-textfield id="idle-timeout" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                    <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      ${_t("resourcePolicy.Unlimited")}
-                    </wl-label>
-                  </div>
-                  <div class="vertical left layout">
-                      <wl-label>${_t("resourcePolicy.ConcurrentJobs")}</wl-label>
-                      <wl-textfield id="concurrency-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                      <wl-label class="unlimited">
-                        <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                       ${_t("resourcePolicy.Unlimited")}
-                      </wl-label>
-                  </div>
-              </div>
-              <h4 style="margin-bottom:0px;">${_t("resourcePolicy.Folders")}</h4>
-              <div class="horizontal center layout">
-                <div class="vertical layout">
-                <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    ${this.allowed_vfolder_hosts.map(item => html`
-                      <paper-item value="${item}" style="margin: 0px 0px 1px 0px;">${item}</paper-item>
-                    `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                </div>
-                <div class="vertical layout" style="margin: 21px 15px 0;">
-                  <wl-label class="folders">${_t("resourcePolicy.Capacity")}(GB)</wl-label>
-                  <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+      <backend-ai-dialog id="modify-policy-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t("resourcePolicy.UpdateResourcePolicy")}</span>
+
+        <div slot="content" class="login-panel intro centered">
+          <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}" pattern="^[a-zA-Z0-9_-]+$"
+                         validationMessage="Policy name is Required."
+                         required></mwc-textfield>
+          <h4>${_t("resourcePolicy.ResourcePolicy")}</h4>
+          <div class="horizontal center layout">
+              <div class="vertical layout" style="margin: 0px 10px 0px 0px;">
+                <wl-label>CPU</wl-label>
+                <wl-textfield id="cpu-resource" type="number"
+                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                     ${_t("resourcePolicy.Unlimited")}
-                </wl-label>
-                </div>
-                <div class="vertical layout">
-                  <wl-label class="folders">Max.#</wl-label>
-                  <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                </div>
+                  </wl-label>
               </div>
-
-              <br/><br/>
-              <wl-button class="fg blue create-button" id="create-policy-button" type="button"
-                outlined @click="${() => this._modifyResourcePolicy()}">
-                <wl-icon>add</wl-icon>
-                ${_t("button.Update")}
-              </wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
+              <div class="vertical layout" style="margin: 0px 10px 0px 10px;">
+                <wl-label>RAM(GB)</wl-label>
+                <wl-textfield id="ram-resource" type="number"
+                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t("resourcePolicy.Unlimited")}
+                </wl-label>
+              </div>
+              <div class="vertical layout" style="margin: 0px 10px 0px 10px;">
+                <wl-label>GPU</wl-label>
+                <wl-textfield id="gpu-resource" type="number"
+                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t("resourcePolicy.Unlimited")}
+                </wl-label>
+              </div>
+              <div class="vertical layout" style="margin: 0px 0px 0px 10px;">
+                <wl-label>fGPU</wl-label>
+                <wl-textfield id="fgpu-resource" type="number"
+                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t("resourcePolicy.Unlimited")}
+                </wl-label>
+              </div>
+          </div>
+          <h4>${_t("resourcePolicy.Sessions")}</h4>
+          <div class="horizontal center layout">
+            <div class="vertical left layout">
+                <wl-label>${_t("resourcePolicy.ContainerPerSession")}</wl-label>
+                <wl-textfield id="container-per-session-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t("resourcePolicy.Unlimited")}
+                </wl-label>
+              </div>
+              <div class="vertical left layout" style="margin: 0px 15px;">
+                <wl-label>${_t("resourcePolicy.IdleTimeoutSec")}</wl-label>
+                <wl-textfield id="idle-timeout" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t("resourcePolicy.Unlimited")}
+                </wl-label>
+              </div>
+              <div class="vertical left layout">
+                  <wl-label>${_t("resourcePolicy.ConcurrentJobs")}</wl-label>
+                  <wl-textfield id="concurrency-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                  <wl-label class="unlimited">
+                    <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                   ${_t("resourcePolicy.Unlimited")}
+                  </wl-label>
+              </div>
+          </div>
+          <h4 style="margin-bottom:0px;">${_t("resourcePolicy.Folders")}</h4>
+          <div class="horizontal center layout">
+            <div class="vertical layout">
+            <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
+              <paper-listbox slot="dropdown-content" selected="0">
+                ${this.allowed_vfolder_hosts.map(item => html`
+                  <paper-item value="${item}" style="margin: 0px 0px 1px 0px;">${item}</paper-item>
+                `)}
+              </paper-listbox>
+            </paper-dropdown-menu>
+            </div>
+            <div class="vertical layout" style="margin: 21px 15px 0;">
+              <wl-label class="folders">${_t("resourcePolicy.Capacity")}(GB)</wl-label>
+              <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <wl-label class="unlimited">
+                <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                ${_t("resourcePolicy.Unlimited")}
+            </wl-label>
+            </div>
+            <div class="vertical layout">
+              <wl-label class="folders">Max.#</wl-label>
+              <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+            </div>
+          </div>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button class="fg blue create-button" id="create-policy-button" type="button"
+            outlined @click="${() => this._modifyResourcePolicy()}">
+            <wl-icon>add</wl-icon>
+            ${_t("button.Update")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 
@@ -332,12 +323,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       `,
       root
     );
-  }
-
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
   }
 
   resourceRenderer(root, column?, rowData?) {
@@ -618,7 +603,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     } catch (err) {
       this.notification.text = err.message;
       this.notification.show();
-    };
+    }
 
   }
 

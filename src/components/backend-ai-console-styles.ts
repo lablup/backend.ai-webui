@@ -245,6 +245,7 @@ export const BackendAiConsoleStyles = [
       padding: 5px;
     }
 
+    backend-ai-dialog wl-textfield,
     wl-dialog wl-textfield {
       --input-font-family: 'Quicksand', Roboto, Noto, sans-serif;
       --input-color-disabled: #222222;

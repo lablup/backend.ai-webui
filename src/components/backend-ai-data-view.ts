@@ -31,6 +31,7 @@ import 'weightless/textfield';
 import '@material/mwc-icon-button';
 
 import '../plastics/lablup-shields/lablup-shields';
+import './backend-ai-dialog';
 import './backend-ai-storage-list';
 import {default as PainKiller} from './backend-ai-painkiller';
 
@@ -485,12 +486,6 @@ export default class BackendAIData extends BackendAIPage {
     for (const list of this.folderLists) {
       list.refreshFolderList();
     }
-  }
-
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
   }
 }
 declare global {

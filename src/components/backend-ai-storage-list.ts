@@ -310,8 +310,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           color: var(--paper-orange-900);
         }
 
-        wl-dialog wl-textfield,
-        wl-dialog wl-select,
         backend-ai-dialog wl-textfield,
         backend-ai-dialog wl-select {
           --input-font-family: Roboto, Noto, sans-serif;

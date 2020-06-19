@@ -166,9 +166,10 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
         </wl-card>
       </wl-card>
-      <wl-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling style="border-bottom:none;">
-        <div slot="header" style="border-bottom:none;">${_t("dialog.warning.LogDeletion")} ${_t("dialog.warning.CannotBeUndone")}</div>
-        <div slot="footer" style="border-top:none;">
+      <backend-ai-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling>
+        <span slot="title">${_t("dialog.warning.LogDeletion")}</span>
+        <div slot="content">${_t("dialog.warning.CannotBeUndone")}</div>
+        <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button inverted flat id="discard-removal"
                      style="margin: 0 5px;"
                      @click="${() => this._hideClearLogsDialog()}">${_t("button.No")}</wl-button>
@@ -176,7 +177,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
                      style="margin: 0 5px;"
                      @click="${() => this._removeLogMessage()}">${_t("button.Yes")}</wl-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `;
   }
 

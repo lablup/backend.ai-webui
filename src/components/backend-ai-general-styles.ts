@@ -511,34 +511,6 @@ export const BackendAiStyles = [
       --font-family-sans-serif: var(--general-font-family);
     }
 
-    wl-dialog > wl-card {
-      --card-elevation: 0;
-    }
-
-    wl-dialog > wl-card > section {
-      margin: 5px 20px;
-    }
-
-    wl-dialog wl-title {
-      border-bottom: 1px solid #cccccc;
-    }
-
-    wl-dialog wl-button.cancel {
-      margin-right: 5px;
-    }
-
-    wl-dialog wl-button.ok {
-      margin-right: 5px;
-    }
-
-    wl-dialog.dialog-ask {
-      --dialog-min-width: 350px;
-    }
-
-    wl-dialog > wl-card > h3 {
-      background-color: var(--general-dialog-background-color, #ffffff);
-    }
-
     vaadin-grid {
       font-family: var(--general-font-family);
     }
