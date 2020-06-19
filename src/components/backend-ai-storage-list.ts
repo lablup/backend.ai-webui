@@ -38,6 +38,7 @@ import 'weightless/tab-group';
 import 'weightless/textfield';
 import '@material/mwc-icon-button';
 
+import './backend-ai-dialog';
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
 import tus from '../lib/tus';

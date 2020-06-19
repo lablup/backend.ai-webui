@@ -17,7 +17,6 @@ import "@material/mwc-menu/mwc-menu";
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/textfield';
 import 'weightless/tab';
 import 'weightless/tab-group';

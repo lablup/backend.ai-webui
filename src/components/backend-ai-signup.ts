@@ -6,7 +6,6 @@ import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/icon';
-import 'weightless/dialog';
 import 'weightless/card';
 import '@material/mwc-textfield';
 import './lablup-terms-of-service';

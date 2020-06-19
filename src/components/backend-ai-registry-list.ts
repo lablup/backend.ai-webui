@@ -13,7 +13,6 @@ import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/icon';
 import 'weightless/label';
 import 'weightless/switch';

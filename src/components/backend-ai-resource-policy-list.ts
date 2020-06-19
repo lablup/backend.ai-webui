@@ -18,11 +18,11 @@ import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 import 'weightless/button';
 import 'weightless/icon';
-import 'weightless/dialog';
 import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/label';
 
+import './backend-ai-dialog';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {default as PainKiller} from './backend-ai-painkiller';

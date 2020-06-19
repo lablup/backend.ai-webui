@@ -21,7 +21,6 @@ import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/snackbar';
 import 'weightless/switch';
 import 'weightless/textarea';

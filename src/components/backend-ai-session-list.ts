@@ -18,7 +18,6 @@ import {default as AnsiUp} from '../lib/ansiup';
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/checkbox';
-import 'weightless/dialog';
 import 'weightless/icon';
 import 'weightless/textfield';
 import 'weightless/title';

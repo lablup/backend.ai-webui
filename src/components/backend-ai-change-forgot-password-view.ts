@@ -7,8 +7,8 @@ import {css, customElement, html, property} from "lit-element";
 
 import '@material/mwc-textfield/mwc-textfield';
 import 'weightless/card';
-import 'weightless/dialog';
 
+import './backend-ai-dialog';
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -104,11 +104,10 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="update-password-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
-        <wl-card class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("console.menu.ChangePassword")}</span>
-          </h3>
+      <backend-ai-dialog id="update-password-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
+        <span slot="title">${_t("console.menu.ChangePassword")}</span>
+
+        <div slot="content" class="login-panel intro centered">
           <div class="horizontal layout center" style="margin:10px;">
             <p style="width:350px;">${_t("login.UpdatePasswordMessage")}</p>
           </div>
@@ -128,31 +127,34 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
                 min-length="8">
             </mwc-textfield>
             <div style="height:1em"></div>
-            <wl-button outlined flat class="fg red mini flex" type="button"
-                @click="${() => this._updatePassword()}">
-              ${_t("console.menu.Update")}
-            </wl-button>
           </div>
-        </wl-card>
-      </wl-dialog>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button outlined flat class="fg red mini flex" type="button"
+              @click="${() => this._updatePassword()}">
+            ${_t("console.menu.Update")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
 
-      <wl-dialog id="verification-fail-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
-        <wl-card class="login-panel intro centered" style="margin: 0;">
+      <backend-ai-dialog id="verification-fail-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
+        <span slot="title">${_t("login.InvalidChangePasswordToken")}</span>
+
+        <div slot="content" class="login-panel intro centered">
           <h3 class="horizontal center layout">
             <span>${_t("login.InvalidChangePasswordToken")}</span>
           </h3>
           <div class="horizontal layout center" style="margin:10px;">
             <p style="width:350;">${_t("login.InvalidChangePasswordTokenMessage")}</p>
           </div>
-          <div style="margin:20px;">
-            <div style="height:1em"></div>
-            <wl-button outlined flat class="fg mini flex red" type="button"
-                @click="${() => this._redirectToLoginPage()}">
-              ${_t("button.Close")}
-            </wl-button>
-          </div>
-        </wl-card>
-      </wl-dialog>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button outlined flat class="fg mini flex red" type="button"
+              @click="${() => this._redirectToLoginPage()}">
+            ${_t("button.Close")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 }

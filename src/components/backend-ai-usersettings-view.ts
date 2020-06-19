@@ -25,6 +25,7 @@ import 'weightless/icon';
 import 'weightless/button';
 
 
+import './backend-ai-dialog';
 import './lablup-codemirror';
 import './lablup-loading-spinner';
 import './backend-ai-error-log-list';

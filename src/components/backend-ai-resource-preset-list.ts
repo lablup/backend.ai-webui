@@ -21,9 +21,9 @@ import '@material/mwc-textfield';
 
 import 'weightless/button';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/icon';
 
+import './backend-ai-dialog';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-general-styles";

@@ -8,7 +8,6 @@ import {css, customElement, html, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/checkbox';
-import 'weightless/dialog';
 import 'weightless/icon';
 import 'weightless/textfield';
 import 'weightless/title';

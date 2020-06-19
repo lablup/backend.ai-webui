@@ -19,7 +19,6 @@ import '@material/mwc-textfield';
 
 import 'weightless/button';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/divider';
 import 'weightless/icon';
 import 'weightless/label';

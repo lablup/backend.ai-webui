@@ -21,6 +21,7 @@ import 'weightless/icon';
 import 'weightless/button';
 import 'weightless/label';
 
+import './backend-ai-dialog';
 import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-list/mwc-list-item';
 

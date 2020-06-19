@@ -17,7 +17,6 @@ import '@vaadin/vaadin-item/vaadin-item';
 
 import 'weightless/button';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/label';
 import 'weightless/select';
 import 'weightless/textfield';
