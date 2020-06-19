@@ -234,7 +234,7 @@ export default class BackendAIData extends BackendAIPage {
           <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
         </div>
       </wl-card>
-      <backend-ai-dialog id="add-folder-dialog" backdrop>
+      <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
         <div slot="content">
           <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]*"
@@ -295,7 +295,7 @@ export default class BackendAIData extends BackendAIPage {
           </wl-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="help-description" backdrop>
+      <backend-ai-dialog id="help-description" fixed backdrop>
         <span slot="title">${this._helpDescriptionTitle}</span>
         <div slot="content" class="horizontal layout center">
         ${this._helpDescriptionIcon == '' ? html`` : html`

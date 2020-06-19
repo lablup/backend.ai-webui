@@ -29,6 +29,7 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 export default class BackendAiDialog extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) dialog = Object();
+  @property({type: Boolean}) fixed = false;
   @property({type: Boolean}) narrowLayout = false;
   @property({type: Boolean}) scrollable = false;
   @property({type: Boolean}) backdrop = false;
@@ -48,11 +49,11 @@ export default class BackendAiDialog extends LitElement {
       // language=CSS
       css`
         wl-dialog {
-          --dialog-min-width: var(--component-min-width, auto);
-          --dialog-max-width: var(--component-max-width, auto);
-          --dialog-max-height: var(--component-max-height, 95vh);
-          --dialog-width: var(--component-width, auto);
-          --dialog-height: var(--component-height, auto);
+          --dialog-min-width: var(--component-min-width);
+          --dialog-max-width: var(--component-max-width);
+          --dialog-max-height: var(--component-max-height);
+          --dialog-width: var(--component-width);
+          --dialog-height: var(--component-height);
         }
 
         wl-dialog > wl-card {
@@ -77,7 +78,7 @@ export default class BackendAiDialog extends LitElement {
         }
 
         wl-dialog div.footer {
-          padding: 10px 15px;
+          padding: 5px 15px;
         }
 
         wl-dialog[narrow] div.content,
@@ -115,7 +116,8 @@ export default class BackendAiDialog extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="dialog" fixed
+      <wl-dialog id="dialog"
+                    ?fixed="${(this.fixed)}"
                     ?narrow="${(this.narrowLayout)}"
                     ?backdrop="${this.backdrop}"
                     ?scrollable="${this.scrollable}"

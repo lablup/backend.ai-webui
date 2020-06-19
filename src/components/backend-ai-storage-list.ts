@@ -168,6 +168,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         #folder-explorer-dialog {
           --dialog-height: calc(100vh - 170px);
+          --component-height: calc(100vh - 170px);
           height: calc(100vh - 170px);
           right: 0;
           top: 0;
@@ -189,6 +190,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           #folder-explorer-dialog.mini_ui {
             left: 0;
             --dialog-width: 100%;
+            --component-width: 100%;
             width: 100%;
           }
         }
@@ -197,12 +199,14 @@ export default class BackendAiStorageList extends BackendAIPage {
           #folder-explorer-dialog {
             left: 150px;
             --dialog-width: calc(100% - 100px);
+            --component-width: calc(100% - 100px);
             width: calc(100% - 100px);
           }
 
           #folder-explorer-dialog.mini_ui {
             left: 65px;
             --dialog-width: calc(100% - 45px);
+            --component-width: calc(100% - 45px);
             width: calc(100% - 45px);
           }
         }
@@ -314,7 +318,9 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         wl-dialog wl-textfield,
-        wl-dialog wl-select {
+        wl-dialog wl-select,
+        backend-ai-dialog wl-textfield,
+        backend-ai-dialog wl-select {
           --input-font-family: Roboto, Noto, sans-serif;
           --input-color-disabled: #222222;
           --input-label-color-disabled: #222222;
@@ -331,7 +337,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           --label-font-family: Roboto, Noto, sans-serif;
           --label-color: black;
         }
-
         wl-checkbox {
           --checkbox-color: var(--paper-orange-900);
           --checkbox-color-checked: var(--paper-orange-900);
@@ -395,31 +400,21 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t("data.folders.Control")}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
       </vaadin-grid>
 
-      <wl-dialog id="rename-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
-        <wl-card class="login-panel intro centered">
-          <h3 class="horizontal center layout">
-            <span>${_t('data.folders.RenameAFolder')}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <section>
-            <div>
-              <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
-                pattern="[a-zA-Z0-9_-.]*"
-                validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
-              <br/>
-              <wl-button class="blue button" type="submit" id="rename-button" outlined @click="${() => this._renameFolder()}">
-                <wl-icon>edit</wl-icon>
-                ${_t('data.folders.Rename')}
-              </wl-button>
-            </div>
-            </section>
-        </wl-card>
-      </wl-dialog>
+      <backend-ai-dialog id="rename-folder-dialog" fixed backdrop>
+        <span slot="title">${_t('data.folders.RenameAFolder')}</span>
+        <div slot="content">
+          <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
+            pattern="[a-zA-Z0-9_-.]*"
+            validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
+          <br/>
+          <wl-button class="blue button" type="submit" id="rename-button" outlined @click="${() => this._renameFolder()}">
+            <wl-icon>edit</wl-icon>
+            ${_t('data.folders.Rename')}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
 
-      <backend-ai-dialog id="delete-folder-dialog" backdrop>
+      <backend-ai-dialog id="delete-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.folders.DeleteAFolder")}</span>
         <div slot="content" style="width:100%;">
           <div class="warning">${_t("dialog.warning.CannotBeUndone")}</div>
@@ -436,7 +431,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </wl-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="info-folder-dialog" backdrop>
+      <backend-ai-dialog id="info-folder-dialog" fixed backdrop>
         <span slot="title">${this.folderInfo.name}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;">
           <vaadin-item>
@@ -463,16 +458,9 @@ export default class BackendAiStorageList extends BackendAIPage {
           </vaadin-item>
         </div>
       </backend-ai-dialog>
-      <wl-dialog id="folder-explorer-dialog" class="folder-explorer">
-        <wl-card>
-          <h3 class="horizontal center layout" style="font-weight:bold">
-            <span>${this.explorer.id}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-
+      <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
+        <span slot="title">${this.explorer.id}</span>
+        <div slot="content">
           <div class="breadcrumb">
             ${this.explorer.breadcrumb ? html`
               <ul>
@@ -564,9 +552,9 @@ export default class BackendAiStorageList extends BackendAIPage {
             </vaadin-grid-column>
             <vaadin-grid-column resizable flex-grow="2" header="${_t("data.explorer.Actions")}" .renderer="${this._boundControlFileListRenderer}"></vaadin-grid-column>
           </vaadin-grid>
-        </wl-card>
-      </wl-dialog>
-      <backend-ai-dialog id="mkdir-dialog" backdrop>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="mkdir-dialog" fixed backdrop>
         <span slot="title">${_t("data.explorer.CreateANewFolder")}</span>
         <div slot="content">
           <mwc-textfield id="mkdir-name"
@@ -583,7 +571,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </wl-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="share-folder-dialog" backdrop>
+      <backend-ai-dialog id="share-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.explorer.ShareFolder")}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;" >
           <div style="margin: 10px 0px">${_t("data.explorer.People")}</div>
@@ -612,24 +600,22 @@ export default class BackendAiStorageList extends BackendAIPage {
             </wl-label>
           </div>
         </div>
-        <wl-button slot="footer"
-          type="button"
-          outlined
-          id="share-button"
-          style="width: 100%; box-sizing: border-box;"
-          @click=${e => this._shareFolder(e)}
-        >
-          <wl-icon>share</wl-icon>
-          ${_t("button.Share")}
-        </wl-button>
+        <div slot="footer" class="horizontal flex end layout">
+          <wl-button slot="footer"
+            type="button"
+            outlined
+            id="share-button"
+            style="width: 100%; box-sizing: border-box;"
+            @click=${e => this._shareFolder(e)}
+          >
+            <wl-icon>share</wl-icon>
+            ${_t("button.Share")}
+          </wl-button>
+        </div>
       </backend-ai-dialog>
 
-      <backend-ai-dialog
-        id="modify-permission-dialog"
-        class="dialog-ask"
-        backdrop>
+      <backend-ai-dialog id="modify-permission-dialog" fixed backdrop>
         <span slot="title">${_t("data.explorer.ModifyPermissions")}</span>
-
         <div slot="content" role="listbox" style="margin: 0; padding: 10px;">
           <vaadin-grid theme="row-stripes column-borders compact" .items="${this.invitees}">
             <vaadin-grid-column
@@ -647,7 +633,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             </vaadin-grid-column>
           </vaadin-grid>
         </div>
-        <div slot="footer">
+        <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button
             type="button"
             outlined
@@ -659,49 +645,39 @@ export default class BackendAiStorageList extends BackendAIPage {
           </wl-button>
         </div>
       </backend-ai-dialog>
-      <wl-dialog id="rename-file-dialog" class="dialog-ask" fixed backdrop blockscrolling>
-        <wl-card class="login-panel intro centered">
-          <h3 class="horizontal center layout">
-            <span>${_t('data.explorer.RenameAFile')}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <section>
-            <div>
-              <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"></mwc-textfield>
-              <div id="old-file-name" style="height:2.5em"></div>
-              <wl-button class="blue button" type="submit" id="rename-file-button" outlined @click="${(e) => this._renameFile(e)}">
-                <wl-icon>edit</wl-icon>
-                ${_t('data.explorer.RenameAFile')}
-              </wl-button>
-            </div>
-          </section>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="delete-file-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">${_t("dialog.title.LetsDouble-Check")}</wl-title>
+      <backend-ai-dialog id="rename-file-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t('data.explorer.RenameAFile')}</span>
+        <div slot="content">
+          <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"></mwc-textfield>
+          <div id="old-file-name" style="height:2.5em"></div>
+          <wl-button class="blue button" type="submit" id="rename-file-button" outlined @click="${(e) => this._renameFile(e)}">
+            <wl-icon>edit</wl-icon>
+            ${_t('data.explorer.RenameAFile')}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="delete-file-dialog" fixed backdrop>
+         <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
             <p>${_t("dialog.warning.CannotBeUndone")}
             ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
-         <div slot="footer">
+         <div slot="footer" class="horizontal end-justified flex layout">
             <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
             <wl-button @click="${(e) => this._deleteFileWithCheck(e)}">${_t("button.Okay")}</wl-button>
          </div>
-      </wl-dialog>
-      <wl-dialog id="download-file-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">${_t("data.explorer.DownloadFile")}</wl-title>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="download-file-dialog" fixed backdrop>
+         <span slot="title">${_t("data.explorer.DownloadFile")}</span>
          <div slot="content">
             <a href="${this.downloadURL}">
               <wl-button outlined>${_t("data.explorer.TouchToDownload")}</wl-button>
             </a>
          </div>
-         <div slot="footer">
+         <div slot="footer" class="horizontal end-justified flex layout">
             <wl-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</wl-button>
          </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `;
   }
 
@@ -811,7 +787,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           }
 
           ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
-
           ${rowData.item.is_owner && rowData.item.type == 'user'
             ? html`
               <mwc-icon-button
@@ -1010,6 +985,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   openDialog(id) {
     //var body = document.querySelector('body');
     //body.appendChild(this.$[id]);
+    console.log(this.shadowRoot.querySelector('#' + id));
     this.shadowRoot.querySelector('#' + id).show();
   }
 
@@ -1055,6 +1031,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _renameFolderDialog(e) {
+    console.log('asdasd');
     this.renameFolderId = this._getControlId(e);
     this.shadowRoot.querySelector('#new-folder-name').value = '';
     this.openDialog('rename-folder-dialog');
@@ -1476,7 +1453,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
