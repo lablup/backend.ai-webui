@@ -834,7 +834,7 @@ export default class BackendAILogin extends BackendAIPage {
         <span slot="title">${_t("login.SendChangePasswordEmail")}</span>
         <div slot="content">
           <section>
-            <div>${_t("login.DescChangePasswordEmail")}</div>
+            <div style="padding:1em">${_t("login.DescChangePasswordEmail")}</div>
           </section>
           <mwc-textfield type="email" id="password-change-email" maxlength="30"
               label="E-mail" value="" autofocus auto-validate
