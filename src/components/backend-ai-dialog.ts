@@ -34,6 +34,7 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) backdrop = false;
   @property({type: Boolean}) noclosebutton = false;
   @property({type: Boolean}) open = false;
+  @property({type: String}) type = 'normal';
 
   constructor() {
     super();
@@ -47,11 +48,11 @@ export default class BackendAiDialog extends LitElement {
       // language=CSS
       css`
         wl-dialog {
-          --dialog-min-width: var(--component-min-width, '350px');
-          --dialog-max-width: var(--component-max-width, '350px');
-          --dialog-max-height: var(--component-max-height, '95vh');
-          --dialog-width: var(--component-width, '350px');
-          --dialog-height: var(--component-height, 'auto');
+          --dialog-min-width: var(--component-min-width, auto);
+          --dialog-max-width: var(--component-max-width, auto);
+          --dialog-max-height: var(--component-max-height, 95vh);
+          --dialog-width: var(--component-width, auto);
+          --dialog-height: var(--component-height, auto);
         }
 
         wl-dialog > wl-card {
@@ -62,11 +63,16 @@ export default class BackendAiDialog extends LitElement {
           background-color: var(--general-dialog-background-color, #ffffff);
         }
 
+        wl-dialog h3.warning {
+          color: red;
+        }
+
         wl-dialog h3 > wl-button {
         }
 
         wl-dialog div.content {
-          padding: var(--component-padding, '15px');
+          padding: var(--component-padding, 15px);
+          font-size: var(--component-font-size, 12px);
           word-break: keep-all;
         }
 
@@ -116,7 +122,7 @@ export default class BackendAiDialog extends LitElement {
                     blockscrolling
                     style="padding:0;">
         <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h3 class="horizontal center layout" style="font-weight:bold">
+          <h3 class="horizontal center layout ${this.type}" style="font-weight:bold">
             <span><slot name="title"></slot></span>
             <div class="flex"></div>
             <slot name="action"></slot>
