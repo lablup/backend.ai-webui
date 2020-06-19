@@ -306,18 +306,16 @@ export default class BackendAiSignup extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="block-panel" fixed type="error" backdrop blockscrolling persistent>
         <span slot="title">${_t('dialog.error.Error')}</span>
-        <div slot="content">
-          <div style="text-align:center;">
+        <div slot="content" style="text-align:center;">
           ${this.errorMsg}
-          </div>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="email-sent-dialog" noclosebutton fixed backdrop blockscrolling persistent>
         <span slot="title">${_t("signup.ThankYou")}</span>
         <div slot="content">
-          <div style="max-width:350px; padding:1em">${_t("signup.VerificationMessage")}</div>
+          <p>${_t("signup.VerificationMessage")}</p>
         </div>
-        <div slot="footer">
+        <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button class="ok" @click="${(e) => {
       e.target.closest('backend-ai-dialog').hide()
     }}">${_t("button.Okay")}</wl-button>
