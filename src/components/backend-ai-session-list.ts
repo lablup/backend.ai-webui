@@ -1318,16 +1318,9 @@ export default class BackendAiSessionList extends BackendAIPage {
             <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t("button.Okay")}</wl-button>
          </div>
       </wl-dialog>
-      <wl-dialog id="export-to-csv" fixed backdrop blockscrolling>
-      <wl-card elevation="1" class="intro centered login-panel" style="margin:0;">
-        <h3 class="horizontal center layout" style="padding:10px;">
-          <span style="margin-left:10px;">${_t("session.ExportSessionListToCSVFile")}</span>
-          <div class="flex"></div>
-          <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-            <wl-icon>close</wl-icon>
-          </wl-button>
-        </h3>
-        <section style="padding: 10px;">
+      <backend-ai-dialog id="export-to-csv" backdrop>
+        <span slot="title">${_t("session.ExportSessionListToCSVFile")}</span>
+        <div slot="content">
           <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
                           validationMessage="Allows letters, numbers and -_."
                           value="${'session_' + this._defaultFileName}" required
@@ -1359,9 +1352,8 @@ export default class BackendAiSessionList extends BackendAIPage {
               ${_t("session.ExportCSVFile")}
             </wl-button>
           </div>
-          </section>
-        </wl-card>
-      </wl-dialog>
+        </div>
+      </backend-ai-dialog>
       `;
   }
 
