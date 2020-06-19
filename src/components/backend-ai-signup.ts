@@ -297,7 +297,7 @@ export default class BackendAiSignup extends BackendAIPage {
              I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">${_t("signup.TermsOfService")}</a> and <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">${_t("signup.PrivacyPolicy")}</a>.
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <wl-button class="full" id="signup-button" outlined type="button"
                       @click="${() => this._signup()}">
                       <wl-icon>check</wl-icon>

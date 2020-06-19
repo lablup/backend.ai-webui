@@ -100,10 +100,20 @@ export default class BackendAiDialog extends LitElement {
   firstUpdated() {
     this.dialog = this.shadowRoot.querySelector('#dialog');
     this.open = this.dialog.open;
+    this.dialog.addEventListener('didShow', () => {
+      this._syncOpenState()
+    });
+    this.dialog.addEventListener('didHide', () => {
+      this._syncOpenState()
+    });
   }
 
   connectedCallback() {
     super.connectedCallback();
+  }
+
+  _syncOpenState() {
+    this.open = this.dialog.open;
   }
 
   _hideDialog() {
