@@ -167,9 +167,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         #folder-explorer-dialog {
-          --dialog-height: calc(100vh - 170px);
           --component-height: calc(100vh - 170px);
-          height: calc(100vh - 170px);
           right: 0;
           top: 0;
           position: fixed;
@@ -189,7 +187,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           #folder-explorer-dialog,
           #folder-explorer-dialog.mini_ui {
             left: 0;
-            --dialog-width: 100%;
             --component-width: 100%;
             width: 100%;
           }
@@ -198,16 +195,12 @@ export default class BackendAiStorageList extends BackendAIPage {
         @media screen and (min-width: 900px) {
           #folder-explorer-dialog {
             left: 150px;
-            --dialog-width: calc(100% - 100px);
             --component-width: calc(100% - 100px);
-            width: calc(100% - 100px);
           }
 
           #folder-explorer-dialog.mini_ui {
             left: 65px;
-            --dialog-width: calc(100% - 45px);
             --component-width: calc(100% - 45px);
-            width: calc(100% - 45px);
           }
         }
 
@@ -985,7 +978,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   openDialog(id) {
     //var body = document.querySelector('body');
     //body.appendChild(this.$[id]);
-    console.log(this.shadowRoot.querySelector('#' + id));
     this.shadowRoot.querySelector('#' + id).show();
   }
 
@@ -1031,7 +1023,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _renameFolderDialog(e) {
-    console.log('asdasd');
     this.renameFolderId = this._getControlId(e);
     this.shadowRoot.querySelector('#new-folder-name').value = '';
     this.openDialog('rename-folder-dialog');
