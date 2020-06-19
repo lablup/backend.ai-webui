@@ -286,46 +286,44 @@ class BackendAiResourcePresetList extends BackendAIPage {
       <backend-ai-dialog id="create-preset-dialog" narrowLayout fixed backdrop blockscrolling>
         <span slot="title">${_t("resourcePreset.CreateResourcePreset")}</span>
         <div slot="content" class="login-panel intro centered">
-          <form id="preset-creation-form">
-            <fieldset>
-              <mwc-textfield
-                type="text"
-                name="preset_name"
-                id="create-preset-name"
-                label="Preset Name"
-                auto-validate
-                required
-                pattern="[a-zA-Z0-9-_]+"
-                error-message="Preset name only accepts letters and numbers"
-              ></mwc-textfield>
-              <h4>${_t("resourcePreset.ResourcePreset")}</h4>
-              <div class="horizontal center layout">
-                <mwc-textfield id="create-cpu-resource" type="number" label="CPU"
-                    min="1" value="1"></mwc-textfield>
-                <mwc-textfield id="create-ram-resource" type="number" label="RAM (GB)"
-                    min="1" value="1"></mwc-textfield>
-              </div>
-              <div class="horizontal center layout">
-                <mwc-textfield id="create-gpu-resource" type="number" label="GPU"
-                    min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
-                <mwc-textfield id="create-fgpu-resource" type="number" label="fGPU"
-                    min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
-              </div>
-              <div class="horizontal center layout">
-                <mwc-textfield id="create-shmem-resource" type="number" label="Shared Memory (GB)" min="0"></mwc-textfield>
-              </div>
-              <wl-button
-                class="fg orange create-button"
-                id="create-policy-button"
-                outlined
-                type="button"
-                @click="${this._createPreset}"
-              >
-                <wl-icon>add</wl-icon>
-                ${_t("button.Add")}
-              </wl-button>
-            </fieldset>
-          </form>
+          <mwc-textfield
+            type="text"
+            name="preset_name"
+            id="create-preset-name"
+            label="Preset Name"
+            auto-validate
+            required
+            pattern="[a-zA-Z0-9-_]+"
+            error-message="Preset name only accepts letters and numbers"
+          ></mwc-textfield>
+          <h4>${_t("resourcePreset.ResourcePreset")}</h4>
+          <div class="horizontal center layout">
+            <mwc-textfield id="create-cpu-resource" type="number" label="CPU"
+                min="1" value="1"></mwc-textfield>
+            <mwc-textfield id="create-ram-resource" type="number" label="RAM (GB)"
+                min="1" value="1"></mwc-textfield>
+          </div>
+          <div class="horizontal center layout">
+            <mwc-textfield id="create-gpu-resource" type="number" label="GPU"
+                min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
+            <mwc-textfield id="create-fgpu-resource" type="number" label="fGPU"
+                min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
+          </div>
+          <div class="horizontal center layout">
+            <mwc-textfield id="create-shmem-resource" type="number" label="Shared Memory (GB)" min="0"></mwc-textfield>
+          </div>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button
+            class="fg orange create-button"
+            id="create-policy-button"
+            outlined
+            type="button"
+            @click="${this._createPreset}"
+          >
+            <wl-icon>add</wl-icon>
+            ${_t("button.Add")}
+          </wl-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
