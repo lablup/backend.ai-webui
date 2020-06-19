@@ -814,7 +814,7 @@ export default class BackendAILogin extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>
         <span slot="title">${_t("login.LeaveService")}</span>
-        <div slot="content" class="login-panel intro centered">
+        <div slot="content">
           <section>
             <div class="warning">${_t("login.DescConfirmLeave")}</div>
           </section>
@@ -832,7 +832,7 @@ export default class BackendAILogin extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="change-password-confirm-dialog" fixed backdrop blockscrolling persistent disablefocustrap>
         <span slot="title">${_t("login.SendChangePasswordEmail")}</span>
-        <div slot="content" class="login-panel intro centered">
+        <div slot="content">
           <section>
             <div>${_t("login.DescChangePasswordEmail")}</div>
           </section>
