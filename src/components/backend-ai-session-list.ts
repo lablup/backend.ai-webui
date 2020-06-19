@@ -878,7 +878,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
 
     if (dialog.id === 'ssh-dialog') {
@@ -1298,26 +1298,26 @@ export default class BackendAiSessionList extends BackendAIPage {
         <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
                 style="border-style: none;width: 100%;"></iframe>
       </backend-ai-dialog>
-      <wl-dialog id="terminate-session-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">${_t("dialog.title.LetsDouble-Check")}</wl-title>
+      <backend-ai-dialog id="terminate-session-dialog" backdrop>
+         <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
             <p>${_t("session.CheckAgainDialog")}</p>
          </div>
-         <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button class="ok" @click="${(e) => this._terminateSessionWithCheck(e)}">Okay</wl-button>
+         <div slot="footer" class="horizontal end-justified flex layout">
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
+            <wl-button class="ok" @click="${(e) => this._terminateSessionWithCheck(e)}">${_t("button.Okay")}</wl-button>
          </div>
-      </wl-dialog>
-      <wl-dialog id="terminate-selected-sessions-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">Let's double-check</wl-title>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="terminate-selected-sessions-dialog" backdrop>
+         <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
             <p>${_t("session.TerminatingSessionDialog")} ${_t("session.CheckAgainDialog")}</p>
          </div>
-         <div slot="footer">
+         <div slot="footer" class="horizontal end-justified flex layout">
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
             <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t("button.Okay")}</wl-button>
          </div>
-      </wl-dialog>
+      </backend-ai-dialog>
       <backend-ai-dialog id="export-to-csv" backdrop>
         <span slot="title">${_t("session.ExportSessionListToCSVFile")}</span>
         <div slot="content">
