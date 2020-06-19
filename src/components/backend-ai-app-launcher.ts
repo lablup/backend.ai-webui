@@ -354,17 +354,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     dialog.show();
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
-
-    if (dialog.id === 'ssh-dialog') {
-      const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
-      globalThis.URL.revokeObjectURL(downloadLinkEl.href);
-    }
-  }
-
   render() {
     // language=HTML
     return html`

@@ -220,7 +220,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-bg-active-flat: var(--paper-red-600);
         }
 
-        wl-dialog wl-textfield {
+        backend-ai-dialog wl-textfield {
           padding: 10px 0px;
           --input-font-family: Roboto, Noto, sans-serif;
           --input-font-size: 12px;

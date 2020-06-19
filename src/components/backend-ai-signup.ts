@@ -10,6 +10,7 @@ import 'weightless/dialog';
 import 'weightless/card';
 import '@material/mwc-textfield';
 import './lablup-terms-of-service';
+import './backend-ai-dialog';
 
 import '../lib/backend.ai-client-es6';
 
@@ -177,7 +178,7 @@ export default class BackendAiSignup extends BackendAIPage {
 
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
@@ -269,15 +270,9 @@ export default class BackendAiSignup extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <div>${_t("signup.SignupBETA")}</div>
-            <div class="flex"></div>
-            <wl-button class="fab"  style="width:40px;" fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
+      <backend-ai-dialog id="signup-panel" narrowLayout fixed blockscrolling persistent disablefocustrap>
+        <span slot="title">${_t("signup.SignupBETA")}</span>
+        <div slot="content">
           <form id="signup-form">
             <fieldset>
               <mwc-textfield type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
@@ -311,27 +306,27 @@ export default class BackendAiSignup extends BackendAIPage {
                           <span id="signup-button-message">${_t("signup.Signup")}</span></wl-button>
             </fieldset>
           </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="block-panel" fixed backdrop blockscrolling persistent>
-        <wl-card>
-          <h3>Error</h3>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="block-panel" fixed type="error" backdrop blockscrolling persistent>
+        <span slot="title">${_t('dialog.error.Error')}</span>
+        <div slot="content">
           <div style="text-align:center;">
           ${this.errorMsg}
           </div>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="email-sent-dialog" fixed backdrop blockscrolling persistent>
-        <wl-card>
-          <h3>${_t("signup.ThankYou")}</h3>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="email-sent-dialog" noclosebutton fixed backdrop blockscrolling persistent>
+        <span slot="title">${_t("signup.ThankYou")}</span>
+        <div slot="content">
           <div style="max-width:350px; padding:1em">${_t("signup.VerificationMessage")}</div>
-        </wl-card>
+        </div>
         <div slot="footer">
           <wl-button class="ok" @click="${(e) => {
-      e.target.closest('wl-dialog').hide()
+      e.target.closest('backend-ai-dialog').hide()
     }}">${_t("button.Okay")}</wl-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
       <lablup-terms-of-service id="terms-of-service"></lablup-terms-of-service>
     `;
   }

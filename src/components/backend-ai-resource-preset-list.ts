@@ -247,15 +247,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </vaadin-grid>
         </div>
       </wl-card>
-      <wl-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro centered">
-          <h3 class="horizontal center layout">
-            <span>${_t("resourcePreset.ModifyResourcePreset")}</span>
-            <div class="flex"></div>
-            <wl-button class="fg orange" fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
+      <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t("resourcePreset.ModifyResourcePreset")}</span>
+        <div slot="content" class="login-panel intro centered">
           <form id="login-form">
             <fieldset>
               <mwc-textfield type="text" name="preset_name" id="id_preset_name" label="${_t("resourcePreset.PresetName")}"
@@ -287,17 +281,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
               </wl-button>
             </fieldset>
           </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="create-preset-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("resourcePreset.CreateResourcePreset")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="create-preset-dialog" narrowLayout fixed backdrop blockscrolling>
+        <span slot="title">${_t("resourcePreset.CreateResourcePreset")}</span>
+        <div slot="content" class="login-panel intro centered">
           <form id="preset-creation-form">
             <fieldset>
               <mwc-textfield
@@ -338,20 +326,20 @@ class BackendAiResourcePresetList extends BackendAIPage {
               </wl-button>
             </fieldset>
           </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">${_t("dialog.title.LetsDouble-Check")}</wl-title>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
+         <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
             <p>${_t("resourcePreset.AboutToDeletePreset")}</p>
             <p style="text-align:center;">${this.presetName}</p>
             <p>${_t("dialog.warning.CannotBeUndone")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
-         <div slot="footer">
+         <div slot="footer" class="horizontal end-justified flex layout">
             <wl-button class="fg orange cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
             <wl-button class="fg orange ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">${_t("button.Okay")}</wl-button>
          </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `;
   }
 
@@ -390,7 +378,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 

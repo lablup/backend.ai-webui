@@ -675,16 +675,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
         </div>` : html``}
       </wl-card>
-      <wl-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
-        <div slot="header" style="padding: 0px 20px;">
-        <h3 class="horizontal center layout">
-          <span>${_t("usersettings.BootstrapScript")}</span>
-          <div class="flex"></div>
-          <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-            <wl-icon>close</wl-icon>
-          </wl-button>
-        </h3>
-        </div>
+      <backend-ai-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
+        <span slot="title">${_t("usersettings.BootstrapScript")}</span>
         <div slot="content">
           <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
         </div>
@@ -693,33 +685,25 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <wl-button id="save-code" class="button" @click="${() => this._saveBootstrapScript()}">${_t("button.Save")}</wl-button>
           <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
         </div>
-      </wl-dialog>
-      <wl-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
-        <div slot="header" style="padding: 0px 20px;">
-          <h3 class="horizontal center layout">
-            <span>Edit ${this.rcfile} shell script</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <div class="vertical layout">
-            <mwc-multi-select id="select-rcfile-type"
-                        label="config file name"
-                        required
-                        validationMessage="Please select one option."
-                        @selected="${() => this._toggleRcFileName()}">
-              ${this.rcfiles.map(item => html`
-                <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
-                  ${item.path}
-                </mwc-list-item>`)}
-            </mwc-multi-select>
-            <div class="horizontal layout">
-              <wl-icon class="warning">warning</wl-icon>
-              <wl-label class="warning" for="warning">
-               ${_t("dialog.warning.WillBeAppliedToNewSessions")}
-              </wl-label>
-            </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
+        <span slot="title">Edit ${this.rcfile} shell script</span>
+        <div slot="action" class="vertical layout">
+          <mwc-multi-select id="select-rcfile-type"
+                      label="config file name"
+                      required
+                      validationMessage="Please select one option."
+                      @selected="${() => this._toggleRcFileName()}">
+            ${this.rcfiles.map(item => html`
+              <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
+                ${item.path}
+              </mwc-list-item>`)}
+          </mwc-multi-select>
+          <div class="horizontal layout">
+            <wl-icon class="warning">warning</wl-icon>
+            <wl-label class="warning" for="warning">
+             ${_t("dialog.warning.WillBeAppliedToNewSessions")}
+            </wl-label>
           </div>
         </div>
         <div slot="content">
@@ -731,13 +715,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <wl-button style="margin-left:10px;" id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
           <wl-button style="margin-left:10px;" id="delete-all" @click="${() => this._deleteRcFileAll()}" style="display:none;">${_t("button.DeleteAll")}</wl-button>
         </div>
-      </wl-dialog>
-      <wl-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
-        <div slot="header" style="border-bottom:none;">
-          <h3>${_t("usersettings.DialogSaveToSpecificFile", {File: () => this.prevRcfile})}
-          </h3>
-          <span>${_t("usersettings.DialogNoSaveNoPreserve")}</span>
-        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
+        <span slot="title">${_t("usersettings.DialogSaveToSpecificFile", {File: () => this.prevRcfile})}
+        <span slot="action">${_t("usersettings.DialogNoSaveNoPreserve")}</span>
         <div slot="footer" style="border-top:none;">
           <wl-button id="discard-editor-data"
                      style="margin: 0 10px;"
@@ -752,7 +733,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                      @click="${() => this._cancelCurrentEditorChange()}">
                      ${_t("button.Cancel")}</wl-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `;
   }
 }
