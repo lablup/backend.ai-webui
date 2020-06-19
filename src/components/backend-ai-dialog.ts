@@ -73,7 +73,7 @@ export default class BackendAiDialog extends LitElement {
 
         wl-dialog div.content {
           padding: var(--component-padding, 15px);
-          font-size: var(--component-font-size, 13px);
+          font-size: var(--component-font-size, 14px);
           word-break: keep-all;
         }
 

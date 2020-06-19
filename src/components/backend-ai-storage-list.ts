@@ -342,6 +342,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           --component-min-width: 600px;
         }
 
+        backend-ai-dialog {
+          --component-min-width: 350px;
+        }
+
       `];
   }
 
