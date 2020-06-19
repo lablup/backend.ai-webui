@@ -89,10 +89,6 @@ export default class BackendAICredentialView extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        wl-button.create-button {
-          width: 335px;
-        }
-
         #new-keypair-dialog {
           min-width: 350px;
         }
@@ -224,6 +220,10 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         mwc-icon-button#dropdown-menu-button {
           margin-left: 10px;
+        }
+
+        backend-ai-dialog {
+          --component-min-width: 350px;
         }
       `];
   }
@@ -825,7 +825,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       </wl-card>
       <backend-ai-dialog id="new-keypair-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("credential.AddCredential")}</span>
-        <div slot="content" class="login-panel intro centered">
+        <div slot="content">
           <wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
                        auto-validate></wl-textfield>
           <div class="horizontal center layout">
@@ -856,7 +856,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           </wl-expansion>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-            <wl-button class="fg blue create-button" id="create-keypair-button" outlined type="button"
+            <wl-button class="fg blue full-size" id="create-keypair-button" outlined type="button"
             @click="${this._addKeyPair}">
                        <wl-icon>add</wl-icon>
                        ${_t("general.Add")}
@@ -866,7 +866,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       <backend-ai-dialog id="new-policy-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("credential.CreateResourcePolicy")}</span>
 
-        <div slot="content" class="login-panel intro centered">
+        <div slot="content">
           <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
                            validationMessage="Policy name is Required."
                            required></mwc-textfield>
@@ -962,7 +962,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-            <wl-button class="fg blue create-button" id="create-policy-button" type="button" outlined
+            <wl-button class="fg blue full-size" id="create-policy-button" type="button" outlined
              @click="${() => this._addResourcePolicy()}">
                        <wl-icon>add</wl-icon>
                        ${_t("credential.Create")}
@@ -971,7 +971,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="new-user-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("credential.CreateUser")}</span>
-        <div slot="content" class="login-panel intro centered">
+        <div slot="content">
           <wl-textfield
             type="email"
             name="user_email"
@@ -1003,7 +1003,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           </wl-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
+          <wl-button class="fg blue full-size" id="create-user-button" outlined type="button"
           @click="${this._addUser}">
             <wl-icon>add</wl-icon>
             ${_t("credential.CreateUser")}

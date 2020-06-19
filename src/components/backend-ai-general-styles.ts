@@ -504,6 +504,10 @@ export const BackendAiStyles = [
       --button-font-size: 14px;
     }
 
+    wl-button.full-size {
+      width: 100%;
+    }
+
     wl-button,
     wl-expansion,
     wl-textfield {

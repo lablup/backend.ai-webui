@@ -107,7 +107,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
         }
 
         wl-button.create-button {
-          width: 335px;
           --button-bg: white;
           --button-bg-hover: var(--paper-yellow-100);
           --button-bg-active: var(--paper-yellow-600);
@@ -274,7 +273,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 <mwc-textfield id="shmem-resource" type="number" label="Shared Memory (GB)" min="0"></mwc-textfield>
               </div>
               <br/><br/>
-              <wl-button class="fg orange create-button" outlined type="button"
+              <wl-button class="fg orange create-button full-size" outlined type="button"
                 @click="${() => this._modifyResourceTemplate()}">
                 <wl-icon>check</wl-icon>
                 ${_t("button.SaveChanges")}
@@ -283,9 +282,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </form>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="create-preset-dialog" narrowLayout fixed backdrop blockscrolling>
+      <backend-ai-dialog id="create-preset-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("resourcePreset.CreateResourcePreset")}</span>
-        <div slot="content" class="login-panel intro centered">
+        <div slot="content">
           <mwc-textfield
             type="text"
             name="preset_name"
@@ -315,7 +314,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button
-            class="fg orange create-button"
+            class="fg orange create-button full-size"
             id="create-policy-button"
             outlined
             type="button"
