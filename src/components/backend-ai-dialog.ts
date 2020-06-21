@@ -64,7 +64,7 @@ export default class BackendAiDialog extends LitElement {
           background-color: var(--general-dialog-background-color, #ffffff);
         }
 
-        wl-dialog h3.warning {
+        wl-dialog.warning h3 {
           color: red;
         }
 
@@ -140,9 +140,9 @@ export default class BackendAiDialog extends LitElement {
                     ?backdrop="${this.backdrop}"
                     ?scrollable="${this.scrollable}"
                     blockscrolling
-                    style="padding:0;">
+                    style="padding:0;" class="${this.type}">
         <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h3 class="horizontal center layout ${this.type}" style="font-weight:bold">
+          <h3 class="horizontal center layout" style="font-weight:bold">
             <span><slot name="title"></slot></span>
             <div class="flex"></div>
             <slot name="action"></slot>
