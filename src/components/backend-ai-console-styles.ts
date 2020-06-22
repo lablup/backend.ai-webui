@@ -231,6 +231,7 @@ export const BackendAiConsoleStyles = [
       --mdc-select-outlined-idle-border-color: rgba(255, 255, 255, 0.42);
       --mdc-select-outlined-hover-border-color: rgba(255, 255, 255, 0.87);
       --mdc-theme-surface: white;
+      --mdc-theme-primary: rgba(255, 255, 255, 1.0);
       --mdc-list-vertical-padding: 5px;
       --mdc-list-side-padding: 10px;
       --mdc-menu-item-height: 28px;
