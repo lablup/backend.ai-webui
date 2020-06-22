@@ -14,12 +14,11 @@ import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-select';
+import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-textfield';
 
 import 'weightless/button';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/divider';
 import 'weightless/icon';
 import 'weightless/label';
@@ -31,6 +30,7 @@ import 'weightless/textfield';
 import '@material/mwc-icon-button';
 
 import '../plastics/lablup-shields/lablup-shields';
+import './backend-ai-dialog';
 import './backend-ai-storage-list';
 import {default as PainKiller} from './backend-ai-painkiller';
 
@@ -104,7 +104,7 @@ export default class BackendAIData extends BackendAIPage {
         }
 
         wl-button.button {
-          width: 330px;
+          width: 350px;
         }
 
         mwc-icon-button.tiny {
@@ -154,13 +154,21 @@ export default class BackendAIData extends BackendAIPage {
           color: var(--paper-orange-900);
         }
 
-        wl-dialog wl-textfield,
-        wl-dialog wl-select {
+        #add-folder-dialog {
+          --component-width: 400px;
+        }
+
+        backend-ai-dialog wl-textfield,
+        backend-ai-dialog wl-select {
           --input-font-family: Roboto, Noto, sans-serif;
           --input-color-disabled: #222222;
           --input-label-color-disabled: #222222;
           --input-label-font-size: 12px;
           --input-border-style-disabled: 1px solid #cccccc;
+        }
+
+        #help-description {
+          --component-width: 350px;
         }
 
         #textfields wl-textfield,
@@ -173,8 +181,9 @@ export default class BackendAIData extends BackendAIPage {
           --label-color: black;
         }
 
-        mwc-select {
+        mwc-multi-select {
           width: 180px;
+          --mdc-select-min-width: 180px;
           margin-bottom: 10px;
           --mdc-theme-primary: var(--paper-orange-600);
           --mdc-select-fill-color: transparent;
@@ -192,7 +201,7 @@ export default class BackendAIData extends BackendAIPage {
           padding: 5px !important;
         }
 
-        mwc-select mwc-icon-button {
+        mwc-multi-select mwc-icon-button {
           --mdc-icon-button-size: 24px;
         }
 
@@ -225,89 +234,76 @@ export default class BackendAIData extends BackendAIPage {
           <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
         </div>
       </wl-card>
-      <wl-dialog id="add-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro centered">
-          <h3 class="horizontal center layout">
-            <span>${_t("data.CreateANewStorageFolder")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <section>
-            <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]*"
-                auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
-            <div class="horizontal layout">
-              <mwc-select id="add-folder-host" label="${_t("data.Host")}">
-                ${this.vhosts.map((item, idx) => html`
-                  <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
-                    <span>${item}</span>
-                    <mwc-icon-button slot="meta" icon="info" class="fg orange info"
-                        @click="${(e) => { this._showStorageDescription(e, item); }}">
-                    </mwc-icon-button>
-                  </mwc-list-item>
-                `)}
-              </mwc-select>
-              <mwc-select id="add-folder-type" label="${_t("data.Type")}">
-                ${(this.allowed_folder_type as String[]).includes('user') ? html`
-                  <mwc-list-item value="user" selected>${_t("data.User")}</mwc-list-item>
-                ` : html``}
-                ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
-                  <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as String[]).includes('user')}">${_t("data.Group")}</mwc-list-item>
-                ` : html``}
-              </mwc-select>
-            </div>
-            ${this._vfolderInnatePermissionSupport ? html`
-              <div class="horizontal layout">
-                <mwc-select id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
-                  ${this.usageModes.map((item, idx) => html`
-                    <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
-                  `)}
-                </mwc-select>
-                <mwc-select id="add-folder-permission" label="${_t("data.Type")}">
-                  ${this.permissions.map((item, idx) => html`
-                    <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
-                  `)}
-                </mwc-select>
-              </div>
-            ` : html``}
-            ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
-              <div class="horizontal layout">
-                <mwc-select id="add-folder-group" label="${_t("data.Group")}">
-                  ${(this.allowedGroups as any).map((item, idx) => html`
-                    <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
-                  `)}
-                </mwc-select>
-              </div>
-            ` : html``}
-            <div style="font-size:11px;">
-              ${_t("data.DialogFolderStartingWithDotAutomount")}
-            </div>
-            <br/>
-            <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
-              <wl-icon>rowing</wl-icon>
-               ${_t("data.Create")}
-            </wl-button>
-          </section>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="help-description" fixed backdrop blockscrolling persistent style="padding:0;">
-        <wl-card class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span style="font-size:16px;">${this._helpDescriptionTitle}</span>
-            <div class="flex"></div>
-            <mwc-icon-button icon="close" class="blue close-button"
-              @click="${(e) => this._hideDialog(e)}">
-            </mwc-icon-button>
-          </h3>
-          <div class="horizontal layout center" style="margin:5px;">
-          ${this._helpDescriptionIcon == '' ? html`` : html`
-            <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
-            `}
-            <p style="font-size:14px;width:256px;">${unsafeHTML(this._helpDescription)}</p>
+      <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
+        <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
+        <div slot="content">
+          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]*"
+              auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
+          <div class="horizontal layout">
+            <mwc-multi-select id="add-folder-host" label="${_t("data.Host")}">
+              ${this.vhosts.map((item, idx) => html`
+                <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
+                  <span>${item}</span>
+                  <mwc-icon-button slot="meta" icon="info" class="fg orange info"
+                      @click="${(e) => {
+      this._showStorageDescription(e, item);
+    }}">
+                  </mwc-icon-button>
+                </mwc-list-item>
+              `)}
+            </mwc-multi-select>
+            <mwc-multi-select id="add-folder-type" label="${_t("data.Type")}">
+              ${(this.allowed_folder_type as String[]).includes('user') ? html`
+                <mwc-list-item value="user" selected>${_t("data.User")}</mwc-list-item>
+              ` : html``}
+              ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
+                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as String[]).includes('user')}">${_t("data.Group")}</mwc-list-item>
+              ` : html``}
+            </mwc-multi-select>
           </div>
-        </wl-card>
-      </wl-dialog>
+          ${this._vfolderInnatePermissionSupport ? html`
+            <div class="horizontal layout">
+              <mwc-multi-select id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
+                ${this.usageModes.map((item, idx) => html`
+                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+                `)}
+              </mwc-multi-select>
+              <mwc-multi-select id="add-folder-permission" label="${_t("data.Type")}">
+                ${this.permissions.map((item, idx) => html`
+                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+                `)}
+              </mwc-multi-select>
+            </div>
+          ` : html``}
+          ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
+            <div class="horizontal layout">
+              <mwc-multi-select id="add-folder-group" label="${_t("data.Group")}">
+                ${(this.allowedGroups as any).map((item, idx) => html`
+                  <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                `)}
+              </mwc-multi-select>
+            </div>
+          ` : html``}
+          <div style="font-size:11px;">
+            ${_t("data.DialogFolderStartingWithDotAutomount")}
+          </div>
+        </div>
+        <div slot="footer">
+          <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
+            <wl-icon>rowing</wl-icon>
+             ${_t("data.Create")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="help-description" fixed backdrop>
+        <span slot="title">${this._helpDescriptionTitle}</span>
+        <div slot="content" class="horizontal layout center">
+        ${this._helpDescriptionIcon == '' ? html`` : html`
+          <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
+          `}
+          <p style="font-size:14px;width:256px;">${unsafeHTML(this._helpDescription)}</p>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 
@@ -467,7 +463,7 @@ export default class BackendAIData extends BackendAIPage {
     if (nameEl.checkValidity()) {
       let job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission);
       job.then((value) => {
-        this.notification.text = 'Folder is successfully created.';
+        this.notification.text = _text('data.folders.FolderCreated');
         this.notification.show();
         this._refreshFolderList();
       }).catch(err => {
@@ -489,12 +485,6 @@ export default class BackendAIData extends BackendAIPage {
     for (const list of this.folderLists) {
       list.refreshFolderList();
     }
-  }
-
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
   }
 }
 declare global {

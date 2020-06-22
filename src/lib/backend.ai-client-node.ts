@@ -43,7 +43,7 @@ class ClientConfig {
   constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
     // default configs.
     this._apiVersionMajor = '4';
-    this._apiVersion = 'v4.20190315'; // For compatibility with 19.03 / 1.4
+    this._apiVersion = 'v4.20190615'; // For compatibility with 19.03 / 1.4
     this._hashType = 'sha256';
     if (endpoint === undefined || endpoint === null)
       endpoint = 'https://api.backend.ai';
@@ -160,6 +160,8 @@ class Client {
   public registry: Registry;
   public setting: Setting;
   public userConfig: UserConfig;
+  public cloud: Cloud;
+  public service: Service;
   public _features: any;
   public ready: boolean = false;
   public abortController: any;
@@ -212,7 +214,9 @@ class Client {
     this.registry = new Registry(this);
     this.setting = new Setting(this);
     this.userConfig = new UserConfig(this);
+    this.service = new Service(this);
     this.domain = new Domain(this);
+    this.cloud = new Cloud(this);
 
     this._features = {}; // feature support list
     this.abortController = new AbortController();
@@ -268,7 +272,6 @@ class Client {
           controller.abort();
         }, (timeout === 0 ? this.requestTimeout : timeout));
       }
-      let resp;
       resp = await fetch(rqst.uri, rqst);
       if (typeof requestTimer !== "undefined") {
         clearTimeout(requestTimer);
@@ -636,8 +639,9 @@ class Client {
    * @param {string} kernelType - the kernel type (usually language runtimes)
    * @param {string} sessionId - user-defined session ID
    * @param {object} resources - Per-session resource
+   * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
    */
-  createIfNotExists(kernelType, sessionId, resources = {}) {
+  createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0) {
     if (typeof sessionId === 'undefined' || sessionId === null)
       sessionId = this.generateSessionId();
     let params = {
@@ -715,7 +719,8 @@ class Client {
     } else {
       rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
     }
-    return this._wrapWithPromise(rqst);
+    //return this._wrapWithPromise(rqst);
+    return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
   /**
@@ -1354,9 +1359,10 @@ class VFolder {
    * @param {string} file - File to download. Should contain full path.
    * @param {string} name - Virtual folder name that files are in.
    */
-  download(file, name = false) {
+  download(file, name = false, archive = false) {
     let params = {
-      'file': file
+      file,
+      archive
     };
     let q = querystring.stringify(params);
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
@@ -1368,10 +1374,12 @@ class VFolder {
    *
    * @param {string} file - File to download. Should contain full path.
    * @param {string} name - Virtual folder name that files are in.
+   * @param {string} archive - Download target directory as an archive.
    */
-  request_download_token(file, name = false) {
+  request_download_token(file, name = false, archive = false) {
     let body = {
-      'file': file
+      file,
+      archive
     };
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
     return this.client._wrapWithPromise(rqst);
@@ -1944,7 +1952,7 @@ class ContainerImage {
     if (Object.keys(resource).length === 0) {
       resource = {'cpu': '1', 'mem': '512m'};
     }
-    return this.client.createIfNotExists(registry + name, sessionId, resource).then((response) => {
+    return this.client.createIfNotExists(registry + name, sessionId, resource, 600000).then((response) => {
       return this.client.destroyKernel(sessionId);
     }).catch(err => {
       throw err;
@@ -2059,6 +2067,33 @@ class ComputeSession {
     }
     return this.client.gql(q, v);
   }
+
+  /**
+   * get compute session with specific condition.
+   *
+   * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
+   * @param {string} sessionName - session name to query specific compute session.
+   * @param {string} domainName - domain name to query specific compute session.
+   * @param {string} accessKey - access key that is used to start compute sessions.
+   */
+  async get(fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
+            sessionName = '', domainName = '', accessKey = '') {
+    fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
+    let q, v;
+    q = `query($ak:String, $domain_name:String, $session_name:String!) {
+      compute_session(access_key:$ak, domain_name:$domain_name, sess_id:$session_name) {
+        ${fields.join(" ")}
+      }
+    }`;
+
+    v = {
+      'ak': accessKey,
+      'domain_name': domainName,
+      'session_name': sessionName
+    };
+    return this.client.gql(q, v);
+  }
+
 }
 
 class Resources {
@@ -2795,9 +2830,48 @@ class Setting {
   }
 }
 
+class Service {
+  public client: any;
+  public config: any;
+
+  /**
+   * Service-specific API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+    this.config = null;
+  }
+
+  /**
+   * Get announcements
+   *
+   */
+  get_announcement() {
+    const rqst = this.client.newSignedRequest("GET", "/manager/announcement", null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Update announcement
+   *
+   * @param {boolean} enabled - Enable / disable announcement. Default is True.
+   * @param {string} message - Announcement content. Usually in Markdown syntax.
+   */
+  update_announcement(enabled = true, message) {
+    const rqst = this.client.newSignedRequest("POST", "/manager/announcement", {
+      "enabled": enabled,
+      "message": message
+    });
+    return this.client._wrapWithPromise(rqst);
+  }
+}
+
 class UserConfig {
   public client: any;
   public config: any;
+
   /**
    * Setting API wrapper.
    *
@@ -2881,12 +2955,81 @@ class UserConfig {
    */
   delete_dotfile_script(path: string) {
     let params = {
-      "path" : path
+      "path": path
     }
     const rqst = this.client.newSignedRequest("DELETE", "/user-config/dotfiles", params);
     return this.client._wrapWithPromise(rqst);
   }
 
+}
+
+class Cloud {
+  public client: any;
+  public config: any;
+
+  /**
+   * Setting API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client: Client) {
+    this.client = client;
+    this.config = null;
+  }
+
+  /**
+   * Check if cloud endpoint is available.
+   */
+  ping() {
+    const rqst = this.client.newSignedRequest('GET', '/cloud/ping');
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Verify signup email by JWT token.
+   *
+   * @param {string} token - JWT token which is delivered to user's email.
+   */
+  verify_email(token: string) {
+    const body = {"verification_code": token};
+    const rqst = this.client.newSignedRequest("POST", "/cloud/verify-email", body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Send verification email.
+   *
+   * @param {string} email - user's email.
+   */
+  send_verification_email(email: string) {
+    const body = {email};
+    const rqst = this.client.newSignedRequest("POST", "/cloud/send-verification-email", body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Send password change email to assist users who forgot their password.
+   *
+   * @param {string} email - user's email.
+   */
+  send_password_change_email(email: string) {
+    const body = {email};
+    const rqst = this.client.newSignedRequest("POST", "/cloud/send-password-change-email", body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Verify JWT token for changing password.
+   *
+   * @param {string} email - user's email (for verification).
+   * @param {string} password - new password.
+   * @param {string} token - JWT token which is delivered to user's email.
+   */
+  change_password(email: string, password: string, token: string) {
+    const body = {email, password, token};
+    const rqst = this.client.newSignedRequest("POST", "/cloud/change-password", body);
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class utils {

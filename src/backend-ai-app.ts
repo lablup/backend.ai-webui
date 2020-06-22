@@ -80,6 +80,12 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
     case 'logs':
       import('./components/backend-ai-error-log-view.js');
       break;
+    case 'verify-email':
+      import('./components/backend-ai-email-verification-view.js');
+      break;
+    case 'change-password':
+      import('./components/backend-ai-change-forgot-password-view.js');
+      break;
     default:
       if (typeof globalThis.backendaiPage !== 'undefined') {
         for (let item of globalThis.backendaiPage) {

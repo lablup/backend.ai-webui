@@ -21,20 +21,17 @@
 
   <script>
     globalThis.isElectron = isElectron();
-    globalThis.enableSW = false;
+    globalThis.enableSW = true;
 
     globalThis.process = {env: {NODE_ENV: 'production'}};
-    globalThis.packageVersion = "20.04.5";
-    globalThis.buildVersion = "200427.150428";
+    globalThis.packageVersion = "20.06.3";
+    globalThis.buildVersion = "200622.100653";
   </script>
   <style>
     body {
       margin: 0;
       font-family: 'Quicksand', Roboto, sans-serif;
-      background-color: rgba(244, 245, 247, 1);
-    }
-
-    body {
+      background-color: rgba(255, 255, 255, 1);
       background-image: url("resources/images/loading-background-large.jpg");
       background-repeat: no-repeat;
       background-attachment: fixed;
@@ -236,9 +233,17 @@
     document.getElementById('loading-message').innerText = 'Not supported browser.';
     document.getElementById('loading-message').style.color = 'red';
   }
-  if ('enableSW' in globalThis && globalThis.enableSW === true) {
+  if (!['127.0.0.1', 'localhost'].includes(window.location.hostname) &&
+    'enableSW' in globalThis &&
+    globalThis.enableSW === true) {
     // Service worker routine.
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+      });
+    }
   }
 </script>
+<script src="./dist/components/backend-ai-console.js" type="module"></script>
 </body>
 </html>

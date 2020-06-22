@@ -1,5 +1,131 @@
 # Changelog
 
+## v20.06.2 (16/06/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**hard**][**major**][**UI / UX**][**library / SDK**] Show app launcher after launch a session on summary page (#575) [#575](https://github.com/lablup/backend.ai-console/issues/575)
+
+
+## v20.06.1 (13/06/2020)
+
+#### Bug Fixes:
+- [**UI / UX**][**bug**][**major**][**blocker**] Sometimes environment list did not refreshed correctly [#576](https://github.com/lablup/backend.ai-console/issues/576)
+
+
+## v20.06.0 (12/06/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**library / SDK**][**minor**] Change session store method for console-server [#567](https://github.com/lablup/backend.ai-console/issues/567)
+- [**cloud**][**enhancement**][**library / SDK**] Let Cloud users to change their forgot password by email verification [#564](https://github.com/lablup/backend.ai-console/issues/564)
+- [**UI / UX**][**cloud**][**enhancement**][**enterprise**][**major**] Provide method to turn off some menus by setting [#562](https://github.com/lablup/backend.ai-console/issues/562)
+- [**cloud**][**enhancement**][**major**][**web**] Re-enable service worker to reduce traffic load [#554](https://github.com/lablup/backend.ai-console/issues/554)
+- [**UI / UX**][**cloud**][**enhancement**][**library / SDK**][**major**] Add support for signup user email verification [#536](https://github.com/lablup/backend.ai-console/issues/536)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**minor**] Resource monitor panel is not updated after session creation [#566](https://github.com/lablup/backend.ai-console/issues/566)
+- [**UI / UX**][**bug**] Session list has scrollbar on admin mode [#560](https://github.com/lablup/backend.ai-console/issues/560)
+- [**blocker**][**bug**][**major**] 'No suitable preset' is not shown when preset does not exist [#559](https://github.com/lablup/backend.ai-console/issues/559)
+- [**bug**][**minor**] Preset does not work after cpu/memory values are set manually by Advanced panel [#555](https://github.com/lablup/backend.ai-console/issues/555)
+- [**UI / UX**][**bug**][**hard**] Resource slider shows zero on first launch dialog [#553](https://github.com/lablup/backend.ai-console/issues/553)
+- [**UI / UX**][**bug**][**minor**] Wait to enable session launch button before SDK is connected to manager [#552](https://github.com/lablup/backend.ai-console/issues/552)
+- [**UI / UX**][**blocker**][**bug**] Resource preset is not refreshed at the first launch [#551](https://github.com/lablup/backend.ai-console/issues/551)
+- [**UI / UX**][**blocker**][**bug**][**library / SDK**] Check password condition on change [#549](https://github.com/lablup/backend.ai-console/issues/549)
+
+#### UI / UX:
+
+- [**UI / UX**][**easy**][**minor**] Limit maximum allowed CPU cores to 64 [#571](https://github.com/lablup/backend.ai-console/issues/571)
+- [**UI / UX**][**minor**] Display TensorFlow/PyTorch versions for NGC images [#569](https://github.com/lablup/backend.ai-console/issues/569)
+
+
+## v20.05.5 (26/05/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**major**] Notification stack UI on sidepanel [#547](https://github.com/lablup/backend.ai-console/issues/547)
+- [**UI / UX**][**enhancement**][**major**] Asychronous tooltip to increase UI response speed [#543](https://github.com/lablup/backend.ai-console/issues/543)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] UI for Background task [#542](https://github.com/lablup/backend.ai-console/issues/542)
+- [**UI / UX**][**cloud**][**enhancement**][**library / SDK**][**major**] Add support for signup user email verification [#536](https://github.com/lablup/backend.ai-console/issues/536)
+- [**UI / UX**][**app**][**enhancement**][**hard**][**library / SDK**][**major**] Task monitor UI component  [#505](https://github.com/lablup/backend.ai-console/issues/505)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**] Resource preset is not refreshed at the first launch [#551](https://github.com/lablup/backend.ai-console/issues/551)
+- [**UI / UX**][**bug**][**major**] Tooltip overrided by main content adrea on mini sidebar mode on Safari [#544](https://github.com/lablup/backend.ai-console/issues/544)
+- [**UI / UX**][**bug**][**library / SDK**][**minor**] Image install shows error message if it takes more than 5 sec. [#541](https://github.com/lablup/backend.ai-console/issues/541)
+
+
+## v20.05.4 (22/05/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**library / SDK**][**maintenance**] Adopt tus v2 client [#530](https://github.com/lablup/backend.ai-console/issues/530)
+- [**UI / UX**][**enhancement**][**major**] New UI for 20.03 (with summary / sidebar) [#518](https://github.com/lablup/backend.ai-console/issues/518)
+
+#### Bug Fixes:
+
+- [**bug**][**easy**] Exception when logged in as a user (or in login page) [#532](https://github.com/lablup/backend.ai-console/issues/532)
+
+
+## v20.05.3 (15/05/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Hover menu description on simple sidebar menu [#528](https://github.com/lablup/backend.ai-console/issues/528)
+- [**UI / UX**][**cloud**][**enhancement**][**minor**] Link online help page on each menu [#524](https://github.com/lablup/backend.ai-console/issues/524)
+- [**enhancement**][**enterprise**][**library / SDK**][**world console**] Change default Dockerfile to use console-server [#523](https://github.com/lablup/backend.ai-console/issues/523)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**] Environment change sometimes does not update presets with GPUs [#525](https://github.com/lablup/backend.ai-console/issues/525)
+
+
+## v20.05.2 (14/05/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Modified some missing i18n resources.
+
+
+## v20.05.1 (08/05/2020)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**library / SDK**][**major**] Multiple virtual folder does not mount on GUI [#520](https://github.com/lablup/backend.ai-console/issues/520)
+
+
+## v20.05.0 (07/05/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Add description about common storage types [#509](https://github.com/lablup/backend.ai-console/issues/509)
+- [**UI / UX**][**bug**][**enhancement**] More CUDA resource minimum settings for image default [#507](https://github.com/lablup/backend.ai-console/issues/507)
+- [**UI / UX**][**enhancement**][**hard**][**library / SDK**][**major**] Unified event tasker [#498](https://github.com/lablup/backend.ai-console/issues/498)
+
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**easy**]  Hide GPU pane on summary page if it does not exist [#519](https://github.com/lablup/backend.ai-console/issues/519)
+- [**UI / UX**][**bug**][**easy**] Set unlimited concurrent jobs number to 1000000 [#516](https://github.com/lablup/backend.ai-console/issues/516)
+- [**bug**][**library / SDK**][**minor**] Resource indicator sometimes does not refreshed after changing resource group [#513](https://github.com/lablup/backend.ai-console/issues/513)
+- [**UI / UX**][**bug**][**minor**] Version item does not update when environment is changed on session launch panel [#510](https://github.com/lablup/backend.ai-console/issues/510)
+- [**blocker**][**bug**][**library / SDK**][**minor**] etcd broken when image metadata is modified with Harbor registry URL with colon  [#508](https://github.com/lablup/backend.ai-console/issues/508)
+#### UI / UX:
+
+- [**UI / UX**][**easy**][**enterprise**] Folder creation keeps last created folder name [#511](https://github.com/lablup/backend.ai-console/issues/511)
+- [**UI / UX**][**easy**][**minor**] Add refresh button in session logs dialog [#502](https://github.com/lablup/backend.ai-console/issues/502)
+
+
+## v20.04.5 (27/04/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**hard**][**library / SDK**][**major**] Unified event tasker [#498](https://github.com/lablup/backend.ai-console/issues/498)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Support shared memory setting to ResourceTemplate [#494](https://github.com/lablup/backend.ai-console/issues/494)
+
+
 ## v20.04.4 (26/04/2020)
 
 #### Enhancements:

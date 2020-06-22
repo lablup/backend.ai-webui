@@ -69,12 +69,10 @@ export default class LablupSlider extends LitElement {
           ?markers="${this.markers}"
           @change="${this.syncToText}">
       </mwc-slider>
-      ${this.editable ? html`
-        <wl-textfield id="textfield" class="${this.id}" type="number"
-          value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
-          @change="${this.syncToSlider}">
-        </wl-textfield>
-      ` : html``}
+      <wl-textfield style="display:none" id="textfield" class="${this.id}" type="number"
+        value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
+        @change="${this.syncToSlider}">
+      </wl-textfield>
       </div>
     `;
   }
@@ -83,6 +81,7 @@ export default class LablupSlider extends LitElement {
     this.slider = this.shadowRoot.querySelector('#slider');
     if (this.editable) {
       this.textfield = this.shadowRoot.querySelector('#textfield');
+      this.textfield.style.display = 'flex';
     }
 
     // wl-textfield does not provide step property. The default step for number input
@@ -109,7 +108,12 @@ export default class LablupSlider extends LitElement {
   updated(changedProperties) {
     changedProperties.forEach((oldVal, propName) => {
       if (propName === 'value') {
-        this.slider.layout();
+        setTimeout(()=>{
+          if (this.editable) {
+            this.syncToSlider();
+          }
+          this.slider.layout();
+        }, 500);
         const event = new CustomEvent('value-changed', {'detail': {}});
         this.dispatchEvent(event);
       }
@@ -139,6 +143,7 @@ export default class LablupSlider extends LitElement {
       this.textfield.value = this.min;
     }
     this.value = this.textfield.value;
+    this.slider.value = this.textfield.value;
     // updated function will be automatically called.
   }
 

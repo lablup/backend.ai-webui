@@ -1,13 +1,13 @@
---- mwc-select-base.ts	2020-05-06 14:42:20.000000000 +0900
-+++ mwc-multi-select-base.ts	2020-05-06 15:34:31.000000000 +0900
+--- ./mwc-select-base.ts	2020-05-08 10:45:49.000000000 +0900
++++ ./mwc-multi-select-base.ts	2020-05-08 10:44:13.000000000 +0900
 @@ -168,6 +168,8 @@
-
+ 
    @property({type: Boolean}) naturalMenuWidth = false;
-
+ 
 +  @property({type: Boolean}) multi = false;
 +
    @property({type: Boolean}) protected isUiValid = true;
-
+ 
    get items(): ListItemBase[] {
 @@ -294,6 +296,7 @@
              wrapFocus
@@ -17,7 +17,15 @@
              .fullwidth=${!this.naturalMenuWidth}
              .open=${this.menuOpen}
              .anchor=${this.anchorElement}
-@@ -418,7 +421,14 @@
+@@ -387,6 +390,7 @@
+         return !!this.label;
+       },
+       floatLabel: (shouldFloat) => {
++        shouldFloat = this.selectedText !== '' ? true : false; // this is a temporary change for label floating.
+         if (this.labelElement) {
+           this.labelElement.floatingLabelFoundation.float(shouldFloat);
+         }
+@@ -418,7 +422,14 @@
          }
        },
        notifyChange: async (value) => {
@@ -28,7 +36,45 @@
 +            values.push(item.value);
 +          });
 +          this.selectedText = values.join(',');
++          //this.value = values;
 +        } else if (!this.valueSetDirectly && value === this.value) {
            return;
          }
-
+ 
+@@ -429,6 +440,7 @@
+         this.dispatchEvent(ev);
+       },
+       setSelectedText: (value) => this.selectedText = value,
++      // @ts-ignore
+       isSelectAnchorFocused: () => {
+         const selectAnchorElement = this.anchorElement;
+ 
+@@ -626,8 +638,11 @@
+     }
+   }
+ 
+-  protected selectByValue(value: string) {
++  protected selectByValue(value: any) {
+     let indexToSelect = -1;
++    if (this.multi) {
++      return;
++    }
+     for (let i = 0; i < this.items.length; i++) {
+       const item = this.items[i];
+       if (item.value === value) {
+@@ -715,6 +730,15 @@
+     }
+ 
+     this.mdcFoundation.handleMenuItemAction(evt.detail.index);
++    // CHANGED : to provide multiple selection
++    if (this.multi) {
++      if (this.selected === null) {
++        this.value = '';
++      } else {
++        this.value = (this.selected as any).map(a => a.value);
++        this.selectedText = this.value.toString();
++      }
++    }
+   }
+ 
+   protected onOpened() {
