@@ -8,15 +8,15 @@ const BASE_DIR = __dirname;
 const ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
 const versions = require('./version');
 process.env.liveDebugMode = false;
-let windowWidth = 1280;
-let windowHeight = 970;
+const windowWidth = 1280;
+const windowHeight = 970;
 
 // ES6 module loader with custom protocol
 const nfs = require('fs');
 const npjoin = require('path').join;
 const es6Path = npjoin(__dirname, 'build/electron-app/app');
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'es6', privileges: {  standard: true, secure: true, bypassCSP: true } }
+  {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
 ]);
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -24,13 +24,13 @@ protocol.registerSchemesAsPrivileged([
 let mainWindow;
 let mainContent;
 let devtools;
-let manager = new ProxyManager();
+const manager = new ProxyManager();
 // reference to the app directory. It will merge into local test / electron app version
-var mainIndex = 'build/electron-app/app/index.html';
+const mainIndex = 'build/electron-app/app/index.html';
 let mainURL;
 
 app.once('ready', function() {
-  var template;
+  let template;
   if (process.platform === 'darwin') {
     template = [
       {
@@ -38,16 +38,16 @@ app.once('ready', function() {
         submenu: [
           {
             label: 'About Backend.AI Console',
-            click: function () {
+            click: function() {
               mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
                 '    document.dispatchEvent(event);');
             }
           },
           {
             label: 'App version ' + versions.package +' (rev.' + versions.revision + ')',
-            click: function () {
+            click: function() {
               clipboard.writeText(versions.package +' (rev.' + versions.revision + ')');
-              const response = dialog.showMessageBox({type:'info', message:'Version information is copied to clipboard.'});
+              const response = dialog.showMessageBox({type: 'info', message: 'Version information is copied to clipboard.'});
             }
           },
           {
@@ -55,7 +55,7 @@ app.once('ready', function() {
           },
           {
             label: 'Force Update Screen',
-            click: function () {
+            click: function() {
               mainContent.reloadIgnoringCache();
             }
           },
@@ -140,7 +140,7 @@ app.once('ready', function() {
             label: 'Zoom In',
             accelerator: 'Command+=',
             click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
+              const focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript('_zoomIn()');
               }
@@ -150,7 +150,7 @@ app.once('ready', function() {
             label: 'Zoom Out',
             accelerator: 'Command+-',
             click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
+              const focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript('_zoomOut()');
               }
@@ -160,10 +160,10 @@ app.once('ready', function() {
             label: 'Actual Size',
             accelerator: 'Command+0',
             click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
+              const focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow && focusedWindow.webContents) {
                 focusedWindow.webContents.executeJavaScript(
-                  '_zoomActualSize()');
+                    '_zoomActualSize()');
               }
             }
           },
@@ -171,7 +171,7 @@ app.once('ready', function() {
             label: 'Toggle Full Screen',
             accelerator: 'Ctrl+Command+F',
             click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
+              const focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
               }
@@ -181,7 +181,7 @@ app.once('ready', function() {
             label: 'Toggle Developer Tools',
             accelerator: 'Alt+Command+I',
             click: function() {
-              var focusedWindow = BrowserWindow.getFocusedWindow();
+              const focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.toggleDevTools();
               }
@@ -313,14 +313,14 @@ app.once('ready', function() {
 });
 
 
-function createWindow () {
+function createWindow() {
   // Create the browser window.
   devtools = null;
 
   mainWindow = new BrowserWindow({
     width: windowWidth,
     height: windowHeight,
-    title: "Backend.AI",
+    title: 'Backend.AI',
     frame: true,
     titleBarStyle: 'hiddenInset',
     webPreferences: {
@@ -345,8 +345,8 @@ function createWindow () {
         console.log('No configuration file found.');
         return;
       }
-      let config = toml(data);
-      if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != "") {
+      const config = toml(data);
+      if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != '') {
         mainURL = config.server.consoleServerURL;
       } else {
         mainURL = url.format({
@@ -361,7 +361,7 @@ function createWindow () {
   mainContent = mainWindow.webContents;
   devtools = new BrowserWindow();
   mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
-  mainWindow.webContents.openDevTools({ mode: 'detach' });
+  mainWindow.webContents.openDevTools({mode: 'detach'});
   // Emitted when the window is closed.
   mainWindow.on('close', (e) => {
     if (mainWindow) {
@@ -371,24 +371,24 @@ function createWindow () {
   });
 
   mainWindow.webContents.once('did-finish-load', () => {
-    manager.once("ready", () => {
-      let url = 'http://localhost:' + manager.port + "/";
-      console.log("Proxy is ready:" + url);
+    manager.once('ready', () => {
+      const url = 'http://localhost:' + manager.port + '/';
+      console.log('Proxy is ready:' + url);
       mainWindow.webContents.send('proxy-ready', url);
     });
     manager.start();
   });
 
-  ipcMain.on('app-closed', _ => {
-    if (process.platform !== 'darwin') {  // Force close app when it is closed even on macOS.
-      //app.quit()
+  ipcMain.on('app-closed', (_) => {
+    if (process.platform !== 'darwin') { // Force close app when it is closed even on macOS.
+      // app.quit()
     }
     mainWindow = null;
     mainContent = null;
     devtools = null;
-    app.quit()
+    app.quit();
   });
-  mainWindow.on('closed', function () {
+  mainWindow.on('closed', function() {
     mainWindow = null;
     mainContent = null;
     devtools = null;
@@ -405,7 +405,7 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
     frame: true,
     show: false,
     backgroundColor: '#EFEFEF',
-    //parent: win,
+    // parent: win,
     titleBarStyle: '',
     width: windowWidth,
     height: windowHeight,
@@ -421,14 +421,14 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   }
   event.newGuest = new BrowserWindow(options);
   event.newGuest.once('ready-to-show', () => {
-    event.newGuest.show()
+    event.newGuest.show();
   });
   event.newGuest.loadURL(url);
-  event.newGuest.webContents.on('new-window',(event, url, frameName, disposition, options, additionalFeatures) => {
+  event.newGuest.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
     newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
   });
   event.newGuest.on('close', (e) => {
-    let c = BrowserWindow.getFocusedWindow();
+    const c = BrowserWindow.getFocusedWindow();
     if (c !== null) {
       c.destroy();
     }
@@ -437,9 +437,9 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
 
 app.on('ready', () => {
   protocol.interceptFileProtocol('file', (request, callback) => {
-    const url = request.url.substr(7);    /* all urls start with 'file://' */
+    const url = request.url.substr(7); /* all urls start with 'file://' */
     const extension = url.split('.').pop();
-    let options = { path: path.normalize(`${BASE_DIR}/${url}`)};
+    const options = {path: path.normalize(`${BASE_DIR}/${url}`)};
     callback(options);
   }, (err) => {
     if (err) console.error('Failed to register protocol');
@@ -447,15 +447,17 @@ app.on('ready', () => {
   // Force mime-type to javascript
   protocol.registerBufferProtocol('es6', (req, cb) => {
     nfs.readFile(
-      npjoin(es6Path, req.url.replace('es6://', '')),
-      (e, b) => { cb({ mimeType: 'text/javascript', data: b }) }
-    )
+        npjoin(es6Path, req.url.replace('es6://', '')),
+        (e, b) => {
+          cb({mimeType: 'text/javascript', data: b});
+        }
+    );
   });
-  createWindow()
+  createWindow();
 });
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', function() {
   if (mainWindow) {
     e.preventDefault();
     mainWindow.webContents.send('app-close-window');
@@ -463,7 +465,7 @@ app.on('window-all-closed', function () {
 });
 
 
-app.on('activate', function () {
+app.on('activate', function() {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
@@ -471,9 +473,9 @@ app.on('activate', function () {
   }
 });
 app.on('certificate-error', function(event, webContents, url, error,
-  certificate, callback) {
-      event.preventDefault();
-      callback(true);
+    certificate, callback) {
+  event.preventDefault();
+  callback(true);
 });
 // Let windows without node integration
 app.on('web-contents-created', (event, contents) => {
@@ -486,8 +488,8 @@ app.on('web-contents-created', (event, contents) => {
     webPreferences.nodeIntegration = false;
 
     // Verify URL being loaded
-    //if (!params.src.startsWith('https://yourapp.com/')) {
+    // if (!params.src.startsWith('https://yourapp.com/')) {
     //  event.preventDefault()
-    //}
-  })
+    // }
+  });
 });

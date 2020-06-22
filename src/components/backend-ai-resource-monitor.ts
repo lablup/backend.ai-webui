@@ -20,7 +20,6 @@ import '@material/mwc-textfield/mwc-textfield';
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/checkbox';
-import 'weightless/dialog';
 import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
@@ -31,6 +30,7 @@ import 'weightless/slider';
 import '@material/mwc-linear-progress';
 
 import './lablup-slider';
+import './backend-ai-dialog';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 
@@ -45,10 +45,13 @@ import {
 
 @customElement("backend-ai-resource-monitor")
 export default class BackendAiResourceMonitor extends BackendAIPage {
+  @property({type: Boolean}) is_connected = false;
+  @property({type: Boolean}) enableLaunchButton = false;
   @property({type: String}) direction = "horizontal";
   @property({type: String}) location = '';
   @property({type: Object}) supports = Object();
   @property({type: Object}) supportImages = Object();
+  @property({type: Object}) imageRequirements = Object();
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) userResourceLimit = Object();
   @property({type: Object}) aliases = Object();
@@ -56,6 +59,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) icons = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Object}) imageNames = Object();
+  @property({type: String}) kernel = '';
   @property({type: Array}) versions;
   @property({type: Array}) languages;
   @property({type: Number}) marker_limit = 25;
@@ -111,17 +115,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Number}) mem_request;
   @property({type: Number}) shmem_request;
   @property({type: Number}) gpu_request;
+  @property({type: String}) gpu_request_type;
   @property({type: Number}) session_request;
   @property({type: Boolean}) _status;
   @property({type: Number}) num_sessions;
   @property({type: Number}) lastQueryTime = 0;
   @property({type: String}) scaling_group;
   @property({type: Array}) scaling_groups;
-  @property({type: Boolean}) enable_scaling_group;
   @property({type: Array}) sessions_list;
   @property({type: Boolean}) metric_updating;
   @property({type: Boolean}) metadata_updating;
   @property({type: Boolean}) aggregate_updating = false;
+  @property({type: Boolean}) image_updating;
   @property({type: Object}) scaling_group_selection_box;
   @property({type: Object}) resourceGauge = Object();
   /* Parameters required to launch a session on behalf of other user */
@@ -133,9 +138,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) project_resource_monitor = false;
   @property({type: Object}) version_selector = Object();
   @property({type: Boolean}) _default_language_updated = false;
+  @property({type: Boolean}) _default_version_updated = false;
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
+  @property({type: Number}) max_cpu_core_per_session = 64;
 
   constructor() {
     super();
@@ -363,12 +370,32 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         #launch-session {
+          --button-color: var(--paper-red-600);
           --button-bg: var(--paper-red-50);
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
         }
 
+        #launch-session[disabled] {
+          --button-color: var(--paper-gray-600);
+          --button-color-disabled: var(--paper-gray-600);
+          --button-bg: var(--paper-gray-50);
+          --button-bg-hover: var(--paper-gray-100);
+          --button-bg-active: var(--paper-gray-600);
+        }
+
         wl-button.launch-button {
+          width: 335px;
+          --button-bg: var(--paper-red-50);
+          --button-bg-active: var(--paper-red-300);
+          --button-bg-hover: var(--paper-red-300);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-color: var(--paper-red-600);
+          --button-color-active: red;
+          --button-color-hover: red;
+        }
+
+        wl-button.launch-confirmation-button {
           width: 335px;
           --button-bg: var(--paper-red-50);
           --button-bg-active: var(--paper-red-300);
@@ -421,7 +448,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --mdc-theme-primary: var(--paper-red-600);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: blue;
+          --mdc-select-dropdown-icon-color: rgba(255, 0, 0, 0.87);
+          --mdc-select-focused-dropdown-icon-color: rgba(255, 0, 0, 0.42);
+          --mdc-select-disabled-dropdown-icon-color: rgba(255, 0, 0, 0.87);
           --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
           --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
           --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
@@ -434,9 +463,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           };
         }
 
-        mwc-select#scaling-groups {
-          margin-right: 5px;
-          width: 170px;
+        mwc-multi-select#scaling-groups {
+          margin-right: 0;
+          padding-right: 0;
+          width: 50%;
+          --mdc-select-min-width: 190px;
         }
 
         mwc-textfield {
@@ -448,8 +479,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         mwc-textfield#session-name {
+          width: 50%;
           padding-top: 20px;
-          margin-left: 5px;
+          padding-left: 0;
+          margin-left: 0;
+          margin-bottom: 1px;
         }
 
         #environment {
@@ -481,11 +515,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         #help-description {
-          --dialog-width: 350px;
+          --component-width: 350px;
         }
 
         #help-description p {
           padding: 5px !important;
+        }
+
+        #launch-confirmation-dialog {
+          --component-width: 400px;
+          --component-font-size: 14px;
         }
 
         mwc-icon-button.info {
@@ -521,10 +560,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.mem_request = 1;
     this.shmem_request = 0.0625;
     this.gpu_request = 0;
+    this.gpu_request_type = 'cuda.device';
     this.session_request = 1;
     this.scaling_groups = [{name: ''}]; // if there is no scaling group, set the name as empty string
     this.scaling_group = '';
-    this.enable_scaling_group = false;
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
@@ -534,9 +573,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.ownerKeypairs = [];
     this.ownerGroups = [];
     this.ownerScalingGroups = [];
+    this.image_updating = true;
   }
 
   firstUpdated() {
+    // TODO : use sessionstore to query the image metadata only once.
     fetch('resources/image_metadata.json').then(
       response => response.json()
     ).then(
@@ -561,6 +602,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               }
             });
           }
+        }
+        if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+          document.addEventListener('backend-ai-connected', () => {
+            this.is_connected = true;
+            this._refreshImageList();
+            this._enableLaunchButton();
+          }, {once: true});
+        } else {
+          this.is_connected = true;
+          this._refreshImageList();
+          this._enableLaunchButton();
         }
       }
     );
@@ -601,6 +653,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     });
   }
 
+  _enableLaunchButton() {
+    // Check preconditions and enable it via pooling
+    if (!this.image_updating) { // Image information is successfully updated.
+      this.enableLaunchButton = true;
+    } else {
+      setTimeout(() => {
+        this._enableLaunchButton();
+      }, 1000);
+    }
+  }
+
   _initAliases() {
     for (let item in this.aliases) {
       this.aliases[this.aliases[item]] = item;
@@ -624,16 +687,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
         scaling_group_selection_box.firstChild.value = this.scaling_group;
       }
-      // let sgnum = this.scaling_groups.map((sg) => sg.name).indexOf(this.scaling_group);
-      // if (sgnum < 0) sgnum = 0;
-      // this.shadowRoot.querySelector('#scaling-groups paper-listbox').selected = sgnum;
+      this.lastQueryTime = 0; // Reset query interval
       if (forceUpdate === true) {
-        //console.log('force update called');
-        //this.metric_updating = true;
-        //await this._aggregateResourceUse('update-scaling-group');
         await this._refreshResourcePolicy();
-        //this.aggregateResource('update-scaling-group'); // updateResourceAllocationPane does not work when no language is selected (on
-        // summary panel)
       } else {
         this.updateResourceAllocationPane('session dialog');
       }
@@ -654,6 +710,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   async _viewStateChanged(active) {
     await this.updateComplete;
+
     if (!this.active) {
       return;
     }
@@ -662,64 +719,63 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
         this._updatePageVariables(true);
         this._disableEnterKey();
-      }, true);
+      }, {once: true});
     } else {
       this.project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
       await this._updatePageVariables(true);
       this._disableEnterKey();
     }
-    //this.run_after_connection(this._updatePageVariables());
   }
 
   async _updatePageVariables(isChanged) {
     if (this.active && this.metadata_updating === false) {
       this.metadata_updating = true;
-      this.enable_scaling_group = globalThis.backendaiclient.supports('scaling-group');
-      if (this.enable_scaling_group === true) {
-        if (this.scaling_group === '' || isChanged) {
-          const currentGroup = globalThis.backendaiclient.current_group || null;
-          let sgs = await globalThis.backendaiclient.scalingGroup.list(currentGroup);
-          // Make empty scaling group item if there is no scaling groups.
-          this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
-          this.scaling_group = this.scaling_groups[0].name;
-          if (this.direction === 'vertical') {
-            const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
-            // Detached from template to support live-update after creating new group (will need it)
-            if (scaling_group_selection_box.hasChildNodes()) {
-              scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
-            }
-            const scaling_select = document.createElement('wl-select');
-            scaling_select.label = _text('session.launcher.ResourceGroup');
-            scaling_select.name = 'scaling-group-select';
-            scaling_select.id = 'scaling-group-select';
-            scaling_select.value = this.scaling_group;
-            scaling_select.addEventListener('input', this.updateScalingGroup.bind(this, true));
-
-            let opt = document.createElement('option');
-            opt.setAttribute('disabled', 'true');
-            opt.innerHTML = _text('session.launcher.SelectResourceGroup');
-            scaling_select.appendChild(opt);
-            this.scaling_groups.map(group => {
-              opt = document.createElement('option');
-              opt.value = group.name;
-              if (this.scaling_group === group.name) {
-                opt.selected = true;
-              } else {
-                opt.selected = false;
-              }
-              opt.innerHTML = group.name;
-              scaling_select.appendChild(opt);
-            });
-            //scaling_select.updateOptions();
-            scaling_group_selection_box.appendChild(scaling_select);
+      if (isChanged) {
+        this.lastQueryTime = 0; // Reset query interval
+      }
+      if (this.scaling_group === '' || isChanged) {
+        const currentGroup = globalThis.backendaiclient.current_group || null;
+        let sgs = await globalThis.backendaiclient.scalingGroup.list(currentGroup);
+        // Make empty scaling group item if there is no scaling groups.
+        this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
+        this.scaling_group = this.scaling_groups[0].name;
+        if (this.direction === 'vertical') {
+          const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
+          // Detached from template to support live-update after creating new group (will need it)
+          if (scaling_group_selection_box.hasChildNodes()) {
+            scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
           }
-          const scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
-          scaling_group_selection_dialog.selectedText = this.scaling_group;
-          scaling_group_selection_dialog.value = this.scaling_group;
-          scaling_group_selection_dialog.addEventListener('selected-item-label-changed', () => {
-            this.updateScalingGroup.bind(this, false);
+          const scaling_select = document.createElement('wl-select');
+          scaling_select.label = _text('session.launcher.ResourceGroup');
+          scaling_select.name = 'scaling-group-select';
+          scaling_select.id = 'scaling-group-select';
+          scaling_select.value = this.scaling_group;
+          scaling_select.addEventListener('input', this.updateScalingGroup.bind(this, true));
+
+          let opt = document.createElement('option');
+          opt.setAttribute('disabled', 'true');
+          opt.innerHTML = _text('session.launcher.SelectResourceGroup');
+          scaling_select.appendChild(opt);
+          this.scaling_groups.map(group => {
+            opt = document.createElement('option');
+            opt.value = group.name;
+            if (this.scaling_group === group.name) {
+              opt.selected = true;
+            } else {
+              opt.selected = false;
+            }
+            opt.innerHTML = group.name;
+            scaling_select.appendChild(opt);
           });
+          //scaling_select.updateOptions();
+          scaling_group_selection_box.appendChild(scaling_select);
         }
+        const scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
+        scaling_group_selection_dialog.selectedText = this.scaling_group;
+        scaling_group_selection_dialog.value = this.scaling_group;
+        scaling_group_selection_dialog.addEventListener('selected-item-label-changed', () => {
+          this.updateScalingGroup.bind(this, false);
+        });
       }
       // update selected Scaling Group depends on project group
       this._updateSelectedScalingGroup();
@@ -729,7 +785,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         .then(res => {
           this.sessions_list = res.compute_session_list.items.map(e => e.created_at);
         });
-
       this._initAliases();
       await this._refreshResourcePolicy();
       this.aggregateResource('update-page-variable');
@@ -765,8 +820,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
       //this._refreshResourceTemplate('refresh-resource-policy');
-      return this._refreshImageList();
-    }).then(() => {
       this._updateGPUMode();
       this.updateResourceAllocationPane('refresh resource policy');
     }).catch((err) => {
@@ -784,12 +837,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async _launchSessionDialog() {
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false || this.image_updating === true) {
       this.notification.text = 'Please wait while initializing...';
       this.notification.show();
     } else {
-      this.selectDefaultLanguage();
-      await this.updateResourceAllocationPane('launch session dialog');
+      await this.selectDefaultLanguage();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
       if (gpu_resource.value > 0) {
@@ -833,8 +885,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return kernel + ':' + version;
   }
 
+  _newSessionWithConfirmation() {
+    let vfolder = this.shadowRoot.querySelector('#vfolder').value;
+    if (vfolder.length === 0) {
+      let confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
+      confirmationDialog.show();
+    } else {
+      return this._newSession();
+    }
+  }
+
   _newSession() {
-    //let kernel = this.shadowRoot.querySelector('#environment').value;
+    let confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
+    confirmationDialog.hide();
     let selectedItem = this.shadowRoot.querySelector('#environment').selected;
     let kernel = selectedItem.id;
     let version = this.shadowRoot.querySelector('#version').value;
@@ -856,9 +919,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.notification.show();
       return;
     }
-    if (this.enable_scaling_group) {
-      this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
-    }
+    this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
     let config = {};
     config['group_name'] = globalThis.backendaiclient.current_group;
     config['domain'] = globalThis.backendaiclient._config.domainName;
@@ -877,12 +938,25 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
     }
     config['cpu'] = this.cpu_request;
-    if (this.gpu_mode == 'cuda.shares') {
-      config['cuda.shares'] = this.gpu_request;
-    } else {
-      config['cuda.device'] = this.gpu_request;
+    switch (this.gpu_request_type) {
+      case 'cuda.shares':
+        config['cuda.shares'] = this.gpu_request;
+        break;
+      case 'cuda.device':
+        config['cuda.device'] = this.gpu_request;
+        break;
+      case 'rocm.device':
+        config['rocm.device'] = this.gpu_request;
+        break;
+      case 'tpu.device':
+        config['tpu.device'] = this.gpu_request;
+        break;
+      default:
+        // Fallback to current gpu mode if there is a gpu request, but without gpu type.
+        if (this.gpu_request > 0 && this.gpu_mode) {
+          config[this.gpu_mode] = this.gpu_request;
+        }
     }
-
     if (String(this.shadowRoot.querySelector('#mem-resource').value) === "Infinity") {
       config['mem'] = String(this.shadowRoot.querySelector('#mem-resource').value);
     } else {
@@ -930,15 +1004,34 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
 
     const createSessionQueue = sessions.map(item => {
-      return this._createKernel(item.kernelName, item.sessionName, item.config);
+      return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
     });
-    Promise.all(createSessionQueue).then((res) => {
+    Promise.all(createSessionQueue).then((res: any) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
-      this.aggregateResource('session-creation');
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
+      setTimeout(() => {
+        this.metadata_updating = true;
+        this.aggregateResource('session-creation');
+        this.metadata_updating = false;
+      }, 1500);
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
+      if (this.direction === 'vertical' && res.length === 1) {
+        res[0].taskobj.then(res => {
+          const appOptions = {
+            'session-name': res.kernelId,
+            'access-key': ''
+          };
+          let service_info = res.servicePorts;
+          if (Array.isArray(service_info) === true) {
+            appOptions['app-services'] = service_info.map(a => a.name);
+          } else {
+            appOptions['app-services'] = [];
+          }
+          globalThis.appLauncher.showLauncher(appOptions);
+        });
+      }
     }).catch((err) => {
       this.metadata_updating = false;
       if (err && err.message) {
@@ -952,7 +1045,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
       this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
     });
   }
 
@@ -980,13 +1073,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   _hideSessionDialog() {
     this.shadowRoot.querySelector('#new-session-dialog').hide();
-  }
-
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
-    e.stopPropagation();
   }
 
   _guessHumanizedNames(kernelName) {
@@ -1066,6 +1152,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       '2020': '2020',
       '2021': '2021',
       '2022': '2022',
+      'tpu': 'TPU:TPUv3',
       'rocm': 'GPU:ROCm',
       'cuda9': 'GPU:CUDA9',
       'cuda10': 'GPU:CUDA10',
@@ -1075,11 +1162,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'cuda10.3': 'GPU:CUDA10.3',
       'cuda11': 'GPU:CUDA11',
       'cuda11.0': 'GPU:CUDA11',
+      'cuda11.1': 'GPU:CUDA11.1',
+      'cuda11.2': 'GPU:CUDA11.2',
       'miniconda': 'Miniconda',
       'anaconda2018.12': 'Anaconda 2018.12',
       'anaconda2019.12': 'Anaconda 2019.12',
       'alpine3.8': 'Alpine Linux 3.8',
-      'ngc': 'NVidia GPU Cloud',
+      'ngc': 'Nvidia GPU Cloud',
       'ff': 'Research Env.',
     };
     if (value in alias) {
@@ -1090,8 +1179,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _updateEnvironment() {
-    // this.languages = Object.keys(this.supports);
-    // this.languages.sort();
     const langs = Object.keys(this.supports);
     if (langs === undefined) return;
     langs.sort((a, b) => (this.supportImages[a].group > this.supportImages[b].group) ? 1 : -1); // TODO: fix this to rearrange kernels
@@ -1143,7 +1230,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         icon = this.icons[kernelName];
       }
       if (interCategory !== this.supportImages[item].group) {
-        //console.log(item);
         this.languages.push({
           name: "",
           registry: "",
@@ -1169,6 +1255,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       });
     });
     this._initAliases();
+    this.image_updating = false;
   }
 
   _updateVersions(kernel) {
@@ -1178,6 +1265,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       versions.sort();
       versions.reverse(); // New version comes first.
       this.versions = versions;
+      this.kernel = kernel;
     } else {
       return;
     }
@@ -1187,13 +1275,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         // updateResourceAllocationPane method. Without this, LAUNCH button's disabled state is not
         // updated, so in some cases, user cannot launch a session even though
         // there are available resources for the selected image.
+        this.version_selector.select(1);
         this.version_selector.value = this.versions[0];
-        setTimeout(() => {
-          //this.version_selector.select(0);
-          this.version_selector.select(1);
-          this.version_selector.disabled = false;
-          this.updateResourceAllocationPane('update versions');
-        }, 500);
+        this.version_selector.selectedText = this.version_selector.value;
+        this.version_selector.disabled = false;
+        this.updateResourceAllocationPane('update versions');
       });
     }
   }
@@ -1229,7 +1315,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (this.aggregate_updating === true) {
       return;
     }
-    if (Date.now() - this.lastQueryTime < 2000) {
+    if (Date.now() - this.lastQueryTime < 1000) {
       return;
     }
     //console.log('aggregate from:', from);
@@ -1241,7 +1327,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
       this.concurrency_used = response.keypair.concurrency_used;
       const param: any = {group: globalThis.backendaiclient.current_group};
-      if (this.enable_scaling_group == true && this.scaling_groups.length > 0) {
+      if (this.scaling_groups.length > 0) {
         let scaling_group: string = '';
         if (this.scaling_group !== '') {
           scaling_group = this.scaling_group;
@@ -1255,7 +1341,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       //console.log('check resource preset from : aggregate resource use, ', from);
       return globalThis.backendaiclient.resourcePreset.check(param);
-      //console.log(this.resource_templates);
       //return {'preset': this.resource_templates};
 
     }).then((response) => {
@@ -1304,7 +1389,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
 
       //let scaling_group_resource_remaining = response.scaling_group_remaining;
-      //console.log('current:', this.scaling_group);
       if (this.scaling_group === '') { // no scaling group in the current project
         response.scaling_groups[''] = {
           using: {'cpu': 0, 'mem': 0},
@@ -1535,7 +1619,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       });
     }
     let selectedItem = this.shadowRoot.querySelector('#environment').selected;
-    let selectedVersionItem = this.shadowRoot.querySelector('#version').selected;
+    let selectedVersionItem = this.version_selector.selected;
     // Pulldown is not ready yet.
     if (selectedVersionItem === null) {
       this.metric_updating = false;
@@ -1555,8 +1639,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     } else {
       this.metric_updating = true;
       await this._aggregateResourceUse('update-metric');
+      await this._updateVirtualFolderList();
       // Resource limitation is not loaded yet.
       if (Object.keys(this.resourceLimits).length === 0) {
+        //console.log("No resource limit loaded");
         this.metric_updating = false;
         return;
       }
@@ -1574,7 +1660,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.metric_updating = false;
         return;
       }
-      await this._updateVirtualFolderList();
       let available_slot = this.available_slot;
 
       // Post-UI markup to disable unchangeable values
@@ -1583,7 +1668,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.shadowRoot.querySelector('#gpu-resource').disabled = false;
       this.shadowRoot.querySelector('#session-resource').disabled = false;
       this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Launch';
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
       let disableLaunch = false;
       let shmem_metric: any = {
         'min': 0.0625,
@@ -1601,15 +1686,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           cpu_metric.min = parseInt(cpu_metric.min);
           if ('cpu' in this.userResourceLimit) {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
-              cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot']);
+              cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot'], this.max_cpu_core_per_session);
             } else {
-              cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot']);
+              cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu_slot'], this.max_cpu_core_per_session);
             }
           } else {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
-              cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu_slot']);
+              cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu_slot'], this.max_cpu_core_per_session);
             } else {
-              cpu_metric.max = this.available_slot['cpu_slot'];
+              cpu_metric.max = Math.min(this.available_slot['cpu_slot'], this.max_cpu_core_per_session);
             }
           }
           if (cpu_metric.min >= cpu_metric.max) {
@@ -1837,24 +1922,25 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   async _refreshImageList() {
     const fields = [
       'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
-      'resource_limits { key min max }'
+      'resource_limits { key min max }', 'labels { key value }'
     ];
     return globalThis.backendaiclient.image.list(fields, true, false).then((response) => {
-      const images: Array<object> = [];
-      Object.keys(response.images).map((objectKey, index) => {
-        const item = response.images[objectKey];
-        if (item.installed === true) {
-          images.push(item);
-        }
-      });
-      if (images.length === 0) {
+      //const images: Array<object> = [];
+      //Object.keys(response.images).map((objectKey, index) => {
+      //  const item = response.images[objectKey];
+      //  images.push(item);
+      //});
+      if (response.images.length === 0) {
         return;
       }
-      this.images = images;
+      //this.images = images;
+      this.images = response.images;
       this.supports = {};
       this.supportImages = {};
+      this.imageRequirements = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
+        //console.log(item);
         const supportsKey = `${item.registry}/${item.name}`;
         if (!(supportsKey in this.supports)) {
           this.supports[supportsKey] = [];
@@ -1885,6 +1971,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           this.supportImages[supportsKey].group = 'Custom Environments';
         }
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
+        this.imageRequirements[`${supportsKey}:${item.tag}`] = {};
+        item.labels.forEach(label => {
+          if (label['key'] === 'com.nvidia.tensorflow.version') {
+            this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'TensorFlow ' + label['value'];
+          }
+          if (label['key'] === 'com.nvidia.pytorch.version') {
+            this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'PyTorch ' + label['value'];
+          }
+          //if (label['key'] === 'com.nvidia.cuda.version') {
+          //  this.imageRequirements[`${supportsKey}:${item.tag}`].push('CUDA:'+label['value']);
+          //}
+        });
       });
       //console.log("update image list.", this.resourceLimits);
       this._updateEnvironment();
@@ -1929,7 +2027,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     let gpu_type, gpu_value;
     if ((typeof cuda_gpu !== 'undefined' || typeof cuda_fgpu !== 'undefined')) {
       if (typeof cuda_gpu === 'undefined') { // FGPU
-        gpu_type = 'cuda.share';
+        gpu_type = 'cuda.shares';
         gpu_value = cuda_fgpu;
       } else {
         gpu_type = 'cuda.device';
@@ -1951,24 +2049,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _updateResourceIndicator(cpu, mem, gpu_type, gpu_value) {
+    this.shadowRoot.querySelector('#cpu-resource').value = cpu;
+    this.shadowRoot.querySelector('#mem-resource').value = mem;
     this.shadowRoot.querySelector('#gpu-resource').value = gpu_value;
     this.shadowRoot.querySelector('#shmem-resource').value = this.shmem_request;
+
     this.cpu_request = cpu;
     this.mem_request = mem;
     this.gpu_request = gpu_value;
+    this.gpu_request_type = gpu_type;
+    //console.log(this.cpu_request, this.mem_request, this.shmem_request, this.gpu_request, this.gpu_request_type);
   }
 
-  selectDefaultLanguage() {
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._selectDefaultLanguage();
-      }, true);
-    } else {
-      this._selectDefaultLanguage();
-    }
-  }
-
-  _selectDefaultLanguage() {
+  async selectDefaultLanguage() {
     if (this._default_language_updated === true) {
       return;
     }
@@ -1989,14 +2082,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (typeof obj === 'undefined') { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
-        this._selectDefaultLanguage();
+        return this.selectDefaultLanguage();
       }, 500);
-      return true;
+      return Promise.resolve(true);
     }
     let idx = environment.items.indexOf(obj);
     environment.select(idx);
     this._default_language_updated = true;
-    return true;
+    return Promise.resolve(true);
   }
 
   _selectDefaultVersion(version) {
@@ -2128,11 +2221,20 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       size: '80px'
     });
     if (fragment.length > 1) {
-      info.push({ // Language
-        tag: this._aliasName(fragment[1]),
-        color: 'red',
-        size: '120px'
-      });
+      //Image requirement overrides language information.
+      if (this.kernel + ':' + version in this.imageRequirements && 'framework' in this.imageRequirements[this.kernel + ':' + version]) {
+        info.push({ // Language
+          tag: this.imageRequirements[this.kernel + ':' + version]['framework'],
+          color: 'red',
+          size: '120px'
+        });
+      } else {
+        info.push({ // Language
+          tag: this._aliasName(fragment[1]),
+          color: 'red',
+          size: '120px'
+        });
+      }
     }
     if (fragment.length > 2) {
       let requirements = this._aliasName(fragment[2]).split(':');
@@ -2168,7 +2270,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      ${this.enable_scaling_group && this.direction === 'vertical' ? html`
+      ${this.direction === 'vertical' ? html`
       <div id="scaling-group-select-box" class="layout horizontal start-justified">
       </div>
       ` : html``}
@@ -2275,21 +2377,21 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">${_t('session.launcher.Session')}</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max}</span>
+              <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max === 1000000 ? html`∞` : this.concurrency_max}</span>
               <mwc-linear-progress class="short full-bar" id="concurrency-usage-bar" progress="${this.used_slot_percent.concurrency / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">&nbsp;</span>
             </div>
           </div>
         </div>
         <div class="layout vertical" style="align-self: center;">
-          <wl-button class="fg red" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
+          <wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
             <wl-icon>add</wl-icon>
             ${_t("session.launcher.Start")}
           </wl-button>
         </div>
         <div class="flex"></div>
       </div>
-      ${this.enable_scaling_group && this.direction === 'vertical' ? html`
+      ${this.direction === 'vertical' ? html`
       <div class="vertical start-justified layout">
         <div class="layout horizontal center start-justified">
           <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#4775E3;"></div>
@@ -2351,275 +2453,272 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         </div>
       </div>
       ` : html``}
-      <wl-dialog id="new-session-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
-        <wl-card class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("session.launcher.StartNewSession")}</span>
-            <div class="flex"></div>
-            <mwc-icon-button icon="close" class="blue close-button"
-              @click="${() => this._hideSessionDialog()}">
-            </mwc-icon-button>
-          </h3>
-          <form id="launch-session-form">
-            <div class="vertical center layout" style="padding-top:15px;">
-              <mwc-select id="environment" label="${_t("session.launcher.Environments")}" required
-                value="${this.default_language}">
-                <mwc-list-item selected style="display:none!important;">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
-                  ${this.languages.map(item => html`
-                    ${item.clickable === false ? html`
-                      <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
-                    ` : html`
-                      <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
-                        <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
-                        <div class="horizontal justified center flex layout" style="width:293px;">
-                          <div style="padding-right:5px;">${item.basename}</div>
-                          <div class="flex"></div>
-                          <div class="horizontal layout end-justified center flex">
-                          ${item.tags ? item.tags.map(item => html`
-                            <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}" description="${item.tag}"></lablup-shields>
-                          `) : ''}
-                            <mwc-icon-button icon="info" class="fg blue info"
-                                             @click="${(e) => {
+      <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
+        <span slot="title">${_t("session.launcher.StartNewSession")}</span>
+        <form slot="content" id="launch-session-form" class="centered">
+          <div class="vertical center layout" style="padding-top:15px;">
+            <mwc-select id="environment" label="${_t("session.launcher.Environments")}" fullwidth required
+              value="${this.default_language}">
+              <mwc-list-item selected style="display:none!important;">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
+                ${this.languages.map(item => html`
+                  ${item.clickable === false ? html`
+                    <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
+                  ` : html`
+                    <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
+                      <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
+                      <div class="horizontal justified center flex layout" style="width:293px;">
+                        <div style="padding-right:5px;">${item.basename}</div>
+                        <div class="flex"></div>
+                        <div class="horizontal layout end-justified center flex">
+                        ${item.tags ? item.tags.map(item => html`
+                          <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}" description="${item.tag}"></lablup-shields>
+                        `) : ''}
+                          <mwc-icon-button icon="info" class="fg blue info"
+                                           @click="${(e) => {
       this._showKernelDescription(e, item);
     }}">
-                            </mwc-icon-button>
-                          </div>
+                          </mwc-icon-button>
                         </div>
-                      </mwc-list-item>
-                    `}
+                      </div>
+                    </mwc-list-item>
+                  `}
+                `)}
+            </mwc-select>
+            <mwc-select id="version" label="${_t("session.launcher.Version")}" fullwidth required>
+              <mwc-list-item selected style="display:none!important"></mwc-list-item>
+                <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout">
+                  <div style="width:80px;">${_t("session.launcher.Version")}</div>
+                  <div style="width:120px;">${_t("session.launcher.Base")}</div>
+                  <div style="width:150px;">${_t("session.launcher.Requirements")}</div>
+                </h5>
+            ${this.versions.map(item => html`
+              <mwc-list-item id="${item}" value="${item}">
+                <span style="display:none">${item}</span>
+                <div class="horizontal layout end-justified">
+                  ${this._getVersionInfo(item).map(item => html`
+                    <lablup-shields style="width:${item.size}!important;"
+                                    color="${item.color}"
+                                    app="${typeof item.app != 'undefined' && item.app != "" && item.app != " " ? item.app : ''}"
+                                    description="${item.tag}">
+                    </lablup-shields>
                   `)}
-              </mwc-select>
-              <mwc-select id="version" label="${_t("session.launcher.Version")}" required>
-                <mwc-list-item selected style="display:none!important"></mwc-list-item>
-                  <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout">
-                    <div style="width:80px;">${_t("session.launcher.Version")}</div>
-                    <div style="width:120px;">${_t("session.launcher.Base")}</div>
-                    <div style="width:150px;">${_t("session.launcher.Requirements")}</div>
-                  </h5>
-              ${this.versions.map(item => html`
-                <mwc-list-item id="${item}" value="${item}">
-                  <span style="display:none">${item}</span>
-                  <div class="horizontal layout end-justified">
-                    ${this._getVersionInfo(item).map(item => html`
-                      <lablup-shields style="width:${item.size}!important;"
-                                      color="${item.color}"
-                                      app="${item.app && item.app != "" && item.app != " " ? item.app : ''}"
-                                      description="${item.tag}">
-                      </lablup-shields>
-                    `)}
-                  </div>
+                </div>
+              </mwc-list-item>
+            `)}
+            </mwc-select>
+          </div>
+          <div style="display:none;">
+            <wl-checkbox id="use-gpu-checkbox">${_t("session.launcher.UseGPU")}</wl-checkbox>
+          </div>
+          <div class="horizontal center layout">
+            <mwc-multi-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required naturalMenuWidth
+                        @selected="${(e) => this.updateScalingGroup(false, e)}">
+              ${this.scaling_groups.map(item => html`
+                <mwc-list-item class="scaling-group-dropdown"
+                               id="${item.name}"
+                               value="${item.name}">
+                  ${item.name}
                 </mwc-list-item>
               `)}
-              </mwc-select>
-            </div>
-              <div style="display:none;">
-                <wl-checkbox id="use-gpu-checkbox">${_t("session.launcher.UseGPU")}</wl-checkbox>
-              </div>
-              <div class="horizontal center layout">
-                ${this.enable_scaling_group ? html`
-                  <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required
-                              @selected="${(e) => this.updateScalingGroup(false, e)}">
-                    ${this.scaling_groups.map(item => html`
-                      <mwc-list-item class="scaling-group-dropdown"
-                                     id="${item.name}"
-                                     value="${item.name}">
-                        ${item.name}
-                      </mwc-list-item>
-                    `)}
-                  </mwc-select>
-                ` : html``}
-                <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
-                               pattern="[a-zA-Z0-9_-]{4,}" fullwidth
-                               validationMessage="4 or more characters / no whitespace."
-                               style="margin-left:5px;">
-                </mwc-textfield>
-              </div>
-              <div class="horizontal center layout">
-                <mwc-multi-select id="vfolder" label="${_t("session.launcher.FolderToMount")}" multi
-                @selected="${this._updateSelectedFolder}">
-                ${this.vfolders.map(item => html`
-                  <mwc-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}</mwc-list-item>
-                `)}
-                </mwc-multi-select>
-              </div>
-            <wl-expansion name="resource-group" open>
-              <span slot="title">${_t("session.launcher.ResourceAllocation")}</span>
-              <span slot="description"></span>
-              <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
-                             style="width:350px; overflow:scroll;">
-                ${this.resource_templates_filtered.map(item => html`
-                  <wl-button class="resource-button vertical center start-justified layout" role="option"
-                             style="height:140px;min-width:120px;" type="button"
-                             flat outlined
-                             @click="${this._chooseResourceTemplate}"
-                             id="${item.name}-button"
-                             .cpu="${item.cpu}"
-                             .mem="${item.mem}"
-                             .cuda_gpu="${item.cuda_gpu}"
-                             .cuda_fgpu="${item.cuda_fgpu}"
-                             .rocm_gpu="${item.rocm_gpu}"
-                             .tpu="${item.tpu}"
-                             .shmem="${item.shmem}">
-                  <div>
-                    <h4 style="padding-top:15px;padding-bottom:15px;">${item.name}</h4>
-                    <ul>
-                      <li>${item.cpu} CPU</li>
-                      <li>${item.mem}GB RAM</li>
-                      ${item.cuda_gpu ? html`<li>${item.cuda_gpu} CUDA GPU</li>` : html``}
-                      ${item.cuda_fgpu ? html`<li>${item.cuda_fgpu} GPU</li>` : html``}
-                      ${item.rocm_gpu ? html`<li>${item.rocm_gpu} ROCM GPU</li>` : html``}
-                      ${item.tpu ? html`<li>${item.tpu} TPU</li>` : html``}
-                      ${item.shmem ? html`<li>${item.shmem}GB SHRAM</li>` : html``}
-                      </ul>
-                  </div>
-                </wl-button>
-              `)}
-              ${this.isEmpty(this.resource_templates) ? html`
-                <wl-button class="resource-button vertical center start layout" role="option"
-                           style="height:140px;width:350px;" type="button"
-                           flat inverted outlined disabled>
-                  <div>
-                    <h4>${_t("session.launcher.NoSuitablePreset")}</h4>
-                    <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
-                  </div>
-                </wl-button>
-                ` : html``}
-              </paper-listbox>
-            </wl-expansion>
-            <wl-expansion name="resource-group">
-              <span slot="title">${_t("session.launcher.Advanced")}</span>
-              <span slot="description">${_t("session.launcher.CustomAllocation")}</span>
-              <div class="vertical layout">
-                <div class="horizontal center layout">
-                  <div class="resource-type" style="width:70px;">CPU</div>
-                  <lablup-slider id="cpu-resource" class="cpu"
-                                 pin snaps expand editable markers
-                                 marker_limit="${this.marker_limit}"
-                                 min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
-                                 value="${this.cpu_request}"></lablup-slider>
-                  <span class="caption">${_t("session.launcher.Core")}</span>
-                  <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
-      this._showResourceDescription(e, 'cpu');
-    }}"></mwc-icon-button>
-                </div>
-                <div class="horizontal center layout">
-                  <div class="resource-type" style="width:70px;">RAM</div>
-                  <lablup-slider id="mem-resource" class="mem"
-                                 pin snaps step=0.05 editable markers
-                                 marker_limit="${this.marker_limit}"
-                                 min="${this.mem_metric.min}" max="${this.mem_metric.max}"
-                                 value="${this.mem_request}"></lablup-slider>
-                  <span class="caption">GB</span>
-                  <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
-      this._showResourceDescription(e, 'mem');
-    }}"></mwc-icon-button>
-                </div>
-                <div class="horizontal center layout">
-                  <div class="resource-type" style="width:70px;">${_t("session.launcher.SharedMemory")}</div>
-                  <lablup-slider id="shmem-resource" class="mem"
-                                 pin snaps step=0.0025 editable markers
-                                 marker_limit="${this.marker_limit}"
-                                 min="0.0" max="${this.shmem_metric.max}"
-                                 value="${this.shmem_request}"></lablup-slider>
-                  <span class="caption">GB</span>
-                  <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
-      this._showResourceDescription(e, 'shmem');
-    }}"></mwc-icon-button>
-                </div>
-                <div class="horizontal center layout">
-                  <div class="resource-type" style="width:70px;">GPU</div>
-                  <lablup-slider id="gpu-resource" class="gpu"
-                                 pin snaps editable markers step="${this.gpu_step}"
-                                 marker_limit="${this.marker_limit}"
-                                 min="0.0" max="${this.cuda_gpu_metric.max}" value="${this.gpu_request}"></lablup-slider>
-                  <span class="caption">GPU</span>
-                  <mwc-icon-button icon="info" class="fg blue info" @click="${(e) => {
-      this._showResourceDescription(e, 'gpu');
-    }}"></mwc-icon-button>
-                </div>
-                <div class="horizontal center layout">
-                  <div class="resource-type" style="width:70px;">Sessions</div>
-                  <lablup-slider id="session-resource" class="session"
-                                 pin snaps editable markers step="1"
-                                 marker_limit="${this.marker_limit}"
-                                 min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
-                  <span class="caption">#</span>
-                  <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
-      this._showResourceDescription(e, 'session');
-    }}"></mwc-icon-button>
-                </div>
-              </div>
-            </wl-expansion>
-
-            <wl-expansion name="ownership">
-              <span slot="title">${_t("session.launcher.Ownership")}</span>
-              <span slot="description">${_t("session.launcher.SetSessionOwner")}</span>
-              <div class="vertical layout">
-                <div class="horizontal center layout">
-                  <mwc-textfield id="owner-email" type="email" class="flex" value=""
-                    pattern="^.+@.+\..+$"
-                    label="${_t("session.launcher.OwnerEmail")}" size="40"></mwc-textfield>
-                  <mwc-icon-button icon="refresh" class="blue"
-                    @click="${() => this._fetchSessionOwnerGroups()}">
-                  </mwc-icon-button>
-                </div>
-                <paper-dropdown-menu id="owner-accesskey" label="${_t("session.launcher.OwnerAccessKey")}">
-                  <paper-listbox slot="dropdown-content" attr-for-selected="id">
-                    ${this.ownerKeypairs.map(item => html`
-                      <paper-item id="${item.access_key}" label="${item.access_key}">${item.access_key}</paper-item>
-                    `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <div class="horizontal center layout">
-                  <paper-dropdown-menu id="owner-group" label="${_t("session.launcher.OwnerGroup")}" horizontal-align="left">
-                    <paper-listbox slot="dropdown-content" attr-for-selected="id"
-                                   selected="${this.default_language}">
-                      ${this.ownerGroups.map(item => html`
-                        <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
-                      `)}
-                    </paper-listbox>
-                  </paper-dropdown-menu>
-                  <paper-dropdown-menu id="owner-scaling-group" label="${_t("session.launcher.OwnerResourceGroup")}">
-                    <paper-listbox slot="dropdown-content" selected="0">
-                      ${this.ownerScalingGroups.map(item => html`
-                        <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
-                      `)}
-                    </paper-listbox>
-                  </paper-dropdown-menu>
-                </div>
-                <wl-label>
-                  <wl-checkbox id="owner-enabled"></wl-checkbox>
-                  ${_t("session.launcher.LaunchSessionWithAccessKey")}
-                </wl-label>
-              </div>
-            </wl-expansion>
-            <fieldset slot="footer" style="padding-top:0;">
-              <wl-button class="launch-button" type="button" id="launch-button"
-                                           outlined @click="${() => this._newSession()}">
-                                          <wl-icon>rowing</wl-icon>
-                <span id="launch-button-msg">Launch</span>
-              </wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="help-description" fixed backdrop blockscrolling persistent style="padding:0;">
-        <wl-card class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span style="font-size:16px;">${this._helpDescriptionTitle}</span>
-            <div class="flex"></div>
-            <mwc-icon-button icon="close" class="blue close-button"
-              @click="${(e) => this._hideDialog(e)}">
-            </mwc-icon-button>
-          </h3>
-          <div class="horizontal layout center" style="margin:5px;">
-          ${this._helpDescriptionIcon == '' ? html`` : html`
-            <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
-            `}
-            <p style="font-size:14px;">${unsafeHTML(this._helpDescription)}</p>
+            </mwc-multi-select>
+            <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
+                           pattern="[a-zA-Z0-9_-]{4,}" fullwidth
+                           validationMessage="4 or more characters / no whitespace."
+                           style="margin-left:5px;">
+            </mwc-textfield>
           </div>
-        </wl-card>
-      </wl-dialog>
+          <div class="horizontal center layout">
+            <mwc-multi-select fullwidth id="vfolder" label="${_t("session.launcher.FolderToMount")}" multi
+            @selected="${this._updateSelectedFolder}">
+            ${this.vfolders.map(item => html`
+              <mwc-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}</mwc-list-item>
+            `)}
+            </mwc-multi-select>
+          </div>
+          <wl-expansion name="resource-group" open>
+            <span slot="title">${_t("session.launcher.ResourceAllocation")}</span>
+            <span slot="description"></span>
+            <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
+                           style="width:350px; overflow:scroll;">
+              ${this.resource_templates_filtered.map(item => html`
+                <wl-button class="resource-button vertical center start-justified layout" role="option"
+                           style="height:140px;min-width:120px;" type="button"
+                           flat outlined
+                           @click="${this._chooseResourceTemplate}"
+                           id="${item.name}-button"
+                           .cpu="${item.cpu}"
+                           .mem="${item.mem}"
+                           .cuda_gpu="${item.cuda_gpu}"
+                           .cuda_fgpu="${item.cuda_fgpu}"
+                           .rocm_gpu="${item.rocm_gpu}"
+                           .tpu="${item.tpu}"
+                           .shmem="${item.shmem}">
+                <div>
+                  <h4 style="padding-top:15px;padding-bottom:15px;">${item.name}</h4>
+                  <ul>
+                    <li>${item.cpu} CPU</li>
+                    <li>${item.mem}GB RAM</li>
+                    ${item.cuda_gpu ? html`<li>${item.cuda_gpu} CUDA GPU</li>` : html``}
+                    ${item.cuda_fgpu ? html`<li>${item.cuda_fgpu} GPU</li>` : html``}
+                    ${item.rocm_gpu ? html`<li>${item.rocm_gpu} ROCM GPU</li>` : html``}
+                    ${item.tpu ? html`<li>${item.tpu} TPU</li>` : html``}
+                    ${item.shmem ? html`<li>${item.shmem}GB SHRAM</li>` : html``}
+                    </ul>
+                </div>
+              </wl-button>
+            `)}
+            ${this.isEmpty(this.resource_templates_filtered) ? html`
+              <wl-button class="resource-button vertical center start layout" role="option"
+                         style="height:140px;width:350px;" type="button"
+                         flat inverted outlined disabled>
+                <div>
+                  <h4>${_t("session.launcher.NoSuitablePreset")}</h4>
+                  <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
+                </div>
+              </wl-button>
+              ` : html``}
+            </paper-listbox>
+          </wl-expansion>
+          <wl-expansion name="resource-group">
+            <span slot="title">${_t("session.launcher.Advanced")}</span>
+            <span slot="description">${_t("session.launcher.CustomAllocation")}</span>
+            <div class="vertical layout">
+              <div class="horizontal center layout">
+                <div class="resource-type" style="width:70px;">CPU</div>
+                <lablup-slider id="cpu-resource" class="cpu"
+                               pin snaps expand editable markers
+                               marker_limit="${this.marker_limit}"
+                               min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
+                               value="${this.cpu_request}"></lablup-slider>
+                <span class="caption">${_t("session.launcher.Core")}</span>
+                <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
+    this._showResourceDescription(e, 'cpu');
+  }}"></mwc-icon-button>
+            </div>
+            <div class="horizontal center layout">
+              <div class="resource-type" style="width:70px;">RAM</div>
+              <lablup-slider id="mem-resource" class="mem"
+                             pin snaps step=0.05 editable markers
+                             marker_limit="${this.marker_limit}"
+                             min="${this.mem_metric.min}" max="${this.mem_metric.max}"
+                             value="${this.mem_request}"></lablup-slider>
+              <span class="caption">GB</span>
+              <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
+    this._showResourceDescription(e, 'mem');
+  }}"></mwc-icon-button>
+            </div>
+            <div class="horizontal center layout">
+              <div class="resource-type" style="width:70px;">${_t("session.launcher.SharedMemory")}</div>
+              <lablup-slider id="shmem-resource" class="mem"
+                             pin snaps step=0.0025 editable markers
+                             marker_limit="${this.marker_limit}"
+                             min="0.0" max="${this.shmem_metric.max}"
+                             value="${this.shmem_request}"></lablup-slider>
+              <span class="caption">GB</span>
+              <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
+    this._showResourceDescription(e, 'shmem');
+  }}"></mwc-icon-button>
+            </div>
+            <div class="horizontal center layout">
+              <div class="resource-type" style="width:70px;">GPU</div>
+              <lablup-slider id="gpu-resource" class="gpu"
+                             pin snaps editable markers step="${this.gpu_step}"
+                             marker_limit="${this.marker_limit}"
+                             min="0.0" max="${this.cuda_gpu_metric.max}" value="${this.gpu_request}"></lablup-slider>
+              <span class="caption">GPU</span>
+              <mwc-icon-button icon="info" class="fg blue info" @click="${(e) => {
+    this._showResourceDescription(e, 'gpu');
+  }}"></mwc-icon-button>
+            </div>
+            <div class="horizontal center layout">
+              <div class="resource-type" style="width:70px;">Sessions</div>
+              <lablup-slider id="session-resource" class="session"
+                             pin snaps editable markers step="1"
+                             marker_limit="${this.marker_limit}"
+                             min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
+              <span class="caption">#</span>
+              <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
+    this._showResourceDescription(e, 'session');
+  }}"></mwc-icon-button>
+            </div>
+          </div>
+        </wl-expansion>
+
+        <wl-expansion name="ownership">
+          <span slot="title">${_t("session.launcher.Ownership")}</span>
+          <span slot="description">${_t("session.launcher.SetSessionOwner")}</span>
+          <div class="vertical layout">
+            <div class="horizontal center layout">
+              <mwc-textfield id="owner-email" type="email" class="flex" value=""
+                pattern="^.+@.+\..+$"
+                label="${_t("session.launcher.OwnerEmail")}" size="40"></mwc-textfield>
+              <mwc-icon-button icon="refresh" class="blue"
+                @click="${() => this._fetchSessionOwnerGroups()}">
+              </mwc-icon-button>
+            </div>
+            <paper-dropdown-menu id="owner-accesskey" label="${_t("session.launcher.OwnerAccessKey")}">
+              <paper-listbox slot="dropdown-content" attr-for-selected="id">
+                ${this.ownerKeypairs.map(item => html`
+                  <paper-item id="${item.access_key}" label="${item.access_key}">${item.access_key}</paper-item>
+                `)}
+              </paper-listbox>
+            </paper-dropdown-menu>
+            <div class="horizontal center layout">
+              <paper-dropdown-menu id="owner-group" label="${_t("session.launcher.OwnerGroup")}" horizontal-align="left">
+                <paper-listbox slot="dropdown-content" attr-for-selected="id"
+                               selected="${this.default_language}">
+                  ${this.ownerGroups.map(item => html`
+                    <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
+                  `)}
+                </paper-listbox>
+              </paper-dropdown-menu>
+              <paper-dropdown-menu id="owner-scaling-group" label="${_t("session.launcher.OwnerResourceGroup")}">
+                <paper-listbox slot="dropdown-content" selected="0">
+                  ${this.ownerScalingGroups.map(item => html`
+                    <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
+                  `)}
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </div>
+            <wl-label>
+              <wl-checkbox id="owner-enabled"></wl-checkbox>
+              ${_t("session.launcher.LaunchSessionWithAccessKey")}
+            </wl-label>
+          </div>
+        </wl-expansion>
+        <fieldset slot="footer" style="padding-top:0;">
+          <wl-button class="launch-button" type="button" id="launch-button"
+                                       outlined @click="${() => this._newSessionWithConfirmation()}">
+                                      <wl-icon>rowing</wl-icon>
+            <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+          </wl-button>
+        </fieldset>
+      </form>
+    </backend-ai-dialog>
+    <backend-ai-dialog id="help-description" fixed backdrop>
+      <span slot="title">${this._helpDescriptionTitle}</span>
+      <div slot="content" class="horizontal layout center" style="margin:5px;">
+      ${this._helpDescriptionIcon == '' ? html`` : html`
+        <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
+        `}
+        <p style="font-size:14px;">${unsafeHTML(this._helpDescription)}</p>
+      </div>
+    </backend-ai-dialog>
+    <backend-ai-dialog id="launch-confirmation-dialog" warning fixed backdrop>
+      <span slot="title">${_t('session.launcher.NoFolderMounted')}</span>
+      <div slot="content" class="vertical layout">
+        <p>${_t('session.launcher.HomeDirectoryDeletionDialog')}</p>
+        <p>${_t('session.launcher.LaunchConfirmationDialog')}</p>
+        <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+      </div>
+      <div slot="footer" style="padding-top:0;margin:0 5px;">
+        <wl-button class="launch-confirmation-button" type="button" id="launch-confirmation-button"
+                                     outlined @click="${() => this._newSession()}">
+                                    <wl-icon>rowing</wl-icon>
+          <span>${_t('session.launcher.LaunchWithoutMount')}</span>
+        </wl-button>
+      </div>
+    </backend-ai-dialog>
 `;
   }
 }

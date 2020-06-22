@@ -1,13 +1,14 @@
 import resolve from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
 //import babel from 'rollup-plugin-babel'; // To support legacy browsers
 import typescript from 'rollup-plugin-typescript';
+import { generateSW } from 'rollup-plugin-workbox';
+
 //import typescript from 'rollup-plugin-typescript2';
 //import typescript from '@rollup/plugin-typescript';
 import { terser } from "rollup-plugin-terser";
 
 export default {
-  // If using any exports from a symlinked project, uncomment the following:
-  // preserveSymlinks: true,
   input: ['src/components/backend-ai-console.ts'],
   output: {
     dir: 'build/rollup/dist/components',
@@ -15,10 +16,18 @@ export default {
     sourcemap: false
   },
   plugins: [
-    //babel(),
     typescript(),
+    replace({
+      'process.env.NODE_ENV': JSON.stringify('production'),
+    }),
     terser(),
-    resolve()
+    resolve(),
+    generateSW( {
+      swDest: 'build/rollup/sw.js',
+      globDirectory: 'build/rollup/',
+      globPatterns: ["dist/**/*.{html,json,js,css}",
+        "src/lib/**/*.{js, map}"],
+    })
 //    babel()
   ]
 };

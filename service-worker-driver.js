@@ -1,7 +1,7 @@
-window.isUpdateAvailable = new Promise(function (resolve, reject) {
+window.isUpdateAvailable = new Promise(function(resolve, reject) {
   if ('serviceWorker' in navigator && ['localhost', '127'].indexOf(location.hostname) === -1) {
-    window.addEventListener('load', function () {
-      navigator.serviceWorker.register('service-worker.js').then(registration => {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('service-worker.js').then((registration) => {
         console.log('ServiceWorker registered with scope: ', registration.scope);
         registration.onupdatefound = () => {
           const installingWorker = registration.installing;
@@ -19,18 +19,18 @@ window.isUpdateAvailable = new Promise(function (resolve, reject) {
             }
           };
         };
-      }).catch(function (err) {
+      }).catch(function(err) {
         console.log('ServiceWorker registration failed: ', err);
       });
     });
   }
 });
 window['isUpdateAvailable']
-  .then(isAvailable => {
-    if (isAvailable) {
-      document.addEventListener('backend-ai-connected', (e) => {
-        document.querySelector('#console-shell').showUpdateNotifier();
-      });
-      console.log('New console available. Please reload to update.');
-    }
-  });
+    .then((isAvailable) => {
+      if (isAvailable) {
+        document.addEventListener('backend-ai-connected', (e) => {
+          document.querySelector('#console-shell').showUpdateNotifier();
+        });
+        console.log('New console available. Please reload to update.');
+      }
+    });

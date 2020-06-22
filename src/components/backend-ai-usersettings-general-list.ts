@@ -21,7 +21,8 @@ import 'weightless/icon';
 import 'weightless/button';
 import 'weightless/label';
 
-import '@material/mwc-select';
+import './backend-ai-dialog';
+import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-list/mwc-list-item';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -143,7 +144,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --dialog-max-height: calc(100vh - 100px);
         }
 
-        mwc-select#select-rcfile-type {
+        mwc-multi-select {
+          --mdc-select-min-width: 140px;
+        }
+
+        mwc-multi-select#select-rcfile-type {
           width: 300px;
           padding-right: 10px;
           --mdc-select-fill-color: transparent;
@@ -232,6 +237,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   setUserLanguage(e) {
     if (e.target.selected.value !== globalThis.backendaioptions.get('language')) {
       globalThis.backendaioptions.set('language', e.target.selected.value);
+      globalThis.backendaioptions.set('current_language', e.target.selected.value);
       setLanguage(e.target.selected.value);
     }
   }
@@ -430,12 +436,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.shadowRoot.querySelector('#change-current-editor-dialog').hide();
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
-  }
-
   _updateSelectedRcFileName(fileName: string) {
     let rcfiles = this.shadowRoot.querySelector('#select-rcfile-type');
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
@@ -579,14 +579,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               </div>
             </div>
             <div class="vertical center-justified layout setting-select">
-              <mwc-select id="ui-language"
+              <mwc-multi-select id="ui-language"
                           required
                           @selected="${(e) => this.setUserLanguage(e)}">
               ${this.supportLanguages.map(item => html`
                 <mwc-list-item value="${item.code}" ?selected=${globalThis.backendaioptions.get('language') === item.code}>
                   ${item.name}
                 </mwc-list-item>`)}
-              </mwc-select>
+              </mwc-multi-select>
             </div>
           </div>
           ${globalThis.isElectron ? html`
@@ -670,16 +670,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
         </div>` : html``}
       </wl-card>
-      <wl-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
-        <div slot="header" style="padding: 0px 20px;">
-        <h3 class="horizontal center layout">
-          <span>${_t("usersettings.BootstrapScript")}</span>
-          <div class="flex"></div>
-          <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-            <wl-icon>close</wl-icon>
-          </wl-button>
-        </h3>
-        </div>
+      <backend-ai-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
+        <span slot="title">${_t("usersettings.BootstrapScript")}</span>
         <div slot="content">
           <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
         </div>
@@ -688,33 +680,25 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <wl-button id="save-code" class="button" @click="${() => this._saveBootstrapScript()}">${_t("button.Save")}</wl-button>
           <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
         </div>
-      </wl-dialog>
-      <wl-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
-        <div slot="header" style="padding: 0px 20px;">
-          <h3 class="horizontal center layout">
-            <span>Edit ${this.rcfile} shell script</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <div class="vertical layout">
-            <mwc-select id="select-rcfile-type"
-                        label="config file name"
-                        required
-                        validationMessage="Please select one option."
-                        @selected="${() => this._toggleRcFileName()}">
-              ${this.rcfiles.map(item => html`
-                <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
-                  ${item.path}
-                </mwc-list-item>`)}
-            </mwc-select>
-            <div class="horizontal layout">
-              <wl-icon class="warning">warning</wl-icon>
-              <wl-label class="warning" for="warning">
-               ${_t("dialog.warning.WillBeAppliedToNewSessions")}
-              </wl-label>
-            </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
+        <span slot="title">Edit ${this.rcfile} shell script</span>
+        <div slot="action" class="vertical layout">
+          <mwc-multi-select id="select-rcfile-type"
+                      label="config file name"
+                      required
+                      validationMessage="Please select one option."
+                      @selected="${() => this._toggleRcFileName()}">
+            ${this.rcfiles.map(item => html`
+              <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
+                ${item.path}
+              </mwc-list-item>`)}
+          </mwc-multi-select>
+          <div class="horizontal layout">
+            <wl-icon class="warning">warning</wl-icon>
+            <wl-label class="warning" for="warning">
+             ${_t("dialog.warning.WillBeAppliedToNewSessions")}
+            </wl-label>
           </div>
         </div>
         <div slot="content">
@@ -726,13 +710,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <wl-button style="margin-left:10px;" id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
           <wl-button style="margin-left:10px;" id="delete-all" @click="${() => this._deleteRcFileAll()}" style="display:none;">${_t("button.DeleteAll")}</wl-button>
         </div>
-      </wl-dialog>
-      <wl-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
-        <div slot="header" style="border-bottom:none;">
-          <h3>${_t("usersettings.DialogSaveToSpecificFile", {File: () => this.prevRcfile})}
-          </h3>
-          <span>${_t("usersettings.DialogNoSaveNoPreserve")}</span>
-        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
+        <span slot="title">${_t("usersettings.DialogSaveToSpecificFile", {File: () => this.prevRcfile})}
+        <span slot="action">${_t("usersettings.DialogNoSaveNoPreserve")}</span>
         <div slot="footer" style="border-top:none;">
           <wl-button id="discard-editor-data"
                      style="margin: 0 10px;"
@@ -747,7 +728,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                      @click="${() => this._cancelCurrentEditorChange()}">
                      ${_t("button.Cancel")}</wl-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `;
   }
 }

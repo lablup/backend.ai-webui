@@ -18,7 +18,6 @@ import {default as AnsiUp} from '../lib/ansiup';
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/checkbox';
-import 'weightless/dialog';
 import 'weightless/icon';
 import 'weightless/textfield';
 import 'weightless/title';
@@ -27,6 +26,7 @@ import '@material/mwc-icon-button';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
 import '../plastics/lablup-shields/lablup-shields';
+import './backend-ai-dialog';
 
 import JsonToCsv from '../lib/json_to_csv';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -101,12 +101,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 300px);
-        }
-
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
+          height: calc(100vh - 265px);
         }
 
         wl-icon.indicator {
@@ -115,6 +110,10 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         wl-icon.pagination {
           color: var(--paper-grey-700);
+        }
+
+        wl-button.pagination[disabled] wl-icon.pagination {
+          color: var(--paper-grey-300);
         }
 
         wl-icon.warning {
@@ -136,6 +135,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
           --button-bg-active-flat: var(--paper-red-600);
+          --button-bg-disabled: var(--paper-grey-50);
+          --button-color-disabled: var(--paper-grey-200);
+        }
+
+        wl-button.pagination[disabled] {
+          --button-shadow-color: transparent;
         }
 
         wl-button.controls-running {
@@ -152,36 +157,28 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
 
         #work-dialog {
-          --dialog-height: calc(100vh - 130px);
+          --component-height: calc(100vh - 50px);
           right: 0;
           top: 50px;
-        }
-
-        #app-dialog {
-          --dialog-width: 330px;
-        }
-
-        #ssh-dialog {
-          --dialog-width: 330px;
         }
 
         @media screen and (max-width: 899px) {
           #work-dialog,
           #work-dialog.mini_ui {
-            left: 0;
-            --dialog-width: 100%;
+            --left: 0;
+            --component-width: 100%;
           }
         }
 
         @media screen and (min-width: 900px) {
           #work-dialog {
-            left: 100px;
-            --dialog-width: calc(100% - 220px);
+            --left: 100px;
+            --component-width: calc(100% - 50px);
           }
 
           #work-dialog.mini_ui {
-            left: 40px;
-            --dialog-width: calc(100% - 102px);
+            --left: 40px;
+            --component-width: calc(100% - 50px);
           }
         }
 
@@ -204,24 +201,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           font-size: 12px;
         }
 
-        .app-icon {
-          margin-left: 5px;
-          margin-right: 5px;
-        }
-
         div.configuration {
           width: 70px !important;
         }
 
         div.configuration wl-icon {
           padding-right: 5px;
-        }
-
-        .app-icon .label {
-          display: block;
-          width: 80px;
-          text-align: center;
-          height: 25px;
         }
 
         wl-button.multiple-action-button {
@@ -234,7 +219,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-bg-active-flat: var(--paper-red-600);
         }
 
-        wl-dialog wl-textfield {
+        backend-ai-dialog wl-textfield {
           padding: 10px 0px;
           --input-font-family: Roboto, Noto, sans-serif;
           --input-font-size: 12px;
@@ -343,7 +328,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         if (!globalThis.backendaiclient.is_admin) {
           this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-          this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)!important';
+          this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
         } else {
           this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
         }
@@ -360,7 +345,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     } else { // already connected
       if (!globalThis.backendaiclient.is_admin) {
         this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-        this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 200px)!important';
+        this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
       } else {
         this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
       }
@@ -746,180 +731,14 @@ export default class BackendAiSessionList extends BackendAIPage {
   _showAppLauncher(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
-    const sessionName = controls['session-name'];
-    const accessKey = controls['access-key'];
-    const appServices = controls['app-services'];
-    this.appSupportList = [];
-    appServices.forEach((elm) => {
-      if (elm in this.appTemplate) {
-        if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
-          this.appTemplate[elm].forEach((app) => {
-            this.appSupportList.push(app);
-          });
-        }
-      } else {
-        if (!['ttyd', 'ipython'].includes(elm)) { // They are default apps from Backend.AI agent.
-          this.appSupportList.push({
-            'name': elm,
-            'title': elm,
-            'redirect': "",
-            'src': './resources/icons/default_app.svg'
-          });
-        }
-      }
-    });
-    let dialog = this.shadowRoot.querySelector('#app-dialog');
-    dialog.setAttribute('session-name', sessionName);
-    dialog.setAttribute('access-key', accessKey);
-    dialog.positionTarget = e.target;
-
-    this.shadowRoot.querySelector('#app-dialog').show();
-  }
-
-  _hideAppLauncher() {
-    this.shadowRoot.querySelector('#app-dialog').hide();
-  }
-
-  async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null) {
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      return false;
-    }
-
-    let param = {
-      endpoint: globalThis.backendaiclient._config.endpoint
-    };
-    if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
-      param['mode'] = "SESSION";
-      param['session'] = globalThis.backendaiclient._config._session_id;
-    } else {
-      param['mode'] = "DEFAULT";
-      param['access_key'] = globalThis.backendaiclient._config.accessKey;
-      param['secret_key'] = globalThis.backendaiclient._config.secretKey;
-    }
-    param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
-    if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
-      this.indicator.end();
-      this.notification.text = 'Proxy is not ready yet. Check proxy settings for detail.';
-      this.notification.show();
-      return Promise.resolve(false);
-    }
-    let rqst = {
-      method: 'PUT',
-      body: JSON.stringify(param),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      uri: this._getProxyURL() + 'conf'
-    };
-    this.indicator.set(20, 'Setting up proxy for the app...');
-    try {
-      let response = await this.sendRequest(rqst);
-      if (response === undefined) {
-        this.indicator.end();
-        this.notification.text = 'Proxy configurator is not responding.';
-        this.notification.show();
-        return Promise.resolve(false);
-      }
-      let token = response.token;
-      let uri = this._getProxyURL() + `proxy/${token}/${sessionName}/add?app=${app}`;
-      if (port !== null && port > 1024 && port < 65535) {
-        uri += `&port=${port}`;
-      }
-      this.indicator.set(50, 'Adding kernel to socket queue...');
-      let rqst_proxy = {
-        method: 'GET',
-        app: app,
-        uri: uri
-      };
-      return await this.sendRequest(rqst_proxy);
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async _runApp(e) {
-    const controller = e.target;
-    let controls = controller.closest('#app-dialog');
-    let sessionName = controls.getAttribute('session-name');
-    let urlPostfix = controller['url-postfix'];
-    let appName = controller['app-name'];
-    if (appName === undefined || appName === null) {
-      return;
-    }
-
-    if (urlPostfix === undefined || urlPostfix === null) {
-      urlPostfix = '';
-    }
-
-    if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
-      this._hideAppLauncher();
-      this.indicator = await globalThis.lablupIndicator.start();
-      let port = null;
-      if (globalThis.isElectron && appName === 'sshd') {
-        port = globalThis.backendaioptions.get('custom_ssh_port', 0);
-        if (port === '0' || port === 0) { // setting store does not accept null.
-          port = null;
-        }
-      }
-      this._open_wsproxy(sessionName, appName, port)
-        .then((response) => {
-          if (appName === 'sshd') {
-            this.indicator.set(100, 'Prepared.');
-            this.sshPort = response.port;
-            this._readSSHKey(sessionName);
-            this._openSSHDialog();
-            setTimeout(() => {
-              this.indicator.end();
-            }, 1000);
-          } else if (appName === 'vnc') {
-            this.indicator.set(100, 'Prepared.');
-            this.vncPort = response.port;
-            this._openVNCDialog();
-          } else if (response.url) {
-            this.indicator.set(100, 'Prepared.');
-            setTimeout(() => {
-              globalThis.open(response.url + urlPostfix, '_blank');
-              console.log(appName + " proxy loaded: ");
-              console.log(sessionName);
-            }, 1000);
-          }
-        });
-    }
-  }
-
-  async _readSSHKey(sessionName) {
-    const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
-    const file = '/home/work/id_container';
-    const blob = await globalThis.backendaiclient.download_single(sessionName, file);
-    // TODO: This blob has additional leading letters in front of key texts.
-    //       Manually trim those letters.
-    const rawText = await blob.text();
-    const index = rawText.indexOf('-----');
-    const trimmedBlob = await blob.slice(index, blob.size, blob.type);
-    downloadLinkEl.href = globalThis.URL.createObjectURL(trimmedBlob);
-    downloadLinkEl.download = 'id_container';
+    return globalThis.appLauncher.showLauncher(controls);
   }
 
   async _runTerminal(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const sessionName = controls['session-name'];
-    if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
-      this.indicator = await globalThis.lablupIndicator.start();
-      this._open_wsproxy(sessionName, 'ttyd')
-        .then((response) => {
-          if (response.url) {
-            this.indicator.set(100, 'Prepared.');
-            setTimeout(() => {
-              globalThis.open(response.url, '_blank');
-              this.indicator.end();
-              console.log("Terminal proxy loaded: ");
-              console.log(sessionName);
-            }, 1000);
-          }
-        });
-    }
+    return globalThis.appLauncher.runTerminal(sessionName);
   }
 
   // Single session closing
@@ -931,16 +750,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSessionDialog.sessionName = sessionName;
     this.terminateSessionDialog.accessKey = accessKey;
     this.terminateSessionDialog.show();
-  }
-
-  _openSSHDialog() {
-    let dialog = this.shadowRoot.querySelector('#ssh-dialog');
-    dialog.show();
-  }
-
-  _openVNCDialog() {
-    let dialog = this.shadowRoot.querySelector('#vnc-dialog');
-    dialog.show();
   }
 
   _terminateSession(e) {
@@ -1068,7 +877,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
 
     if (dialog.id === 'ssh-dialog') {
@@ -1324,7 +1133,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     //   let dateFrom = this.shadowRoot.querySelector('#date-from');
 
     //   if(dateTo.validity.valid && dateFrom.validity.valid) {
-    //     // TODO : new backendaiclien.computeSession query will be added (date range)
+    //      TODO : new backendaiclient.computeSession query will be added (date range)
     //     console.log('Session between ' , dateFrom.value, ' ~ ', dateTo.value, " will be downloaded.");
     //   }
     // }
@@ -1477,115 +1286,40 @@ export default class BackendAiSessionList extends BackendAIPage {
           <wl-icon class="pagination">navigate_next</wl-icon>
         </wl-button>
       </div>
-      <wl-dialog id="work-dialog" fixed blockscrolling scrollable
-                    style="padding:0;">
-        <wl-card elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
-          <h3 class="horizontal center layout" style="font-weight:bold">
-            <span id="work-title"></span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._refreshLogs()}">
-              <wl-icon>refresh</wl-icon>
-            </wl-button>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <div id="work-area" style="overflow:scroll;"></div>
-          <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
-                  style="border-style: none;width: 100%;"></iframe>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="app-dialog" fixed backdrop blockscrolling
-                    style="padding:0;">
-        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h4 class="horizontal center layout" style="font-weight:bold">
-            <span>App</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h4>
-          <div style="padding:15px;" class="horizontal layout wrap center center-justified">
-          ${this.appSupportList.map(item => html`
-            <div class="vertical layout center center-justified app-icon">
-              <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
-                                 .url-postfix="${item.redirect}"
-                                 @click="${(e) => this._runApp(e)}">
-                <img src="${item.src}" />
-              </mwc-icon-button>
-              <span class="label">${item.title}</span>
-            </div>
-          `)}
-           </div>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="ssh-dialog" fixed backdrop blockscrolling persistent
-                 style="padding:0;">
-        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h4 class="horizontal center layout" style="font-weight:bold">
-            <span>SSH / SFTP connection</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h4>
-          <div style="padding:0 15px;" >Use your favorite SSH/SFTP application to connect.</div>
-          <section class="vertical layout wrap start start-justified">
-            <h4>${_t("session.ConnectionInformation")}</h4>
-            <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a></div>
-            <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
-            <div><span>Port:</span> ${this.sshPort}</div>
-            <div><a id="sshkey-download-link" href="">Download SSH key file (id_container)</a></div>
-          </section>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="vnc-dialog" fixed backdrop blockscrolling
-                    style="padding:0;">
-        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h4 class="horizontal center layout" style="font-weight:bold">
-            <span>${_t("session.VNCconnection")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h4>
-          <div style="padding:0 15px;" >${_t("session.UseYourFavoriteSSHApp")}</div>
-          <section class="vertical layout wrap start start-justified">
-            <h4>${_t("session.ConnectionInformation")}</h4>
-            <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a></div>
-          </section>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="terminate-session-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">${_t("dialog.title.LetsDouble-Check")}</wl-title>
+      <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
+        <span slot="title" id="work-title"></span>
+        <div slot="action">
+          <wl-button fab flat inverted @click="${(e) => this._refreshLogs()}">
+            <wl-icon>refresh</wl-icon>
+          </wl-button>
+        </div>
+        <div slot="content" id="work-area" style="overflow:scroll;"></div>
+        <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
+                style="border-style: none;width: 100%;"></iframe>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="terminate-session-dialog" fixed backdrop>
+         <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
             <p>${_t("session.CheckAgainDialog")}</p>
          </div>
-         <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button class="ok" @click="${(e) => this._terminateSessionWithCheck(e)}">Okay</wl-button>
+         <div slot="footer" class="horizontal end-justified flex layout">
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
+            <wl-button class="ok" @click="${(e) => this._terminateSessionWithCheck(e)}">${_t("button.Okay")}</wl-button>
          </div>
-      </wl-dialog>
-      <wl-dialog id="terminate-selected-sessions-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">Let's double-check</wl-title>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
+         <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
             <p>${_t("session.TerminatingSessionDialog")} ${_t("session.CheckAgainDialog")}</p>
          </div>
-         <div slot="footer">
+         <div slot="footer" class="horizontal end-justified flex layout">
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
             <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t("button.Okay")}</wl-button>
          </div>
-      </wl-dialog>
-      <wl-dialog id="export-to-csv" fixed backdrop blockscrolling>
-      <wl-card elevation="1" class="intro centered login-panel" style="margin:0;">
-        <h3 class="horizontal center layout" style="padding:10px;">
-          <span style="margin-left:10px;">${_t("session.ExportSessionListToCSVFile")}</span>
-          <div class="flex"></div>
-          <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-            <wl-icon>close</wl-icon>
-          </wl-button>
-        </h3>
-        <section style="padding: 10px;">
+      </backend-ai-dialog>
+      <backend-ai-dialog id="export-to-csv" fixed backdrop>
+        <span slot="title">${_t("session.ExportSessionListToCSVFile")}</span>
+        <div slot="content">
           <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
                           validationMessage="Allows letters, numbers and -_."
                           value="${'session_' + this._defaultFileName}" required
@@ -1617,9 +1351,8 @@ export default class BackendAiSessionList extends BackendAIPage {
               ${_t("session.ExportCSVFile")}
             </wl-button>
           </div>
-          </section>
-        </wl-card>
-      </wl-dialog>
+        </div>
+      </backend-ai-dialog>
       `;
   }
 

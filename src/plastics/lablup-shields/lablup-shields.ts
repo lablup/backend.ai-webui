@@ -100,6 +100,10 @@ export default class LablupShields extends LitElement {
 
   attributeChangedCallback(name, oldval, newval) {
     super.attributeChangedCallback(name, oldval, newval);
+    if (name == 'app') {
+      this.app = newval;
+      this._appChanged();
+    }
     if (name == 'description') {
       this.description = newval;
       this._descriptionChanged();
@@ -109,6 +113,9 @@ export default class LablupShields extends LitElement {
   updated(changedProps) {
     if (changedProps.has("color")) {
       this._colorChanged();
+    }
+    if (changedProps.has("appColor")) {
+      this._appColorChanged();
     }
   }
 
@@ -133,6 +140,15 @@ export default class LablupShields extends LitElement {
       }
     } else {
       this.shadowRoot.querySelector('.app').style.backgroundColor = '#555';
+    }
+  }
+
+  async _appChanged() {
+    await this.updateComplete;
+    if (typeof this.app == 'undefined' || this.app == 'undefined' || this.app === '') {
+      this.shadowRoot.querySelector('#app').style.display = 'none';
+    } else {
+      this.shadowRoot.querySelector('#app').style.display = 'block';
     }
   }
 
