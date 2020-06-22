@@ -7,8 +7,8 @@ import {css, customElement, html, property} from "lit-element";
 
 import '@material/mwc-textfield/mwc-textfield';
 import 'weightless/card';
-import 'weightless/dialog';
 
+import './backend-ai-dialog';
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -101,29 +101,27 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="verification-success-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
-        <wl-card class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("signup.EmailVerified")}</span>
-          </h3>
-          <div class="horizontal layout center" style="margin:10px;">
+      <backend-ai-dialog id="verification-success-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
+        <span slot="title">${_t("signup.EmailVerified")}</span>
+
+        <div slot="content">
+          <div class="horizontal layout center">
             <p style="width:256px;">${_t("signup.EmailVerifiedMessage")}</p>
           </div>
-          <div class="horizontal layout center" style="margin:20px;">
-            <wl-button outlined flat class="fg green mini flex" type="button"
-                @click="${() => this._redirectToLoginPage()}">
-              ${_t("login.Login")}
-            </wl-button>
-          </div>
-        </wl-card>
-      </wl-dialog>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button outlined flat class="fg green mini flex" type="button"
+              @click="${() => this._redirectToLoginPage()}">
+            ${_t("login.Login")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
 
-      <wl-dialog id="verification-fail-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
-        <wl-card class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("signup.EmailVerificationFailed")}</span>
-          </h3>
-          <div class="horizontal layout center" style="margin:10px;">
+      <backend-ai-dialog id="verification-fail-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
+        <span slot="title">${_t("signup.EmailVerificationFailed")}</span>
+
+        <div slot="content">
+          <div class="horizontal layout center">
             <p style="width:256px;">${_t("signup.EmailVerificationFailedMessage")}</p>
           </div>
           <div style="margin:20px;">
@@ -131,13 +129,15 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
                 autofocus auto-validate validationMessage="${_t('signup.InvalidEmail')}"
                 pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
             <div style="height:1em"></div>
-            <wl-button outlined flat class="fg red mini flex" type="button"
-                @click="${() => this.sendVerificationCode()}">
-              ${_t("signup.SendEmail")}
-            </wl-button>
           </div>
-        </wl-card>
-      </wl-dialog>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button outlined flat class="fg red mini flex" type="button"
+              @click="${() => this.sendVerificationCode()}">
+            ${_t("signup.SendEmail")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 }

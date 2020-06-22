@@ -14,7 +14,6 @@ import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/icon';
 import 'weightless/label';
 import 'weightless/select';
@@ -23,6 +22,7 @@ import 'weightless/textarea';
 import 'weightless/textfield';
 import 'weightless/title';
 
+import './backend-ai-dialog';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
@@ -67,20 +67,20 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           margin-top: 20px;
         }
 
-        wl-dialog wl-textfield,
-        wl-dialog wl-textarea,
-        wl-dialog wl-select {
+        backend-ai-dialog wl-textfield,
+        backend-ai-dialog wl-textarea,
+        backend-ai-dialog wl-select {
           margin-bottom: 20px;
           --input-font-family: Roboto, Noto, sans-serif;
         }
 
-        wl-dialog wl-label {
+        backend-ai-dialog wl-label {
           --label-font-family: Roboto, Noto, sans-serif;
           --label-color: #282828;
           margin-bottom: 5px;
         }
 
-        wl-dialog wl-switch {
+        backend-ai-dialog wl-switch {
           margin-bottom: 20px;
           --switch-color-checked: #29b6f6;
           --switch-bg-checked: #bbdefb;
@@ -93,8 +93,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           --input-border-style-disabled: 1px solid #ccc;
         }
 
-        wl-dialog {
-          --dialog-min-width: 350px;
+        backend-ai-dialog {
+          --component-min-width: 350px;
         }
       `
     ];
@@ -200,12 +200,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         </div>
       `, root
     )
-  }
-
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
   }
 
   _createScalingGroup() {
@@ -371,104 +365,90 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         <vaadin-grid-column flex-grow="1" header="${_t("general.Control")}" .renderer=${this._boundControlRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
-      <wl-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("resourceGroup.CreateResourceGroup")}</span>
-            <div class="flex"></div>
-            <wl-button class="fab" fab flat inverted @click=${e => this._hideDialog(e)}>
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <form>
-            <fieldset>
-              <wl-textfield
-                type="text"
-                id="scaling-group-name"
-                label="${_t("resourceGroup.ResourceGroupName")}"
-              ></wl-textfield>
-              <wl-textarea
-                name="description"
-                id="scaling-group-description"
-                label="${_t("resourceGroup.Description")}"
-              ></wl-textarea>
-              <wl-select
-                id="scaling-group-domain"
-                label="${_t("resourceGroup.SelectDomain")}"
-              >
-                <option disabled>${_t("resourceGroup.SelectDomain")}</option>
-                ${this.domains.map(e => html`
-                    <option value="${e.name}">
-                      ${e.name}
-                    </option>
-                  `
+      <backend-ai-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t("resourceGroup.CreateResourceGroup")}</span>
+
+        <div slot="content" class="login-panel intro centered">
+          <wl-textfield
+            type="text"
+            id="scaling-group-name"
+            label="${_t("resourceGroup.ResourceGroupName")}"
+          ></wl-textfield>
+          <wl-textarea
+            name="description"
+            id="scaling-group-description"
+            label="${_t("resourceGroup.Description")}"
+          ></wl-textarea>
+          <wl-select
+            id="scaling-group-domain"
+            label="${_t("resourceGroup.SelectDomain")}"
+          >
+            <option disabled>${_t("resourceGroup.SelectDomain")}</option>
+            ${this.domains.map(e => html`
+                <option value="${e.name}">
+                  ${e.name}
+                </option>
+              `
     )}
-              </wl-select>
-              <div class="horizontal layout center-justified">
-                <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
-                  @click="${this._createScalingGroup}">
-                  <wl-icon>add</wl-icon>
-                  ${_t("button.Create")}
-                </wl-button>
-              </div>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("resourceGroup.ModifyResourceGroup")}</span>
-            <div class="flex"></div>
-            <wl-button class="fab" fab flat inverted @click="${e => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <form>
-            <fieldset>
-              <wl-textarea
-                id="modify-scaling-group-description"
-                type="text"
-                label="Description"
-                value=${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].description}
-              ></wl-textarea>
-              <wl-select id="modify-scaling-group-scheduler" label="Select scheduler"
-                  value="${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].scheduler}">
-                <option disabled>Select Scheduler</option>
-                ${this.schedulerTypes.map(sched => html`
-                  <option value="${sched}">${sched}</option>
-                `)}
-              </wl-select>
-              <wl-label for="switch">
-                ${_t("resourceGroup.ActiveStatus")}
-              </wl-label>
-              <div id="switch">
-                <wl-switch
-                  id="modify-scaling-group-active"
-                ></wl-switch>
-              </div>
-              <wl-button
-                class="fg blue"
-                type="button"
-                outlined
-                style="width: 100%; box-sizing: border-box;"
-                @click=${this._modifyScalingGroup}
-              >
-                <wl-icon>check</wl-icon>
-                ${_t("button.Save")}
-              </wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="delete-scaling-group-dialog" fixed backdrop blockscrolling>
-        <wl-title slot="header" level="3" style="color: #EF1320">${_t("dialog.warning.CannotBeUndone")}</wl-title>
+          </wl-select>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
+            @click="${this._createScalingGroup}">
+            <wl-icon>add</wl-icon>
+            ${_t("button.Create")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t("resourceGroup.ModifyResourceGroup")}</span>
+
+        <div slot="content" class="login-panel intro centered">
+          <wl-textarea
+            id="modify-scaling-group-description"
+            type="text"
+            label="Description"
+            value=${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].description}
+          ></wl-textarea>
+          <wl-select id="modify-scaling-group-scheduler" label="Select scheduler"
+              value="${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].scheduler}">
+            <option disabled>Select Scheduler</option>
+            ${this.schedulerTypes.map(sched => html`
+              <option value="${sched}">${sched}</option>
+            `)}
+          </wl-select>
+          <wl-label for="switch">
+            ${_t("resourceGroup.ActiveStatus")}
+          </wl-label>
+          <div id="switch">
+            <wl-switch
+              id="modify-scaling-group-active"
+            ></wl-switch>
+          </div>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button
+            class="fg blue"
+            type="button"
+            outlined
+            style="width: 100%; box-sizing: border-box;"
+            @click=${this._modifyScalingGroup}
+          >
+            <wl-icon>check</wl-icon>
+            ${_t("button.Save")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="delete-scaling-group-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t("dialog.warning.CannotBeUndone")}</span>
         <div slot="content">
           <wl-textfield
             id="delete-scaling-group"
             type="text"
             label="${_t("resourceGroup.TypeResourceGroupNameToDelete")}"
           ></wl-textfield>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button
             class="fg red delete"
             type="button"
@@ -480,7 +460,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             ${_t("button.Delete")}
           </wl-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `;
   }
 }

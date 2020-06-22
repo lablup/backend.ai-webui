@@ -17,7 +17,6 @@ import "@material/mwc-menu/mwc-menu";
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/textfield';
 import 'weightless/tab';
 import 'weightless/tab-group';
@@ -26,6 +25,7 @@ import 'weightless/checkbox';
 import 'weightless/label';
 
 import './backend-ai-credential-list';
+import './backend-ai-dialog';
 import './backend-ai-resource-policy-list';
 import './backend-ai-user-list';
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -89,20 +89,8 @@ export default class BackendAICredentialView extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        wl-button.create-button {
-          width: 335px;
-        }
-
         #new-keypair-dialog {
           min-width: 350px;
-        }
-
-        wl-dialog {
-          margin: 15px 0 5px 0;
-          font-weight: 100;
-          font-size: 16px;
-          padding-left: 20px;
-          border-bottom: 1px solid #ccc;
         }
 
         wl-button {
@@ -232,6 +220,10 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         mwc-icon-button#dropdown-menu-button {
           margin-left: 10px;
+        }
+
+        backend-ai-dialog {
+          --component-min-width: 350px;
         }
       `];
   }
@@ -574,12 +566,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
-  }
-
   _showTab(tab) {
     var els = this.shadowRoot.querySelectorAll(".tab-content");
     for (var x = 0; x < els.length; x++) {
@@ -837,244 +823,210 @@ export default class BackendAICredentialView extends BackendAIPage {
           </div>
         </wl-card>
       </wl-card>
-      <wl-dialog id="new-keypair-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
+      <backend-ai-dialog id="new-keypair-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t("credential.AddCredential")}</span>
+        <div slot="content">
+          <wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
+                       auto-validate></wl-textfield>
+          <div class="horizontal center layout">
+            <paper-dropdown-menu id="resource-policy" label="Resource Policy">
+              <paper-listbox slot="dropdown-content" selected="0">
+              ${this.resource_policy_names.map(item => html`
+                <paper-item label="${item}">${item}</paper-item>
+              `)}
+              </paper-listbox>
+            </paper-dropdown-menu>
+            <paper-dropdown-menu id="rate-limit" label="Rate Limit (for 15 min.)">
+              <paper-listbox slot="dropdown-content" selected="0">
+              ${this.rate_metric.map(item => html`
+                <paper-item label="${item}">${item}</paper-item>
+              `)}
+              </paper-listbox>
+            </paper-dropdown-menu>
+          </div>
+          <wl-expansion name="advanced-keypair-info">
+            <span slot="title">${_t("general.Advanced")}</span>
+            <span slot="description"></span>
+            <wl-textfield type="text" name="new_access_key" id="id_new_access_key" label="Access Key (optional)"
+                          auto-validate .value="${this.new_access_key}">
+            </wl-textfield>
+            <wl-textfield type="text" name="new_secret_key" id="id_new_secret_key" label="Secret Key (optional)"
+                          auto-validate .value="${this.new_secret_key}">
+            </wl-textfield>
+          </wl-expansion>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+            <wl-button class="fg blue full-size" id="create-keypair-button" outlined type="button"
+            @click="${this._addKeyPair}">
+                       <wl-icon>add</wl-icon>
+                       ${_t("general.Add")}
+                       </wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="new-policy-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t("credential.CreateResourcePolicy")}</span>
 
-          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span style="margin-right:15px;">${_t("credential.AddCredential")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <form id="login-form">
-            <fieldset>
-              <wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
-                           auto-validate></wl-textfield>
-              <div class="horizontal center layout">
-                <paper-dropdown-menu id="resource-policy" label="Resource Policy">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.resource_policy_names.map(item => html`
-                    <paper-item label="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                <paper-dropdown-menu id="rate-limit" label="Rate Limit (for 15 min.)">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.rate_metric.map(item => html`
-                    <paper-item label="${item}">${item}</paper-item>
-                  `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-              </div>
-              <wl-expansion name="advanced-keypair-info">
-                <span slot="title">${_t("general.Advanced")}</span>
-                <span slot="description"></span>
-                <wl-textfield type="text" name="new_access_key" id="id_new_access_key" label="Access Key (optional)"
-                              auto-validate .value="${this.new_access_key}">
-                </wl-textfield>
-                <wl-textfield type="text" name="new_secret_key" id="id_new_secret_key" label="Secret Key (optional)"
-                              auto-validate .value="${this.new_secret_key}">
-                </wl-textfield>
-              </wl-expansion>
-              <br/><br/>
-              <wl-button class="fg blue create-button" id="create-keypair-button" outlined type="button"
-              @click="${this._addKeyPair}">
-                         <wl-icon>add</wl-icon>
-                         ${_t("general.Add")}
-                         </wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="new-policy-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("credential.CreateResourcePolicy")}</span>
-            <div class="flex"></div>
-            <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <form id="login-form">
-            <fieldset>
-            <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
-                             validationMessage="Policy name is Required."
-                             required></mwc-textfield>
-              <h4>${_t("credential.ResourcePolicy")}</h4>
-              <div class="horizontal center layout">
-                  <div class="vertical layout" style="width:75px; margin:0px 10px 0px 0px;">
-                    <wl-label>CPU</wl-label>
-                    <wl-textfield id="cpu-resource" type="number"
-                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                      <wl-label class="unlimited">
-                        <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                        ${_t("credential.Unlimited")}
-                      </wl-label>
-                  </div>
-                  <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
-                    <wl-label>RAM(GB)</wl-label>
-                    <wl-textfield id="ram-resource" type="number"
-                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                    <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      ${_t("credential.Unlimited")}
-                    </wl-label>
-                  </div>
-                  <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
-                    <wl-label>GPU</wl-label>
-                    <wl-textfield id="gpu-resource" type="number"
-                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                    <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      ${_t("credential.Unlimited")}
-                    </wl-label>
-                  </div>
-                  <div class="vertical layout" style="width:75px; margin:0px 0px 0px 10px;">
-                    <wl-label>fGPU</wl-label>
-                    <wl-textfield id="fgpu-resource" type="number"
-                                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                    <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      ${_t("credential.Unlimited")}
-                    </wl-label>
-                  </div>
-              </div>
-              <h4>${_t("credential.Sessions")}</h4>
-              <div class="horizontal center layout">
-                <div class="vertical left layout" style="width: 110px;">
-                    <wl-label>${_t("credential.ContainerPerSession")}</wl-label>
-                    <wl-textfield id="container-per-session-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                    <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      ${_t("credential.Unlimited")}
-                    </wl-label>
-                  </div>
-                  <div class="vertical left layout" style="width: 110px; margin: 0px 15px;">
-                    <wl-label>${_t("credential.IdleTimeoutSec")}</wl-label>
-                    <wl-textfield id="idle-timeout" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                    <wl-label class="unlimited">
-                      <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                      ${_t("credential.Unlimited")}
-                    </wl-label>
-                  </div>
-                  <div class="vertical left layout" style="width: 110px;">
-                      <wl-label>${_t("credential.ConcurrentJobs")}</wl-label>
-                      <wl-textfield id="concurrency-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                      <wl-label class="unlimited">
-                        <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                        ${_t("credential.Unlimited")}
-                      </wl-label>
-                  </div>
-              </div>
-              <h4 style="margin-bottom:0px;">${_t("credential.Folders")}</h4>
-              <div class="horizontal center layout">
-                <div class="vertical layout" style="width: 110px;">
-                <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
-                  <paper-listbox slot="dropdown-content" selected="0">
-                    ${this.allowed_vfolder_hosts.map(item => html`
-                      <paper-item value="${item}" style="margin: 0px 0px 1px 0px;">${item}</paper-item>
-                    `)}
-                  </paper-listbox>
-                </paper-dropdown-menu>
-                </div>
-                <div class="vertical layout" style="width: 110px; margin: 21px 15px 0;">
-                  <wl-label class="folders">${_t("credential.Capacity(GB)")}</wl-label>
-                  <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+        <div slot="content">
+          <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
+                           validationMessage="Policy name is Required."
+                           required></mwc-textfield>
+          <h4>${_t("credential.ResourcePolicy")}</h4>
+          <div class="horizontal center layout">
+              <div class="vertical layout" style="width:75px; margin:0px 10px 0px 0px;">
+                <wl-label>CPU</wl-label>
+                <wl-textfield id="cpu-resource" type="number"
+                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                     ${_t("credential.Unlimited")}
-                </wl-label>
-                </div>
-                <div class="vertical layout" style="width: 110px;">
-                  <wl-label class="folders">${_t("credential.Max#")}</wl-label>
-                  <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                </div>
+                  </wl-label>
               </div>
-
-              <br/><br/>
-              <wl-button class="fg blue create-button" id="create-policy-button" type="button" outlined
-               @click="${() => this._addResourcePolicy()}">
-                         <wl-icon>add</wl-icon>
-                         ${_t("credential.Create")}
-              </wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="new-user-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("credential.CreateUser")}</span>
-            <div class="flex"></div>
-            <wl-button class="fab" fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
+              <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
+                <wl-label>RAM(GB)</wl-label>
+                <wl-textfield id="ram-resource" type="number"
+                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t("credential.Unlimited")}
+                </wl-label>
+              </div>
+              <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
+                <wl-label>GPU</wl-label>
+                <wl-textfield id="gpu-resource" type="number"
+                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t("credential.Unlimited")}
+                </wl-label>
+              </div>
+              <div class="vertical layout" style="width:75px; margin:0px 0px 0px 10px;">
+                <wl-label>fGPU</wl-label>
+                <wl-textfield id="fgpu-resource" type="number"
+                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t("credential.Unlimited")}
+                </wl-label>
+              </div>
+          </div>
+          <h4>${_t("credential.Sessions")}</h4>
+          <div class="horizontal center layout">
+            <div class="vertical left layout" style="width: 110px;">
+                <wl-label>${_t("credential.ContainerPerSession")}</wl-label>
+                <wl-textfield id="container-per-session-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t("credential.Unlimited")}
+                </wl-label>
+              </div>
+              <div class="vertical left layout" style="width: 110px; margin: 0px 15px;">
+                <wl-label>${_t("credential.IdleTimeoutSec")}</wl-label>
+                <wl-textfield id="idle-timeout" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t("credential.Unlimited")}
+                </wl-label>
+              </div>
+              <div class="vertical left layout" style="width: 110px;">
+                  <wl-label>${_t("credential.ConcurrentJobs")}</wl-label>
+                  <wl-textfield id="concurrency-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                  <wl-label class="unlimited">
+                    <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                    ${_t("credential.Unlimited")}
+                  </wl-label>
+              </div>
+          </div>
+          <h4 style="margin-bottom:0px;">${_t("credential.Folders")}</h4>
+          <div class="horizontal center layout">
+            <div class="vertical layout" style="width: 110px;">
+            <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
+              <paper-listbox slot="dropdown-content" selected="0">
+                ${this.allowed_vfolder_hosts.map(item => html`
+                  <paper-item value="${item}" style="margin: 0px 0px 1px 0px;">${item}</paper-item>
+                `)}
+              </paper-listbox>
+            </paper-dropdown-menu>
+            </div>
+            <div class="vertical layout" style="width: 110px; margin: 21px 15px 0;">
+              <wl-label class="folders">${_t("credential.Capacity(GB)")}</wl-label>
+              <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <wl-label class="unlimited">
+                <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                ${_t("credential.Unlimited")}
+            </wl-label>
+            </div>
+            <div class="vertical layout" style="width: 110px;">
+              <wl-label class="folders">${_t("credential.Max#")}</wl-label>
+              <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+            </div>
+          </div>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+            <wl-button class="fg blue full-size" id="create-policy-button" type="button" outlined
+             @click="${() => this._addResourcePolicy()}">
+                       <wl-icon>add</wl-icon>
+                       ${_t("credential.Create")}
             </wl-button>
-          </h3>
-          <form>
-            <fieldset>
-              <wl-textfield
-                type="email"
-                name="user_email"
-                id="id_user_email"
-                label="${_t("general.E-Mail")}"
-              >
-              </wl-textfield>
-              <wl-textfield
-                type="text"
-                name="user_name"
-                id="id_user_name"
-                label="${_t("general.Username")}"
-              >
-              </wl-textfield>
-              <wl-textfield
-                type="password"
-                name="user_password"
-                id="id_user_password"
-                label="${_t("general.Password")}"
-                pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
-              >
-              </wl-textfield>
-              <wl-textfield
-                type="password"
-                name="user_confirm"
-                id="id_user_confirm"
-                label="${_t("general.ConfirmPassword")}"
-              >
-              </wl-textfield>
-              <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
-              @click="${this._addUser}">
-                <wl-icon>add</wl-icon>
-                ${_t("credential.CreateUser")}
-              </wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="export-to-csv" fixed backdrop blockscrolling>
-      <wl-card elevation="1" class="intro centered login-panel" style="margin:0;">
-        <h3 class="horizontal center layout" style="padding:10px;">
-          <span style="margin-left:10px; font-size:18px;">${_t("credential.ExportCSVFile")} (${this._activeTab})</span>
-          <div class="flex"></div>
-          <wl-button flat fab @click="${(e) => this._hideDialog(e)}">
-            <wl-icon class="close">close</wl-icon>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="new-user-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t("credential.CreateUser")}</span>
+        <div slot="content">
+          <wl-textfield
+            type="email"
+            name="user_email"
+            id="id_user_email"
+            label="${_t("general.E-Mail")}"
+          >
+          </wl-textfield>
+          <wl-textfield
+            type="text"
+            name="user_name"
+            id="id_user_name"
+            label="${_t("general.Username")}"
+          >
+          </wl-textfield>
+          <wl-textfield
+            type="password"
+            name="user_password"
+            id="id_user_password"
+            label="${_t("general.Password")}"
+            pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+          >
+          </wl-textfield>
+          <wl-textfield
+            type="password"
+            name="user_confirm"
+            id="id_user_confirm"
+            label="${_t("general.ConfirmPassword")}"
+          >
+          </wl-textfield>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button class="fg blue full-size" id="create-user-button" outlined type="button"
+          @click="${this._addUser}">
+            <wl-icon>add</wl-icon>
+            ${_t("credential.CreateUser")}
           </wl-button>
-        </h3>
-        <section style="padding: 5px;">
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="export-to-csv" fixed backdrop blockscrolling>
+        <span slot="title">${_t("credential.ExportCSVFile")} (${this._activeTab})</span>
+
+        <div slot="content" class="intro centered login-panel">
           <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
                           validationMessage="Allows letters, numbers and -_."
                           value="${this._activeTab + '_' + this._defaultFileName}" required
           ></mwc-textfield>
-          <div class="horizontal center layout">
-            <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
-            @click="${this._exportToCSV}">
-              <wl-icon>get_app</wl-icon>
-              ${_t("credential.ExportCSVFile")}
-            </wl-button>
-          </div>
-          </section>
-        </wl-card>
-      </wl-dialog>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
+          @click="${this._exportToCSV}">
+            <wl-icon>get_app</wl-icon>
+            ${_t("credential.ExportCSVFile")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 }

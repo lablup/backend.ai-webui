@@ -887,7 +887,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.06.2.200616</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.06.3.200622</small>
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
@@ -997,7 +997,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
-      <backend-ai-dialog id="user-preference-dialog" backdrop>
+      <backend-ai-dialog id="user-preference-dialog" fixed backdrop>
         <span slot="title">${_t("console.menu.ChangePassword")}</span>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-password" type="password"
