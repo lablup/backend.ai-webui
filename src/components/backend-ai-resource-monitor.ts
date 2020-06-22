@@ -329,18 +329,38 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           z-index: 100;
         }
 
-        wl-select {
-          --input-bg: transparent;
-          --input-color: rgb(24, 24, 24);
-          --input-color-disabled: rgb(24, 24, 24);
-          --input-label-color: rgb(24, 24, 24);
-          --input-label-font-size: 10px;
-          --input-border-style: 0;
-          --input-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+        mwc-multi-select {
+          width: 235px;
+          font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          --mdc-typography-subtitle1-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          --mdc-typography-subtitle1-font-size: 14px;
+          --mdc-typography-subtitle1-font-color: rgb(24, 24, 24);;
+          --mdc-typography-subtitle1-font-weight: 400;
+          --mdc-typography-subtitle1-line-height: 16px;
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(255, 255, 255, 1.0);
+          --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
+          --mdc-select-dropdown-icon-color: rgba(255, 255, 255, 1.0);
+          --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
+          --mdc-select-disabled-dropdown-icon-color: rgba(255, 255, 255, 0.87);
+          --mdc-select-idle-line-color: transparent;
+          --mdc-select-hover-line-color: rgba(255, 255, 255, 0.87);
+          --mdc-select-ink-color: rgb(24, 24, 24);
+          --mdc-select-outlined-idle-border-color: rgba(255, 255, 255, 0.42);
+          --mdc-select-outlined-hover-border-color: rgba(255, 255, 255, 0.87);
+          --mdc-theme-surface: white;
+          --mdc-list-vertical-padding: 5px;
+          --mdc-list-side-padding: 10px;
+          --mdc-menu-item-height: 28px;
+          --mdc-list-item__primary-text: {
+            height: 20px;
+            color: #222222;
+          };
+          margin-bottom: 15px;
         }
 
         #scaling-group-select {
-          width: 250px;
+          width: 235px;
         }
 
         wl-button.resource-button.iron-selected {
@@ -687,21 +707,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           if (scaling_group_selection_box.hasChildNodes()) {
             scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
           }
-          const scaling_select = document.createElement('wl-select');
+          const scaling_select = document.createElement('mwc-multi-select');
           scaling_select.label = _text('session.launcher.ResourceGroup');
-          scaling_select.name = 'scaling-group-select';
+          //scaling_select.name = 'scaling-group-select';
           scaling_select.id = 'scaling-group-select';
           scaling_select.value = this.scaling_group;
-          scaling_select.addEventListener('input', this.updateScalingGroup.bind(this, true));
-
-          let opt = document.createElement('option');
+          scaling_select.setAttribute('fullwidth', 'true');
+          scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
+          let opt = document.createElement('mwc-list-item');
           opt.setAttribute('disabled', 'true');
           opt.innerHTML = _text('session.launcher.SelectResourceGroup');
+          opt.style.borderBottom = "1px solid #ccc";
           scaling_select.appendChild(opt);
           this.resourceBroker.scaling_groups.map(group => {
-            opt = document.createElement('option');
+            opt = document.createElement('mwc-list-item');
             opt.value = group.name;
-            if (this.scaling_group === group.name) {
+            if (this.resourceBroker.scaling_group === group.name) {
               opt.selected = true;
             } else {
               opt.selected = false;
