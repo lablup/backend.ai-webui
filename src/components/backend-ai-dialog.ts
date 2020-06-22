@@ -29,6 +29,7 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 export default class BackendAiDialog extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) dialog = Object();
+  @property({type: Boolean}) fixed = false;
   @property({type: Boolean}) narrowLayout = false;
   @property({type: Boolean}) scrollable = false;
   @property({type: Boolean}) backdrop = false;
@@ -48,11 +49,11 @@ export default class BackendAiDialog extends LitElement {
       // language=CSS
       css`
         wl-dialog {
-          --dialog-min-width: var(--component-min-width, auto);
-          --dialog-max-width: var(--component-max-width, auto);
-          --dialog-max-height: var(--component-max-height, 95vh);
-          --dialog-width: var(--component-width, auto);
-          --dialog-height: var(--component-height, auto);
+          --dialog-min-width: var(--component-min-width);
+          --dialog-max-width: var(--component-max-width);
+          --dialog-max-height: var(--component-max-height);
+          --dialog-width: var(--component-width);
+          --dialog-height: var(--component-height);
         }
 
         wl-dialog > wl-card {
@@ -63,7 +64,7 @@ export default class BackendAiDialog extends LitElement {
           background-color: var(--general-dialog-background-color, #ffffff);
         }
 
-        wl-dialog h3.warning {
+        wl-dialog.warning h3 {
           color: red;
         }
 
@@ -72,12 +73,20 @@ export default class BackendAiDialog extends LitElement {
 
         wl-dialog div.content {
           padding: var(--component-padding, 15px);
-          font-size: var(--component-font-size, 12px);
+          font-size: var(--component-font-size, 14px);
           word-break: keep-all;
         }
 
         wl-dialog div.footer {
-          padding: 10px 15px;
+          padding: 5px 15px 10px 15px;
+        }
+
+        wl-dialog wl-button.cancel {
+          margin-right: 5px;
+        }
+
+        wl-dialog wl-button.ok {
+          margin-right: 5px;
         }
 
         wl-dialog[narrow] div.content,
@@ -91,10 +100,20 @@ export default class BackendAiDialog extends LitElement {
   firstUpdated() {
     this.dialog = this.shadowRoot.querySelector('#dialog');
     this.open = this.dialog.open;
+    this.dialog.addEventListener('didShow', () => {
+      this._syncOpenState()
+    });
+    this.dialog.addEventListener('didHide', () => {
+      this._syncOpenState()
+    });
   }
 
   connectedCallback() {
     super.connectedCallback();
+  }
+
+  _syncOpenState() {
+    this.open = this.dialog.open;
   }
 
   _hideDialog() {
@@ -115,14 +134,15 @@ export default class BackendAiDialog extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="dialog" fixed
+      <wl-dialog id="dialog"
+                    ?fixed="${(this.fixed)}"
                     ?narrow="${(this.narrowLayout)}"
                     ?backdrop="${this.backdrop}"
                     ?scrollable="${this.scrollable}"
                     blockscrolling
-                    style="padding:0;">
+                    style="padding:0;" class="${this.type}">
         <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h3 class="horizontal center layout ${this.type}" style="font-weight:bold">
+          <h3 class="horizontal center layout" style="font-weight:bold">
             <span><slot name="title"></slot></span>
             <div class="flex"></div>
             <slot name="action"></slot>
@@ -132,7 +152,7 @@ export default class BackendAiDialog extends LitElement {
             </wl-button>
             `}
           </h3>
-          <div class="content">
+          <div class="content" class="content-area">
             <slot name="content"></slot>
           </div>
           <div class="footer horizontal flex layout">

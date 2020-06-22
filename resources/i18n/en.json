@@ -255,7 +255,9 @@
       "LetterNumber-_dot": "Allows letters, numbers and -_.",
       "NameAlreadyExists": "Policy Name Already Exists!"
     },
-    "ProjectAndGroup": "Projects & Groups"
+    "ProjectAndGroup": "Projects & Groups",
+    "ModifyKeypairResourcePolicy": "Modify keypair resource policy",
+    "SelectPolicy": "Select Policy"
   },
   "data": {
     "Folders": "Folders",
@@ -335,7 +337,10 @@
     "title": {
       "LetsDouble-Check": "Let's Double-check"
     },
-    "ErrorOccurred": "Error Occurred"
+    "ErrorOccurred": "Error Occurred",
+    "error": {
+      "Error": "Error"
+    }
   },
   "environment": {
     "DescProblemOccurred": "Problem occurred during installation",

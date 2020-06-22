@@ -253,7 +253,9 @@
       "LetterNumber-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
       "NameAlreadyExists": "그 이름은 이미 사용중입니다."
     },
-    "ProjectAndGroup": "프로젝트 및 그룹"
+    "ProjectAndGroup": "프로젝트 및 그룹",
+    "ModifyKeypairResourcePolicy": "키페어 자원 정책 수정",
+    "SelectPolicy": "자원 정책 선택"
   },
   "data": {
     "Folders": "폴더",
@@ -333,6 +335,9 @@
     "ErrorOccurred": "문제가 발생했습니다",
     "title": {
       "LetsDouble-Check": "한 번 더 확인합시다"
+    },
+    "error": {
+      "Error": "오류"
     }
   },
   "environment": {

@@ -15,6 +15,7 @@ import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
+import './backend-ai-dialog';
 import './backend-ai-environment-list';
 import './backend-ai-resource-preset-list';
 import './backend-ai-registry-list';
@@ -106,12 +107,6 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     }
     this._activeTab = tab.value;
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
-  }
-
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
   }
 
   render() {

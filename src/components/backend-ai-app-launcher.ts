@@ -8,7 +8,6 @@ import {css, customElement, html, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/checkbox';
-import 'weightless/dialog';
 import 'weightless/icon';
 import 'weightless/textfield';
 import 'weightless/title';
@@ -354,21 +353,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     dialog.show();
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
-
-    if (dialog.id === 'ssh-dialog') {
-      const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
-      globalThis.URL.revokeObjectURL(downloadLinkEl.href);
-    }
-  }
-
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="app-dialog" backdrop>
+      <backend-ai-dialog id="app-dialog" fixed backdrop>
         <span slot="title">App</span>
         <div slot="content" style="padding:15px;" class="horizontal layout wrap center start-justified">
         ${this.appSupportList.map(item => html`
@@ -383,7 +371,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         `)}
          </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="ssh-dialog" backdrop>
+      <backend-ai-dialog id="ssh-dialog" fixed backdrop>
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content" style="padding:15px;">
           <div style="padding:15px 0;" >Use your favorite SSH/SFTP application to connect.</div>
@@ -398,7 +386,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </section>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="vnc-dialog" backdrop>
+      <backend-ai-dialog id="vnc-dialog" fixed backdrop>
         <span slot="title">${_t("session.VNCconnection")}</span>
         <div slot="content" style="padding:15px;">
           <div style="padding:15px 0;">${_t("session.UseYourFavoriteSSHApp")}</div>

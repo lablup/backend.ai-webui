@@ -632,7 +632,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               </wl-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="modify-app-dialog" backdrop>
+      <backend-ai-dialog id="modify-app-dialog" fixed backdrop>
         <span slot="title">${_t("environment.ManageApps")}</span>
         <div slot="content" id="modify-app-container" class="container">
           <div class="row header">
@@ -688,7 +688,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ${_t("button.Finish")}
         </wl-button>
       </backend-ai-dialog>
-      <backend-ai-dialog id="install-image-dialog" backdrop persistent>
+      <backend-ai-dialog id="install-image-dialog" fixed backdrop persistent>
         <span slot="title">Let's double-check</span>
         <div slot="content">
           <p>${_t("environment.DescDownloadImage")} <span style="color:blue;">${this.installImageName}</span></p>
