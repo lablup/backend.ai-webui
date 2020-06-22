@@ -26,10 +26,11 @@ export const BackendAiStyles = [
       --general-panel-width: 280px;
       --general-big-panel-width: 560px;
       --general-content-container-width: 980px;
-      --general-background-color: rgba(244, 245, 247, 1);
+      --general-background-color: rgba(255, 255, 255, 1);
+      --general-background-color-2: rgba(244, 245, 247, 1);
       --general-sidebar-color: #dddddd;
       --general-sidebar-background-color: rgba(24, 24, 24, 1.0);
-      --general-sidebar-h3-color: #ccc;
+      --general-sidebar-h3-color: #cccccc;
       --general-sidebar-h3-border-color: 1px solid #444444;
       --general-sidebar-topbar-background-color-3: #383e48;
       --general-sidebar-topbar-background-color-2: rgba(103, 172, 91, 1.00);
@@ -38,13 +39,15 @@ export const BackendAiStyles = [
       --general-sidebar-topbar-background-color: rgba(24, 24, 24, 1);
       --general-sidebar-topbar-color: #efefef;
       --general-sidebar-selected-color: var(--paper-green-400);
-      --general-sidebar-selected-background-color: rgba(244, 245, 247, 1); /* removed transparent */
+      --general-sidebar-selected-background-color: rgba(255, 255, 255, 1); /* removed transparent */
       --general-sidebar-selected-background-gradient-color: transparent;
       --general-sidebar-selected-border-left: 5px solid #2ab6f6;
       --general-sidebar-footer-color: #777777;
       --general-sidebar-navbar-footer-color: #222222;
       --general-sidebar-item-even-background-color: transparent;
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
+      --general-sidepanel-color: #dddddd;
+      --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
       --general-dialog-background-color: #ffffff;
       --app-drawer-width: 190px;
       --general-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
@@ -191,7 +194,6 @@ export const BackendAiStyles = [
       display: block;
       background: white;
       box-sizing: border-box;
-      margin: 16px;
       padding: 0;
       border-radius: 2px;
     }
@@ -216,7 +218,13 @@ export const BackendAiStyles = [
     @media screen and (min-width: 450px) {
       #content > wl-card,
       #content > div {
-        width: 95%;
+        width: 100%;
+        --card-elevation: 0;
+        --card-padding: 0;
+      }
+
+      #content > wl-card {
+        margin: 0 !important;
       }
     }
 
@@ -496,38 +504,16 @@ export const BackendAiStyles = [
       --button-font-size: 14px;
     }
 
+    wl-button.full-size,
+    wl-button.full {
+      width: 100%;
+    }
+
     wl-button,
-    wl-expansion {
+    wl-expansion,
+    wl-textfield {
       --font-family-serif: var(--general-font-family);
       --font-family-sans-serif: var(--general-font-family);
-    }
-
-    wl-dialog > wl-card {
-      --card-elevation: 0;
-    }
-
-    wl-dialog > wl-card > section {
-      margin: 5px 20px;
-    }
-
-    wl-dialog wl-title {
-      border-bottom: 1px solid #cccccc;
-    }
-
-    wl-dialog wl-button.cancel {
-      margin-right: 5px;
-    }
-
-    wl-dialog wl-button.ok {
-      margin-right: 5px;
-    }
-
-    wl-dialog.dialog-ask {
-      --dialog-min-width: 350px;
-    }
-
-    wl-dialog > wl-card > h3 {
-      background-color: var(--general-dialog-background-color, #ffffff);
     }
 
     vaadin-grid {

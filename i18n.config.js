@@ -1,5 +1,5 @@
-var fs = require('fs');
-var chalk = require('chalk');
+const fs = require('fs');
+const chalk = require('chalk');
 
 module.exports = {
   input: [
@@ -17,7 +17,7 @@ module.exports = {
     lngs: ['en', 'ko'],
     defaultLng: 'en',
     defaultNs: 'resource',
-    defaultValue: function (lng, ns, key) {
+    defaultValue: function(lng, ns, key) {
       if (lng === 'en') {
         // Return key as the default value for English language
         return key;
@@ -31,15 +31,15 @@ module.exports = {
       jsonIndent: 2,
       lineEnding: '\n'
     },
-    nsSeparator: ':',//'.',//false, // namespace separator
-    keySeparator: '.',//false, // key separator
+    nsSeparator: ':', // '.',//false, // namespace separator
+    keySeparator: '.', // false, // key separator
     interpolation: {
       prefix: '{{',
       suffix: '}}'
     }
   },
   transform: function customTransform(file, enc, done) {
-    "use strict";
+    'use strict';
     const parser = this.parser;
     const content = fs.readFileSync(file.path, enc);
     let count = 0;

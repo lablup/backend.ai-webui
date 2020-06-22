@@ -231,10 +231,14 @@ export default class LablupNotification extends LitElement {
     notification.style.fontWeight = '400';
     notification.style.fontFamily = "'Quicksand', Roboto, sans-serif";
     notification.style.zIndex = "12345678";
+    let d = new Date();
+    notification.setAttribute('created', d.toLocaleString());
     document.body.appendChild(notification);
     this.notifications.push(notification);
     await this.updateComplete;
     notification.show();
+    let event = new CustomEvent('backend-ai-notification-changed', {});
+    document.dispatchEvent(event);
     this._spawnDesktopNotification("Backend.AI", this.text, '');
   }
 
@@ -266,13 +270,15 @@ export default class LablupNotification extends LitElement {
     if (this.notifications.length > 0) {
       let opened_notifications = this.notifications.filter(noti => noti.open === true);
       this.notifications = opened_notifications;
+      let event = new CustomEvent('backend-ai-notification-changed', {});
+      document.dispatchEvent(event);
     }
     // if (this.notificationstore.length > 5000) {
     //   this.notificationstore = this.notificationstore.slice(1, 5000);
     // }
     let logs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
-    if (logs.length > 5000) {
-      logs = logs.slice(1, 5000);
+    if (logs.length > 3000) {
+      logs = logs.slice(1, 3000);
     }
     this.step = this.notifications.length;
   }

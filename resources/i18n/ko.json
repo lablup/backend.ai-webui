@@ -23,6 +23,8 @@
       "OriginalPassword": "기존 패스워드",
       "NewPassword": "새 패스워드",
       "NewPasswordAgain": "새 패스워드 (재입력)",
+      "InvalidPasswordMessage": "영문자, 숫자, 특수 문자를 하나 이상 포함해서 8자 이상 입력하세요",
+      "PasswordMismatch": "비밀번호가 일치하지 않습니다",
       "TermsOfService": "약관",
       "PrivacyPolicy": "개인정보보호",
       "LeaveService": "탈퇴",
@@ -31,10 +33,12 @@
       "Environments&Presets": "실행환경 및 프리셋",
       "ComputationResources": "연산 자원",
       "Logs": "로그",
-      "Project": "프로젝트",
+      "Project": "현재 프로젝트",
       "NoProject": "프로젝트 없음",
       "SelectProject": "프로젝트 선택",
-      "Experiments": "실험"
+      "Experiments": "실험",
+      "UserName": "사용자 이름",
+      "Menu": "메뉴"
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",
@@ -70,7 +74,8 @@
     "SystemMaintenance": "시스템 유지보수",
     "Invitation": "초대",
     "FolderName": "폴더 이름",
-    "Permission": "권한"
+    "Permission": "권한",
+    "Announcement": "공지"
   },
   "session": {
     "launcher": {
@@ -114,7 +119,12 @@
       "CPU": "CPU",
       "Memory": "메모리",
       "GPU": "GPU",
-      "TitleSession": "세션 (Backend.AI)"
+      "TitleSession": "세션 (Backend.AI)",
+      "NoFolderMounted": "폴더를 마운트하지 않았습니다",
+      "HomeDirectoryDeletionDialog": "세션 안의 홈 디렉토리는 세션을 종료하면 자동으로 삭제됩니다.",
+      "LaunchConfirmationDialog": "코드 및 데이터를 계속 유지하거나 다른 공동 작업자들과 공유하기 위해서는 데이터 &amp; 폴더 메뉴에서 스토리지 폴더를 생성하신 후, 자원을 시작할 때 해당 폴더를 마운트하고 그 안에 보관하시면 됩니다.",
+      "Launch": "시작",
+      "LaunchWithoutMount": "스토리지 폴더 없이 시작"
     },
     "Running": "실행중",
     "Finished": "종료",
@@ -242,7 +252,10 @@
       "PolicyName": "정책 이름이 필요합니다.",
       "LetterNumber-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
       "NameAlreadyExists": "그 이름은 이미 사용중입니다."
-    }
+    },
+    "ProjectAndGroup": "프로젝트 및 그룹",
+    "ModifyKeypairResourcePolicy": "키페어 자원 정책 수정",
+    "SelectPolicy": "자원 정책 선택"
   },
   "data": {
     "Folders": "폴더",
@@ -282,7 +295,8 @@
       "SelectPermission": "권한 선택",
       "View": "읽기 전용",
       "Edit": "수정",
-      "EditDelete": "수정 및 삭제"
+      "EditDelete": "수정 및 삭제",
+      "KickOut": "권한 회수"
     },
     "explorer": {
       "Delete": "삭제...",
@@ -321,6 +335,9 @@
     "ErrorOccurred": "문제가 발생했습니다",
     "title": {
       "LetsDouble-Check": "한 번 더 확인합시다"
+    },
+    "error": {
+      "Error": "오류"
     }
   },
   "environment": {
@@ -575,7 +592,16 @@
     "SignoutFinished": "탈퇴가 완료되었습니다.",
     "APIEndpointEmpty": "API Endpoint 가 지정되지 않았습니다. 로그인을 위해 앤드포인트를 지정하세요.",
     "PleaseWait": "로그인 진행중. 기다려주세요.",
-    "ConnectingToCluster": "Backend.AI 클러스터에 연결중..."
+    "ConnectingToCluster": "Backend.AI 클러스터에 연결중...",
+    "ForgotPassword": "비밀번호를 잊어버렸습니까?",
+    "ChangePassword": "비밀번호 변경",
+    "SendChangePasswordEmail": "비밀번호 변경 이메일 보내기",
+    "DescChangePasswordEmail": "비밀번호 변경을 위한 이메일을 보내기 위해 이메일을 입력하고 보내기 버튼을 눌러주세요.",
+    "EmailSendButton": "보내기",
+    "UpdatePasswordMessage": "사용하고 있는 이메일과 새로운 비밀번호를 입력한 뒤 업데이트 버튼을 누르십시오.",
+    "PasswordChanged": "비밀번호가 변경되었습니다",
+    "InvalidChangePasswordToken": "토큰 오류",
+    "InvalidChangePasswordTokenMessage": "비밀번호 변경을 위해 발급된 토큰에 오류가 있습니다. 비밀번호 변경 이메일을 다시 보내고 시도해 보십시오."
   },
   "signup": {
     "SignupBETA": "가입 (베타 초대 대상)",
@@ -586,9 +612,26 @@
     "Signup": "가입",
     "InvitationToken": "초대 토큰",
     "TermsOfService": "약관",
-    "PrivacyPolicy": "개인정보보호정책"
+    "PrivacyPolicy": "개인정보보호정책",
+    "ThankYou": "감사합니다!",
+    "VerificationMessage": "인증 메일을 전송했습니다. 가입하신 계정으로 로그인 하기 전에 전송된 메일을 읽고 인증을 완료해 주십시오.",
+    "EmailVerified": "이메일이 인증되었습니다",
+    "EmailVerifiedMessage": "이메일 인증이 완료되었습니다. 가입하신 계정으로 로그인 하실 수 있습니다.",
+    "EmailVerificationFailed": "이메일 인증에 실패했습니다",
+    "EmailVerificationFailedMessage": "이메일을 인증할 수 없습니다. 인증 토큰에 문제가 있거나 만료되었을 가능성이 있습니다. 이메일을 입력하고 버튼을 클릭하면 새로운 인증 링크를 받을 수 있습니다.",
+    "InvalidEmail": "정상적인 이메일 주소가 아닙니다",
+    "SendEmail": "인증 메일 전송",
+    "EmailSent": "이메일을 보냈습니다",
+    "EmailNotSent": "이메일을 보내는 데 실패했습니다"
   },
   "update": {
     "NewConsoleVersionAvailable": "새 버전이 출시되었습니다:"
+  },
+  "sidepanel": {
+    "BackgroundTasks": "작업",
+    "NoBackgroundTask": "실행중인 작업이 없습니다.",
+    "Running": "실행중...",
+    "Notification": "알림",
+    "NoNotification": "알림이 없습니다."
   }
 }

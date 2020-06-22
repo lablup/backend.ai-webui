@@ -13,7 +13,7 @@ View [changelog](https://github.com/lablup/backend.ai-console/master/CHANGELOG.m
 Backend.AI console focuses to
 
  * Serve as desktop app (windows, macOS and Linux) and web service
- * Provide both basic administration and user mode 
+ * Provide both basic administration and user mode
     * Use CLI for detailed administration features such as domain administation
  * Versatile devices ready such as mobile, tablet and desktop.
  * Built-in websocket proxy feature for apps
@@ -87,6 +87,7 @@ connectionMode = "[Connection mode. Default is API. Currenly supports API and SE
 allowChangeSigninMode = false # Allows user to change signin mode between `API` and `SESSION`
 signupSupport = false # Enable / disable signup feature support. Manager plugin is required.
 allowSignout = false # Let users signout from service. Signup plugin is required.
+allowAnonymousChangePassword = false # Enable / disable anonymous user can send change password email. Manager plugin is required.
 allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
 debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
 
@@ -142,7 +143,17 @@ $ npm run build:d # To watch source changes
 $ npm run wsproxy # To run websocket proxy
 ```
 
-### Electron testing
+### Unit Testing
+
+The project uses `testcafe` as testing framework.
+To perform functional tests, you must run complete Backend.AI cluster before starting test.
+
+```
+$ npm run server:d # To run dev. web server
+$ npm run test # Run tests (tests are located in `tests` directory)
+```
+
+### Electron (app mode) development / testing
 
 ```
 $ make compile_wsproxy # Build websocket proxy.

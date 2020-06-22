@@ -1,5 +1,5 @@
 // Preload script for electron environment
-const { ipcRenderer } = require('electron');
+const {ipcRenderer} = require('electron');
 global.appRoot = window.appRoot = __dirname;
 
 process.once('loaded', () => {

@@ -23,6 +23,8 @@
       "OriginalPassword": "Original password",
       "NewPassword": "New password",
       "NewPasswordAgain": "New password (again)",
+      "InvalidPasswordMessage": "At least 1 alphabet, 1 number and 1 special character is required with at least 8 chars.",
+      "PasswordMismatch": "Password mismatch",
       "TermsOfService": "Terms of Service",
       "PrivacyPolicy": "Privacy Policy",
       "LeaveService": "Leave service",
@@ -31,10 +33,12 @@
       "Environments&Presets": "Environments & Presets",
       "ComputationResources": "Computation Resources",
       "Logs": "Logs",
-      "Project": "Project",
+      "Project": "Current Project",
       "NoProject": "No Project",
       "SelectProject": "Select Project",
-      "Experiments": "Experiments"
+      "Experiments": "Experiments",
+      "UserName": "User Name",
+      "Menu": "Menu"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
@@ -70,7 +74,8 @@
     "SystemMaintenance": "System maintenance",
     "Invitation": "Invitation",
     "FolderName": "Folder Name",
-    "Permission": "Permission"
+    "Permission": "Permission",
+    "Announcement": "Announcement"
   },
   "session": {
     "launcher": {
@@ -114,7 +119,12 @@
       "CPU": "CPU",
       "Memory": "Memory",
       "GPU": "GPU",
-      "TitleSession": "Session (Backend.AI)"
+      "TitleSession": "Session (Backend.AI)",
+      "NoFolderMounted": "No Storage folder is mounted",
+      "HomeDirectoryDeletionDialog": "The home directory in the session is automatically deleted when the session ends.",
+      "LaunchConfirmationDialog": "To keep your code and data, or share it with other collaborators, simply create a storage folder in the data &amp; storage sidebar, then mount that folder when you start the resource and keep it there.",
+      "Launch": "Launch",
+      "LaunchWithoutMount": "Launch Without Storage Folder"
     },
     "Running": "Running",
     "Finished": "Finished",
@@ -244,7 +254,10 @@
       "PolicyName": "Policy name Required.",
       "LetterNumber-_dot": "Allows letters, numbers and -_.",
       "NameAlreadyExists": "Policy Name Already Exists!"
-    }
+    },
+    "ProjectAndGroup": "Projects & Groups",
+    "ModifyKeypairResourcePolicy": "Modify keypair resource policy",
+    "SelectPolicy": "Select Policy"
   },
   "data": {
     "Folders": "Folders",
@@ -284,7 +297,8 @@
       "SelectPermission": "Select permission",
       "View": "View",
       "Edit": "Edit",
-      "EditDelete": "Edit+Delete"
+      "EditDelete": "Edit+Delete",
+      "KickOut": "Kick out user"
     },
     "explorer": {
       "Delete": "Delete...",
@@ -323,7 +337,10 @@
     "title": {
       "LetsDouble-Check": "Let's Double-check"
     },
-    "ErrorOccurred": "Error Occurred"
+    "ErrorOccurred": "Error Occurred",
+    "error": {
+      "Error": "Error"
+    }
   },
   "environment": {
     "DescProblemOccurred": "Problem occurred during installation",
@@ -577,7 +594,16 @@
     "SignoutFinished": "Signout finished.",
     "APIEndpointEmpty": "API Endpoint is empty. Please specify API endpoint to login.",
     "PleaseWait": "Please wait to login.",
-    "ConnectingToCluster": "Connecting to Backend.AI Cluster..."
+    "ConnectingToCluster": "Connecting to Backend.AI Cluster...",
+    "ForgotPassword": "Forgot password?",
+    "ChangePassword": "Change password",
+    "SendChangePasswordEmail": "Send change password email",
+    "DescChangePasswordEmail": "To send an email for changing your password, please type your E-mail and press SEND button.",
+    "EmailSendButton": "Send",
+    "UpdatePasswordMessage": "Type your email and a new password, and then press Update button.",
+    "PasswordChanged": "Password is successfully changed",
+    "InvalidChangePasswordToken": "Invalid Token",
+    "InvalidChangePasswordTokenMessage": "Issued token to change password has error. Please send another email for changing password and try again."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",
@@ -588,9 +614,26 @@
     "Signup": "Signup",
     "InvitationToken": "Invitation Token",
     "TermsOfService": "Terms of service",
-    "PrivacyPolicy": "Privacy Policy"
+    "PrivacyPolicy": "Privacy Policy",
+    "ThankYou": "Thank you!",
+    "VerificationMessage": "Verification email is sent to your email address. Please read and follow the steps specified in the email before login with your account.",
+    "EmailVerified": "Email verified",
+    "EmailVerifiedMessage": "Your email is verified! Now you can login with your account.",
+    "EmailVerificationFailed": "Email verification failed",
+    "EmailVerificationFailedMessage": "We're unable to verify your email. Your token may be invalid or expired. Write your email address and click send button to get new verification code.",
+    "InvalidEmail": "Invalid email address",
+    "SendEmail": "Send verification email",
+    "EmailSent": "Email sent",
+    "EmailNotSent": "Unable to send email"
   },
   "update": {
     "NewConsoleVersionAvailable": "New version is available:"
+  },
+  "sidepanel": {
+    "BackgroundTasks": "Running Tasks",
+    "NoBackgroundTask": "No Task.",
+    "Running": "Running...",
+    "Notification": "Notification",
+    "NoNotification": "No Notification."
   }
 }
