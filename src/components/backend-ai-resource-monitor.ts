@@ -709,12 +709,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
           const scaling_select = document.createElement('mwc-multi-select');
           scaling_select.label = _text('session.launcher.ResourceGroup');
-          //scaling_select.name = 'scaling-group-select';
           scaling_select.id = 'scaling-group-select';
           scaling_select.value = this.scaling_group;
           scaling_select.setAttribute('fullwidth', 'true');
           scaling_select.setAttribute('icon', 'storage');
-          //scaling_select.setAttribute('outlined', 'true');
           scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
           let opt = document.createElement('mwc-list-item');
           opt.setAttribute('disabled', 'true');
