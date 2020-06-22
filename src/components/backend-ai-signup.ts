@@ -6,13 +6,13 @@ import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/icon';
-import 'weightless/dialog';
 import 'weightless/card';
 import '@material/mwc-textfield';
 import './lablup-terms-of-service';
+import './backend-ai-dialog';
 
 import '../lib/backend.ai-client-es6';
-
+import './backend-ai-dialog';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
   IronFlex,
@@ -177,7 +177,7 @@ export default class BackendAiSignup extends BackendAIPage {
 
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
@@ -269,69 +269,58 @@ export default class BackendAiSignup extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <div>${_t("signup.SignupBETA")}</div>
-            <div class="flex"></div>
-            <wl-button class="fab"  style="width:40px;" fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <form id="signup-form">
-            <fieldset>
-              <mwc-textfield type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
-                           label="${_t("signup.E-mail")}" value="${this.user_email}"
-                           @change="${() => this._clear_info()}"></mwc-textfield>
-              <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
-                           label="${_t("signup.UserName")}" value="${this.user_name}"></mwc-textfield>
-              <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
-                           label="${_t("signup.InvitationToken")}"></mwc-textfield>
-              <mwc-textfield type="password" name="password1" id="id_password1"
-                           label="${_t("signup.Password")}" minlength="8"
-                           pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                           error-message="At least 1 alphabet, 1 number and 1 special character is required."
-                           auto-validate
-                           value=""></mwc-textfield>
-              <mwc-textfield type="password" name="password2" id="id_password2"
-                           label="${_t("signup.PasswordAgain")}" minlength="8"
-                           pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                           error-message="At least 1 alphabet, 1 number and 1 special character is required."
-                           auto-validate
-                           value=""></mwc-textfield>
-              <div style="margin-top:10px;">
-                <wl-checkbox id="approve-terms-of-service">
-                </wl-checkbox>
-                 I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">${_t("signup.TermsOfService")}</a> and <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">${_t("signup.PrivacyPolicy")}</a>.
-              </div>
-              <br/><br/>
-              <wl-button class="full" id="signup-button" outlined type="button"
-                          @click="${() => this._signup()}">
-                          <wl-icon>check</wl-icon>
-                          <span id="signup-button-message">${_t("signup.Signup")}</span></wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="block-panel" fixed backdrop blockscrolling persistent>
-        <wl-card>
-          <h3>Error</h3>
-          <div style="text-align:center;">
-          ${this.errorMsg}
+      <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
+        <span slot="title">${_t("signup.SignupBETA")}</span>
+        <div slot="content">
+          <mwc-textfield type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
+                       label="${_t("signup.E-mail")}" value="${this.user_email}"
+                       @change="${() => this._clear_info()}"></mwc-textfield>
+          <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
+                       label="${_t("signup.UserName")}" value="${this.user_name}"></mwc-textfield>
+          <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
+                       label="${_t("signup.InvitationToken")}"></mwc-textfield>
+          <mwc-textfield type="password" name="password1" id="id_password1"
+                       label="${_t("signup.Password")}" minlength="8"
+                       pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                       error-message="At least 1 alphabet, 1 number and 1 special character is required."
+                       auto-validate
+                       value=""></mwc-textfield>
+          <mwc-textfield type="password" name="password2" id="id_password2"
+                       label="${_t("signup.PasswordAgain")}" minlength="8"
+                       pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                       error-message="At least 1 alphabet, 1 number and 1 special character is required."
+                       auto-validate
+                       value=""></mwc-textfield>
+          <div style="margin-top:10px;">
+            <wl-checkbox id="approve-terms-of-service">
+            </wl-checkbox>
+             I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">${_t("signup.TermsOfService")}</a> and <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">${_t("signup.PrivacyPolicy")}</a>.
           </div>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="email-sent-dialog" fixed backdrop blockscrolling persistent>
-        <wl-card>
-          <h3>${_t("signup.ThankYou")}</h3>
-          <div style="max-width:350px; padding:1em">${_t("signup.VerificationMessage")}</div>
-        </wl-card>
-        <div slot="footer">
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <wl-button class="full" id="signup-button" outlined type="button"
+                      @click="${() => this._signup()}">
+                      <wl-icon>check</wl-icon>
+                      <span id="signup-button-message">${_t("signup.Signup")}</span></wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="block-panel" fixed type="error" backdrop blockscrolling persistent>
+        <span slot="title">${_t('dialog.error.Error')}</span>
+        <div slot="content" style="text-align:center;">
+          ${this.errorMsg}
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="email-sent-dialog" noclosebutton fixed backdrop blockscrolling persistent>
+        <span slot="title">${_t("signup.ThankYou")}</span>
+        <div slot="content">
+          <p>${_t("signup.VerificationMessage")}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button class="ok" @click="${(e) => {
-      e.target.closest('wl-dialog').hide()
+      e.target.closest('backend-ai-dialog').hide()
     }}">${_t("button.Okay")}</wl-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
       <lablup-terms-of-service id="terms-of-service"></lablup-terms-of-service>
     `;
   }

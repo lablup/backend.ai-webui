@@ -119,7 +119,12 @@
       "CPU": "CPU",
       "Memory": "Memory",
       "GPU": "GPU",
-      "TitleSession": "Session (Backend.AI)"
+      "TitleSession": "Session (Backend.AI)",
+      "NoFolderMounted": "No Storage folder is mounted",
+      "HomeDirectoryDeletionDialog": "The home directory in the session is automatically deleted when the session ends.",
+      "LaunchConfirmationDialog": "To keep your code and data, or share it with other collaborators, simply create a storage folder in the data &amp; storage sidebar, then mount that folder when you start the resource and keep it there.",
+      "Launch": "Launch",
+      "LaunchWithoutMount": "Launch Without Storage Folder"
     },
     "Running": "Running",
     "Finished": "Finished",
@@ -250,7 +255,9 @@
       "LetterNumber-_dot": "Allows letters, numbers and -_.",
       "NameAlreadyExists": "Policy Name Already Exists!"
     },
-    "ProjectAndGroup": "Projects & Groups"
+    "ProjectAndGroup": "Projects & Groups",
+    "ModifyKeypairResourcePolicy": "Modify keypair resource policy",
+    "SelectPolicy": "Select Policy"
   },
   "data": {
     "Folders": "Folders",
@@ -330,7 +337,10 @@
     "title": {
       "LetsDouble-Check": "Let's Double-check"
     },
-    "ErrorOccurred": "Error Occurred"
+    "ErrorOccurred": "Error Occurred",
+    "error": {
+      "Error": "Error"
+    }
   },
   "environment": {
     "DescProblemOccurred": "Problem occurred during installation",

@@ -8,10 +8,10 @@ import {css, customElement, html, LitElement, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/title';
 import 'weightless/checkbox';
 
+import './backend-ai-dialog';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
   IronFlex,
@@ -69,16 +69,16 @@ export default class LablupTermsOfService extends LitElement {
       // language=CSS
       css`
         @media screen and (max-width: 669px) {
-          wl-dialog.terms-of-service-dialog {
-            --dialog-width: 80% !important;
-            --dialog-height: 80vh;
+          backend-ai-dialog.terms-of-service-dialog {
+            --component-width: 80% !important;
+            --component-height: 80vh;
           }
         }
 
         @media screen and (min-width: 670px) {
-          wl-dialog.terms-of-service-dialog {
-            --dialog-width: 650px !important;
-            --dialog-height: 80vh;
+          backend-ai-dialog.terms-of-service-dialog {
+            --component-width: 650px !important;
+            --component-height: 80vh;
           }
         }
 
@@ -109,10 +109,9 @@ export default class LablupTermsOfService extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable>
-        <div slot="header" class="horizontal center flex layout" style="padding:0 15px;">
-          <h3>${this.title}</h3>
-          <div class="flex"></div>
+      <backend-ai-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable>
+        <span slot="title">${this.title}</span>
+        <div slot="action" class="horizontal center flex layout">
           ${this.tosLanguages ? html`
             ${_t("language.Language")}:
             ${this.tosLanguages.map(item => html`
@@ -126,7 +125,7 @@ export default class LablupTermsOfService extends LitElement {
         <div slot="content">
           <div id="terms-of-service-dialog-content"></div>
         </div>
-        <div slot="footer" class="horizontal flex layout">
+        <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
           <wl-button class="fg green dismiss" id="dismiss-button" outlined type="button" @click="${() => {
       this.close();
@@ -134,7 +133,7 @@ export default class LablupTermsOfService extends LitElement {
               ${_t("button.Dismiss")}
           </wl-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `;
   }
 
@@ -238,12 +237,6 @@ export default class LablupTermsOfService extends LitElement {
         this.dialog.show();
       }
     }
-  }
-
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
   }
 
   _hideTOSdialog() {

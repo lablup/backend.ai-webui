@@ -21,7 +21,6 @@ import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/snackbar';
 import 'weightless/switch';
 import 'weightless/textarea';
@@ -482,7 +481,7 @@ export default class BackendAIUserList extends BackendAIPage {
           <wl-icon class="pagination">navigate_next</wl-icon>
         </wl-button>
       </div>
-      <backend-ai-dialog id="signout-user-dialog" backdrop>
+      <backend-ai-dialog id="signout-user-dialog" fixed backdrop>
         <span slot="title">Let's double-check</span>
         <div slot="content">
           <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>.</p>
@@ -494,7 +493,7 @@ export default class BackendAIUserList extends BackendAIPage {
           <wl-button class="ok" outlined @click="${() => this._signoutUser()}">${_t("button.Okay")}</wl-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="user-info-dialog" backdrop narrowLayout>
+      <backend-ai-dialog id="user-info-dialog" fixed backdrop narrowLayout>
         <div slot="title" class="horizontal center layout">
           <span style="margin-right:15px;">${_t("credential.UserDetail")}</span>
           <lablup-shields app="" description="user" ui="flat"></lablup-shields>

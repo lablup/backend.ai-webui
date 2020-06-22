@@ -119,7 +119,12 @@
       "CPU": "CPU",
       "Memory": "메모리",
       "GPU": "GPU",
-      "TitleSession": "세션 (Backend.AI)"
+      "TitleSession": "세션 (Backend.AI)",
+      "NoFolderMounted": "폴더를 마운트하지 않았습니다",
+      "HomeDirectoryDeletionDialog": "세션 안의 홈 디렉토리는 세션을 종료하면 자동으로 삭제됩니다.",
+      "LaunchConfirmationDialog": "코드 및 데이터를 계속 유지하거나 다른 공동 작업자들과 공유하기 위해서는 데이터 &amp; 폴더 메뉴에서 스토리지 폴더를 생성하신 후, 자원을 시작할 때 해당 폴더를 마운트하고 그 안에 보관하시면 됩니다.",
+      "Launch": "시작",
+      "LaunchWithoutMount": "스토리지 폴더 없이 시작"
     },
     "Running": "실행중",
     "Finished": "종료",
@@ -248,7 +253,9 @@
       "LetterNumber-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
       "NameAlreadyExists": "그 이름은 이미 사용중입니다."
     },
-    "ProjectAndGroup": "프로젝트 및 그룹"
+    "ProjectAndGroup": "프로젝트 및 그룹",
+    "ModifyKeypairResourcePolicy": "키페어 자원 정책 수정",
+    "SelectPolicy": "자원 정책 선택"
   },
   "data": {
     "Folders": "폴더",
@@ -328,6 +335,9 @@
     "ErrorOccurred": "문제가 발생했습니다",
     "title": {
       "LetsDouble-Check": "한 번 더 확인합시다"
+    },
+    "error": {
+      "Error": "오류"
     }
   },
   "environment": {

@@ -8,7 +8,6 @@ import {css, customElement, html, property} from "lit-element";
 
 import 'weightless/button';
 import 'weightless/icon';
-import 'weightless/dialog';
 import 'weightless/card';
 
 import '@material/mwc-icon';
@@ -429,7 +428,7 @@ export default class BackendAILogin extends BackendAIPage {
 
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
@@ -807,85 +806,62 @@ export default class BackendAILogin extends BackendAIPage {
                       ${_t("login.ChangePassword")}
                     </wl-button>
                   </div>
-                `: html``}
+                ` : html``}
               </div>
             </fieldset>
           </form>
         </div>
       </backend-ai-dialog>
-      <wl-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <div>${_t("login.LeaveService")}</div>
-            <div class="flex"></div>
-            <wl-button class="red" fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
+      <backend-ai-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>
+        <span slot="title">${_t("login.LeaveService")}</span>
+        <div slot="content">
           <section>
             <div class="warning">${_t("login.DescConfirmLeave")}</div>
           </section>
-          <form id="signout-form">
-            <fieldset>
-              <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
-                           label="E-mail" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
-              <mwc-textfield type="password" name="signout_password" id="id_signout_password"
-                           label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
-              <br/><br/>
-              <wl-button class="fg red full login-button" id="signout-button" outlined type="button"
-                          @click="${() => this._signout()}">
-                          <wl-icon>check</wl-icon>
-                          ${_t("login.LeaveService")}</wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="change-password-confirm-dialog" fixed backdrop blockscrolling persistent disablefocustrap>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin:0;">
-          <h3 class="horizontal center layout">
-            <div>${_t("login.SendChangePasswordEmail")}</div>
-            <div class="flex"></div>
-            <wl-button class="red" fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
+          <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
+                       label="E-mail" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
+          <mwc-textfield type="password" name="signout_password" id="id_signout_password"
+                       label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button class="fg red full login-button" id="signout-button" outlined type="button"
+                      @click="${() => this._signout()}">
+                      <wl-icon>check</wl-icon>
+                      ${_t("login.LeaveService")}</wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="change-password-confirm-dialog" fixed backdrop blockscrolling persistent disablefocustrap>
+        <span slot="title">${_t("login.SendChangePasswordEmail")}</span>
+        <div slot="content">
           <section>
-            <div>${_t("login.DescChangePasswordEmail")}</div>
+            <div style="padding:1em">${_t("login.DescChangePasswordEmail")}</div>
           </section>
-          <form>
-            <fieldset>
-              <mwc-textfield type="email" id="password-change-email" maxlength="30"
-                  label="E-mail" value="" autofocus auto-validate
-                  validationMessage="${_t('signup.InvalidEmail')}"
-                  pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
-              <br/><br/>
-              <wl-button class="fg red full" outlined type="button"
-                  @click="${() => this._sendChangePasswordEmail()}">
-                <wl-icon>check</wl-icon>
-                ${_t("login.EmailSendButton")}
-              </wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="block-panel" fixed blockscrolling persistent>
+          <mwc-textfield type="email" id="password-change-email" maxlength="30"
+              label="E-mail" value="" autofocus auto-validate
+              validationMessage="${_t('signup.InvalidEmail')}"
+              pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <wl-button class="fg red full" outlined type="button"
+              @click="${() => this._sendChangePasswordEmail()}">
+            <wl-icon>check</wl-icon>
+            ${_t("login.EmailSendButton")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="block-panel" fixed blockscrolling persistent>
         ${this.blockMessage != '' ? html`
-        <wl-card>
           ${this.blockType !== '' ? html`
-          <h3 class="horizontal center layout" style="font-weight:bold">
-            <span id="work-title">${this.blockType}</span>
-            <div class="flex"></div>
-          </h3>
+            <span slot="title" id="work-title">${this.blockType}</span>
           ` : html``}
-          <div style="text-align:center;padding-top:15px;">
+          <div slot="content" style="text-align:center;padding-top:15px;">
           ${this.blockMessage}
           </div>
-          <div style="text-align:right;padding-top:15px;">
+          <div slot="footer" class="horizontal end-justified flex layout">
             <wl-button outlined class="fg red mini login-cancel-button" type="button" @click="${(e) => this._cancelLogin(e)}">${_t("login.CancelLogin")}</wl-button>
           </div>
-        </wl-card>
         ` : html``}
-      </wl-dialog>
+      </backend-ai-dialog>
       <backend-ai-signup id="signup-dialog"></backend-ai-signup>
     `;
   }
