@@ -24,7 +24,6 @@ import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
 import 'weightless/radio';
-import 'weightless/select';
 import 'weightless/slider';
 
 import '@material/mwc-linear-progress';
@@ -329,25 +328,26 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           z-index: 100;
         }
 
-        mwc-multi-select {
-          width: 235px;
+        #scaling-group-select-box mwc-multi-select {
+          width: 245px;
+          margin-left: -4px;
           font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
           --mdc-typography-subtitle1-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
           --mdc-typography-subtitle1-font-size: 14px;
-          --mdc-typography-subtitle1-font-color: rgb(24, 24, 24);;
+          --mdc-typography-subtitle1-font-color: rgb(24, 24, 24);
           --mdc-typography-subtitle1-font-weight: 400;
           --mdc-typography-subtitle1-line-height: 16px;
           --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(255, 255, 255, 1.0);
-          --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
-          --mdc-select-dropdown-icon-color: rgba(255, 255, 255, 1.0);
-          --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
-          --mdc-select-disabled-dropdown-icon-color: rgba(255, 255, 255, 0.87);
+          --mdc-select-label-ink-color: rgba(24, 24, 24, 1.0);
+          --mdc-select-disabled-ink-color: rgba(24, 24, 24, 1.0);
+          --mdc-select-dropdown-icon-color: rgba(24, 24, 24, 1.0);
+          --mdc-select-focused-dropdown-icon-color: rgba(24, 24, 24, 0.87);
+          --mdc-select-disabled-dropdown-icon-color: rgba(24, 24, 24, 0.87);
           --mdc-select-idle-line-color: transparent;
           --mdc-select-hover-line-color: rgba(255, 255, 255, 0.87);
           --mdc-select-ink-color: rgb(24, 24, 24);
-          --mdc-select-outlined-idle-border-color: rgba(255, 255, 255, 0.42);
-          --mdc-select-outlined-hover-border-color: rgba(255, 255, 255, 0.87);
+          --mdc-select-outlined-idle-border-color: rgba(24, 24, 24, 0.42);
+          --mdc-select-outlined-hover-border-color: rgba(24, 24, 24, 0.87);
           --mdc-theme-surface: white;
           --mdc-list-vertical-padding: 5px;
           --mdc-list-side-padding: 10px;
@@ -356,11 +356,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             height: 20px;
             color: #222222;
           };
-          margin-bottom: 15px;
+          margin-bottom: 5px;
         }
 
         #scaling-group-select {
-          width: 235px;
+          width: 245px;
         }
 
         wl-button.resource-button.iron-selected {
@@ -713,15 +713,19 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           scaling_select.id = 'scaling-group-select';
           scaling_select.value = this.scaling_group;
           scaling_select.setAttribute('fullwidth', 'true');
+          scaling_select.setAttribute('icon', 'storage');
+          //scaling_select.setAttribute('outlined', 'true');
           scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
           let opt = document.createElement('mwc-list-item');
           opt.setAttribute('disabled', 'true');
+          opt.setAttribute('graphic', 'icon');
           opt.innerHTML = _text('session.launcher.SelectResourceGroup');
           opt.style.borderBottom = "1px solid #ccc";
           scaling_select.appendChild(opt);
           this.resourceBroker.scaling_groups.map(group => {
             opt = document.createElement('mwc-list-item');
             opt.value = group.name;
+            opt.setAttribute('graphic', 'icon');
             if (this.resourceBroker.scaling_group === group.name) {
               opt.selected = true;
             } else {
