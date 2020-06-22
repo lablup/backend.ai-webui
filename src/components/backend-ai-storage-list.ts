@@ -15,6 +15,8 @@ import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@material/mwc-textfield';
+import '@material/mwc-list/mwc-list';
+import '@material/mwc-list/mwc-list-item';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -37,8 +39,6 @@ import 'weightless/title';
 import 'weightless/tab-group';
 import 'weightless/textfield';
 import '@material/mwc-icon-button';
-
-import './backend-ai-dialog';
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
 import tus from '../lib/tus';
@@ -431,28 +431,41 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="info-folder-dialog" fixed backdrop>
         <span slot="title">${this.folderInfo.name}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;">
-          <vaadin-item>
-            <div><strong>ID</strong></div>
-            <div class="monospace" secondary>${this.folderInfo.id}</div>
-          </vaadin-item>
-          <vaadin-item>
-            <div><strong>${_t("data.folders.Location")}</strong></div>
-            <div secondary>${this.folderInfo.host}</div>
-          </vaadin-item>
-          <vaadin-item>
-            <div><strong>${_t("data.folders.NumberOfFiles")}</strong></div>
-            <div secondary>${this.folderInfo.numFiles}</div>
-          </vaadin-item>
-          ${this.folderInfo.is_owner ? html`
-            <vaadin-item>
-              <div><strong>${_t("data.folders.Ownership")}</strong></div>
-              <div secondary>${_t("data.folders.DescYouAreFolderOwner")}</div>
-            </vaadin-item>
-          ` : html``}
-          <vaadin-item>
-            <div><strong>${_t("data.folders.Permission")}</strong></div>
-            <div secondary>${this.folderInfo.permission}</div>
-          </vaadin-item>
+          <mwc-list>
+            <mwc-list-item twoline>
+              <span><strong>ID</strong></span>
+              <span class="monospace" slot="secondary">${this.folderInfo.id}</span>
+            </mwc-list-item>
+            <mwc-list-item twoline>
+              <span><strong>${_t("data.folders.Location")}</strong></span>
+              <span slot="secondary">${this.folderInfo.host}</span>
+            </mwc-list-item>
+            <mwc-list-item twoline>
+              <span><strong>${_t("data.folders.NumberOfFiles")}</strong></span>
+              <span slot="secondary">${this.folderInfo.numFiles}</span>
+            </mwc-list-item>
+            ${this.folderInfo.is_owner ? html`
+              <mwc-list-item twoline>
+                <span><strong>${_t("data.folders.Ownership")}</strong></span>
+                <span slot="secondary">${_t("data.folders.DescYouAreFolderOwner")}</span>
+              </mwc-list-item>
+            ` : html``}
+            <mwc-list-item twoline>
+              <span><strong>${_t("data.folders.Permission")}</strong></span>
+              <div slot="secondary" class="horizontal layout">
+              ${this.folderInfo.permission ? html`
+                ${this._hasPermission(this.folderInfo, 'r') ? html`
+                    <lablup-shields app="" color="green"
+                                    description="R" ui="flat"></lablup-shields>` : html``}
+                ${this._hasPermission(this.folderInfo, 'w') ? html`
+                    <lablup-shields app="" color="blue"
+                                    description="W" ui="flat"></lablup-shields>` : html``}
+                ${this._hasPermission(this.folderInfo, 'd') ? html`
+                    <lablup-shields app="" color="red"
+                                    description="D" ui="flat"></lablup-shields>` : html``}` : html``}
+              </div>
+            </mwc-list-item>
+          </mwc-list>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
