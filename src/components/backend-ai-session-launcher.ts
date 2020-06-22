@@ -523,9 +523,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.version_selector.addEventListener('selected', this.updateResourceAllocationPane.bind(this));
 
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
-    if (document.body.clientWidth < 750 && this.direction == 'horizontal') {
-      this.resourceGauge.style.display = 'none';
-    }
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     gpu_resource.addEventListener('value-changed', () => {
       if (gpu_resource.value > 0) {
@@ -578,10 +575,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   async updateScalingGroup(forceUpdate = false, e) {
     await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
     if (this.active) {
-      if (this.direction === 'vertical') {
-        const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
-        scaling_group_selection_box.firstChild.value = this.resourceBroker.scaling_group;
-      }
       if (forceUpdate === true) {
         await this._refreshResourcePolicy();
       } else {
@@ -625,48 +618,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.active && this.metadata_updating === false) {
       this.metadata_updating = true;
       await this.resourceBroker._updatePageVariables(isChanged);
-      if (this.resourceBroker.scaling_group === '' || isChanged) {
-        if (this.direction === 'vertical') {
-          const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
-          // Detached from template to support live-update after creating new group (will need it)
-          if (scaling_group_selection_box.hasChildNodes()) {
-            scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
-          }
-          const scaling_select = document.createElement('mwc-multi-select');
-          scaling_select.label = _text('session.launcher.ResourceGroup');
-          scaling_select.id = 'scaling-group-select';
-          scaling_select.value = this.scaling_group;
-          scaling_select.setAttribute('fullwidth', 'true');
-          scaling_select.setAttribute('icon', 'storage');
-          scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
-          let opt = document.createElement('mwc-list-item');
-          opt.setAttribute('disabled', 'true');
-          opt.setAttribute('graphic', 'icon');
-          opt.innerHTML = _text('session.launcher.SelectResourceGroup');
-          opt.style.borderBottom = "1px solid #ccc";
-          scaling_select.appendChild(opt);
-          this.resourceBroker.scaling_groups.map(group => {
-            opt = document.createElement('mwc-list-item');
-            opt.value = group.name;
-            opt.setAttribute('graphic', 'icon');
-            if (this.resourceBroker.scaling_group === group.name) {
-              opt.selected = true;
-            } else {
-              opt.selected = false;
-            }
-            opt.innerHTML = group.name;
-            scaling_select.appendChild(opt);
-          });
-          //scaling_select.updateOptions();
-          scaling_group_selection_box.appendChild(scaling_select);
-        }
-        const scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
-        scaling_group_selection_dialog.selectedText = this.scaling_group;
-        scaling_group_selection_dialog.value = this.scaling_group;
-        scaling_group_selection_dialog.addEventListener('selected-item-label-changed', () => {
-          this.updateScalingGroup.bind(this, false);
-        });
-      }
       // update selected Scaling Group depends on project group
       this._updateSelectedScalingGroup();
       this.sessions_list = this.resourceBroker.sessions_list;
@@ -862,7 +813,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }, 1500);
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
-      if (this.direction === 'vertical' && res.length === 1) {
+      if (res.length === 1) {
         res[0].taskobj.then(res => {
           const appOptions = {
             'session-name': res.kernelId,
@@ -1668,7 +1619,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
+      <wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" outlined @click="${() => this._launchSessionDialog()}">
         <wl-icon>add</wl-icon>
         ${_t("session.launcher.Start")}
       </wl-button>
