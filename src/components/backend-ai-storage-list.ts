@@ -135,6 +135,15 @@ export default class BackendAiStorageList extends BackendAIPage {
           font-size: 10px;
         }
 
+        .info-indicator {
+          min-width: 90px;
+          padding: 0 10px;
+        }
+
+        div.big.indicator {
+          font-size: 48px;
+        }
+
         .folder-action-buttons wl-button {
           margin-right: 10px;
         }
@@ -431,18 +440,20 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="info-folder-dialog" fixed backdrop>
         <span slot="title">${this.folderInfo.name}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;">
+          <div class="horizontal justified layout wrap">
+              <div class="vertical layout center info-indicator">
+                <div class="big indicator">${this.folderInfo.host}</div>
+                <span>${_t("data.folders.Location")}</span>
+              </div>
+            <div class="vertical layout center info-indicator">
+              <div class="big indicator">${this.folderInfo.numFiles}</div>
+              <span>${_t("data.folders.NumberOfFiles")}</span>
+            </div>
+          </div>
           <mwc-list>
             <mwc-list-item twoline>
               <span><strong>ID</strong></span>
               <span class="monospace" slot="secondary">${this.folderInfo.id}</span>
-            </mwc-list-item>
-            <mwc-list-item twoline>
-              <span><strong>${_t("data.folders.Location")}</strong></span>
-              <span slot="secondary">${this.folderInfo.host}</span>
-            </mwc-list-item>
-            <mwc-list-item twoline>
-              <span><strong>${_t("data.folders.NumberOfFiles")}</strong></span>
-              <span slot="secondary">${this.folderInfo.numFiles}</span>
             </mwc-list-item>
             ${this.folderInfo.is_owner ? html`
               <mwc-list-item twoline>
