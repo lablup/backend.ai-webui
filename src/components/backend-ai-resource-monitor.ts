@@ -463,6 +463,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         mwc-select,
         mwc-multi-select {
           width: 100%;
+          font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          --mdc-typography-subtitle1-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
           --mdc-theme-primary: var(--paper-red-600);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
@@ -1636,15 +1638,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   _showKernelDescription(e, item) {
     e.stopPropagation();
     let name = item.kernelname;
-    if (name in this.imageInfo && 'description' in this.imageInfo[name]) {
+    if (name in this.resourceBroker.imageInfo && 'description' in this.resourceBroker.imageInfo[name]) {
       let desc = this.shadowRoot.querySelector('#help-description');
-      this._helpDescriptionTitle = this.imageInfo[name].name;
-      this._helpDescription = this.imageInfo[name].description;
+      this._helpDescriptionTitle = this.resourceBroker.imageInfo[name].name;
+      this._helpDescription = this.resourceBroker.imageInfo[name].description;
       this._helpDescriptionIcon = item.icon;
       desc.show();
     } else {
       if (name in this.imageInfo) {
-        this._helpDescriptionTitle = this.imageInfo[name].name;
+        this._helpDescriptionTitle = this.resourceBroker.imageInfo[name].name;
       } else {
         this._helpDescriptionTitle = name;
       }
