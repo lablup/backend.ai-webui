@@ -1,5 +1,18 @@
 # Changelog
 
+## v20.06.3 (22/06/2020)
+
+#### Enhancements:
+
+- [**enhancement**] Feature to download vfolder directory [#580](https://github.com/lablup/backend.ai-console/issues/580)
+- [**UI / UX**][**enhancement**][**minor**] Migrate legacy dialogs to backend.ai dialog for unified look and feel [#584](https://github.com/lablup/backend.ai-console/issues/584)
+- [**UI / UX**][**enhancement**][**minor**] Open notification when no virtual folder is attached on console [#583](https://github.com/lablup/backend.ai-console/issues/583)
+
+#### Bug Fixes:
+
+- [**bug**] After selecting resource template without GPU, advanced panel's GPU value is not respected in creating session [#581](https://github.com/lablup/backend.ai-console/issues/581)
+
+
 ## v20.06.2 (16/06/2020)
 
 #### Enhancements:
