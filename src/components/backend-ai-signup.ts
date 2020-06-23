@@ -313,7 +313,7 @@ export default class BackendAiSignup extends BackendAIPage {
       <backend-ai-dialog id="email-sent-dialog" noclosebutton fixed backdrop blockscrolling persistent>
         <span slot="title">${_t("signup.ThankYou")}</span>
         <div slot="content">
-          <p>${_t("signup.VerificationMessage")}</p>
+          <p style="max-width:350px">${_t("signup.VerificationMessage")}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button class="ok" @click="${(e) => {
