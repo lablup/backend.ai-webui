@@ -42,11 +42,10 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-@customElement("backend-ai-resource-monitor")
-export default class BackendAiResourceMonitor extends BackendAIPage {
+@customElement("backend-ai-session-launcher")
+export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
-  @property({type: String}) direction = "horizontal";
   @property({type: String}) location = '';
   @property({type: Object}) imageRequirements = Object();
   @property({type: Object}) resourceLimits = Object();
@@ -151,7 +150,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   static get is() {
-    return 'backend-ai-resource-monitor';
+    return 'backend-ai-session-launcher';
   }
 
   static get styles() {
@@ -243,17 +242,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 100px;
         }
 
-        #resource-gauges.horizontal {
-          position: absolute;
-          top: 48px;
-          z-index: 100;
-          left: 160px;
-          width: 420px;
-          height: 48px;
-          color: #ffffff;
-          background-color: transparent;
-        }
-
         wl-icon {
           --icon-size: 24px;
         }
@@ -261,36 +249,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         img.resource-type-icon {
           width: 24px;
           height: 24px;
-        }
-
-        @media screen and (max-width: 749px) {
-          #resource-gauge-toggle.horizontal {
-            display: flex;
-          }
-
-          #resource-gauge-toggle.vertical {
-            display: none;
-          }
-
-          #resource-gauges.horizontal {
-            display: none;
-          }
-
-          #resource-gauges.vertical {
-            display: flex;
-          }
-
-        }
-
-        @media screen and (min-width: 750px) {
-          #resource-gauge-toggle {
-            display: none;
-          }
-
-          #resource-gauges.horizontal,
-          #resource-gauges.vertical {
-            display: flex;
-          }
         }
 
         div.resource-type {
@@ -326,41 +284,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         #new-session-dialog {
           z-index: 100;
-        }
-
-        #scaling-group-select-box mwc-multi-select {
-          width: 245px;
-          margin-left: -4px;
-          font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-          --mdc-typography-subtitle1-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-          --mdc-typography-subtitle1-font-size: 14px;
-          --mdc-typography-subtitle1-font-color: rgb(24, 24, 24);
-          --mdc-typography-subtitle1-font-weight: 400;
-          --mdc-typography-subtitle1-line-height: 16px;
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(24, 24, 24, 1.0);
-          --mdc-select-disabled-ink-color: rgba(24, 24, 24, 1.0);
-          --mdc-select-dropdown-icon-color: rgba(24, 24, 24, 1.0);
-          --mdc-select-focused-dropdown-icon-color: rgba(24, 24, 24, 0.87);
-          --mdc-select-disabled-dropdown-icon-color: rgba(24, 24, 24, 0.87);
-          --mdc-select-idle-line-color: transparent;
-          --mdc-select-hover-line-color: rgba(255, 255, 255, 0.87);
-          --mdc-select-ink-color: rgb(24, 24, 24);
-          --mdc-select-outlined-idle-border-color: rgba(24, 24, 24, 0.42);
-          --mdc-select-outlined-hover-border-color: rgba(24, 24, 24, 0.87);
-          --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
-          --mdc-list-side-padding: 10px;
-          --mdc-menu-item-height: 28px;
-          --mdc-list-item__primary-text: {
-            height: 20px;
-            color: #222222;
-          };
-          margin-bottom: 5px;
-        }
-
-        #scaling-group-select {
-          width: 245px;
         }
 
         wl-button.resource-button.iron-selected {
@@ -600,9 +523,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.version_selector.addEventListener('selected', this.updateResourceAllocationPane.bind(this));
 
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
-    if (document.body.clientWidth < 750 && this.direction == 'horizontal') {
-      this.resourceGauge.style.display = 'none';
-    }
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
     gpu_resource.addEventListener('value-changed', () => {
       if (gpu_resource.value > 0) {
@@ -655,10 +575,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   async updateScalingGroup(forceUpdate = false, e) {
     await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
     if (this.active) {
-      if (this.direction === 'vertical') {
-        const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
-        scaling_group_selection_box.firstChild.value = this.resourceBroker.scaling_group;
-      }
       if (forceUpdate === true) {
         await this._refreshResourcePolicy();
       } else {
@@ -702,48 +618,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (this.active && this.metadata_updating === false) {
       this.metadata_updating = true;
       await this.resourceBroker._updatePageVariables(isChanged);
-      if (this.resourceBroker.scaling_group === '' || isChanged) {
-        if (this.direction === 'vertical') {
-          const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
-          // Detached from template to support live-update after creating new group (will need it)
-          if (scaling_group_selection_box.hasChildNodes()) {
-            scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
-          }
-          const scaling_select = document.createElement('mwc-multi-select');
-          scaling_select.label = _text('session.launcher.ResourceGroup');
-          scaling_select.id = 'scaling-group-select';
-          scaling_select.value = this.scaling_group;
-          scaling_select.setAttribute('fullwidth', 'true');
-          scaling_select.setAttribute('icon', 'storage');
-          scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
-          let opt = document.createElement('mwc-list-item');
-          opt.setAttribute('disabled', 'true');
-          opt.setAttribute('graphic', 'icon');
-          opt.innerHTML = _text('session.launcher.SelectResourceGroup');
-          opt.style.borderBottom = "1px solid #ccc";
-          scaling_select.appendChild(opt);
-          this.resourceBroker.scaling_groups.map(group => {
-            opt = document.createElement('mwc-list-item');
-            opt.value = group.name;
-            opt.setAttribute('graphic', 'icon');
-            if (this.resourceBroker.scaling_group === group.name) {
-              opt.selected = true;
-            } else {
-              opt.selected = false;
-            }
-            opt.innerHTML = group.name;
-            scaling_select.appendChild(opt);
-          });
-          //scaling_select.updateOptions();
-          scaling_group_selection_box.appendChild(scaling_select);
-        }
-        const scaling_group_selection_dialog = this.shadowRoot.querySelector('#scaling-groups');
-        scaling_group_selection_dialog.selectedText = this.scaling_group;
-        scaling_group_selection_dialog.value = this.scaling_group;
-        scaling_group_selection_dialog.addEventListener('selected-item-label-changed', () => {
-          this.updateScalingGroup.bind(this, false);
-        });
-      }
       // update selected Scaling Group depends on project group
       this._updateSelectedScalingGroup();
       this.sessions_list = this.resourceBroker.sessions_list;
@@ -939,7 +813,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }, 1500);
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
-      if (this.direction === 'vertical' && res.length === 1) {
+      if (res.length === 1) {
         res[0].taskobj.then(res => {
           const appOptions = {
             'session-name': res.kernelId,
@@ -1745,189 +1619,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      ${this.direction === 'vertical' ? html`
-      <div id="scaling-group-select-box" class="layout horizontal start-justified">
-      </div>
-      ` : html``}
-      <div class="layout horizontal">
-        <mwc-icon-button id="resource-gauge-toggle" icon="assessment" class="fg blue ${this.direction}"
-          @click="${() => this._toggleResourceGauge()}">
-        </mwc-icon-button>
-        <div id="resource-gauges" class="layout ${this.direction} resources flex" style="align-items: flex-start">
-        ${this.direction === 'horizontal' ? html`
-          <div class="layout vertical end-justified wrap short-indicator">
-            <span class="gauge-label">${_t('session.launcher.TOTAL')}</span>
-            <div style="font-size:8px;height:10px;">${_t('session.launcher.RESOURCE')}</div>
-            <span class="gauge-label">${_t('session.launcher.MY')}</span>
-          </div>
-          ` : html``}
-          <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <wl-icon class="fg blue">developer_board</wl-icon>
-              <div class="gauge-name">CPU</div>
-            </div>
-            <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_resource_group_slot.cpu}/${this.total_resource_group_slot.cpu}</span>
-              <mwc-linear-progress id="cpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cpu / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="cpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cpu / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.cpu}/${this.total_slot.cpu}</span>
-            </div>
-          </div>
-          <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <wl-icon class="fg blue">memory</wl-icon>
-              <span class="gauge-name">RAM</span>
-            </div>
-            <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_resource_group_slot.mem}/${this.total_resource_group_slot.mem}GB</span>
-              <mwc-linear-progress id="mem-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.mem / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="mem-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.mem / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.mem}/${this.total_slot.mem}GB</span>
-            </div>
-          </div>
-          ${this.total_slot.cuda_device ?
-      html`
-          <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <img class="resource-type-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-              <span class="gauge-name">GPU</span>
-            </div>
-            <div class="layout vertical center-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_resource_group_slot.cuda_device}/${this.total_resource_group_slot.cuda_device}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.cuda_device}/${this.total_slot.cuda_device}</span>
-            </div>
-          </div>` :
-      html``}
-          ${this.total_slot.cuda_shares && this.total_slot.cuda_shares > 0 ?
-      html`
-          <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <img class="resource-type-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-              <span class="gauge-name">FGPU</span>
-            </div>
-            <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_resource_group_slot.cuda_shares}/${this.total_resource_group_slot.cuda_shares}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.cuda_shares}/${this.total_slot.cuda_shares}</span>
-            </div>
-          </div>` :
-      html``}
-          ${this.total_slot.rocm_device_slot ?
-      html`
-          <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <img class="resource-type-icon fg green" src="/resources/icons/ROCm.png" />
-              <span class="gauge-name">ROCm<br/>GPU</span>
-            </div>
-            <div class="layout vertical center-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_resource_group_slot.rocm_device_slot}/${this.total_resource_group_slot.rocm_device_slot}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.rocm_device_slot / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.rocm_device_slot / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.rocm_device_slot}/${this.total_slot.rocm_device_slot}</span>
-            </div>
-          </div>` :
-      html``}
-          ${this.total_slot.tpu_device_slot ?
-      html`
-          <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <wl-icon class="fg blue">view_module</wl-icon>
-              <span class="gauge-name">TPU</span>
-            </div>
-            <div class="layout vertical center-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_resource_group_slot.tpu_device_slot}/${this.total_resource_group_slot.tpu_device_slot}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.tpu_device_slot / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.tpu_device_slot / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.tpu_device_slot}/${this.total_slot.tpu_device_slot}</span>
-            </div>
-          </div>` :
-      html``}
-
-          <div class="layout horizontal center-justified monitor session">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <wl-icon class="fg blue">assignment</wl-icon>
-              <span class="gauge-name">${_t('session.launcher.Session')}</span>
-            </div>
-            <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max === 1000000 ? html`∞` : this.concurrency_max}</span>
-              <mwc-linear-progress class="short full-bar" id="concurrency-usage-bar" progress="${this.used_slot_percent.concurrency / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">&nbsp;</span>
-            </div>
-          </div>
-        </div>
-        <div class="layout vertical" style="align-self: center;">
-          <wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" ?fab=${this.direction === 'vertical'} outlined @click="${() => this._launchSessionDialog()}">
-            <wl-icon>add</wl-icon>
-            ${_t("session.launcher.Start")}
-          </wl-button>
-        </div>
-        <div class="flex"></div>
-      </div>
-      ${this.direction === 'vertical' ? html`
-      <div class="vertical start-justified layout">
-        <div class="layout horizontal center start-justified">
-          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#4775E3;"></div>
-          <span style="margin-right:5px;">${_t('session.launcher.CurrentResourceGroup')} (${this.scaling_group})</span>
-        </div>
-        <div class="layout horizontal center start-justified">
-          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#A0BD67"></div>
-          <span style="margin-right:5px;">${_t('session.launcher.UserResourceLimit')}</span>
-        </div>
-      </div>
-      ` : html``}
-      ${this.direction === 'vertical' && this.project_resource_monitor === true &&
-    (this.total_project_slot.cpu > 0 || this.total_project_slot.cpu === Infinity) ? html`
-      <hr />
-      <div class="vertical start-justified layout">
-        <div class="flex"></div>
-        <div class="layout horizontal center-justified monitor">
-          <div class="layout vertical center center-justified" style="margin-right:5px;">
-            <wl-icon class="fg blue">group_work</wl-icon>
-            <span class="gauge-name">${_t('session.launcher.Project')}</span>
-          </div>
-          <div class="layout vertical start-justified wrap short-indicator">
-            <div class="layout horizontal">
-              <span style="width:35px; margin-left:5px; margin-right:5px;">CPU</span>
-              <mwc-linear-progress id="cpu-project-usage-bar" class="start-bar project-bar" progress="${this.used_project_slot_percent.cpu / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_project_slot.cpu}/${this.total_project_slot.cpu === Infinity ? '∞' : this.total_project_slot.cpu}</span>
-            </div>
-            <div class="layout horizontal">
-              <span style="width:35px;margin-left:5px; margin-right:5px;">RAM</span>
-              <mwc-linear-progress id="mem-project-usage-bar" class="middle-bar project-bar" progress="${this.used_project_slot_percent.mem / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_project_slot.mem}/${this.total_project_slot.mem === Infinity ? '∞' : this.total_project_slot.mem}</span>
-            </div>
-            ${this.total_project_slot.cuda_device ? html`
-            <div class="layout horizontal">
-              <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_project_slot.cuda_device}/${this.total_project_slot.cuda_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}</span>
-            </div>` : html``}
-            ${this.total_project_slot.cuda_shares ? html`
-            <div class="layout horizontal">
-              <span style="width:35px;margin-left:5px; margin-right:5px;">fGPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_project_slot.cuda_shares}/${this.total_project_slot.cuda_shares === 'Infinity' ? '∞' : this.total_project_slot.cuda_shares}</span>
-            </div>` : html``}
-            ${this.total_project_slot.rocm_device ? html`
-            <div class="layout horizontal">
-              <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.rocm_device / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_project_slot.rocm_device}/${this.total_project_slot.rocm_device === 'Infinity' ? '∞' : this.total_project_slot.rocm_device}</span>
-            </div>` : html``}
-            ${this.total_project_slot.tpu_device ? html`
-            <div class="layout horizontal">
-              <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.tpu_device / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_project_slot.tpu_device}/${this.total_project_slot.tpu_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}</span>
-            </div>` : html``}
-          </div>
-          <div class="flex"></div>
-        </div>
-      </div>
-      ` : html``}
+      <wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" outlined @click="${() => this._launchSessionDialog()}">
+        <wl-icon>add</wl-icon>
+        ${_t("session.launcher.Start")}
+      </wl-button>
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
         <span slot="title">${_t("session.launcher.StartNewSession")}</span>
         <form slot="content" id="launch-session-form" class="centered">
@@ -2067,8 +1762,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                                value="${this.cpu_request}"></lablup-slider>
                 <span class="caption">${_t("session.launcher.Core")}</span>
                 <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
-    this._showResourceDescription(e, 'cpu');
-  }}"></mwc-icon-button>
+      this._showResourceDescription(e, 'cpu');
+    }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
               <div class="resource-type" style="width:70px;">RAM</div>
@@ -2079,8 +1774,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                              value="${this.mem_request}"></lablup-slider>
               <span class="caption">GB</span>
               <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
-    this._showResourceDescription(e, 'mem');
-  }}"></mwc-icon-button>
+      this._showResourceDescription(e, 'mem');
+    }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
               <div class="resource-type" style="width:70px;">${_t("session.launcher.SharedMemory")}</div>
@@ -2113,8 +1808,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                              min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
               <span class="caption">#</span>
               <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
-    this._showResourceDescription(e, 'session');
-  }}"></mwc-icon-button>
+      this._showResourceDescription(e, 'session');
+    }}"></mwc-icon-button>
             </div>
           </div>
         </wl-expansion>
@@ -2200,6 +1895,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-resource-monitor": BackendAiResourceMonitor;
+    "backend-ai-session-launcher": BackendAiSessionLauncher;
   }
 }

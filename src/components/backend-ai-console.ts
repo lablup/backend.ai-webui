@@ -36,7 +36,7 @@ import './backend-ai-dialog';
 import './backend-ai-sidepanel-task';
 import './backend-ai-sidepanel-notification';
 import './backend-ai-app-launcher';
-
+import './backend-ai-resource-broker';
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 import '../lib/backend.ai-client-es6';
 
@@ -134,6 +134,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.lablupNotification = this.shadowRoot.querySelector('#notification');
     globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
     globalThis.appLauncher = this.shadowRoot.querySelector('#app-launcher');
+    globalThis.resourceBroker = this.shadowRoot.querySelector('#resource-broker');
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.appPage = this.shadowRoot.querySelector('#app-page');
@@ -679,7 +680,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
       this.TOSdialog.tosLanguage = this.lang;
-      this.TOSdialog.title = _t("console.menu.TermsOfService");
+      this.TOSdialog.title = _text("console.menu.TermsOfService");
       this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
     }
@@ -689,7 +690,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
       this.TOSdialog.tosLanguage = this.lang;
-      this.TOSdialog.title = _t("console.menu.PrivacyPolicy");
+      this.TOSdialog.title = _text("console.menu.PrivacyPolicy");
       this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();
     }
@@ -1019,6 +1020,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         </div>
       </backend-ai-dialog>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
+      <backend-ai-resource-broker id="resource-broker" ?active="${this.is_connected}"></backend-ai-resource-broker>
     `;
   }
 
