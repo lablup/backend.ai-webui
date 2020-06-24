@@ -53,6 +53,7 @@ export default class LablupActivityPanel extends LitElement {
           height: 32px;
           padding: 5px 15px 5px 20px;
           margin: 0 0 10px 0;
+          border-radius: 10px 10px 0 0;
           border-bottom: 1px solid #DDD;
           @apply --layout-justified;
           display: flex;
