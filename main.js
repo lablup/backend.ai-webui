@@ -1,13 +1,45 @@
-// Modules to control application life and create native browser window / Local tester file
+/**
+ @license
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ */
 const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
+function isDev() {
+  return process.argv[2] == '--dev';
+}
+let debugMode = true;
+if (isDev()) { // Dev mode from Makefile
+  process.env.serveMode = "dev"; // Prod OR debug
+} else {
+  process.env.serveMode = "prod"; // Prod OR debug
+  debugMode = false;
+}
+process.env.liveDebugMode = false; // Special flag for live server debug.
 const url = require('url');
 const path = require('path');
 const toml = require('markty-toml');
 const BASE_DIR = __dirname;
+
+let ProxyManager, versions, es6Path, electronPath, mainIndex;
+if (process.env.serveMode == 'dev') {
+  ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
+  versions = require('./version');
+  es6Path = npjoin(__dirname, 'build/electron-app/app');  // ES6 module loader with custom protocol
+  electronPath = npjoin(__dirname, 'build/electron-app');
+  mainIndex = 'build/electron-app/app/index.html';
+} else {
+  ProxyManager = require('./app/wsproxy/wsproxy.js');
+  versions = require('./app/version');
+  es6Path = npjoin(__dirname, 'app');  // ES6 module loader with custom protocol
+  electronPath = npjoin(__dirname);
+  mainIndex = 'index.html';
+}
+let windowWidth = 1280;
+let windowHeight = 970;
+
+/*
 const ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
 const versions = require('./version');
-process.env.liveDebugMode = false;
 const windowWidth = 1280;
 const windowHeight = 970;
 
@@ -15,6 +47,8 @@ const windowHeight = 970;
 const nfs = require('fs');
 const npjoin = require('path').join;
 const es6Path = npjoin(__dirname, 'build/electron-app/app');
+*/
+
 protocol.registerSchemesAsPrivileged([
   {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
 ]);
