@@ -18,21 +18,22 @@ process.env.liveDebugMode = false; // Special flag for live server debug.
 const url = require('url');
 const path = require('path');
 const toml = require('markty-toml');
+const nfs = require('fs');
+const npjoin = require('path').join;
 const BASE_DIR = __dirname;
-
 let ProxyManager, versions, es6Path, electronPath, mainIndex;
 if (process.env.serveMode == 'dev') {
   ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
   versions = require('./version');
   es6Path = npjoin(__dirname, 'build/electron-app/app');  // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname, 'build/electron-app');
-  mainIndex = 'build/electron-app/app/index.html';
+  mainIndex = 'build/electron-app/app/index.html'; // reference to the app directory. It will merge into local test / electron app version
 } else {
   ProxyManager = require('./app/wsproxy/wsproxy.js');
   versions = require('./app/version');
   es6Path = npjoin(__dirname, 'app');  // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname);
-  mainIndex = 'index.html';
+  mainIndex = 'index.html'; // reference to the app directory. It will merge into local test / electron app version
 }
 let windowWidth = 1280;
 let windowHeight = 970;
@@ -59,8 +60,6 @@ let mainWindow;
 let mainContent;
 let devtools;
 const manager = new ProxyManager();
-// reference to the app directory. It will merge into local test / electron app version
-const mainIndex = 'build/electron-app/app/index.html';
 let mainURL;
 
 app.once('ready', function() {
@@ -360,8 +359,8 @@ function createWindow() {
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: false,
-      preload: path.join(BASE_DIR, 'preload.js'),
-      devTools: true
+      preload: path.join(electronPath, 'preload.js'),
+      devTools: (debugMode === true)
     }
   });
   // and load the index.html of the app.
@@ -374,12 +373,15 @@ function createWindow() {
     }));
   } else {
     // Load HTML into new Window (file-based serving)
-    nfs.readFile('build/electron-app/app/config.toml', 'utf-8', (err, data) => {
+    nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
       if (err) {
         console.log('No configuration file found.');
         return;
       }
       const config = toml(data);
+      if ('wsproxy' in config && 'disableCertCheck' in config.wsproxy && config.wsproxy.disableCertCheck == true) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+      }
       if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != '') {
         mainURL = config.server.consoleServerURL;
       } else {
@@ -388,6 +390,11 @@ function createWindow() {
           protocol: 'file',
           slashes: true
         });
+      }
+      if ('general' in config && 'siteDescription' in config.general) {
+        process.env.siteDescription = config.general.siteDescription;
+      } else {
+        process.env.siteDescription = '';
       }
       mainWindow.loadURL(mainURL);
     });
