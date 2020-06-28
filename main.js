@@ -75,9 +75,18 @@ app.once('ready', function() {
             type: 'separator'
           },
           {
-            label: 'Force Update Screen',
+            label: 'Refresh App',
+            accelerator: 'Command+R',
             click: function() {
-              mainContent.reloadIgnoringCache();
+              // mainContent.reloadIgnoringCache();
+              const proxyUrl = `http://localhost:${manager.port}/`;
+              mainWindow.loadURL(url.format({ // Load HTML into new Window
+                pathname: path.join(mainIndex),
+                protocol: 'file',
+                slashes: true
+              }));
+              mainContent.executeJavaScript(`window.__local_proxy = '${proxyUrl}'`);
+              console.log('Re-connected to proxy: ' + proxyUrl);
             }
           },
           {
@@ -160,33 +169,17 @@ app.once('ready', function() {
           {
             label: 'Zoom In',
             accelerator: 'Command+=',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript('_zoomIn()');
-              }
-            }
+            role: 'zoomin'
           },
           {
             label: 'Zoom Out',
             accelerator: 'Command+-',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript('_zoomOut()');
-              }
-            }
+            role: 'zoomout'
           },
           {
             label: 'Actual Size',
             accelerator: 'Command+0',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript(
-                    '_zoomActualSize()');
-              }
-            }
+            role: 'resetzoom'
           },
           {
             label: 'Toggle Full Screen',
@@ -195,16 +188,6 @@ app.once('ready', function() {
               const focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-              }
-            }
-          },
-          {
-            label: 'Toggle Developer Tools',
-            accelerator: 'Alt+Command+I',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.toggleDevTools();
               }
             }
           },
@@ -236,7 +219,13 @@ app.once('ready', function() {
         label: 'Help',
         submenu: [
           {
-            label: 'Learn More',
+            label: 'Online Manual',
+            click: function() {
+              shell.openExternal('https://console.docs.backend.ai/');
+            }
+          },
+          {
+            label: 'Backend.AI Project Site',
             click: function() {
               shell.openExternal('https://www.backend.ai/');
             }
@@ -301,25 +290,19 @@ app.once('ready', function() {
             accelerator: 'F11',
             role: 'togglefullscreen'
           },
-          /* Does not work
-          {
-            label: 'Toggle &Developer Tools',
-            accelerator: 'Alt+Ctrl+I',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.toggleDevTools();
-              }
-            }
-          },
-          */
         ]
       },
       {
         label: 'Help',
         submenu: [
           {
-            label: 'Learn More',
+            label: 'Online Manual',
+            click: function() {
+              shell.openExternal('https://console.docs.backend.ai/');
+            }
+          },
+          {
+            label: 'Backend.AI Project Site',
             click: function() {
               shell.openExternal('https://www.backend.ai/');
             }
