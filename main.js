@@ -27,28 +27,16 @@ if (process.env.serveMode == 'dev') {
   versions = require('./version');
   es6Path = npjoin(__dirname, 'build/electron-app/app');  // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname, 'build/electron-app');
-  mainIndex = 'build/electron-app/app/index.html'; // reference to the app directory. It will merge into local test / electron app version
+  mainIndex = 'build/electron-app/app/index.html';
 } else {
   ProxyManager = require('./app/wsproxy/wsproxy.js');
   versions = require('./app/version');
   es6Path = npjoin(__dirname, 'app');  // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname);
-  mainIndex = 'index.html'; // reference to the app directory. It will merge into local test / electron app version
+  mainIndex = 'app/index.html'; 
 }
 let windowWidth = 1280;
 let windowHeight = 970;
-
-/*
-const ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
-const versions = require('./version');
-const windowWidth = 1280;
-const windowHeight = 970;
-
-// ES6 module loader with custom protocol
-const nfs = require('fs');
-const npjoin = require('path').join;
-const es6Path = npjoin(__dirname, 'build/electron-app/app');
-*/
 
 protocol.registerSchemesAsPrivileged([
   {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
@@ -400,9 +388,11 @@ function createWindow() {
     });
   }
   mainContent = mainWindow.webContents;
-  devtools = new BrowserWindow();
-  mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
-  mainWindow.webContents.openDevTools({mode: 'detach'});
+  if (debugMode === true) {
+    devtools = new BrowserWindow();
+    mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
+    mainWindow.webContents.openDevTools({mode: 'detach'});
+  }
   // Emitted when the window is closed.
   mainWindow.on('close', (e) => {
     if (mainWindow) {
