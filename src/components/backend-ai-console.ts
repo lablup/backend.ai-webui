@@ -222,7 +222,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     return this.hasLoadedStrings && super.shouldUpdate(changedProperties);
   }
 
-  loadConfig(config) {
+  loadConfig(config): void {
     if (typeof config.general !== "undefined" && 'siteDescription' in config.general) {
       this.siteDescription = config.general.siteDescription;
     }
@@ -271,7 +271,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.loginPanel.refreshWithConfig(config);
   }
 
-  refreshPage() {
+  refreshPage(): void {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
     globalThis.backendaiclient.proxyURL = this.proxy_url;
     if (typeof globalThis.backendaiclient !== "undefined" && globalThis.backendaiclient != null
@@ -303,7 +303,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.addTooltips();
   }
 
-  showUpdateNotifier() {
+  showUpdateNotifier(): void {
     let indicator = <any>this.shadowRoot.getElementById('backend-ai-indicator');
     indicator.innerHTML = 'New console available. Please <a onclick="globalThis.location.reload()">reload</a> to update.';
     indicator.show();
