@@ -96,6 +96,13 @@ export default class BackendAiDialog extends LitElement {
           padding: 0;
           margin: 0;
         }
+
+        wl-dialog[scrollable]::slotted([slot="content"]),
+        wl-dialog[scrollable] div.content-area {
+          overflow-y: scroll; /* Has to be scroll (not auto) to get smooth scrolling on iOS */
+          -webkit-overflow-scrolling: touch;
+          height: calc(var(--component-height) - 90px);
+        }
       `];
   }
 
@@ -162,7 +169,7 @@ export default class BackendAiDialog extends LitElement {
             </wl-button>
             `}
           </h3>
-          <div class="content" class="content-area">
+          <div class="content content-area">
             <slot name="content"></slot>
           </div>
           <div class="footer horizontal flex layout">

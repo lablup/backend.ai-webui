@@ -124,14 +124,14 @@ export default class LablupTermsOfService extends LitElement {
         </div>
         <div slot="content">
           <div id="terms-of-service-dialog-content"></div>
-        </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <div class="flex"></div>
-          <wl-button class="fg green dismiss" id="dismiss-button" outlined type="button" @click="${() => {
+          <div class="horizontal end-justified flex layout">
+            <div class="flex"></div>
+            <wl-button class="fg green dismiss" id="dismiss-button" outlined type="button" @click="${() => {
       this.close();
     }}">
-              ${_t("button.Dismiss")}
-          </wl-button>
+                ${_t("button.Dismiss")}
+            </wl-button>
+          </div>
         </div>
       </backend-ai-dialog>
     `;
