@@ -155,12 +155,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     let configPath;
     if (globalThis.isElectron) {
       configPath = './config.toml';
-      document.addEventListener('backend-ai-logout', ()=> this.logout(true));
-      document.addEventListener('backend-ai-app-close', ()=> this.close_app_window(true));
-      document.addEventListener('backend-ai-show-splash', ()=> this.splash.show());
+      document.addEventListener('backend-ai-logout', () => this.logout(true));
+      document.addEventListener('backend-ai-app-close', () => this.close_app_window(true));
+      document.addEventListener('backend-ai-show-splash', () => this.splash.show());
     } else {
       configPath = '../../config.toml';
-      document.addEventListener('backend-ai-logout', ()=>this.logout(false));
+      document.addEventListener('backend-ai-logout', () => this.logout(false));
     }
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
@@ -196,7 +196,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   async connectedCallback() {
     super.connectedCallback();
-    document.addEventListener('backend-ai-connected', ()=>this.refreshPage());
+    document.addEventListener('backend-ai-connected', () => this.refreshPage());
     if (globalThis.backendaioptions.get('language') === "default" && this.supportLanguageCodes.includes(globalThis.navigator.language)) { // Language is not set and
       this.lang = globalThis.navigator.language;
     } else if (this.supportLanguageCodes.includes(globalThis.backendaioptions.get('language'))) {
@@ -210,7 +210,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   disconnectedCallback() {
-    document.removeEventListener('backend-ai-connected', ()=>this.refreshPage());
+    document.removeEventListener('backend-ai-connected', () => this.refreshPage());
     super.disconnectedCallback();
   }
 
@@ -309,7 +309,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     indicator.show();
   }
 
-  _parseConfig(fileName) {
+  _parseConfig(fileName): Promise<void> {
     return fetch(fileName)
       .then(res => {
         if (res.status == 200) {
@@ -324,7 +324,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       });
   }
 
-  toggleSidebarUI() {
+  toggleSidebarUI(): void {
     if (!this.mini_ui) {
       this.mini_ui = true;
     } else {
@@ -336,7 +336,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
   }
 
-  toggleSidePanelUI() {
+  toggleSidePanelUI(): void {
     if (this.contentBody.open) {
       this.contentBody.open = false;
       if (this.mini_ui) {
@@ -363,7 +363,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
-  _openSidePanel(panel) {
+  _openSidePanel(panel): void {
     if (this.contentBody.open === true) {
       if (panel != this._sidepanel) { // change panel only.
         this._sidepanel = panel;
@@ -377,7 +377,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
-  _changeDrawerLayout(width, height) {
+  _changeDrawerLayout(width, height): void {
     this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
     if (width < 700) {  // Close drawer
       this.appBody.style.setProperty('--mdc-drawer-width', '190px');
@@ -412,7 +412,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
-  _refreshUserInfoPanel() {
+  _refreshUserInfoPanel(): void {
     this.user_id = globalThis.backendaiclient.email;
     this.full_name = globalThis.backendaiclient.full_name;
     this.domain = globalThis.backendaiclient._config.domainName;
@@ -430,7 +430,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     select.value = this.current_group;
     //select.setAttribute('naturalMenuWidth', 'true');
     select.setAttribute('fullwidth', 'true');
-    select.addEventListener('selected', (e)=>this.changeGroup(e));
+    select.addEventListener('selected', (e) => this.changeGroup(e));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
     opt.innerHTML = _text("console.menu.SelectProject");
