@@ -4,7 +4,6 @@
  */
 
 import {translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
-import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -23,7 +22,6 @@ import './backend-ai-resource-monitor';
 import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
 import '../plastics/lablup-piechart/lablup-piechart';
-import marked from "marked/lib/marked.esm.js";
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -198,13 +196,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.update_checker = this.shadowRoot.querySelector('#update-checker');
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._readAnnouncement();
-      }, true);
-    } else {
-      this._readAnnouncement();
-    }
   }
 
   _refreshHealthPanel() {
@@ -392,7 +383,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         if (this.activeConnected) {
           this._refreshConsoleUpdateInformation();
           this._refreshHealthPanel();
-          this._refreshInvitations();
           this.requestUpdate();
           //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
           //document.dispatchEvent(event);
