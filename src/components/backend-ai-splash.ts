@@ -7,6 +7,7 @@ import {css, customElement, html, LitElement, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/dialog';
 import 'weightless/icon';
+
 /**
  Backend.AI Splash component
 
@@ -30,6 +31,8 @@ export default class BackendAISplash extends LitElement {
   @property({type: String}) license = 'Subscription';
   @property({type: String}) validUntil = '';
   @property({type: String}) version = '';
+  @property({type: String}) managerVersion = '';
+
 
   constructor() {
     super();
@@ -54,7 +57,8 @@ export default class BackendAISplash extends LitElement {
 
         #splash-panel {
           --dialog-width: 345px;
-          --dialog-height: 300px;
+          --dialog-height: 345px;
+          --dialog-border-radius: 10px;
         }
 
         .splash-header {
@@ -100,6 +104,7 @@ export default class BackendAISplash extends LitElement {
     this.edition = globalThis.packageEdition;
     this.validUntil = globalThis.packageValidUntil;
     this.version = globalThis.packageVersion;
+    this.managerVersion = globalThis.backendaiclient.managerVersion;
     if (this.edition !== 'Open Source') {
       if (globalThis.packageValidUntil === "2099-12-31" || this.validUntil === '""' || this.validUntil == "") {
         this.license = "Perpetual";
@@ -134,6 +139,7 @@ export default class BackendAISplash extends LitElement {
               ${this.license === "Subscription" ? html`Subscription is active until ${this.validUntil}` : html``}
               ${this.license === "Perpetual" ? html`Perpetual License` : html``}
               </span></li>
+            <li style="margin-top:15px;"><span id="mode-detail" class="detail">Backend.AI Cluster</span> <span id="manager-build-detail" class="detail">${this.managerVersion}</span></li>
             <li><span id="mode-detail" class="detail">${globalThis.isElectron ? 'App' : 'WebServer'}</span> <span id="build-detail" class="detail">Build ${globalThis.buildVersion}</span></li>
           </ul>
           <ul>
