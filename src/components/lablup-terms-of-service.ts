@@ -140,6 +140,12 @@ export default class LablupTermsOfService extends LitElement {
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     this.dialog = this.shadowRoot.querySelector('#terms-of-service-dialog');
+    this.dialog.addEventListener('didShow', () => {
+      this._syncOpenState()
+    });
+    this.dialog.addEventListener('didHide', () => {
+      this._syncOpenState()
+    });
     if (this.block) {
       this.dialog.backdrop = true;
     }
@@ -152,6 +158,10 @@ export default class LablupTermsOfService extends LitElement {
 
   attributeChangedCallback(name, oldval, newval) {
     super.attributeChangedCallback(name, oldval, newval);
+  }
+
+  _syncOpenState() {
+    this.show = this.dialog.open;
   }
 
   async open() {

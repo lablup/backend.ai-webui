@@ -114,6 +114,13 @@ export default class BackendAiDialog extends LitElement {
 
   _syncOpenState() {
     this.open = this.dialog.open;
+    if (this.open === true) {
+      let event = new CustomEvent("didShow", {"detail": ""});
+      this.dispatchEvent(event);
+    } else {
+      let event = new CustomEvent("didHide", {"detail": ""});
+      this.dispatchEvent(event);
+    }
   }
 
   _hideDialog() {
