@@ -835,10 +835,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <mwc-icon id="statistics-menu-icon" slot="graphic" class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'usersettings'}" @click="${() => this._moveTo('/usersettings')}" ?disabled="${this.blockedMenuitem.includes('usersettings')}">
-              <mwc-icon id="usersettings-menu-icon" slot="graphic" class="fg teal" icon="icons:settings">settings_applications</mwc-icon>
-              <span class="full-menu">${_t("console.menu.Settings")}</span>
-            </mwc-list-item>
             ${this.is_admin ?
       html`
             <h3 class="full-menu">${_t("console.menu.Administration")}</h3>
@@ -892,7 +888,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
             <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
-            <mwc-icon-button disabled id="admin-menu-icon" icon="settings" slot="graphic" class="fg white" style="margin-left:4px;"></mwc-icon-button>
+            <mwc-icon-button id="admin-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
           </div>
         </div>
         <div slot="appContent">
