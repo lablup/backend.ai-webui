@@ -760,7 +760,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this._createPopover("#configurations-menu-icon", _text("console.menu.Configurations"));
       this._createPopover("#maintenance-menu-icon", _text("console.menu.Maintenance"));
       this._createPopover("#information-menu-icon", _text("console.menu.Information"));
-      this._createPopover("#admin-menu-icon", _text("console.menu.Administration"));
+      //this._createPopover("#admin-menu-icon", _text("console.menu.Administration"));
     }
   }
 
@@ -888,7 +888,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
             <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
-            <mwc-icon-button id="admin-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
+            <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
           </div>
         </div>
         <div slot="appContent">
