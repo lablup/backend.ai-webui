@@ -34,6 +34,8 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) scrollable = false;
   @property({type: Boolean}) backdrop = false;
   @property({type: Boolean}) noclosebutton = false;
+  @property({type: Boolean}) persistent = false;
+  @property({type: Boolean}) blockscrolling = false;
   @property({type: Boolean}) open = false;
   @property({type: String}) type = 'normal';
 
@@ -145,8 +147,9 @@ export default class BackendAiDialog extends LitElement {
                     ?fixed="${(this.fixed)}"
                     ?narrow="${(this.narrowLayout)}"
                     ?backdrop="${this.backdrop}"
+                    ?persistent="${this.persistent}"
                     ?scrollable="${this.scrollable}"
-                    blockscrolling
+                    blockscrolling="${this.blockscrolling}"
                     style="padding:0;" class="${this.type}">
         <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">

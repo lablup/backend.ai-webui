@@ -70,7 +70,7 @@ export default class LablupTermsOfService extends LitElement {
       css`
         @media screen and (max-width: 669px) {
           backend-ai-dialog.terms-of-service-dialog {
-            --component-width: 80% !important;
+            --component-width: 85% !important;
             --component-height: 80vh;
           }
         }
@@ -111,9 +111,9 @@ export default class LablupTermsOfService extends LitElement {
     return html`
       <backend-ai-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable>
         <span slot="title">${this.title}</span>
-        <div slot="action" class="horizontal center flex layout">
+        <div slot="action" class="horizontal end-justified center flex layout">
           ${this.tosLanguages ? html`
-            ${_t("language.Language")}:
+            <span style="font-size:14px;">${_t("language.Language")}</span>
             ${this.tosLanguages.map(item => html`
             <wl-button class="fg blue language" outlined type="button" ?active="${this.tosLanguage === item.code}" @click="${() => {
       this.changeLanguage(item.code)
