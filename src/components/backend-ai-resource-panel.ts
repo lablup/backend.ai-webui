@@ -361,7 +361,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
 
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
-    console.log(active);
     if (active === false) {
       return;
     }
