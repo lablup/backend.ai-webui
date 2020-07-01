@@ -424,7 +424,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (groupSelectionBox.hasChildNodes()) {
       groupSelectionBox.removeChild(groupSelectionBox.firstChild as ChildNode);
     }
-    let select = document.createElement('mwc-multi-select');
+    let select = document.createElement('mwc-multi-select') as any;
     select.label = _text("console.menu.Project");
     select.id = 'group-select';
     select.value = this.current_group;

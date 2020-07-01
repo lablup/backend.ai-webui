@@ -18,10 +18,14 @@ import '@material/mwc-notched-outline';
 import '@material/mwc-menu';
 import '@material/mwc-icon';
 
+import {KEY, normalizeKey} from '@material/dom/keyboard';
 import {MDCFloatingLabelFoundation} from '@material/floating-label/foundation.js';
 import {MDCLineRippleFoundation} from '@material/line-ripple/foundation.js';
+import * as typeahead from '@material/list/typeahead.js';
+import {MDCListTextAndIndex} from '@material/list/types';
 import {addHasRemoveClass, FormElement} from '@material/mwc-base/form-element.js';
 import {observer} from '@material/mwc-base/observer.js';
+import {isNodeElement} from '@material/mwc-base/utils.js';
 import {floatingLabel, FloatingLabel} from '@material/mwc-floating-label';
 import {lineRipple, LineRipple} from '@material/mwc-line-ripple';
 import {ListItemBase} from '@material/mwc-list/mwc-list-item-base';
@@ -29,10 +33,9 @@ import {Menu} from '@material/mwc-menu';
 import {NotchedOutline} from '@material/mwc-notched-outline';
 import {MDCSelectAdapter} from '@material/select/adapter';
 import MDCSelectFoundation from '@material/select/foundation.js';
-import {html, property, query, TemplateResult} from 'lit-element';
+import {eventOptions, html, property, query, TemplateResult} from 'lit-element';
 import {classMap} from 'lit-html/directives/class-map.js';
 import {ifDefined} from 'lit-html/directives/if-defined.js';
-
 
 // must be done to get past lit-analyzer checks
 declare global {
@@ -117,7 +120,6 @@ export abstract class SelectBase extends FormElement {
 
   @query('.mdc-menu') protected menuElement!: Menu|null;
 
-
   @query('.mdc-select__anchor') protected anchorElement!: HTMLDivElement|null;
 
   @property({type: Boolean, attribute: 'disabled', reflect: true})
@@ -128,9 +130,21 @@ export abstract class SelectBase extends FormElement {
   })
   disabled = false;
 
-  @property({type: Boolean}) outlined = false;
+  @property({type: Boolean})
+  @observer(function(this: SelectBase, _newVal: boolean, oldVal: boolean) {
+    if (oldVal !== undefined && this.outlined !== oldVal) {
+      this.layout(false);
+    }
+  })
+  outlined = false;
 
-  @property({type: String}) label = '';
+  @property({type: String})
+  @observer(function(this: SelectBase, _newVal: string, oldVal: string) {
+    if (oldVal !== undefined && this.label !== oldVal) {
+      this.layout(false);
+    }
+  })
+  label = '';
 
   @property({type: Boolean}) protected outlineOpen = false;
 
@@ -164,18 +178,26 @@ export abstract class SelectBase extends FormElement {
 
   @property({type: Boolean}) required = false;
 
-  @property({type: Boolean}) fullwidth = false;
-
   @property({type: Boolean}) naturalMenuWidth = false;
 
   @property({type: Boolean}) multi = false;
 
   @property({type: Boolean}) protected isUiValid = true;
 
+  // Transiently holds current typeahead prefix from user.
+  protected typeaheadState = typeahead.initState();
+  protected sortedIndexByFirstChar = new Map<string, MDCListTextAndIndex[]>();
+
+  protected menuElement_: Menu|null = null;
+
   get items(): ListItemBase[] {
-    const menuElement = this.menuElement;
-    if (menuElement) {
-      return menuElement.items;
+    // memoize menuElement to prevent unnecessary querySelector calls.
+    if (!this.menuElement_) {
+      this.menuElement_ = this.menuElement;
+    }
+
+    if (this.menuElement_) {
+      return this.menuElement_.items;
     }
 
     return [];
@@ -237,17 +259,22 @@ export abstract class SelectBase extends FormElement {
     const classes = {
       'mdc-select--disabled': this.disabled,
       'mdc-select--no-label': !this.label,
+      'mdc-select--filled': !this.outlined,
       'mdc-select--outlined': this.outlined,
       'mdc-select--with-leading-icon': !!this.icon,
       'mdc-select--required': this.required,
       'mdc-select--invalid': !this.isUiValid,
-      'mdc-select--fullwidth': this.fullwidth,
+    };
+
+    const menuClasses = {
+      'mdc-select__menu--invalid': !this.isUiValid,
     };
 
     const describedby = this.shouldRenderHelperText ? 'helper-text' : undefined;
 
     return html`
-      <div class="mdc-select ${classMap(classes)}">
+      <div
+          class="mdc-select ${classMap(classes)}">
         <input
             class="formElement"
             .value=${this.value}
@@ -271,8 +298,7 @@ export abstract class SelectBase extends FormElement {
           <span class="mdc-select__selected-text">${this.selectedText}</span>
           <span class="mdc-select__dropdown-icon">
             <svg
-                width="10px"
-                height="5px"
+                class="mdc-select__dropdown-icon-graphic"
                 viewBox="7 10 10 5">
               <polygon
                   class="mdc-select__dropdown-icon-inactive"
@@ -290,11 +316,11 @@ export abstract class SelectBase extends FormElement {
           </span>
           ${outlinedOrUnderlined}
         </div>
-        ${this.renderHelperText()}
         <mwc-menu
             innerRole="listbox"
             wrapFocus
-            class="mdc-select__menu mdc-menu mdc-menu-surface"
+            class="mdc-select__menu mdc-menu mdc-menu-surface ${
+        classMap(menuClasses)}"
             activatable
             .multi=${this.multi}
             .fullwidth=${!this.naturalMenuWidth}
@@ -302,10 +328,13 @@ export abstract class SelectBase extends FormElement {
             .anchor=${this.anchorElement}
             @selected=${this.onSelected}
             @opened=${this.onOpened}
-            @closed=${this.onClosed}>
+            @closed=${this.onClosed}
+            @items-updated=${this.onItemsUpdated}
+            @keydown=${this.handleTypeahead}>
           <slot></slot>
         </mwc-menu>
-      </div>`;
+      </div>
+      ${this.renderHelperText()}`;
   }
 
   protected renderHelperText() {
@@ -352,10 +381,7 @@ export abstract class SelectBase extends FormElement {
     return html`
       <label
           .floatingLabelFoundation=${floatingLabel(this.label)}
-          @labelchange=${this.onLabelChange}
-          id="label">
-        ${this.label}
-      </label>
+          id="label">${this.label}</label>
     `;
   }
 
@@ -401,6 +427,11 @@ export abstract class SelectBase extends FormElement {
         }
 
         return 0;
+      },
+      setLabelRequired: (isRequired) => {
+        if (this.labelElement) {
+          this.labelElement.floatingLabelFoundation.setRequired(isRequired);
+        }
       },
       hasOutline: () => this.outlined,
       notchOutline: (labelWidth) => {
@@ -471,12 +502,23 @@ export abstract class SelectBase extends FormElement {
 
         selectAnchorElement.setAttribute(attr, value);
       },
+      removeSelectAnchorAttr: (attr) => {
+        const selectAnchorElement = this.anchorElement;
+
+        if (!selectAnchorElement) {
+          return;
+        }
+
+        selectAnchorElement.removeAttribute(attr);
+      },
       openMenu: () => {
         this.menuOpen = true;
       },
       closeMenu: () => {
         this.menuOpen = false;
       },
+      addMenuClass: () => undefined,
+      removeMenuClass: () => undefined,
       getAnchorElement: () => this.anchorElement,
       setMenuAnchorElement: () => {
         /* Handled by anchor directive */
@@ -494,7 +536,6 @@ export abstract class SelectBase extends FormElement {
         }
       },
       setAttributeAtIndex: () => undefined,
-      removeAttributeAtIndex: () => undefined,
       focusMenuItemAtIndex: (index) => {
         const menuElement = this.menuElement;
         if (!menuElement) {
@@ -549,6 +590,36 @@ export abstract class SelectBase extends FormElement {
       },
       addClassAtIndex: () => undefined,
       removeClassAtIndex: () => undefined,
+      getSelectedIndex: () => this.index,
+      setSelectedIndex: () => undefined,
+      isTypeaheadInProgress: () =>
+          typeahead.isTypingInProgress(this.typeaheadState),
+      typeaheadMatchItem: (nextChar, startingIndex) => {
+        if (!this.menuElement) {
+          return -1;
+        }
+
+        const opts: typeahead.TypeaheadMatchItemOpts = {
+          focusItemAtIndex: (index) => {
+            this.menuElement!.focusItemAtIndex(index);
+          },
+          focusedItemIndex: startingIndex ?
+              startingIndex :
+              this.menuElement.getFocusedItemIndex(),
+          nextChar,
+          sortedIndexByFirstChar: this.sortedIndexByFirstChar,
+          skipFocus: false,
+          isItemAtIndexDisabled: (index) => this.items[index].disabled,
+        };
+
+        const index = typeahead.matchItem(opts, this.typeaheadState);
+
+        if (index !== -1) {
+          this.select(index);
+        }
+
+        return index;
+      },
     };
   }
 
@@ -615,8 +686,8 @@ export abstract class SelectBase extends FormElement {
       this.reportValidity();
     }
 
-    // init with value set
-    if (this.value && !this.selected) {
+    // Select an option based on init value
+    if (!this.selected) {
       if (!this.items.length && this.slotElement &&
           this.slotElement.assignedNodes({flatten: true}).length) {
         // Shady DOM initial render fix
@@ -624,10 +695,24 @@ export abstract class SelectBase extends FormElement {
         await this.layout();
       }
 
+      const hasEmptyFirstOption =
+          this.items.length && this.items[0].value === '';
+      if (!this.value && hasEmptyFirstOption) {
+        this.select(0);
+        return;
+      }
+
       this.selectByValue(this.value);
     }
 
+    this.sortedIndexByFirstChar = typeahead.initSortedIndex(
+        this.items.length, (index) => this.items[index].text);
     this.renderReady = true;
+  }
+
+  protected onItemsUpdated() {
+    this.sortedIndexByFirstChar = typeahead.initSortedIndex(
+        this.items.length, (index) => this.items[index].text);
   }
 
   select(index: number) {
@@ -719,9 +804,54 @@ export abstract class SelectBase extends FormElement {
   }
 
   protected onKeydown(evt: KeyboardEvent) {
-    if (this.mdcFoundation) {
-      this.mdcFoundation.handleKeydown(evt);
+    const arrowUp = normalizeKey(evt) === KEY.ARROW_UP;
+    const arrowDown = normalizeKey(evt) === KEY.ARROW_DOWN;
+
+    if (arrowDown || arrowUp) {
+      const shouldSelectNextItem = arrowUp && this.index > 0;
+      const shouldSelectPrevItem =
+          arrowDown && this.index < this.items.length - 1;
+
+      if (shouldSelectNextItem) {
+        this.select(this.index - 1);
+      } else if (shouldSelectPrevItem) {
+        this.select(this.index + 1);
+      }
+      evt.preventDefault();
+
+      this.mdcFoundation.openMenu();
+      return;
     }
+
+    this.mdcFoundation.handleKeydown(evt);
+  }
+
+  // must capture to run before list foundation captures event
+  @eventOptions({capture: true})
+  protected handleTypeahead(event: KeyboardEvent) {
+    if (!this.menuElement) {
+      return;
+    }
+
+    const focusedItemIndex = this.menuElement.getFocusedItemIndex();
+    const target = isNodeElement(event.target as Node) ?
+        event.target as HTMLElement :
+        null;
+    const isTargetListItem =
+        target ? target.hasAttribute('mwc-list-item') : false;
+
+    const opts: typeahead.HandleKeydownOpts = {
+      event,
+      focusItemAtIndex: (index) => {
+        this.menuElement!.focusItemAtIndex(index);
+      },
+      focusedItemIndex,
+      isTargetListItem,
+      sortedIndexByFirstChar: this.sortedIndexByFirstChar,
+      isItemAtIndexDisabled: (index) => this.items[index].disabled,
+    };
+
+    typeahead.handleKeydown(opts, this.typeaheadState);
   }
 
   protected async onSelected(evt: CustomEvent<{index: number}>) {
@@ -755,12 +885,6 @@ export abstract class SelectBase extends FormElement {
     }
   }
 
-  protected async onLabelChange() {
-    if (this.label) {
-      await this.layout(false);
-    }
-  }
-
   async layout(updateItems = true) {
     if (this.mdcFoundation) {
       this.mdcFoundation.layout();
@@ -768,25 +892,38 @@ export abstract class SelectBase extends FormElement {
 
     await this.updateComplete;
 
-    const labelElement = this.labelElement;
-
-    if (labelElement && this.outlineElement) {
-      /* When the textfield automatically notches due to a value and label
-       * being defined, the textfield may be set to `display: none` by the user.
-       * this means that the notch is of size 0px. We provide this function so
-       * that the user may manually resize the notch to the floated label's
-       * width.
-       */
-      if (this.outlineOpen) {
-        const labelWidth = labelElement.floatingLabelFoundation.getWidth();
-        this.outlineWidth = labelWidth;
-      }
-    }
-
     const menuElement = this.menuElement;
 
     if (menuElement) {
       menuElement.layout(updateItems);
+    }
+
+    const labelElement = this.labelElement;
+
+    if (!labelElement) {
+      this.outlineOpen = false;
+      return;
+    }
+
+    const shouldFloat = !!this.label && !!this.value;
+    labelElement.floatingLabelFoundation.float(shouldFloat);
+
+    if (!this.outlined) {
+      return;
+    }
+
+    this.outlineOpen = shouldFloat;
+    await this.updateComplete;
+
+    /* When the textfield automatically notches due to a value and label
+     * being defined, the textfield may be set to `display: none` by the user.
+     * this means that the notch is of size 0px. We provide this function so
+     * that the user may manually resize the notch to the floated label's
+     * width.
+     */
+    const labelWidth = labelElement.floatingLabelFoundation.getWidth();
+    if (this.outlineOpen) {
+      this.outlineWidth = labelWidth;
     }
   }
 }
