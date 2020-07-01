@@ -163,6 +163,10 @@ export default class BackendAISummary extends BackendAIPage {
           --button-bg-active: var(--paper-red-600);
         }
 
+        #session-launcher {
+          --component-width: 235px;
+        }
+
         wl-icon {
           --icon-size: 24px;
         }
@@ -192,6 +196,7 @@ export default class BackendAISummary extends BackendAIPage {
         .system-health-indicator {
           width: 90px;
         }
+
       `
     ];
   }
@@ -340,20 +345,8 @@ export default class BackendAISummary extends BackendAIPage {
           <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
-                <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>
-              </div>
-            </div>
-          </lablup-activity-panel>
-          <lablup-activity-panel title="${_t('summary.Shortcut')}" elevation="1">
-            <div slot="message">
-              <div class="horizontal justified layout wrap">
                 <backend-ai-session-launcher location="summary" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
               </div>
-            </div>
-          </lablup-activity-panel>
-          <backend-ai-resource-panel ?active="${this.active === true}"></backend-ai-resource-panel>
-          <lablup-activity-panel title="${_t('summary.Shortcut')}" elevation="1">
-            <div slot="message">
               <ul>
                 <li><a href="/data">${_t('summary.UploadFiles')}</a></li>
               </ul>
@@ -369,6 +362,14 @@ export default class BackendAISummary extends BackendAIPage {
       : html``}
             </div>
           </lablup-activity-panel>
+          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1">
+            <div slot="message">
+              <div class="horizontal justified layout wrap">
+                <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>
+              </div>
+            </div>
+          </lablup-activity-panel>
+          <backend-ai-resource-panel ?active="${this.active === true}"></backend-ai-resource-panel>
           ${this.announcement != '' ? html`
           <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1">
             <div slot="message">

@@ -75,7 +75,8 @@
     "Invitation": "Invitation",
     "FolderName": "Folder Name",
     "Permission": "Permission",
-    "Announcement": "Announcement"
+    "Announcement": "Announcement",
+    "SystemResources": "System Resources"
   },
   "session": {
     "launcher": {

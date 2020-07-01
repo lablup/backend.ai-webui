@@ -51,7 +51,7 @@
     "SystemHealth": "시스템 상태",
     "ConnectedNodes": "연결된 노드",
     "ActiveSessions": "활성 세션",
-    "ResourceStatistics": "자원 상태",
+    "ResourceStatistics": "자원 사용량",
     "CoresReserved": "코어 예약",
     "reserved": "예약",
     "FractionalGPUScalingEnabled": "Fractional GPU 가상화 사용중",
@@ -75,7 +75,8 @@
     "Invitation": "초대",
     "FolderName": "폴더 이름",
     "Permission": "권한",
-    "Announcement": "공지"
+    "Announcement": "공지",
+    "SystemResources": "시스템 자원"
   },
   "session": {
     "launcher": {

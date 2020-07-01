@@ -408,7 +408,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1">
+      <lablup-activity-panel title="${_t('summary.SystemResources')}" elevation="1">
         <div slot="message">
           <div class="horizontal justified layout wrap">
             ${this.is_superadmin ? html`
