@@ -16,14 +16,10 @@ import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
 import '@material/mwc-textfield/mwc-textfield';
 
-import 'weightless/button';
 import 'weightless/card';
 import 'weightless/checkbox';
-import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
-import 'weightless/radio';
-import 'weightless/slider';
 
 import '@material/mwc-linear-progress';
 
@@ -44,12 +40,8 @@ import {
 @customElement("backend-ai-resource-monitor")
 export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) is_connected = false;
-  @property({type: Boolean}) enableLaunchButton = false;
   @property({type: String}) direction = "horizontal";
   @property({type: String}) location = '';
-  @property({type: Object}) imageRequirements = Object();
-  @property({type: Object}) resourceLimits = Object();
-  @property({type: Object}) userResourceLimit = Object();
   @property({type: Object}) aliases = Object();
   @property({type: Object}) total_slot;
   @property({type: Object}) total_resource_group_slot;
@@ -61,12 +53,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Number}) concurrency_used;
   @property({type: Number}) concurrency_max;
   @property({type: Number}) concurrency_limit;
-  @property({type: Array}) vfolders;
   @property({type: Object}) used_slot_percent;
   @property({type: Object}) used_resource_group_slot_percent;
   @property({type: Object}) used_project_slot_percent;
-  @property({type: Array}) resource_templates;
-  @property({type: Array}) resource_templates_filtered;
   @property({type: String}) default_language;
   @property({type: Boolean}) _status;
   @property({type: Number}) num_sessions;
@@ -79,8 +68,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Object}) scaling_group_selection_box;
   @property({type: Object}) resourceGauge = Object();
   @property({type: Boolean}) project_resource_monitor = false;
-  @property({type: Boolean}) _default_language_updated = false;
-  @property({type: Boolean}) _default_version_updated = false;
   @property({type: Object}) resourceBroker;
 
   constructor() {
@@ -105,9 +92,24 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       // language=CSS
       css`
         mwc-linear-progress {
-          width: 90px;
           height: 5px;
           --mdc-theme-primary: #98be5a;
+        }
+
+        .horizontal-panel mwc-linear-progress {
+          width: 90px;
+        }
+
+        .vertical-panel mwc-linear-progress {
+          width: 180px;
+        }
+
+        #scaling-group-select-box {
+          min-height: 61px;
+        }
+
+        .vertical-panel #resource-gauges {
+          min-height: 200px;
         }
 
         mwc-linear-progress.project-bar {
@@ -417,6 +419,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       if (forceUpdate === true) {
         await this._refreshResourcePolicy();
+        this.aggregateResource('update-scaling-group');
       } else {
       }
     }
@@ -491,7 +494,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   async _refreshResourcePolicy() {
     return this.resourceBroker._refreshResourcePolicy().then(() => {
       this.concurrency_used = this.resourceBroker.concurrency_used;
-      this.userResourceLimit = this.resourceBroker.userResourceLimit;
+      //this.userResourceLimit = this.resourceBroker.userResourceLimit;
       this.concurrency_max = this.resourceBroker.concurrency_max;
       //this.updateResourceAllocationPane('refresh resource policy');
     }).catch((err) => {
@@ -598,8 +601,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.concurrency_used = this.resourceBroker.concurrency_used;
       this.scaling_group = this.resourceBroker.scaling_group;
       this.scaling_groups = this.resourceBroker.scaling_groups;
-      this.resource_templates = this.resourceBroker.resource_templates;
-      this.resource_templates_filtered = this.resourceBroker.resource_templates_filtered;
       this.total_slot = this.resourceBroker.total_slot;
       this.total_resource_group_slot = this.resourceBroker.total_resource_group_slot;
       this.total_project_slot = this.resourceBroker.total_project_slot;
@@ -627,7 +628,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   // Get available / total resources from manager
   aggregateResource(from: string = '') {
-    console.log('aggregate resource called - ', from);
+    //console.log('aggregate resource called - ', from);
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._aggregateResourceUse(from);
@@ -674,7 +675,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         <mwc-icon-button id="resource-gauge-toggle" icon="assessment" class="fg blue ${this.direction}"
           @click="${() => this._toggleResourceGauge()}">
         </mwc-icon-button>
-        <div id="resource-gauges" class="layout ${this.direction} resources flex" style="align-items: flex-start">
+        <div id="resource-gauges" class="layout ${this.direction} ${this.direction}-panel resources flex" style="align-items: flex-start">
         ${this.direction === 'horizontal' ? html`
           <div class="layout vertical end-justified wrap short-indicator">
             <span class="gauge-label">${_t('session.launcher.TOTAL')}</span>
@@ -779,10 +780,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>
         </div>
-        <div class="layout vertical" style="align-self: center;">
-        HERE
-        </div>
-        <div class="flex"></div>
       </div>
       ${this.direction === 'vertical' ? html`
       <div class="vertical start-justified layout">
