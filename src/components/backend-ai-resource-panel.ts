@@ -46,7 +46,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
   @property({type: Object}) resources = Object();
-  @property({type: Object}) update_checker = Object();
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) manager_version = '';
   @property({type: String}) console_version = '';
@@ -195,7 +194,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
-    this.update_checker = this.shadowRoot.querySelector('#update-checker');
   }
 
   _refreshHealthPanel() {
@@ -242,12 +240,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       this.notification.detail = err;
       this.notification.show(true, err);
     });
-  }
-
-  _refreshConsoleUpdateInformation() {
-    if (this.is_superadmin && globalThis.backendaioptions.get("automatic_update_check", true)) {
-      this.update_checker.checkRelease();
-    }
   }
 
   _refreshResourceInformation() {
@@ -369,11 +361,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
 
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
+    console.log(active);
     if (active === false) {
-      this.shadowRoot.querySelector('#resource-monitor').removeAttribute('active');
       return;
     }
-    this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
     this._init_resource_values();
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -381,7 +372,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
         if (this.activeConnected) {
-          this._refreshConsoleUpdateInformation();
           this._refreshHealthPanel();
           this.requestUpdate();
           //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
@@ -418,6 +408,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1">
         <div slot="message">
           <div class="horizontal justified layout wrap">
