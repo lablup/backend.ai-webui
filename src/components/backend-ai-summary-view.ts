@@ -350,9 +350,6 @@ export default class BackendAISummary extends BackendAIPage {
               <ul>
                 <li><a href="/data">${_t('summary.UploadFiles')}</a></li>
               </ul>
-              <ul>
-                <li><a href="/job">${_t('summary.StartASession')}</a></li>
-              </ul>
               ${this.is_admin
       ? html`
                 <ul>

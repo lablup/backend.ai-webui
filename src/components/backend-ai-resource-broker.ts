@@ -239,7 +239,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       }
       if (this.scaling_group === '' || isChanged) {
         const currentGroup = globalThis.backendaiclient.current_group || null;
-        let sgs = await globalThis.backendaiclient.scalingGroup.list(currentGroup);
+        const sgs = await globalThis.backendaiclient.scalingGroup.list(currentGroup);
         // Make empty scaling group item if there is no scaling groups.
         this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
         this.scaling_group = this.scaling_groups[0].name;
@@ -247,7 +247,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
       // Reload number of sessions
       let fields = ["created_at"];
-      globalThis.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
+      await globalThis.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
         .then(res => {
           this.sessions_list = res.compute_session_list.items.map(e => e.created_at);
         });

@@ -448,46 +448,52 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (this.active && this.metadata_updating === false) {
       this.metadata_updating = true;
       await this.resourceBroker._updatePageVariables(isChanged);
-      if (this.resourceBroker.scaling_group === '' || isChanged) {
-        if (this.direction === 'vertical') {
-          const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box'); // monitor SG selector
-          // Detached from template to support live-update after creating new group (will need it)
-          if (scaling_group_selection_box.hasChildNodes()) {
-            scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
-          }
-          const scaling_select = document.createElement('mwc-multi-select');
-          scaling_select.label = _text('session.launcher.ResourceGroup');
-          scaling_select.id = 'scaling-group-select';
-          scaling_select.value = this.scaling_group;
-          scaling_select.setAttribute('fullwidth', 'true');
-          scaling_select.setAttribute('icon', 'storage');
-          scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
-          let opt = document.createElement('mwc-list-item');
-          opt.setAttribute('disabled', 'true');
-          opt.setAttribute('graphic', 'icon');
-          opt.innerHTML = _text('session.launcher.SelectResourceGroup');
-          opt.style.borderBottom = "1px solid #ccc";
-          scaling_select.appendChild(opt);
-          this.resourceBroker.scaling_groups.map(group => {
-            opt = document.createElement('mwc-list-item');
-            opt.value = group.name;
-            opt.setAttribute('graphic', 'icon');
-            if (this.resourceBroker.scaling_group === group.name) {
-              opt.selected = true;
-            } else {
-              opt.selected = false;
-            }
-            opt.innerHTML = group.name;
-            scaling_select.appendChild(opt);
-          });
-          //scaling_select.updateOptions();
-          scaling_group_selection_box.appendChild(scaling_select);
-        }
-      }
+      setTimeout(() => {
+        this._updateScalingGroupSelector();
+      }, 1000);
       this.sessions_list = this.resourceBroker.sessions_list;
       await this._refreshResourcePolicy();
       this.aggregateResource('update-page-variable');
       this.metadata_updating = false;
+      return Promise.resolve(true);
+    }
+    return Promise.resolve(false);
+  }
+
+  _updateScalingGroupSelector() {
+    if (this.direction === 'vertical') {
+      const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box'); // monitor SG selector
+      // Detached from template to support live-update after creating new group (will need it)
+      if (scaling_group_selection_box.hasChildNodes()) {
+        scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
+      }
+      const scaling_select = document.createElement('mwc-multi-select');
+      scaling_select.label = _text('session.launcher.ResourceGroup');
+      scaling_select.id = 'scaling-group-select';
+      scaling_select.value = this.scaling_group;
+      scaling_select.setAttribute('fullwidth', 'true');
+      scaling_select.setAttribute('icon', 'storage');
+      scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
+      let opt = document.createElement('mwc-list-item');
+      opt.setAttribute('disabled', 'true');
+      opt.setAttribute('graphic', 'icon');
+      opt.innerHTML = _text('session.launcher.SelectResourceGroup');
+      opt.style.borderBottom = "1px solid #ccc";
+      scaling_select.appendChild(opt);
+      this.resourceBroker.scaling_groups.map(group => {
+        opt = document.createElement('mwc-list-item');
+        opt.value = group.name;
+        opt.setAttribute('graphic', 'icon');
+        if (this.resourceBroker.scaling_group === group.name) {
+          opt.selected = true;
+        } else {
+          opt.selected = false;
+        }
+        opt.innerHTML = group.name;
+        scaling_select.appendChild(opt);
+      });
+      //scaling_select.updateOptions();
+      scaling_group_selection_box.appendChild(scaling_select);
     }
   }
 

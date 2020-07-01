@@ -74,11 +74,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
 
-  public invitations: any;
-
   constructor() {
     super();
-    this.invitations = [];
   }
 
   static get styles() {
@@ -146,24 +143,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
           --mdc-theme-primary: #98be5a;
         }
 
-        wl-button[class*="green"] {
-          --button-bg: var(--paper-light-green-50);
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
-        }
-
-        wl-button[class*="red"] {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-        }
-
         wl-icon {
           --icon-size: 24px;
-        }
-
-        .invitation_folder_name {
-          font-size: 13px;
         }
 
         mwc-icon-button.update-button {
