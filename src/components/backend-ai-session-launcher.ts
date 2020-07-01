@@ -467,6 +467,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding: 5px !important;
         }
 
+        #new-session-dialog {
+          --component-width: 400px;
+        }
+
         #launch-confirmation-dialog {
           --component-width: 400px;
           --component-font-size: 14px;
