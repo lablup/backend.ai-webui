@@ -949,7 +949,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg red controls-running"
                                @click="${(e) => this._openTerminateSessionDialog(e)}"
-                               icon="delete"><wl-icon>delete</wl-icon></wl-button>
+                               icon="delete"><wl-icon>power_settings_new</wl-icon></wl-button>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg blue controls-running" icon="assignment"
