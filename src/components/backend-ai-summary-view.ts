@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
+import {translate as _t} from "lit-translate";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
@@ -232,6 +232,8 @@ export default class BackendAISummary extends BackendAIPage {
         this.is_superadmin = globalThis.backendaiclient.is_superadmin;
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
+        this.manager_version = globalThis.backendaiclient.managerVersion;
+        this.console_version = globalThis.packageVersion;
         if (this.activeConnected) {
           this._refreshConsoleUpdateInformation();
           this._refreshInvitations();
@@ -244,6 +246,8 @@ export default class BackendAISummary extends BackendAIPage {
       this.is_superadmin = globalThis.backendaiclient.is_superadmin;
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
+      this.manager_version = globalThis.backendaiclient.managerVersion;
+      this.console_version = globalThis.packageVersion;
       this._refreshConsoleUpdateInformation();
       this._refreshInvitations();
       this.requestUpdate();
