@@ -421,6 +421,9 @@ export default class BackendAiSessionList extends BackendAIPage {
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
       this.spinner.hide();
+      if (!response.compute_session_list && response.legacy_compute_session_list) {
+        response.compute_session_list = response.legacy_compute_session_list;
+      }
       this.total_session_count = response.compute_session_list.total_count;
       if (this.total_session_count === 0) {
         this.total_session_count = 1;
@@ -1110,6 +1113,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
 
     globalThis.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
+      if (!response.compute_session_list && response.legacy_compute_session_list) {
+        response.compute_session_list = response.legacy_compute_session_list;
+      }
       let sessions = response.compute_sessions;
       JsonToCsv.exportToCsv(fileNameEl.value, sessions);
 
