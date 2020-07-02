@@ -157,7 +157,7 @@ export const BackendAiConsoleStyles = [
     }
 
     #content-body {
-      background-color: #ffffff;
+      background-color: var(--general-content-background-color, #ffffff);
       color: var(--general-sidepanel-color, #fafafa);
       --mdc-drawer-background-color: var(--sidepanel-background-color, var(--general-sidepanel-background-color, #fafafa));
     }

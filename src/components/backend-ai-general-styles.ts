@@ -48,10 +48,27 @@ export const BackendAiStyles = [
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
       --general-sidepanel-color: #dddddd;
       --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
+      --general-content-background-color: rgba(255, 255, 255, 1);
       --general-dialog-background-color: #ffffff;
       --app-drawer-width: 190px;
       --general-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
+    }
+
+    @media screen and  (prefers-color-scheme: dark) {
+      :host > *, html {
+        --general-background-color: rgba(24, 24, 24, 1);
+        --general-background-color-2: rgba(42, 42, 42, 1);
+        --general-sidepanel-background-color: rgba(42, 42, 42, 1);
+        --general-sidebar-selected-background-color: rgba(64, 64, 64, 1);
+        --general-content-background-color: rgba(64, 64, 64, 1);
+        --sidepanel-background-color: rgba(64, 64, 64, 1);
+      }
+
+      wl-card {
+        background: var(--general-content-background-color) !important;
+        color: rgba(244, 245, 247, 1);
+      }
     }
 
     body {

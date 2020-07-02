@@ -372,7 +372,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
+        <div id="controls" class="layout horizontal flex center" agentId="${rowData.item.addr}">
           <wl-button fab flat inverted disabled class="fg" icon="assignment"><wl-icon>assignment</wl-icon></wl-button>
           ${this._isRunning() ? html`
             <wl-button fab flat inverted disabled class="fg controls-running" icon="build"><wl-icon>build</wl-icon></wl-button>
