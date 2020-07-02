@@ -249,7 +249,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       let fields = ["created_at"];
       await globalThis.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
         .then(res => {
-          this.sessions_list = res.legacy_compute_session_list.items.map(e => e.created_at);
+          if (!res.compute_session_list && res.legacy_compute_session_list) {
+            res.compute_session_list = res.legacy_compute_session_list;
+          }
+          this.sessions_list = res.compute_session_list.items.map(e => e.created_at);
         });
       this._initAliases();
       await this._refreshResourcePolicy();
