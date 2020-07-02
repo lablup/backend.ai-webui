@@ -1,6 +1,17 @@
 # Changelog
 
-## v20.07.1 (02/07/2020)
+## v20.07.0 (02/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Migrate legacy dialogs to backend.ai dialog for unified look and feel [#584](https://github.com/lablup/backend.ai-console/issues/584)
+- [**UI / UX**][**enhancement**][**minor**] Open notification when no virtual folder is attached on console [#583](https://github.com/lablup/backend.ai-console/issues/583)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**][**working**] Unified session information crawler / store [#496](https://github.com/lablup/backend.ai-console/issues/496)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**minor**] TOS is not scrollable [#588](https://github.com/lablup/backend.ai-console/issues/588)
+
 
 ## v20.06.3 (22/06/2020)
 
