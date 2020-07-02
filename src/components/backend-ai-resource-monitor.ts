@@ -273,6 +273,25 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           margin-bottom: 5px;
         }
 
+        @media screen and (prefers-color-scheme: dark) {
+          #scaling-group-select-box mwc-multi-select {
+            --mdc-typography-subtitle1-font-color: rgba(244, 245, 247, 1);
+            --mdc-select-label-ink-color: rgba(244, 245, 247, 1);
+            --mdc-select-disabled-ink-color: rgba(244, 245, 247, 1);
+            --mdc-select-dropdown-icon-color: rgba(244, 245, 247, 1);
+            --mdc-select-focused-dropdown-icon-color: rgba(244, 245, 247, 0.87);
+            --mdc-select-disabled-dropdown-icon-color: rgba(244, 245, 247, 0.87);
+            --mdc-select-hover-line-color: rgba(24, 24, 24, 0.87);
+            --mdc-select-ink-color: rgba(244, 245, 247, 1);
+            --mdc-select-outlined-idle-border-color: rgba(244, 245, 247, 0.42);
+            --mdc-select-outlined-hover-border-color: rgba(244, 245, 247, 0.87);
+            --mdc-theme-surface: white;
+            --mdc-list-item__primary-text: {
+              color: #222222;
+            };
+          }
+        }
+
         #scaling-group-select {
           width: 245px;
         }

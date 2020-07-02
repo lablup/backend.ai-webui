@@ -55,19 +55,32 @@ export const BackendAiStyles = [
       --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
     }
 
-    @media screen and  (prefers-color-scheme: dark) {
+    @media screen and (prefers-color-scheme: dark) {
       :host > *, html {
         --general-background-color: rgba(24, 24, 24, 1);
         --general-background-color-2: rgba(42, 42, 42, 1);
         --general-sidepanel-background-color: rgba(42, 42, 42, 1);
         --general-sidebar-selected-background-color: rgba(64, 64, 64, 1);
-        --general-content-background-color: rgba(64, 64, 64, 1);
+        --general-content-background-color: rgba(42, 42, 42, 1);
         --sidepanel-background-color: rgba(64, 64, 64, 1);
+      }
+
+      a, a:visited {
+        color: #ffffff !important;
       }
 
       wl-card {
         background: var(--general-content-background-color) !important;
         color: rgba(244, 245, 247, 1);
+        --card-elevation: rgba(64, 67, 122, 0.15) 0px 5px 10px -2px;
+      }
+
+      wl-card.panel {
+        background: rgba(64, 64, 64, 1) !important;
+      }
+
+      li:before {
+        border-color: rgba(244, 245, 247, 1) !important;
       }
     }
 

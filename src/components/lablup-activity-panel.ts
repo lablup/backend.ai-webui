@@ -7,6 +7,7 @@ import 'weightless/button';
 import 'weightless/card';
 import 'weightless/icon';
 
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 @customElement("lablup-activity-panel")
@@ -30,6 +31,7 @@ export default class LablupActivityPanel extends LitElement {
 
   static get styles() {
     return [
+      BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
       // language=CSS
@@ -86,7 +88,7 @@ export default class LablupActivityPanel extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-card id="activity" elevation="${this.elevation}" ?disabled="${this.disabled}">
+      <wl-card id="activity" class="panel" elevation="${this.elevation}" ?disabled="${this.disabled}">
         <h4 class="horizontal center layout" style="font-weight:bold">
           <span>${this.title}</span>
           <div class="flex"></div>
