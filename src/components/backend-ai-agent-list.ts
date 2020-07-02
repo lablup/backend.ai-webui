@@ -149,7 +149,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       default:
         status = 'ALIVE';
     }
-    let fields = ['id', 'status', 'addr', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'];
+    let fields = ['id', 'status', 'version', 'addr', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'];
     globalThis.backendaiclient.agent.list(status, fields).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
@@ -362,7 +362,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       // language=HTML
       html`
         <div class="layout horizontal justified wrap">
-          <lablup-shields app="" color="${this._heartbeatColor(rowData.item.status)}"
+          <lablup-shields app="${rowData.item.version}" color="${this._heartbeatColor(rowData.item.status)}"
                           description="${this._heartbeatStatus(rowData.item.status)}" ui="flat"></lablup-shields>
         </div>`, root
     );
@@ -480,7 +480,7 @@ export default class BackendAIAgentList extends BackendAIPage {
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="100px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
     `;
