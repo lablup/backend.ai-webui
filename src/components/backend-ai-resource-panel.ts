@@ -207,7 +207,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     globalThis.backendaiclient.computeSession.list(fields, status).then((response) => {
       this.spinner.hide();
       this.jobs = response;
-      this.sessions = response.compute_session_list.total_count;
+      this.sessions = response.legacy_compute_session_list.total_count;
       if (this.active) {
         setTimeout(() => {
           this._refreshSessionInformation()

@@ -421,11 +421,11 @@ export default class BackendAiSessionList extends BackendAIPage {
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
       this.spinner.hide();
-      this.total_session_count = response.compute_session_list.total_count;
+      this.total_session_count = response.legacy_compute_session_list.total_count;
       if (this.total_session_count === 0) {
         this.total_session_count = 1;
       }
-      let sessions = response.compute_session_list.items;
+      let sessions = response.legacy_compute_session_list.items;
       if (sessions !== undefined && sessions.length != 0) {
         let previous_sessions = this.compute_sessions;
 
@@ -1110,7 +1110,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
 
     globalThis.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
-      let sessions = response.compute_sessions;
+      let sessions = response.legacy_compute_sessions;
       JsonToCsv.exportToCsv(fileNameEl.value, sessions);
 
       this.notification.text = "Downloading CSV file..."
@@ -1121,8 +1121,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     // let isUnlimited = this.shadowRoot.querySelector('#export-csv-checkbox').checked;
     // if (isUnlimited) {
     //   globalThis.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
-    //     // let total_count = response.compute_sessions.length;
-    //     let sessions = response.compute_sessions;
+    //     // let total_count = response.legacy_compute_sessions.length;
+    //     let sessions = response.legacy_compute_sessions;
     //     // console.log("total_count : ",total_count);
     //   JsonToCsv.exportToCsv(fileNameEl.value, sessions);
     //   });

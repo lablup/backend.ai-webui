@@ -1844,7 +1844,7 @@ class ComputeSession {
         fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
         let q, v;
         q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
-      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
+      legacy_compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
         items { ${fields.join(" ")}}
         total_count
       }
