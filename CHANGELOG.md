@@ -1,5 +1,16 @@
 # Changelog
 
+## v20.07.1 (03/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**minor**] Show agent version on resource pane to check upgradable agents [#590](https://github.com/lablup/backend.ai-console/issues/590)
+
+#### Bug Fixes:
+
+- [**blocker**][**bug**][**major**] Cannot see templates / assign resource without GPU [#591](https://github.com/lablup/backend.ai-console/issues/591)
+
+
 ## v20.07.0 (02/07/2020)
 
 #### Enhancements:
