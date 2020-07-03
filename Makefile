@@ -11,7 +11,7 @@ current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 test_web:
 	npm run server:d
 test_electron:
-	./node_modules/electron/cli.js .
+	./node_modules/electron/cli.js . --dev
 proxy:
 	node ./src/wsproxy/local_proxy.js
 run_tests:
@@ -37,7 +37,8 @@ dep:
 	rm -rf build/electron-app
 	mkdir -p build/electron-app
 	cp ./package.json ./build/electron-app/package.json
-	cp ./main.electron-packager.js ./build/electron-app/main.js
+	cp ./main.js ./build/electron-app/main.js
+	#cp ./main.electron-packager.js ./build/electron-app/main.js
 	cp -Rp build/rollup build/electron-app/app
 	cp -Rp build/rollup/resources build/electron-app
 	cp -Rp build/rollup/manifest build/electron-app
@@ -75,7 +76,7 @@ mac: dep
 	mv ./app/backend.ai-console-$(BUILD_DATE).dmg ./app/backend.ai-console-$(BUILD_VERSION)-$(site).dmg
 win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	$(EP) --platform=win32 --icon=manifest/backend-ai.ico
+	$(EP) --platform=win32 --arch=x64 --icon=manifest/backend-ai.ico
 	cd app; zip ./backend.ai-console-win32-x64-$(BUILD_DATE).zip -r ./backend.ai-console-win32-x64
 	mv ./app/backend.ai-console-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-console-x64-$(BUILD_VERSION)-$(site).zip
 linux: dep

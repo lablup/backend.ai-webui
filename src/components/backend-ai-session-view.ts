@@ -17,6 +17,7 @@ import "@material/mwc-list/mwc-list-item";
 import "@material/mwc-icon-button/mwc-icon-button";
 import "@material/mwc-menu/mwc-menu";
 
+import './backend-ai-session-launcher';
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -165,6 +166,7 @@ export default class BackendAiSessionView extends BackendAIPage {
           </wl-tab-group>
           <div class="flex"></div>
           <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
+          <backend-ai-session-launcher location="session" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
           ${this.is_admin ? html`
               <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
                                @click="${this._toggleDropdown}">

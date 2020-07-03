@@ -34,6 +34,8 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) scrollable = false;
   @property({type: Boolean}) backdrop = false;
   @property({type: Boolean}) noclosebutton = false;
+  @property({type: Boolean}) persistent = false;
+  @property({type: Boolean}) blockscrolling = false;
   @property({type: Boolean}) open = false;
   @property({type: String}) type = 'normal';
 
@@ -94,6 +96,13 @@ export default class BackendAiDialog extends LitElement {
           padding: 0;
           margin: 0;
         }
+
+        wl-dialog[scrollable]::slotted([slot="content"]),
+        wl-dialog[scrollable] div.content-area {
+          overflow-y: scroll; /* Has to be scroll (not auto) to get smooth scrolling on iOS */
+          -webkit-overflow-scrolling: touch;
+          height: calc(var(--component-height) - 90px);
+        }
       `];
   }
 
@@ -114,6 +123,13 @@ export default class BackendAiDialog extends LitElement {
 
   _syncOpenState() {
     this.open = this.dialog.open;
+    if (this.open === true) {
+      let event = new CustomEvent("didShow", {"detail": ""});
+      this.dispatchEvent(event);
+    } else {
+      let event = new CustomEvent("didHide", {"detail": ""});
+      this.dispatchEvent(event);
+    }
   }
 
   _hideDialog() {
@@ -138,8 +154,9 @@ export default class BackendAiDialog extends LitElement {
                     ?fixed="${(this.fixed)}"
                     ?narrow="${(this.narrowLayout)}"
                     ?backdrop="${this.backdrop}"
+                    ?persistent="${this.persistent}"
                     ?scrollable="${this.scrollable}"
-                    blockscrolling
+                    blockscrolling="${this.blockscrolling}"
                     style="padding:0;" class="${this.type}">
         <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
@@ -152,7 +169,7 @@ export default class BackendAiDialog extends LitElement {
             </wl-button>
             `}
           </h3>
-          <div class="content" class="content-area">
+          <div class="content content-area">
             <slot name="content"></slot>
           </div>
           <div class="footer horizontal flex layout">

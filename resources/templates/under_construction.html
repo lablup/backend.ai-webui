@@ -24,8 +24,8 @@
     globalThis.enableSW = true;
 
     globalThis.process = {env: {NODE_ENV: 'production'}};
-    globalThis.packageVersion = "20.07.1";
-    globalThis.buildVersion = "200703.140745";
+    globalThis.packageVersion = "20.07.0";
+    globalThis.buildVersion = "200701.200727";
   </script>
   <style>
     body {
@@ -40,10 +40,10 @@
 
     .splash {
       position: absolute;
-      top: calc(50% - 150px);
+      top: calc(50% - 200px);
       left: calc(50% - 170px);
       width: 340px;
-      height: 300px;
+      height: 400px;
       border: 1px solid #aaaaaa;
       border-radius: 4px;
       background-color: #ffffff;
@@ -62,8 +62,23 @@
       line-height: 60px;
     }
 
+    .splash-header .header-ribbon {
+      font-size: 16px;
+      line-height: 24px;
+      width: 100%;
+      background-color: #3e872d;
+      color: #ffffff;
+      text-align: center;
+    }
+
     ul {
       list-style-type: none;
+      padding-left: 20px;
+    }
+
+    .splash-information .title {
+      font-size: 24px;
+      text-align: center;
     }
 
     .splash-information .detail {
@@ -71,10 +86,14 @@
       font-size: 13px;
     }
 
+    .splash-information p {
+      padding: 5px 20px 1px 20px;
+    }
+
     .loading-message {
       position: absolute;
-      top: calc(50% + 108px);
-      left: calc(50% - 165px);
+      top: calc(50% + 168px);
+      left: calc(50% - 145px);
       width: 300px;
       text-align: center;
       font-size: 16px;
@@ -85,7 +104,7 @@
       width: 15px;
       height: 15px;
       position: absolute;
-      top: calc(50% + 110px);
+      top: calc(50% + 170px);
       left: calc(50% - 130px);
       margin: auto;
       -webkit-transform: rotateZ(45deg);
@@ -184,65 +203,34 @@
     }
 
     .copyright {
-      font-size: 12px;
+      font-size: 14px;
+      text-align: center;
     }
   </style>
 </head>
 
 <body>
-<backend-ai-console id="console-shell" style="background-color:#222222;">
-  <div class="splash">
-    <div class="splash-header">
-      <img src="manifest/backend.ai-text.svg" style="height:50px;padding:35px 20px;">
-    </div>
-    <div class="splash-information">
-      <ul>
-        <li>Backend.AI Console <span id="version-detail" class="detail"></span></li>
-        <li><span id="license-detail"></span></li>
-        <li><span id="mode-detail" class="detail"></span> <span id="build-detail" class="detail"></span></li>
-      </ul>
-        <ul>
-          <li>Powered by open-source software</li>
-          <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
-        </ul>
-    </div>
-    <div class="sk-folding-cube">
-      <div class="sk-cube1 sk-cube"></div>
-      <div class="sk-cube2 sk-cube"></div>
-      <div class="sk-cube4 sk-cube"></div>
-      <div class="sk-cube3 sk-cube"></div>
-    </div>
-    <div id="loading-message" class="loading-message">Loading components...</div>
+<div class="splash">
+  <div class="splash-header">
+    <div class="header-ribbon">Scheduled maintenance</div>
+    <img src="manifest/backend.ai-text.svg" style="height:50px;padding:35px 20px;">
   </div>
-</backend-ai-console>
+  <div class="splash-information">
+    <h1 class="title">We’ll be back soon!</h1>
+    <p>Sorry for the inconvenience but we’re performing some maintenance at the moment.</p>
+    <p>If you need to you can always contact us, otherwise we’ll be back online shortly!</p>
+    <div class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</div>
+  </div>
+  <div class="sk-folding-cube">
+    <div class="sk-cube1 sk-cube"></div>
+    <div class="sk-cube2 sk-cube"></div>
+    <div class="sk-cube4 sk-cube"></div>
+    <div class="sk-cube3 sk-cube"></div>
+  </div>
+  <div id="loading-message" class="loading-message">Now under maintenance...</div>
+</div>
 <noscript>
   <p>Could not render Backend.AI console. Check that JavaScript is enabled.</p>
 </noscript>
-<script src="./dist/components/backend-ai-console.js" type="module"></script>
-<script>
-  document.getElementById('version-detail').innerText = globalThis.packageVersion;
-  document.getElementById('build-detail').innerText = ' Build ' + globalThis.buildVersion;
-  document.getElementById('license-detail').innerText = '';
-  if (globalThis.isElectron) {
-    document.getElementById('mode-detail').innerText = 'App';
-  } else {
-    document.getElementById('mode-detail').innerText = 'WebServer';
-  }
-  if (globalThis.isIE) {
-    alert('Internet Explorer is not supported. Please visit with modern browsers.');
-    document.getElementById('loading-message').innerText = 'Not supported browser.';
-    document.getElementById('loading-message').style.color = 'red';
-  }
-  if (!['127.0.0.1', 'localhost'].includes(window.location.hostname) &&
-    'enableSW' in globalThis &&
-    globalThis.enableSW === true) {
-    // Service worker routine.
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js');
-      });
-    }
-  }
-</script>
 </body>
 </html>

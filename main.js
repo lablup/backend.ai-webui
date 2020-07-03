@@ -1,20 +1,43 @@
-// Modules to control application life and create native browser window / Local tester file
+/**
+ @license
+ Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ */
 const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
+function isDev() {
+  return process.argv[2] == '--dev';
+}
+let debugMode = true;
+if (isDev()) { // Dev mode from Makefile
+  process.env.serveMode = "dev"; // Prod OR debug
+} else {
+  process.env.serveMode = "prod"; // Prod OR debug
+  debugMode = false;
+}
+process.env.liveDebugMode = false; // Special flag for live server debug.
 const url = require('url');
 const path = require('path');
 const toml = require('markty-toml');
-const BASE_DIR = __dirname;
-const ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
-const versions = require('./version');
-process.env.liveDebugMode = false;
-const windowWidth = 1280;
-const windowHeight = 970;
-
-// ES6 module loader with custom protocol
 const nfs = require('fs');
 const npjoin = require('path').join;
-const es6Path = npjoin(__dirname, 'build/electron-app/app');
+const BASE_DIR = __dirname;
+let ProxyManager, versions, es6Path, electronPath, mainIndex;
+if (process.env.serveMode == 'dev') {
+  ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
+  versions = require('./version');
+  es6Path = npjoin(__dirname, 'build/electron-app/app');  // ES6 module loader with custom protocol
+  electronPath = npjoin(__dirname, 'build/electron-app');
+  mainIndex = 'build/electron-app/app/index.html';
+} else {
+  ProxyManager = require('./app/wsproxy/wsproxy.js');
+  versions = require('./app/version');
+  es6Path = npjoin(__dirname, 'app');  // ES6 module loader with custom protocol
+  electronPath = npjoin(__dirname);
+  mainIndex = 'app/index.html'; 
+}
+let windowWidth = 1280;
+let windowHeight = 970;
+
 protocol.registerSchemesAsPrivileged([
   {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
 ]);
@@ -25,8 +48,6 @@ let mainWindow;
 let mainContent;
 let devtools;
 const manager = new ProxyManager();
-// reference to the app directory. It will merge into local test / electron app version
-const mainIndex = 'build/electron-app/app/index.html';
 let mainURL;
 
 app.once('ready', function() {
@@ -54,9 +75,18 @@ app.once('ready', function() {
             type: 'separator'
           },
           {
-            label: 'Force Update Screen',
+            label: 'Refresh App',
+            accelerator: 'Command+R',
             click: function() {
-              mainContent.reloadIgnoringCache();
+              // mainContent.reloadIgnoringCache();
+              const proxyUrl = `http://localhost:${manager.port}/`;
+              mainWindow.loadURL(url.format({ // Load HTML into new Window
+                pathname: path.join(mainIndex),
+                protocol: 'file',
+                slashes: true
+              }));
+              mainContent.executeJavaScript(`window.__local_proxy = '${proxyUrl}'`);
+              console.log('Re-connected to proxy: ' + proxyUrl);
             }
           },
           {
@@ -139,33 +169,17 @@ app.once('ready', function() {
           {
             label: 'Zoom In',
             accelerator: 'Command+=',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript('_zoomIn()');
-              }
-            }
+            role: 'zoomin'
           },
           {
             label: 'Zoom Out',
             accelerator: 'Command+-',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript('_zoomOut()');
-              }
-            }
+            role: 'zoomout'
           },
           {
             label: 'Actual Size',
             accelerator: 'Command+0',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript(
-                    '_zoomActualSize()');
-              }
-            }
+            role: 'resetzoom'
           },
           {
             label: 'Toggle Full Screen',
@@ -174,16 +188,6 @@ app.once('ready', function() {
               const focusedWindow = BrowserWindow.getFocusedWindow();
               if (focusedWindow) {
                 focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-              }
-            }
-          },
-          {
-            label: 'Toggle Developer Tools',
-            accelerator: 'Alt+Command+I',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.toggleDevTools();
               }
             }
           },
@@ -215,7 +219,13 @@ app.once('ready', function() {
         label: 'Help',
         submenu: [
           {
-            label: 'Learn More',
+            label: 'Online Manual',
+            click: function() {
+              shell.openExternal('https://console.docs.backend.ai/');
+            }
+          },
+          {
+            label: 'Backend.AI Project Site',
             click: function() {
               shell.openExternal('https://www.backend.ai/');
             }
@@ -280,25 +290,19 @@ app.once('ready', function() {
             accelerator: 'F11',
             role: 'togglefullscreen'
           },
-          /* Does not work
-          {
-            label: 'Toggle &Developer Tools',
-            accelerator: 'Alt+Ctrl+I',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow) {
-                focusedWindow.toggleDevTools();
-              }
-            }
-          },
-          */
         ]
       },
       {
         label: 'Help',
         submenu: [
           {
-            label: 'Learn More',
+            label: 'Online Manual',
+            click: function() {
+              shell.openExternal('https://console.docs.backend.ai/');
+            }
+          },
+          {
+            label: 'Backend.AI Project Site',
             click: function() {
               shell.openExternal('https://www.backend.ai/');
             }
@@ -326,8 +330,8 @@ function createWindow() {
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: false,
-      preload: path.join(BASE_DIR, 'preload.js'),
-      devTools: true
+      preload: path.join(electronPath, 'preload.js'),
+      devTools: (debugMode === true)
     }
   });
   // and load the index.html of the app.
@@ -340,12 +344,15 @@ function createWindow() {
     }));
   } else {
     // Load HTML into new Window (file-based serving)
-    nfs.readFile('build/electron-app/app/config.toml', 'utf-8', (err, data) => {
+    nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
       if (err) {
         console.log('No configuration file found.');
         return;
       }
       const config = toml(data);
+      if ('wsproxy' in config && 'disableCertCheck' in config.wsproxy && config.wsproxy.disableCertCheck == true) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+      }
       if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != '') {
         mainURL = config.server.consoleServerURL;
       } else {
@@ -355,13 +362,20 @@ function createWindow() {
           slashes: true
         });
       }
+      if ('general' in config && 'siteDescription' in config.general) {
+        process.env.siteDescription = config.general.siteDescription;
+      } else {
+        process.env.siteDescription = '';
+      }
       mainWindow.loadURL(mainURL);
     });
   }
   mainContent = mainWindow.webContents;
-  devtools = new BrowserWindow();
-  mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
-  mainWindow.webContents.openDevTools({mode: 'detach'});
+  if (debugMode === true) {
+    devtools = new BrowserWindow();
+    mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
+    mainWindow.webContents.openDevTools({mode: 'detach'});
+  }
   // Emitted when the window is closed.
   mainWindow.on('close', (e) => {
     if (mainWindow) {

@@ -75,7 +75,8 @@
     "Invitation": "Invitation",
     "FolderName": "Folder Name",
     "Permission": "Permission",
-    "Announcement": "Announcement"
+    "Announcement": "Announcement",
+    "SystemResources": "System Resources"
   },
   "session": {
     "launcher": {
@@ -120,9 +121,13 @@
       "Memory": "Memory",
       "GPU": "GPU",
       "TitleSession": "Session (Backend.AI)",
+      "PleaseWaitInitializing": "Please wait while initializing...",
+      "MustSpecifyVersion": "You must specify Environment and Version.",
+      "NotEnoughOwnershipInfo": "Not enough ownership information",
+      "NoDescriptionFound": "No description found.",
       "NoFolderMounted": "No Storage folder is mounted",
       "HomeDirectoryDeletionDialog": "The home directory in the session is automatically deleted when the session ends.",
-      "LaunchConfirmationDialog": "To keep your code and data, or share it with other collaborators, simply create a storage folder in the data &amp; storage sidebar, then mount that folder when you start the resource and keep it there.",
+      "LaunchConfirmationDialog": "To keep your code and data, or share it with other collaborators, simply create a storage folder in the data & storage sidebar, then mount that folder when you start the resource and keep it there.",
       "Launch": "Launch",
       "LaunchWithoutMount": "Launch Without Storage Folder"
     },

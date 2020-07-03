@@ -49,10 +49,12 @@ export default class LablupCodemirror extends LitElement {
   _initEditor() {
     const cm = this.shadowRoot.querySelector('#codemirror-editor');
     if (!cm.__initialized) {
-      globalThis.setTimeout(this._initEditor.bind(this), 100);
+      setTimeout(() => {
+        this._initEditor()
+      }, 500);
       return;
     }
-    this.editor = cm.__editor;
+    this.editor = cm.editor;
     Object.assign(this.editor.options, this.config);
     this.refresh();
   }

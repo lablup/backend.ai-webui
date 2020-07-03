@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
+import {translate as _t} from "lit-translate";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
@@ -20,6 +20,8 @@ import '@material/mwc-icon-button';
 import './lablup-activity-panel';
 import './backend-ai-chart';
 import './backend-ai-resource-monitor';
+import './backend-ai-resource-panel';
+import './backend-ai-session-launcher';
 import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
 import '../plastics/lablup-piechart/lablup-piechart';
@@ -161,6 +163,10 @@ export default class BackendAISummary extends BackendAIPage {
           --button-bg-active: var(--paper-red-600);
         }
 
+        #session-launcher {
+          --component-width: 235px;
+        }
+
         wl-icon {
           --icon-size: 24px;
         }
@@ -190,6 +196,7 @@ export default class BackendAISummary extends BackendAIPage {
         .system-health-indicator {
           width: 90px;
         }
+
       `
     ];
   }
@@ -207,172 +214,9 @@ export default class BackendAISummary extends BackendAIPage {
     }
   }
 
-  _refreshHealthPanel() {
-    if (this.activeConnected) {
-      this._refreshSessionInformation();
-      if (this.is_superadmin) {
-        this._refreshAgentInformation();
-      }
-    }
-  }
-
-  _refreshSessionInformation() {
-    if (!this.activeConnected) {
-      return;
-    }
-    this.spinner.show();
-    let status = 'RUNNING';
-    switch (this.condition) {
-      case 'running':
-        status = 'RUNNING';
-        break;
-      case 'finished':
-        status = 'TERMINATED';
-        break;
-      case 'archived':
-      default:
-        status = 'RUNNING';
-    }
-    let fields = ["created_at"];
-    globalThis.backendaiclient.computeSession.list(fields, status).then((response) => {
-      this.spinner.hide();
-      this.jobs = response;
-      this.sessions = response.compute_session_list.total_count;
-      if (this.active) {
-        setTimeout(() => {
-          this._refreshSessionInformation()
-        }, 15000);
-      }
-    }).catch(err => {
-      this.spinner.hide();
-      this.jobs = [];
-      this.sessions = 0;
-      this.notification.text = PainKiller.relieve('Couldn\'t connect to manager.');
-      this.notification.detail = err;
-      this.notification.show(true, err);
-    });
-  }
-
   _refreshConsoleUpdateInformation() {
     if (this.is_superadmin && globalThis.backendaioptions.get("automatic_update_check", true)) {
       this.update_checker.checkRelease();
-    }
-  }
-
-  _refreshResourceInformation() {
-    if (!this.activeConnected) {
-      return;
-    }
-    return globalThis.backendaiclient.resourcePolicy.get(globalThis.backendaiclient.resource_policy).then((response) => {
-      let rp = response.keypair_resource_policies;
-      this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
-    });
-  }
-
-  _refreshAgentInformation(status: string = 'running') {
-    if (!this.activeConnected) {
-      return;
-    }
-    switch (this.condition) {
-      case 'running':
-        status = 'ALIVE';
-        break;
-      case 'finished':
-        status = 'TERMINATED';
-        break;
-      case 'archived':
-      default:
-        status = 'ALIVE';
-    }
-    this.spinner.show();
-
-    globalThis.backendaiclient.resources.totalResourceInformation().then((response) => {
-      this.spinner.hide();
-      this.resources = response;
-      this._sync_resource_values();
-      if (this.active == true) {
-        setTimeout(() => {
-          this._refreshAgentInformation(status)
-        }, 15000);
-      }
-    }).catch(err => {
-      this.spinner.hide();
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
-  }
-
-  _init_resource_values() {
-    this.resources.cpu = {};
-    this.resources.cpu.total = 0;
-    this.resources.cpu.used = 0;
-    this.resources.cpu.percent = 0;
-    this.resources.mem = {};
-    this.resources.mem.total = 0;
-    this.resources.mem.allocated = 0;
-    this.resources.mem.used = 0;
-    this.resources.cuda_gpu = {};
-    this.resources.cuda_gpu.total = 0;
-    this.resources.cuda_gpu.used = 0;
-    this.resources.cuda_fgpu = {};
-    this.resources.cuda_fgpu.total = 0;
-    this.resources.cuda_fgpu.used = 0;
-    this.resources.agents = {};
-    this.resources.agents.total = 0;
-    this.resources.agents.using = 0;
-    this.cpu_total_usage_ratio = 0;
-    this.cpu_current_usage_ratio = 0;
-    this.mem_total_usage_ratio = 0;
-    this.mem_current_usage_ratio = 0;
-    this.mem_current_usage_percent = "0";
-    this.is_admin = false;
-    this.is_superadmin = false;
-  }
-
-  _sync_resource_values() {
-    this.manager_version = globalThis.backendaiclient.managerVersion;
-    this.console_version = globalThis.packageVersion;
-    this.cpu_total = this.resources.cpu.total;
-    this.mem_total = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
-    if (isNaN(this.resources['cuda.device'].total)) {
-      this.cuda_gpu_total = 0;
-    } else {
-      this.cuda_gpu_total = this.resources['cuda.device'].total;
-    }
-    if (isNaN(this.resources['cuda.shares'].total)) {
-      this.cuda_fgpu_total = 0;
-    } else {
-      this.cuda_fgpu_total = this.resources['cuda.shares'].total;
-    }
-    this.cpu_used = this.resources.cpu.used;
-    this.cuda_gpu_used = this.resources['cuda.device'].used;
-    this.cuda_fgpu_used = this.resources['cuda.shares'].used;
-
-    this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
-    this.cpu_total_percent = ((parseFloat(this.resources.cpu.percent) / (this.cpu_total * 100.0)) * 100.0).toFixed(2);
-    this.cpu_total_usage_ratio = this.resources.cpu.used / this.resources.cpu.total * 100.0;
-    this.cpu_current_usage_ratio = this.resources.cpu.percent / this.resources.cpu.total;
-
-    // mem.total: total memory
-    // mem.allocated: allocated by backend.ai
-    // mem.used: used by backend.ai
-    this.mem_used = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.used, 'g')).toFixed(2);
-    this.mem_allocated = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.allocated, 'g')).toFixed(2);
-    this.mem_total_usage_ratio = this.resources.mem.allocated / this.resources.mem.total * 100.0;
-    this.mem_current_usage_ratio = this.resources.mem.used / this.resources.mem.total * 100.0;
-
-    if (this.mem_total_usage_ratio === 0) { // Not allocated (no session presents)
-      this.mem_current_usage_percent = '0.0';
-    } else {
-      this.mem_current_usage_percent = this.mem_total_usage_ratio.toFixed(2);//(this.mem_allocated / this.mem_total_usage_ratio * 100.0).toFixed(2);
-    }
-    this.agents = this.resources.agents.total;
-
-    if (isNaN(parseFloat(this.mem_current_usage_percent))) {
-      this.mem_current_usage_percent = '0';
     }
   }
 
@@ -383,15 +227,15 @@ export default class BackendAISummary extends BackendAIPage {
       return;
     }
     this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
-    this._init_resource_values();
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_superadmin = globalThis.backendaiclient.is_superadmin;
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
+        this.manager_version = globalThis.backendaiclient.managerVersion;
+        this.console_version = globalThis.packageVersion;
         if (this.activeConnected) {
           this._refreshConsoleUpdateInformation();
-          this._refreshHealthPanel();
           this._refreshInvitations();
           this.requestUpdate();
           //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
@@ -402,8 +246,9 @@ export default class BackendAISummary extends BackendAIPage {
       this.is_superadmin = globalThis.backendaiclient.is_superadmin;
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
+      this.manager_version = globalThis.backendaiclient.managerVersion;
+      this.console_version = globalThis.packageVersion;
       this._refreshConsoleUpdateInformation();
-      this._refreshHealthPanel();
       this._refreshInvitations();
       this.requestUpdate();
       //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
@@ -504,129 +349,10 @@ export default class BackendAISummary extends BackendAIPage {
           <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1">
             <div slot="message">
               <div class="horizontal justified layout wrap">
-                <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>
+                <backend-ai-session-launcher location="summary" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
               </div>
-            </div>
-          </lablup-activity-panel>
-          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1">
-            <div slot="message">
-              <div class="horizontal justified layout wrap">
-                ${this.is_superadmin ? html`
-                  <div class="vertical layout center system-health-indicator">
-                    <div class="big indicator">${this.agents}</div>
-                    <span>${_tr('summary.ConnectedNodes')}</span>
-                  </div>` : html``}
-                <div class="vertical layout center system-health-indicator">
-                  <div class="big indicator">${this.sessions}</div>
-                  <span>${_t('summary.ActiveSessions')}</span>
-                </div>
-              </div>
-              ${this.is_superadmin ? html`
-              <div class="layout horizontal center flex" style="margin-top:15px;margin-bottom:5px;">
-                <div class="layout vertical start center-justified">
-                  <wl-icon class="fg green">developer_board</wl-icon>
-                  <span>CPU</span>
-                </div>
-                <div class="layout vertical start" style="padding-left:15px;">
-                  <mwc-linear-progress class="mem-usage-bar start-bar" progress="${this.cpu_total_usage_ratio / 100.0}"></mwc-linear-progress>
-                  <mwc-linear-progress class="mem-usage-bar end-bar" id="cpu-usage-bar"
-                    progress="${this.cpu_current_usage_ratio / 100.0}"
-                    buffer="${this.cpu_current_usage_ratio / 100.0}"></mwc-linear-progress>
-                  <div><span class="progress-value"> ${this._addComma(this.cpu_used)}</span>/${this._addComma(this.cpu_total)}
-                    ${_t('summary.CoresReserved')}.
-                  </div>
-                  <div>${_t('summary.Using')} <span class="progress-value"> ${this.cpu_total_percent}</span>% (util. ${this.cpu_percent} %)
-                  </div>
-                </div>
-              </div>
-              <div class="layout horizontal center flex" style="margin-bottom:5px;">
-                <div class="layout vertical start center-justified">
-                  <wl-icon class="fg green">memory</wl-icon>
-                  <span>RAM</span>
-                </div>
-                <div class="layout vertical start" style="padding-left:15px;">
-                  <mwc-linear-progress class="mem-usage-bar start-bar" id="mem-usage-bar" progress="${this.mem_total_usage_ratio / 100.0}"></mwc-linear-progress>
-                  <mwc-linear-progress class="mem-usage-bar end-bar"
-                    progress="${this.mem_current_usage_ratio / 100.0}"
-                    buffer="${this.mem_current_usage_ratio / 100.0}"></mwc-linear-progress>
-                  <div><span class="progress-value"> ${this._addComma(this.mem_allocated)}</span>/${this._addComma(this.mem_total)} GB
-                    ${_t('summary.reserved')}.
-                  </div>
-                  <div>${_t('summary.Using')} <span class="progress-value"> ${this._addComma(this.mem_used)}</span> GB
-                    (${this.mem_current_usage_percent} %)
-                  </div>
-                </div>
-              </div>
-              ${this.cuda_gpu_total || this.cuda_fgpu_total || this.rocm_gpu_total || this.tpu_total ? html`
-              <div class="layout horizontal center flex" style="margin-bottom:5px;">
-                <div class="layout vertical start center-justified">
-                  <wl-icon class="fg green">view_module</wl-icon>
-                  <span>GPU</span>
-                </div>
-                <div class="layout vertical start" style="padding-left:15px;">
-                ${this.cuda_gpu_total ? html`
-                  <mwc-linear-progress id="gpu-bar"
-                    progress="${this.cuda_gpu_used / this.cuda_gpu_total}"></mwc-linear-progress>
-                  <div class="horizontal center layout">
-                    <img class="resource-type-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                    <div>
-                      <div><span class="progress-value"> ${this.cuda_gpu_used}</span>/${this.cuda_gpu_total} CUDA GPUs</div>
-                    </div>
-                  </div>
-                ` : html``}
-                ${this.cuda_fgpu_total ? html`
-                  <mwc-linear-progress id="vgpu-bar"
-                    progress="${this.cuda_fgpu_used / this.cuda_fgpu_total}"
-                    buffer="${this.cuda_fgpu_used / this.cuda_fgpu_total}"></mwc-linear-progress>
-                  <div class="horizontal center layout">
-                    <img class="resource-type-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                    <div>
-                      <div><span class="progress-value"> ${this.cuda_fgpu_used}</span>/${this.cuda_fgpu_total} CUDA fGPUs</div>
-                      <div><span class="progress-value">${_t('summary.FractionalGPUScalingEnabled')}.</div>
-                    </div>
-                  </div>
-                ` : html``}
-                ${this.rocm_gpu_total ? html`
-                  <mwc-linear-progress id="rocm-gpu-bar"
-                    progress="${this.rocm_gpu_used / 100.0}"
-                    buffer="${this.rocm_gpu_used / 100.0}"></mwc-linear-progress>
-                  <div class="horizontal center layout">
-                    <img class="resource-type-icon fg green" src="/resources/icons/ROCm.png" />
-                    <div>
-                      <div><span class="progress-value"> ${this.rocm_gpu_used}</span>/${this.rocm_gpu_total} ROCm GPUs</div>
-                    </div>
-                  </div>
-                ` : html``}
-                ${this.tpu_total ? html`
-                  <mwc-linear-progress id="tpu-bar"
-                    progress="${this.tpu_used / 100.0}"
-                    buffer="${this.tpu_used / 100.0}"></mwc-linear-progress>
-                  <div class="horizontal center layout">
-                    <img class="resource-type-icon fg green" src="/resources/icons/tpu.svg" />
-                    <div>
-                      <div><span class="progress-value"> ${this.tpu_used}</span>/${this.tpu_total} TPUs</div>
-                    </div>
-                  </div>
-            ` : html``}
-                </div>
-              </div>` : html``}
-              <div class="horizontal center layout">
-                <div style="width:10px;height:10px;margin-left:40px;margin-right:3px;background-color:#4775E3;"></div>
-                <span style="margin-right:5px;">${_t('summary.Reserved')}</span>
-                <div style="width:10px;height:10px;margin-right:3px;background-color:#A0BD67"></div>
-                <span style="margin-right:5px;">${_t('summary.Used')}</span>
-                <div style="width:10px;height:10px;margin-right:3px;background-color:#E0E0E0"></div>
-                <span>${_t('summary.Total')}</span>
-              </div>` : html``}
-            </div>
-          </lablup-activity-panel>
-          <lablup-activity-panel title="${_t('summary.Shortcut')}" elevation="1">
-            <div slot="message">
               <ul>
                 <li><a href="/data">${_t('summary.UploadFiles')}</a></li>
-              </ul>
-              <ul>
-                <li><a href="/job">${_t('summary.StartASession')}</a></li>
               </ul>
               ${this.is_admin
       ? html`
@@ -637,6 +363,14 @@ export default class BackendAISummary extends BackendAIPage {
       : html``}
             </div>
           </lablup-activity-panel>
+          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1">
+            <div slot="message">
+              <div class="horizontal justified layout wrap">
+                <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>
+              </div>
+            </div>
+          </lablup-activity-panel>
+          <backend-ai-resource-panel ?active="${this.active === true}"></backend-ai-resource-panel>
           ${this.announcement != '' ? html`
           <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1">
             <div slot="message">

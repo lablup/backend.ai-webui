@@ -421,6 +421,9 @@ export default class BackendAiSessionList extends BackendAIPage {
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
       this.spinner.hide();
+      if (!response.compute_session_list && response.legacy_compute_session_list) {
+        response.compute_session_list = response.legacy_compute_session_list;
+      }
       this.total_session_count = response.compute_session_list.total_count;
       if (this.total_session_count === 0) {
         this.total_session_count = 1;
@@ -943,13 +946,11 @@ export default class BackendAiSessionList extends BackendAIPage {
                                @click="${(e) => this._showAppLauncher(e)}"
                                icon="vaadin:caret-right"><wl-icon>launch</wl-icon></wl-button>
             <wl-button fab flat inverted class="fg controls-running"
-                               @click="${(e) => this._runTerminal(e)}"
-                               icon="vaadin:terminal"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
+                               @click="${(e) => this._runTerminal(e)}"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg red controls-running"
-                               @click="${(e) => this._openTerminateSessionDialog(e)}"
-                               icon="delete"><wl-icon>delete</wl-icon></wl-button>
+                               @click="${(e) => this._openTerminateSessionDialog(e)}"><wl-icon>power_settings_new</wl-icon></wl-button>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg blue controls-running" icon="assignment"
@@ -1112,6 +1113,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
 
     globalThis.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
+      if (!response.compute_session_list && response.legacy_compute_session_list) {
+        response.compute_session_list = response.legacy_compute_session_list;
+      }
       let sessions = response.compute_sessions;
       JsonToCsv.exportToCsv(fileNameEl.value, sessions);
 
