@@ -545,9 +545,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
     });
     document.addEventListener("backend-ai-group-changed", (e) => {
-      // this.scaling_group = '';
       this._updatePageVariables(true);
     });
+    document.addEventListener("backend-ai-resource-broker-updated", (e) => {
+      // Fires when broker is updated.
+    });
+
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_connected = true;
@@ -573,9 +576,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _updateSelectedScalingGroup() {
     let Sgroups = this.shadowRoot.querySelector('#scaling-groups');
+    this.scaling_groups = this.resourceBroker.scaling_groups;
     let selectedSgroup = Sgroups.items.find(item => item.value === this.resourceBroker.scaling_group);
+    if (this.resourceBroker.scaling_group === '' || typeof selectedSgroup == 'undefined') {
+      setTimeout(() => {
+        this._updateSelectedScalingGroup();
+      }, 500);
+      return;
+    }
     let idx = Sgroups.items.indexOf(selectedSgroup);
-    Sgroups.select(idx);
+    Sgroups.select(idx + 1);
+    Sgroups.value = selectedSgroup.value;
+    Sgroups.requestUpdate();
   }
 
   async updateScalingGroup(forceUpdate = false, e) {
