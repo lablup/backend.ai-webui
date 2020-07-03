@@ -1,5 +1,12 @@
 # Changelog
 
+## v20.07.2 (03/07/2020)
+
+#### Bug Fixes:
+
+- [**bug**][**cloud**][**easy**] Error on re-send signup verification email [#595](https://github.com/lablup/backend.ai-console/issues/595)
+
+
 ## v20.07.1 (03/07/2020)
 
 #### Enhancements:
