@@ -258,6 +258,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       await this._refreshResourcePolicy();
       this.aggregateResource('update-page-variable');
       this.metadata_updating = false;
+      let event = new CustomEvent("backend-ai-resource-broker-updated", {"detail": ''});
+      document.dispatchEvent(event);
       return Promise.resolve(true);
     } else {
       return Promise.resolve(false);

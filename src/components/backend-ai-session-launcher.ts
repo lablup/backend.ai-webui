@@ -545,9 +545,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
     });
     document.addEventListener("backend-ai-group-changed", (e) => {
-      // this.scaling_group = '';
       this._updatePageVariables(true);
     });
+    document.addEventListener("backend-ai-resource-broker-updated", (e) => {
+      // Fires when broker is updated.
+    });
+
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_connected = true;
@@ -573,14 +576,24 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _updateSelectedScalingGroup() {
     let Sgroups = this.shadowRoot.querySelector('#scaling-groups');
+    this.scaling_groups = this.resourceBroker.scaling_groups;
     let selectedSgroup = Sgroups.items.find(item => item.value === this.resourceBroker.scaling_group);
+    if (this.resourceBroker.scaling_group === '' || typeof selectedSgroup == 'undefined') {
+      setTimeout(() => {
+        this._updateSelectedScalingGroup();
+      }, 500);
+      return;
+    }
     let idx = Sgroups.items.indexOf(selectedSgroup);
-    Sgroups.select(idx);
+    Sgroups.select(idx + 1);
+    Sgroups.value = selectedSgroup.value;
+    Sgroups.requestUpdate();
   }
 
   async updateScalingGroup(forceUpdate = false, e) {
-    await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
     if (this.active) {
+      await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
+
       if (forceUpdate === true) {
         await this._refreshResourcePolicy();
       } else {
@@ -998,7 +1011,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   async _aggregateResourceUse(from: string = '') {
-    return this.resourceBroker._aggregateCurrentResource(from).then((res) => {
+    return this.resourceBroker._aggregateCurrentResource(from).then(async (res) => {
       if (res === false) {
         return Promise.resolve(false);
       }
@@ -1018,9 +1031,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.available_slot = this.resourceBroker.available_slot;
       this.used_slot_percent = this.resourceBroker.used_slot_percent;
       this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
-      //this.requestUpdate();
+      await this.updateComplete;
       return Promise.resolve(true);
-      return this.available_slot;
     }).catch(err => {
       if (err && err.message) {
         console.log(err);
@@ -1289,7 +1301,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.shmem_metric = shmem_metric;
 
       // GPU metric
-      if (this.cuda_device_metric.min == 0 && this.cuda_device_metric.max == 0) { // GPU is disabled (by image,too). cuda_shares is copied into cuda_device.
+      if (this.cuda_device_metric.min == 0 && this.cuda_device_metric.max == 0) { // GPU is disabled (by image,too).
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').value = 0;
@@ -1298,6 +1310,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           for (let i = 0; i < this.resource_templates.length; i++) {
             if (!('cuda_device' in this.resource_templates[i]) &&
               !('cuda_shares' in this.resource_templates[i])) {
+              new_resource_templates.push(this.resource_templates[i]);
+            } else if ((parseFloat(this.resource_templates[i].cuda_device) <= 0.0 && !('cuda_shares' in this.resource_templates[i])) ||
+              (parseFloat(this.resource_templates[i].cuda_shares) <= 0.0) && !('cuda_device' in this.resource_templates[i])) {
               new_resource_templates.push(this.resource_templates[i]);
             } else if (parseFloat(this.resource_templates[i].cuda_device) <= 0.0 &&
               parseFloat(this.resource_templates[i].cuda_shares) <= 0.0) {
