@@ -1033,7 +1033,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
       await this.updateComplete;
       return Promise.resolve(true);
-      return this.available_slot;
     }).catch(err => {
       if (err && err.message) {
         console.log(err);
