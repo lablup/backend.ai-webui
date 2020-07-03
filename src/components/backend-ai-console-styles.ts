@@ -5,6 +5,25 @@ export const BackendAiConsoleStyles = [
   BackendAiStyles,
   // language=CSS
   css`
+    @media screen and (prefers-color-scheme: dark) {
+      .loading-background:after {
+        content: '\\A';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.7) !important;
+        opacity: 1;
+      }
+    }
+
+    @media screen and (prefers-color-scheme: light) {
+      .loading-background {
+        background-image: url("/resources/images/loading-background-large.jpg");
+      }
+    }
+
     .loading-background {
       transition: all 0.3s linear;
       position: fixed;
@@ -13,7 +32,6 @@ export const BackendAiConsoleStyles = [
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url("/resources/images/loading-background-large.jpg");
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: top left;

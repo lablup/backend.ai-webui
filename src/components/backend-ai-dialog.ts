@@ -158,7 +158,7 @@ export default class BackendAiDialog extends LitElement {
                     ?scrollable="${this.scrollable}"
                     blockscrolling="${this.blockscrolling}"
                     style="padding:0;" class="${this.type}">
-        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
+        <wl-card elevation="1" class="intro panel" style="margin: 0; height: 100%;">
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span><slot name="title"></slot></span>
             <div class="flex"></div>

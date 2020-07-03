@@ -49,7 +49,8 @@ export const BackendAiStyles = [
       --general-sidepanel-color: #dddddd;
       --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
       --general-content-background-color: rgba(255, 255, 255, 1);
-      --general-dialog-background-color: #ffffff;
+      --general-panel-background-color: rgba(255, 255, 255, 1);
+      --general-dialog-background-color: rgba(255, 255, 255, 1);
       --app-drawer-width: 190px;
       --general-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
@@ -62,21 +63,19 @@ export const BackendAiStyles = [
         --general-sidepanel-background-color: rgba(42, 42, 42, 1);
         --general-sidebar-selected-background-color: rgba(64, 64, 64, 1);
         --general-content-background-color: rgba(42, 42, 42, 1);
+        --general-panel-background-color: rgba(42, 42, 42, 1);
         --sidepanel-background-color: rgba(64, 64, 64, 1);
+        --general-dialog-background-color: rgba(64, 64, 64, 1) !important;
       }
 
       a, a:visited {
         color: #ffffff !important;
       }
 
-      wl-card {
-        background: var(--general-content-background-color) !important;
-        color: rgba(244, 245, 247, 1);
-        --card-elevation: rgba(64, 67, 122, 0.15) 0px 5px 10px -2px;
-      }
-
       wl-card.panel {
         background: rgba(64, 64, 64, 1) !important;
+        color: rgba(244, 245, 247, 1);
+        --card-elevation: rgba(64, 67, 122, 0.15) 0px 5px 10px -2px;
       }
 
       li:before {

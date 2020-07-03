@@ -32,10 +32,21 @@
       margin: 0;
       font-family: 'Quicksand', Roboto, sans-serif;
       background-color: rgba(255, 255, 255, 1);
-      background-image: url("resources/images/loading-background-large.jpg");
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: top left;
+    }
+
+    @media screen and (prefers-color-scheme: dark) {
+      background-color:
+
+    rgba(42, 42, 42, 1)!important;
+    }
+
+    @media screen and (prefers-color-scheme: light) {
+      background-image:
+
+    url("resources/images/loading-background-large.jpg");
     }
 
     .splash {
