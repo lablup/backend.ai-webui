@@ -579,8 +579,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   async updateScalingGroup(forceUpdate = false, e) {
-    await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
     if (this.active) {
+      await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
+
       if (forceUpdate === true) {
         await this._refreshResourcePolicy();
       } else {
@@ -998,7 +999,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   async _aggregateResourceUse(from: string = '') {
-    return this.resourceBroker._aggregateCurrentResource(from).then((res) => {
+    return this.resourceBroker._aggregateCurrentResource(from).then(async (res) => {
       if (res === false) {
         return Promise.resolve(false);
       }
@@ -1018,7 +1019,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.available_slot = this.resourceBroker.available_slot;
       this.used_slot_percent = this.resourceBroker.used_slot_percent;
       this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
-      //this.requestUpdate();
+      await this.updateComplete;
       return Promise.resolve(true);
       return this.available_slot;
     }).catch(err => {
