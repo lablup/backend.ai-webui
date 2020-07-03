@@ -48,8 +48,10 @@ export const BackendAiStyles = [
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
       --general-sidepanel-color: #dddddd;
       --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
+      --general-content-color: rgba(24, 24, 24, 1);
       --general-content-background-color: rgba(255, 255, 255, 1);
       --general-panel-background-color: rgba(255, 255, 255, 1);
+      --general-dialog-color: rgba(24, 24, 24, 1);
       --general-dialog-background-color: rgba(255, 255, 255, 1);
       --app-drawer-width: 190px;
       --general-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
@@ -62,9 +64,11 @@ export const BackendAiStyles = [
         --general-background-color-2: rgba(42, 42, 42, 1);
         --general-sidepanel-background-color: rgba(42, 42, 42, 1);
         --general-sidebar-selected-background-color: rgba(64, 64, 64, 1);
+        --general-content-color: rgba(244, 245, 247, 1);
         --general-content-background-color: rgba(42, 42, 42, 1);
-        --general-panel-background-color: rgba(42, 42, 42, 1);
+        --general-panel-background-color: rgba(64, 64, 64, 1);
         --sidepanel-background-color: rgba(64, 64, 64, 1);
+        --general-dialog-color: rgba(244, 245, 247, 1);
         --general-dialog-background-color: rgba(64, 64, 64, 1) !important;
       }
 
@@ -72,14 +76,89 @@ export const BackendAiStyles = [
         color: #ffffff !important;
       }
 
-      wl-card.panel {
-        background: rgba(64, 64, 64, 1) !important;
+      wl-card {
+        background: var(--general-content-background-color) !important;
         color: rgba(244, 245, 247, 1);
         --card-elevation: rgba(64, 67, 122, 0.15) 0px 5px 10px -2px;
       }
 
+      wl-card.panel {
+        background: var(--general-panel-background-color) !important;
+        color: rgba(244, 245, 247, 1);
+        --card-elevation: rgba(64, 67, 122, 0.15) 0px 5px 10px -2px;
+      }
+
+      wl-dialog wl-card {
+        background: var(--general-dialog-background-color) !important;
+        color: rgba(244, 245, 247, 1);
+      }
+
       li:before {
         border-color: rgba(244, 245, 247, 1) !important;
+      }
+
+      vaadin-grid {
+        background: var(--general-content-background-color) !important;
+        color: var(--general-content-color) !important;
+        --_lumo-body-text-color: rgba(244, 245, 247, 1);
+        --_lumo-grid-border-color: rgba(64, 64, 64, 1);
+        --_lumo-grid-secondary-border-color: rgba(64, 64, 64, 1);
+        --_lumo-grid-selected-row-color: rgba(64, 64, 64, 1);
+        --lumo-base-color: rgba(64, 64, 64, 1);
+        --lumo-primary-color-10pct: hsla(214, 90%, 63%, 0.1);
+        --lumo-primary-color-50pct: hsla(214, 86%, 55%, 0.5);
+        --lumo-primary-color: hsl(214, 86%, 55%);
+        --lumo-primary-contrast-color: #ffffff;
+        --lumo-tint-5pct: hsla(214, 65%, 85%, 0.06);
+        --lumo-tint-10pct: hsla(214, 60%, 80%, 0.14);
+        --lumo-tint-20pct: hsla(214, 64%, 82%, 0.23);
+        --lumo-tint-30pct: hsla(214, 69%, 84%, 0.32);
+        --lumo-tint-40pct: hsla(214, 73%, 86%, 0.41);
+        --lumo-tint-50pct: hsla(214, 78%, 88%, 0.5);;
+        --lumo-tint-60pct: hsla(214, 82%, 90%, 0.6);
+        --lumo-tint-70pct: hsla(214, 87%, 92%, 0.7);
+        --lumo-tint-80pct: hsla(214, 91%, 94%, 0.8);
+        --lumo-tint-90pct: hsla(214, 96%, 96%, 0.9);
+        --lumo-tint: hsl(214, 100%, 98%);
+        --lumo-shade-5pct: hsla(214, 0%, 0%, 0.07);
+        --lumo-shade-10pct: hsla(214, 4%, 2%, 0.15);
+        --lumo-shade-20pct: hsla(214, 8%, 4%, 0.23);
+        --lumo-shade-30pct: hsla(214, 12%, 6%, 0.32);
+        --lumo-shade-40pct: hsla(214, 16%, 8%, 0.41);
+        --lumo-shade-50pct: hsla(214, 20%, 10%, 0.5);
+        --lumo-shade-60pct: hsla(214, 24%, 12%, 0.6);
+        --lumo-shade-70pct: hsla(214, 28%, 13%, 0.7);
+        --lumo-shade-80pct: hsla(214, 32%, 13%, 0.8);
+        --lumo-shade-90pct: hsla(214, 33%, 13%, 0.9);
+        --lumo-shade: hsl(214, 33%, 13%);
+        --lumo-contrast-5pct: hsla(214, 65%, 85%, 0.06);
+        --lumo-contrast-10pct: hsla(214, 60%, 80%, 0.14);
+        --lumo-contrast-20pct: hsla(214, 64%, 82%, 0.23);
+        --lumo-contrast-30pct: hsla(214, 69%, 84%, 0.32);
+        --lumo-contrast-40pct: hsla(214, 73%, 86%, 0.41);
+        --lumo-contrast-50pct: hsla(214, 78%, 88%, 0.5);
+        --lumo-contrast-60pct: hsla(214, 82%, 90%, 0.6);
+        --lumo-contrast-70pct: hsla(214, 87%, 92%, 0.7);
+        --lumo-contrast-80pct: hsla(214, 91%, 94%, 0.8);
+        --lumo-contrast-90pct: hsla(214, 96%, 96%, 0.9);
+        --lumo-contrast: hsl(214, 100%, 98%);
+        --lumo-error-color-10pct: hsla(3, 90%, 63%, 0.1);
+        --lumo-error-color-50pct: hsla(3, 90%, 63%, 0.5);
+        --lumo-error-color: hsl(3, 90%, 63%);
+        --lumo-error-contrast-color: #ffffff;
+        --lumo-success-color-10pct: hsla(145, 65%, 42%, 0.1);
+        --lumo-success-color-50pct: hsla(145, 65%, 42%, 0.5);
+        --lumo-success-color: hsl(145, 65%, 42%);
+        --lumo-success-contrast-color: #ffffff;
+        --lumo-header-text-color: hsl(214, 100%, 98%);
+        --lumo-body-text-color: hsla(214, 96%, 96%, 0.9);
+        --lumo-secondary-text-color: hsla(214, 87%, 92%, 0.7);
+        --lumo-tertiary-text-color: hsla(214, 78%, 88%, 0.5);
+        --lumo-disabled-text-color: hsla(214, 69%, 84%, 0.32);
+        --lumo-primary-text-color: hsl(214, 100%, 70%);
+        --lumo-error-text-color: hsl(3, 100%, 67%);
+        --lumo-success-text-color: hsl(145, 85%, 47%);
+        --lumo-link-color: var(--lumo-primary-text-color);
       }
     }
 

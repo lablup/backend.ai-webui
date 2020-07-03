@@ -58,6 +58,13 @@ export default class BackendAiDialog extends LitElement {
           --dialog-height: var(--component-height);
         }
 
+        wl-dialog wl-card,
+        wl-dialog wl-expansion {
+          background: var(--general-dialog-background-color) !important;
+          color: var(--general-dialog-color) !important;
+        }
+
+
         wl-dialog > wl-card {
           --card-elevation: 0;
         }

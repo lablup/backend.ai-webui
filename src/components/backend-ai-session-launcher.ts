@@ -408,6 +408,31 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           };
         }
 
+        @media screen and (prefers-color-scheme: dark) {
+          mwc-select,
+          mwc-multi-select {
+            --mdc-typography-subtitle1-font-color: rgba(244, 245, 247, 1);
+            --mdc-select-label-ink-color: rgba(244, 245, 247, 1);
+            --mdc-select-disabled-ink-color: rgba(244, 245, 247, 1);
+            --mdc-select-dropdown-icon-color: rgba(244, 245, 247, 1);
+            --mdc-select-focused-dropdown-icon-color: rgba(244, 245, 247, 0.87);
+            --mdc-select-disabled-dropdown-icon-color: rgba(244, 245, 247, 0.87);
+            --mdc-select-hover-line-color: rgba(24, 24, 24, 0.87);
+            --mdc-select-ink-color: rgba(244, 245, 247, 1);
+            --mdc-select-outlined-idle-border-color: rgba(244, 245, 247, 0.42);
+            --mdc-select-outlined-hover-border-color: rgba(244, 245, 247, 0.87);
+            --mdc-theme-surface: rgba(64, 64, 64, 1.0);
+            --mdc-list-item__primary-text: {
+              color: #FFFFFF;
+            };
+          }
+
+          wl-expansion {
+            --expansion-bg: var(--general-dialog-background-color);
+            --expansion-color: var(--general-dialog-color);
+          }
+        }
+
         mwc-multi-select#scaling-groups {
           margin-right: 0;
           padding-right: 0;
