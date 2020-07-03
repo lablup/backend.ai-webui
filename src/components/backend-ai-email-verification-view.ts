@@ -87,9 +87,8 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     const emailEl = this.shadowRoot.querySelector('#email');
     if (!emailEl.value || !emailEl.validity.valid) return;
     try {
-      const resp = await this.client.cloud.send_verification_email(emailEl.value);
-      const text = resp.verification_email_sent ? _text('signup.EmailSent') : _text('signup.EmailNotSent');
-      this.notification.text = text;
+      await this.client.cloud.send_verification_email(emailEl.value);
+      this.notification.text = _text('signup.EmailSent');
       this.notification.show();
     } catch (e) {
       console.error(e);
