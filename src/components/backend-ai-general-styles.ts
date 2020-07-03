@@ -88,11 +88,6 @@ export const BackendAiStyles = [
         --card-elevation: rgba(64, 67, 122, 0.15) 0px 5px 10px -2px;
       }
 
-      wl-dialog wl-card {
-        background: var(--general-dialog-background-color) !important;
-        color: rgba(244, 245, 247, 1);
-      }
-
       li:before {
         border-color: rgba(244, 245, 247, 1) !important;
       }
@@ -160,6 +155,15 @@ export const BackendAiStyles = [
         --lumo-success-text-color: hsl(145, 85%, 47%);
         --lumo-link-color: var(--lumo-primary-text-color);
       }
+    }
+    wl-dialog wl-card {
+      background: var(--general-dialog-background-color) !important;
+      color: var(--general-dialog-color) !important;
+    }
+
+    wl-expansion {
+      background: var(--general-content-background-color) !important;
+      color: var(--general-content-color) !important;
     }
 
     body {
