@@ -1302,7 +1302,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.shmem_metric = shmem_metric;
 
       // GPU metric
-      if (this.cuda_device_metric.min == 0 && this.cuda_device_metric.max == 0) { // GPU is disabled (by image,too). cuda_shares is copied into cuda_device.
+      if (this.cuda_device_metric.min == 0 && this.cuda_device_metric.max == 0) { // GPU is disabled (by image,too).
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').value = 0;
@@ -1311,6 +1311,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           for (let i = 0; i < this.resource_templates.length; i++) {
             if (!('cuda_device' in this.resource_templates[i]) &&
               !('cuda_shares' in this.resource_templates[i])) {
+              new_resource_templates.push(this.resource_templates[i]);
+            } else if ((parseFloat(this.resource_templates[i].cuda_device) <= 0.0 && !('cuda_shares' in this.resource_templates[i])) ||
+              (parseFloat(this.resource_templates[i].cuda_shares) <= 0.0) && !('cuda_device' in this.resource_templates[i])) {
               new_resource_templates.push(this.resource_templates[i]);
             } else if (parseFloat(this.resource_templates[i].cuda_device) <= 0.0 &&
               parseFloat(this.resource_templates[i].cuda_shares) <= 0.0) {
