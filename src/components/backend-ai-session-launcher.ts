@@ -585,7 +585,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return;
     }
     let idx = Sgroups.items.indexOf(selectedSgroup);
-    Sgroups.select(idx + 1);
+    Sgroups.select(-1);
+    Sgroups.select(idx);
     Sgroups.value = selectedSgroup.value;
     Sgroups.requestUpdate();
   }
