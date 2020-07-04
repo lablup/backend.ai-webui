@@ -43,7 +43,6 @@
     "@polymer/paper-styles": "^3.0.1",
     "@polymer/polymer": "^3.4.1",
     "@rollup/plugin-replace": "^2.3.3",
-    "@vaadin/vaadin-dialog": "^2.4.2",
     "@vaadin/vaadin-grid": "^5.6.6",
     "@vaadin/vaadin-icons": "^4.3.1",
     "@vaadin/vaadin-item": "^2.2.0",
