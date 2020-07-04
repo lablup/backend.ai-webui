@@ -1014,7 +1014,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   async _aggregateResourceUse(from: string = '') {
     return this.resourceBroker._aggregateCurrentResource(from).then(async (res) => {
       if (res === false) {
-        return Promise.resolve(false);
+        //return Promise.resolve(false);  // use current information.
       }
       this.concurrency_used = this.resourceBroker.concurrency_used;
       this.scaling_group = this.resourceBroker.scaling_group;
