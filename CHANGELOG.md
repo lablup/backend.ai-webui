@@ -1,5 +1,49 @@
 # Changelog
 
+## v20.07.2 (03/07/2020)
+
+#### Bug Fixes:
+
+- [**bug**][**cloud**][**easy**] Error on re-send signup verification email [#595](https://github.com/lablup/backend.ai-console/issues/595)
+
+
+## v20.07.1 (03/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**minor**] Show agent version on resource pane to check upgradable agents [#590](https://github.com/lablup/backend.ai-console/issues/590)
+
+#### Bug Fixes:
+
+- [**blocker**][**bug**][**major**] Cannot see templates / assign resource without GPU [#591](https://github.com/lablup/backend.ai-console/issues/591)
+
+
+## v20.07.0 (02/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Migrate legacy dialogs to backend.ai dialog for unified look and feel [#584](https://github.com/lablup/backend.ai-console/issues/584)
+- [**UI / UX**][**enhancement**][**minor**] Open notification when no virtual folder is attached on console [#583](https://github.com/lablup/backend.ai-console/issues/583)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**][**working**] Unified session information crawler / store [#496](https://github.com/lablup/backend.ai-console/issues/496)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**minor**] TOS is not scrollable [#588](https://github.com/lablup/backend.ai-console/issues/588)
+
+
+## v20.06.3 (22/06/2020)
+
+#### Enhancements:
+
+- [**enhancement**] Feature to download vfolder directory [#580](https://github.com/lablup/backend.ai-console/issues/580)
+- [**UI / UX**][**enhancement**][**minor**] Migrate legacy dialogs to backend.ai dialog for unified look and feel [#584](https://github.com/lablup/backend.ai-console/issues/584)
+- [**UI / UX**][**enhancement**][**minor**] Open notification when no virtual folder is attached on console [#583](https://github.com/lablup/backend.ai-console/issues/583)
+
+#### Bug Fixes:
+
+- [**bug**] After selecting resource template without GPU, advanced panel's GPU value is not respected in creating session [#581](https://github.com/lablup/backend.ai-console/issues/581)
+
+
 ## v20.06.2 (16/06/2020)
 
 #### Enhancements:

@@ -33,6 +33,9 @@ export class Select extends SelectBase {
         .mdc-select__anchor {
           min-width: var(--mdc-select-min-width, 200px);
         }
+        .mdc-select--filled {
+          min-width: var(--mdc-select-min-width, 200px);
+        }
       `];
   }
 }

@@ -240,9 +240,7 @@ export default class BackendAiSignup extends BackendAIPage {
       this.notification.show();
       setTimeout(() => {
         this.signupPanel.hide();
-        if (response.verification_email_sent) {
-          this.shadowRoot.querySelector('#email-sent-dialog').show();
-        }
+        this.shadowRoot.querySelector('#email-sent-dialog').show();
       }, 1000);
     }).catch((e) => {
       if (e.message) {
@@ -313,7 +311,7 @@ export default class BackendAiSignup extends BackendAIPage {
       <backend-ai-dialog id="email-sent-dialog" noclosebutton fixed backdrop blockscrolling persistent>
         <span slot="title">${_t("signup.ThankYou")}</span>
         <div slot="content">
-          <p>${_t("signup.VerificationMessage")}</p>
+          <p style="max-width:350px">${_t("signup.VerificationMessage")}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button class="ok" @click="${(e) => {

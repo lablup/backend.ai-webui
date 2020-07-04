@@ -213,6 +213,7 @@ export const BackendAiConsoleStyles = [
 
     mwc-multi-select {
       width: 135px;
+      min-width: 135px;
       font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --mdc-typography-subtitle1-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --mdc-typography-subtitle1-font-size: 14px;
@@ -231,6 +232,7 @@ export const BackendAiConsoleStyles = [
       --mdc-select-outlined-idle-border-color: rgba(255, 255, 255, 0.42);
       --mdc-select-outlined-hover-border-color: rgba(255, 255, 255, 0.87);
       --mdc-theme-surface: white;
+      --mdc-theme-primary: rgba(255, 255, 255, 1.0);
       --mdc-list-vertical-padding: 5px;
       --mdc-list-side-padding: 10px;
       --mdc-menu-item-height: 28px;
@@ -265,7 +267,7 @@ export const BackendAiConsoleStyles = [
 
     mwc-menu.user-menu {
       --mdc-theme-surface: #f1f1f1;
-      --mdc-menu-item-height: auto;
+      --mdc-menu-item-height: 28px;
       box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     }
 

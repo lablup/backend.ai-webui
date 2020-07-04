@@ -33,7 +33,7 @@ if (process.env.serveMode == 'dev') {
   versions = require('./app/version');
   es6Path = npjoin(__dirname, 'app');  // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname);
-  mainIndex = 'app.html';
+  mainIndex = 'app.html'; 
 }
 let windowWidth = 1280;
 let windowHeight = 970;
@@ -48,7 +48,6 @@ let mainWindow;
 let mainContent;
 let devtools;
 const manager = new ProxyManager();
-// reference to the app directory. It will merge into local test / electron app version
 let mainURL;
 
 // Modules to control application life and create native browser window
@@ -77,12 +76,16 @@ app.once('ready', function() {
             type: 'separator'
           },
           {
-            label: 'Force Update Screen',
+            label: 'Refresh App',
             accelerator: 'Command+R',
-            click: function () {
+            click: function() {
               // mainContent.reloadIgnoringCache();
               const proxyUrl = `http://localhost:${manager.port}/`;
-              mainContent.reloadIgnoringCache();
+              mainWindow.loadURL(url.format({ // Load HTML into new Window
+                pathname: path.join(mainIndex),
+                protocol: 'file',
+                slashes: true
+              }));
               mainContent.executeJavaScript(`window.__local_proxy = '${proxyUrl}'`);
               console.log('Re-connected to proxy: ' + proxyUrl);
             }
@@ -167,33 +170,17 @@ app.once('ready', function() {
           {
             label: 'Zoom In',
             accelerator: 'Command+=',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript('_zoomIn()');
-              }
-            }
+            role: 'zoomin'
           },
           {
             label: 'Zoom Out',
             accelerator: 'Command+-',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript('_zoomOut()');
-              }
-            }
+            role: 'zoomout'
           },
           {
             label: 'Actual Size',
             accelerator: 'Command+0',
-            click: function() {
-              const focusedWindow = BrowserWindow.getFocusedWindow();
-              if (focusedWindow && focusedWindow.webContents) {
-                focusedWindow.webContents.executeJavaScript(
-                    '_zoomActualSize()');
-              }
-            }
+            role: 'resetzoom'
           },
           {
             label: 'Toggle Full Screen',
@@ -233,8 +220,14 @@ app.once('ready', function() {
         label: 'Help',
         submenu: [
           {
-            label: 'Learn More',
-            click: function () {
+            label: 'Online Manual',
+            click: function() {
+              shell.openExternal('https://console.docs.backend.ai/');
+            }
+          },
+          {
+            label: 'Backend.AI Project Site',
+            click: function() {
               shell.openExternal('https://www.backend.ai/');
             }
           }
@@ -304,8 +297,14 @@ app.once('ready', function() {
         label: 'Help',
         submenu: [
           {
-            label: 'Learn More',
-            click: function () {
+            label: 'Online Manual',
+            click: function() {
+              shell.openExternal('https://console.docs.backend.ai/');
+            }
+          },
+          {
+            label: 'Backend.AI Project Site',
+            click: function() {
               shell.openExternal('https://www.backend.ai/');
             }
           }

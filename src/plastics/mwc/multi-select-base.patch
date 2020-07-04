@@ -1,6 +1,6 @@
---- ./mwc-select-base.ts	2020-05-08 10:45:49.000000000 +0900
-+++ ./mwc-multi-select-base.ts	2020-05-08 10:44:13.000000000 +0900
-@@ -168,6 +168,8 @@
+--- ./mwc-select-base.ts	2020-07-01 19:53:11.000000000 +0900
++++ ./mwc-multi-select-base.ts	2020-07-01 19:56:01.000000000 +0900
+@@ -180,6 +180,8 @@
  
    @property({type: Boolean}) naturalMenuWidth = false;
  
@@ -8,16 +8,16 @@
 +
    @property({type: Boolean}) protected isUiValid = true;
  
-   get items(): ListItemBase[] {
-@@ -294,6 +296,7 @@
-             wrapFocus
-             class="mdc-select__menu mdc-menu mdc-menu-surface"
+   // Transiently holds current typeahead prefix from user.
+@@ -320,6 +322,7 @@
+             class="mdc-select__menu mdc-menu mdc-menu-surface ${
+         classMap(menuClasses)}"
              activatable
 +            .multi=${this.multi}
              .fullwidth=${!this.naturalMenuWidth}
              .open=${this.menuOpen}
              .anchor=${this.anchorElement}
-@@ -387,6 +390,7 @@
+@@ -413,6 +416,7 @@
          return !!this.label;
        },
        floatLabel: (shouldFloat) => {
@@ -25,7 +25,7 @@
          if (this.labelElement) {
            this.labelElement.floatingLabelFoundation.float(shouldFloat);
          }
-@@ -418,7 +422,14 @@
+@@ -449,7 +453,14 @@
          }
        },
        notifyChange: async (value) => {
@@ -41,7 +41,7 @@
            return;
          }
  
-@@ -429,6 +440,7 @@
+@@ -460,6 +471,7 @@
          this.dispatchEvent(ev);
        },
        setSelectedText: (value) => this.selectedText = value,
@@ -49,7 +49,7 @@
        isSelectAnchorFocused: () => {
          const selectAnchorElement = this.anchorElement;
  
-@@ -626,8 +638,11 @@
+@@ -711,8 +723,11 @@
      }
    }
  
@@ -62,7 +62,7 @@
      for (let i = 0; i < this.items.length; i++) {
        const item = this.items[i];
        if (item.value === value) {
-@@ -715,6 +730,15 @@
+@@ -845,6 +860,15 @@
      }
  
      this.mdcFoundation.handleMenuItemAction(evt.detail.index);

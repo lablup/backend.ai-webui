@@ -117,7 +117,7 @@ consoleServerURL = "[Console server website URL. App will use the site instead o
 ## Development Guide
 
 Backend.AI console is built with
- * `lit-element` / `Polymer 3 `as webcomponent framework
+ * `lit-element` as webcomponent framework
  * `npm` as package manager
  * `rollup` as bundler
  * `electron` as app shell

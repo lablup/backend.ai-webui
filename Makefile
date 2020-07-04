@@ -94,7 +94,7 @@ mac: dep
 	mv ./app/backend.ai-console-$(BUILD_DATE).dmg ./app/backend.ai-console-$(BUILD_VERSION)-$(site).dmg
 win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	$(EP) --platform=win32 --icon=manifest/backend-ai.ico
+	$(EP) --platform=win32 --arch=x64 --icon=manifest/backend-ai.ico
 	cd app; zip ./backend.ai-console-win32-x64-$(BUILD_DATE).zip -r ./backend.ai-console-win32-x64
 	mv ./app/backend.ai-console-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-console-x64-$(BUILD_VERSION)-$(site).zip
 linux: dep
