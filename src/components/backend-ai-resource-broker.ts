@@ -368,7 +368,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     let total_resource_group_slot = {};
     let total_project_slot = {};
 
-    return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
+    return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then(async (response) => {
       this.concurrency_used = response.keypair.concurrency_used;
       const param: any = {group: globalThis.backendaiclient.current_group};
       if (this.scaling_groups.length > 0) {
@@ -427,13 +427,15 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'rocm.device': 'rocm_device',
         'tpu.device': 'tpu_device'
       }
-
       //let scaling_group_resource_remaining = response.scaling_group_remaining;
-      if (this.scaling_group === '') { // no scaling group in the current project
+      if (this.scaling_group === '' && this.scaling_groups.length > 0) { // no scaling group in the current project
         response.scaling_groups[''] = {
           using: {'cpu': 0, 'mem': 0},
           remaining: {'cpu': 0, 'mem': 0},
         }
+      } else if (this.scaling_groups.length === 0) {
+        this.aggregate_updating = false;
+        return Promise.resolve(false);
       }
       let scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
       let scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
