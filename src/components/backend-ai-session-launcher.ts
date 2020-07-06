@@ -277,7 +277,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .resource-button {
           height: 140px;
-          width: 120px;
+          width: 330px;
           margin: 5px;
           padding: 0;
           font-size: 14px;
@@ -1339,10 +1339,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (this.resource_templates_filtered !== [] && this.resource_templates_filtered.length > 0) {
         let resource = this.resource_templates_filtered[0];
         this._chooseResourceTemplate(resource);
-        let default_template = this.shadowRoot.querySelector('#resource-templates').getElementsByTagName('mwc-list-item')[0];
-        this.shadowRoot.querySelector('#resource-templates').select(0);
-        default_template.setAttribute('active', true);
-        //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
+        this.shadowRoot.querySelector('#resource-templates').select(1);
       } else {
         this._updateResourceIndicator(this.cpu_metric.min, this.mem_metric.min, 'none', 0);
       }
@@ -1732,19 +1729,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             `)}
             </mwc-multi-select>
           </div>
-          <wl-expansion name="resource-group" open>
-            <span slot="title">${_t("session.launcher.ResourceAllocation")}</span>
-            <span slot="description"></span>
-            <mwc-list id="resource-templates" selected="0" class="horizontal center layout"
-                           style="width:350px; overflow:scroll;">
-              ${this.resource_templates_filtered.map(item => html`
-                <mwc-list-item class="resource-button vertical center start-justified layout" role="option"
-                           style="height:140px;min-width:120px;" type="button"
-                           flat outlined
+          <div class="vertical center layout" style="padding-top:15px;">
+            <mwc-select id="resource-templates" label="${_t("session.launcher.ResourceAllocation")}" fullwidth required>
+              <mwc-list-item selected style="display:none!important"></mwc-list-item>
+                <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout">
+                  <div style="width:100px;">Name</div>
+                  <div style="width:50px;">CPU</div>
+                  <div style="width:50px;">RAM</div>
+                  <div style="width:50px;">SHRAM</div>
+                  <div style="width:80px;">GPU/ASIC</div>
+                </h5>
+            ${this.resource_templates_filtered.map(item => html`
+              <mwc-list-item value="${item}"
+                           id="${item.name}-button"
                            @click="${(e) => {
       this._chooseResourceTemplate(e);
     }}"
-                           id="${item.name}-button"
                            .cpu="${item.cpu}"
                            .mem="${item.mem}"
                            .cuda_device="${item.cuda_device}"
@@ -1752,17 +1752,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            .rocm_device="${item.rocm_device}"
                            .tpu_device="${item.tpu_device}"
                            .shmem="${item.shmem}">
-                <div>
-                  <h4 style="padding-top:15px;padding-bottom:15px;">${item.name}</h4>
-                  <ul>
-                    <li>${item.cpu} CPU</li>
-                    <li>${item.mem}GB RAM</li>
-                    ${item.cuda_device ? html`<li>${item.cuda_device} CUDA GPU</li>` : html``}
-                    ${item.cuda_shares ? html`<li>${item.cuda_shares} GPU</li>` : html``}
-                    ${item.rocm_device ? html`<li>${item.rocm_device} ROCM GPU</li>` : html``}
-                    ${item.tpu_device ? html`<li>${item.tpu_device} TPU</li>` : html``}
-                    ${item.shmem ? html`<li>${item.shmem}GB SHRAM</li>` : html``}
-                    </ul>
+                <div class="horizontal layout end-justified">
+                  <div style="width:100px;">${item.name}</div>
+                  <div style="width:50px;text-align:right;">${item.cpu}</div>
+                  <div style="width:50px;text-align:right;">${item.mem}GB</div>
+                  <div style="width:50px;text-align:right;">${item.shmem ? html`${item.shmem}GB` : html`64MB`}</div>
+                  <div style="width:80px;text-align:right;">
+                    ${item.cuda_device && item.cuda_device > 0 ? html`${item.cuda_device} CUDA GPU` : html``}
+                    ${item.cuda_shares && item.cuda_shares > 0 ? html`${item.cuda_shares} GPU` : html``}
+                    ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} ROCM GPU` : html``}
+                    ${item.tpu_device && item.tpu_device > 0 ? html`${item.tpu_device} TPU` : html``}
+                  </div>
                 </div>
               </mwc-list-item>
             `)}
@@ -1776,9 +1776,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               </mwc-list-item>
               ` : html``}
-            </mwc-list>
-          </wl-expansion>
-          <wl-expansion name="resource-group">
+            </mwc-select>
+          </div>
+          <wl-expansion name="resource-group" open>
             <span slot="title">${_t("session.launcher.Advanced")}</span>
             <span slot="description">${_t("session.launcher.CustomAllocation")}</span>
             <div class="vertical layout">
