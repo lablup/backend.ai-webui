@@ -527,7 +527,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   firstUpdated() {
     this.shadowRoot.querySelector('#environment').addEventListener('selected', this.updateLanguage.bind(this));
     this.version_selector = this.shadowRoot.querySelector('#version');
-    this.version_selector.addEventListener('selected', this.updateResourceAllocationPane.bind(this));
+    this.version_selector.addEventListener('selected', () => {
+      this.updateResourceAllocationPane();
+    });
 
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
@@ -991,11 +993,21 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         // there are available resources for the selected image.
         this.version_selector.select(1);
         this.version_selector.value = this.versions[0];
-        this.version_selector.selectedText = this.version_selector.value;
+        //this.version_selector.selectedText = this.version_selector.value;
+        this._updateVersionSelectorText(this.version_selector.value);
         this.version_selector.disabled = false;
         this.updateResourceAllocationPane('update versions');
       });
     }
+  }
+
+  _updateVersionSelectorText(text) {
+    let res = this._getVersionInfo(text);
+    let resultArray: array = [];
+    res.forEach(item => {
+      resultArray.push(item.tag);
+    });
+    this.version_selector.selectedText = resultArray.join(' / ');
   }
 
   generateSessionId() {
@@ -1082,6 +1094,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return;
     }
     let selectedVersionValue = selectedVersionItem.value;
+    this._updateVersionSelectorText(selectedVersionValue);
     // Environment is not selected yet.
     if (typeof selectedItem === 'undefined' || selectedItem === null || selectedItem.getAttribute("disabled")) {
       this.metric_updating = false;
