@@ -25,7 +25,7 @@ Backend.AI console focuses to
     * Terminal for each session
     * Fully-featured VSCode editor and environments
  * Pipeline
-    * Experiments (with SACRED)
+    * Experiments (with SACRED / MLFlow)
     * AutoML (with NNI)
     * Manages container streams with pipeline vfolders
     * Checks queue and scheduled jobs
