@@ -74,16 +74,19 @@ mac: dep
 	mv ./app/backend.ai-console-macos/backend.ai-console.app './app/backend.ai-console-macos/Backend.AI Console.app'
 	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-console-macos/Backend.AI Console.app' ./app/backend.ai-console-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 	mv ./app/backend.ai-console-$(BUILD_DATE).dmg ./app/backend.ai-console-$(BUILD_VERSION)-$(site).dmg
+	cp ./app/backend.ai-console-$(BUILD_VERSION)-$(site).dmg ./app/backend.ai-console-$(BUILD_VERSION)-macos.dmg
 win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=win32 --arch=x64 --icon=manifest/backend-ai.ico
 	cd app; zip ./backend.ai-console-win32-x64-$(BUILD_DATE).zip -r ./backend.ai-console-win32-x64
 	mv ./app/backend.ai-console-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-console-x64-$(BUILD_VERSION)-$(site).zip
+	cp ./app/backend.ai-console-x64-$(BUILD_VERSION)-$(site).zip ./app/backend.ai-console-$(BUILD_VERSION)-win32-x64.zip
 linux: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=linux --icon=manifest/backend-ai.ico
 	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-linux-x64 ./backend.ai-console-linux-x64-$(BUILD_DATE).zip
-	mv ./app/backend.ai-console-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-console-linux-x64-$(BUILD_DATE)-$(site).zip
+	mv ./app/backend.ai-console-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-console-linux-x64-$(BUILD_VERSION)-$(site).zip
+	cp ./app/backend.ai-console-linux-x64-$(BUILD_VERSION)-$(site).zip ./app/backend.ai-console-$(BUILD_VERSION)-linux-x64.zip
 build_docker: compile
 	docker build -t backend.ai-console:$(BUILD_DATE) .
 pack:
