@@ -411,6 +411,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             available_presets.push(item);
           }
         });
+        available_presets.sort((a, b) => (a['name'] > b['name'] ? 1 : -1);
         this.resource_templates = available_presets;
         if (this.resource_templates_filtered.length === 0) {
           this.resource_templates_filtered = this.resource_templates;
