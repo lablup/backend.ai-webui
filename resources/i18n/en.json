@@ -129,7 +129,8 @@
       "HomeDirectoryDeletionDialog": "The home directory in the session is automatically deleted when the session ends.",
       "LaunchConfirmationDialog": "To keep your code and data, or share it with other collaborators, simply create a storage folder in the data & storage sidebar, then mount that folder when you start the resource and keep it there.",
       "Launch": "Launch",
-      "LaunchWithoutMount": "Launch Without Storage Folder"
+      "LaunchWithoutMount": "Launch Without Storage Folder",
+      "Accelerator": "Accelerator"
     },
     "Running": "Running",
     "Finished": "Finished",

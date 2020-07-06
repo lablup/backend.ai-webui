@@ -1419,7 +1419,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       gpu_value = 0;
     }
     const shmem = button.shmem;
-    this.shmem_request = shmem ? shmem : 0.0625;
+    this.shmem_request = shmem ? shmem : 0.0625; // 64MB as default. Enough for single core CPU.
     this._updateResourceIndicator(cpu, mem, gpu_type, gpu_value);
   }
 
@@ -1732,12 +1732,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <div class="vertical center layout" style="padding-top:15px;">
             <mwc-select id="resource-templates" label="${_t("session.launcher.ResourceAllocation")}" fullwidth required>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
-                <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout">
-                  <div style="width:100px;">Name</div>
-                  <div style="width:50px;">CPU</div>
-                  <div style="width:50px;">RAM</div>
-                  <div style="width:50px;">SHRAM</div>
-                  <div style="width:80px;">GPU/ASIC</div>
+                <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout center">
+                  <div style="width:110px;">Name</div>
+                  <div style="width:50px;text-align:right;">CPU</div>
+                  <div style="width:50px;text-align:right;">RAM</div>
+                  <div style="width:50px;text-align:right;">${_t("session.launcher.SharedMemory")}</div>
+                  <div style="width:100px;text-align:right;">${_t("session.launcher.Accelerator")}</div>
                 </h5>
             ${this.resource_templates_filtered.map(item => html`
               <mwc-list-item value="${item}"
@@ -1753,11 +1753,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            .tpu_device="${item.tpu_device}"
                            .shmem="${item.shmem}">
                 <div class="horizontal layout end-justified">
-                  <div style="width:100px;">${item.name}</div>
+                  <div style="width:110px;">${item.name}</div>
                   <div style="width:50px;text-align:right;">${item.cpu}</div>
                   <div style="width:50px;text-align:right;">${item.mem}GB</div>
                   <div style="width:50px;text-align:right;">${item.shmem ? html`${item.shmem}GB` : html`64MB`}</div>
-                  <div style="width:80px;text-align:right;">
+                  <div style="width:100px;text-align:right;">
                     ${item.cuda_device && item.cuda_device > 0 ? html`${item.cuda_device} CUDA GPU` : html``}
                     ${item.cuda_shares && item.cuda_shares > 0 ? html`${item.cuda_shares} GPU` : html``}
                     ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} ROCM GPU` : html``}
