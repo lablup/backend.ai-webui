@@ -19,10 +19,10 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
 export default class LablupSlider extends LitElement {
   public shadowRoot: any; // ShadowRoot
 
-  @property({type: Number}) step = 1;
-  @property({type: Number}) value = 0;
-  @property({type: Number}) max = 0;
-  @property({type: Number}) min = 0;
+  @property({type: Number}) step;
+  @property({type: Number}) value;
+  @property({type: Number}) max;
+  @property({type: Number}) min;
   @property({type: Boolean}) editable = null;
   @property({type: Boolean}) pin = null;
   @property({type: Boolean}) markers = null;
@@ -63,7 +63,7 @@ export default class LablupSlider extends LitElement {
     return html`
       <div class="horizontal center layout">
       <mwc-slider id="slider" class="${this.id}" value="${this.value}"
-          min="${this.min}" max="${this.max}" step="${this.step}"
+          min="${this.min}" max="${this.max}"
           ?pin="${this.pin}"
           ?disabled="${this.disabled}"
           ?markers="${this.markers}"
@@ -94,6 +94,10 @@ export default class LablupSlider extends LitElement {
         el.$formElement.step = step;
       });
     }, 100);
+    if (this.step) {
+    } else {
+      this.step = 1.0;
+    }
     this.checkMarkerDisplay();
   }
 
@@ -146,6 +150,7 @@ export default class LablupSlider extends LitElement {
     }
     this.value = this.textfield.value;
     this.slider.value = this.textfield.value;
+    this.slider.step = this.step;
     // updated function will be automatically called.
   }
 
@@ -155,6 +160,8 @@ export default class LablupSlider extends LitElement {
         this.slider.removeAttribute('markers');
       }
     }
+    this.slider.setAttribute('step', this.step);
+    this.slider.step = this.step;
   }
 }
 

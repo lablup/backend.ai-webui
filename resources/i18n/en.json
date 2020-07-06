@@ -133,7 +133,8 @@
       "Accelerator": "Accelerator",
       "AdvancedResourceAllocation": "AdvancedResourceAllocation",
       "ThisSettingTakesPrecedence": "Note: This setting takes precedence",
-      "CustomResourceApplied": "Custom resource is applied"
+      "CustomResourceApplied": "Custom resource is applied",
+      "PleaseChooseFoldersToMount": "Please Choose Folders To Mount"
     },
     "Running": "Running",
     "Finished": "Finished",

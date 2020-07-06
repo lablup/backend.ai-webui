@@ -296,7 +296,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
       //this._refreshResourceTemplate('refresh-resource-policy');
-      this._updateGPUMode();
+      return this._updateGPUMode();
     }).catch((err) => {
       this.metadata_updating = false;
       throw err;
@@ -304,7 +304,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   }
 
   _updateGPUMode() {
-    globalThis.backendaiclient.getResourceSlots().then((response) => {
+    return globalThis.backendaiclient.getResourceSlots().then((response) => {
       let results = response;
       ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
         if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
@@ -411,7 +411,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             available_presets.push(item);
           }
         });
-        available_presets.sort((a, b) => (a['name'] > b['name'] ? 1 : -1);
+        available_presets.sort((a, b) => (a['name'] > b['name'] ? 1 : -1));
         this.resource_templates = available_presets;
         if (this.resource_templates_filtered.length === 0) {
           this.resource_templates_filtered = this.resource_templates;

@@ -136,6 +136,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Number}) max_cpu_core_per_session = 64;
+  @property({type: Number}) max_cuda_device_per_session = 16;
+  @property({type: Number}) max_shm_per_session = 2;
   @property({type: Object}) resourceBroker;
 
 
@@ -533,6 +535,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
     const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
+
     gpu_resource.addEventListener('value-changed', () => {
       if (gpu_resource.value > 0) {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
@@ -1003,7 +1006,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _updateVersionSelectorText(text) {
     let res = this._getVersionInfo(text);
-    let resultArray: array = [];
+    let resultArray: string[] = [];
     res.forEach(item => {
       resultArray.push(item.tag);
     });
@@ -1141,7 +1144,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       let disableLaunch = false;
       let shmem_metric: any = {
         'min': 0.0625,
-        'max': 1,
+        'max': 2,
         'preferred': 0.125
       };
       this.cuda_device_metric = {
@@ -1183,13 +1186,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           cuda_device_metric.min = parseInt(cuda_device_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
             if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && cuda_device_metric.max !== NaN) {
-              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_shares']);
+              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_shares'], this.max_cuda_device_per_session);
             } else {
-              cuda_device_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device']);
+              cuda_device_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device'], this.max_cuda_device_per_session);
             }
           } else {
             if (parseInt(cuda_device_metric.max) !== 0) {
-              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), available_slot['cuda_device']);
+              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), available_slot['cuda_device'], this.max_cuda_device_per_session);
             } else {
               cuda_device_metric.max = this.available_slot['cuda_device'];
             }
@@ -1234,6 +1237,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           }
 
           this.cuda_shares_metric = cuda_shares_metric;
+          //console.log(this.cuda_shares_metric);
           if (cuda_shares_metric.max > 0) {
             this.cuda_device_metric = cuda_shares_metric;
           }
@@ -1302,7 +1306,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
       });
       // Shared memory setting
-      shmem_metric.max = this.mem_metric.max;
+      shmem_metric.max = this.max_shm_per_session;
       shmem_metric.min = 0.0625; // 64m
       if (shmem_metric.min >= shmem_metric.max) {
         if (shmem_metric.min > shmem_metric.max) {
@@ -1801,7 +1805,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
           <wl-expansion name="resource-group" open style="--expansion-header-padding:16px;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.CustomAllocation")}</span>
-            <span slot="description" style="font-size:12px;color:#646464;">${_t("session.launcher.ThisSettingTakesPrecedence")}</span>
+            <span slot="description" style="font-size:12px;color:#646464;"></span>
             <div class="vertical layout">
               <div class="horizontal center layout">
                 <div class="resource-type" style="width:70px;">CPU</div>
@@ -1832,10 +1836,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <div class="horizontal center layout">
               <div class="resource-type" style="width:70px;">${_t("session.launcher.SharedMemory")}</div>
               <lablup-slider id="shmem-resource" class="mem"
-                             pin snaps step=0.0025 editable markers
+                             pin snaps step="0.0025" editable markers
                              @click="${this._resourceTemplateToCustom}"
                              marker_limit="${this.marker_limit}"
-                             min="0.0" max="${this.shmem_metric.max}"
+                             min="0.0625" max="${this.shmem_metric.max}"
                              value="${this.shmem_request}"></lablup-slider>
               <span class="caption">GB</span>
               <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
