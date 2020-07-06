@@ -75,6 +75,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     'max': '1'
   };
   @property({type: Number}) lastQueryTime = 0;
+  @property({type: Number}) lastVFolderQueryTime = 0;
   @property({type: String}) scaling_group;
   @property({type: Array}) scaling_groups;
   @property({type: Array}) sessions_list;
@@ -85,9 +86,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   // Flags
   @property({type: Boolean}) _default_language_updated = false;
   @property({type: Boolean}) _default_version_updated = false;
+  @property({type: Boolean}) _GPUmodeUpdated = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Array}) disableLaunch;
-  @property({type: Boolean}) _GPUmodeUpdated = false;
   // Custom information
   @property({type: Number}) max_cpu_core_per_session = 64;
 
@@ -338,8 +339,12 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    *
    */
   async updateVirtualFolderList() {
+    if (Date.now() - this.lastVFolderQueryTime < 2000) {
+      return Promise.resolve(false);
+    }
     let l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id());
     return l.then((value) => {
+      this.lastVFolderQueryTime = Date.now();
       let selectableFolders: object[] = [];
       let automountFolders: object[] = [];
       value.forEach((item) => {
