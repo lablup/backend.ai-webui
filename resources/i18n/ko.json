@@ -133,7 +133,7 @@
       "Accelerator": "가속기",
       "AdvancedResourceAllocation": "상세 자원 할당",
       "ThisSettingTakesPrecedence": "알림: 이 설정이 우선합니다",
-      "CustomResourceApplied": "임의 자원이 할당됨",
+      "CustomResourceApplied": "사용자 설정 자원이 할당됨",
       "PleaseChooseFoldersToMount": "마운트할 폴더들을 선택하세요"
     },
     "Running": "실행중",
