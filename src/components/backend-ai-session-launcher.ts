@@ -1339,8 +1339,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (this.resource_templates_filtered !== [] && this.resource_templates_filtered.length > 0) {
         let resource = this.resource_templates_filtered[0];
         this._chooseResourceTemplate(resource);
-        let default_template = this.shadowRoot.querySelector('#resource-templates').getElementsByTagName('wl-button')[0];
-        this.shadowRoot.querySelector('#resource-templates').selected = "0";
+        let default_template = this.shadowRoot.querySelector('#resource-templates').getElementsByTagName('mwc-list-item')[0];
+        this.shadowRoot.querySelector('#resource-templates').select(0);
         default_template.setAttribute('active', true);
         //this.shadowRoot.querySelector('#' + resource.title + '-button').raised = true;
       } else {
@@ -1394,7 +1394,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (typeof e.cpu !== 'undefined') {
       button = e;
     } else {
-      button = e.target.closest('wl-button');
+      button = e.target.closest('mwc-list-item');
     }
     const cpu = button.cpu;
     const mem = button.mem;
