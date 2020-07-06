@@ -488,7 +488,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   init_resource() {
     this.versions = ['Not Selected'];
     this.languages = [];
-    this.gpu_mode = 'no';
+    this.gpu_mode = 'none';
     this.total_slot = {};
     this.total_resource_group_slot = {};
     this.total_project_slot = {};
@@ -1132,6 +1132,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.metric_updating = false;
         return;
       }
+      this.gpu_mode = this.resourceBroker.gpu_mode;
+      this.gpu_step = this.resourceBroker.gpu_step;
+      this.gpu_modes = this.resourceBroker.gpu_modes;
+
       let available_slot = this.resourceBroker.available_slot;
 
       // Post-UI markup to disable unchangeable values
@@ -1689,6 +1693,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                         <div class="horizontal layout end-justified center flex">
                         ${item.tags ? item.tags.map(item => html`
                           <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}" description="${item.tag}"></lablup-shields>
+                          <span style="display:none">(${item.tag})</span>
                         `) : ''}
                           <mwc-icon-button icon="info" class="fg blue info"
                                            @click="${(e) => {
