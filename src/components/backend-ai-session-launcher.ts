@@ -1052,6 +1052,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.available_slot = this.resourceBroker.available_slot;
       this.used_slot_percent = this.resourceBroker.used_slot_percent;
       this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
+      this.gpu_mode = this.resourceBroker.gpu_mode;
+      this.gpu_step = this.resourceBroker.gpu_step;
+      this.gpu_modes = this.resourceBroker.gpu_modes;
       await this.updateComplete;
       return Promise.resolve(true);
     }).catch(err => {
