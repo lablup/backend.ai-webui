@@ -87,7 +87,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Boolean}) _default_version_updated = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Array}) disableLaunch;
-
+  @property({type: Boolean}) _GPUmodeUpdated = false;
   // Custom information
   @property({type: Number}) max_cpu_core_per_session = 64;
 
@@ -304,20 +304,25 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   }
 
   _updateGPUMode() {
-    return globalThis.backendaiclient.getResourceSlots().then((response) => {
-      let results = response;
-      ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
-        if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
-          this.gpu_mode = item;
-          (this.gpu_modes as Array<string>).push(item);
-          if (item === 'cuda.shares') {
-            this.gpu_step = 0.05;
-          } else {
-            this.gpu_step = 1;
+    if (!this._GPUmodeUpdated) {
+      this._GPUmodeUpdated = true;
+      return globalThis.backendaiclient.getResourceSlots().then((response) => {
+        let results = response;
+        ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
+          if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
+            this.gpu_mode = item;
+            (this.gpu_modes as Array<string>).push(item);
+            if (item === 'cuda.shares') {
+              this.gpu_step = 0.05;
+            } else {
+              this.gpu_step = 1;
+            }
           }
-        }
+        });
       });
-    });
+    } else {
+      return Promise.resolve(true);
+    }
   }
 
   generateSessionId() {
