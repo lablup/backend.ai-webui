@@ -13,6 +13,7 @@ import '@polymer/paper-item/paper-item';
 
 import '@material/mwc-select';
 import '../plastics/mwc/mwc-multi-select';
+import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
 import '@material/mwc-textfield/mwc-textfield';
@@ -286,7 +287,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           z-index: 100;
         }
 
-        wl-button.resource-button.iron-selected {
+        .resource-button.iron-selected {
           --button-color: var(--paper-red-600);
           --button-bg: var(--paper-red-600);
           --button-bg-active: var(--paper-red-600);
@@ -1734,13 +1735,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <wl-expansion name="resource-group" open>
             <span slot="title">${_t("session.launcher.ResourceAllocation")}</span>
             <span slot="description"></span>
-            <paper-listbox id="resource-templates" selected="0" class="horizontal center layout"
+            <mwc-list id="resource-templates" selected="0" class="horizontal center layout"
                            style="width:350px; overflow:scroll;">
               ${this.resource_templates_filtered.map(item => html`
-                <wl-button class="resource-button vertical center start-justified layout" role="option"
+                <mwc-list-item class="resource-button vertical center start-justified layout" role="option"
                            style="height:140px;min-width:120px;" type="button"
                            flat outlined
-                           @click="${this._chooseResourceTemplate}"
+                           @click="${(e) => {
+      this._chooseResourceTemplate(e);
+    }}"
                            id="${item.name}-button"
                            .cpu="${item.cpu}"
                            .mem="${item.mem}"
@@ -1761,19 +1764,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     ${item.shmem ? html`<li>${item.shmem}GB SHRAM</li>` : html``}
                     </ul>
                 </div>
-              </wl-button>
+              </mwc-list-item>
             `)}
             ${this.isEmpty(this.resource_templates_filtered) ? html`
-              <wl-button class="resource-button vertical center start layout" role="option"
+              <mwc-list-item class="resource-button vertical center start layout" role="option"
                          style="height:140px;width:350px;" type="button"
                          flat inverted outlined disabled>
                 <div>
                   <h4>${_t("session.launcher.NoSuitablePreset")}</h4>
                   <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
                 </div>
-              </wl-button>
+              </mwc-list-item>
               ` : html``}
-            </paper-listbox>
+            </mwc-list>
           </wl-expansion>
           <wl-expansion name="resource-group">
             <span slot="title">${_t("session.launcher.Advanced")}</span>
