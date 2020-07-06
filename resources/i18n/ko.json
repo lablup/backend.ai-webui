@@ -130,7 +130,10 @@
       "LaunchConfirmationDialog": "코드 및 데이터를 계속 유지하거나 다른 공동 작업자들과 공유하기 위해서는 데이터 & 폴더 메뉴에서 스토리지 폴더를 생성하신 후, 자원을 시작할 때 해당 폴더를 마운트하고 그 안에 보관하시면 됩니다.",
       "Launch": "시작",
       "LaunchWithoutMount": "스토리지 폴더 없이 시작",
-      "Accelerator": "가속기"
+      "Accelerator": "가속기",
+      "AdvancedResourceAllocation": "상세 자원 할당",
+      "ThisSettingTakesPrecedence": "알림: 이 설정이 우선합니다",
+      "CustomResourceApplied": "임의 자원이 할당됨"
     },
     "Running": "실행중",
     "Finished": "종료",

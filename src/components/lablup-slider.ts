@@ -121,6 +121,8 @@ export default class LablupSlider extends LitElement {
         this.checkMarkerDisplay();
       }
     });
+    let event = new CustomEvent('changed', {"detail": ''});
+    this.dispatchEvent(event);
   }
 
   syncToText() {

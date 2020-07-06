@@ -1587,6 +1587,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
+  _resourceTemplateToCustom() {
+    this.shadowRoot.querySelector('#resource-templates').selectedText = _text('session.launcher.CustomResourceApplied');
+  }
+
   _getVersionInfo(version) {
     let info: any = [];
     let fragment = version.split('-');
@@ -1756,6 +1760,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            .shmem="${item.shmem}">
                 <div class="horizontal layout end-justified">
                   <div style="width:110px;">${item.name}</div>
+                  <div style="display:none"> (</div>
                   <div style="width:50px;text-align:right;">${item.cpu}<span style="display:none">CPU</span></div>
                   <div style="width:50px;text-align:right;">${item.mem}GB</div>
                   <div style="width:50px;text-align:right;">${item.shmem ? html`${item.shmem}GB` : html`64MB`}</div>
@@ -1765,6 +1770,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} ROCM GPU` : html``}
                     ${item.tpu_device && item.tpu_device > 0 ? html`${item.tpu_device} TPU` : html``}
                   </div>
+                  <div style="display:none">)</div>
                 </div>
               </mwc-list-item>
             `)}
@@ -1780,14 +1786,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ` : html``}
             </mwc-select>
           </div>
-          <wl-expansion name="resource-group" open>
-            <span slot="title">${_t("session.launcher.Advanced")}</span>
-            <span slot="description">${_t("session.launcher.CustomAllocation")}</span>
+          <wl-expansion name="resource-group" open style="--expansion-header-padding:16px;">
+            <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.CustomAllocation")}</span>
+            <span slot="description" style="font-size:12px;color:#646464;">${_t("session.launcher.ThisSettingTakesPrecedence")}</span>
             <div class="vertical layout">
               <div class="horizontal center layout">
                 <div class="resource-type" style="width:70px;">CPU</div>
                 <lablup-slider id="cpu-resource" class="cpu"
                                pin snaps expand editable markers
+                               @click="${this._resourceTemplateToCustom}"
                                marker_limit="${this.marker_limit}"
                                min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                                value="${this.cpu_request}"></lablup-slider>
@@ -1800,6 +1807,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="resource-type" style="width:70px;">RAM</div>
               <lablup-slider id="mem-resource" class="mem"
                              pin snaps step=0.05 editable markers
+                             @click="${this._resourceTemplateToCustom}"
                              marker_limit="${this.marker_limit}"
                              min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                              value="${this.mem_request}"></lablup-slider>
@@ -1812,6 +1820,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="resource-type" style="width:70px;">${_t("session.launcher.SharedMemory")}</div>
               <lablup-slider id="shmem-resource" class="mem"
                              pin snaps step=0.0025 editable markers
+                             @click="${this._resourceTemplateToCustom}"
                              marker_limit="${this.marker_limit}"
                              min="0.0" max="${this.shmem_metric.max}"
                              value="${this.shmem_request}"></lablup-slider>
@@ -1824,6 +1833,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="resource-type" style="width:70px;">GPU</div>
               <lablup-slider id="gpu-resource" class="gpu"
                              pin snaps editable markers step="${this.gpu_step}"
+                             @click="${this._resourceTemplateToCustom}"
                              marker_limit="${this.marker_limit}"
                              min="0.0" max="${this.cuda_device_metric.max}" value="${this.gpu_request}"></lablup-slider>
               <span class="caption">GPU</span>
@@ -1835,6 +1845,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="resource-type" style="width:70px;">Sessions</div>
               <lablup-slider id="session-resource" class="session"
                              pin snaps editable markers step="1"
+                             @click="${this._resourceTemplateToCustom}"
                              marker_limit="${this.marker_limit}"
                              min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
               <span class="caption">#</span>
@@ -1845,9 +1856,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
         </wl-expansion>
 
-        <wl-expansion name="ownership">
-          <span slot="title">${_t("session.launcher.Ownership")}</span>
-          <span slot="description">${_t("session.launcher.SetSessionOwner")}</span>
+        <wl-expansion name="ownership" style="--expansion-header-padding:16px;">
+          <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.SetSessionOwner")}</span>
+          <span slot="description"></span>
           <div class="vertical layout">
             <div class="horizontal center layout">
               <mwc-textfield id="owner-email" type="email" class="flex" value=""
