@@ -75,6 +75,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     'max': '1'
   };
   @property({type: Number}) lastQueryTime = 0;
+  @property({type: Number}) lastResourcePolicyQueryTime = 0;
   @property({type: Number}) lastVFolderQueryTime = 0;
   @property({type: String}) scaling_group;
   @property({type: Array}) scaling_groups;
@@ -282,11 +283,13 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    *
    */
   async _refreshResourcePolicy() {
+    if (Date.now() - this.lastResourcePolicyQueryTime < 2000) {
+      return Promise.resolve(false);
+    }
+    this.lastResourcePolicyQueryTime = Date.now();
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['resource_policy', 'concurrency_used']).then((response) => {
       let policyName = response.keypair.resource_policy;
       this.concurrency_used = response.keypair.concurrency_used;
-      // Workaround: We need a new API for user mode resource policy access, and current resource usage.
-      // TODO: Fix it to use API-based resource max.
       return globalThis.backendaiclient.resourcePolicy.get(policyName, ['default_for_unspecified',
         'total_resource_slots',
         'max_concurrent_sessions',
