@@ -890,7 +890,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, config) {
-    return globalThis.backendaiclient.createKernel(kernelName, sessionName, config);
+    return globalThis.backendaiclient.createKernel(kernelName, sessionName, config, 10000);
   }
 
   _hideSessionDialog() {

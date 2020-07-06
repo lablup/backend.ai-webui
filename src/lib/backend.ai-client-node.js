@@ -704,8 +704,8 @@ class Client {
         return this._wrapWithPromise(rqst);
     }
     // legacy aliases
-    createKernel(kernelType, sessionId = undefined, resources = {}) {
-        return this.createIfNotExists(kernelType, sessionId, resources);
+    createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
+        return this.createIfNotExists(kernelType, sessionId, resources, timeout);
     }
     destroyKernel(sessionId, ownerKey = null) {
         return this.destroy(sessionId, ownerKey);
