@@ -1339,7 +1339,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (this.resource_templates_filtered !== [] && this.resource_templates_filtered.length > 0) {
         let resource = this.resource_templates_filtered[0];
         this._chooseResourceTemplate(resource);
-        this.shadowRoot.querySelector('#resource-templates').select(1);
+        this.shadowRoot.querySelector('#resource-templates').layout(true).then(() => {
+          this.shadowRoot.querySelector('#resource-templates').select(1);
+        });
       } else {
         this._updateResourceIndicator(this.cpu_metric.min, this.mem_metric.min, 'none', 0);
       }
@@ -1737,10 +1739,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div style="width:50px;text-align:right;">CPU</div>
                   <div style="width:50px;text-align:right;">RAM</div>
                   <div style="width:50px;text-align:right;">${_t("session.launcher.SharedMemory")}</div>
-                  <div style="width:100px;text-align:right;">${_t("session.launcher.Accelerator")}</div>
+                  <div style="width:90px;text-align:right;">${_t("session.launcher.Accelerator")}</div>
                 </h5>
             ${this.resource_templates_filtered.map(item => html`
-              <mwc-list-item value="${item}"
+              <mwc-list-item value="${item.name}"
                            id="${item.name}-button"
                            @click="${(e) => {
       this._chooseResourceTemplate(e);
@@ -1754,10 +1756,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            .shmem="${item.shmem}">
                 <div class="horizontal layout end-justified">
                   <div style="width:110px;">${item.name}</div>
-                  <div style="width:50px;text-align:right;">${item.cpu}</div>
+                  <div style="width:50px;text-align:right;">${item.cpu}<span style="display:none">CPU</span></div>
                   <div style="width:50px;text-align:right;">${item.mem}GB</div>
                   <div style="width:50px;text-align:right;">${item.shmem ? html`${item.shmem}GB` : html`64MB`}</div>
-                  <div style="width:100px;text-align:right;">
+                  <div style="width:90px;text-align:right;">
                     ${item.cuda_device && item.cuda_device > 0 ? html`${item.cuda_device} CUDA GPU` : html``}
                     ${item.cuda_shares && item.cuda_shares > 0 ? html`${item.cuda_shares} GPU` : html``}
                     ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} ROCM GPU` : html``}
