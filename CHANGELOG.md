@@ -1,5 +1,13 @@
 # Changelog
 
+
+## v20.07.4 (06/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Set environment name with tags [#598](https://github.com/lablup/backend.ai-console/issues/598)
+
+
 ## v20.07.3 (06/07/2020)
 
 #### Enhancements:
