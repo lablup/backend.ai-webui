@@ -1,5 +1,12 @@
 # Changelog
 
+## v20.07.3 (06/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**][**hard**] Stabilize the resource broker with refactoring [#596](https://github.com/lablup/backend.ai-console/issues/596)
+
+
 ## v20.07.2 (03/07/2020)
 
 #### Bug Fixes:
