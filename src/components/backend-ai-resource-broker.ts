@@ -323,6 +323,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             }
           }
         });
+        if (typeof this.gpu_mode == 'undefined') {
+          this.gpu_mode = 'none';
+        }
       });
     } else {
       return Promise.resolve(true);
