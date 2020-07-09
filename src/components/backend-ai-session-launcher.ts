@@ -841,10 +841,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       document.dispatchEvent(event);
       if (res.length === 1) {
         res[0].taskobj.then(res => {
-          const appOptions = {
-            'session-name': res.kernelId,
-            'access-key': ''
-          };
+          let appOptions;
+          if ('kernelId' in res) {
+            appOptions = {
+              'session-name': res.kernelId,
+              'access-key': ''
+            };
+          } else {
+            appOptions = {
+              'session-name': res.sessionId,
+              'access-key': ''
+            };
+          }
           let service_info = res.servicePorts;
           if (Array.isArray(service_info) === true) {
             appOptions['app-services'] = service_info.map(a => a.name);
