@@ -13,9 +13,7 @@ import 'weightless/progress-spinner';
 
  Example:
 
- <lablup-loading-spinner>
- ... content ...
- </lablup-loading-spinner>
+ <lablup-loading-spinner></lablup-loading-spinner>
 
  @group Backend.AI Console
  @element lablup-loading-spinner

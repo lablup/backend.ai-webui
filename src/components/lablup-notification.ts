@@ -19,9 +19,7 @@ import {store} from '../store';
 
  Example:
 
- <lablup-notification>
- ... content ...
- </lablup-notification>
+ <lablup-notification></lablup-notification>
 
  @group Backend.AI Console
  @element lablup-notification

@@ -22,9 +22,7 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
 
  Example:
 
- <lablup-slider>
- ... content ...
- </lablup-slider>
+ <lablup-slider></lablup-slider>
 
  @group Backend.AI Console
  @element lablup-slider

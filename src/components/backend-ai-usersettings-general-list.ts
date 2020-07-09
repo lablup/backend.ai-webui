@@ -29,6 +29,21 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
 import './lablup-codemirror';
 
+/**
+ Backend AI Usersettings General List
+
+ `backend-ai-usersettings-general-list` is list of user settings such as preference, desktop notification, etc.
+
+ Example:
+
+ <backend-ai-usersettings-general-list>
+ ...
+ </backend-ai-usersettings-general-list>
+
+ @group Backend.AI Console
+ @element backend-ai-usersettings-general-list
+ */
+
 @customElement("backend-ai-usersettings-general-list")
 export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   public spinner: any;

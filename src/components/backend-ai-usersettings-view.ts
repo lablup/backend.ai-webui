@@ -31,6 +31,19 @@ import './lablup-loading-spinner';
 import './backend-ai-error-log-list';
 import './backend-ai-usersettings-general-list';
 
+/**
+ Backend AI Usersettings View
+
+ Example:
+
+ <backend-ai-usersettings-view>
+  ...
+ </backend-ai-usersettings-view>
+
+ @group Backend.AI Console
+ @element backend-ai-usersettings-view
+ */
+
 @customElement("backend-ai-usersettings-view")
 export default class BackendAiUserSettingsView extends BackendAIPage {
   public spinner: any;

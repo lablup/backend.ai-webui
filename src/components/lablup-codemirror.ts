@@ -18,9 +18,7 @@ import {CodemirrorThemeMonokai} from '../lib/codemirror/theme/monokai.css.js';
 
  Example:
 
- <lablup-codemirror>
- ...
- </lablup-codemirror>
+ <lablup-codemirror></lablup-codemirror>
 
  @group Backend.AI Console
  @element lablup-codemirror
