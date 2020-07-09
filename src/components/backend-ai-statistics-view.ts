@@ -26,7 +26,9 @@ import {
 
  Example:
 
- <backend-ai-statistics-view></backend-ai-statistics-view>
+ <backend-ai-statistics-view active>
+ ...
+ </backend-ai-statistics-view>
 
  @group Backend.AI Console
  @element backend-ai-statistics-view

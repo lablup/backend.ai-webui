@@ -36,7 +36,7 @@ import './backend-ai-usersettings-general-list';
 
  Example:
 
- <backend-ai-usersettings-view>
+ <backend-ai-usersettings-view active>
   ...
  </backend-ai-usersettings-view>
 

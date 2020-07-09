@@ -35,7 +35,9 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
  `<backend-ai-summary-view>` is a Summary panel of backend.ai console.
 
  Example:
- <backend-ai-summary-view active></backend-ai-summary-view>
+ <backend-ai-summary-view active>
+ ...
+ </backend-ai-summary-view>
 
  @group Lablup Elements
  @element backend-ai-summary-view
