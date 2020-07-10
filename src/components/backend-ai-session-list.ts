@@ -11,7 +11,6 @@ import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@material/mwc-textfield/mwc-textfield';
 
 import {default as AnsiUp} from '../lib/ansiup';

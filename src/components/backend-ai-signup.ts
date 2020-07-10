@@ -240,9 +240,7 @@ export default class BackendAiSignup extends BackendAIPage {
       this.notification.show();
       setTimeout(() => {
         this.signupPanel.hide();
-        if (response.verification_email_sent) {
-          this.shadowRoot.querySelector('#email-sent-dialog').show();
-        }
+        this.shadowRoot.querySelector('#email-sent-dialog').show();
       }, 1000);
     }).catch((e) => {
       if (e.message) {

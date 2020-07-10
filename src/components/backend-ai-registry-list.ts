@@ -8,7 +8,6 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';

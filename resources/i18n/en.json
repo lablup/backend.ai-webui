@@ -127,9 +127,14 @@
       "NoDescriptionFound": "No description found.",
       "NoFolderMounted": "No Storage folder is mounted",
       "HomeDirectoryDeletionDialog": "The home directory in the session is automatically deleted when the session ends.",
-      "LaunchConfirmationDialog": "To keep your code and data, or share it with other collaborators, simply create a storage folder in the data &amp; storage sidebar, then mount that folder when you start the resource and keep it there.",
+      "LaunchConfirmationDialog": "To keep your code and data, or share it with other collaborators, simply create a storage folder in the data & storage sidebar, then mount that folder when you start the resource and keep it there.",
       "Launch": "Launch",
-      "LaunchWithoutMount": "Launch Without Storage Folder"
+      "LaunchWithoutMount": "Launch Without Storage Folder",
+      "Accelerator": "Accelerator",
+      "AdvancedResourceAllocation": "AdvancedResourceAllocation",
+      "ThisSettingTakesPrecedence": "Note: This setting takes precedence",
+      "CustomResourceApplied": "Custom resource is applied",
+      "PleaseChooseFoldersToMount": "Please Choose Folders To Mount"
     },
     "Running": "Running",
     "Finished": "Finished",
