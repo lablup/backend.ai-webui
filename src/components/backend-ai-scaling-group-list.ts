@@ -26,6 +26,19 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
+/**
+ Backend AI Scaling Group List
+
+ `backend-ai-scaling-group-list` manages scaling group.
+
+ Example:
+
+ <backend-ai-scaling-group-list active></backend-ai-scaling-group-list>
+
+ @group Backend.AI Console
+ @element backend-ai-scaling-group-list
+ */
+
 @customElement("backend-ai-scaling-group-list")
 export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this._controlRenderer.bind(this);

@@ -12,6 +12,19 @@ import 'weightless/icon';
 import {navigate} from '../backend-ai-app';
 import {store} from '../store';
 
+/**
+ Lablup Notification
+
+ `lablup-notification` notifies backend.ai console logs.
+
+ Example:
+
+ <lablup-notification></lablup-notification>
+
+ @group Backend.AI Console
+ @element lablup-notification
+ */
+
 @customElement("lablup-notification")
 export default class LablupNotification extends LitElement {
   public shadowRoot: any;
@@ -166,6 +179,12 @@ export default class LablupNotification extends LitElement {
     notification.appendChild(button);
   }
 
+  /**
+   * Show notifications
+   *
+   * @param {boolean} persistent - if persistent is false, the snackbar is hidden automatically after 3000ms
+   * @param {object} log
+   * */
   async show(persistent: boolean = false, log: object = Object()) {
     let snackbar = document.querySelector("wl-snackbar[persistent='true']");
     if (snackbar) {
@@ -266,6 +285,10 @@ export default class LablupNotification extends LitElement {
     localStorage.setItem(key, JSON.stringify(current_log));
   }
 
+  /**
+   * Collect only the open notification and slice the log so that it does not exceed a certain length.
+   * And, set step as the length of notification.
+   * */
   gc() {
     if (this.notifications.length > 0) {
       let opened_notifications = this.notifications.filter(noti => noti.open === true);

@@ -43,6 +43,17 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend AI Session Launcher
+
+ Example:
+
+ <backend-ai-session-launcher active></backend-ai-session-launcher>
+
+ @group Backend.AI Console
+ @element backend-ai-session-launcher
+ */
+
 @customElement("backend-ai-session-launcher")
 export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) is_connected = false;
@@ -1021,6 +1032,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.version_selector.selectedText = resultArray.join(' / ');
   }
 
+  /**
+   * Rondomly generate session ID
+   * */
   generateSessionId() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -1465,6 +1479,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.gpu_request_type = gpu_type;
   }
 
+  /**
+   * Select default_language and then set _default_language_updated to true.
+   * */
   async selectDefaultLanguage() {
     if (this._default_language_updated === true) {
       return;

@@ -9,6 +9,21 @@ import 'weightless/icon';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Lablup Activitiy Panel
+
+ `lablup-activity-panel` is activity panel with close button.
+
+ Example:
+
+ <lablup-activity-panel>
+ ...
+ </lablup-activity-panel>
+
+ @group Backend.AI Console
+ @element lablup-activity-panel
+ */
+
 @customElement("lablup-activity-panel")
 export default class LablupActivityPanel extends LitElement {
   public shadowRoot: any; // ShadowRoot

@@ -1,3 +1,12 @@
+/**
+ Backend AI Painkiller
+
+ `backend-ai-painkiller` informs error messages.
+
+ @group Backend.AI Console
+ @element backend-ai-painkiller
+ */
+
 'use strict';
 declare global {
   interface Window {

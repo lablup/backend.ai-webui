@@ -26,6 +26,15 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
+/**
+ Backend AI Registry List
+
+ `backend-ai-registry-list` manages registries.
+
+ @group Backend.AI Console
+ @element backend-ai-release-check
+ */
+
 @customElement("backend-ai-registry-list")
 class BackendAIRegistryList extends BackendAIPage {
   public registryList: any;

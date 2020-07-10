@@ -34,6 +34,22 @@ import {
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
 
+/**
+ Backend AI User List
+
+ `backend-ai-user-list` is list of user details.
+ Through this, user information can be read or modified, and the user can be logged out.
+
+ Example:
+
+ <backend-ai-user-list>
+ ...
+ </backend-ai-user-list>
+
+ @group Backend.AI Console
+ @element backend-ai-user-list
+ */
+
 @customElement("backend-ai-user-list")
 export default class BackendAIUserList extends BackendAIPage {
   @property({type: Boolean}) isAdmin = false;

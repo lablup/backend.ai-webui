@@ -21,6 +21,19 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend AI Statistics View
+
+ Example:
+
+ <backend-ai-statistics-view active>
+ ...
+ </backend-ai-statistics-view>
+
+ @group Backend.AI Console
+ @element backend-ai-statistics-view
+ */
+
 @customElement("backend-ai-statistics-view")
 export default class BackendAIStatisticsView extends BackendAIPage {
   @property({type: String}) _status = "inactive";

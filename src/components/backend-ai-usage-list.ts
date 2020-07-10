@@ -21,6 +21,21 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend AI Usage List
+
+ `backend-ai-usage-list` is usage list of resources.
+
+ Example:
+
+ <backend-ai-usage-list>
+ ...
+ </backend-ai-usage-list>
+
+ @group Backend.AI Console
+ @element backend-ai-usage-list
+ */
+
 @customElement("backend-ai-usage-list")
 export default class BackendAIUsageList extends BackendAIPage {
   @property({type: Object}) _map = {
@@ -105,6 +120,9 @@ export default class BackendAIUsageList extends BackendAIPage {
     //this.init();
   }
 
+  /**
+   * Initialize backend ai chart
+   * */
   init() {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener("backend-ai-connected", () => {
@@ -139,6 +157,9 @@ export default class BackendAIUsageList extends BackendAIPage {
     }
   }
 
+  /**
+   * Read user stats that belongs to specific period
+   * */
   readUserStat() {
     return globalThis.backendaiclient.resources.user_stats()
       .then(res => {
@@ -168,6 +189,11 @@ export default class BackendAIUsageList extends BackendAIPage {
       });
   }
 
+  /**
+   * Change the data according to the item selected in the pull down menu.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   * */
   pulldownChange(e) {
     this.period = e.target.value;
 

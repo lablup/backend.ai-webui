@@ -47,6 +47,21 @@ import tus from '../lib/tus';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
+/**
+ Backend AI Storage List
+
+ `backend-ai-storage-list` is list of storage folder.
+
+ Example:
+
+ <backend-ai-storage-list>
+ ...
+ </backend-ai-storage-list>
+
+ @group Backend.AI Console
+ @element backend-ai-storage-list
+ */
+
 @customElement("backend-ai-storage-list")
 export default class BackendAiStorageList extends BackendAIPage {
   @property({type: String}) storageType = 'general';
