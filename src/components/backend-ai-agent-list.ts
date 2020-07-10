@@ -20,6 +20,19 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
+/**
+ Backend.AI Agent List
+
+ Example:
+
+ <backend-ai-agent-list active=true>
+ ... content ...
+ </backend-ai-agent-list>
+
+ @group Backend.AI Console
+ @element backend-ai-agent-list
+ */
+
 @customElement("backend-ai-agent-list")
 export default class BackendAIAgentList extends BackendAIPage {
   @property({type: String}) condition = 'running';

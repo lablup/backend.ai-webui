@@ -18,6 +18,18 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend.AI Email Verification View
+
+ Example:
+
+ <backend-ai-email-verification-view class="page" name="email-verification" ?active="${0}">
+ ... content ...
+ </backend-ai-email-verification-view>
+
+ @group Backend.AI Console
+ @element backend-ai-email-verification-view
+ */
 
 @customElement("backend-ai-email-verification-view")
 export default class BackendAIEmailVerificationView extends BackendAIPage {
@@ -62,6 +74,11 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     window.location.href = '/';
   }
 
+  /**
+   * verify the client
+   * 
+   * @param {string} apiEndpoint - endpoint api of Backend.AI manager
+   */
   async verify(apiEndpoint: string) {
     const queryParams = new URLSearchParams(window.location.search);
     const token = queryParams.get('verification_code');

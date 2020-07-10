@@ -18,6 +18,18 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend.AI Change Forgot Password View
+
+ Example:
+
+ <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${0}">
+ ... content ...
+ </backend-ai-change-forgot-password-view>
+
+ @group Backend.AI Console
+ @element backend-ai-change-forgot-password-view
+ */
 
 @customElement("backend-ai-change-forgot-password-view")
 export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
@@ -63,6 +75,11 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     window.location.href = '/';
   }
 
+  /**
+   * Open the upadate password dialog.
+   * 
+   * @param {string} apiEndpoint - endpoint api of Backend.AI manager
+   */
   open(apiEndpoint: string) {
     const queryParams = new URLSearchParams(window.location.search);
     this.token = queryParams.get('token') || '';

@@ -28,6 +28,13 @@ import 'weightless/textfield';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 
+/**
+ Backend.AI Environment List
+
+ @group Backend.AI Console
+ @element backend-ai-environment-list
+ */
+
 @customElement("backend-ai-environment-list")
 export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Array}) images = Array();
@@ -165,6 +172,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return this.shadowRoot.querySelector(id).show();
   }
 
+  /**
+   * modify images of cpu, memory, cuda-gpu, cuda-fgpu, rocm-gpu and tpu
+   */
   modifyImage() {
     const cpu = this.shadowRoot.querySelector("#modify-image-cpu").value,
       mem = this.shadowRoot.querySelector("#modify-image-mem").value,
@@ -214,6 +224,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       })
   }
 
+  /**
+   * open the selected image
+   * 
+   * @param {object} index - selected image's index object
+   */
   openInstallImageDialog(index) {
     this.selectedIndex = index;
     let chosenImage = this.images[this.selectedIndex];

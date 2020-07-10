@@ -37,6 +37,19 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
+/**
+ Backend.AI Data View
+
+ Example:
+
+ <backend-ai-data-view class="page" name="data" ?active="${0}">
+ ... content ...
+ </backend-ai-data-view>
+
+ @group Backend.AI Console
+ @element backend-ai-data-view
+ */
+
 @customElement("backend-ai-data-view")
 export default class BackendAIData extends BackendAIPage {
   @property({type: String}) apiMajorVersion = '';

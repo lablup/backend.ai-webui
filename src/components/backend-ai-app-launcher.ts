@@ -21,6 +21,17 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend.AI App Launcher
+
+ Example:
+
+ <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
+
+ @group Backend.AI Console
+ @element backend-ai-app-launcher
+ */
+
 @customElement("backend-ai-app-launcher")
 export default class BackendAiAppLauncher extends BackendAIPage {
   public shadowRoot: any;

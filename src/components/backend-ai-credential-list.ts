@@ -33,6 +33,13 @@ import {
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
 
+/**
+ Backend.AI Credential List
+
+ @group Backend.AI Console
+ @element backend-ai-credential-list
+ */
+
 @customElement("backend-ai-credential-list")
 export default class BackendAICredentialList extends BackendAIPage {
   @property({type: Object}) notification;

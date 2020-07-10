@@ -20,6 +20,19 @@ import 'weightless/card';
 
 import './lablup-loading-spinner';
 
+/**
+ Backend.AI Information View
+
+ Example:
+
+ <backend-ai-information-view page="class" id="information" ?active="${0}">
+ ... content ...
+ </backend-ai-information-view>
+
+ @group Backend.AI Console
+ @element backend-ai-information-view
+ */
+
 @customElement("backend-ai-information-view")
 export default class BackendAiInformationView extends BackendAIPage {
 
@@ -203,6 +216,10 @@ export default class BackendAiInformationView extends BackendAIPage {
       return;
     }
   }
+
+  /**
+   * Update information of the client
+   */
   updateInformation() {
     this.manager_version = globalThis.backendaiclient.managerVersion;
     this.console_version = globalThis.packageVersion;

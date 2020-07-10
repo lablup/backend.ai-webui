@@ -26,6 +26,7 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
  </backend-ai-agent-view>
 
  @group Backend.AI Console
+ @element backend-ai-agent-view
  */
 
 @customElement("backend-ai-agent-view")

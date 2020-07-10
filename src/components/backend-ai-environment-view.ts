@@ -20,6 +20,18 @@ import './backend-ai-environment-list';
 import './backend-ai-resource-preset-list';
 import './backend-ai-registry-list';
 
+/**
+ Backend.AI Environment View
+
+ Example:
+
+ <backend-ai-environment-view class="page" name="environment" ?active="${0}">
+ ... content ...
+ </backend-ai-environment-view>
+
+ @group Backend.AI Console
+ @element backend-ai-environment-view
+ */
 
 @customElement("backend-ai-environment-view")
 export default class BackendAIEnvironmentView extends BackendAIPage {

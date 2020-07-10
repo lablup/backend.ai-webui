@@ -36,7 +36,6 @@ declare global {
   const ai: typeof aiSDK;
 }
 
-
 /**
  Backend.AI Login for GUI Console
 

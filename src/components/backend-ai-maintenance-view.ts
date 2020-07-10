@@ -21,6 +21,19 @@ import 'weightless/card';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 
+/**
+ Backend.AI Maintenance View
+
+ Example:
+
+ <backend-ai-maintenance-view class="page" name="maintenance" ?active="${0}">
+ ... content ...
+ </backend-ai-maintenance-view>
+
+ @group Backend.AI Console
+ @element backend-ai-maintenance-view
+ */
+
 @customElement("backend-ai-maintenance-view")
 export default class BackendAiMaintenanceView extends BackendAIPage {
 
@@ -156,6 +169,9 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     }
   }
 
+  /**
+   * rescan the image
+   */
   async rescan_images() {
     this.shadowRoot.querySelector('#rescan-image-button-desc').textContent = _text("maintenance.RescanImageScanning");
     this.scanning = true;
@@ -183,6 +199,9 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
       }), '', 'image');
   }
 
+  /**
+   * recalculate the usage
+   */
   async recalculate_usage() {
     this.shadowRoot.querySelector('#recalculate_usage-button-desc').textContent = _text('maintenance.Recalculating');
     this.recalculating = true;

@@ -30,6 +30,19 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend.AI Experiment View
+
+ Example:
+
+ <backend-ai-experiment-view class="page" name="experiment" ?active="${0}">
+ ... content ...
+ </backend-ai-experiment-view>
+
+ @group Backend.AI Console
+ @element backend-ai-experiment-view
+ */
+
 @customElement("backend-ai-experiment-view")
 export default class BackendAIExperimentView extends BackendAIPage {
   public supports: any;
