@@ -215,6 +215,11 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     })
   }
 
+  /**
+   * Change view state when the user clicks the tab.
+   *
+   * @param {Boolean} active
+   * */
   async _viewStateChanged(active) {
     const params = store.getState().app.params;
     const tab = params.tab;
@@ -234,10 +239,16 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   updateSettings() {
   }
 
+  /**
+   * Hide clearLogsDialog.
+   * */
   _hideClearLogsDialog() {
     this.clearLogsDialog.hide();
   }
 
+  /**
+   * Remove log message.
+   * */
   _removeLogMessage() {
     let currentLogs = localStorage.getItem('backendaiconsole.logs');
     if (currentLogs) {
@@ -252,16 +263,27 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     this.spinner.hide();
   }
 
+  /**
+   * Show clearLogsDialog.
+   * */
   _showClearLogsDialog() {
     this.clearLogsDialog.show();
   }
 
+  /**
+   * Refresh log messages.
+   * */
   _refreshLogs() {
     this.logGrid = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
     let event = new CustomEvent("log-message-refresh", this.logGrid);
     document.dispatchEvent(event);
   }
 
+  /**
+   * Show only one tab clicked by user.
+   *
+   * @param {EventTarget} tab - clicked tab
+   * */
   _showTab(tab) {
     let els = this.shadowRoot.querySelectorAll(".tab-content");
     for (let x = 0; x < els.length; x++) {

@@ -127,6 +127,9 @@ export default class LablupNotification extends LitElement {
 
   }
 
+  /**
+   * Get user settings and set options according to user settings.
+   * */
   _readUserSetting(name, default_value = true) {
     let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
     if (value !== null && value != '' && value != '""') {
@@ -142,12 +145,22 @@ export default class LablupNotification extends LitElement {
     }
   }
 
+  /**
+   * When click the close_button, hide dialog(wl-snackbar).
+   *
+   * @param {Event} e - Click the close_button
+   * */
   _hideNotification(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-snackbar');
     dialog.hide();
   }
 
+  /**
+   * When click the more_button, dispatch 'backend-ai-usersettings-logs' event.
+   *
+   * @param {Event} e - Click the more_button
+   * */
   _moreNotification(e) {
     // const notification = e.target.closest('wl-snackbar');
     // const button = e.target.closest('wl-button');
@@ -169,6 +182,9 @@ export default class LablupNotification extends LitElement {
     }
   }
 
+  /**
+   * Create close_button that bind with function '_hideNotification(e)'
+   * */
   _createCloseButton(notification) {
     let button = document.createElement('wl-button');
     button.setAttribute('slot', "action");
@@ -261,6 +277,13 @@ export default class LablupNotification extends LitElement {
     this._spawnDesktopNotification("Backend.AI", this.text, '');
   }
 
+  /**
+   * Spawn new desktop notification that is used to configure and display desktop notifications to the user.
+   *
+   * @param {string} title - Title of Notification
+   * @param {string} body  - Body of Notification
+   * @param {string} icon  - Icon of Notification
+   * */
   _spawnDesktopNotification(title, body, icon) {
     if (this.supportDesktopNotification === false) {
       return;
@@ -272,6 +295,11 @@ export default class LablupNotification extends LitElement {
     this.newDesktopNotification = new Notification(title, options);
   }
 
+  /**
+   * Open a blank page with url.
+   *
+   * @param {string} url - Address of open page
+   * */
   _openURL(url) {
     window.open(url, '_blank');
   }

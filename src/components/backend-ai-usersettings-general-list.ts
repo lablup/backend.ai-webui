@@ -36,9 +36,7 @@ import './lablup-codemirror';
 
  Example:
 
- <backend-ai-usersettings-general-list>
- ...
- </backend-ai-usersettings-general-list>
+ <backend-ai-usersettings-general-list active="true"></backend-ai-usersettings-general-list>
 
  @group Backend.AI Console
  @element backend-ai-usersettings-general-list
@@ -214,6 +212,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
+  /**
+   * Toggle desktop_notification.
+   *
+   * @param {Event} e - click the desktop-notification-switch
+   * */
   toggleDesktopNotification(e) {
     if (e.target.checked === false) {
       globalThis.backendaioptions.set('desktop_notification', false);
@@ -224,6 +227,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
+  /**
+   * Toggle compact_sidebar.
+   *
+   * @param {Event} e - click the compact-sidebar-switch
+   * */
   toggleCompactSidebar(e) {
     if (e.target.checked === false) {
       globalThis.backendaioptions.set('compact_sidebar', false);
@@ -232,6 +240,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
+  /**
+   * Toggle preserve_login.
+   *
+   * @param {Event} e - click the preserve-login-switch
+   * */
   togglePreserveLogin(e) {
     if (e.target.checked === false) {
       globalThis.backendaioptions.set('preserve_login', false);
@@ -240,6 +253,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
+  /**
+   * Toggle automatic_update_check. If automatic_update_check is true, set automatic_update_count_trial to 0.
+   *
+   * @param {Event} e - click the automatic-update-check-switch
+   * */
   toggleAutomaticUploadCheck(e) {
     if (e.target.checked === false) {
       globalThis.backendaioptions.set('automatic_update_check', false);
@@ -249,6 +267,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
+  /**
+   * Set language.
+   *
+   * @param {Event} e - select the ui-language item
+   * */
   setUserLanguage(e) {
     if (e.target.selected.value !== globalThis.backendaioptions.get('language')) {
       globalThis.backendaioptions.set('language', e.target.selected.value);
@@ -257,6 +280,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
+  /**
+   * Change custom_ssh_port.
+   *
+   * @param {Event} e - fill the textfield
+   * */
   changePreferredSSHPort(e) {
     const value = Number(e.target.value);
     if (value !== globalThis.backendaioptions.get('custom_ssh_port', '')) {
@@ -272,6 +300,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
+  /**
+   * Toggle beta_feature.
+   *
+   * @param {Event} e - click the beta-feature-switch
+   * */
   toggleBetaFeature(e) {
     if (e.target.checked === false) {
       globalThis.backendaioptions.set('beta_feature', false);
@@ -331,6 +364,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.bootstrapDialog.hide();
   }
 
+  /**
+   * Edit user's .bashrc or .zshrc code.
+   * */
   async _editUserConfigScript() {
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     this.rcfiles = await this._fetchUserConfigScript();
@@ -463,6 +499,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
+  /**
+   * Change current editor code according to select-rcfile-type.
+   * */
   _changeCurrentEditorData() {
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     let select = this.shadowRoot.querySelector('#select-rcfile-type');
@@ -471,6 +510,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     editor.setValue(code);
   }
 
+  /**
+   * Toggle RcFile name according to editor code.
+   * */
   _toggleRcFileName() {
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     let select = this.shadowRoot.querySelector('#select-rcfile-type');
@@ -489,6 +531,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
+  /**
+   * Delete user's config script.
+   *
+   * @param {string} path - path that you want to delete
+   * */
   _deleteRcFile(path: string) {
     if (path) {
       globalThis.backendaiclient.userConfig.delete_dotfile_script(path).then(res => {

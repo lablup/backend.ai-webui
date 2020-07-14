@@ -79,6 +79,12 @@ export default class BackendAIStatisticsView extends BackendAIPage {
     ]
   }
 
+  /**
+   * If active is false, set _status to inactive and remove active attribute.
+   * Else, set both _status and #usage-list items to active.
+   *
+   * @param {boolean} active
+   * */
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -93,6 +99,11 @@ export default class BackendAIStatisticsView extends BackendAIPage {
     this._status = "active";
   }
 
+  /**
+   * Show the contents contained in the selected tab.
+   *
+   * @param {EventTarget} tab - usage tab to want to show
+   * */
   _showTab(tab) {
     const els = this.shadowRoot.querySelectorAll(".tab-content");
 

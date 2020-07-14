@@ -59,6 +59,9 @@ export default class LablupCodemirror extends LitElement {
     this._initEditor();
   }
 
+  /**
+   * Initialize codemirror editor.
+   * */
   _initEditor() {
     const cm = this.shadowRoot.querySelector('#codemirror-editor');
     if (!cm.__initialized) {

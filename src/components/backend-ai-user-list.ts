@@ -176,6 +176,11 @@ export default class BackendAIUserList extends BackendAIPage {
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
     }
 
+  /**
+   * If active is true, change view state
+   *
+   * @param {Boolean} active - boolean value that determines whether view state is changed or not
+   * */
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -301,6 +306,12 @@ export default class BackendAIUserList extends BackendAIPage {
     return this.condition === 'active';
   }
 
+  /**
+   * Return elapsed time
+   *
+   * @param {Date} start
+   * @param {Date} end
+   * */
   _elapsed(start, end) {
     var startDate = new Date(start);
     if (this.condition == 'active') {
@@ -313,10 +324,22 @@ export default class BackendAIUserList extends BackendAIPage {
     return days;
   }
 
+  /**
+   * Date to UTC string
+   *
+   * @param {Date} d - date
+   * */
   _humanReadableTime(d) {
     return new Date(d).toUTCString();
   }
 
+  /**
+   * Render index to root element.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
     render(
@@ -327,6 +350,9 @@ export default class BackendAIUserList extends BackendAIPage {
     );
   }
 
+  /**
+   * Return an unlimited mark if unlimited sign is included.
+   * */
   _markIfUnlimited(value) {
     if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
@@ -335,6 +361,11 @@ export default class BackendAIUserList extends BackendAIPage {
     }
   }
 
+  /**
+   * Update items
+   *
+   * @param {number} page - number of page
+   * */
   _updateItemsFromPage(page) {
     if (typeof page !== 'number') {
       let page_action = page.target;
@@ -352,6 +383,13 @@ export default class BackendAIUserList extends BackendAIPage {
     this.userView = this.users.slice(start, end);
   }
 
+  /**
+   * Control rendering - showUserDetail, editUserDetail, signoutUserDialog.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   controlRenderer(root, column?, rowData?) {
     render(
       html`
@@ -389,6 +427,11 @@ export default class BackendAIUserList extends BackendAIPage {
     dialog.hide();
   }
 
+  /**
+   * Save any changes. - username, full_name, password, etc.
+   *
+   * @param {Event} event - click SaveChanges button
+   * */
   _saveChanges(event) {
     const username = this.shadowRoot.querySelector('#username').value,
       full_name = this.shadowRoot.querySelector('#full_name').value,

@@ -591,6 +591,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
+  /**
+   * Update selected scaling groups.
+   * An element should update based on some state not triggered by setting a property.
+   * */
   _updateSelectedScalingGroup() {
     let Sgroups = this.shadowRoot.querySelector('#scaling-groups');
     this.scaling_groups = this.resourceBroker.scaling_groups;
@@ -608,6 +612,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     Sgroups.requestUpdate();
   }
 
+  /**
+   * Update scaling groups asynchronously.
+   * If forceUpdate is true, call _refreshResourcePolicy().
+   * Else, call updateResourceAllocationPane().
+   *
+   * @param {boolean} forceUpdate - whether to refresh resource policy or not
+   * @param {any} e
+   * */
   async updateScalingGroup(forceUpdate = false, e) {
     if (this.active) {
       await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
@@ -620,6 +632,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
+  /**
+   * Update selected folders
+   * */
   _updateSelectedFolder() {
     let folders = this.shadowRoot.querySelector('#vfolder');
     let selectedFolders = folders.value;
@@ -632,6 +647,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     folders.select(indexes);
   }
 
+  /**
+   * If active is true, change view states. - update page variables, disable enter key.
+   *
+   * @param {Boolean} active - whether view states change or not
+   * */
   async _viewStateChanged(active) {
     await this.updateComplete;
 
@@ -687,6 +707,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
   }
 
+  /**
+   * If backendaiclient is not ready, notify wait for initializing.
+   * Else, launch session dialog.
+   * */
   async _launchSessionDialog() {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false || this.resourceBroker.image_updating === true) {
       this.notification.text = _text('session.launcher.PleaseWaitInitializing');
@@ -718,6 +742,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return kernel + ':' + version;
   }
 
+  /**
+   * If vfolder has not any items, show launch-confirmation-dialog.
+   * Else, make new session by call _newSession().
+   * */
   _newSessionWithConfirmation() {
     let vfolder = this.shadowRoot.querySelector('#vfolder').value;
     if (vfolder.length === 0) {
@@ -728,6 +756,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
+  /**
+   * Make a new session.
+   * */
   _newSession() {
     let confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
     confirmationDialog.hide();
@@ -1023,6 +1054,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
+  /**
+   * Update version_selector's selectedText.
+   *
+   * @param {any} text - version
+   * */
   _updateVersionSelectorText(text) {
     let res = this._getVersionInfo(text);
     let resultArray: string[] = [];
@@ -1049,6 +1085,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
   }
 
+  /**
+   * Aggregate used resources from manager and save them.
+   *
+   * @param {string} from - set the value for debugging purpose
+   * */
   async _aggregateResourceUse(from: string = '') {
     return this.resourceBroker._aggregateCurrentResource(from).then(async (res) => {
       if (res === false) {
@@ -1099,6 +1140,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
+  /**
+   * Update resource allocation pane
+   * - resource policy, metrics of cpu, gpu, rocm, tpu, memory, and shared memory
+   *
+   * @param {string} from
+   * */
   async updateResourceAllocationPane(from: string = '') {
     if (this.metric_updating == true) {
       //console.log('update metric blocked');
@@ -1431,6 +1478,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.shadowRoot.querySelector('#advanced-resource-settings').toggle();
   }
 
+  /**
+   * Choose resource template
+   * - cpu, mem, cuda_device, cuda_shares, rocm_device, tpu_device, shmem
+   *
+   * @param {Event} e
+   * */
   _chooseResourceTemplate(e) {
     let button;
     if (typeof e.cpu !== 'undefined') {
@@ -1517,6 +1570,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return false;
   }
 
+  /**
+   * Fetch session owner groups.
+   * - owner email, keypair, and domain / group information
+   * */
   async _fetchSessionOwnerGroups() {
     if (!this.ownerFeatureInitialized) {
       this.shadowRoot.querySelector('#owner-group').addEventListener('selected-item-label-changed', this._fetchSessionOwnerScalingGroups.bind(this));
@@ -1637,6 +1694,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.shadowRoot.querySelector('#resource-templates').selectedText = _text('session.launcher.CustomResourceApplied');
   }
 
+  /**
+   * Get version information - Version, Language, Additional information.
+   *
+   * @param {any} version
+   * */
   _getVersionInfo(version) {
     let info: any = [];
     let fragment = version.split('-');

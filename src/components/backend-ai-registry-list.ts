@@ -124,6 +124,11 @@ class BackendAIRegistryList extends BackendAIPage {
     this.indicator = globalThis.lablupIndicator;
   }
 
+  /**
+   * Parse registry list according to whether obj[hostname] is string or not.
+   *
+   * @param {Object} obj - registry list
+   * */
   _parseRegistryList(obj) {
     const isString = (val) => typeof val === "string" || val instanceof String;
     return Object.keys(obj).map(hostname =>
@@ -149,6 +154,11 @@ class BackendAIRegistryList extends BackendAIPage {
     })
   }
 
+  /**
+   * Change view state. If disconnected, try connecting.
+   *
+   * @param {Boolean} active - whether view state change or not
+   * */
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -166,6 +176,11 @@ class BackendAIRegistryList extends BackendAIPage {
     }
   }
 
+  /**
+   * Get host name from url
+   *
+   * @param {string} url
+   * */
   _getHostname(url) {
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -173,6 +188,9 @@ class BackendAIRegistryList extends BackendAIPage {
     return anchor.hostname;
   }
 
+  /**
+   * Add registry with validation
+   * */
   _addRegistry() {
     // somehow type casting is needed to prevent errors, unlike similar use cases in other files
     const hostname = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-hostname")).value,
@@ -229,6 +247,9 @@ class BackendAIRegistryList extends BackendAIPage {
       })
   }
 
+  /**
+   * Delete registry
+   * */
   _deleteRegistry() {
     const name = (<HTMLInputElement>this.shadowRoot.querySelector("#delete-registry")).value;
 
@@ -250,6 +271,9 @@ class BackendAIRegistryList extends BackendAIPage {
     }
   }
 
+  /**
+   * Rescan the images if registry has been updated.
+   * */
   async _rescanImage() {
     let indicator = await this.indicator.start('indeterminate');
     indicator.set(10, 'Updating registry information...');
@@ -340,6 +364,13 @@ class BackendAIRegistryList extends BackendAIPage {
     }
   }
 
+  /**
+   * If state is true, turn on the registry.
+   * If state is false, turn off the registry.
+   *
+   * @param {string} hostname
+   * @param {boolean} state
+   * */
   _changeRegistryState(hostname, state) {
     if (state === true) {
       this.allowed_registries.push(hostname);
@@ -388,6 +419,14 @@ class BackendAIRegistryList extends BackendAIPage {
       root
     )
   }
+
+  /**
+   * Render a switch to check that registry is turned on or off.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   _isEnabledRenderer(root, column, rowData) {
     render(
       html`
@@ -399,6 +438,13 @@ class BackendAIRegistryList extends BackendAIPage {
     )
   }
 
+  /**
+   * Render control units - delete (delete registry), refresh (rescan image).
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   _controlsRenderer(root, column, rowData) {
     render(
       html`

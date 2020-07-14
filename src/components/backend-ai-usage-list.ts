@@ -105,6 +105,11 @@ export default class BackendAIUsageList extends BackendAIPage {
     super.attributeChangedCallback(name, oldval, newval);
   }
 
+  /**
+   * Wipe all of backend-ai-chart if active is false. Else, initialize the backend-ai-chart.
+   *
+   * @param {Boolean} active - flag to decide whether to change menu or not
+   * */
   async _menuChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -121,7 +126,7 @@ export default class BackendAIUsageList extends BackendAIPage {
   }
 
   /**
-   * Initialize backend ai chart
+   * Initialize backend-ai-chart
    * */
   init() {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
