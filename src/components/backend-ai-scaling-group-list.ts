@@ -186,6 +186,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     this.shadowRoot.querySelector(id).hide();
   }
 
+  /**
+   * Render control units - settings (modify-scaling-group), delete (delete-scaling-group)
+   * */
   _controlRenderer(root, column, rowData) {
     render(
       html`
@@ -214,6 +217,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     )
   }
 
+  /**
+   * Create scaling group and associate scaling group with domain.
+   * */
   _createScalingGroup() {
     const scalingGroup = this.shadowRoot.querySelector("#scaling-group-name").value,
       description = this.shadowRoot.querySelector("#scaling-group-description").value,
@@ -258,6 +264,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       })
   }
 
+  /**
+   * Modify scaling group such as description, scheduler, is_active, and name.
+   * */
   _modifyScalingGroup() {
     const description = this.shadowRoot.querySelector("#modify-scaling-group-description").value,
       scheduler = this.shadowRoot.querySelector("#modify-scaling-group-scheduler").value,
