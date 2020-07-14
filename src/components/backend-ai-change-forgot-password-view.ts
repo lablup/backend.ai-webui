@@ -57,6 +57,11 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     ];
   }
 
+  /**
+   * Initialize the client.
+   * 
+   * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
+   */
   _initClient(apiEndpoint: string) {
     this.consoleShell = document.querySelector('#console-shell');
     this.consoleShell.appBody.style.visibility = 'visible';
@@ -71,6 +76,9 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     );
   }
 
+  /**
+   * Redirect to login page.
+   */
   _redirectToLoginPage() {
     window.location.href = '/';
   }
@@ -78,7 +86,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
   /**
    * Open the upadate password dialog.
    * 
-   * @param {string} apiEndpoint - endpoint api of Backend.AI manager
+   * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   open(apiEndpoint: string) {
     const queryParams = new URLSearchParams(window.location.search);
@@ -92,6 +100,9 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     }
   }
 
+  /**
+   * Update a password.
+   */
   async _updatePassword() {
     const emailEl = this.shadowRoot.querySelector('#email');
     const passwordEl1 = this.shadowRoot.querySelector('#password1')

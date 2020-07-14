@@ -355,6 +355,11 @@ export default class BackendAIData extends BackendAIPage {
     );
   }
 
+  /**
+   * Initialize the admin.
+   * 
+   * @param {Boolean} active 
+   */
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -382,6 +387,11 @@ export default class BackendAIData extends BackendAIPage {
     }
   }
 
+  /**
+   * display tabs 
+   * 
+   * @param {object} tab 
+   */
   _showTab(tab) {
     let els = this.shadowRoot.querySelectorAll(".tab-content");
     for (let x = 0; x < els.length; x++) {
@@ -394,6 +404,9 @@ export default class BackendAIData extends BackendAIPage {
     this.shadowRoot.querySelector('#' + tab.value + '-storage').setAttribute('active', true);
   }
 
+  /**
+   * Add folder dialog.
+   */
   async _addFolderDialog() {
     let vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
     let nameEl = this.shadowRoot.querySelector('#add-folder-name');
@@ -415,6 +428,12 @@ export default class BackendAIData extends BackendAIPage {
     this.shadowRoot.querySelector('#' + id).hide();
   }
 
+  /**
+   * Display the storage description.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   * @param {object} item
+   */
   _showStorageDescription(e, item) {
     e.stopPropagation();
     if (item in this.storageInfo) {
@@ -434,6 +453,9 @@ export default class BackendAIData extends BackendAIPage {
     return index + 1;
   }
 
+  /**
+   * Add folder with name, host, type, usage mode and permission.
+   */
   _addFolder() {
     let nameEl = this.shadowRoot.querySelector('#add-folder-name');
     let name = nameEl.value;
@@ -493,6 +515,9 @@ export default class BackendAIData extends BackendAIPage {
     }
   }
 
+  /**
+   * Refresh the folder list.
+   */
   _refreshFolderList() {
     // Send notification to folder objects
     for (const list of this.folderLists) {
@@ -500,6 +525,7 @@ export default class BackendAIData extends BackendAIPage {
     }
   }
 }
+
 declare global {
   interface HTMLElementTagNameMap {
     "backend-ai-data-view": BackendAIData;

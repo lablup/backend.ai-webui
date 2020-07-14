@@ -96,6 +96,11 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     }
   }
 
+  /**
+   * Set backend.ai client to super admin.
+   * 
+   * @param {Boolean} active 
+   */
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -112,6 +117,11 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     return false;
   }
 
+  /**
+   * Display the tab.
+   * 
+   * @param tab 
+   */
   _showTab(tab) {
     var els = this.shadowRoot.querySelectorAll(".tab-content");
     for (var x = 0; x < els.length; x++) {

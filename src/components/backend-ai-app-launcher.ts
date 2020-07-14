@@ -133,6 +133,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     );
   }
 
+  /**
+   * Send a request with a get method.
+   * 
+   * @param rqst 
+   */
   async sendRequest(rqst) {
     let resp, body;
     try {
@@ -158,6 +163,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     return body;
   }
 
+  /**
+   * Get a proxy url by checking local proxy and config proxy url.
+   */
   _getProxyURL() {
     let url = 'http://127.0.0.1:5050/';
     if (globalThis.__local_proxy !== undefined) {
@@ -168,10 +176,20 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     return url;
   }
 
+  /**
+   * Display the app launcher.
+   * 
+   * @param detail 
+   */
   showLauncher(detail) {
     return this._showAppLauncher(detail);
   }
 
+  /**
+   * Display the app launcher.
+   * 
+   * @param detail 
+   */
   _showAppLauncher(detail) {
     //const controller = e.target;
     //const controls = controller.closest('#controls');
@@ -212,10 +230,20 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this.shadowRoot.querySelector('#app-dialog').show();
   }
 
+  /**
+   * Hide the app launcher.
+   */
   _hideAppLauncher() {
     this.shadowRoot.querySelector('#app-dialog').hide();
   }
 
+  /**
+   * Open a WsProxy with session and app and port number.
+   * 
+   * @param {string} sessionName 
+   * @param {string} app 
+   * @param {number} port 
+   */
   async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null) {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
@@ -273,6 +301,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
+  /**
+   * Run backend.ai app.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   async _runApp(e) {
     const controller = e.target;
     let controls = controller.closest('#app-dialog');
@@ -323,6 +356,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
+  /**
+   * Read a SSH key.
+   * 
+   * @param {string} sessionName 
+   */
   async _readSSHKey(sessionName) {
     const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
     const file = '/home/work/id_container';
@@ -336,6 +374,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     downloadLinkEl.download = 'id_container';
   }
 
+  /**
+   * Run terminal with session name.
+   * 
+   * @param {string} sessionName 
+   */
   async runTerminal(sessionName: string) {
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
       this.indicator = await globalThis.lablupIndicator.start();
@@ -354,11 +397,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
+  /**
+   * Open a SSH dialog.
+   */
   _openSSHDialog() {
     let dialog = this.shadowRoot.querySelector('#ssh-dialog');
     dialog.show();
   }
 
+  /**
+   * Open a VNC dialog.
+   */
   _openVNCDialog() {
     let dialog = this.shadowRoot.querySelector('#vnc-dialog');
     dialog.show();

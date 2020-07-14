@@ -56,6 +56,11 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     ];
   }
 
+  /**
+   * Initialize the client.
+   * 
+   * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
+   */
   _initClient(apiEndpoint: string) {
     this.consoleShell = document.querySelector('#console-shell');
     this.consoleShell.appBody.style.visibility = 'visible';
@@ -70,14 +75,17 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     );
   }
 
+  /**
+   * Redirect to login page.
+   */
   _redirectToLoginPage() {
     window.location.href = '/';
   }
 
   /**
-   * verify the client
+   * Verify the client.
    * 
-   * @param {string} apiEndpoint - endpoint api of Backend.AI manager
+   * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   async verify(apiEndpoint: string) {
     const queryParams = new URLSearchParams(window.location.search);
@@ -100,6 +108,9 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     }
   }
 
+  /**
+   * Send verification code to use email.
+   */
   async sendVerificationCode() {
     const emailEl = this.shadowRoot.querySelector('#email');
     if (!emailEl.value || !emailEl.validity.valid) return;

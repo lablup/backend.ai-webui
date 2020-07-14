@@ -241,6 +241,11 @@ export default class BackendAIExperimentView extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
   }
 
+  /**
+   * Dislplay tabs.
+   * 
+   * @param tab 
+   */
   _showTab(tab) {
     var els = this.shadowRoot.querySelectorAll(".tab-content");
     for (var x = 0; x < els.length; x++) {
@@ -249,6 +254,11 @@ export default class BackendAIExperimentView extends BackendAIPage {
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
   }
 
+  /**
+   * Hide a wl dialog.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');

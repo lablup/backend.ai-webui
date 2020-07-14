@@ -150,6 +150,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       `];
   }
 
+  /**
+   * If value includes unlimited contents, mark as unlimited.
+   * 
+   * @param value 
+   */
   _markIfUnlimited(value) {
     if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
@@ -158,22 +163,37 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
   }
 
+  /**
+   * Hide a backend.ai dialog.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
+  /**
+   * Hide a dialog by id.
+   * 
+   * @param id 
+   */
   _hideDialogById(id) {
     return this.shadowRoot.querySelector(id).hide();
   }
 
+  /**
+   * Display a dialog by id.
+   * 
+   * @param id 
+   */
   _launchDialogById(id) {
     return this.shadowRoot.querySelector(id).show();
   }
 
   /**
-   * modify images of cpu, memory, cuda-gpu, cuda-fgpu, rocm-gpu and tpu
+   * Modify images of cpu, memory, cuda-gpu, cuda-fgpu, rocm-gpu and tpu.
    */
   modifyImage() {
     const cpu = this.shadowRoot.querySelector("#modify-image-cpu").value,
@@ -225,9 +245,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * open the selected image
+   * Open the selected image.
    * 
-   * @param {object} index - selected image's index object
+   * @param {object} index - Selected image's index object.
    */
   openInstallImageDialog(index) {
     this.selectedIndex = index;
@@ -290,6 +310,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
   }
 
+  /**
+   * Render requirments such as cpu limit, memoty limit
+   * cuda share limit, rocm device limit and tpu limit.
+   * 
+   * @param {DOM element} root 
+   * @param {<vaadin-grid-column> element} column 
+   * @param {object} rowData  
+   */
   requirementsRenderer(root, column?, rowData?) {
     render(
       html`
@@ -353,6 +381,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     );
   }
 
+  /**
+   * Set resource limits to default value.
+   * 
+   * @param {object} resource_limits 
+   */
   _setPulldownDefaults(resource_limits) {
     this._cuda_gpu_disabled = resource_limits.filter(e => e.key === "cuda_device").length === 0;
     this._cuda_fgpu_disabled = resource_limits.filter(e => e.key === "cuda_shares").length === 0;
@@ -376,6 +409,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.shadowRoot.querySelector("#modify-image-mem").value = this._addUnit(resource_limits[mem_idx].min);
   }
 
+  /**
+   * Decode backend.ai service ports.
+   */
   _decodeServicePort() {
     if (this.images[this.selectedIndex].labels["ai.backend.service-ports"] === "") {
       this.servicePorts = [];
@@ -394,6 +430,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
   }
 
+  /**
+   * Parse backend.ai service ports.
+   */
   _parseServicePort() {
     const container = this.shadowRoot.querySelector("#modify-app-container");
     const rows = container.querySelectorAll(".row:not(.header)");
@@ -407,6 +446,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return Array.prototype.filter.call(rows, row => valid(row)).map(row => encodeRow(row)).join(",");
   }
 
+  /**
+   * Modify backend.ai service ports.
+   */
   modifyServicePort() {
     const value = this._parseServicePort();
     const image = this.images[this.selectedIndex];
@@ -425,6 +467,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       })
   }
 
+  /**
+   * Render controllers.
+   * 
+   * @param {DOM element} root 
+   * @param {<vaadin-grid-column> element} column 
+   * @param {object} rowData  
+   */
   controlsRenderer(root, column, rowData) {
     render(
       html`
@@ -459,6 +508,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     )
   }
 
+  /**
+   * Render an install dialog.
+   * 
+   * @param {DOM element} root 
+   * @param {<vaadin-grid-column> element} column 
+   * @param {object} rowData  
+   */
   installRenderer(root, column, rowData) {
     render(
       // language=HTML
@@ -724,6 +780,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     `;
   }
 
+  /**
+   * Remove a row in the environment list.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _removeRow(e) {
     const path = e.composedPath();
     let i = 0;
@@ -731,6 +792,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     path[i].remove();
   }
 
+  /**
+   * Add a row to the environment list.
+   */
   _addRow() {
     const container = this.shadowRoot.querySelector("#modify-app-container");
     const lastChild = container.children[container.children.length - 1];
@@ -738,6 +802,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     container.insertBefore(div, lastChild);
   }
 
+  /**
+   * Create a row in the environment list.
+   */
   _createRow() {
     const div = document.createElement("div");
     div.setAttribute("class", "row extra");
@@ -769,6 +836,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return div;
   }
 
+  /**
+   * Clear rows from the environment list.
+   */
   _clearRows() {
     const container = this.shadowRoot.querySelector("#modify-app-container");
     const rows = container.querySelectorAll(".row");
@@ -782,6 +852,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
   }
 
+  /**
+   * Deselect the selected row from the environment list.
+   */
   _uncheckSelectedRow() {
     this.selectedCheckbox.checked = false;
   }
@@ -806,6 +879,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
   }
 
+  /**
+   * Refresh the sorter.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _refreshSorter(e) {
     let sorter = e.target;
     let sorterPath = sorter.path.toString();
@@ -829,6 +907,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
   }
 
+  /**
+   * Get backend.ai client images.
+   */
   _getImages() {
     this.spinner.show();
 
@@ -912,6 +993,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
   }
 
+  /**
+   * Add unit to the value.
+   * 
+   * @param {string} value 
+   */
   _addUnit(value) {
     let unit = value.substr(-1);
     if (unit == 'm') {
@@ -926,6 +1012,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return value;
   }
 
+  /**
+   * Change unit to symbol.
+   * 
+   * @param {string} value 
+   */
   _symbolicUnit(value) {
     let unit = value.substr(-2);
     if (unit == 'MB') {
@@ -940,6 +1031,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return value;
   }
 
+  /**
+   * Humanize the value.
+   * 
+   * @param {string} value 
+   */
   _humanizeName(value) {
     this.alias = {
       'python': 'Python',

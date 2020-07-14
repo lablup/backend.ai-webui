@@ -210,6 +210,11 @@ export default class BackendAIChart extends LitElement {
     `;
   }
 
+  /**
+   * set the offsetWidth properly
+   * 
+   * @param {number} offsetWidth
+   */
   _scaledSVGWidth(offsetWidth) {
     return offsetWidth > 1700 ? 1600 :
       offsetWidth > 1400 ? 1300 :
@@ -220,9 +225,9 @@ export default class BackendAIChart extends LitElement {
   }
 
   /**
-   * help container to resize
+   * Help container to resize.
    * 
-   * @param {object} svg - svg object to resize
+   * @param {object} svg - Svg object to resize.
    */
   responsiveHelper(svg) {
     const container = d3.select(svg.node().parentNode),
@@ -246,7 +251,7 @@ export default class BackendAIChart extends LitElement {
   }
 
   /**
-   * when the svg last element child is exist, remove them
+   * When the svg last element child is exist, remove them.
    */
   wipe() {
     const svg = this.shadowRoot.querySelector("#d3");
@@ -254,7 +259,7 @@ export default class BackendAIChart extends LitElement {
   }
 
   /**
-   * draw dots, lines and etc
+   * Draw dots, lines and etc.
    */
   draw() {
     const {
@@ -477,7 +482,7 @@ export default class BackendAIChart extends LitElement {
   }
 
   /**
-   * provide drawing tools
+   * Provide drawing tools.
    */
   toolbox() {
     const margin = {top: 50, right: 50, bottom: 50, left: 50},

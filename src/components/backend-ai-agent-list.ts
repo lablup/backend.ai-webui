@@ -129,6 +129,11 @@ export default class BackendAIAgentList extends BackendAIPage {
     super.connectedCallback();
   }
 
+  /**
+   * Change state to 'ALIVE' when backend.ai client connected.
+   * 
+   * @param {Booelan} active - The component will work if active is true.
+   */
   async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
     if (active === false) {
@@ -146,6 +151,11 @@ export default class BackendAIAgentList extends BackendAIPage {
     }
   }
 
+  /**
+   * Load an agents list with agent's backend.ai information.
+   * 
+   * @param {string} status - The agent's backend.ai client status.
+   */
   _loadAgentList(status: string = 'running') {
     if (this.active !== true) {
       return;
@@ -243,18 +253,37 @@ export default class BackendAIAgentList extends BackendAIPage {
     });
   }
 
+  /**
+   * Check currecnt condition is running.
+   */
   _isRunning() {
     return this.condition === 'running';
   }
 
+  /**
+   * Convert the value byte to MB.
+   * 
+   * @param {number} value 
+   */
   _byteToMB(value) {
     return Math.floor(value / 1000000);
   }
 
+  /**
+   * Convert the value MB to GB.
+   * 
+   * @param {number} value 
+   */
   _MBtoGB(value) {
     return Math.floor(value / 1024);
   }
 
+  /**
+   * Return backend.ai client elapsed time.
+   * 
+   * @param {Date} start - Start time of backend.ai client.
+   * @param {Date} end - End time of backend.ai client.
+   */
   _elapsed(start, end) {
     let startDate = new Date(start);
     let endDate: Date;
@@ -272,19 +301,39 @@ export default class BackendAIAgentList extends BackendAIPage {
     return seconds;
   }
 
+  /**
+   * Covert start date to human readable date.
+   * 
+   * @param {Date} start 
+   */
   _humanReadableDate(start) {
     var startDate = new Date(start);
     return startDate.toLocaleString('ko-KR');
   }
 
+  /**
+   * Increase index by 1.
+   * 
+   * @param {number} index 
+   */
   _indexFrom1(index: number) {
     return index + 1;
   }
 
+  /**
+   * Return the heartbeat status.
+   * 
+   * @param {string} state
+   */
   _heartbeatStatus(state: string) {
     return state;
   }
 
+  /**
+   * Change heartbeat color according to heartbeat status.
+   * 
+   * @param {string} state 
+   */
   _heartbeatColor(state: string) {
     switch (state) {
       case 'ALIVE':
@@ -296,6 +345,13 @@ export default class BackendAIAgentList extends BackendAIPage {
     }
   }
 
+  /**
+   * Render an index.
+   * 
+   * @param {DOM element} root 
+   * @param {<vaadin-grid-column> element} column 
+   * @param {object} rowData  
+   */
   _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
     render(
@@ -306,6 +362,13 @@ export default class BackendAIAgentList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render regions by platforms and locations.
+   * 
+   * @param {DOM element} root 
+   * @param {<vaadin-grid-column> element} column 
+   * @param {object} rowData 
+   */
   regionRenderer(root, column?, rowData?) {
     let platform: string;
     let location: string;
@@ -360,6 +423,13 @@ export default class BackendAIAgentList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render a first contact date.
+   * 
+   * @param {DOM element} root 
+   * @param {<vaadin-grid-column> element} column 
+   * @param {object} rowData 
+  */
   contactDateRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -370,6 +440,13 @@ export default class BackendAIAgentList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render a heartbeat status.
+   * 
+   * @param {DOM element} root 
+   * @param {<vaadin-grid-column> element} column 
+   * @param {object} rowData 
+  */
   statusRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -381,6 +458,13 @@ export default class BackendAIAgentList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render control buttons such as assignment, build, add an alarm, pause and delete.
+   * 
+   * @param {DOM element} root 
+   * @param {<vaadin-grid-column> element} column 
+   * @param {object} rowData 
+  */
   controlRenderer(root, column?, rowData?) {
     render(
       // language=HTML
