@@ -4,7 +4,7 @@
 
  This file uses some code of chartjs-web-components (https://github.com/fsx950223/chartjs-web-components)
  */
-import {Chart} from 'chart.js';
+import Chart from 'chart.js/dist/Chart.esm.min';
 import {html, LitElement, property, TemplateResult} from 'lit-element';
 
 /**

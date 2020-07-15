@@ -6,8 +6,9 @@
 import {css, customElement, html, LitElement, property} from "lit-element";
 
 import "weightless/card";
-
 import * as d3 from "d3";
+import "../plastics/base-chart";
+
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
