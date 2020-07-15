@@ -12,12 +12,33 @@ import {html, LitElement, property, TemplateResult} from 'lit-element';
  */
 export default class BaseChart extends LitElement {
   public chart: Chart.ChartConfiguration & Chart;
-  @property()
-  public type: Chart.ChartType; // tslint:disable-line:no-reserved-keywords
-  @property()
-  public data: Chart.ChartData;
-  @property()
-  public options: Chart.ChartOptions;
+  @property({type: Chart.ChartType}) type = 'line';
+  @property({type: Chart.ChartData}) data = {};
+  @property({type: Chart.ChartOptions}) options = {};
+
+
+  update() {
+    super.update();
+    if (this.chart) {
+      this.chart.type = this.type;
+      this.chart.data = this.data;
+      this.chart.options = this.options;
+      this.updateChart();
+    } else {
+      this._initializeChart();
+    }
+  }
+
+  _initializeChart() {
+    const ctx: CanvasRenderingContext2D = (this.shadowRoot as any)
+      .querySelector('canvas')
+      .getContext('2d');
+    this.chart = new Chart(ctx, {
+      type: this.type,
+      data: this.data,
+      options: this.options
+    });
+  }
 
   /**
    * Called when the dom first time updated. init chart.js data, add observe, and add resize listener
@@ -42,7 +63,7 @@ export default class BaseChart extends LitElement {
       this.chart.options = options;
       this.chart.update();
     }
-    this.chart.data = this.observe(this.chart.data);
+    /*this.chart.data = this.observe(this.chart.data);
     for (const prop of Object.keys(this.chart.data)) {
       this.chart.data[prop] = this.observe(this.chart.data[prop]);
     }
@@ -50,16 +71,18 @@ export default class BaseChart extends LitElement {
       dataset.data = this.observe(dataset.data);
 
       return this.observe(dataset);
-    });
+    });*/
     window.addEventListener('resize', () => {
       if (this.chart) {
         this.chart.resize();
       }
     });
   }
-  updated(changedProps) {
-    console.log('prop change:', changedProps);
+
+  attributeChangedCallback(name, oldval, newval) {
+    console.log('attribute changed:', name, newval);
   }
+
   /**
    * Use Proxy to watch object props change
    * @params obj
@@ -71,6 +94,7 @@ export default class BaseChart extends LitElement {
     return new Proxy(obj, {
       set: (target: T, prop: string, val: unknown): boolean => {
         target[prop] = val;
+        console.log('updated:', val);
         Promise.resolve()
           .then(updateChart);
         return true;
