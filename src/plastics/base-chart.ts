@@ -4,26 +4,28 @@
 
  This file uses some code of chartjs-web-components (https://github.com/fsx950223/chartjs-web-components)
  */
-import Chart from 'chart.js/dist/Chart.esm.min';
+import Chart from 'chart.js';
+
+import 'date-fns';
+
+import 'chartjs-adapter-date-fns';
 import {html, LitElement, property, TemplateResult} from 'lit-element';
 
-/**
- * Base Chart of chartjs-web-components
- */
 export default class BaseChart extends LitElement {
-  public chart: Chart.ChartConfiguration & Chart;
+  @property({type: Chart}) chart;
   @property({type: Chart.ChartType}) type = 'line';
   @property({type: Chart.ChartData}) data = {};
   @property({type: Chart.ChartOptions}) options = {};
 
-
-  update() {
-    super.update();
+  update(prop) {
+    super.update(prop);
     if (this.chart) {
       this.chart.type = this.type;
       this.chart.data = this.data;
       this.chart.options = this.options;
-      this.updateChart();
+      if (this.type != '' && this.data != {} && this.options != {} ) {
+        this.updateChart();
+      }
     } else {
       this._initializeChart();
     }
@@ -44,24 +46,13 @@ export default class BaseChart extends LitElement {
    * Called when the dom first time updated. init chart.js data, add observe, and add resize listener
    */
   public firstUpdated(): void {
-    const data: Chart.ChartData = this.data || {};
-    const options: Chart.ChartOptions = this.options || {};
+    //const data: Chart.ChartData = this.data || {};
+    //const options: Chart.ChartOptions = this.options || {};
     //console.log(data);
     //console.log(options);
-    if (!this.chart) {
-      const ctx: CanvasRenderingContext2D = (this.shadowRoot as any)
-        .querySelector('canvas')
-        .getContext('2d');
-      this.chart = new Chart(ctx, {
-        type: this.type,
-        data,
-        options
-      });
+    if (this.type != '' && this.data != {} && this.options != {} ) {
+      this._initializeChart();
     } else {
-      this.chart.type = this.type;
-      this.chart.data = data;
-      this.chart.options = options;
-      this.chart.update();
     }
     /*this.chart.data = this.observe(this.chart.data);
     for (const prop of Object.keys(this.chart.data)) {
@@ -80,7 +71,7 @@ export default class BaseChart extends LitElement {
   }
 
   attributeChangedCallback(name, oldval, newval) {
-    console.log('attribute changed:', name, newval);
+    //console.log('attribute changed:', name, newval);
   }
 
   /**
@@ -89,12 +80,12 @@ export default class BaseChart extends LitElement {
    */
   public observe<T extends object>(obj: T): T {
     const updateChart: () => void = this.updateChart;
-    console.log("changed object:", obj);
+    //console.log("changed object:", obj);
 
     return new Proxy(obj, {
       set: (target: T, prop: string, val: unknown): boolean => {
         target[prop] = val;
-        console.log('updated:', val);
+        //console.log('updated:', val);
         Promise.resolve()
           .then(updateChart);
         return true;
@@ -110,10 +101,9 @@ export default class BaseChart extends LitElement {
             <style>
                 .chart-size{
                     position: relative;
+                    width:800px;
                 }
                 canvas{
-                    width:400px;
-                    height:400px;
                 }
             </style>
             <div class="chart-size">
@@ -136,8 +126,6 @@ export default class BaseChart extends LitElement {
    */
   public updateChart = (): void => {
     if (this.chart) {
-      console.log('calling update');
-      console.log(this.chart.data);
       this.chart.update();
     }
   }

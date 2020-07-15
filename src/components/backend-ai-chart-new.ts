@@ -78,8 +78,10 @@ export default class BackendAIChart extends LitElement {
   ];
 
 
-  @property({type:Object}) chartData;
-  @property({type:Object}) options;
+  @property({type: Object}) chartData;
+  @property({type: Object}) options;
+  @property({type: Object}) chartDataTest;
+  @property({type: Object}) optionsTest;
 
   /**
    * @param collection              {object}   Object containing the fields listed below
@@ -90,28 +92,73 @@ export default class BackendAIChart extends LitElement {
    */
   constructor() {
     super();
-    this.options = {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-        }
+    this.chartDataTest =  {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [{
+            label: 'My First dataset',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: [0, 10, 5, 2, 20, 30, 45]
+        }]
     };
+    this.optionsTest = {};
   }
 
   firstUpdated() {
-    console.log(this.collection);
+    //console.log(typeof this.collection.data[0][0]['x']);
     this.chartData = {
       datasets: [{
-        label: this.collection.axisTitle['y'],
+        label: this.collection.axisTitle['y'] + ' (' + this.collection.unit_hint +')',
         data: this.collection.data[0],
-        borderWidth: 1
+        borderWidth: 1,
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgb(255, 99, 132)',
+        parsing: {
+            xAxisKey: 'x',
+            yAxisKey: 'y'
+        }
       }],
     };
-    //this.shadowRoot.querySelector('#chart').updateChart();
+    this.options = {
+      legend: {
+        display: true
+      },
+      scales: {
+        x: {
+          display: true,
+          ticks: {
+            major: {
+              enabled: true
+            },
+            source: 'data',
+            autoSkip: true,
+            sampleSize: 100
+          }
+        },
+        y: {
+          beginAtZero: true,
+          display: true,
+        }
+      },
+      aspectRatio: 5
+    };
+    //this.shadowRoot.querySelector('#chart')
   }
+
+  render() {
+    // language=HTML
+    return html`
+      <div class="layout vertical center">
+        <div id="ctn${this.idx}">
+          <svg id="d3"></svg>
+        </div>
+        <div id="ctn-chartjs${this.idx}">
+          <base-chart id="chart" type="line" .data="${this.chartData}" .options="${this.options}"></base-chart>
+        </div>
+      </div>
+    `;
+  }
+
 
   static get properties() {
     return {
@@ -119,9 +166,7 @@ export default class BackendAIChart extends LitElement {
         type: Object,
         hasChanged(newval, oldval) {
           if (oldval === undefined) return true;
-
           if (newval.period !== oldval.period) return true;
-
           return false;
         }
       }
@@ -150,6 +195,10 @@ export default class BackendAIChart extends LitElement {
 
         wl-card > div {
           font-size: 12px;
+        }
+
+        base-chart {
+          width: 100%;
         }
 
         #chart-canvas {
@@ -216,21 +265,6 @@ export default class BackendAIChart extends LitElement {
     const converted = this.collection.data.map(e => ByteConverter.scale(e, 'MB'));
     this.collection.data = converted.map(e => e.data);
     this.collection.unit_hint = {"B": 'Bytes', "KB": 'KBytes', "MB": 'MB', "GB": 'GB', "TB": 'TB'}[converted[0].unit];
-  }
-
-  render() {
-    // language=HTML
-    return html`
-      <div class="layout vertical center">
-        <div id="ctn${this.idx}">
-          <svg id="d3"></svg>
-        </div>
-        <div id="ctn-chartjs${this.idx}">
-        TEST
-          <base-chart id="chart" type="line" .data="${this.chartData}" .options="${this.options}"></base-chart>
-        </div>
-      </div>
-    `;
   }
 
   _scaledSVGWidth(offsetWidth) {
