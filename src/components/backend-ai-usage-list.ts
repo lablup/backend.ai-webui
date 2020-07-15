@@ -12,7 +12,8 @@ import 'weightless/tab-group';
 import 'weightless/tab';
 import 'weightless/select';
 import {BackendAiStyles} from './backend-ai-general-styles';
-import './backend-ai-chart-new'
+import './backend-ai-chart-new';
+
 import {
   IronFlex,
   IronFlexAlignment,

@@ -77,6 +77,10 @@ export default class BackendAIChart extends LitElement {
     "#ffa600"
   ];
 
+
+  @property({type:Object}) chartData;
+  @property({type:Object}) options;
+
   /**
    * @param collection              {object}   Object containing the fields listed below
    * @param collection.data         {Array}    Array containing objects of x y values
@@ -86,6 +90,27 @@ export default class BackendAIChart extends LitElement {
    */
   constructor() {
     super();
+    this.options = {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    };
+  }
+
+  firstUpdated() {
+    console.log(this.collection);
+    this.chartData = {
+      datasets: [{
+        label: this.collection.axisTitle['y'],
+        data: this.collection.data[0],
+        borderWidth: 1
+      }],
+    };
+    //this.shadowRoot.querySelector('#chart').updateChart();
   }
 
   static get properties() {
@@ -199,6 +224,10 @@ export default class BackendAIChart extends LitElement {
       <div class="layout vertical center">
         <div id="ctn${this.idx}">
           <svg id="d3"></svg>
+        </div>
+        <div id="ctn-chartjs${this.idx}">
+        TEST
+          <base-chart id="chart" type="line" .data="${this.chartData}" .options="${this.options}"></base-chart>
         </div>
       </div>
     `;

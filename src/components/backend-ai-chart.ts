@@ -766,6 +766,6 @@ export default class BackendAIChart extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-chart": BackendAIChart;
+    "backend-ai-chart-old": BackendAIChart;
   }
 }

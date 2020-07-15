@@ -18,7 +18,6 @@ import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 
 import './lablup-activity-panel';
-import './backend-ai-chart';
 import './backend-ai-resource-monitor';
 import './backend-ai-resource-panel';
 import './backend-ai-session-launcher';

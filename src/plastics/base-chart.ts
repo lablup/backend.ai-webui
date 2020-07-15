@@ -25,6 +25,8 @@ export default class BaseChart extends LitElement {
   public firstUpdated(): void {
     const data: Chart.ChartData = this.data || {};
     const options: Chart.ChartOptions = this.options || {};
+    //console.log(data);
+    //console.log(options);
     if (!this.chart) {
       const ctx: CanvasRenderingContext2D = (this.shadowRoot as any)
         .querySelector('canvas')
@@ -55,20 +57,22 @@ export default class BaseChart extends LitElement {
       }
     });
   }
-
+  updated(changedProps) {
+    console.log('prop change:', changedProps);
+  }
   /**
    * Use Proxy to watch object props change
    * @params obj
    */
   public observe<T extends object>(obj: T): T {
     const updateChart: () => void = this.updateChart;
+    console.log("changed object:", obj);
 
     return new Proxy(obj, {
       set: (target: T, prop: string, val: unknown): boolean => {
         target[prop] = val;
         Promise.resolve()
           .then(updateChart);
-
         return true;
       }
     });
@@ -108,6 +112,8 @@ export default class BaseChart extends LitElement {
    */
   public updateChart = (): void => {
     if (this.chart) {
+      console.log('calling update');
+      console.log(this.chart.data);
       this.chart.update();
     }
   }
