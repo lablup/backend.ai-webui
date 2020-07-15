@@ -7,7 +7,8 @@ import {css, customElement, html, LitElement, property} from "lit-element";
 
 import "weightless/card";
 import * as d3 from "d3";
-import "../plastics/base-chart";
+import "../plastics/chart-js";
+import format from 'date-fns/format';
 
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
@@ -80,8 +81,9 @@ export default class BackendAIChart extends LitElement {
 
   @property({type: Object}) chartData;
   @property({type: Object}) options;
-  @property({type: Object}) chartDataTest;
-  @property({type: Object}) optionsTest;
+  @property({type: Object}) chart;
+  @property({type: String}) type;
+
 
   /**
    * @param collection              {object}   Object containing the fields listed below
@@ -92,30 +94,24 @@ export default class BackendAIChart extends LitElement {
    */
   constructor() {
     super();
-    this.chartDataTest =  {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [{
-            label: 'My First dataset',
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: [0, 10, 5, 2, 20, 30, 45]
-        }]
-    };
-    this.optionsTest = {};
   }
 
   firstUpdated() {
-    //console.log(typeof this.collection.data[0][0]['x']);
+    this.chart = this.shadowRoot.querySelector('#chart');
+    let temp = this.collection.data[0]
+      .map(e => (format(e.x, 'MM/dd HH:mm')));
+    this.type = 'line';
     this.chartData = {
+      labels: temp,
       datasets: [{
-        label: this.collection.axisTitle['y'] + ' (' + this.collection.unit_hint +')',
+        label: this.collection.axisTitle['y'] + ' (' + this.collection.unit_hint + ')',
         data: this.collection.data[0],
         borderWidth: 1,
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgb(255, 99, 132)',
         parsing: {
-            xAxisKey: 'x',
-            yAxisKey: 'y'
+          xAxisKey: 'x',
+          yAxisKey: 'y'
         }
       }],
     };
@@ -153,7 +149,7 @@ export default class BackendAIChart extends LitElement {
           <svg id="d3"></svg>
         </div>
         <div id="ctn-chartjs${this.idx}">
-          <base-chart id="chart" type="line" .data="${this.chartData}" .options="${this.options}"></base-chart>
+          <chart-js id="chart" .type="${this.type}" .data="${this.chartData}" .options="${this.options}"></chart-js>
         </div>
       </div>
     `;
@@ -287,6 +283,7 @@ export default class BackendAIChart extends LitElement {
       const targetWidth = this._scaledSVGWidth(offsetWidth);
       svg.attr("width", targetWidth);
       svg.attr("height", Math.round(targetWidth / aspect));
+      this.chart.width = targetWidth + 'px';
     };
 
     svg

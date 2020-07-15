@@ -154,13 +154,12 @@ export default class BackendAIUsageList extends BackendAIPage {
                 .map(e => ({x: new Date(1000 * e["date"]), y: e[key]["value"]})),
                 //.map(e => ({x: 1000 * e["date"], y: e[key]["value"]})),
             ],
-            data2: [
+            labels: [
               res
                 .filter((e, i) => res.length - templates[period].length <= i)
-                .map(e => (e[key]["value"])),
-                //.map(e => ({x: 1000 * e["date"], y: e[key]["value"]})),
+                .map(e => (new Date(1000 * e["date"]).toString())),
+              //.map(e => ({x: 1000 * e["date"], y: e[key]["value"]})),
             ],
-
             axisTitle: {
               x: "Date",
               y: this._map[key]
