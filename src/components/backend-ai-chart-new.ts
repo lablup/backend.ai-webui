@@ -98,6 +98,11 @@ export default class BackendAIChart extends LitElement {
 
   firstUpdated() {
     this.chart = this.shadowRoot.querySelector('#chart');
+    this._updateChartData();
+    //this.shadowRoot.querySelector('#chart')
+  }
+
+  _updateChartData() {
     let temp = this.collection.data[0]
       .map(e => (format(e.x, 'MM/dd HH:mm')));
     this.type = 'line';
@@ -138,7 +143,6 @@ export default class BackendAIChart extends LitElement {
       },
       aspectRatio: 5
     };
-    //this.shadowRoot.querySelector('#chart')
   }
 
   render() {
@@ -154,7 +158,6 @@ export default class BackendAIChart extends LitElement {
       </div>
     `;
   }
-
 
   static get properties() {
     return {
@@ -242,6 +245,7 @@ export default class BackendAIChart extends LitElement {
   updated(changedProps) {
     if (changedProps.has('collection') && changedProps.get("collection") !== undefined) {
       this.draw();
+      this._updateChartData();
     }
   }
 
