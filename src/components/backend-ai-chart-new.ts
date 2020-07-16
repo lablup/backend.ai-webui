@@ -105,6 +105,8 @@ export default class BackendAIChart extends LitElement {
   _updateChartData() {
     let temp = this.collection.data[0]
       .map(e => (format(e.x, 'MM/dd HH:mm')));
+    let colors = {'Sessions':'#ec407a', 'CPU':'#9ccc65', 'Memory':'#ffa726',
+      'GPU':'#26c6da', 'IO-Read':'#3677eb', 'IO-Write':'#3677eb'}
     this.type = 'line';
     this.chartData = {
       labels: temp,
@@ -112,8 +114,8 @@ export default class BackendAIChart extends LitElement {
         label: this.collection.axisTitle['y'] + ' (' + this.collection.unit_hint + ')',
         data: this.collection.data[0],
         borderWidth: 1,
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: colors[this.collection.axisTitle['y']],
+        backgroundColor: colors[this.collection.axisTitle['y']],
         parsing: {
           xAxisKey: 'x',
           yAxisKey: 'y'
