@@ -10,7 +10,8 @@ export default class ChartJs extends LitElement {
   @property({type: Chart.ChartType}) type = '';
   @property({type: Chart.ChartData}) data = {};
   @property({type: Chart.ChartOptions}) options = {};
-  @property({type: String}) width = '400px';
+  @property({type: String}) width = '80vw';
+  @property({type: String}) height = '15vh';
 
   update(prop) {
     super.update(prop);
@@ -53,7 +54,7 @@ export default class ChartJs extends LitElement {
 
   public render(): void | TemplateResult {
     return html`
-      <div class="chart-shell" style="position:relative;width:${this.width};">
+      <div class="chart-shell" style="position:relative;width:${this.width};height:${this.height}">
         <canvas></canvas>
       </div>
   `;

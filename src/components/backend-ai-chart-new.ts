@@ -141,7 +141,7 @@ export default class BackendAIChart extends LitElement {
           display: true,
         }
       },
-      aspectRatio: 5
+      maintainAspectRatio: false
     };
   }
 
