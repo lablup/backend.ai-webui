@@ -104,9 +104,12 @@ export default class BackendAIChart extends LitElement {
 
   _updateChartData() {
     let temp = this.collection.data[0]
-      .map(e => (format(e.x, 'MM/dd HH:mm')));
-    let colors = {'Sessions':'#ec407a', 'CPU':'#9ccc65', 'Memory':'#ffa726',
-      'GPU':'#26c6da', 'IO-Read':'#3677eb', 'IO-Write':'#3677eb'}
+      .map(e => (format(e.x, 'MMM dd HH:mm')));
+    let colors = {
+      'Sessions': '#ec407a', 'CPU': '#9ccc65', 'Memory': '#ffa726',
+      'GPU': '#26c6da', 'IO-Read': '#3677eb', 'IO-Write': '#003f5c'
+    };
+
     this.type = 'line';
     this.chartData = {
       labels: temp,
@@ -133,14 +136,37 @@ export default class BackendAIChart extends LitElement {
             major: {
               enabled: true
             },
+            callback: function (value) {
+              return value.slice(0, -2) + '00';
+            },
             source: 'data',
             autoSkip: true,
-            sampleSize: 100
+            sampleSize: 100,
+            maxTicksLimit: 8,
+            maxRotation: 0,
+            fontSize: 10,
+          },
+          scaleLabel: {
+            display: true,
+            align: 'end',
+            labelString: this.collection.axisTitle.x
           }
         },
         y: {
+          responsive: true,
           beginAtZero: true,
           display: true,
+          scaleLabel: {
+            display: true,
+            labelString: capitalize(this.collection.unit_hint)
+          },
+          ticks: {
+            fontSize: 10,
+            callback: function(value) {
+              return Math.round(value);
+            },
+            maxTicksLimit: 5
+          }
         }
       },
       maintainAspectRatio: false
