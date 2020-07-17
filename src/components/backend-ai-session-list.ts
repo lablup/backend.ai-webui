@@ -404,7 +404,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       status = status.join(',');
     }
     let fields = [
-      "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
+      "id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
     ];
     if (this.enableScalingGroup) {
@@ -686,14 +686,16 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _showLogs(e) {
     const controls = e.target.closest('#controls');
+    const sessionUuid = controls['session-uuid'];
     const sessionName = controls['session-name'];
+    const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = controls['access-key'];
 
-    globalThis.backendaiclient.getLogs(sessionName, accessKey).then((req) => {
+    globalThis.backendaiclient.getLogs(sessionId, accessKey).then((req) => {
       const ansi_up = new AnsiUp();
       let logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
-        this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName}`;
+        this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName} (${sessionUuid})`;
         this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
         this.shadowRoot.querySelector('#work-dialog').sessionName = sessionName;
         this.shadowRoot.querySelector('#work-dialog').accessKey = accessKey;
@@ -712,9 +714,11 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _refreshLogs() {
+    const sessionUuid = this.shadowRoot.querySelector('#work-dialog').sessionUuid;
     const sessionName = this.shadowRoot.querySelector('#work-dialog').sessionName;
+    const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = this.shadowRoot.querySelector('#work-dialog').accessKey;
-    globalThis.backendaiclient.getLogs(sessionName, accessKey).then((req) => {
+    globalThis.backendaiclient.getLogs(sessionId, accessKey).then((req) => {
       const ansi_up = new AnsiUp();
       const logs = ansi_up.ansi_to_html(req.result.logs);
       this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
@@ -936,6 +940,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
+             .session-uuid="${rowData.item.id}"
              .session-name="${rowData.item[this.sessionNameField]}"
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
@@ -1101,7 +1106,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
 
     let group_id = globalThis.backendaiclient.current_group_id();
-    let fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info",
+    let fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"];
 
     if (this._connectionMode === "SESSION") {
