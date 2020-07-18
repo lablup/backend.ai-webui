@@ -317,10 +317,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   async _editUserConfigScript() {
-    let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
+    const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     this.rcfiles = await this._fetchUserConfigScript();
-    let rcfile_names = Array(".bashrc", ".zshrc");
-    rcfile_names.map(filename => {
+    const rcfileNames = Array('.bashrc', '.zshrc', '.Renviron');
+    rcfileNames.map(filename => {
       let idx = this.rcfiles.findIndex(item => item.path === filename);
       if (idx == -1) {
         this.rcfiles.push({path: filename, data: ""});
@@ -338,6 +338,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       editor.setValue('');
     }
     editor.refresh();
+    this.spinner.hide();
   }
 
   _fetchUserConfigScript() {
@@ -462,25 +463,27 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.prevRcfile = this.rcfile;
     this.rcfile = select.value;
     let idx = this.rcfiles.findIndex(item => item.path === this.prevRcfile);
-    let code = this.rcfiles[idx]['data'];
+    let code = idx > -1 ? this.rcfiles[idx]['data'] : '';
     let editorCode = editor.getValue();
     select.layout();
     if (code !== editorCode) {
       this._launchChangeCurrentEditorDialog();
     } else {
-      idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
-      code = this.rcfiles[idx]['data'];
       editor.setValue(code);
     }
   }
 
   _deleteRcFile(path: string) {
+    if (!path) {
+      path = this.rcfile;
+    }
     if (path) {
       globalThis.backendaiclient.userConfig.delete_dotfile_script(path).then(res => {
         let message = 'User config script ' + path + 'is deleted.';
         this.notification.text = message;
         this.notification.show();
         this.spinner.hide();
+        this._hideUserConfigScriptDialog();
       }).catch(err => {
         console.log(err);
         if (err && err.message) {
@@ -644,7 +647,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout setting-item">
-            <wl-button class="fg teal" outlined @click="${() => this._editBootstrapScript()}" style="margin-right:20px; display:none;">
+            <wl-button class="fg teal" outlined @click="${() => this._editBootstrapScript()}" style="margin-right:20px;">
               <wl-icon>edit</wl-icon>
               ${_t("usersettings.EditBootstrapScript")}
             </wl-button>
@@ -708,7 +711,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">${_t("button.Cancel")}</wl-button>
           <wl-button style="margin-left:10px;" id="save-code" class="button" @click="${() => this._saveUserConfigScript()}">${_t("button.Save")}</wl-button>
           <wl-button style="margin-left:10px;" id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
-          <wl-button style="margin-left:10px;" id="delete-all" @click="${() => this._deleteRcFileAll()}" style="display:none;">${_t("button.DeleteAll")}</wl-button>
+          <wl-button style="margin-left:10px;" id="delete-rcfile" @click="${() => this._deleteRcFile()}" style="display:none;">${_t("button.Delete")}</wl-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
