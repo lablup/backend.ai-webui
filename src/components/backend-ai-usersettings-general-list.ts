@@ -463,7 +463,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.prevRcfile = this.rcfile;
     this.rcfile = select.value;
     let idx = this.rcfiles.findIndex(item => item.path === this.prevRcfile);
-    let code = this.rcfiles[idx]['data'];
+    let code = idx > -1 ? this.rcfiles[idx]['data'] : '';
     let editorCode = editor.getValue();
     select.layout();
     if (code !== editorCode) {
@@ -649,7 +649,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout setting-item">
-            <wl-button class="fg teal" outlined @click="${() => this._editBootstrapScript()}" style="margin-right:20px;">
+            <wl-button class="fg teal" outlined @click="${() => this._editBootstrapScript()}" style="margin-right:20px; display:none;">
               <wl-icon>edit</wl-icon>
               ${_t("usersettings.EditBootstrapScript")}
             </wl-button>
