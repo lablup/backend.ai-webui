@@ -48,7 +48,7 @@
     "@vaadin/vaadin-item": "^2.2.0",
     "@vaadin/vaadin-progress-bar": "^1.2.0",
     "@vaadin/vaadin-upload": "^4.3.0",
-    "@vanillawc/wc-codemirror": "1.5.3",
+    "@vanillawc/wc-codemirror": "^1.8.10",
     "@webcomponents/webcomponentsjs": "^2.4.3",
     "bufferutil": "^4.0.1",
     "d3": "^5.16.0",

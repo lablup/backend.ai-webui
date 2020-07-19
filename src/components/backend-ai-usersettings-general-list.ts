@@ -463,12 +463,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.prevRcfile = this.rcfile;
     this.rcfile = select.value;
     let idx = this.rcfiles.findIndex(item => item.path === this.prevRcfile);
-    let code = idx > -1 ? this.rcfiles[idx]['data'] : '';
+    let code = this.rcfiles[idx]['data'];
     let editorCode = editor.getValue();
     select.layout();
     if (code !== editorCode) {
       this._launchChangeCurrentEditorDialog();
     } else {
+      idx = this.rcfiles.findIndex((item) => item.path === this.rcfile);
+      code = this.rcfiles[idx]['data'];
       editor.setValue(code);
     }
   }
@@ -715,8 +717,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
-        <span slot="title">${_t("usersettings.DialogSaveToSpecificFile", {File: () => this.prevRcfile})}
-        <span slot="action">${_t("usersettings.DialogNoSaveNoPreserve")}</span>
+        <div slot="title">
+          ${_t("usersettings.DialogSaveToSpecificFile", {File: () => this.prevRcfile})}
+        </div>
+        <div slot="content">
+          ${_t("usersettings.DialogNoSaveNoPreserve")}
+        </div>
         <div slot="footer" style="border-top:none;">
           <wl-button id="discard-editor-data"
                      style="margin: 0 10px;"
