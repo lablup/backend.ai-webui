@@ -16,6 +16,13 @@ import {
     IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend.AI Error Log View
+
+ @group Backend.AI Console
+ @element backend-ai-error-log-view
+ */
+
 @customElement("backend-ai-error-log-view")
 export default class BackendAIErrorLogView extends BackendAIPage {
 

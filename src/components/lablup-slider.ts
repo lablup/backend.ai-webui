@@ -15,6 +15,19 @@ import {
 } from "../plastics/layout/iron-flex-layout-classes";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 
+/**
+ Lablup Slider
+
+ `lablup-slider` is slider of session launcher and resource monitor.
+
+ Example:
+
+ <lablup-slider></lablup-slider>
+
+ @group Backend.AI Console
+ @element lablup-slider
+ */
+
 @customElement("lablup-slider")
 export default class LablupSlider extends LitElement {
   public shadowRoot: any; // ShadowRoot
@@ -129,11 +142,17 @@ export default class LablupSlider extends LitElement {
     this.dispatchEvent(event);
   }
 
+  /**
+   * Synchronize value with slider value.
+   * */
   syncToText() {
     this.value = this.slider.value;
     // updated function will be automatically called.
   }
 
+  /**
+   * Setting value, slider value, and slider step to synchronize with slider.
+   * */
   syncToSlider() {
     let rounded = Math.round(this.textfield.value / this.step) * this.step;
     this.textfield.value = rounded.toFixed(((decimal_places: number) => {
@@ -154,6 +173,9 @@ export default class LablupSlider extends LitElement {
     // updated function will be automatically called.
   }
 
+  /**
+   * Check marker display or not.
+   * */
   checkMarkerDisplay() {
     if (this.markers) {
       if (((this.max - this.min) / this.step) > this.marker_limit) {

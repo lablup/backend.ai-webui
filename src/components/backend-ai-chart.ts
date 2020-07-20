@@ -45,6 +45,13 @@ const capitalize = (s) => {
   return s.charAt(0).toUpperCase() + s.slice(1)
 };
 
+/**
+ Backend.AI Chart
+
+ @group Backend.AI Console
+ @element backend-ai-chart
+ */
+
 @customElement("backend-ai-chart")
 export default class BackendAIChart extends LitElement {
   public shadowRoot: any; // ShadowRoot
@@ -203,6 +210,11 @@ export default class BackendAIChart extends LitElement {
     `;
   }
 
+  /**
+   * set the offsetWidth properly
+   * 
+   * @param {number} offsetWidth
+   */
   _scaledSVGWidth(offsetWidth) {
     return offsetWidth > 1700 ? 1600 :
       offsetWidth > 1400 ? 1300 :
@@ -212,6 +224,11 @@ export default class BackendAIChart extends LitElement {
               400;
   }
 
+  /**
+   * Help container to resize.
+   * 
+   * @param {object} svg - Svg object to resize.
+   */
   responsiveHelper(svg) {
     const container = d3.select(svg.node().parentNode),
       width = parseInt(svg.node().getAttribute("width")),
@@ -233,11 +250,17 @@ export default class BackendAIChart extends LitElement {
     d3.select(window).on(`resize.${container.attr("id")}`, resize);
   }
 
+  /**
+   * When the svg last element child is exist, remove them.
+   */
   wipe() {
     const svg = this.shadowRoot.querySelector("#d3");
     if (svg.lastElementChild) svg.removeChild(svg.lastElementChild);
   }
 
+  /**
+   * Draw dots, lines and etc.
+   */
   draw() {
     const {
       data,
@@ -458,6 +481,9 @@ export default class BackendAIChart extends LitElement {
     });
   }
 
+  /**
+   * Provide drawing tools.
+   */
   toolbox() {
     const margin = {top: 50, right: 50, bottom: 50, left: 50},
       graphWidth = this.width - margin.left - margin.right,

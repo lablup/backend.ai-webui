@@ -18,6 +18,18 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend.AI Change Forgot Password View
+
+ Example:
+
+ <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${0}">
+ ... content ...
+ </backend-ai-change-forgot-password-view>
+
+ @group Backend.AI Console
+ @element backend-ai-change-forgot-password-view
+ */
 
 @customElement("backend-ai-change-forgot-password-view")
 export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
@@ -45,6 +57,11 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     ];
   }
 
+  /**
+   * Initialize the client.
+   * 
+   * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
+   */
   _initClient(apiEndpoint: string) {
     this.consoleShell = document.querySelector('#console-shell');
     this.consoleShell.appBody.style.visibility = 'visible';
@@ -59,10 +76,18 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     );
   }
 
+  /**
+   * Redirect to login page.
+   */
   _redirectToLoginPage() {
     window.location.href = '/';
   }
 
+  /**
+   * Open the upadate password dialog.
+   * 
+   * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
+   */
   open(apiEndpoint: string) {
     const queryParams = new URLSearchParams(window.location.search);
     this.token = queryParams.get('token') || '';
@@ -75,6 +100,9 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     }
   }
 
+  /**
+   * Update a password.
+   */
   async _updatePassword() {
     const emailEl = this.shadowRoot.querySelector('#email');
     const passwordEl1 = this.shadowRoot.querySelector('#password1')

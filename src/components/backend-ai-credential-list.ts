@@ -33,6 +33,13 @@ import {
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
 
+/**
+ Backend.AI Credential List
+
+ @group Backend.AI Console
+ @element backend-ai-credential-list
+ */
+
 @customElement("backend-ai-credential-list")
 export default class BackendAICredentialList extends BackendAIPage {
   @property({type: Object}) notification;
@@ -175,6 +182,11 @@ export default class BackendAICredentialList extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
   }
 
+  /**
+   * Check the admin and set the keypair grid when backend.ai client connected.
+   * 
+   * @param {Booelan} active - The component will work if active is true.
+   */
   async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
     if (active === false) {
@@ -194,6 +206,11 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
+  /**
+   * Refresh key datas when user id is null.
+   * 
+   * @param {string} user_id 
+   */
   _refreshKeyData(user_id: null|string = null) {
     let is_active = true;
     switch (this.condition) {
@@ -282,6 +299,11 @@ export default class BackendAICredentialList extends BackendAIPage {
     });
   }
 
+  /**
+   * Display a keypair information dialog.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   async _showKeypairDetail(e) {
     const controls = e.target.closest('#controls');
     const access_key = controls['access-key'];
@@ -298,6 +320,11 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
+  /**
+   * Modify resource policy by displaying keypair modify dialog.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   async _modifyResourcePolicy(e) {
     const controls = e.target.closest('#controls');
     const access_key = controls['access-key'];
@@ -317,20 +344,36 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
+  /**
+   * Get key data from access key.
+   * 
+   * @param accessKey
+   */
   async _getKeyData(accessKey) {
     let fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
       'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
     return globalThis.backendaiclient.keypair.info(accessKey, fields);
   }
 
+  /**
+   * Refresh the key data.
+   */
   refresh() {
     this._refreshKeyData();
   }
 
+  /**
+   * Return the condtion is active.
+   */
   _isActive() {
     return this.condition === 'active';
   }
 
+  /**
+   * Delete the access key.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _deleteKey(e) {
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
@@ -352,14 +395,30 @@ export default class BackendAICredentialList extends BackendAIPage {
     });
   }
 
+  /**
+   * Revoke the access key.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _revokeKey(e) {
     this._mutateKey(e, false);
   }
 
+  /**
+   * Reuse the access key.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _reuseKey(e) {
     this._mutateKey(e, true);
   }
 
+  /**
+   * Mutate the access key.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   * @param {Boolean} is_active
+   */
   _mutateKey(e, is_active) {
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
@@ -384,10 +443,21 @@ export default class BackendAICredentialList extends BackendAIPage {
     });
   }
 
+  /**
+   * Find the access key.
+   * 
+   * @param element 
+   */
   _findKeyItem(element) {
     return element.access_key = this;
   }
 
+  /**
+   * Return backend.ai client elapsed time.
+   *
+   * @param {Date} start - Start time of backend.ai client.
+   * @param {Date} end - End time of backend.ai client.
+   */
   _elapsed(start, end?) {
     var startDate = new Date(start);
     if (this.condition == 'active') {
@@ -400,10 +470,22 @@ export default class BackendAICredentialList extends BackendAIPage {
     return days;
   }
 
+  /**
+   * Change d of any type to human readable date time.
+   * 
+   * @param {any} d 
+   */
   _humanReadableTime(d) {
     return new Date(d).toUTCString();
   }
 
+  /**
+   * Render an index.
+   * 
+   * @param {DOM element} root 
+   * @param {<vaadin-grid-column> element} column 
+   * @param {object} rowData  
+   */
   _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
     render(
@@ -414,6 +496,11 @@ export default class BackendAICredentialList extends BackendAIPage {
     );
   }
 
+  /**
+   * If value includes unlimited contents, mark as unlimited.
+   * 
+   * @param value 
+   */
   _markIfUnlimited(value) {
     if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
@@ -422,6 +509,11 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
+  /**
+   * Update items from page
+   * 
+   * @param page 
+   */
   _updateItemsFromPage(page) {
     if (typeof page !== 'number') {
       let page_action = page.target;
@@ -440,6 +532,13 @@ export default class BackendAICredentialList extends BackendAIPage {
     console.log()
   }
 
+  /**
+   * Render a key elasped time.
+   * 
+   * @param {DOM element} root 
+   * @param {<vaadin-grid-column> element} column 
+   * @param {object} rowData  
+   */
   keyageRenderer(root, column?, rowData?) {
     render(
       html`
@@ -451,6 +550,13 @@ export default class BackendAICredentialList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render key control buttons.
+   * 
+   * @param {DOM element} root 
+   * @param {<vaadin-grid-column> element} column 
+   * @param {object} rowData  
+   */
   controlRenderer(root, column?, rowData?) {
     render(
       html`
@@ -480,12 +586,22 @@ export default class BackendAICredentialList extends BackendAIPage {
     );
   }
 
+  /**
+   * Hide the backend.ai dialog.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
+  /**
+   * Save a keypair modification.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _saveKeypairModification(e) {
     const resource_policy = this.shadowRoot.querySelector('#policy-list').value;
     const rate_limit = this.shadowRoot.querySelector('#rate-limit').value;

@@ -38,7 +38,6 @@ dep:
 	mkdir -p build/electron-app
 	cp ./package.json ./build/electron-app/package.json
 	cp ./main.js ./build/electron-app/main.js
-	#cp ./main.electron-packager.js ./build/electron-app/main.js
 	cp -Rp build/rollup build/electron-app/app
 	cp -Rp build/rollup/resources build/electron-app
 	cp -Rp build/rollup/manifest build/electron-app
@@ -49,11 +48,7 @@ dep:
 	mkdir -p ./build/electron-app/node_modules/markty-toml
 	cp -Rp ./node_modules/markty ./build/electron-app/node_modules
 	cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules
-	#rm ./build/electron-app/node_modules/markty-toml/dist/marktytoml.js
-	#cp ./node_modules/markty-toml/dist/marktytoml.es.js ./build/electron-app/node_modules/markty-toml/dist/marktytoml.js
 	cp ./preload.js ./build/electron-app/preload.js
-	#mkdir -p ./build/electron-app/app/wsproxy/config
-	#cp ./wsproxy-config.js ./build/electron-app/app/wsproxy/config/default.json
 web:
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
@@ -70,7 +65,6 @@ mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns
 	rm -rf ./app/backend.ai-console-macos
 	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos;
-	#cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
 	mv ./app/backend.ai-console-macos/backend.ai-console.app './app/backend.ai-console-macos/Backend.AI Console.app'
 	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-console-macos/Backend.AI Console.app' ./app/backend.ai-console-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),master)

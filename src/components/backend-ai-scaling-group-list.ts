@@ -26,6 +26,19 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
+/**
+ Backend AI Scaling Group List
+
+ `backend-ai-scaling-group-list` manages scaling group.
+
+ Example:
+
+ <backend-ai-scaling-group-list active></backend-ai-scaling-group-list>
+
+ @group Backend.AI Console
+ @element backend-ai-scaling-group-list
+ */
+
 @customElement("backend-ai-scaling-group-list")
 export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this._controlRenderer.bind(this);
@@ -173,6 +186,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     this.shadowRoot.querySelector(id).hide();
   }
 
+  /**
+   * Render control units - settings (modify-scaling-group), delete (delete-scaling-group)
+   * */
   _controlRenderer(root, column, rowData) {
     render(
       html`
@@ -201,6 +217,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     )
   }
 
+  /**
+   * Create scaling group and associate scaling group with domain.
+   * */
   _createScalingGroup() {
     const scalingGroup = this.shadowRoot.querySelector("#scaling-group-name").value,
       description = this.shadowRoot.querySelector("#scaling-group-description").value,
@@ -245,6 +264,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       })
   }
 
+  /**
+   * Modify scaling group such as description, scheduler, is_active, and name.
+   * */
   _modifyScalingGroup() {
     const description = this.shadowRoot.querySelector("#modify-scaling-group-description").value,
       scheduler = this.shadowRoot.querySelector("#modify-scaling-group-scheduler").value,

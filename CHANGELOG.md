@@ -1,5 +1,11 @@
 # Changelog
 
+## v20.07.5 (09/07/2020)
+
+#### Bug Fixes:
+
+- [**blocker**][**bug**][**library / SDK**][**major**] 502 error found when launching app with Backend.AI 20.03 / Enterprise R2 beta [#601](https://github.com/lablup/backend.ai-console/issues/601)
+
 
 ## v20.07.4 (06/07/2020)
 
