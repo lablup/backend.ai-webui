@@ -768,7 +768,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </wl-label>
           </div>
         </div>
-        <div slot="content">
+        <div slot="content" style="height:calc(100vh - 300px);background-color:#272823;">
           <lablup-codemirror id="usersetting-editor" mode="shell"></lablup-codemirror>
         </div>
         <div slot="footer" class="end-justified layout flex horizontal">
@@ -786,6 +786,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           ${_t("usersettings.DialogNoSaveNoPreserve")}
         </div>
         <div slot="footer" style="border-top:none;" class="end-justified layout flex horizontal">
+          <wl-button inverted flat id="cancel-editor" class="button"
+                     style="margin: 0 10px;"
+                     @click="${() => this._cancelCurrentEditorChange()}">
+                     ${_t("button.Cancel")}</wl-button>
           <wl-button id="discard-editor-data"
                      style="margin: 0 10px;"
                      @click="${() => this._discardCurrentEditorChange()}">
@@ -794,10 +798,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                      style="margin: 0 10px;"
                      @click="${() => this._saveCurrentEditorChange()}">
                      ${_t("button.Save")}</wl-button>
-          <wl-button inverted flat id="cancel-editor" class="button"
-                     style="margin: 0 10px;"
-                     @click="${() => this._cancelCurrentEditorChange()}">
-                     ${_t("button.Cancel")}</wl-button>
         </div>
       </backend-ai-dialog>
     `;
