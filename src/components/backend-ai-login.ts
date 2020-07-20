@@ -209,7 +209,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         .login-input mwc-icon {
-          margin: 5px 5px 5px 15px;
+          margin: 5px 15px 5px 15px;
           color: #737373;
         }
 
