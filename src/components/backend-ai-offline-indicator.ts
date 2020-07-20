@@ -4,6 +4,17 @@
  */
 import {css, customElement, html, LitElement} from "lit-element";
 
+/**
+ Backend.AI Offline Indicator
+
+ Example:
+
+ <backend-ai-offline-indicator ?active="${0}"></backend-ai-offline-indicator>
+
+ @group Backend.AI Console
+ @element backend-ai-offline-indicator
+ */
+
 @customElement("backend-ai-offline-indicator")
 export default class BackendAIOfflineIndicator extends LitElement {
   static get styles() {

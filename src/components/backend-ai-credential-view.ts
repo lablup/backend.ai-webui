@@ -250,6 +250,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
+  /**
+   * If admin comes, prepare the user list page.
+   */
   _preparePage() {
     if (globalThis.backendaiclient.is_admin !== true) {
       this.disablePage();
@@ -273,6 +276,11 @@ export default class BackendAICredentialView extends BackendAIPage {
     this._defaultFileName = this._getDefaultCSVFileName();
   }
 
+  /**
+   * Change resource policy list's active state and user list's active state.
+   * 
+   * @param {Boolean} active 
+   */
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -286,11 +294,17 @@ export default class BackendAICredentialView extends BackendAIPage {
     this._status = 'active';
   }
 
+  /**
+   * Launch a keypair dialog.
+   */
   async _launchKeyPairDialog() {
     await this._getResourcePolicies();
     this.shadowRoot.querySelector('#new-keypair-dialog').show();
   }
 
+  /**
+   * Read the vfolder host information.
+   */
   _readVFolderHostInfo() {
     globalThis.backendaiclient.vfolder.list_hosts().then(response => {
       this.allowed_vfolder_hosts = response.allowed;
@@ -305,6 +319,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     });
   }
 
+  /**
+   * Launch a resouce policy dialog.
+   */
   _launchResourcePolicyDialog() {
     this._readVFolderHostInfo();
     this.shadowRoot.querySelector('#id_new_policy_name').mdcFoundation.setValid(true);
@@ -313,15 +330,24 @@ export default class BackendAICredentialView extends BackendAIPage {
     this.shadowRoot.querySelector('#new-policy-dialog').show();
   }
 
+  /**
+   * Launch a modify resource policy dialog.
+   */
   _launchModifyResourcePolicyDialog() {
     this._readVFolderHostInfo();
     this.shadowRoot.querySelector('#new-policy-dialog').show();
   }
 
+  /**
+   * Launch an user add dialog.
+   */
   _launchUserAddDialog() {
     this.shadowRoot.querySelector('#new-user-dialog').show();
   }
 
+  /**
+   * Get resource policies from backend client.
+   */
   async _getResourcePolicies() {
     return globalThis.backendaiclient.resourcePolicy.get(null, ['name', 'default_for_unspecified',
       'total_resource_slots',
@@ -335,6 +361,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     });
   }
 
+  /**
+   * Create a keypair to the user.
+   */
   _addKeyPair() {
     let is_active = true;
     let is_admin = false;
@@ -369,6 +398,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     });
   }
 
+  /**
+   * Read resource policy and check validation.
+   */
   _readResourcePolicyInput() {
     let total_resource_slots = {};
     let vfolder_hosts: Array<object> = [];
@@ -417,6 +449,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     return input;
   }
 
+  /**
+   * Add a new resource policy.
+   */
   _addResourcePolicy() {
     let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
     if(!policy_info.checkValidity()) {
@@ -451,6 +486,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
+  /**
+   * Add an user with user information.
+   */
   _addUser() {
     const email = this.shadowRoot.querySelector('#id_user_email').value,
       name = this.shadowRoot.querySelector('#id_user_name').value,
@@ -534,6 +572,9 @@ export default class BackendAICredentialView extends BackendAIPage {
       })
   }
 
+  /**
+   * Modify a resouce policy.
+   */
   _modifyResourcePolicy() {
     let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
     try {
@@ -559,6 +600,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
+  /**
+   * Disable the page.
+   */
   disablePage() {
     var els = this.shadowRoot.querySelectorAll(".admin");
     for (var x = 0; x < els.length; x++) {
@@ -566,6 +610,11 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
+  /**
+   * Display the tab.
+   * 
+   * @param tab 
+   */
   _showTab(tab) {
     var els = this.shadowRoot.querySelectorAll(".tab-content");
     for (var x = 0; x < els.length; x++) {
@@ -575,6 +624,11 @@ export default class BackendAICredentialView extends BackendAIPage {
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
   }
 
+  /**
+   * Set a wlTextEl value according to toggle checkbox checked state.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _toggleCheckbox(e) {
     const checkEl = e.target;
     const checked = checkEl.checked;
@@ -587,6 +641,11 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
+  /**
+   * Check validation of resource input.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _validateResourceInput(e) {
     const textfield = e.target.closest('wl-textfield');
     const checkbox_el = textfield.closest('div').querySelector('.unlimited');
@@ -619,6 +678,11 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
+  /**
+   * Check validation of user input.
+   * 
+   * @param {object} resource 
+   */
   _validateUserInput(resource) {
     if (resource.disabled) {
       resource.value = '';
@@ -629,6 +693,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
+  /**
+   * Add validator to policy input.
+   */
   _addValidatorToPolicyInput() {
     let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
     policy_info.validityTransform = (value, nativeValidity) => {
@@ -674,6 +741,11 @@ export default class BackendAICredentialView extends BackendAIPage {
     };
   }
 
+  /**
+   * Update the input resource's status.
+   * 
+   * @param {object} resource 
+   */
   _updateInputStatus(resource) {
     let textfield = resource;
     let checkbox = textfield.closest('div').querySelector('wl-checkbox');
@@ -685,11 +757,18 @@ export default class BackendAICredentialView extends BackendAIPage {
       checkbox.checked = false;
     }
   }
+
+  /**
+   * Display a export to csv dialog.
+   */
   _openExportToCsvDialog() {
     this._defaultFileName = this._getDefaultCSVFileName();
     this.exportToCsvDialog.show();
   }
 
+  /**
+   * Export user list and credential lists and resource policy lists to csv.
+   */
   _exportToCSV() {
     let fileNameEl = this.shadowRoot.querySelector('#export-file-name');
     if (!fileNameEl.validity.valid) {
@@ -722,6 +801,10 @@ export default class BackendAICredentialView extends BackendAIPage {
     this.exportToCsvDialog.hide();
   }
 
+  /**
+   * Get resource information includes cpu, ram, gpu, fgpu, concurrency limit, idle timeout,
+   * container per session limit, vforder capacity and vfolder max limit.
+   */
   _getResourceInfo() {
     this.cpu_resource = this.shadowRoot.querySelector('#cpu-resource');
     this.ram_resource = this.shadowRoot.querySelector('#ram-resource');
@@ -734,12 +817,18 @@ export default class BackendAICredentialView extends BackendAIPage {
     this.vfolder_max_limit = this.shadowRoot.querySelector('#vfolder-count-limit');
   }
 
+  /**
+   * Get default csv file name according to local time.
+   */
   _getDefaultCSVFileName() {
     let date = new Date().toISOString().substring(0, 10);
     let time = new Date().toTimeString().slice(0,8).replace(/:/gi, '-');
     return date+'_'+time;
   }
 
+  /**
+   * Control a dropdown menu's open state.
+   */
   _toggleDropdown() {
     let menu = this.shadowRoot.querySelector("#dropdown-menu");
     menu.open = !menu.open;

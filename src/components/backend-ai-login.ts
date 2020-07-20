@@ -36,7 +36,6 @@ declare global {
   const ai: typeof aiSDK;
 }
 
-
 /**
  Backend.AI Login for GUI Console
 
@@ -213,6 +212,9 @@ export default class BackendAILogin extends BackendAIPage {
     this.endpoints = globalThis.backendaioptions.get("endpoints", []);
   }
 
+  /**
+   * Change the signin mode with SESSION or API
+   * */
   _changeSigninMode() {
     if (this.change_signin_support === true) {
       if (this.connection_mode == 'SESSION') {
@@ -329,6 +331,9 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
+  /**
+   * Open loginPanel.
+   * */
   open() {
     if (this.loginPanel.open !== true) {
       this.loginPanel.show();
@@ -338,6 +343,9 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
+  /**
+  * Close the loginPanel
+  * */
   close() {
     if (this.loginPanel.open === true) {
       this.loginPanel.hide();
@@ -347,6 +355,12 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
+  /**
+   * Show the blockPanel.
+   *
+   * @param {string} message - block message
+   * @param {string} type - block type
+   * */
   block(message = '', type = '') {
     this.blockMessage = message;
     this.blockType = type;
@@ -357,6 +371,9 @@ export default class BackendAILogin extends BackendAIPage {
     }, 2000);
   }
 
+  /**
+   * Hide the blockPanel.
+   * */
   free() {
     this.blockPanel.hide();
   }
@@ -365,6 +382,9 @@ export default class BackendAILogin extends BackendAIPage {
     return str.replace(/^\|+|\|+$/g, '');
   }
 
+  /**
+   * Login according to connection_mode and api_endpoint.
+   * */
   login() {
     if (this.api_endpoint === '') {
       let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
@@ -388,6 +408,9 @@ export default class BackendAILogin extends BackendAIPage {
     this.signoutPanel.show();
   }
 
+  /**
+   * Show signup dialog. And notify message if API Endpoint is empty.
+   * */
   _showSignupDialog() {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.api_endpoint === '') {
@@ -497,6 +520,9 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
+  /**
+   * Connect GQL when SESSION mode.
+   * */
   async _connectUsingSession() {
     this.clientConfig = new ai.backend.ClientConfig(
       this.user_id,
@@ -549,6 +575,9 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
+  /**
+   * Connect GQL when API mode.
+   * */
   _connectUsingAPI() {
     this.clientConfig = new ai.backend.ClientConfig(
       this.api_key,
@@ -563,6 +592,9 @@ export default class BackendAILogin extends BackendAIPage {
     this._connectGQL();
   }
 
+  /**
+   * Call _connectViaGQL() to connect to GQL.
+   * */
   _connectGQL() {
     // Test connection
     if (this.loginPanel.open !== true) {
@@ -594,6 +626,9 @@ export default class BackendAILogin extends BackendAIPage {
     });
   }
 
+  /**
+   * Connect client via GQL and set up the globalThis.backendaiclient's attributes.
+   * */
   _connectViaGQL() {
     let fields = ["user_id", "resource_policy", "user"];
     let q = `query { keypair { ${fields.join(" ")} } }`;

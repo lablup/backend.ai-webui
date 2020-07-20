@@ -324,6 +324,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       });
   }
 
+  /**
+   * Display the toggle sidebar when this.mini_ui is true.
+   */
   toggleSidebarUI(): void {
     if (!this.mini_ui) {
       this.mini_ui = true;
@@ -336,6 +339,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
   }
 
+  /**
+   * Set the drawer width by browser size.
+   */
   toggleSidePanelUI(): void {
     if (this.contentBody.open) {
       this.contentBody.open = false;
@@ -355,6 +361,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Set the toggle side pannel type.
+   */
   toggleSidePanelType() {
     if (this.contentBody.type === 'dismissible') {
       this.contentBody.type === 'modal';
@@ -363,6 +372,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Control the side panel by panel's state.
+   * 
+   * @param {string} panel 
+   */
   _openSidePanel(panel): void {
     if (this.contentBody.open === true) {
       if (panel != this._sidepanel) { // change panel only.
@@ -377,6 +391,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Change the drawer layout according to browser size.
+   * 
+   * @param {number} width 
+   * @param {number} height 
+   */
   _changeDrawerLayout(width, height): void {
     this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
     if (width < 700) {  // Close drawer
@@ -412,6 +432,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Refresh the user information panel.
+   */
   _refreshUserInfoPanel(): void {
     this.user_id = globalThis.backendaiclient.email;
     this.full_name = globalThis.backendaiclient.full_name;
@@ -451,6 +474,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     groupSelectionBox.appendChild(select);
   }
 
+  /**
+   * Load the page element.
+   */
   _loadPageElement() {
     if (this._page === 'index.html' || this._page === '') {
       this._page = 'summary';
@@ -458,15 +484,24 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Open the user preference dialog.
+   */
   _openUserPrefDialog() {
     const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
     dialog.show();
   }
 
+  /**
+   * Hide the user preference dialog.
+   */
   _hideUserPrefDialog() {
     this.shadowRoot.querySelector('#user-preference-dialog').hide();
   }
 
+  /**
+   * Update the user password.
+   */
   _updateUserPassword() {
     const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
     const oldPassword = dialog.querySelector('#pref-original-password').value;
@@ -525,6 +560,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Update the sidebar menu title according to view.
+   * 
+   * @param {string} view - Sidebar menu title string.
+   */
   _updateSidebar(view) {
     switch (view) {
       case 'summary':
@@ -588,6 +628,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * When user close the app window, delete login information.
+   * 
+   * @param {Boolean} performClose 
+   */
   async close_app_window(performClose = false) {
     if (globalThis.backendaioptions.get('preserve_login') === false) { // Delete login information.
       this.notification.text = 'Clean up login session...';
@@ -610,6 +655,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Logout from the backend.ai client.
+   * 
+   * @param {Boolean} performClose 
+   */
   async logout(performClose = false) {
     console.log('also close the app:', performClose);
     this._deleteRecentProjectGroupInfo();
@@ -647,11 +697,22 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Update the title color.
+   * 
+   * @param {string} backgroundColorVal 
+   * @param {string} colorVal 
+   */
   updateTitleColor(backgroundColorVal: string, colorVal: string) {
     (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.setProperty('--mdc-theme-primary', backgroundColorVal);
     (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.color = colorVal;
   }
 
+  /**
+   * Change the backend.ai client's current group.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   changeGroup(e) {
     globalThis.backendaiclient.current_group = e.target.value;
     this.current_group = globalThis.backendaiclient.current_group;
@@ -660,6 +721,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     document.dispatchEvent(event);
   }
 
+  /**
+   * Control the mwc-drawer.
+   */
   toggleDrawer() {
     let drawer = this.shadowRoot.querySelector('mwc-drawer');
     if (drawer.open === true) {
@@ -669,6 +733,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Control the dropdown menu.
+   */
   _toggleDropdown() {
     let menu = this.shadowRoot.querySelector("#dropdown-menu");
     let menu_icon = this.shadowRoot.querySelector('#dropdown-button');
@@ -676,6 +743,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     menu.open = !menu.open;
   }
 
+  /**
+   * Display the ToS(terms of service) agreement.
+   */
   showTOSAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
@@ -686,6 +756,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Display the PP(privacy policy) agreement.
+   */
   showPPAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
@@ -696,11 +769,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Move to input url.
+   * 
+   * @param {string} url
+   */
   _moveTo(url) {
     globalThis.history.pushState({}, '', url);
     store.dispatch(navigate(decodeURIComponent(url), {}));
   }
 
+  /**
+   * Move to user's log page.
+   */
   _moveToLogPage() {
     let currentPage = globalThis.location.toString().split(/[\/]+/).pop();
     globalThis.history.pushState({}, '', '/usersettings');
@@ -711,6 +792,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Read recent project group according to endpoint id.
+   */
   _readRecentProjectGroup() {
     let endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
     let value: string | null = globalThis.backendaioptions.get('projectGroup.' + endpointId);
@@ -725,16 +809,27 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     return globalThis.backendaiclient.current_group;
   }
 
+  /**
+   * Set the project group according to current group.
+   * 
+   * @param {string} value 
+   */
   _writeRecentProjectGroup(value: string) {
     let endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
     globalThis.backendaioptions.set('projectGroup.' + endpointId, value ? value : globalThis.backendaiclient.current_group);
   }
 
+  /**
+   * Delete the recent project group information.
+   */
   _deleteRecentProjectGroupInfo() {
     let endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
     globalThis.backendaioptions.delete('projectGroup.' + endpointId);
   }
 
+  /**
+   * Move to user settings page.
+   */
   _moveToUserSettingsPage() {
     let currentPage = globalThis.location.toString().split(/[\/]+/).pop();
     globalThis.history.pushState({}, '', '/usersettings');
@@ -745,6 +840,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Add tool tips by create popovers.
+   */
   async addTooltips() {
     this._createPopover("#summary-menu-icon", _text("console.menu.Summary"));
     this._createPopover("#sessions-menu-icon", _text("console.menu.Sessions"));
@@ -764,6 +862,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
   }
 
+  /**
+   * Create a popover.
+   * 
+   * @param {string} anchor 
+   * @param {string} title 
+   */
   _createPopover(anchor: string, title: string) {
     let popover = document.createElement('wl-popover');
     popover.anchor = anchor;
@@ -1020,6 +1124,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     `;
   }
 
+  /**
+   * Change the state.
+   * 
+   * @param {object} state 
+   */
   stateChanged(state) {
     this._page = state.app.page;
     this._offline = state.app.offline;

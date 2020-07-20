@@ -66,6 +66,9 @@ export default class BackendAiHelpButton extends BackendAIPage {
     return this.page;
   }
 
+  /**
+   * Show help page with current language(Korean or English).
+   */
   showHelpPage() {
     let postfix: string = '';
     if (this.manualURL != '') {
@@ -84,6 +87,11 @@ export default class BackendAiHelpButton extends BackendAIPage {
     this.showOnlineHelpPage(postfix);
   }
 
+  /**
+   * Open the online help page.
+   * 
+   * @param {string} postfix 
+   */
   showOnlineHelpPage(postfix: string) {
     window.open(`https://console.docs.backend.ai/${this.lang}/latest/` + postfix, '_blank');
   }

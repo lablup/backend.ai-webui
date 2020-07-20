@@ -26,6 +26,19 @@ import 'weightless/switch';
 import 'weightless/select';
 import {default as PainKiller} from "./backend-ai-painkiller";
 
+/**
+ Backend AI Settings View
+
+ Example:
+
+ <backend-ai-settings-view active>
+ ...
+ </backend-ai-settings-view>
+
+ @group Backend.AI Console
+ @element backend-ai-storage-list
+ */
+
 @customElement("backend-ai-settings-view")
 export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
@@ -287,6 +300,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
     }
   }
 
+  /**
+   * Image pulling behavior, scheduler, and resource slots setting update
+   * */
   updateSettings() {
     globalThis.backendaiclient.setting.get('docker/image/auto_pull').then((response) => {
       if (response['result'] === null || response['result'] === 'digest') { // digest mode
@@ -323,6 +339,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
     });
   }
 
+  /**
+   * Set image pulling behavior and notify.
+   * */
   setImagePullingBehavior(e) {
     if (e.target.selected === null) return false;
     const value = e.target.selected.value;
@@ -338,6 +357,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
     return true;
   }
 
+  /**
+   * Change Scheduler and notify.
+   * */
   changeScheduler(e) {
     if (['fifo', 'lifo', 'drf'].includes(e.target.value)) {
       let scheduler = `{${e.target.value}}`;

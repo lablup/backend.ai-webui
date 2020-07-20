@@ -121,6 +121,9 @@ export default class BackendAiDialog extends LitElement {
     super.connectedCallback();
   }
 
+  /**
+   * Synchronize the open state according to this.open.
+   */
   _syncOpenState() {
     this.open = this.dialog.open;
     if (this.open === true) {
@@ -132,16 +135,25 @@ export default class BackendAiDialog extends LitElement {
     }
   }
 
+  /**
+   * Hide a dialog.
+   */
   _hideDialog() {
     this.dialog.hide();
     this.open = this.dialog.open;
   }
 
+  /**
+   * Open a dialog.
+   */
   show() {
     this.dialog.show();
     this.open = this.dialog.open;
   }
 
+  /**
+   * Hide a dialog.
+   */
   hide() {
     this.dialog.hide();
     this.open = this.dialog.open;
