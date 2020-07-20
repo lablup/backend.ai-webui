@@ -125,7 +125,10 @@ export default class BackendAIChart extends LitElement {
         }
       }],
     };
+
     this.options = {
+      responsive: true,
+      maintainAspectRatio: false,
       legend: {
         display: true
       },
@@ -141,6 +144,7 @@ export default class BackendAIChart extends LitElement {
             },
             source: 'data',
             autoSkip: true,
+            labelOffset: 20,
             sampleSize: 100,
             maxTicksLimit: 8,
             maxRotation: 0,
@@ -156,21 +160,24 @@ export default class BackendAIChart extends LitElement {
           responsive: true,
           beginAtZero: true,
           display: true,
-          scaleLabel: {
-            display: true,
-            labelString: capitalize(this.collection.unit_hint)
-          },
           ticks: {
             fontSize: 10,
-            callback: function(value) {
+            callback: function (value) {
               return Math.round(value);
             },
             maxTicksLimit: 5
+          },
+          scaleLabel: {
+            display: true,
+            labelString: capitalize(this.collection.unit_hint)
           }
         }
-      },
-      maintainAspectRatio: false
+      }
     };
+    if (this.collection.period == '1W') {
+      this.options.scales.x.ticks.maxTicksLimit = 14;
+      this.options.scales.x.ticks.maxRotation = 50;
+    }
   }
 
   render() {
