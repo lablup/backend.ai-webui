@@ -220,7 +220,6 @@ export const BackendAiConsoleStyles = [
       --mdc-typography-subtitle1-font-color: white;
       --mdc-typography-subtitle1-font-weight: 400;
       --mdc-typography-subtitle1-line-height: 16px;
-
       --mdc-theme-primary: rgba(255, 255, 255, 1.0);
       --mdc-select-idle-line-color: transparent;
       --mdc-select-hover-line-color: transparent;
