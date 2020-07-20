@@ -6,6 +6,19 @@
 import {css, customElement, html, LitElement, property} from "lit-element";
 import 'weightless/progress-spinner';
 
+/**
+ Lablup Loading Spinner
+
+ `lablup-loading-spinner` is loading spinner.
+
+ Example:
+
+ <lablup-loading-spinner></lablup-loading-spinner>
+
+ @group Backend.AI Console
+ @element lablup-loading-spinner
+ */
+
 @customElement("lablup-loading-spinner")
 export default class LablupLoadingSpinner extends LitElement {
   public shadowRoot: any; // ShadowRoot
@@ -60,12 +73,18 @@ export default class LablupLoadingSpinner extends LitElement {
 
   }
 
+  /**
+   * Set up active state and spinner style to show the loading spinner.
+   * */
   async show() {
     this.active = true;
     await this.updateComplete;
     this.spinner.style.display = 'block';
   }
 
+  /**
+   * Set up active state and spinner style to hide the loading spinner.
+   * */
   async hide() {
     this.active = true;
     await this.updateComplete;
@@ -73,6 +92,9 @@ export default class LablupLoadingSpinner extends LitElement {
     this.active = false;
   }
 
+  /**
+   * Change whether spinner is visible or not.
+   * */
   async toggle() {
     await this.updateComplete;
     if (this.spinner.active === true) {

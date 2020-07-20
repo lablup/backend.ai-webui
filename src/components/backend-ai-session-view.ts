@@ -27,6 +27,19 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend AI Session View
+
+ Example:
+
+ <backend-ai-session-view active>
+ ...
+ </backend-ai-settings-view>
+
+ @group Backend.AI Console
+ @element backend-ai-storage-list
+ */
+
 @customElement("backend-ai-session-view")
 export default class BackendAiSessionView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
