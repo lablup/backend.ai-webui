@@ -680,7 +680,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <div slot="content">
           <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
         </div>
-        <div slot="footer">
+        <div slot="footer" class="end-justified layout flex horizontal">
           <wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">${_t("button.Cancel")}</wl-button>
           <wl-button id="save-code" class="button" @click="${() => this._saveBootstrapScript()}">${_t("button.Save")}</wl-button>
           <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
@@ -709,7 +709,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <div slot="content">
           <lablup-codemirror id="usersetting-editor" mode="shell"></lablup-codemirror>
         </div>
-        <div slot="footer">
+        <div slot="footer" class="end-justified layout flex horizontal">
           <wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">${_t("button.Cancel")}</wl-button>
           <wl-button style="margin-left:10px;" id="save-code" class="button" @click="${() => this._saveUserConfigScript()}">${_t("button.Save")}</wl-button>
           <wl-button style="margin-left:10px;" id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
@@ -723,7 +723,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <div slot="content">
           ${_t("usersettings.DialogNoSaveNoPreserve")}
         </div>
-        <div slot="footer" style="border-top:none;">
+        <div slot="footer" style="border-top:none;" class="end-justified layout flex horizontal">
           <wl-button id="discard-editor-data"
                      style="margin: 0 10px;"
                      @click="${() => this._discardCurrentEditorChange()}">
