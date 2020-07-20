@@ -6,7 +6,6 @@ import {css, customElement, html, LitElement, property} from "lit-element";
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
-import {WCCodeMirror} from '@vanillawc/wc-codemirror/index';
 import '@vanillawc/wc-codemirror/index';
 import '@vanillawc/wc-codemirror/mode/python/python';
 import '@vanillawc/wc-codemirror/mode/shell/shell';

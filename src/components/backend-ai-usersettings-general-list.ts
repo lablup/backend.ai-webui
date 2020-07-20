@@ -475,7 +475,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
-  _deleteRcFile(path: string) {
+  _deleteRcFile(path?: string) {
     if (!path) {
       path = this.rcfile;
     }
