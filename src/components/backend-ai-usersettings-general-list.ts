@@ -368,10 +368,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * Edit user's .bashrc or .zshrc code.
    * */
   async _editUserConfigScript() {
-    let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
+    const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     this.rcfiles = await this._fetchUserConfigScript();
-    let rcfile_names = Array(".bashrc", ".zshrc");
-    rcfile_names.map(filename => {
+    const rcfileNames = Array('.bashrc', '.zshrc', '.Renviron');
+    rcfileNames.map(filename => {
       let idx = this.rcfiles.findIndex(item => item.path === filename);
       if (idx == -1) {
         this.rcfiles.push({path: filename, data: ""});
@@ -389,6 +389,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       editor.setValue('');
     }
     editor.refresh();
+    this.spinner.hide();
   }
 
   _fetchUserConfigScript() {
@@ -519,13 +520,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.prevRcfile = this.rcfile;
     this.rcfile = select.value;
     let idx = this.rcfiles.findIndex(item => item.path === this.prevRcfile);
-    let code = this.rcfiles[idx]['data'];
+    let code = idx > -1 ? this.rcfiles[idx]['data'] : '';
     let editorCode = editor.getValue();
     select.layout();
     if (code !== editorCode) {
       this._launchChangeCurrentEditorDialog();
     } else {
-      idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+      idx = this.rcfiles.findIndex((item) => item.path === this.rcfile);
       code = this.rcfiles[idx]['data'];
       editor.setValue(code);
     }
@@ -536,13 +537,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    *
    * @param {string} path - path that you want to delete
    * */
-  _deleteRcFile(path: string) {
+  _deleteRcFile(path?: string) {
+    if (!path) {
+      path = this.rcfile;
+    }
     if (path) {
       globalThis.backendaiclient.userConfig.delete_dotfile_script(path).then(res => {
         let message = 'User config script ' + path + 'is deleted.';
         this.notification.text = message;
         this.notification.show();
         this.spinner.hide();
+        this._hideUserConfigScriptDialog();
       }).catch(err => {
         console.log(err);
         if (err && err.message) {
@@ -737,7 +742,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <div slot="content">
           <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
         </div>
-        <div slot="footer">
+        <div slot="footer" class="end-justified layout flex horizontal">
           <wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">${_t("button.Cancel")}</wl-button>
           <wl-button id="save-code" class="button" @click="${() => this._saveBootstrapScript()}">${_t("button.Save")}</wl-button>
           <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
@@ -763,20 +768,28 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </wl-label>
           </div>
         </div>
-        <div slot="content">
+        <div slot="content" style="height:calc(100vh - 300px);background-color:#272823;">
           <lablup-codemirror id="usersetting-editor" mode="shell"></lablup-codemirror>
         </div>
-        <div slot="footer">
+        <div slot="footer" class="end-justified layout flex horizontal">
           <wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">${_t("button.Cancel")}</wl-button>
           <wl-button style="margin-left:10px;" id="save-code" class="button" @click="${() => this._saveUserConfigScript()}">${_t("button.Save")}</wl-button>
           <wl-button style="margin-left:10px;" id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
-          <wl-button style="margin-left:10px;" id="delete-all" @click="${() => this._deleteRcFileAll()}" style="display:none;">${_t("button.DeleteAll")}</wl-button>
+          <wl-button style="margin-left:10px;" id="delete-rcfile" @click="${() => this._deleteRcFile()}" style="display:none;">${_t("button.Delete")}</wl-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
-        <span slot="title">${_t("usersettings.DialogSaveToSpecificFile", {File: () => this.prevRcfile})}
-        <span slot="action">${_t("usersettings.DialogNoSaveNoPreserve")}</span>
-        <div slot="footer" style="border-top:none;">
+        <div slot="title">
+          ${_t("usersettings.DialogSaveToSpecificFile", {File: () => this.prevRcfile})}
+        </div>
+        <div slot="content">
+          ${_t("usersettings.DialogNoSaveNoPreserve")}
+        </div>
+        <div slot="footer" style="border-top:none;" class="end-justified layout flex horizontal">
+          <wl-button inverted flat id="cancel-editor" class="button"
+                     style="margin: 0 10px;"
+                     @click="${() => this._cancelCurrentEditorChange()}">
+                     ${_t("button.Cancel")}</wl-button>
           <wl-button id="discard-editor-data"
                      style="margin: 0 10px;"
                      @click="${() => this._discardCurrentEditorChange()}">
@@ -785,10 +798,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                      style="margin: 0 10px;"
                      @click="${() => this._saveCurrentEditorChange()}">
                      ${_t("button.Save")}</wl-button>
-          <wl-button inverted flat id="cancel-editor" class="button"
-                     style="margin: 0 10px;"
-                     @click="${() => this._cancelCurrentEditorChange()}">
-                     ${_t("button.Cancel")}</wl-button>
         </div>
       </backend-ai-dialog>
     `;
