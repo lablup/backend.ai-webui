@@ -109,6 +109,8 @@ export default class BackendAIChart extends LitElement {
       'Sessions': '#ec407a', 'CPU': '#9ccc65', 'Memory': '#ffa726',
       'GPU': '#26c6da', 'IO-Read': '#3677eb', 'IO-Write': '#003f5c'
     };
+    let maxTicksLimit = (this.collection.period == '1D') ? 8 : 14;
+    let maxRotation = (this.collection.period == '1D') ? 0 : 50;
 
     this.type = 'line';
     this.chartData = {
@@ -146,8 +148,8 @@ export default class BackendAIChart extends LitElement {
             autoSkip: true,
             labelOffset: 20,
             sampleSize: 100,
-            maxTicksLimit: 8,
-            maxRotation: 0,
+            maxTicksLimit: maxTicksLimit,
+            maxRotation: maxRotation,
             fontSize: 10,
           },
           scaleLabel: {
@@ -174,10 +176,6 @@ export default class BackendAIChart extends LitElement {
         }
       }
     };
-    if (this.collection.period == '1W') {
-      this.options.scales.x.ticks.maxTicksLimit = 14;
-      this.options.scales.x.ticks.maxRotation = 50;
-    }
   }
 
   render() {
