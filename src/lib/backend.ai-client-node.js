@@ -1438,7 +1438,7 @@ class Keypair {
         return this.client.gql(q, v);
     }
     /**
-     * List Keypairs of given user ID.
+     * List all Keypairs of given user ID.
      *
      * @param {string} userId - User ID to query API keys. If user ID is not given and client is authorized as admin, this will return every keypairs of the manager.
      * @param {array} fields - Fields to query. Queryable fields are: "access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
@@ -1446,35 +1446,61 @@ class Keypair {
      */
     async list(userId = null, fields = ['access_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
         'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
-        let q;
-        if (this.client.is_admin) {
-            if (userId == null) {
-                q = `query($is_active: Boolean) {` +
-                    `  keypairs(is_active: $is_active) {` +
-                    `    ${fields.join(" ")}` +
-                    `  }` +
-                    `}`;
-            }
-            else {
-                q = `query($email: String!, $is_active: Boolean) {` +
-                    `  keypairs(email: $email, is_active: $is_active) {` +
-                    `    ${fields.join(" ")}` +
-                    `  }` +
-                    `}`;
-            }
+        let q, v;
+        if (this.client._apiVersionMajor < 5) {
+            q = (this.client.is_admin && userId == null) ? `
+        query($is_active: Boolean) {
+          keypairs(is_active: $is_active) {
+            ${fields.join(' ')}
+          }
+        }
+      ` : `
+        query($email: String!, $is_active: Boolean) {
+          keypairs(email: $email, is_active: $is_active) {
+            ${fields.join(' ')}
+          }
+        }
+      `;
+            v = {
+                email: userId || this.client.email,
+                is_active: isActive,
+            };
+            return this.client.gql(q, v);
         }
         else {
-            q = `query($email: String!, $is_active: Boolean) {` +
-                `  keypairs(email: $email, is_active: $is_active) {` +
-                `    ${fields.join(" ")}` +
-                `  }` +
-                `}`;
+            const limit = 100;
+            const keypairs = [];
+            q = (this.client.is_admin && userId == null) ? `
+        query($offset:Int!, $limit:Int!, $is_active: Boolean) {
+          keypair_list(offset:$offset, limit:$limit, is_active: $is_active) {
+            items { ${fields.join(' ')} }
+            total_count
+          }
         }
-        let v = {
-            'email': userId || this.client.email,
-            'is_active': isActive,
-        };
-        return this.client.gql(q, v);
+      ` : `
+        query($offset:Int!, $limit:Int!, $email: String!, $is_active: Boolean) {
+          keypair_list(offset:$offset, limit:$limit, email: $email, is_active: $is_active) {
+            items { ${fields.join(' ')} }
+            total_count
+          }
+        }
+      `;
+            // Prevent fetcing more than 1000 keypairs.
+            for (let offset = 0; offset < 10 * limit; offset += limit) {
+                v = {
+                    offset, limit,
+                    email: userId || this.client.email,
+                    is_active: isActive,
+                };
+                const page = await this.client.gql(q, v);
+                keypairs.push(...page.keypair_list.items);
+                if ((offset + 1) * limit >= page.keypair_list.total_count) {
+                    break;
+                }
+            }
+            const resp = { keypairs };
+            return Promise.resolve(resp);
+        }
     }
     /**
      * Add Keypair with given information.
@@ -2263,7 +2289,9 @@ class User {
         this.client = client;
     }
     /**
-     * List registred users.
+     * List all registred users.
+     *
+     * TODO: we need new paginated list API after implementation of server-side dynamic filtering.
      *
      * @param {boolean} is_active - List whether active users or inactive users.
      * @param {json} input - User specification to query. Fields are:
@@ -2281,19 +2309,51 @@ class User {
      */
     async list(is_active = true, fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
         let q, v;
-        if (this.client.is_admin === true) {
-            q = `query($is_active:Boolean) {` +
-                `  users(is_active:$is_active) { ${fields.join(" ")} }` +
-                '}';
-            v = { 'is_active': is_active };
+        if (this.client._apiVersionMajor < 5) {
+            q = this.client.is_admin ? `
+        query($is_active:Boolean) {
+          users(is_active:$is_active) { ${fields.join(' ')} }
+        }
+      ` : `
+        query {
+          users { ${fields.join(' ')} }
+        }
+      `;
+            v = this.client.is_admin ? { is_active } : {};
+            return this.client.gql(q, v);
         }
         else {
-            q = `query {` +
-                `  user { ${fields.join(" ")} }` +
-                '}';
-            v = {};
+            // From 20.03, there is no single query to fetch every users, so
+            // we iterate pages to gather all users for client-side compability.
+            const limit = 100;
+            const users = [];
+            q = this.client.is_admin ? `
+        query($offset:Int!, $limit:Int!, $is_active:Boolean) {
+          user_list(offset:$offset, limit:$limit, is_active:$is_active) {
+            items { ${fields.join(' ')} }
+            total_count
+          }
         }
-        return this.client.gql(q, v);
+      ` : `
+        query($offset:Int!, $limit:Int!) {
+          user_list(offset:$offset, limit:$limit) {
+            items { ${fields.join(' ')} }
+            total_count
+          }
+        }
+      `;
+            // Prevent fetching more than 1000 users.
+            for (let offset = 0; offset < 10 * limit; offset += limit) {
+                v = this.client.is_admin ? { offset, limit, is_active } : { offset, limit };
+                const page = await this.client.gql(q, v);
+                users.push(...page.user_list.items);
+                if ((offset + 1) * limit >= page.user_list.total_count) {
+                    break;
+                }
+            }
+            const resp = { users };
+            return Promise.resolve(resp);
+        }
     }
     /**
      * Get user information.
