@@ -184,7 +184,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Check the admin and set the keypair grid when backend.ai client connected.
-   * 
+   *
    * @param {Booelan} active - The component will work if active is true.
    */
   async _viewStateChanged(active: Boolean) {
@@ -208,8 +208,8 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Refresh key datas when user id is null.
-   * 
-   * @param {string} user_id 
+   *
+   * @param {string} user_id
    */
   _refreshKeyData(user_id: null|string = null) {
     let is_active = true;
@@ -301,7 +301,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Display a keypair information dialog.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   async _showKeypairDetail(e) {
@@ -322,7 +322,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Modify resource policy by displaying keypair modify dialog.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   async _modifyResourcePolicy(e) {
@@ -346,7 +346,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Get key data from access key.
-   * 
+   *
    * @param accessKey
    */
   async _getKeyData(accessKey) {
@@ -371,7 +371,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Delete the access key.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _deleteKey(e) {
@@ -397,7 +397,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Revoke the access key.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _revokeKey(e) {
@@ -406,7 +406,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Reuse the access key.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _reuseKey(e) {
@@ -415,7 +415,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Mutate the access key.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    * @param {Boolean} is_active
    */
@@ -445,8 +445,8 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Find the access key.
-   * 
-   * @param element 
+   *
+   * @param element
    */
   _findKeyItem(element) {
     return element.access_key = this;
@@ -472,8 +472,8 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Change d of any type to human readable date time.
-   * 
-   * @param {any} d 
+   *
+   * @param {any} d
    */
   _humanReadableTime(d) {
     return new Date(d).toUTCString();
@@ -481,13 +481,14 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Render an index.
-   * 
-   * @param {DOM element} root 
-   * @param {<vaadin-grid-column> element} column 
-   * @param {object} rowData  
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
    */
   _indexRenderer(root, column, rowData) {
-    let idx = rowData.index + 1;
+    const idxPrevPages = (this._currentPage - 1) * this.keypairGrid.pageSize;
+    const idx = rowData.index + 1 + idxPrevPages;
     render(
       html`
         <div>${idx}</div>
@@ -498,8 +499,8 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * If value includes unlimited contents, mark as unlimited.
-   * 
-   * @param value 
+   *
+   * @param value
    */
   _markIfUnlimited(value) {
     if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
@@ -511,8 +512,8 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Update items from page
-   * 
-   * @param page 
+   *
+   * @param page
    */
   _updateItemsFromPage(page) {
     if (typeof page !== 'number') {
@@ -534,10 +535,10 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Render a key elasped time.
-   * 
-   * @param {DOM element} root 
-   * @param {<vaadin-grid-column> element} column 
-   * @param {object} rowData  
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
    */
   keyageRenderer(root, column?, rowData?) {
     render(
@@ -552,10 +553,10 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Render key control buttons.
-   * 
-   * @param {DOM element} root 
-   * @param {<vaadin-grid-column> element} column 
-   * @param {object} rowData  
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
    */
   controlRenderer(root, column?, rowData?) {
     render(
@@ -588,7 +589,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Hide the backend.ai dialog.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _hideDialog(e) {
@@ -599,7 +600,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Save a keypair modification.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _saveKeypairModification(e) {
@@ -638,7 +639,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     return html`
       <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact" aria-label="Credential list"
                    id="keypair-grid" .items="${this.keypairView}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
 
         <vaadin-grid-column resizable>
           <template class="header">

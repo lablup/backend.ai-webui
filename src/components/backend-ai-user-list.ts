@@ -341,7 +341,8 @@ export default class BackendAIUserList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   _indexRenderer(root, column, rowData) {
-    let idx = rowData.index + 1;
+    const idxPrevPages = (this._currentPage - 1) * this.userGrid.pageSize;
+    const idx = rowData.index + 1 + idxPrevPages;
     render(
       html`
         <div>${idx}</div>
@@ -504,7 +505,7 @@ export default class BackendAIUserList extends BackendAIPage {
       <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact"
                    aria-label="User list" id="user-grid" .items="${this.userView}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
-                            .renderer="${this._indexRenderer}"></vaadin-grid-column>
+                            .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
         <vaadin-grid-sort-column resizable header="${_t("credential.UserID")}" path="email">
           <template>
             <div class="layout horizontal center flex">

@@ -1611,6 +1611,8 @@ class Keypair {
       };
       return this.client.gql(q, v);
     } else {
+      // From 20.03, there is no single query to fetch every keypairs, so
+      // we iterate pages to gather all keypairs for client-side compability.
       const limit = 100;
       const keypairs = [];
       q = (this.client.is_admin && userId == null) ? `
@@ -1628,7 +1630,7 @@ class Keypair {
           }
         }
       `;
-      // Prevent fetcing more than 1000 keypairs.
+      // Prevent fetching more than 1000 keypairs.
       for (let offset = 0; offset < 10 * limit; offset+=limit) {
         v = {
           offset, limit,
