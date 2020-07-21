@@ -60,6 +60,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) enableLaunchButton = false;
   @property({type: String}) location = '';
   @property({type: String}) mode = 'normal';
+  @property({type: String}) newSessionDialogTitle = '';
   @property({type: String}) importScript = '';
   @property({type: String}) importFilename = '';
   @property({type: Object}) imageRequirements = Object();
@@ -1776,7 +1777,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         ${_t("session.launcher.Start")}
       </wl-button>
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
-        <span slot="title">${_t("session.launcher.StartNewSession")}</span>
+        <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>
         <form slot="content" id="launch-session-form" class="centered">
           <div class="vertical center layout" style="padding-top:15px;">
             <mwc-select id="environment" label="${_t("session.launcher.Environments")}" fullwidth required

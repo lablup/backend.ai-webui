@@ -39,7 +39,8 @@
       "Experiments": "Experiments",
       "UserName": "User Name",
       "Menu": "Menu",
-      "Run": "Run"
+      "Run": "Run",
+      "Import&Run": "Import & Run"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
@@ -135,7 +136,8 @@
       "AdvancedResourceAllocation": "AdvancedResourceAllocation",
       "ThisSettingTakesPrecedence": "Note: This setting takes precedence",
       "CustomResourceApplied": "Custom resource is applied",
-      "PleaseChooseFoldersToMount": "Please Choose Folders To Mount"
+      "PleaseChooseFoldersToMount": "Please Choose Folders To Mount",
+      "StartImportedNotebook": "Start Imported Notebook"
     },
     "Running": "Running",
     "Finished": "Finished",
@@ -652,6 +654,8 @@
     "RunOnBackendAI": "Run On Backend.AI",
     "ImportAndRun": "Import And Run",
     "NoSuitableResourceFoundOnGivenURL": "No suitable resource found on given URL.",
-    "Importing": "Importing"
+    "Importing": "Importing",
+    "ImportToStorage": "Import Code Repository To Storage",
+    "ReadyToImport": "Ready To Import"
   }
 }

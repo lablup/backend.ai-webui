@@ -10,16 +10,14 @@ import {BackendAIPage} from './backend-ai-page';
 import './lablup-loading-spinner';
 
 import 'weightless/card';
-import 'weightless/icon';
 
-import '@material/mwc-linear-progress/mwc-linear-progress';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
+import '@material/mwc-textfield';
 
 import './lablup-activity-panel';
 import './backend-ai-chart';
 import './backend-ai-resource-monitor';
-import './backend-ai-resource-panel';
 import './backend-ai-session-launcher';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -103,6 +101,9 @@ export default class BackendAIImport extends BackendAIPage {
   fetchURLResource(url): void {
     let downloadURL = 'https://raw.githubusercontent.com/' + url;
     fetch(downloadURL).then((res) => {
+      this.notification.text = _text('import.ReadyToImport');
+      this.importMessage = this.notification.text;
+      this.notification.show();
       this.sessionLauncher.importScript = "#!/bin/sh\ncurl -O " + downloadURL;
       this.sessionLauncher.importFilename = downloadURL.split('/').pop();
       this.sessionLauncher._launchSessionDialog();
@@ -119,19 +120,21 @@ export default class BackendAIImport extends BackendAIPage {
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
         <h3 class="plastic-material-title">${_t('import.ImportAndRun')}</h3>
-        <div class="horizontal wrap layout">
-          <div class="vertical wrap layout">
           ${this.queryString ? html`
-            <lablup-activity-panel title="${_t('import.Importing')}" elevation="1"  headerColor="#3164BA">
+            <lablup-activity-panel title="${_t('import.Importing')}" elevation="1" horizontalsize="2x" headerColor="#3164BA">
               <div slot="message">
               ${this.importMessage}...
               </div>
             </lablup-activity-panel>
           ` : html``}
+        <div class="horizontal wrap layout">
+          <div class="vertical wrap layout">
             <lablup-activity-panel title="${_t('import.RunOnBackendAI')}" elevation="1"  headerColor="#3164BA">
               <div slot="message">
                 <div class="horizontal justified layout wrap">
-                  <backend-ai-session-launcher mode="import" location="summary" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
+                  <backend-ai-session-launcher mode="import" location="import"
+                  id="session-launcher" ?active="${this.active === true}"
+                  .newSessionDialogTitle="${_t('session.launcher.StartImportedNotebook')}"></backend-ai-session-launcher>
                 </div>
               </div>
             </lablup-activity-panel>
@@ -143,10 +146,11 @@ export default class BackendAIImport extends BackendAIPage {
               </div>
             </div>
           </lablup-activity-panel>
-
-       </div>
+        </div>
+        <h3 class="plastic-material-title">${_t('import.ImportToStorage')}</h3>
+        <div class="horizontal wrap layout">
+        </div>
       </wl-card>
-      <backend-ai-release-check id="update-checker"></backend-ai-release-check>
 `;
   }
 }

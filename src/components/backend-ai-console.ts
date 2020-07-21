@@ -550,7 +550,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view: string = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'information', 'statistics', 'github'].includes(view) !== true) { // Fallback for Windows OS
+      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'information', 'statistics', 'github', 'import'].includes(view) !== true) { // Fallback for Windows OS
         let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
         if (typeof modified_view != 'undefined') {
           view = modified_view;
@@ -625,6 +625,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
       case 'github':
+      case 'import':
         this.menuTitle = _text("console.menu.Run");
         this.updateTitleColor('var(--paper-blue-800)', '#efefef');
         break;
@@ -998,7 +999,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
-            <mwc-icon-button id="import-menu-icon" icon="play_arrow" slot="graphic" class="fg ${this._page === 'github' ? 'blue' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/github')}"></mwc-icon-button>
+            <mwc-icon-button id="import-menu-icon" icon="play_arrow" slot="graphic" class="fg ${this._page === 'github' || this._page === 'run' ? 'blue' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/github')}"></mwc-icon-button>
             <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
             <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
           </div>
@@ -1064,7 +1065,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <section role="main" id="content" class="container layout vertical center">
                   <div id="app-page">
                     <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-summary-view>
-                    <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-import-view>
+                    <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-import-view>
                     <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-session-view>
                     <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-experiment-view>
                     <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usersettings-view>
