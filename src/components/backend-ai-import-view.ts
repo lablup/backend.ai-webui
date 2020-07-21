@@ -38,12 +38,13 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 @customElement("backend-ai-import-view")
 export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) condition = 'running';
-  @property({type: Boolean}) is_admin = false;
-  @property({type: Boolean}) is_superadmin = false;
   @property({type: Boolean}) authenticated = false;
   @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
+  @property({type: Object}) sessionLauncher = Object();
   @property({type: Object}) resourcePolicy;
+  @property({type: String}) requestURL = '';
+  @property({type: String}) queryString = '';
 
   constructor() {
     super();
@@ -66,6 +67,7 @@ export default class BackendAIImport extends BackendAIPage {
 
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.sessionLauncher = this.shadowRoot.querySelector('#session-launcher');
     this.notification = globalThis.lablupNotification;
   }
 
@@ -78,19 +80,33 @@ export default class BackendAIImport extends BackendAIPage {
     this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.is_superadmin = globalThis.backendaiclient.is_superadmin;
-        this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
         if (this.activeConnected) {
           this.requestUpdate();
         }
       }, true);
     } else {
-      this.is_superadmin = globalThis.backendaiclient.is_superadmin;
-      this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
       this.requestUpdate();
     }
+    this.requestURL = globalThis.currentPageParams.requestURL;
+    let queryString = globalThis.currentPageParams.queryString;
+    queryString = queryString.substring(queryString.indexOf("?") + 1);
+    if (queryString !== "") {
+      this.fetchURLResource(queryString);
+    } else {
+      this.notification.text = 'Wrong URL parameter.';
+      this.notification.show();
+    }
+  }
+
+  fetchURLResource(url) {
+    fetch('https://raw.githubusercontent.com/' + url).then((res) => {
+      this.sessionLauncher._launchSessionDialog();
+      console.log(res);
+    }).catch((err) => {
+      console.log(err);
+    });
   }
 
   render() {

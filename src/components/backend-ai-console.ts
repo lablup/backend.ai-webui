@@ -136,6 +136,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
     globalThis.appLauncher = this.shadowRoot.querySelector('#app-launcher');
     globalThis.resourceBroker = this.shadowRoot.querySelector('#resource-broker');
+    globalThis.currentPage = this._page;
+    globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.appPage = this.shadowRoot.querySelector('#app-page');
@@ -1141,6 +1143,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._offline = state.app.offline;
     this._offlineIndicatorOpened = state.app.offlineIndicatorOpened;
     this._drawerOpened = state.app.drawerOpened;
+    globalThis.currentPage = this._page;
+    globalThis.currentPageParams = this._pageParams;
   }
 }
 

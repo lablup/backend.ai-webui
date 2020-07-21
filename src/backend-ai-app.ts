@@ -19,10 +19,10 @@ export const navigate = (path: any, params: Object = {}) => (dispatch: any) => {
       params['requestURL'] = fragments.slice(2).join("/");
     }
   }
+  params['queryString'] = window.location.search;
   if (path === 'index.html' || path === '') {
     path = '/';
   }
-
   let page;
   if (path === '/') {
     page = 'summary';

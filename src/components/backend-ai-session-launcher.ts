@@ -713,8 +713,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   async _launchSessionDialog() {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false || this.resourceBroker.image_updating === true) {
-      this.notification.text = _text('session.launcher.PleaseWaitInitializing');
-      this.notification.show();
+      setTimeout(() => {
+        this._launchSessionDialog();
+      }, 1000);
+      //this.notification.text = _text('session.launcher.PleaseWaitInitializing');
+      //this.notification.show();
     } else {
       await this.selectDefaultLanguage();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
