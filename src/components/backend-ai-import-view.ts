@@ -43,6 +43,7 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: Object}) resourcePolicy;
   @property({type: String}) requestURL = '';
   @property({type: String}) queryString = '';
+  @property({type: String}) environment = 'python';
   @property({type: String}) importMessage = '';
 
   constructor() {
@@ -93,6 +94,13 @@ export default class BackendAIImport extends BackendAIPage {
     queryString = queryString.substring(queryString.indexOf("?") + 1);
     this.queryString = queryString;
     this.importMessage = this.queryString;
+    if (this.queryString.includes('tensorflow')) {
+      this.environment = 'index.docker.io/lablup/python-tensorflow';
+    } else if (this.queryString.includes('pytorch')) {
+      this.environment = 'index.docker.io/lablup/python-pytorch';
+    } else if (this.queryString.includes('mxnet')) {
+      this.environment = 'index.docker.io/lablup/python-mxnet';
+    }
     if (queryString !== "") {
       this.fetchURLResource(queryString);
     }
@@ -104,6 +112,7 @@ export default class BackendAIImport extends BackendAIPage {
       this.notification.text = _text('import.ReadyToImport');
       this.importMessage = this.notification.text;
       this.notification.show();
+      this.sessionLauncher.selectDefaultLanguage(true, this.environment);
       this.sessionLauncher.importScript = "#!/bin/sh\ncurl -O " + downloadURL;
       this.sessionLauncher.importFilename = downloadURL.split('/').pop();
       this.sessionLauncher._launchSessionDialog();

@@ -1550,11 +1550,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   /**
    * Select default_language and then set _default_language_updated to true.
    * */
-  async selectDefaultLanguage() {
-    if (this._default_language_updated === true) {
+  async selectDefaultLanguage(forceUpdate: boolean = false, language: string = '') {
+    if (this._default_language_updated === true && forceUpdate === false) {
       return;
     }
-    if (globalThis.backendaiclient._config.default_session_environment !== undefined &&
+    if (language !== '') {
+      this.default_language = language;
+    } else if (globalThis.backendaiclient._config.default_session_environment !== undefined &&
       'default_session_environment' in globalThis.backendaiclient._config &&
       globalThis.backendaiclient._config.default_session_environment !== '') {
       this.default_language = globalThis.backendaiclient._config.default_session_environment;
@@ -1571,7 +1573,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (typeof obj === 'undefined') { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
-        return this.selectDefaultLanguage();
+        return this.selectDefaultLanguage(forceUpdate, language);
       }, 500);
       return Promise.resolve(true);
     }
