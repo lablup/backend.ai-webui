@@ -220,19 +220,22 @@ export const BackendAiConsoleStyles = [
       --mdc-typography-subtitle1-font-color: white;
       --mdc-typography-subtitle1-font-weight: 400;
       --mdc-typography-subtitle1-line-height: 16px;
+      --mdc-theme-primary: rgba(255, 255, 255, 1.0);
+      --mdc-select-idle-line-color: transparent;
+      --mdc-select-hover-line-color: transparent;
+      --mdc-select-outlined-idle-border-color: rgba(255, 255, 255, 0.42);
+      --mdc-select-outlined-hover-border-color: rgba(255, 255, 255, 0.87);
+      --mdc-select-outlined-disabled-border-color: rgba(255, 255, 255, 0.87);
       --mdc-select-fill-color: transparent;
+      --mdc-select-disabled-fill-color: transparent;
+      --mdc-select-ink-color: rgba(255, 255, 255, 1.0);
       --mdc-select-label-ink-color: rgba(255, 255, 255, 1.0);
+      --mdc-select-focused-label-color: rgba(24, 24, 24, 1.0);
       --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
       --mdc-select-dropdown-icon-color: rgba(255, 255, 255, 1.0);
       --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
       --mdc-select-disabled-dropdown-icon-color: rgba(255, 255, 255, 0.87);
-      --mdc-select-idle-line-color: transparent;
-      --mdc-select-hover-line-color: rgba(255, 255, 255, 0.87);
-      --mdc-select-ink-color: rgba(255, 255, 255, 1.0);
-      --mdc-select-outlined-idle-border-color: rgba(255, 255, 255, 0.42);
-      --mdc-select-outlined-hover-border-color: rgba(255, 255, 255, 0.87);
       --mdc-theme-surface: white;
-      --mdc-theme-primary: rgba(255, 255, 255, 1.0);
       --mdc-list-vertical-padding: 5px;
       --mdc-list-side-padding: 10px;
       --mdc-menu-item-height: 28px;
@@ -241,6 +244,11 @@ export const BackendAiConsoleStyles = [
         color: #222222;
       };
       --mdc-select-min-width: 100px;
+    }
+
+    mwc-list-item[activated] {
+      color: black;
+      background-color: #E1E1E1;
     }
 
     wl-popover-card {

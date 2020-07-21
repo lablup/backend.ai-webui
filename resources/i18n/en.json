@@ -405,7 +405,7 @@
     "EditUserConfigScript": "Edit User Config Script",
     "PackageInstallation": "Package Installation",
     "BootstrapScript": "Bootstrap Script",
-    "DialogSaveToSpecificFile": "Do you want to save the changes you made to File?",
+    "DialogSaveToSpecificFile": "Save the changes you made to File?",
     "DialogNoSaveNoPreserve": "Your changes will be lost if you don't save them.",
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
     "DescScriptCreated": "User config script created. This will be applied to new sessions only.",

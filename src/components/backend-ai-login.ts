@@ -836,10 +836,11 @@ export default class BackendAILogin extends BackendAIPage {
                   </mwc-list-item>`)}
                 </mwc-menu>
                 <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
+                             style="--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
                              label="${_t("login.Endpoint")}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
               </div>
               <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized"
-                           style="display:none;--mdc-text-field-idle-line-color:rgba(255,0,0,0);"
+                           style="display:none;--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
                            label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
               <wl-button class="fg red full login-button" id="login-button" outlined type="button"
                           @click="${() => this._login()}">
