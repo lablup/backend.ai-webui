@@ -40,6 +40,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
+  @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
 
@@ -118,6 +119,12 @@ export default class BackendAIAgentList extends BackendAIPage {
         .terminated mwc-linear-progress {
           --mdc-linear-progress-buffering-dots-image: url("data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 1 1'%3E%3Cpath d='M0,0h1v1H0' fill='#fff'/%3E%3C/svg%3E");
         }
+
+        .asic-indicator {
+          border-top: 1px solid #ccc;
+          margin-top: 3px;
+          padding-top: 3px;
+        }
       `];
   }
 
@@ -131,7 +138,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Change state to 'ALIVE' when backend.ai client connected.
-   * 
+   *
    * @param {Booelan} active - The component will work if active is true.
    */
   async _viewStateChanged(active: Boolean) {
@@ -153,7 +160,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Load an agents list with agent's backend.ai information.
-   * 
+   *
    * @param {string} status - The agent's backend.ai client status.
    */
   _loadAgentList(status: string = 'running') {
@@ -172,14 +179,15 @@ export default class BackendAIAgentList extends BackendAIPage {
       default:
         status = 'ALIVE';
     }
-    let fields = ['id', 'status', 'version', 'addr', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'];
+    let fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'];
     globalThis.backendaiclient.agent.list(status, fields).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
         Object.keys(agents).map((objectKey, index) => {
-          var agent = agents[objectKey];
-          var occupied_slots = JSON.parse(agent.occupied_slots);
-          var available_slots = JSON.parse(agent.available_slots);
+          let agent = agents[objectKey];
+          let occupied_slots = JSON.parse(agent.occupied_slots);
+          let available_slots = JSON.parse(agent.available_slots);
+          let compute_plugins = JSON.parse(agent.compute_plugins);
           ['cpu', 'mem'].forEach((slot) => { // Fallback routine when occupied slots are not present
             if (slot in occupied_slots === false) {
               occupied_slots[slot] = "0";
@@ -236,6 +244,10 @@ export default class BackendAIAgentList extends BackendAIPage {
             }
             agents[objectKey].used_rocm_gpu_slots_ratio = agents[objectKey].used_rocm_gpu_slots / agents[objectKey].rocm_gpu_slots;
           }
+          if ('cuda' in compute_plugins) {
+            let cuda_plugin = compute_plugins['cuda'];
+            agents[objectKey].cuda_plugin = cuda_plugin;
+          }
         });
       }
       this.agents = agents;
@@ -262,8 +274,8 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Convert the value byte to MB.
-   * 
-   * @param {number} value 
+   *
+   * @param {number} value
    */
   _byteToMB(value) {
     return Math.floor(value / 1000000);
@@ -271,8 +283,8 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Convert the value MB to GB.
-   * 
-   * @param {number} value 
+   *
+   * @param {number} value
    */
   _MBtoGB(value) {
     return Math.floor(value / 1024);
@@ -280,7 +292,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Return backend.ai client elapsed time.
-   * 
+   *
    * @param {Date} start - Start time of backend.ai client.
    * @param {Date} end - End time of backend.ai client.
    */
@@ -303,8 +315,8 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Covert start date to human readable date.
-   * 
-   * @param {Date} start 
+   *
+   * @param {Date} start
    */
   _humanReadableDate(start) {
     var startDate = new Date(start);
@@ -313,8 +325,8 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Increase index by 1.
-   * 
-   * @param {number} index 
+   *
+   * @param {number} index
    */
   _indexFrom1(index: number) {
     return index + 1;
@@ -322,7 +334,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Return the heartbeat status.
-   * 
+   *
    * @param {string} state
    */
   _heartbeatStatus(state: string) {
@@ -331,8 +343,8 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Change heartbeat color according to heartbeat status.
-   * 
-   * @param {string} state 
+   *
+   * @param {string} state
    */
   _heartbeatColor(state: string) {
     switch (state) {
@@ -347,10 +359,10 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Render an index.
-   * 
-   * @param {DOM element} root 
-   * @param {<vaadin-grid-column> element} column 
-   * @param {object} rowData  
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
    */
   _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
@@ -364,10 +376,10 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Render regions by platforms and locations.
-   * 
-   * @param {DOM element} root 
-   * @param {<vaadin-grid-column> element} column 
-   * @param {object} rowData 
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
    */
   regionRenderer(root, column?, rowData?) {
     let platform: string;
@@ -425,11 +437,11 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Render a first contact date.
-   * 
-   * @param {DOM element} root 
-   * @param {<vaadin-grid-column> element} column 
-   * @param {object} rowData 
-  */
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+   */
   contactDateRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -441,29 +453,127 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
+   * Render a resource.
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+   */
+  resourceRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout flex">
+          <div class="layout horizontal center flex">
+            <wl-icon class="fg green">developer_board</wl-icon>
+            <div class="layout vertical start" style="padding-left:5px;">
+              <div class="layout horizontal start">
+                <span>${rowData.item.cpu_slots}</span>
+                <span class="indicator">${_t("general.cores")}</span>
+              </div>
+              <div class="layout horizontal start">
+                <span>${rowData.item.current_cpu_percent}</span>
+                <span class="indicator">%</span>
+              </div>
+            </div>
+            <span class="flex"></span>
+            <mwc-linear-progress id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
+                            buffer="${rowData.item.cpu_total_usage_ratio}"></mwc-linear-progress>
+          </div>
+          <div class="layout horizontal center flex">
+            <wl-icon class="fg green">memory</wl-icon>
+            <div class="layout vertical start" style="padding-left:5px;">
+              <div class="layout horizontal start">
+                <span>${rowData.item.mem_slots}</span>
+                <span class="indicator">GB</span>
+              </div>
+              <div class="layout horizontal start">
+                <span>${rowData.item.current_mem}</span>
+                <span class="indicator">GB</span>
+              </div>
+            </div>
+            <span class="flex"></span>
+            <mwc-linear-progress id="mem-usage-bar" progress="${rowData.item.mem_current_usage_ratio}"
+                            buffer="${rowData.item.mem_total_usage_ratio}"></mwc-linear-progress>
+
+          </div>
+          ${rowData.item.cuda_gpu_slots ? html`
+            <div class="layout horizontal center flex asic-indicator">
+              <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+              <span style="padding-left:5px;">${rowData.item.cuda_gpu_slots}</span>
+              <span class="indicator">GPU</span>
+              <span class="flex"></span>
+              <mwc-linear-progress id="gpu-bar" value="${rowData.item.used_cuda_gpu_slots_ratio}" buffer="${rowData.item.used_cuda_gpu_slots_ratio}"></mwc-linear-progress>
+            </div>
+            ` : html``}
+          ${rowData.item.cuda_fgpu_slots ? html`
+            <div class="layout horizontal center flex asic-indicator">
+              <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+              <span style="padding-left:5px;">${rowData.item.cuda_fgpu_slots}</span>
+              <span class="indicator">fGPU</span>
+              <span class="flex"></span>
+              <mwc-linear-progress id="vgpu-bar" value="${rowData.item.used_cuda_fgpu_slots_ratio}" buffer="${rowData.item.used_cuda_fgpu_slots_ratio}"></mwc-linear-progress>
+            </div>
+            ` : html``}
+          ${rowData.item.rocm_gpu_slots ? html`
+            <div class="layout horizontal center flex asic-indicator">
+              <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
+              <span style="padding-left:5px;">${rowData.item.rocm_gpu_slots}</span>
+              <span class="indicator">ROCm</span>
+              <span class="flex"></span>
+              <mwc-linear-progress id="rocm-gpu-bar" value="${rowData.item.used_rocm_gpu_slots_ratio}" buffer="${rowData.item.used_rocm_gpu_slots_ratio}"></mwc-linear-progress>
+            </div>
+            ` : html``}
+          ${rowData.item.tpu_slots ? html`
+            <div class="layout horizontal center flex asic-indicator">
+              <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
+              <span style="padding-left:5px;">${rowData.item.tpu_slots}</span>
+              <span class="indicator">TPU</span>
+              <span class="flex"></span>
+              <mwc-linear-progress id="tpu-bar" value="${rowData.item.used_tpu_slots_ratio}" buffer="${rowData.item.used_tpu_slots_ratio}"></mwc-linear-progress>
+            </div>
+            ` : html``}
+        </div>`, root
+    );
+  }
+
+  /**
    * Render a heartbeat status.
-   * 
-   * @param {DOM element} root 
-   * @param {<vaadin-grid-column> element} column 
-   * @param {object} rowData 
-  */
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+   */
   statusRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
-        <div class="layout horizontal justified wrap">
-          <lablup-shields app="${rowData.item.version}" color="${this._heartbeatColor(rowData.item.status)}"
-                          description="${this._heartbeatStatus(rowData.item.status)}" ui="flat"></lablup-shields>
+        <div class="layout vertical start justified wrap">
+          <lablup-shields app="Agent" color="${this._heartbeatColor(rowData.item.status)}"
+                          description="${rowData.item.version}" ui="flat"></lablup-shields>
+          ${rowData.item.cuda_plugin ? html`
+          <lablup-shields app="CUDA Plugin" color="blue"
+                          description="${rowData.item.cuda_plugin['version']}" ui="flat"></lablup-shields>
+        ${rowData.item.cuda_fgpu_slots ? html`
+          <lablup-shields app="" color="blue"
+                          description="Fractional GPU™" ui="flat"></lablup-shields>
+        ` : html``}
+          ${'cuda_version' in rowData.item.cuda_plugin ? html`
+          <lablup-shields app="CUDA" color="green"
+                          description="${rowData.item.cuda_plugin['cuda_version']}" ui="flat"></lablup-shields>`
+        : html`          <lablup-shields app="CUDA Disabled" color="green"
+                          description="" ui="flat"></lablup-shields>`}` : html``}
+
         </div>`, root
     );
   }
 
   /**
    * Render control buttons such as assignment, build, add an alarm, pause and delete.
-   * 
-   * @param {DOM element} root 
-   * @param {<vaadin-grid-column> element} column 
-   * @param {object} rowData 
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
   */
   controlRenderer(root, column?, rowData?) {
     render(
@@ -501,81 +611,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <template class="header">${_t("agent.Starts")}</template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
-          <template class="header">${_t("agent.Resources")}</template>
-          <template>
-            <div class="layout flex">
-              <div class="layout horizontal center flex">
-                <wl-icon class="fg green">developer_board</wl-icon>
-                <div class="layout vertical start" style="padding-left:5px;">
-                  <div class="layout horizontal start">
-                    <span>[[ item.cpu_slots ]]</span>
-                    <span class="indicator">${_t("general.cores")}</span>
-                  </div>
-                  <div class="layout horizontal start">
-                    <span>[[item.current_cpu_percent]]</span>
-                    <span class="indicator">%</span>
-                  </div>
-                </div>
-                <span class="flex"></span>
-                <mwc-linear-progress id="cpu-usage-bar" progress="[[item.cpu_current_usage_ratio]]"
-                                buffer="[[item.cpu_total_usage_ratio]]"></mwc-linear-progress>
-              </div>
-              <div class="layout horizontal center flex">
-                <wl-icon class="fg green">memory</wl-icon>
-                <div class="layout vertical start" style="padding-left:5px;">
-                  <div class="layout horizontal start">
-                    <span>[[item.mem_slots]]</span>
-                    <span class="indicator">GB</span>
-                  </div>
-                  <div class="layout horizontal start">
-                    <span>[[item.current_mem]]</span>
-                    <span class="indicator">GB</span>
-                  </div>
-                </div>
-                <span class="flex"></span>
-                <mwc-linear-progress id="mem-usage-bar" progress="[[item.mem_current_usage_ratio]]"
-                                buffer="[[item.mem_total_usage_ratio]]"></mwc-linear-progress>
-
-              </div>
-              <template is="dom-if" if="[[item.cuda_gpu_slots]]">
-                <div class="layout horizontal center flex">
-                  <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                  <span style="padding-left:5px;">[[item.cuda_gpu_slots]]</span>
-                  <span class="indicator">GPU</span>
-                  <span class="flex"></span>
-                  <mwc-linear-progress id="gpu-bar" value="[[item.used_cuda_gpu_slots_ratio]]" buffer="[[item.used_cuda_gpu_slots_ratio]]"></mwc-linear-progress>
-                </div>
-              </template>
-              <template is="dom-if" if="[[item.cuda_fgpu_slots]]">
-                <div class="layout horizontal center flex">
-                  <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                  <span style="padding-left:5px;">[[item.cuda_fgpu_slots]]</span>
-                  <span class="indicator">fGPU</span>
-                  <span class="flex"></span>
-                  <mwc-linear-progress id="vgpu-bar" value="[[item.used_cuda_fgpu_slots_ratio]]" buffer="[[item.used_cuda_fgpu_slots_ratio]]"></mwc-linear-progress>
-                </div>
-              </template>
-              <template is="dom-if" if="[[item.rocm_gpu_slots]]">
-                <div class="layout horizontal center flex">
-                  <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
-                  <span style="padding-left:5px;">[[item.rocm_gpu_slots]]</span>
-                  <span class="indicator">ROCm</span>
-                  <span class="flex"></span>
-                  <mwc-linear-progress id="rocm-gpu-bar" value="[[item.used_rocm_gpu_slots_ratio]]" buffer="[[item.used_rocm_gpu_slots_ratio]]"></mwc-linear-progress>
-                </div>
-              </template>
-              <template is="dom-if" if="[[item.tpu_slots]]">
-                <div class="layout horizontal center flex">
-                  <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
-                  <span style="padding-left:5px;">[[item.tpu_slots]]</span>
-                  <span class="indicator">TPU</span>
-                  <span class="flex"></span>
-                  <mwc-linear-progress id="tpu-bar" value="[[item.used_tpu_slots_ratio]]" buffer="[[item.used_tpu_slots_ratio]]"></mwc-linear-progress>
-                </div>
-              </template>
-            </div>
-          </template>
+        <vaadin-grid-column resizable header="${_t("agent.Resources")}" .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
