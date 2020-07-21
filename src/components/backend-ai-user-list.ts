@@ -12,6 +12,7 @@ import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-filter';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
@@ -174,7 +175,7 @@ export default class BackendAIUserList extends BackendAIPage {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
-    }
+  }
 
   /**
    * If active is true, change view state
@@ -368,6 +369,7 @@ export default class BackendAIUserList extends BackendAIPage {
    * @param {number} page - number of page
    * */
   _updateItemsFromPage(page) {
+    this._clearVaadinFilters();
     if (typeof page !== 'number') {
       let page_action = page.target;
       if (page_action['role'] !== 'button') {
@@ -495,7 +497,42 @@ export default class BackendAIUserList extends BackendAIPage {
 
         this.notification.show();
       })
+  }
 
+  /**
+   * Vaadin grid's email filter renderer.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
+  _emailFilterRenderer(root, column, rowData) {
+    root.innerHTML = `
+      <vaadin-grid-filter path="email">
+        <vaadin-text-field slot="filter" focus-target label="User ID"
+            style="max-width:100%" theme="small"></vaadin-text-field>
+      </vaadin-grid-filter>
+    `;
+
+    const _handler = (e) => {
+      if (e.detail.value && this.userView !== this.users) {
+        this.userView = this.users;
+        return;
+      } else if (!e.detail.value && this.userView === this.users) {
+        this._updateItemsFromPage(this._currentPage);
+        return;
+      }
+      root.querySelector('vaadin-grid-filter').value = e.detail.value;
+    }
+    root.querySelector('vaadin-text-field').addEventListener('value-changed', _handler);
+  }
+
+  _clearVaadinFilters() {
+    const userGrid = this.shadowRoot.querySelector('#user-grid');
+    const filters = userGrid.querySelectorAll('vaadin-text-field[slot="filter"]');
+    filters.forEach((filter) => {
+      filter.value = '';
+    });
   }
 
   render() {
@@ -506,13 +543,8 @@ export default class BackendAIUserList extends BackendAIPage {
                    aria-label="User list" id="user-grid" .items="${this.userView}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-        <vaadin-grid-sort-column resizable header="${_t("credential.UserID")}" path="email">
-          <template>
-            <div class="layout horizontal center flex">
-              <div>[[item.email]]</div>
-            </div>
-          </template>
-        </vaadin-grid-sort-column>
+        <vaadin-grid-column path="email" id="email" resizable
+            .headerRenderer="${this._emailFilterRenderer.bind(this)}"></vaadin-grid-column>
         <vaadin-grid-sort-column resizable header="${_t("credential.Name")}" path="username">
           <template>
             <div class="layout horizontal center flex">
