@@ -12,12 +12,17 @@ export const navigate = (path: any, params: Object = {}) => (dispatch: any) => {
   // Extract the page name from path.
   if (['/summary', '/job', '/experiment', '/data', '/statistics', '/usersettings',
     '/agent', '/resource', '/user', '/credential', '/environment', '/settings',
-    '/maintenance', '/information'].includes(path) !== true) { // Fallback for Electron Shell/Windows OS
-    path = path.split(/[\/]+/).pop();
+    '/maintenance', '/information', '/github'].includes(path) !== true) { // Fallback for Electron Shell/Windows OS
+    let fragments = path.split(/[\/]+/);
+    if (fragments.length > 1 && fragments[0] === "") {
+      path = fragments[1];
+      params['requestURL'] = fragments.slice(2).join("/");
+    }
   }
   if (path === 'index.html' || path === '') {
     path = '/';
   }
+
   let page;
   if (path === '/') {
     page = 'summary';
@@ -85,6 +90,10 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
       break;
     case 'change-password':
       import('./components/backend-ai-change-forgot-password-view.js');
+      break;
+    case 'github':
+    case 'gitlab':
+      import('./components/backend-ai-import-view.js');
       break;
     default:
       if (typeof globalThis.backendaiPage !== 'undefined') {

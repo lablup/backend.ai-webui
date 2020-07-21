@@ -38,7 +38,8 @@
       "SelectProject": "Select Project",
       "Experiments": "Experiments",
       "UserName": "User Name",
-      "Menu": "Menu"
+      "Menu": "Menu",
+      "Run": "Run"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
