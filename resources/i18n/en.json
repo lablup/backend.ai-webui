@@ -649,6 +649,9 @@
   },
   "import": {
     "Runtime": "Runtime",
-    "RunOnBackendAI": "Run On Backend.AI"
+    "RunOnBackendAI": "Run On Backend.AI",
+    "ImportAndRun": "Import And Run",
+    "NoSuitableResourceFoundOnGivenURL": "No suitable resource found on given URL.",
+    "Importing": "Importing"
   }
 }

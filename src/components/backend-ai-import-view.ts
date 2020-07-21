@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -45,6 +45,7 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: Object}) resourcePolicy;
   @property({type: String}) requestURL = '';
   @property({type: String}) queryString = '';
+  @property({type: String}) importMessage = '';
 
   constructor() {
     super();
@@ -93,23 +94,22 @@ export default class BackendAIImport extends BackendAIPage {
     let queryString = globalThis.currentPageParams.queryString;
     queryString = queryString.substring(queryString.indexOf("?") + 1);
     this.queryString = queryString;
+    this.importMessage = this.queryString;
     if (queryString !== "") {
       this.fetchURLResource(queryString);
-    } else {
-      this.notification.text = 'Wrong URL parameter.';
-      this.notification.show();
     }
   }
 
-  fetchURLResource(url) {
+  fetchURLResource(url): void {
     let downloadURL = 'https://raw.githubusercontent.com/' + url;
     fetch(downloadURL).then((res) => {
       this.sessionLauncher.importScript = "#!/bin/sh\ncurl -O " + downloadURL;
       this.sessionLauncher.importFilename = downloadURL.split('/').pop();
       this.sessionLauncher._launchSessionDialog();
-      console.log(res);
     }).catch((err) => {
-      console.log(err);
+      this.notification.text = _text('import.NoSuitableResourceFoundOnGivenURL');
+      this.importMessage = this.notification.text;
+      this.notification.show();
     });
   }
 
@@ -118,15 +118,24 @@ export default class BackendAIImport extends BackendAIPage {
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
-        <h3 class="plastic-material-title">${_t('import.Runtime')} <small>: Loading ${this.queryString}...</small></h3>
+        <h3 class="plastic-material-title">${_t('import.ImportAndRun')}</h3>
         <div class="horizontal wrap layout">
-          <lablup-activity-panel title="${_t('import.RunOnBackendAI')}" elevation="1"  headerColor="#3164BA">
-            <div slot="message">
-              <div class="horizontal justified layout wrap">
-                <backend-ai-session-launcher mode="import" location="summary" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
+          <div class="vertical wrap layout">
+          ${this.queryString ? html`
+            <lablup-activity-panel title="${_t('import.Importing')}" elevation="1"  headerColor="#3164BA">
+              <div slot="message">
+              ${this.importMessage}...
               </div>
-            </div>
-          </lablup-activity-panel>
+            </lablup-activity-panel>
+          ` : html``}
+            <lablup-activity-panel title="${_t('import.RunOnBackendAI')}" elevation="1"  headerColor="#3164BA">
+              <div slot="message">
+                <div class="horizontal justified layout wrap">
+                  <backend-ai-session-launcher mode="import" location="summary" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
+                </div>
+              </div>
+            </lablup-activity-panel>
+          </div>
           <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" headerColor="#3164BA">
             <div slot="message">
               <div class="horizontal justified layout wrap">

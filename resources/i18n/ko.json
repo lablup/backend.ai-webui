@@ -647,6 +647,9 @@
   },
   "import": {
     "Runtime": "런타임",
-    "RunOnBackendAI": "Backend.AI 에서 실행"
+    "RunOnBackendAI": "Backend.AI 에서 실행",
+    "ImportAndRun": "가져와서 실행하기",
+    "NoSuitableResourceFoundOnGivenURL": "URL에서 가져올 수 있는 항목이 없습니다.",
+    "Importing": "가져오는 중"
   }
 }

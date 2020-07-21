@@ -998,6 +998,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
+            <mwc-icon-button id="import-menu-icon" icon="play_arrow" slot="graphic" class="fg ${this._page === 'github' ? 'blue' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/github')}"></mwc-icon-button>
             <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
             <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
           </div>
