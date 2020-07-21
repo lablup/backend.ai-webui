@@ -83,6 +83,7 @@ export default class BackendAIChart extends LitElement {
   @property({type: Object}) options;
   @property({type: Object}) chart;
   @property({type: String}) type;
+  @property({type: String}) chartWidth;
 
 
   /**
@@ -112,7 +113,7 @@ export default class BackendAIChart extends LitElement {
     let maxTicksLimit = (this.collection.period == '1D') ? 8 : 14;
     let maxRotation = (this.collection.period == '1D') ? 0 : 50;
 
-    this.type = 'line';
+    this.type = (this.collection.axisTitle['y'] == 'Sessions' || this.collection.axisTitle['y'] == 'CPU') ? 'bar' : 'line';
     this.chartData = {
       labels: temp,
       datasets: [{
@@ -129,7 +130,6 @@ export default class BackendAIChart extends LitElement {
     };
 
     this.options = {
-      responsive: true,
       maintainAspectRatio: false,
       legend: {
         display: true
@@ -186,7 +186,9 @@ export default class BackendAIChart extends LitElement {
           <svg id="d3"></svg>
         </div>
         <div id="ctn-chartjs${this.idx}">
-          <chart-js id="chart" .type="${this.type}" .data="${this.chartData}" .options="${this.options}"></chart-js>
+        ${this.type == 'bar' ?
+          html`<chart-js id="chart" type="bar" .data="${this.chartData}" .options="${this.options}"></chart-js>` :
+          html`<chart-js id="chart" type="line" .data="${this.chartData}" .options="${this.options}"></chart-js>`}
         </div>
       </div>
     `;
