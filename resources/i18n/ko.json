@@ -40,7 +40,7 @@
       "UserName": "사용자 이름",
       "Menu": "메뉴",
       "Run": "실행",
-      "Import&Run": "가져와서 실행하기"
+      "Import&Run": "가져오기 & 실행"
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",
@@ -650,10 +650,13 @@
   "import": {
     "Runtime": "런타임",
     "RunOnBackendAI": "Backend.AI 에서 실행",
-    "ImportAndRun": "가져와서 실행하기",
+    "ImportAndRun": "가져오기 & 실행",
     "NoSuitableResourceFoundOnGivenURL": "URL에서 가져올 수 있는 항목이 없습니다.",
     "Importing": "가져오는 중",
     "ImportToStorage": "코드 저장소를 폴더로 가져오기",
-    "ReadyToImport": "가져올 준비가 완료되었습니다."
+    "ReadyToImport": "가져올 준비가 완료되었습니다.",
+    "ImportNotebook": "노트북 가져오기",
+    "NotebookURL": "가져올 노트북 URL",
+    "GetNotebook": "가져오기"
   }
 }

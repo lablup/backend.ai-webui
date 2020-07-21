@@ -939,6 +939,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
               <span class="full-menu">${_t("console.menu.Experiments")}</span>
             </mwc-list-item>` : html``}
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'github' || this._page === 'import'}" @click="${() => this._moveTo('/import')}" ?disabled="${this.blockedMenuitem.includes('import')}">
+              <mwc-icon id="import-menu-icon" slot="graphic" class="fg blue">play_arrow</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Import&Run")}</span>
+            </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}" ?disabled="${this.blockedMenuitem.includes('data')}">
               <mwc-icon id="data-menu-icon" slot="graphic" class="fg orange">cloud_upload</mwc-icon>
               <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
@@ -999,7 +1003,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
-            <mwc-icon-button id="import-menu-icon" icon="play_arrow" slot="graphic" class="fg ${this._page === 'github' || this._page === 'run' ? 'blue' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/github')}"></mwc-icon-button>
             <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
             <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
           </div>

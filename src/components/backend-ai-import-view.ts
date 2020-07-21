@@ -14,6 +14,7 @@ import 'weightless/card';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-textfield';
+import '@material/mwc-button';
 
 import './lablup-activity-panel';
 import './backend-ai-chart';
@@ -61,6 +62,10 @@ export default class BackendAIImport extends BackendAIPage {
         #session-launcher {
           --component-width: 235px;
         }
+
+        mwc-button {
+          --mdc-theme-primary: var(--paper-blue-600);
+        }
       `
     ];
   }
@@ -89,27 +94,47 @@ export default class BackendAIImport extends BackendAIPage {
       this.authenticated = true;
       this.requestUpdate();
     }
+    // Given URL via URL path parameter.
     this.requestURL = globalThis.currentPageParams.requestURL;
     let queryString = globalThis.currentPageParams.queryString;
     queryString = queryString.substring(queryString.indexOf("?") + 1);
     this.queryString = queryString;
     this.importMessage = this.queryString;
-    if (this.queryString.includes('tensorflow')) {
-      this.environment = 'index.docker.io/lablup/python-tensorflow';
-    } else if (this.queryString.includes('pytorch')) {
-      this.environment = 'index.docker.io/lablup/python-pytorch';
-    } else if (this.queryString.includes('mxnet')) {
-      this.environment = 'index.docker.io/lablup/python-mxnet';
-    } else {
-      this.environment = 'index.docker.io/lablup/python-ff';
-    }
+    this.environment = this.guessEnvironment(this.queryString);
     if (queryString !== "") {
-      this.fetchURLResource(queryString);
+      let downloadURL = 'https://raw.githubusercontent.com/' + this.queryString;
+      this.fetchURLResource(downloadURL);
     }
   }
 
-  fetchURLResource(url): void {
-    let downloadURL = 'https://raw.githubusercontent.com/' + url;
+  getNotebookFromURL() {
+    let url = this.shadowRoot.querySelector("#notebook-url").value;
+    if (url !== "") {
+      this.queryString = this.regularizeGithubURL(url);
+      this.fetchURLResource(this.queryString);
+    }
+  }
+
+  regularizeGithubURL(url) {
+    url = url.replace('/blob/', '/');
+    url = url.replace('github.com', 'raw.githubusercontent.com');
+    return url;
+  }
+
+  guessEnvironment(url) {
+    if (url.includes('tensorflow')) {
+      return 'index.docker.io/lablup/python-tensorflow';
+    } else if (url.includes('pytorch')) {
+      return 'index.docker.io/lablup/python-pytorch';
+    } else if (url.includes('mxnet')) {
+      return 'index.docker.io/lablup/python-mxnet';
+    } else {
+      return 'index.docker.io/lablup/python-ff';
+    }
+  }
+
+  fetchURLResource(downloadURL): void {
+    this.shadowRoot.querySelector("#notebook-url").value = downloadURL;
     fetch(downloadURL).then((res) => {
       this.notification.text = _text('import.ReadyToImport');
       this.importMessage = this.notification.text;
@@ -130,14 +155,16 @@ export default class BackendAIImport extends BackendAIPage {
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
-        <h3 class="plastic-material-title">${_t('import.ImportAndRun')}</h3>
-          ${this.queryString ? html`
-            <lablup-activity-panel title="${_t('import.Importing')}" elevation="1" horizontalsize="2x" headerColor="#3164BA">
-              <div slot="message">
-              ${this.importMessage}...
-              </div>
-            </lablup-activity-panel>
-          ` : html``}
+        <h3 class="plastic-material-title">${_t('import.ImportNotebook')}</h3>
+        <lablup-activity-panel title="${_t('import.ImportNotebook')}" elevation="1" horizontalsize="2x" headerColor="#3164BA">
+          <div slot="message">
+            <div class="horizontal wrap layout center">
+              <mwc-textfield style="width:80%;" id="notebook-url" label="${_t('import.NotebookURL')}"></mwc-textfield>
+              <mwc-button icon="cloud_download" @click="${() => this.getNotebookFromURL()}">${_t('import.GetNotebook')}</mwc-button>
+            </div>
+            ${this.importMessage}
+          </div>
+        </lablup-activity-panel>
         <div class="horizontal wrap layout">
           <div class="vertical wrap layout">
             <lablup-activity-panel title="${_t('import.RunOnBackendAI')}" elevation="1"  headerColor="#3164BA">

@@ -656,6 +656,9 @@
     "NoSuitableResourceFoundOnGivenURL": "No suitable resource found on given URL.",
     "Importing": "Importing",
     "ImportToStorage": "Import Code Repository To Storage",
-    "ReadyToImport": "Ready To Import"
+    "ReadyToImport": "Ready To Import",
+    "ImportNotebook": "Import Notebook",
+    "GetNotebook": "Get Notebook",
+    "NotebookURL": "Notebook URL"
   }
 }
