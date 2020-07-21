@@ -148,7 +148,8 @@ export default class BackendAIImport extends BackendAIPage {
       }
       baseURL = baseURL + '/github?';
     }
-    this.shadowRoot.querySelector('#notebook-badge-code').value = baseURL + badgeURL;
+    let fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
+    this.shadowRoot.querySelector('#notebook-badge-code').value = fullText;
   }
 
   fetchURLResource(downloadURL): void {
@@ -177,8 +178,8 @@ export default class BackendAIImport extends BackendAIPage {
         <lablup-activity-panel title="${_t('import.ImportNotebook')}" elevation="1" horizontalsize="2x" headerColor="#3164BA">
           <div slot="message">
             <div class="horizontal wrap layout center">
-              <mwc-textfield style="width:80%;" id="notebook-url" label="${_t('import.NotebookURL')}"></mwc-textfield>
-              <mwc-button icon="cloud_download" @click="${() => this.getNotebookFromURL()}">${_t('import.GetNotebook')}</mwc-button>
+              <mwc-textfield style="width:75%;" id="notebook-url" label="${_t('import.NotebookURL')}"></mwc-textfield>
+              <mwc-button icon="cloud_download" @click="${() => this.getNotebookFromURL()}">${_t('import.GetAndRunNotebook')}</mwc-button>
             </div>
             ${this.importMessage}
           </div>
@@ -197,8 +198,9 @@ export default class BackendAIImport extends BackendAIPage {
           </lablup-activity-panel>
           <lablup-activity-panel title="${_t('import.CreateNotebookButton')}" elevation="1" headerColor="#3164BA">
             <div slot="message">
-              <div class="horizontal wrap layout center">
-                <p>${_t('import.YouCanCreateNotebookCode')}</p>
+              <div class="vertical wrap layout center">
+                ${_t('import.YouCanCreateNotebookCode')}
+                <img src="/resources/badge.svg" style="margin-top:5px;margin-bottom:5px;"/>
                 <mwc-textfield style="width:100%;" id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"></mwc-textfield>
                 <mwc-button style="width:100%;" @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
                 <mwc-textarea style="width:100%;" id="notebook-badge-code" label="${_t('import.NotebookBadgeCode')}">></mwc-textarea>

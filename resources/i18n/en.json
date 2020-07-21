@@ -663,8 +663,9 @@
     "CreateNotebookButton": "Create Notebook Button",
     "CreateButtonCode": "Create",
     "NotebookButtonURL": "Notebook URL",
-    "YouCanCreateNotebookCode": "Enter the notebook URL to create a badge code that you can run directly on Backend.AI.",
+    "YouCanCreateNotebookCode": "Enter the notebook URL to create a badge code like below that you can run directly on Backend.AI.",
     "NotebookBadgeURL": "Notebook URL",
-    "NotebookBadgeCode": "Notebook Badge Code"
+    "NotebookBadgeCode": "Notebook Badge Code",
+    "GetAndRunNotebook": "Import & Run"
   }
 }
