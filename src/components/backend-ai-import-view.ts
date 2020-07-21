@@ -100,6 +100,8 @@ export default class BackendAIImport extends BackendAIPage {
       this.environment = 'index.docker.io/lablup/python-pytorch';
     } else if (this.queryString.includes('mxnet')) {
       this.environment = 'index.docker.io/lablup/python-mxnet';
+    } else {
+      this.environment = 'index.docker.io/lablup/python-ff';
     }
     if (queryString !== "") {
       this.fetchURLResource(queryString);
