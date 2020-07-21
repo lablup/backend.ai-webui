@@ -121,7 +121,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         }
 
         .asic-indicator {
-          border-top: 1px solid #cccccc;
+          border-top: 1px solid #ccc;
           margin-top: 3px;
           padding-top: 3px;
         }
@@ -570,10 +570,6 @@ export default class BackendAIAgentList extends BackendAIPage {
     );
   }
 
-
-
-
-
   /**
    * Render control buttons such as assignment, build, add an alarm, pause and delete.
    *
@@ -585,64 +581,44 @@ export default class BackendAIAgentList extends BackendAIPage {
     render(
       // language=HTML
       html`
-<
-  div
-  id = "controls"
-  class = "layout horizontal flex center"
-  agent
--
-  id = "${rowData.item.addr}" >
-    <wl-button
-  fab
-  flat
-  inverted
-  disabled
-  class = "fg"
-  icon = "assignment" > <wl-icon > assignment < /wl-icon></
-  wl
--
-  button
->
-  ${this._isRunning() ? html`
-    <wl-button fab flat inverted disabled class="fg controls-running" icon="build"><wl-icon>build</wl-icon></wl-button>
-    <wl-button fab flat inverted disabled class="fg controls-running" icon="alarm-add"><wl-icon>alarm_add</wl-icon></wl-button>
-    <wl-button fab flat inverted disabled class="fg controls-running" icon="av:pause"><wl-icon>pause</wl-icon></wl-button>
-    <wl-button fab flat inverted disabled class="fg controls-running" icon="delete"><wl-icon>delete</wl-icon></wl-button>
-  ` : html``}
-</div>`, root
-);
-}
+        <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
+          <wl-button fab flat inverted disabled class="fg" icon="assignment"><wl-icon>assignment</wl-icon></wl-button>
+          ${this._isRunning() ? html`
+            <wl-button fab flat inverted disabled class="fg controls-running" icon="build"><wl-icon>build</wl-icon></wl-button>
+            <wl-button fab flat inverted disabled class="fg controls-running" icon="alarm-add"><wl-icon>alarm_add</wl-icon></wl-button>
+            <wl-button fab flat inverted disabled class="fg controls-running" icon="av:pause"><wl-icon>pause</wl-icon></wl-button>
+            <wl-button fab flat inverted disabled class="fg controls-running" icon="delete"><wl-icon>delete</wl-icon></wl-button>
+          ` : html``}
+    </div>`, root
+    );
+  }
 
+  render() {
+    // language=HTML
+    return html`
+      <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="80px">
+          <template class="header">${_t("agent.Endpoint")}</template>
+          <template>
+            <div>[[item.id]]</div>
+            <div class="indicator monospace">[[item.addr]]</div>
+          </template>
+        </vaadin-grid-column>
+        <vaadin-grid-column width="100px" resizable .renderer="${this._boundRegionRenderer}">
+          <template class="header">${_t("agent.Region")}</template>
+        </vaadin-grid-column>
 
-  render()
-{
-  // language=HTML
-  return html
-    `
-<vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
-<vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-<vaadin-grid-column width="80px">
-<template class="header">${_t("agent.Endpoint")}</template>
-<template>
-<div>[[item.id]]</div>
-<div class="indicator monospace">[[item.addr]]</div>
-</template>
-</vaadin-grid-column>
-<vaadin-grid-column width="100px" resizable .renderer="${this._boundRegionRenderer}">
-<template class="header">${_t("agent.Region")}</template>
-</vaadin-grid-column>
+        <vaadin-grid-column resizable .renderer="${this._boundContactDateRenderer}">
+          <template class="header">${_t("agent.Starts")}</template>
+        </vaadin-grid-column>
 
-<vaadin-grid-column resizable .renderer="${this._boundContactDateRenderer}">
-<template class="header">${_t("agent.Starts")}</template>
-</vaadin-grid-column>
-
-<vaadin-grid-column resizable header="${_t("agent.Resources")}" .renderer="${this._boundResourceRenderer}">
-</vaadin-grid-column>
-<vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
-<vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-</vaadin-grid>
-`
-    ;
+        <vaadin-grid-column resizable header="${_t("agent.Resources")}" .renderer="${this._boundResourceRenderer}">
+        </vaadin-grid-column>
+        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+      </vaadin-grid>
+    `;
   }
 }
 declare global {
