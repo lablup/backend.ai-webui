@@ -182,7 +182,6 @@ export default class BackendAIAgentList extends BackendAIPage {
     let fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'];
     globalThis.backendaiclient.agent.list(status, fields).then(response => {
       let agents = response.agents;
-      console.log(response.agents);
       if (agents !== undefined && agents.length != 0) {
         Object.keys(agents).map((objectKey, index) => {
           let agent = agents[objectKey];
@@ -248,7 +247,6 @@ export default class BackendAIAgentList extends BackendAIPage {
           if ('cuda' in compute_plugins) {
             let cuda_plugin = compute_plugins['cuda'];
             agents[objectKey].cuda_plugin = cuda_plugin;
-            console.log(compute_plugins['cuda']);
           }
         });
       }
