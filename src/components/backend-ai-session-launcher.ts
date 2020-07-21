@@ -59,6 +59,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
   @property({type: String}) location = '';
+  @property({type: String}) mode = 'normal';
+  @property({type: String}) importScript = '';
+  @property({type: String}) importFilename = '';
   @property({type: Object}) imageRequirements = Object();
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) userResourceLimit = Object();
@@ -852,6 +855,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
     }
+    if (this.mode === 'import' && this.importScript !== '') {
+      config['bootstrap_script'] = this.importScript;
+    }
+
     const kernelName: string = this._generateKernelIndex(kernel, version);
     this.shadowRoot.querySelector('#launch-button').disabled = true;
     this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Preparing...';

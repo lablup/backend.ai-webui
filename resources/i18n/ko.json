@@ -644,5 +644,9 @@
     "Running": "실행중...",
     "Notification": "알림",
     "NoNotification": "알림이 없습니다."
+  },
+  "import": {
+    "Runtime": "런타임",
+    "RunOnBackendAI": "Backend.AI 에서 실행"
   }
 }

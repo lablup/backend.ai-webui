@@ -92,6 +92,7 @@ export default class BackendAIImport extends BackendAIPage {
     this.requestURL = globalThis.currentPageParams.requestURL;
     let queryString = globalThis.currentPageParams.queryString;
     queryString = queryString.substring(queryString.indexOf("?") + 1);
+    this.queryString = queryString;
     if (queryString !== "") {
       this.fetchURLResource(queryString);
     } else {
@@ -101,7 +102,10 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   fetchURLResource(url) {
-    fetch('https://raw.githubusercontent.com/' + url).then((res) => {
+    let downloadURL = 'https://raw.githubusercontent.com/' + url;
+    fetch(downloadURL).then((res) => {
+      this.sessionLauncher.importScript = "#!/bin/sh\ncurl -O " + downloadURL;
+      this.sessionLauncher.importFilename = downloadURL.split('/').pop();
       this.sessionLauncher._launchSessionDialog();
       console.log(res);
     }).catch((err) => {
@@ -114,16 +118,16 @@ export default class BackendAIImport extends BackendAIPage {
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <wl-card class="item" elevation="1" style="padding-bottom:20px;">
-        <h3 class="plastic-material-title">${_t('summary.Dashboard')}</h3>
+        <h3 class="plastic-material-title">${_t('import.Runtime')} <small>: Loading ${this.queryString}...</small></h3>
         <div class="horizontal wrap layout">
-          <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1">
+          <lablup-activity-panel title="${_t('import.RunOnBackendAI')}" elevation="1"  headerColor="#3164BA">
             <div slot="message">
               <div class="horizontal justified layout wrap">
-                <backend-ai-session-launcher location="summary" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
+                <backend-ai-session-launcher mode="import" location="summary" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
               </div>
             </div>
           </lablup-activity-panel>
-          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1">
+          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" headerColor="#3164BA">
             <div slot="message">
               <div class="horizontal justified layout wrap">
                 <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>

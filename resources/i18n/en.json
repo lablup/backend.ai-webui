@@ -646,5 +646,9 @@
     "Running": "Running...",
     "Notification": "Notification",
     "NoNotification": "No Notification."
+  },
+  "import": {
+    "Runtime": "Runtime",
+    "RunOnBackendAI": "Run On Backend.AI"
   }
 }
