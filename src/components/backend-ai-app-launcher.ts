@@ -234,8 +234,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     dialog.setAttribute('session-name', sessionName);
     dialog.setAttribute('access-key', accessKey);
     //dialog.positionTarget = e.target;
-
     this.shadowRoot.querySelector('#app-dialog').show();
+    return;
   }
 
   /**
