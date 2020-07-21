@@ -43,6 +43,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
 
+  @property({type: Object}) _boundResourceGroupRenderer = this.resourceGroupRenderer.bind(this);
+
   constructor() {
     super();
   }
@@ -172,7 +174,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       default:
         status = 'ALIVE';
     }
-    let fields = ['id', 'status', 'version', 'addr', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'];
+    let fields = ['id', 'status', 'version', 'addr', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     globalThis.backendaiclient.agent.list(status, fields).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
@@ -480,6 +482,23 @@ export default class BackendAIAgentList extends BackendAIPage {
     </div>`, root
     );
   }
+  
+  /**
+   * Render a resource group.
+   * 
+   * @param {DOM element} root 
+   * @param {<vaadin-grid-column> element} column 
+   * @param {object} rowData 
+  */
+  resourceGroupRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div>
+          ${rowData.item.scaling_group}
+        </div>`, root
+    );
+  }
 
   render() {
     // language=HTML
@@ -577,6 +596,7 @@ export default class BackendAIAgentList extends BackendAIPage {
             </div>
           </template>
         </vaadin-grid-column>
+        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("general.ResourceGroup")}" .renderer="${this._boundResourceGroupRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
