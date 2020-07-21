@@ -9,6 +9,7 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid-sort-column';
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/icon';
@@ -43,8 +44,6 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
-
-  @property({type: Object}) _boundResourceGroupRenderer = this.resourceGroupRenderer.bind(this);
 
   constructor() {
     super();
@@ -592,23 +591,6 @@ export default class BackendAIAgentList extends BackendAIPage {
     </div>`, root
     );
   }
-  
-  /**
-   * Render a resource group.
-   * 
-   * @param {DOM element} root 
-   * @param {<vaadin-grid-column> element} column 
-   * @param {object} rowData 
-  */
-  resourceGroupRenderer(root, column?, rowData?) {
-    render(
-      // language=HTML
-      html`
-        <div>
-          ${rowData.item.scaling_group}
-        </div>`, root
-    );
-  }
 
   render() {
     // language=HTML
@@ -632,9 +614,16 @@ export default class BackendAIAgentList extends BackendAIPage {
 
         <vaadin-grid-column resizable header="${_t("agent.Resources")}" .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("general.ResourceGroup")}" .renderer="${this._boundResourceGroupRenderer}"></vaadin-grid-column>
+        <vaadin-grid-sort-column width="100px" resizable path="scaling_group" header="${_t("general.ResourceGroup")}"></vaadin-grid-sort-column>
+
+
+
         <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
+
         <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+
+
+
       </vaadin-grid>
     `;
   }
