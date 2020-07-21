@@ -83,8 +83,6 @@ export default class BackendAIChart extends LitElement {
   @property({type: Object}) options;
   @property({type: Object}) chart;
   @property({type: String}) type;
-  @property({type: String}) chartWidth;
-
 
   /**
    * @param collection              {object}   Object containing the fields listed below
@@ -117,6 +115,7 @@ export default class BackendAIChart extends LitElement {
     this.chartData = {
       labels: temp,
       datasets: [{
+        barThickness: 6,
         label: this.collection.axisTitle['y'] + ' (' + this.collection.unit_hint + ')',
         data: this.collection.data[0],
         borderWidth: 1,
@@ -130,6 +129,7 @@ export default class BackendAIChart extends LitElement {
     };
 
     this.options = {
+      responsive: true,
       maintainAspectRatio: false,
       legend: {
         display: true

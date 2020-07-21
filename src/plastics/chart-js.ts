@@ -3,15 +3,13 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 import Chart from 'chart.js';
-import {html, LitElement, property, TemplateResult} from 'lit-element';
+import {css, html, LitElement, property, TemplateResult} from 'lit-element';
 
 export default class ChartJs extends LitElement {
   @property({type: Chart}) chart;
   @property({type: Chart.ChartType}) type = '';
   @property({type: Chart.ChartData}) data = {};
   @property({type: Chart.ChartOptions}) options = {};
-  @property({type: String}) width = '80vw';
-  @property({type: String}) height = '15vh';
 
   update(prop) {
     super.update(prop);
@@ -40,6 +38,27 @@ export default class ChartJs extends LitElement {
     });
   }
 
+  static get styles() {
+    return [
+      // language=CSS
+      css`
+        .chart-top-container {
+          margin: 0px auto;
+          padding: 5px;
+          overflow: hidden;
+          width: 70vw;
+          height: 25vh;
+        }
+
+        .chart-sub-container {
+          position:relative;
+          width: 100%;
+          height: 100%
+        }
+      `
+    ];
+  }
+
   public firstUpdated(): void {
     if (this.type != '' && this.data != {} && this.options != {}) {
       this._initializeChart();
@@ -54,8 +73,10 @@ export default class ChartJs extends LitElement {
 
   public render(): void | TemplateResult {
     return html`
-      <div class="chart-shell" style="position:relative;width:${this.width};height:${this.height}">
-        <canvas></canvas>
+      <div class="chart-top-container">
+        <div class="chart-shell chart-sub-container">
+          <canvas></canvas>
+        </div>
       </div>
   `;
   }
