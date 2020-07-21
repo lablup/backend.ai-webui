@@ -626,7 +626,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         break;
       case 'github':
       case 'import':
-        this.menuTitle = _text("console.menu.Run");
+        this.menuTitle = _text("console.menu.Import&Run");
         this.updateTitleColor('var(--paper-blue-800)', '#efefef');
         break;
       default:

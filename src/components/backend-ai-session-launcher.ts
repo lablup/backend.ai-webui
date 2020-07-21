@@ -58,6 +58,7 @@ import {
 export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
+  @property({type: Boolean}) hideLaunchButton = false;
   @property({type: String}) location = '';
   @property({type: String}) mode = 'normal';
   @property({type: String}) newSessionDialogTitle = '';
@@ -571,6 +572,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     document.addEventListener("backend-ai-resource-broker-updated", (e) => {
       // Fires when broker is updated.
     });
+    if (this.hideLaunchButton === true) {
+      this.shadowRoot.querySelector('#launch-session').style.display = 'none';
+    }
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {

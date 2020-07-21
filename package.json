@@ -34,6 +34,7 @@
     "@material/mwc-select": "^0.17.2",
     "@material/mwc-slider": "^0.17.2",
     "@material/mwc-switch": "^0.17.2",
+    "@material/mwc-textarea": "^0.17.2",
     "@material/mwc-textfield": "^0.17.2",
     "@material/mwc-top-app-bar-fixed": "^0.17.2",
     "@polymer/paper-dropdown-menu": "^3.1.0",

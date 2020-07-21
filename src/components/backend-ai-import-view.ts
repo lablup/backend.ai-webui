@@ -14,6 +14,7 @@ import 'weightless/card';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-textfield';
+import '@material/mwc-textarea';
 import '@material/mwc-button';
 
 import './lablup-activity-panel';
@@ -102,7 +103,7 @@ export default class BackendAIImport extends BackendAIPage {
     this.importMessage = this.queryString;
     this.environment = this.guessEnvironment(this.queryString);
     if (queryString !== "") {
-      let downloadURL = 'https://raw.githubusercontent.com/' + this.queryString;
+      let downloadURL = 'https://raw.githubusercontent.com' + this.queryString;
       this.fetchURLResource(downloadURL);
     }
   }
@@ -131,6 +132,23 @@ export default class BackendAIImport extends BackendAIPage {
     } else {
       return 'index.docker.io/lablup/python-ff';
     }
+  }
+
+  createNotebookBadge() {
+    let url = this.shadowRoot.querySelector('#notebook-badge-url').value;
+    let rawURL = this.regularizeGithubURL(url);
+    let badgeURL = rawURL.replace('https://raw.githubusercontent.com', '');
+    let baseURL: string = '';
+    if (globalThis.isElectron) {
+      baseURL = "https://cloud.backend.ai/github?";
+    } else {
+      baseURL = window.location.protocol + '//' + window.location.hostname;
+      if (window.location.port) {
+        baseURL = baseURL + ':' + window.location.port;
+      }
+      baseURL = baseURL + '/github?';
+    }
+    this.shadowRoot.querySelector('#notebook-badge-code').value = baseURL + badgeURL;
   }
 
   fetchURLResource(downloadURL): void {
@@ -165,18 +183,11 @@ export default class BackendAIImport extends BackendAIPage {
             ${this.importMessage}
           </div>
         </lablup-activity-panel>
+        <backend-ai-session-launcher mode="import" location="import" hideLaunchButton
+        id="session-launcher" ?active="${this.active === true}"
+        .newSessionDialogTitle="${_t('session.launcher.StartImportedNotebook')}"></backend-ai-session-launcher>
+
         <div class="horizontal wrap layout">
-          <div class="vertical wrap layout">
-            <lablup-activity-panel title="${_t('import.RunOnBackendAI')}" elevation="1"  headerColor="#3164BA">
-              <div slot="message">
-                <div class="horizontal justified layout wrap">
-                  <backend-ai-session-launcher mode="import" location="import"
-                  id="session-launcher" ?active="${this.active === true}"
-                  .newSessionDialogTitle="${_t('session.launcher.StartImportedNotebook')}"></backend-ai-session-launcher>
-                </div>
-              </div>
-            </lablup-activity-panel>
-          </div>
           <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" headerColor="#3164BA">
             <div slot="message">
               <div class="horizontal justified layout wrap">
@@ -184,6 +195,17 @@ export default class BackendAIImport extends BackendAIPage {
               </div>
             </div>
           </lablup-activity-panel>
+          <lablup-activity-panel title="${_t('import.CreateNotebookButton')}" elevation="1" headerColor="#3164BA">
+            <div slot="message">
+              <div class="horizontal wrap layout center">
+                <p>${_t('import.YouCanCreateNotebookCode')}</p>
+                <mwc-textfield style="width:100%;" id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"></mwc-textfield>
+                <mwc-button style="width:100%;" @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
+                <mwc-textarea style="width:100%;" id="notebook-badge-code" label="${_t('import.NotebookBadgeCode')}">></mwc-textarea>
+              </div>
+            </div>
+          </lablup-activity-panel>
+
         </div>
         <h3 class="plastic-material-title">${_t('import.ImportToStorage')}</h3>
         <div class="horizontal wrap layout">
