@@ -911,6 +911,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           } else {
             appOptions['app-services'] = [];
           }
+          if (this.mode === 'import') {
+            appOptions['runtime'] = 'jupyter';
+            appOptions['filename'] = this.importFilename;
+          }
           globalThis.appLauncher.showLauncher(appOptions);
         });
       }
