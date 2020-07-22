@@ -669,6 +669,13 @@
     "GitHubURL": "GitHub 주소",
     "GetToFolder": "가져오기",
     "RepoWillBeFolder": "가져온 GitHub 저장소는 폴더로 변환되며, 세션을 시작할 때 마운트할 수 있습니다.",
-    "FolderAlreadyExists": "같은 이름의 폴더가 있어서 이름을 변경합니다."
+    "FolderAlreadyExists": "같은 이름의 폴더가 있어서 이름을 변경합니다.",
+    "WrongURLType": "잘못된 URL 형식입니다.",
+    "Preparing": "준비중...",
+    "FolderCreated": "폴더를 생성했습니다.",
+    "Downloading": "다운로드중...",
+    "CleanUpImportTask": "가져오기를 완료하는 중...",
+    "ImportFinished": "가져오기를 완료했습니다.",
+    "FolderName": "가져올 폴더 이름: "
   }
 }

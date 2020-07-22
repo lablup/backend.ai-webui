@@ -125,6 +125,23 @@ export default class BackendAIImport extends BackendAIPage {
     return url;
   }
 
+  fetchNotebookURLResource(downloadURL): void {
+    this.shadowRoot.querySelector("#notebook-url").value = downloadURL;
+    fetch(downloadURL).then((res) => {
+      this.notification.text = _text('import.ReadyToImport');
+      this.importMessage = this.notification.text;
+      this.notification.show();
+      this.sessionLauncher.selectDefaultLanguage(true, this.environment);
+      this.sessionLauncher.importScript = "#!/bin/sh\ncurl -O " + downloadURL;
+      this.sessionLauncher.importFilename = downloadURL.split('/').pop();
+      this.sessionLauncher._launchSessionDialog();
+    }).catch((err) => {
+      this.notification.text = _text('import.NoSuitableResourceFoundOnGivenURL');
+      this.importMessage = this.notification.text;
+      this.notification.show();
+    });
+  }
+
   getGitHubRepoFromURL() {
     let url = this.shadowRoot.querySelector("#github-repo-url").value;
     let tree = 'master';
@@ -140,8 +157,15 @@ export default class BackendAIImport extends BackendAIPage {
     }
     url = url.replace('https://github.com', 'https://codeload.github.com');
     url = url + '/zip/' + tree;
-    return this.importRepoFromURL(url, name);
-    //console.log(url);
+    let protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+    if (['http', 'https'].includes(protocol)) {
+      return this.importRepoFromURL(url, name);
+    } else {
+      this.notification.text = _text('import.WrongURLType');
+      this.importMessage = this.notification.text;
+      this.notification.show();
+      return false;
+    }
   }
 
   async importRepoFromURL(url, folderName) {
@@ -152,21 +176,19 @@ export default class BackendAIImport extends BackendAIPage {
     imageResource['domain'] = globalThis.backendaiclient._config.domainName;
     imageResource['group_name'] = globalThis.backendaiclient.current_group;
     let indicator = await this.indicator.start('indeterminate');
-    indicator.set(10, 'Preparing...');
+    indicator.set(10, _text('import.Preparing'));
     await this._addFolderWithName(folderName);
-    indicator.set(20, 'Folder created');
+    indicator.set(20, _text('import.FolderCreated'));
     imageResource['mounts'] = [folderName];
     imageResource['bootstrap_script'] = "#!/bin/sh\ncurl -o repo.zip " + url + "\ncd /home/work/" + folderName + "\nunzip -u /home/work/repo.zip";
     return globalThis.backendaiclient.getResourceSlots().then((response) => {
       //let results = response;
-      indicator.set(50, 'Downloading...');
+      indicator.set(50, _text('import.Downloading'));
       return globalThis.backendaiclient.createIfNotExists('index.docker.io/lablup/python:3.8-ubuntu18.04', null, imageResource, 60000);
     }).then(async (response) => {
-      indicator.set(80, 'Clean up import task...');
+      indicator.set(80, _text('import.CleanUpImportTask'));
       await globalThis.backendaiclient.destroy(response.sessionId);
-      //console.log(response); // TODO : delete kernel.
-      //response.sessionId;
-      indicator.set(100, 'Import finished.');
+      indicator.set(100, _text('import.ImportFinished'));
       indicator.end(1000);
     }).catch(err => {
       this.notification.text = PainKiller.relieve(err.title);
@@ -197,8 +219,11 @@ export default class BackendAIImport extends BackendAIPage {
         newName = name + '_' + i;
         i++;
       }
+      name = newName;
     }
     return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
+      this.importMessage = _text('import.FolderName') + name;
+      console.log("name:", name);
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -237,23 +262,6 @@ export default class BackendAIImport extends BackendAIPage {
     }
     let fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
     this.shadowRoot.querySelector('#notebook-badge-code').value = fullText;
-  }
-
-  fetchNotebookURLResource(downloadURL): void {
-    this.shadowRoot.querySelector("#notebook-url").value = downloadURL;
-    fetch(downloadURL).then((res) => {
-      this.notification.text = _text('import.ReadyToImport');
-      this.importMessage = this.notification.text;
-      this.notification.show();
-      this.sessionLauncher.selectDefaultLanguage(true, this.environment);
-      this.sessionLauncher.importScript = "#!/bin/sh\ncurl -O " + downloadURL;
-      this.sessionLauncher.importFilename = downloadURL.split('/').pop();
-      this.sessionLauncher._launchSessionDialog();
-    }).catch((err) => {
-      this.notification.text = _text('import.NoSuitableResourceFoundOnGivenURL');
-      this.importMessage = this.notification.text;
-      this.notification.show();
-    });
   }
 
   render() {
