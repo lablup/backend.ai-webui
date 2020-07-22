@@ -678,6 +678,8 @@
     "Downloading": "Downloading...",
     "CleanUpImportTask": "Cleanup import task...",
     "ImportFinished": "Import finished.",
-    "FolderName": "Imported folder name: "
+    "FolderName": "Imported folder name: ",
+    "NotebookBadgeCodeHTML": "Notebook Badge Code (HTML)",
+    "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)"
   }
 }

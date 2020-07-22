@@ -676,6 +676,8 @@
     "Downloading": "다운로드중...",
     "CleanUpImportTask": "가져오기를 완료하는 중...",
     "ImportFinished": "가져오기를 완료했습니다.",
-    "FolderName": "가져올 폴더 이름: "
+    "FolderName": "가져올 폴더 이름: ",
+    "NotebookBadgeCodeHTML": "노트북 배지 코드(HTML)",
+    "NotebookBadgeCodeMarkdown": "노트북 배지 코드(Markdown)"
   }
 }

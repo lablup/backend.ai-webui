@@ -261,7 +261,10 @@ export default class BackendAIImport extends BackendAIPage {
       baseURL = baseURL + '/github?';
     }
     let fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
+    let fullTextMarkdown = `[![Open In Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
     this.shadowRoot.querySelector('#notebook-badge-code').value = fullText;
+    this.shadowRoot.querySelector('#notebook-badge-code-markdown').value = fullTextMarkdown;
+
   }
 
   render() {
@@ -298,7 +301,8 @@ export default class BackendAIImport extends BackendAIPage {
                 <img src="/resources/badge.svg" style="margin-top:5px;margin-bottom:5px;"/>
                 <mwc-textfield style="width:100%;" id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"></mwc-textfield>
                 <mwc-button style="width:100%;" @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
-                <mwc-textarea style="width:100%;" id="notebook-badge-code" label="${_t('import.NotebookBadgeCode')}">></mwc-textarea>
+                <mwc-textarea style="width:100%;" id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}">></mwc-textarea>
+                <mwc-textarea style="width:100%;" id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}">></mwc-textarea>
               </div>
             </div>
           </lablup-activity-panel>
