@@ -261,7 +261,7 @@ export default class BackendAIImport extends BackendAIPage {
       baseURL = baseURL + '/github?';
     }
     let fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
-    let fullTextMarkdown = `[![Open In Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
+    let fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
     this.shadowRoot.querySelector('#notebook-badge-code').value = fullText;
     this.shadowRoot.querySelector('#notebook-badge-code-markdown').value = fullTextMarkdown;
 
