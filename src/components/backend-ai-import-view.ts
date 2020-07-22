@@ -158,12 +158,13 @@ export default class BackendAIImport extends BackendAIPage {
     await this._addFolderWithName(folderName);
     indicator.set(20, 'Folder created');
     imageResource['mounts'] = [folderName];
-    imageResource['bootstrap_script'] = "#!/bin/sh\ncurl -o repo.zip " + url + "\ncd /home/work/" + folderName + "\nunzip /home/work/repo.zip";
+    imageResource['bootstrap_script'] = "#!/bin/sh\ncurl -o repo.zip " + url + "\ncd /home/work/" + folderName + "\nunzip -u /home/work/repo.zip";
     globalThis.backendaiclient.getResourceSlots().then((response) => {
       //let results = response;
       indicator.set(50, 'Downloading...');
       return globalThis.backendaiclient.createIfNotExists('index.docker.io/lablup/python:3.8-ubuntu18.04', null, imageResource, 60000);
     }).then((response) => {
+      console.log(response); // TODO : delete kernel.
       indicator.set(100, 'Download finished.');
       indicator.end(1000);
     }).catch(err => {
@@ -193,6 +194,7 @@ export default class BackendAIImport extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+    return job;
   }
 
   guessEnvironment(url) {
