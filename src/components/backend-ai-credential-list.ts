@@ -82,7 +82,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 400px);
+          height: calc(100vh - 235px);
         }
 
         wl-button > wl-icon {

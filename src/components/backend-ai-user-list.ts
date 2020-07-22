@@ -83,7 +83,7 @@ export default class BackendAIUserList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 275px);
+          height: calc(100vh - 235px);
         }
 
         backend-ai-dialog h4,
