@@ -446,7 +446,7 @@ class Client {
    *
    * @param {AbortController.signal} signal - Request signal to abort fetch
    */
-  async getManagerVersion(signal = null) {
+  async get_manager_version(signal = null) {
     if (this._managerVersion === null) {
       let v = await this.getServerVersion(signal);
       this._managerVersion = v.manager;
@@ -600,7 +600,7 @@ class Client {
    * Update user's password.
    *
    */
-  async updatePassword(oldPassword, newPassword, newPassword2) {
+  async update_password(oldPassword, newPassword, newPassword2) {
     let body = {
       'old_password': oldPassword,
       'new_password': newPassword,
@@ -613,7 +613,7 @@ class Client {
   /**
    * Return the resource slots.
    */
-  async getResourceSlots() {
+  async get_resource_slots() {
     let rqst;
     if (this.isAPIVersionCompatibleWith('v4.20190601')) {
       rqst = this.newPublicRequest('GET', '/config/resource-slots', null, '');
@@ -719,7 +719,7 @@ class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  async getInformation(sessionId, ownerKey = null) {
+  async get_info(sessionId, ownerKey = null) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
@@ -734,7 +734,7 @@ class Client {
    * @param {string} sessionId - the sessionId given when created
    * @param {string | null} ownerKey - owner key to access
    */
-  async getLogs(sessionId, ownerKey = null) {
+  async get_logs(sessionId, ownerKey = null) {
     let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
@@ -844,7 +844,7 @@ class Client {
   }
 
   /* GraphQL requests */
-  async gql(q, v, signal = null, timeout: number = 0) {
+  async query(q, v, signal = null, timeout: number = 0) {
     let query = {
       'query': q,
       'variables': v
@@ -1135,7 +1135,7 @@ class VFolder {
    * Get allowed types of folders
    *
    */
-  async allowed_types() {
+  async list_allowed_types() {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/allowed_types`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1367,7 +1367,7 @@ class VFolder {
    * @param {string} name - Virtual folder name that files are in.
    * @param {string} archive - Download target directory as an archive.
    */
-  async request_download_token(file, name = false, archive = false) {
+  async request_download(file, name = false, archive = false) {
     let body = {
       file,
       archive
@@ -2373,7 +2373,7 @@ class Domain {
    *   'scaling_groups': [String],   // Scaling groups
    * };
    */
-  async modify(domain_name = false, input) {
+  async update(domain_name = false, input) {
     //let fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
     //  'allowed_docker_registries', 'integration_id', 'scaling_groups'];
     if (this.client.is_superadmin === true) {
@@ -2543,7 +2543,7 @@ class User {
    *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async add(email = null, input) {
+  async create(email = null, input) {
     let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups{id, name}'];
     if (this.client.is_admin === true) {
       let q = `mutation($email: String!, $input: UserInput!) {` +
@@ -2578,7 +2578,7 @@ class User {
    *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async modify(email = null, input) {
+  async update(email = null, input) {
     if (this.client.is_superadmin === true) {
       let q = `mutation($email: String!, $input: ModifyUserInput!) {` +
         `  modify_user(email: $email, props: $input) {` +
@@ -2630,7 +2630,7 @@ class ScalingGroup {
     this.client = client;
   }
 
-  async list_all() {
+  async list_available() {
     if (this.client.is_superadmin === true) {
       const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
       const q = `query {` +
@@ -2686,7 +2686,7 @@ class ScalingGroup {
    * @param {string} domain - domain name
    * @param {string} scaling_group - scaling group name
    */
-  async associateWithDomain(domain, scaling_group) {
+  async associate_domain(domain, scaling_group) {
     let q = `mutation($domain: String!, $scaling_group: String!) {` +
       `  associate_scaling_group_with_domain(domain: $domain, scaling_group: $scaling_group) {` +
       `    ok msg` +
@@ -2714,7 +2714,7 @@ class ScalingGroup {
    *   'scheduler_opts': JSONString
    * }
    */
-  async modify(name, input) {
+  async update(name, input) {
     let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
       `  modify_scaling_group(name: $name, props: $input) {` +
       `    ok msg` +
@@ -2920,7 +2920,7 @@ class UserConfig {
    * @param {string} data - text content of script dotfile
    * @param {string} path - path of script dotfile. (cwd: home directory)
    */
-  async create_dotfile_script(data: string = '', path: string) {
+  async create(data: string = '', path: string) {
     if (!this.client._config.accessKey) {
       throw 'Your access key is not set';
     }
@@ -2936,7 +2936,7 @@ class UserConfig {
   /**
    * Get content of script dotfile
    */
-  async get_dotfile_script() {
+  async get() {
     if (!this.client._config.accessKey) {
       throw 'Your access key is not set';
     }
@@ -2953,7 +2953,7 @@ class UserConfig {
    * @param {string} data - text content of script dotfile.
    * @param {string} path - path of script dotfile. (cwd: home directory)
    */
-  async update_dotfile_script(data: string, path: string) {
+  async update(data: string, path: string) {
     let params = {
       "data": data,
       "path": path,
@@ -2968,7 +2968,7 @@ class UserConfig {
    *
    * @param {string} path - path of script dotfile.
    */
-  async delete_dotfile_script(path: string) {
+  async delete(path: string) {
     let params = {
       "path": path
     }
