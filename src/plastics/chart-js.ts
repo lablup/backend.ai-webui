@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import Chart from 'chart.js';
+import {Chart} from 'chart.js';
 import {css, html, LitElement, property, TemplateResult} from 'lit-element';
 
 export default class ChartJs extends LitElement {
@@ -17,11 +17,11 @@ export default class ChartJs extends LitElement {
       this.chart.type = this.type;
       this.chart.data = this.data;
       this.chart.options = this.options;
-      if (this.type != '' && this.data != {} && this.options != {}) {
+      if (typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && this.type != '' && this.data != {} && this.options != {}) {
         this.updateChart();
       }
     } else {
-      if (this.type != '' && this.data != {} && this.options != {}) {
+      if (typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && this.type != '' && this.data != {} && this.options != {}) {
         this._initializeChart();
       }
     }
