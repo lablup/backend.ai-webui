@@ -104,7 +104,7 @@ export default class BackendAIImport extends BackendAIPage {
     this.environment = this.guessEnvironment(this.queryString);
     if (queryString !== "") {
       let downloadURL = 'https://raw.githubusercontent.com' + this.queryString;
-      this.fetchURLResource(downloadURL);
+      this.fetchNotebookURLResource(downloadURL);
     }
   }
 
@@ -112,7 +112,7 @@ export default class BackendAIImport extends BackendAIPage {
     let url = this.shadowRoot.querySelector("#notebook-url").value;
     if (url !== "") {
       this.queryString = this.regularizeGithubURL(url);
-      this.fetchURLResource(this.queryString);
+      this.fetchNotebookURLResource(this.queryString);
     }
   }
 
@@ -124,6 +124,14 @@ export default class BackendAIImport extends BackendAIPage {
 
   getGitHubRepoFromURL() {
     let url = this.shadowRoot.querySelector("#github-repo-url").value;
+    let tree = 'master';
+    if (url.includes('/tree')) { // Branch.
+      let version = (/\/tree\/[a-zA-Z.0-9_-]+/.exec(url) || [''])[0];
+      url = url.replace(version, '');
+      tree = version.replace('/tree/', '');
+    }
+    url = url.replace('https://github.com', 'https://codeload.github.com');
+    url = url + '/zip/' + tree;
     console.log(url);
   }
 
@@ -157,7 +165,7 @@ export default class BackendAIImport extends BackendAIPage {
     this.shadowRoot.querySelector('#notebook-badge-code').value = fullText;
   }
 
-  fetchURLResource(downloadURL): void {
+  fetchNotebookURLResource(downloadURL): void {
     this.shadowRoot.querySelector("#notebook-url").value = downloadURL;
     fetch(downloadURL).then((res) => {
       this.notification.text = _text('import.ReadyToImport');
