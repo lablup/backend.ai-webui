@@ -666,6 +666,10 @@
     "YouCanCreateNotebookCode": "Enter the notebook URL to create a badge code like below that you can run directly on Backend.AI.",
     "NotebookBadgeURL": "Notebook URL",
     "NotebookBadgeCode": "Notebook Badge Code",
-    "GetAndRunNotebook": "Import & Run"
+    "GetAndRunNotebook": "Import & Run",
+    "ImportGithubRepo": "ImportGithubRepo",
+    "GitHubURL": "GitHubURL",
+    "GetToFolder": "GetToFolder",
+    "RepoWillBeFolder": "Imported GitHub repositories are converted to folders and can be mounted when session starts."
   }
 }

@@ -664,6 +664,10 @@
     "YouCanCreateNotebookCode": "노트북의 주소를 입력하면 어디에서나 Backend.AI로 바로 연결되어 다음과 같은 실행할 수 있는 배지 코드를 만들어 줍니다.",
     "NotebookBadgeURL": "노트북 주소",
     "NotebookBadgeCode": "노트북 배지 코드",
-    "GetAndRunNotebook": "가져와 실행"
+    "GetAndRunNotebook": "가져와 실행",
+    "ImportGithubRepo": "GitHub 저장소 가져오기",
+    "GitHubURL": "GitHub 주소",
+    "GetToFolder": "가져오기",
+    "RepoWillBeFolder": "가져온 GitHub 저장소는 폴더로 변환되며, 세션을 시작할 때 마운트할 수 있습니다."
   }
 }

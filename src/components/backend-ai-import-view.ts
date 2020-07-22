@@ -122,6 +122,11 @@ export default class BackendAIImport extends BackendAIPage {
     return url;
   }
 
+  getGitHubRepoFromURL() {
+    let url = this.shadowRoot.querySelector("#github-repo-url").value;
+    console.log(url);
+  }
+
   guessEnvironment(url) {
     if (url.includes('tensorflow')) {
       return 'index.docker.io/lablup/python-tensorflow';
@@ -198,7 +203,7 @@ export default class BackendAIImport extends BackendAIPage {
           </lablup-activity-panel>
           <lablup-activity-panel title="${_t('import.CreateNotebookButton')}" elevation="1" headerColor="#3164BA">
             <div slot="message">
-              <div class="vertical wrap layout center">
+              <div class="vertical wrap layout center" style="font-size:14px;">
                 ${_t('import.YouCanCreateNotebookCode')}
                 <img src="/resources/badge.svg" style="margin-top:5px;margin-bottom:5px;"/>
                 <mwc-textfield style="width:100%;" id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"></mwc-textfield>
@@ -211,6 +216,16 @@ export default class BackendAIImport extends BackendAIPage {
         </div>
         <h3 class="plastic-material-title">${_t('import.ImportToStorage')}</h3>
         <div class="horizontal wrap layout">
+          <lablup-activity-panel title="${_t('import.ImportGithubRepo')}" elevation="1" horizontalsize="2x" headerColor="#3164BA">
+            <div slot="message">
+              <div style="font-size:14px;">${_t('import.RepoWillBeFolder')}</div>
+              <div class="horizontal wrap layout center">
+                <mwc-textfield style="width:75%;" id="github-repo-url" label="${_t('import.GitHubURL')}"></mwc-textfield>
+                <mwc-button icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">${_t('import.GetToFolder')}</mwc-button>
+              </div>
+              ${this.importMessage}
+            </div>
+          </lablup-activity-panel>
         </div>
       </wl-card>
 `;
