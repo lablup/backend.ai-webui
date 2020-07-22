@@ -264,6 +264,8 @@ export default class BackendAIUserList extends BackendAIPage {
   _signoutUser() {
     globalThis.backendaiclient.user.delete(this.signoutUserName).then(response => {
       this.notification.text = PainKiller.relieve('Signout finished.');
+      this._refreshUserData();
+      this.signoutUserDialog.hide();
     }).catch((err) => {   // Signout failed
       console.log(err);
       if (typeof err.message !== "undefined") {
@@ -466,17 +468,10 @@ export default class BackendAIUserList extends BackendAIPage {
                    aria-label="User list" id="user-grid" .items="${this.users}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-        <vaadin-grid-filter-column path="email" resizable></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column resizable header="${_t("credential.Name")}" path="username">
-          <template>
-            <div class="layout horizontal center flex">
-              <div>[[item.username]]</div>
-            </div>
-          </template>
-        </vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="email" header="${_t("credential.UserID")}" resizable></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column resizable header="${_t("credential.Name")}" path="username"></vaadin-grid-filter-column>
         <vaadin-grid-column resizable header="${_t("general.Control")}"
-          .renderer="${this._boundControlRenderer}">
-        </vaadin-grid-column>
+            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="signout-user-dialog" fixed backdrop>
         <span slot="title">Let's double-check</span>
