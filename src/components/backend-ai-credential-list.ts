@@ -63,9 +63,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Object}) _boundKeyageRenderer = this.keyageRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
-  @property({type: Number}) _pageSize = 10;
   @property({type: Object}) keypairGrid = Object();
-  @property({type: Number}) _currentPage = 1;
   @property({type: Number}) _totalCredentialCount = 0;
 
   constructor() {
@@ -465,8 +463,7 @@ export default class BackendAICredentialList extends BackendAIPage {
    * @param {object} rowData
    */
   _indexRenderer(root, column, rowData) {
-    const idxPrevPages = (this._currentPage - 1) * this.keypairGrid.pageSize;
-    const idx = rowData.index + 1 + idxPrevPages;
+    const idx = rowData.index + 1;
     render(
       html`
         <div>${idx}</div>
@@ -592,7 +589,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact" aria-label="Credential list"
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
                    id="keypair-grid" .items="${this.keypairs}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
 

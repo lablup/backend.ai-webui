@@ -64,9 +64,7 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) signoutUserDialog = Object();
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
-  @property({type: Number}) _pageSize = 20;
   @property({type: Object}) userGrid = Object();
-  @property({type: Number}) _currentPage = 1;
   @property({type: Number}) _totalUserCount = 0;
 
   constructor() {
@@ -170,26 +168,18 @@ export default class BackendAIUserList extends BackendAIPage {
     if (active === false) {
       return;
     }
-    this._updatePageItemSize();
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshUserData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
         this.userGrid = this.shadowRoot.querySelector('#user-grid');
-        this._currentPage = 1;
       }, true);
     } else { // already connected
       this._refreshUserData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
       this.userGrid = this.shadowRoot.querySelector('#user-grid');
-      this._currentPage = 1;
     }
-  }
-
-  _updatePageItemSize() {
-    let tableSize = window.innerHeight - 275 - 30;
-    this._pageSize = Math.floor(tableSize / 50);
   }
 
   _refreshUserData() {
@@ -202,7 +192,6 @@ export default class BackendAIUserList extends BackendAIPage {
         is_active = false;
     }
     this.spinner.hide();
-    this._updatePageItemSize();
     let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       let users = response.users;
@@ -326,8 +315,7 @@ export default class BackendAIUserList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   _indexRenderer(root, column, rowData) {
-    const idxPrevPages = (this._currentPage - 1) * this.userGrid.pageSize;
-    const idx = rowData.index + 1 + idxPrevPages;
+    const idx = rowData.index + 1;
     render(
       html`
         <div>${idx}</div>
@@ -464,7 +452,7 @@ export default class BackendAIUserList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact"
+      <vaadin-grid theme="row-stripes column-borders compact"
                    aria-label="User list" id="user-grid" .items="${this.users}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
