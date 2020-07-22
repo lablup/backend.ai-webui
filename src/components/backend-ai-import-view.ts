@@ -24,6 +24,7 @@ import './backend-ai-session-launcher';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
+import {default as PainKiller} from "./backend-ai-painkiller";
 
 /**
  `<backend-ai-import-view>` is a import feature of backend.ai console.
@@ -40,6 +41,7 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Boolean}) authenticated = false;
   @property({type: Object}) spinner = Object();
+  @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) sessionLauncher = Object();
   @property({type: Object}) resourcePolicy;
@@ -74,6 +76,7 @@ export default class BackendAIImport extends BackendAIPage {
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.sessionLauncher = this.shadowRoot.querySelector('#session-launcher');
+    this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
   }
 
@@ -125,14 +128,71 @@ export default class BackendAIImport extends BackendAIPage {
   getGitHubRepoFromURL() {
     let url = this.shadowRoot.querySelector("#github-repo-url").value;
     let tree = 'master';
+    let name = '';
     if (url.includes('/tree')) { // Branch.
-      let version = (/\/tree\/[a-zA-Z.0-9_-]+/.exec(url) || [''])[0];
+      let version = (/\/tree\/[.a-zA-Z.0-9_-]+/.exec(url) || [''])[0];
+      let nameWithVersion = (/\/[.a-zA-Z0-9_-]+\/tree\//.exec(url) || [''])[0];
       url = url.replace(version, '');
       tree = version.replace('/tree/', '');
+      name = nameWithVersion.replace('/tree/', '').substring(1);
+    } else {
+      name = url.split('/').slice(-1)[0]; // TODO: can be undefined.
     }
     url = url.replace('https://github.com', 'https://codeload.github.com');
     url = url + '/zip/' + tree;
-    console.log(url);
+    return this.importRepoFromURL(url, name);
+    //console.log(url);
+  }
+
+  async importRepoFromURL(url, folderName) {
+    // Create folder to
+    let imageResource: Object = {};
+    imageResource['cpu'] = 1;
+    imageResource['mem'] = '0.5g';
+    imageResource['domain'] = globalThis.backendaiclient._config.domainName;
+    imageResource['group_name'] = globalThis.backendaiclient.current_group;
+    this.notification.text = "Downloading repository. It takes time so have a cup of coffee!";
+    this.notification.show();
+    let indicator = await this.indicator.start('indeterminate');
+    indicator.set(10, 'Preparing...');
+    await this._addFolderWithName(folderName);
+    indicator.set(20, 'Folder created');
+    imageResource['mounts'] = [folderName];
+    imageResource['bootstrap_script'] = "#!/bin/sh\ncurl -o repo.zip " + url + "\ncd /home/work/" + folderName + "\nunzip /home/work/repo.zip";
+    globalThis.backendaiclient.getResourceSlots().then((response) => {
+      //let results = response;
+      indicator.set(50, 'Downloading...');
+      return globalThis.backendaiclient.createIfNotExists('index.docker.io/lablup/python:3.8-ubuntu18.04', null, imageResource, 60000);
+    }).then((response) => {
+      indicator.set(100, 'Download finished.');
+      indicator.end(1000);
+    }).catch(err => {
+      this.notification.text = PainKiller.relieve(err.title);
+      this.notification.detail = err.message;
+      this.notification.show(true, err);
+      indicator.end(1000);
+    });
+  }
+
+  async _addFolderWithName(name) {
+    let permission = 'rw';
+    let usageMode = 'general';
+    let group = ''; // user ownership
+    let vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    let host = vhost_info.default;
+
+    let job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission);
+    job.then((value) => {
+      this.notification.text = _text('data.folders.FolderCreated');
+      this.notification.show();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
   }
 
   guessEnvironment(url) {
