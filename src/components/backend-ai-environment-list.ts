@@ -16,6 +16,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
@@ -543,41 +544,15 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="80px" resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="registry">${_t("environment.Registry")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout vertical">
-              <span>[[item.registry]]</span>
-            </div>
-          </template>
-        </vaadin-grid-column>
+        <vaadin-grid-filter-column path="registry" width="80px" resizable
+            header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="namespace" width="60px" resizable
+            header="${_t('environment.Namespace')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="lang" resizable
+            header="${_t('environment.Language')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="baseversion" resizable
+            header="${_t('environment.Version')}"></vaadin-grid-filter-column>
 
-        <vaadin-grid-column width="60px" resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="namespace">${_t("environment.Namespace")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div>[[item.namespace]]</div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="lang">${_t("environment.Language")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div>[[item.lang]]</div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column width="40px" resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="baseversion">${_t("environment.Version")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div>[[item.baseversion]]</div>
-          </template>
-        </vaadin-grid-column>
         <vaadin-grid-column width="60px" resizable>
           <template class="header">${_t("environment.Base")}</template>
           <template>
@@ -594,16 +569,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             </template>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="150px" flex-grow="0" resizable>
-          <template class="header">
-            ${_t("environment.Digest")}
-          </template>
+        <vaadin-grid-filter-column path="digest" resizable
+            header="${_t('environment.Digest')}">
           <template>
             <div class="layout vertical">
               <span class="indicator monospace">[[item.digest]]</span>
             </div>
           </template>
-        </vaadin-grid-column>
+        </vaadin-grid-filter-column>
 
         <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t("environment.ResourceLimit")}" .renderer="${this._boundRequirementsRenderer}">
         </vaadin-grid-column>
@@ -880,7 +853,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Refresh he sorter.
+   * Refresh the sorter.
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */

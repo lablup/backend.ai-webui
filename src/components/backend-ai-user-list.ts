@@ -12,7 +12,7 @@ import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
@@ -55,7 +55,6 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) editMode = false;
   @property({type: Object}) users = Object();
-  @property({type: Object}) userView = Object();
   @property({type: Object}) userInfo = Object();
   @property({type: Array}) userInfoGroups = Array();
   @property({type: String}) condition = 'active';
@@ -65,9 +64,7 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) signoutUserDialog = Object();
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
-  @property({type: Number}) _pageSize = 20;
   @property({type: Object}) userGrid = Object();
-  @property({type: Number}) _currentPage = 1;
   @property({type: Number}) _totalUserCount = 0;
 
   constructor() {
@@ -86,7 +83,7 @@ export default class BackendAIUserList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 275px);
+          height: calc(100vh - 235px);
         }
 
         backend-ai-dialog h4,
@@ -152,21 +149,6 @@ export default class BackendAIUserList extends BackendAIPage {
           --button-bg-active: var(--paper-green-600);
           color: var(--paper-green-900);
         }
-
-        wl-icon.pagination {
-          color: var(--paper-grey-700);
-        }
-
-        wl-button.pagination {
-          width: 15px;
-          height: 15px;
-          padding: 10 10px;
-          box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
-          --button-bg: transparent;
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-red-600);
-        }
       `];
   }
 
@@ -174,7 +156,7 @@ export default class BackendAIUserList extends BackendAIPage {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
-    }
+  }
 
   /**
    * If active is true, change view state
@@ -186,26 +168,18 @@ export default class BackendAIUserList extends BackendAIPage {
     if (active === false) {
       return;
     }
-    this._updatePageItemSize();
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshUserData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
         this.userGrid = this.shadowRoot.querySelector('#user-grid');
-        this._currentPage = 1;
       }, true);
     } else { // already connected
       this._refreshUserData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
       this.userGrid = this.shadowRoot.querySelector('#user-grid');
-      this._currentPage = 1;
     }
-  }
-
-  _updatePageItemSize() {
-    let tableSize = window.innerHeight - 275 - 30;
-    this._pageSize = Math.floor(tableSize / 50);
   }
 
   _refreshUserData() {
@@ -218,7 +192,6 @@ export default class BackendAIUserList extends BackendAIPage {
         is_active = false;
     }
     this.spinner.hide();
-    this._updatePageItemSize();
     let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       let users = response.users;
@@ -228,7 +201,6 @@ export default class BackendAIUserList extends BackendAIPage {
       //});
       this.users = users;
       this._totalUserCount = this.users.length;
-      this._updateItemsFromPage(1);
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
@@ -281,6 +253,8 @@ export default class BackendAIUserList extends BackendAIPage {
   _signoutUser() {
     globalThis.backendaiclient.user.delete(this.signoutUserName).then(response => {
       this.notification.text = PainKiller.relieve('Signout finished.');
+      this._refreshUserData();
+      this.signoutUserDialog.hide();
     }).catch((err) => {   // Signout failed
       console.log(err);
       if (typeof err.message !== "undefined") {
@@ -341,7 +315,7 @@ export default class BackendAIUserList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   _indexRenderer(root, column, rowData) {
-    let idx = rowData.index + 1;
+    const idx = rowData.index + 1;
     render(
       html`
         <div>${idx}</div>
@@ -359,28 +333,6 @@ export default class BackendAIUserList extends BackendAIPage {
     } else {
       return value;
     }
-  }
-
-  /**
-   * Update items
-   *
-   * @param {number} page - number of page
-   * */
-  _updateItemsFromPage(page) {
-    if (typeof page !== 'number') {
-      let page_action = page.target;
-      if (page_action['role'] !== 'button') {
-        page_action = page.target.closest('wl-button');
-      }
-      if (page_action.id === 'previous-page') {
-        this._currentPage -= 1;
-      } else {
-        this._currentPage += 1;
-      }
-    }
-    let start = (this._currentPage - 1) * this.userGrid.pageSize;
-    let end = this._currentPage * this.userGrid.pageSize;
-    this.userView = this.users.slice(start, end);
   }
 
   /**
@@ -494,59 +446,28 @@ export default class BackendAIUserList extends BackendAIPage {
 
         this.notification.show();
       })
-
   }
 
   render() {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact"
-                   aria-label="User list" id="user-grid" .items="${this.userView}">
+      <vaadin-grid theme="row-stripes column-borders compact"
+                   aria-label="User list" id="user-grid" .items="${this.users}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
-                            .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-sort-column resizable header="${_t("credential.UserID")}" path="email">
-          <template>
-            <div class="layout horizontal center flex">
-              <div>[[item.email]]</div>
-            </div>
-          </template>
-        </vaadin-grid-sort-column>
-        <vaadin-grid-sort-column resizable header="${_t("credential.Name")}" path="username">
-          <template>
-            <div class="layout horizontal center flex">
-              <div>[[item.username]]</div>
-            </div>
-          </template>
-        </vaadin-grid-sort-column>
-        <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}">
-        </vaadin-grid-column>
+                            .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
+        <vaadin-grid-filter-column path="email" header="${_t("credential.UserID")}" resizable></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column resizable header="${_t("credential.Name")}" path="username"></vaadin-grid-filter-column>
+        <vaadin-grid-column resizable header="${_t("general.Control")}"
+            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
-      <div class="horizontal center-justified layout flex" style="padding: 10px;border-top:1px solid #ccc;">
-        <wl-button class="pagination" id="previous-page"
-                   ?disabled="${this._currentPage === 1}"
-                   @click="${(e) => {
-      this._updateItemsFromPage(e)
-    }}">
-          <wl-icon class="pagination">navigate_before</wl-icon>
-        </wl-button>
-        <wl-label style="padding: 5px 15px 0px 15px;">
-        ${this._currentPage} / ${Math.ceil(this._totalUserCount / this._pageSize)}</wl-label>
-        <wl-button class="pagination" id="next-page"
-                   ?disabled="${this._totalUserCount <= this._pageSize * this._currentPage}"
-                   @click="${(e) => {
-      this._updateItemsFromPage(e)
-    }}">
-          <wl-icon class="pagination">navigate_next</wl-icon>
-        </wl-button>
-      </div>
       <backend-ai-dialog id="signout-user-dialog" fixed backdrop>
         <span slot="title">Let's double-check</span>
         <div slot="content">
           <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>.</p>
           <p>${_t("dialog.ask.DoYouWantToProceed")}</p>
         </div>
-        <div slot="footer" class="horizontal layout">
+        <div slot="footer" class="horizontal flex layout">
           <div class="flex"></div>
           <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
           <wl-button class="ok" outlined @click="${() => this._signoutUser()}">${_t("button.Okay")}</wl-button>
