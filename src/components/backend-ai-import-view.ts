@@ -151,21 +151,22 @@ export default class BackendAIImport extends BackendAIPage {
     imageResource['mem'] = '0.5g';
     imageResource['domain'] = globalThis.backendaiclient._config.domainName;
     imageResource['group_name'] = globalThis.backendaiclient.current_group;
-    this.notification.text = "Downloading repository. It takes time so have a cup of coffee!";
-    this.notification.show();
     let indicator = await this.indicator.start('indeterminate');
     indicator.set(10, 'Preparing...');
     await this._addFolderWithName(folderName);
     indicator.set(20, 'Folder created');
     imageResource['mounts'] = [folderName];
     imageResource['bootstrap_script'] = "#!/bin/sh\ncurl -o repo.zip " + url + "\ncd /home/work/" + folderName + "\nunzip -u /home/work/repo.zip";
-    globalThis.backendaiclient.getResourceSlots().then((response) => {
+    return globalThis.backendaiclient.getResourceSlots().then((response) => {
       //let results = response;
       indicator.set(50, 'Downloading...');
       return globalThis.backendaiclient.createIfNotExists('index.docker.io/lablup/python:3.8-ubuntu18.04', null, imageResource, 60000);
-    }).then((response) => {
-      console.log(response); // TODO : delete kernel.
-      indicator.set(100, 'Download finished.');
+    }).then(async (response) => {
+      indicator.set(80, 'Clean up import task...');
+      await globalThis.backendaiclient.destroy(response.sessionId);
+      //console.log(response); // TODO : delete kernel.
+      //response.sessionId;
+      indicator.set(100, 'Import finished.');
       indicator.end(1000);
     }).catch(err => {
       this.notification.text = PainKiller.relieve(err.title);
@@ -182,10 +183,22 @@ export default class BackendAIImport extends BackendAIPage {
     let vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
     let host = vhost_info.default;
 
-    let job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission);
-    job.then((value) => {
-      this.notification.text = _text('data.folders.FolderCreated');
+    let vfolderObj = await globalThis.backendaiclient.vfolder.list();
+    let vfolders = vfolderObj.map(function (value) {
+      return value.name;
+    });
+    if (vfolders.includes(name)) {
+      this.notification.text = _text('import.FolderAlreadyExists');
+      this.importMessage = this.notification.text;
       this.notification.show();
+      let i: number = 1;
+      let newName: string = name;
+      while (vfolders.includes(newName)) {
+        newName = name + '_' + i;
+        i++;
+      }
+    }
+    return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -194,7 +207,6 @@ export default class BackendAIImport extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
-    return job;
   }
 
   guessEnvironment(url) {

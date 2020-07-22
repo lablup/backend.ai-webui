@@ -670,6 +670,7 @@
     "ImportGithubRepo": "ImportGithubRepo",
     "GitHubURL": "GitHubURL",
     "GetToFolder": "GetToFolder",
-    "RepoWillBeFolder": "Imported GitHub repositories are converted to folders and can be mounted when session starts."
+    "RepoWillBeFolder": "Imported GitHub repositories are converted to folders and can be mounted when session starts.",
+    "FolderAlreadyExists": "There is a folder with the same name, so rename it."
   }
 }
