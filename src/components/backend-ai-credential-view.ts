@@ -278,8 +278,8 @@ export default class BackendAICredentialView extends BackendAIPage {
 
   /**
    * Change resource policy list's active state and user list's active state.
-   * 
-   * @param {Boolean} active 
+   *
+   * @param {Boolean} active
    */
   async _viewStateChanged(active) {
     await this.updateComplete;
@@ -612,8 +612,8 @@ export default class BackendAICredentialView extends BackendAIPage {
 
   /**
    * Display the tab.
-   * 
-   * @param tab 
+   *
+   * @param button
    */
   _showTab(tab) {
     var els = this.shadowRoot.querySelectorAll(".tab-content");
@@ -625,8 +625,21 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   /**
+   * Display the list.
+   *
+   * @param button
+   */
+  _showList(list) {
+    var els = this.shadowRoot.querySelectorAll(".list-content");
+    for (var x = 0; x < els.length; x++) {
+      els[x].style.display = 'none';
+    }
+    this.shadowRoot.querySelector('#' + list.value).style.display = 'block';
+  }
+
+  /**
    * Set a wlTextEl value according to toggle checkbox checked state.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _toggleCheckbox(e) {
@@ -643,7 +656,7 @@ export default class BackendAICredentialView extends BackendAIPage {
 
   /**
    * Check validation of resource input.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _validateResourceInput(e) {
@@ -680,8 +693,8 @@ export default class BackendAICredentialView extends BackendAIPage {
 
   /**
    * Check validation of user input.
-   * 
-   * @param {object} resource 
+   *
+   * @param {object} resource
    */
   _validateUserInput(resource) {
     if (resource.disabled) {
@@ -743,8 +756,8 @@ export default class BackendAICredentialView extends BackendAIPage {
 
   /**
    * Update the input resource's status.
-   * 
-   * @param {object} resource 
+   *
+   * @param {object} resource
    */
   _updateInputStatus(resource) {
     let textfield = resource;
@@ -875,28 +888,20 @@ export default class BackendAICredentialView extends BackendAIPage {
             <backend-ai-user-list id="user-list" ?active="${this._status === 'active'}"></backend-ai-user-list>
           </div>
         </wl-card>
-        <wl-card id="credential-lists" class="tab-content" style="display:none;">
-        <h4 class="horizontal flex layout">
-          <span class="flex"></span>
-          <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
-            <wl-icon>add</wl-icon>
-            ${_t("credential.AddCredential")}
-          </wl-button>
-        </h4>
-          <wl-expansion name="credential-group" open role="list">
-            <h4 slot="title">${_t("credential.Active")}</h4>
-            <span slot="description">
-            </span>
-            <div>
-              <backend-ai-credential-list id="active-credential-list" condition="active" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
-            </div>
-          </wl-expansion>
-          <wl-expansion name="credential-group" role="list">
-            <h4 slot="title">${_t("credential.Inactive")}</h4>
-            <div>
-              <backend-ai-credential-list id="inactive-credential-list" condition="inactive" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
-            </div>
-          </wl-expansion>
+        <wl-card id="credential-lists" class="item tab-content" style="display:none;">
+          <h4 class="horizontal flex center center-justified layout">
+            <wl-tab-group style="margin-bottom:-8px;">
+              <wl-tab value="active-credential-list" checked @click="${(e) => this._showList(e.target)}">${_t("credential.Active")}</wl-tab>
+              <wl-tab value="inactive-credential-list" @click="${(e) => this._showList(e.target)}">${_t("credential.Inactive")}</wl-tab>
+            </wl-tab-group>
+            <div class="flex"></div>
+            <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
+              <wl-icon>add</wl-icon>
+              ${_t("credential.AddCredential")}
+            </wl-button>
+          </h4>
+          <backend-ai-credential-list class="list-content" id="active-credential-list" condition="active" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
+          <backend-ai-credential-list class="list-content" style="display:none;" id="inactive-credential-list" condition="inactive" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
         </wl-card>
         <wl-card id="resource-policy-lists" class="admin item tab-content" style="display:none;">
           <h4 class="horizontal flex center center-justified layout">

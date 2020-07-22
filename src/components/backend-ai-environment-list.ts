@@ -16,6 +16,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
@@ -152,8 +153,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * If value includes unlimited contents, mark as unlimited.
-   * 
-   * @param value 
+   *
+   * @param value
    */
   _markIfUnlimited(value) {
     if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
@@ -165,7 +166,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Hide a backend.ai dialog.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _hideDialog(e) {
@@ -176,8 +177,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Hide a dialog by id.
-   * 
-   * @param id 
+   *
+   * @param id
    */
   _hideDialogById(id) {
     return this.shadowRoot.querySelector(id).hide();
@@ -185,8 +186,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Display a dialog by id.
-   * 
-   * @param id 
+   *
+   * @param id
    */
   _launchDialogById(id) {
     return this.shadowRoot.querySelector(id).show();
@@ -246,7 +247,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Open the selected image.
-   * 
+   *
    * @param {object} index - Selected image's index object.
    */
   openInstallImageDialog(index) {
@@ -313,10 +314,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   /**
    * Render requirments such as cpu limit, memoty limit
    * cuda share limit, rocm device limit and tpu limit.
-   * 
-   * @param {DOM element} root 
-   * @param {<vaadin-grid-column> element} column 
-   * @param {object} rowData  
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
    */
   requirementsRenderer(root, column?, rowData?) {
     render(
@@ -383,8 +384,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Set resource limits to default value.
-   * 
-   * @param {object} resource_limits 
+   *
+   * @param {object} resource_limits
    */
   _setPulldownDefaults(resource_limits) {
     this._cuda_gpu_disabled = resource_limits.filter(e => e.key === "cuda_device").length === 0;
@@ -469,10 +470,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Render controllers.
-   * 
-   * @param {DOM element} root 
-   * @param {<vaadin-grid-column> element} column 
-   * @param {object} rowData  
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
    */
   controlsRenderer(root, column, rowData) {
     render(
@@ -510,10 +511,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Render an install dialog.
-   * 
-   * @param {DOM element} root 
-   * @param {<vaadin-grid-column> element} column 
-   * @param {object} rowData  
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
    */
   installRenderer(root, column, rowData) {
     render(
@@ -543,41 +544,15 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="80px" resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="registry">${_t("environment.Registry")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout vertical">
-              <span>[[item.registry]]</span>
-            </div>
-          </template>
-        </vaadin-grid-column>
+        <vaadin-grid-filter-column path="registry" width="80px" resizable
+            header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="namespace" width="60px" resizable
+            header="${_t('environment.Namespace')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="lang" resizable
+            header="${_t('environment.Language')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="baseversion" resizable
+            header="${_t('environment.Version')}"></vaadin-grid-filter-column>
 
-        <vaadin-grid-column width="60px" resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="namespace">${_t("environment.Namespace")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div>[[item.namespace]]</div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="lang">${_t("environment.Language")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div>[[item.lang]]</div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column width="40px" resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="baseversion">${_t("environment.Version")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div>[[item.baseversion]]</div>
-          </template>
-        </vaadin-grid-column>
         <vaadin-grid-column width="60px" resizable>
           <template class="header">${_t("environment.Base")}</template>
           <template>
@@ -594,16 +569,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             </template>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="150px" flex-grow="0" resizable>
-          <template class="header">
-            ${_t("environment.Digest")}
-          </template>
+        <vaadin-grid-filter-column path="digest" resizable
+            header="${_t('environment.Digest')}">
           <template>
             <div class="layout vertical">
               <span class="indicator monospace">[[item.digest]]</span>
             </div>
           </template>
-        </vaadin-grid-column>
+        </vaadin-grid-filter-column>
 
         <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t("environment.ResourceLimit")}" .renderer="${this._boundRequirementsRenderer}">
         </vaadin-grid-column>
@@ -782,7 +755,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Remove a row in the environment list.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _removeRow(e) {
@@ -881,7 +854,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Refresh the sorter.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _refreshSorter(e) {
@@ -995,8 +968,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Add unit to the value.
-   * 
-   * @param {string} value 
+   *
+   * @param {string} value
    */
   _addUnit(value) {
     let unit = value.substr(-1);
@@ -1014,8 +987,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Change unit to symbol.
-   * 
-   * @param {string} value 
+   *
+   * @param {string} value
    */
   _symbolicUnit(value) {
     let unit = value.substr(-2);
@@ -1033,8 +1006,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Humanize the value.
-   * 
-   * @param {string} value 
+   *
+   * @param {string} value
    */
   _humanizeName(value) {
     this.alias = {
