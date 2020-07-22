@@ -467,7 +467,7 @@ export default class BackendAIUserList extends BackendAIPage {
           <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>.</p>
           <p>${_t("dialog.ask.DoYouWantToProceed")}</p>
         </div>
-        <div slot="footer" class="horizontal layout">
+        <div slot="footer" class="horizontal flex layout">
           <div class="flex"></div>
           <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
           <wl-button class="ok" outlined @click="${() => this._signoutUser()}">${_t("button.Okay")}</wl-button>
