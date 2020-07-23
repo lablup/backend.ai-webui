@@ -42,7 +42,7 @@ export default class ChartJs extends LitElement {
       // language=CSS
       css`
         .chart-top-container {
-          margin: 0px auto;
+          margin: 0 auto;
           padding: 5px;
           overflow: hidden;
           width: 70vw;
@@ -50,7 +50,7 @@ export default class ChartJs extends LitElement {
         }
 
         .chart-sub-container {
-          position:relative;
+          position: relative;
           width: 100%;
           height: 100%
         }
@@ -62,11 +62,6 @@ export default class ChartJs extends LitElement {
     if (this.type != '' && this.data != {} && this.options != {}) {
       this._initializeChart();
     }
-    window.addEventListener('resize', () => {
-      if (this.chart) {
-        this.chart.resize();
-      }
-    });
   }
 
   public render(): void | TemplateResult {
