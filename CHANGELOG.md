@@ -1,5 +1,29 @@
 # Changelog
 
+## v20.07.7 (23/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Migrate repository notebook into cluster [#599](https://github.com/lablup/backend.ai-console/issues/599)
+
+#### Bug Fixes:
+
+- [**bug**][**library / SDK**][**major**][**urgency**] User and keypair page displays only 100 users/keypairs in >20.03 manager [#617](https://github.com/lablup/backend.ai-console/issues/617)
+
+
+## v20.07.6 (20/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Project color in pull-down menu on top-right corner becomes white when selected [#614](https://github.com/lablup/backend.ai-console/issues/614)
+- [**UI / UX**][**blocker**][**easy**][**enhancement**] Problems that do not support password autocomplete in web browsers [#613](https://github.com/lablup/backend.ai-console/issues/613)
+- [**UI / UX**][**enhancement**][**library / SDK**] Add edit feature of .Renviron file in home directory [#608](https://github.com/lablup/backend.ai-console/issues/608)
+
+#### Bug Fixes:
+
+- [**blocker**][**bug**][**library / SDK**][**major**] 502 error found when launching app with Backend.AI 20.03 / Enterprise R2 beta [#601](https://github.com/lablup/backend.ai-console/issues/601)
+
+
 ## v20.07.5 (09/07/2020)
 
 #### Bug Fixes:
