@@ -140,6 +140,7 @@ class Client {
         this.userConfig = new UserConfig(this);
         this.service = new Service(this);
         this.domain = new Domain(this);
+        this.enterprise = new Enterprise(this);
         this.cloud = new Cloud(this);
         this._features = {}; // feature support list
         this.abortController = new AbortController();
@@ -2805,6 +2806,39 @@ class UserConfig {
         };
         const rqst = this.client.newSignedRequest("DELETE", "/user-config/dotfiles", params);
         return this.client._wrapWithPromise(rqst);
+    }
+}
+class Enterprise {
+    /**
+     * Setting API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+        this.config = null;
+    }
+    /**
+     * Get the current enterprise license.
+     */
+    async getLicense() {
+        if (this.client.is_superadmin === true) {
+            if (typeof this.certificate === 'undefined') {
+                const rqst = this.client.newSignedRequest('GET', '/license');
+                let cert = await this.client._wrapWithPromise(rqst);
+                this.certificate = cert.certificate;
+                if (cert.status === "valid") {
+                    this.certificate['valid'] = true;
+                }
+                else {
+                    this.certificate['valid'] = false;
+                }
+                return Promise.resolve(this.certificate);
+            }
+        }
+        else {
+            return Promise.resolve(false);
+        }
     }
 }
 class Cloud {
