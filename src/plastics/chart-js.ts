@@ -2,19 +2,18 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {Chart} from 'chart.js';
+import Chart from './Chart';
 import {css, html, LitElement, property, TemplateResult} from 'lit-element';
 
 export default class ChartJs extends LitElement {
-  @property({type: Chart}) chart;
-  @property({type: Chart.ChartType}) type = '';
-  @property({type: Chart.ChartData}) data = {};
-  @property({type: Chart.ChartOptions}) options = {};
+  @property({type: Object}) data = {};
+  @property({type: Object}) options = {};
+  @property({type: Object}) chart;
+  @property({type: String}) type = '';
 
-  update(prop) {
+  updated(prop) {
     super.update(prop);
     if (this.chart) {
-      this.chart.type = this.type;
       this.chart.data = this.data;
       this.chart.options = this.options;
       if (typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && this.type != '' && this.data != {} && this.options != {}) {
@@ -62,7 +61,6 @@ export default class ChartJs extends LitElement {
   public firstUpdated(): void {
     if (this.type != '' && this.data != {} && this.options != {}) {
       this._initializeChart();
-    } else {
     }
     window.addEventListener('resize', () => {
       if (this.chart) {

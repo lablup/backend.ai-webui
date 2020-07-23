@@ -97,6 +97,9 @@ export default class BackendAIChart extends LitElement {
 
   firstUpdated() {
     this.chart = this.shadowRoot.querySelector('#chart');
+    if (this.collection.axisTitle['y']) {
+      this.type = (this.collection.axisTitle['y'] == 'Sessions' || this.collection.axisTitle['y'] == 'CPU') ? 'bar' : 'line';
+    }
     this._updateChartData();
     //this.shadowRoot.querySelector('#chart')
   }
@@ -111,13 +114,12 @@ export default class BackendAIChart extends LitElement {
     let maxTicksLimit = (this.collection.period == '1D') ? 8 : 14;
     let maxRotation = (this.collection.period == '1D') ? 0 : 50;
 
-    this.type = (this.collection.axisTitle['y'] == 'Sessions' || this.collection.axisTitle['y'] == 'CPU') ? 'bar' : 'line';
     this.chartData = {
       labels: temp,
       datasets: [{
-        barThickness: 6,
         label: this.collection.axisTitle['y'] + ' (' + this.collection.unit_hint + ')',
         data: this.collection.data[0],
+        barThickness: 6,
         borderWidth: 1,
         borderColor: colors[this.collection.axisTitle['y']],
         backgroundColor: colors[this.collection.axisTitle['y']],
@@ -133,6 +135,9 @@ export default class BackendAIChart extends LitElement {
       maintainAspectRatio: false,
       legend: {
         display: true
+      },
+      tooltips: {
+        intersect: false,
       },
       scales: {
         x: {
