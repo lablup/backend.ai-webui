@@ -604,6 +604,12 @@ class Client {
             if (resources['startupCommand']) {
                 params['startupCommand'] = resources['startupCommand'];
             }
+            if (resources['bootstrapScript']) {
+                params['bootstrapScript'] = resources['bootstrapScript'];
+            }
+            if (resources['bootstrap_script']) {
+                params['bootstrap_script'] = resources['bootstrap_script'];
+            }
             if (resources['owner_access_key']) {
                 params['owner_access_key'] = resources['owner_access_key'];
             }

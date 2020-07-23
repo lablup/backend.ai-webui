@@ -99,6 +99,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) splash = Object();
   @property({type: Object}) loginPanel = Object();
   @property({type: String}) _page = '';
+  @property({type: Object}) _pageParams = {};
   @property({type: String}) _sidepanel = '';
   @property({type: Boolean}) _drawerOpened = false;
   @property({type: Boolean}) _offlineIndicatorOpened = false;
@@ -135,6 +136,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
     globalThis.appLauncher = this.shadowRoot.querySelector('#app-launcher');
     globalThis.resourceBroker = this.shadowRoot.querySelector('#resource-broker');
+    globalThis.currentPage = this._page;
+    globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.appPage = this.shadowRoot.querySelector('#app-page');
@@ -374,8 +377,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Control the side panel by panel's state.
-   * 
-   * @param {string} panel 
+   *
+   * @param {string} panel
    */
   _openSidePanel(panel): void {
     if (this.contentBody.open === true) {
@@ -393,9 +396,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Change the drawer layout according to browser size.
-   * 
-   * @param {number} width 
-   * @param {number} height 
+   *
+   * @param {number} width
+   * @param {number} height
    */
   _changeDrawerLayout(width, height): void {
     this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
@@ -547,7 +550,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view: string = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'information', 'statistics'].includes(view) !== true) { // Fallback for Windows OS
+      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'information', 'statistics', 'github', 'import'].includes(view) !== true) { // Fallback for Windows OS
         let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
         if (typeof modified_view != 'undefined') {
           view = modified_view;
@@ -562,7 +565,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Update the sidebar menu title according to view.
-   * 
+   *
    * @param {string} view - Sidebar menu title string.
    */
   _updateSidebar(view) {
@@ -621,6 +624,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.menuTitle = _text("console.menu.Logs");
         this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
+      case 'github':
+      case 'import':
+        this.menuTitle = _text("console.menu.Import&Run");
+        this.updateTitleColor('var(--paper-blue-800)', '#efefef');
+        break;
       default:
         this._page = 'error';
         this.menuTitle = _text("console.NOTFOUND");
@@ -630,8 +638,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * When user close the app window, delete login information.
-   * 
-   * @param {Boolean} performClose 
+   *
+   * @param {Boolean} performClose
    */
   async close_app_window(performClose = false) {
     if (globalThis.backendaioptions.get('preserve_login') === false) { // Delete login information.
@@ -657,8 +665,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Logout from the backend.ai client.
-   * 
-   * @param {Boolean} performClose 
+   *
+   * @param {Boolean} performClose
    */
   async logout(performClose = false) {
     console.log('also close the app:', performClose);
@@ -699,9 +707,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Update the title color.
-   * 
-   * @param {string} backgroundColorVal 
-   * @param {string} colorVal 
+   *
+   * @param {string} backgroundColorVal
+   * @param {string} colorVal
    */
   updateTitleColor(backgroundColorVal: string, colorVal: string) {
     (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.setProperty('--mdc-theme-primary', backgroundColorVal);
@@ -710,7 +718,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Change the backend.ai client's current group.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   changeGroup(e) {
@@ -771,7 +779,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Move to input url.
-   * 
+   *
    * @param {string} url
    */
   _moveTo(url) {
@@ -811,8 +819,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Set the project group according to current group.
-   * 
-   * @param {string} value 
+   *
+   * @param {string} value
    */
   _writeRecentProjectGroup(value: string) {
     let endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
@@ -864,9 +872,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Create a popover.
-   * 
-   * @param {string} anchor 
-   * @param {string} title 
+   *
+   * @param {string} anchor
+   * @param {string} title
    */
   _createPopover(anchor: string, title: string) {
     let popover = document.createElement('wl-popover');
@@ -931,6 +939,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
               <span class="full-menu">${_t("console.menu.Experiments")}</span>
             </mwc-list-item>` : html``}
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'github' || this._page === 'import'}" @click="${() => this._moveTo('/import')}" ?disabled="${this.blockedMenuitem.includes('import')}">
+              <mwc-icon id="import-menu-icon" slot="graphic" class="fg blue">play_arrow</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Import&Run")}</span>
+            </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}" ?disabled="${this.blockedMenuitem.includes('data')}">
               <mwc-icon id="data-menu-icon" slot="graphic" class="fg orange">cloud_upload</mwc-icon>
               <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
@@ -1056,6 +1068,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <section role="main" id="content" class="container layout vertical center">
                   <div id="app-page">
                     <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-summary-view>
+                    <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-import-view>
                     <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-session-view>
                     <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-experiment-view>
                     <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usersettings-view>
@@ -1126,14 +1139,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Change the state.
-   * 
-   * @param {object} state 
+   *
+   * @param {object} state
    */
   stateChanged(state) {
     this._page = state.app.page;
+    this._pageParams = state.app.params;
     this._offline = state.app.offline;
     this._offlineIndicatorOpened = state.app.offlineIndicatorOpened;
     this._drawerOpened = state.app.drawerOpened;
+    globalThis.currentPage = this._page;
+    globalThis.currentPageParams = this._pageParams;
   }
 }
 
