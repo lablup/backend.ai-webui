@@ -106,7 +106,7 @@ export default class BackendAIImport extends BackendAIPage {
     this.importMessage = this.queryString;
     this.environment = this.guessEnvironment(this.queryString);
     if (queryString !== "") {
-      let downloadURL = 'https://raw.githubusercontent.com' + this.queryString;
+      let downloadURL = 'https://raw.githubusercontent.com/' + this.queryString;
       this.fetchNotebookURLResource(downloadURL);
     }
   }

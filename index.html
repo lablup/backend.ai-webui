@@ -6,7 +6,7 @@
   <meta name="description" content="Backend.AI Console">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="theme-color" content="#fff">
-  <base href="/">
+  <base href="">
   <link rel="icon" href="manifest/favicon.ico">
   <link rel="apple-touch-icon" sizes="256x256" href="manifest/backend-ai.iconset/icon_256x256@2x.png">
   <link rel="icon" type="image/png" sizes="32x32" href="manifest/backend-ai.iconset/icon_32x32@1x.png">
@@ -24,8 +24,8 @@
     globalThis.enableSW = true;
 
     globalThis.process = {env: {NODE_ENV: 'production'}};
-    globalThis.packageVersion = "20.07.6";
-    globalThis.buildVersion = "200720.170751";
+    globalThis.packageVersion = "20.07.7";
+    globalThis.buildVersion = "200723.170725";
   </script>
   <style>
     body {
@@ -237,7 +237,7 @@
     'enableSW' in globalThis &&
     globalThis.enableSW === true) {
     // Service worker routine.
-    if ('serviceWorker' in navigator) {
+    if ('serviceWorker' in navigator && globalThis.isElectron === false) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js');
       });
