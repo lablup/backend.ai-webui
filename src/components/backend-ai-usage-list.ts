@@ -11,9 +11,9 @@ import 'weightless/card';
 import 'weightless/tab-group';
 import 'weightless/tab';
 import 'weightless/select';
-
 import {BackendAiStyles} from './backend-ai-general-styles';
-import './backend-ai-chart.js'
+import './backend-ai-chart';
+
 import {
   IronFlex,
   IronFlexAlignment,
@@ -178,6 +178,13 @@ export default class BackendAIUsageList extends BackendAIPage {
               res
                 .filter((e, i) => res.length - templates[period].length <= i)
                 .map(e => ({x: new Date(1000 * e["date"]), y: e[key]["value"]})),
+                //.map(e => ({x: 1000 * e["date"], y: e[key]["value"]})),
+            ],
+            labels: [
+              res
+                .filter((e, i) => res.length - templates[period].length <= i)
+                .map(e => (new Date(1000 * e["date"]).toString())),
+              //.map(e => ({x: 1000 * e["date"], y: e[key]["value"]})),
             ],
             axisTitle: {
               x: "Date",
@@ -212,6 +219,7 @@ export default class BackendAIUsageList extends BackendAIPage {
             data
               .filter((e, i) => data.length - templates[period].length <= i)
               .map(e => ({x: new Date(1000 * e["date"]), y: e[key]["value"]})),
+            //.map(e => ({x: 1000 * e["date"], y: e[key]["value"]})),
           ],
           axisTitle: {
             x: "Date",
@@ -220,7 +228,7 @@ export default class BackendAIUsageList extends BackendAIPage {
           period,
           unit_hint: data[data.length - 1][key].unit_hint
         }
-      })
+      });
     }
   }
 
