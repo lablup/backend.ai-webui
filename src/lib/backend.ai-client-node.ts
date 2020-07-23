@@ -3071,7 +3071,12 @@ class Enterprise {
       if (typeof this.certificate === 'undefined') {
         const rqst = this.client.newSignedRequest('GET', '/license');
         let cert = await this.client._wrapWithPromise(rqst);
-        this.certificate = JSON.parse(cert);
+        this.certificate = cert.certificate;
+        if (cert.status === "valid") {
+          this.certificate['valid'] = true;
+        } else {
+          this.certificate['valid'] = false;
+        }
         return Promise.resolve(this.certificate);
       }
     } else {

@@ -45,6 +45,7 @@ export default class BackendAiInformationView extends BackendAIPage {
   @property({type: String}) pgsql_version = '';
   @property({type: String}) redis_version = '';
   @property({type: String}) etcd_version = '';
+  @property({type: Boolean}) license_valid = false;
   @property({type: String}) license_type = '';
   @property({type: String}) license_licensee = '';
   @property({type: String}) license_key = '';
@@ -202,8 +203,18 @@ export default class BackendAiInformationView extends BackendAIPage {
         <div>
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
+              <div>${_t("information.IsLicenseValid")}</div>
+              <div class="description">${_t("information.DescIsLicenseValid")}
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+            ${this.license_valid ? html`<wl-icon>done</wl-icon>` : html`<wl-icon class="fg red">warning</wl-icon>`}
+            </div>
+          </div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
               <div>${_t("information.LicenseType")}</div>
-              <div class="description">${_tr("information.CurrentSystemLicenseType")}
+              <div class="description">${_tr("information.DescLicenseType")}
               </div>
             </div>
             <div class="vertical center-justified layout">
@@ -213,7 +224,7 @@ export default class BackendAiInformationView extends BackendAIPage {
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>${_t("information.Licensee")}</div>
-              <div class="description">${_t("information.WhoHasLicensed")}
+              <div class="description">${_t("information.DescLicensee")}
               </div>
             </div>
             <div class="vertical center-justified layout">
@@ -223,17 +234,17 @@ export default class BackendAiInformationView extends BackendAIPage {
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>${_t("information.LicenseKey")}</div>
-              <div class="description">${_t("information.FullLicenseKey")}
+              <div class="description">${_t("information.DescLicenseKey")}
               </div>
             </div>
-            <div class="vertical center-justified layout">
+            <div class="vertical center-justified layout monospace indicator">
             ${this.license_key}
             </div>
           </div>
           <div class="horizontal flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div>${_t("information.Expiration")}</div>
-              <div class="description">${_t("information.WhenLicenseExpire")}
+              <div class="description">${_t("information.DescExpiration")}
               </div>
             </div>
             <div class="vertical center-justified layout">
@@ -265,6 +276,22 @@ export default class BackendAiInformationView extends BackendAIPage {
     }
   }
 
+  _updateLicenseInfo() {
+    globalThis.backendaiclient.enterprise.getLicense().then((response) => {
+      this.license_valid = response.valid;
+      this.license_type = response.type;
+      this.license_licensee = response.licensee;
+      this.license_key = response.licenseKey;
+      this.license_expiration = response.expiration;
+    }).catch((err) => {
+      this.license_valid = false;
+      this.license_type = _text('information.CannotRead');
+      this.license_licensee = _text('information.CannotRead');
+      this.license_key = _text('information.CannotRead');
+      this.license_expiration = _text('information.CannotRead');
+    });
+  }
+
   /**
    * Update information of the client
    */
@@ -278,20 +305,10 @@ export default class BackendAiInformationView extends BackendAIPage {
     this.etcd_version = _text('information.Compatible');
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        globalThis.backendaiclient.enterprise.getLicense().then((response) => {
-          this.license_type = response.type;
-          this.license_licensee = response.licensee;
-          this.license_key = response.licenseKey;
-          this.license_expiration = response.expiration;
-        });
+        this._updateLicenseInfo();
       }, true);
     } else { // already connected
-      globalThis.backendaiclient.enterprise.getLicense().then((response) => {
-        this.license_type = response.type;
-        this.license_licensee = response.licensee;
-        this.license_key = response.licenseKey;
-        this.license_expiration = response.expiration;
-      });
+      this._updateLicenseInfo();
     }
 
     if (globalThis.backendaiclient._config.endpoint.startsWith('https:')) {
