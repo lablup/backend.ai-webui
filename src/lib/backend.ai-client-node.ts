@@ -3067,8 +3067,12 @@ class Enterprise {
    * Get the current enterprise license.
    */
   async getLicense() {
-    const rqst = this.client.newSignedRequest('GET', '/license');
-    return this.client._wrapWithPromise(rqst);
+    if (this.client.is_superadmin === true) {
+      const rqst = this.client.newSignedRequest('GET', '/license');
+      return this.client._wrapWithPromise(rqst);
+    } else {
+      return Promise.resolve(false);
+    }
   }
 }
 
