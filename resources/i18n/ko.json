@@ -580,7 +580,21 @@
     "DescDefaultAdministratorAccountChanged": "실제 사용을 위해서는 초기 계정 정보를 반드시 변경해야 합니다.",
     "UsesSSL": "SSL 사용",
     "DescUsesSSL": "적절하게 설정된 SSL을 통한 HTTPS 통신은 시스템 보안을 강화합니다.",
-    "Compatible": "호환"
+    "Compatible": "호환",
+    "License": "사용권",
+    "LicenseType": "사용 허가 종류",
+    "Licensee": "사용허가권자",
+    "LicenseKey": "인증키",
+    "Expiration": "유효기간",
+    "FixedLicense": "고정 라이선스",
+    "DynamicLicense": "가변 라이선스",
+    "IsLicenseValid": "유효성 검증",
+    "DescIsLicenseValid": "현재 시스템에 설치된 사용권의 유효성을 검증합니다.",
+    "DescLicenseType": "현재 시스템에서 사용하는 사용 허가권의 종류입니다.<br/> 고정 라이선스의 경우 미리 정해진 하드웨어에만 실행 권한이 주어집니다. 가변 라이선스의 경우, 계약 한도 내의 클러스터 하드웨어에 대해 실행 권한이 주어집니다.",
+    "DescLicensee": "사용 허가를 받은 조직 또는 구입자 정보입니다.",
+    "DescLicenseKey": "사용 허가를 위한 인증키입니다. 잘 보관하시기 바랍니다.",
+    "DescExpiration": "사용허가권의 유효기간입니다. 기간이 넘으면 클러스터 소프트웨어 사용이 중지됩니다.",
+    "CannotRead": "읽을 수 없음"
   },
   "login": {
     "Login": "로그인",

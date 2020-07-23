@@ -1,5 +1,14 @@
 # Changelog
 
+## v20.07.8 (23/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**enterprise**][**library / SDK**][**major**] License information viewer [#623](https://github.com/lablup/backend.ai-console/issues/623)
+- [**enhancement**][**urgency**] Add feature to search and/or filter user and keypair by fields such as email, username, etc [#618](https://github.com/lablup/backend.ai-console/issues/618)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Migrate d3.js charts into chart.js [#607](https://github.com/lablup/backend.ai-console/issues/607)
+
+
 ## v20.07.7 (23/07/2020)
 
 #### Enhancements:
