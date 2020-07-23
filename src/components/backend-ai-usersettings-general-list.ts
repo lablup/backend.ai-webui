@@ -394,7 +394,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _fetchUserConfigScript() {
     // Fetch user's .zshrc or .bashrc code
-    return globalThis.backendaiclient.userConfig.get_dotfile_script().then((resp) => {
+    return globalThis.backendaiclient.userConfig.get().then((resp) => {
       const script = resp || '';
       return script;
     }).catch(err => {
@@ -421,7 +421,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       if (this.rcfiles[idx]['data'] === '') { // if new rcfile
         if (script !== '') {
           // create and save with data and path
-          globalThis.backendaiclient.userConfig.create_dotfile_script(
+          globalThis.backendaiclient.userConfig.create(
             script, this.rcfiles[idx]['path'])
             .then(res => {
               this.spinner.hide();
@@ -452,7 +452,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           this.notification.show();
           return;
         } else {
-          await globalThis.backendaiclient.userConfig.update_dotfile_script(script, this.rcfile)
+          await globalThis.backendaiclient.userConfig.update(script, this.rcfile)
             .then(res => {
               this.notification.text = _text("usersettings.DescScriptUpdated");
               this.notification.show();
@@ -542,7 +542,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       path = this.rcfile;
     }
     if (path) {
-      globalThis.backendaiclient.userConfig.delete_dotfile_script(path).then(res => {
+      globalThis.backendaiclient.userConfig.delete(path).then(res => {
         let message = 'User config script ' + path + 'is deleted.';
         this.notification.text = message;
         this.notification.show();
@@ -562,7 +562,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _deleteRcFileAll() {
     this.rcfiles.map(item => {
       let path = item.path;
-      globalThis.backendaiclient.userConfig.delete_dotfile_script(item.path).then(res => {
+      globalThis.backendaiclient.userConfig.delete(item.path).then(res => {
         let message = 'User config script ' + path + ' is deleted.';
         this.notification.text = message;
         this.notification.show();
@@ -580,7 +580,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _createRcFile(path: string) {
     if (path) {
-      globalThis.backendaiclient.userConfig.create_dotfile_script(path);
+      globalThis.backendaiclient.userConfig.create(path);
     }
   }
 
