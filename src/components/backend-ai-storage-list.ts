@@ -437,7 +437,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="delete-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.folders.DeleteAFolder")}</span>
         <div slot="content" style="width:100%;">
-          <div class="warning">${_t("dialog.warning.CannotBeUndone")}</div>
+          <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
           <div>
             <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
                          pattern="[a-zA-Z0-9_-.]*"

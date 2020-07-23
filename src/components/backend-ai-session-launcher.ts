@@ -58,7 +58,12 @@ import {
 export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
+  @property({type: Boolean}) hideLaunchButton = false;
   @property({type: String}) location = '';
+  @property({type: String}) mode = 'normal';
+  @property({type: String}) newSessionDialogTitle = '';
+  @property({type: String}) importScript = '';
+  @property({type: String}) importFilename = '';
   @property({type: Object}) imageRequirements = Object();
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) userResourceLimit = Object();
@@ -567,6 +572,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     document.addEventListener("backend-ai-resource-broker-updated", (e) => {
       // Fires when broker is updated.
     });
+    if (this.hideLaunchButton === true) {
+      this.shadowRoot.querySelector('#launch-session').style.display = 'none';
+    }
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -713,8 +721,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   async _launchSessionDialog() {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false || this.resourceBroker.image_updating === true) {
-      this.notification.text = _text('session.launcher.PleaseWaitInitializing');
-      this.notification.show();
+      setTimeout(() => {
+        this._launchSessionDialog();
+      }, 1000);
+      //this.notification.text = _text('session.launcher.PleaseWaitInitializing');
+      //this.notification.show();
     } else {
       await this.selectDefaultLanguage();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
@@ -849,6 +860,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
     }
+    if (this.mode === 'import' && this.importScript !== '') {
+      config['bootstrap_script'] = this.importScript;
+    }
+
     const kernelName: string = this._generateKernelIndex(kernel, version);
     this.shadowRoot.querySelector('#launch-button').disabled = true;
     this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Preparing...';
@@ -900,6 +915,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             appOptions['app-services'] = service_info.map(a => a.name);
           } else {
             appOptions['app-services'] = [];
+          }
+          if (this.mode === 'import') {
+            appOptions['runtime'] = 'jupyter';
+            appOptions['filename'] = this.importFilename;
           }
           globalThis.appLauncher.showLauncher(appOptions);
         });
@@ -1535,11 +1554,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   /**
    * Select default_language and then set _default_language_updated to true.
    * */
-  async selectDefaultLanguage() {
-    if (this._default_language_updated === true) {
+  async selectDefaultLanguage(forceUpdate: boolean = false, language: string = '') {
+    if (this._default_language_updated === true && forceUpdate === false) {
       return;
     }
-    if (globalThis.backendaiclient._config.default_session_environment !== undefined &&
+    if (language !== '') {
+      this.default_language = language;
+    } else if (globalThis.backendaiclient._config.default_session_environment !== undefined &&
       'default_session_environment' in globalThis.backendaiclient._config &&
       globalThis.backendaiclient._config.default_session_environment !== '') {
       this.default_language = globalThis.backendaiclient._config.default_session_environment;
@@ -1556,7 +1577,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (typeof obj === 'undefined') { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
-        return this.selectDefaultLanguage();
+        return this.selectDefaultLanguage(forceUpdate, language);
       }, 500);
       return Promise.resolve(true);
     }
@@ -1762,7 +1783,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         ${_t("session.launcher.Start")}
       </wl-button>
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
-        <span slot="title">${_t("session.launcher.StartNewSession")}</span>
+        <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>
         <form slot="content" id="launch-session-form" class="centered">
           <div class="vertical center layout" style="padding-top:15px;">
             <mwc-select id="environment" label="${_t("session.launcher.Environments")}" fullwidth required
