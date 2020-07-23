@@ -24,7 +24,7 @@ export const navigate = (path: any, params: Object = {}) => (dispatch: any) => {
     path = '/';
   }
   let page;
-  if (path === '/') {
+  if (['/', 'build', '/build', 'app', '/app'].includes(path)) {
     page = 'summary';
   } else if (path[0] === '/') {
     page = path.slice(1);
