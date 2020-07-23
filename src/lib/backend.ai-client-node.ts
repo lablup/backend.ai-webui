@@ -162,6 +162,7 @@ class Client {
   public userConfig: UserConfig;
   public cloud: Cloud;
   public service: Service;
+  public enterprise: Enterprise;
   public _features: any;
   public ready: boolean = false;
   public abortController: any;
@@ -216,6 +217,7 @@ class Client {
     this.userConfig = new UserConfig(this);
     this.service = new Service(this);
     this.domain = new Domain(this);
+    this.enterprise = new Enterprise(this);
     this.cloud = new Cloud(this);
 
     this._features = {}; // feature support list
@@ -3045,6 +3047,29 @@ class UserConfig {
     return this.client._wrapWithPromise(rqst);
   }
 
+}
+
+class Enterprise {
+  public client: any;
+  public config: any;
+
+  /**
+   * Setting API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client: Client) {
+    this.client = client;
+    this.config = null;
+  }
+
+  /**
+   * Get the current enterprise license.
+   */
+  async getLicense() {
+    const rqst = this.client.newSignedRequest('GET', '/license');
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class Cloud {
