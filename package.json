@@ -62,7 +62,6 @@
     "log": "^6.0.0",
     "marked": "^1.1.0",
     "markty-toml": "0.1.1",
-    "moment": "^2.27.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-workbox": "^5.0.1",
     "tus-js-client": "^2.1.1",
