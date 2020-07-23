@@ -3052,7 +3052,7 @@ class UserConfig {
 class Enterprise {
   public client: any;
   public config: any;
-
+  public certificate: any;
   /**
    * Setting API wrapper.
    *
@@ -3068,8 +3068,12 @@ class Enterprise {
    */
   async getLicense() {
     if (this.client.is_superadmin === true) {
-      const rqst = this.client.newSignedRequest('GET', '/license');
-      return this.client._wrapWithPromise(rqst);
+      if (typeof this.certificate === 'undefined') {
+        const rqst = this.client.newSignedRequest('GET', '/license');
+        let cert = await this.client._wrapWithPromise(rqst);
+        this.certificate = JSON.parse(cert);
+        return Promise.resolve(this.certificate);
+      }
     } else {
       return Promise.resolve(false);
     }

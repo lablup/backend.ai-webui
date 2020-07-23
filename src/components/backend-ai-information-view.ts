@@ -45,6 +45,10 @@ export default class BackendAiInformationView extends BackendAIPage {
   @property({type: String}) pgsql_version = '';
   @property({type: String}) redis_version = '';
   @property({type: String}) etcd_version = '';
+  @property({type: String}) license_type = '';
+  @property({type: String}) license_licensee = '';
+  @property({type: String}) license_key = '';
+  @property({type: String}) license_expiration = '';
   @property({type: Boolean}) account_changed = true;
   @property({type: Boolean}) use_ssl = true;
 
@@ -194,6 +198,50 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
           </div>
         </div>
+        <h4>${_t("information.License")}</h4>
+        <div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>${_t("information.LicenseType")}</div>
+              <div class="description">${_tr("information.CurrentSystemLicenseType")}
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+            ${this.license_type === 'fixed' ? _t('information.FixedLicense') : _t('information.DynamicLicense')}
+            </div>
+          </div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>${_t("information.Licensee")}</div>
+              <div class="description">${_t("information.WhoHasLicensed")}
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+            ${this.license_licensee}
+            </div>
+          </div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>${_t("information.LicenseKey")}</div>
+              <div class="description">${_t("information.FullLicenseKey")}
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+            ${this.license_key}
+            </div>
+          </div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>${_t("information.Expiration")}</div>
+              <div class="description">${_t("information.WhenLicenseExpire")}
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+            ${this.license_expiration}
+            </div>
+          </div>
+        </div>
+
       </wl-card>
     `;
   }
@@ -228,6 +276,24 @@ export default class BackendAiInformationView extends BackendAIPage {
     this.pgsql_version = _text('information.Compatible');
     this.redis_version = _text('information.Compatible');
     this.etcd_version = _text('information.Compatible');
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        globalThis.backendaiclient.enterprise.getLicense().then((response) => {
+          this.license_type = response.type;
+          this.license_licensee = response.licensee;
+          this.license_key = response.licenseKey;
+          this.license_expiration = response.expiration;
+        });
+      }, true);
+    } else { // already connected
+      globalThis.backendaiclient.enterprise.getLicense().then((response) => {
+        this.license_type = response.type;
+        this.license_licensee = response.licensee;
+        this.license_key = response.licenseKey;
+        this.license_expiration = response.expiration;
+      });
+    }
+
     if (globalThis.backendaiclient._config.endpoint.startsWith('https:')) {
       this.use_ssl = true;
     } else {

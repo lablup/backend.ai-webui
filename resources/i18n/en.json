@@ -582,7 +582,18 @@
     "DescDefaultAdministratorAccountChanged": "SHOULD change the default account / password for production use.",
     "UsesSSL": "Uses SSL",
     "DescUsesSSL": "HTTPS with proper SSL setup helps system security.",
-    "Compatible": "Compatible"
+    "Compatible": "Compatible",
+    "License": "License",
+    "LicenseType": "License Type",
+    "CurrentSystemLicenseType": "The type of license currently used in the system.<br/> For fixed licenses, execution rights are given only to predetermined hardware. In the case of variable licenses, execution rights are granted for cluster hardware within the limits of the agreement.",
+    "Licensee": "Licensee",
+    "WhoHasLicensed": "Information about the organization or buyer licensed for use.",
+    "LicenseKey": "License Key",
+    "FullLicenseKey": "Authentication key for permission to use. Please keep it secure.",
+    "Expiration": "Expiration",
+    "WhenLicenseExpire": "The validity period of the license. If the period is over, the cluster software will be stopped.",
+    "FixedLicense": "Fixed License",
+    "DynamicLicense": "Dynamic License"
   },
   "login": {
     "Login": "Login",
