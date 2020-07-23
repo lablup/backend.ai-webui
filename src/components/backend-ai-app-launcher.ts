@@ -21,6 +21,17 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend.AI App Launcher
+
+ Example:
+
+ <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
+
+ @group Backend.AI Console
+ @element backend-ai-app-launcher
+ */
+
 @customElement("backend-ai-app-launcher")
 export default class BackendAiAppLauncher extends BackendAIPage {
   public shadowRoot: any;
@@ -122,6 +133,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     );
   }
 
+  /**
+   * Send a request with a get method.
+   *
+   * @param rqst
+   */
   async sendRequest(rqst) {
     let resp, body;
     try {
@@ -147,6 +163,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     return body;
   }
 
+  /**
+   * Get a proxy url by checking local proxy and config proxy url.
+   */
   _getProxyURL() {
     let url = 'http://127.0.0.1:5050/';
     if (globalThis.__local_proxy !== undefined) {
@@ -157,17 +176,35 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     return url;
   }
 
+  /**
+   * Display the app launcher.
+   *
+   * @param detail
+   */
   showLauncher(detail) {
     return this._showAppLauncher(detail);
   }
 
-  _showAppLauncher(detail) {
-    //const controller = e.target;
-    //const controls = controller.closest('#controls');
-    const controls = detail;
+  /**
+   * Display the app launcher.
+   *
+   * @param detail
+   */
+  _showAppLauncher(controls) {
     const sessionName = controls['session-name'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
+    if ('runtime' in controls) {
+      let param: Object = {};
+      param['session-name'] = sessionName;
+      param['app-name'] = controls['runtime'];
+      param['url-postfix'] = '';
+      param['file-name'] = controls['filename'];
+      if (param['app-name'] === 'jupyter') {
+        param['url-postfix'] = '&redirect=/notebooks/' + param['file-name'];
+      }
+      return this._runAppWithParameters(param);
+    }
     this.appSupportList = [];
     this.appSupportList.push({ // Force push terminal
       'name': 'ttyd',
@@ -197,14 +234,24 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     dialog.setAttribute('session-name', sessionName);
     dialog.setAttribute('access-key', accessKey);
     //dialog.positionTarget = e.target;
-
     this.shadowRoot.querySelector('#app-dialog').show();
+    return;
   }
 
+  /**
+   * Hide the app launcher.
+   */
   _hideAppLauncher() {
     this.shadowRoot.querySelector('#app-dialog').hide();
   }
 
+  /**
+   * Open a WsProxy with session and app and port number.
+   *
+   * @param {string} sessionName
+   * @param {string} app
+   * @param {number} port
+   */
   async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null) {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
@@ -262,7 +309,53 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
-  async _runApp(e) {
+  /**
+   * Run backend.ai app.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
+  async _runAppWithParameters(param) {
+    let sessionName = param['session-name'];
+    let urlPostfix = param['url-postfix'];
+    let appName = param['app-name'];
+    if (appName === undefined || appName === null) {
+      return;
+    }
+
+    if (urlPostfix === undefined || urlPostfix === null) {
+      urlPostfix = '';
+    }
+
+    if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
+      this._hideAppLauncher();
+      this.indicator = await globalThis.lablupIndicator.start();
+      let port = null;
+      if (globalThis.isElectron && appName === 'sshd') {
+        port = globalThis.backendaioptions.get('custom_ssh_port', 0);
+        if (port === '0' || port === 0) { // setting store does not accept null.
+          port = null;
+        }
+      }
+      this._open_wsproxy(sessionName, appName, port)
+        .then((response) => {
+          if (response.url) {
+            this.indicator.set(100, 'Prepared.');
+            setTimeout(() => {
+              globalThis.open(response.url + urlPostfix, '_blank');
+              console.log(appName + " proxy loaded: ");
+              console.log(sessionName);
+            }, 1000);
+          }
+        });
+    }
+  }
+
+  /**
+   * Run backend.ai app.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
+  async _runThisApp(e) {
     const controller = e.target;
     let controls = controller.closest('#app-dialog');
     let sessionName = controls.getAttribute('session-name');
@@ -312,6 +405,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
+  /**
+   * Read a SSH key.
+   *
+   * @param {string} sessionName
+   */
   async _readSSHKey(sessionName) {
     const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
     const file = '/home/work/id_container';
@@ -325,6 +423,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     downloadLinkEl.download = 'id_container';
   }
 
+  /**
+   * Run terminal with session name.
+   *
+   * @param {string} sessionName
+   */
   async runTerminal(sessionName: string) {
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
       this.indicator = await globalThis.lablupIndicator.start();
@@ -343,11 +446,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
+  /**
+   * Open a SSH dialog.
+   */
   _openSSHDialog() {
     let dialog = this.shadowRoot.querySelector('#ssh-dialog');
     dialog.show();
   }
 
+  /**
+   * Open a VNC dialog.
+   */
   _openVNCDialog() {
     let dialog = this.shadowRoot.querySelector('#vnc-dialog');
     dialog.show();
@@ -363,7 +472,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div class="vertical layout center center-justified app-icon">
             <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
                                .url-postfix="${item.redirect}"
-                               @click="${(e) => this._runApp(e)}">
+                               @click="${(e) => this._runThisApp(e)}">
               <img src="${item.src}" />
             </mwc-icon-button>
             <span class="label">${item.title}</span>

@@ -47,6 +47,13 @@ const capitalize = (s) => {
   return s.charAt(0).toUpperCase() + s.slice(1)
 };
 
+/**
+ Backend.AI Chart
+
+ @group Backend.AI Console
+ @element backend-ai-chart
+ */
+
 @customElement("backend-ai-chart")
 export default class BackendAIChart extends LitElement {
   public shadowRoot: any; // ShadowRoot

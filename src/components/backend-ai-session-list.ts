@@ -32,6 +32,21 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend AI Session List
+
+ `backend-ai-session-list` is list of backend ai session.
+
+ Example:
+
+ <backend-ai-session-list>
+ ...
+ </backend-ai-session-list>
+
+ @group Backend.AI Console
+ @element backend-ai-session-list
+ */
+
 @customElement("backend-ai-session-list")
 export default class BackendAiSessionList extends BackendAIPage {
   public shadowRoot: any;
@@ -374,6 +389,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     return this._refreshJobData(refresh, repeat);
   }
 
+  /**
+   * Refresh the job data - data fields, sessions, etc.
+   *
+   * @param {boolean} refresh - if true, dispatch the 'backend-ai-resource-refreshed' event
+   * @param {boolean} repeat - set refreshTime to 5000 if true else 30000
+   * */
   async _refreshJobData(refresh = false, repeat = true) {
     await this.updateComplete;
     if (this.active !== true) {
@@ -404,7 +425,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       status = status.join(',');
     }
     let fields = [
-      "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
+      "id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
     ];
     if (this.enableScalingGroup) {
@@ -528,6 +549,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     });
   }
 
+  /**
+   * Refresh work dialog.
+   *
+   * @param {Event} e
+   * */
   _refreshWorkDialogUI(e) {
     let work_dialog = this.shadowRoot.querySelector('#work-dialog');
     if (e.detail.hasOwnProperty('mini-ui') && e.detail['mini-ui'] === true) {
@@ -537,11 +563,21 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
+  /**
+   * Return human readable time.
+   *
+   * @param {any} d - date
+   * */
   _humanReadableTime(d: any) {
     d = new Date(d);
     return d.toLocaleString();
   }
 
+  /**
+   * Get kernel information - category, tag, color.
+   *
+   * @param {string} lang - session language
+   * */
   _getKernelInfo(lang) {
     let tags: any = [];
     if (lang === undefined) return [];
@@ -582,6 +618,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     return value / 1024;
   }
 
+  /**
+   * Scale the time in units of D, H, M, S, and MS.
+   *
+   * @param {number} value - time to want to scale
+   * */
   _automaticScaledTime(value: number) { // number: msec.
     let result = Object();
     let unitText = ['D', 'H', 'M', 'S'];
@@ -607,10 +648,23 @@ export default class BackendAiSessionList extends BackendAIPage {
     return Number(value / 1000).toFixed(0);
   }
 
+  /**
+   * Return elapsed time
+   *
+   * @param {any} start - start time
+   * @param {any} end - end time
+   * */
   _elapsed(start, end) {
     return globalThis.backendaiclient.utils.elapsedTime(start, end);
   }
 
+  /**
+   * Render index of rowData
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
     render(
@@ -621,6 +675,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
+  /**
+   * Send request according to rqst method.
+   *
+   * @param {XMLHttpRequest} rqst
+   * */
   async sendRequest(rqst) {
     let resp, body;
     try {
@@ -684,16 +743,23 @@ export default class BackendAiSessionList extends BackendAIPage {
     return url;
   }
 
+  /**
+   * Show logs - work title, session logs, session name, and access key.
+   *
+   * @param {Event} e - click the assignment button
+   * */
   _showLogs(e) {
     const controls = e.target.closest('#controls');
+    const sessionUuid = controls['session-uuid'];
     const sessionName = controls['session-name'];
+    const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = controls['access-key'];
 
-    globalThis.backendaiclient.getLogs(sessionName, accessKey).then((req) => {
+    globalThis.backendaiclient.getLogs(sessionId, accessKey).then((req) => {
       const ansi_up = new AnsiUp();
       let logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
-        this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName}`;
+        this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName} (${sessionUuid})`;
         this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
         this.shadowRoot.querySelector('#work-dialog').sessionName = sessionName;
         this.shadowRoot.querySelector('#work-dialog').accessKey = accessKey;
@@ -712,9 +778,11 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _refreshLogs() {
+    const sessionUuid = this.shadowRoot.querySelector('#work-dialog').sessionUuid;
     const sessionName = this.shadowRoot.querySelector('#work-dialog').sessionName;
+    const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = this.shadowRoot.querySelector('#work-dialog').accessKey;
-    globalThis.backendaiclient.getLogs(sessionName, accessKey).then((req) => {
+    globalThis.backendaiclient.getLogs(sessionId, accessKey).then((req) => {
       const ansi_up = new AnsiUp();
       const logs = ansi_up.ansi_to_html(req.result.logs);
       this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
@@ -801,6 +869,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSelectedSessionsDialog.show();
   }
 
+  /**
+   * Clear checked attributes.
+   * */
   _clearCheckboxes() {
     let elm = this.shadowRoot.querySelectorAll('wl-checkbox.list-check');
     [...elm].forEach((checkbox) => {
@@ -831,6 +902,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     });
   }
 
+  /**
+   * Terminate selected sessions without check.
+   * */
   _terminateSelectedSessions() {
     this.notification.text = 'Terminating sessions...';
     this.notification.show();
@@ -900,6 +974,13 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.exportToCsvDialog.show();
   }
 
+  /**
+   * Render session information - category, color, description, etc.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   sessionInfoRenderer(root, column?, rowData?) {
     render(
       html`
@@ -932,10 +1013,18 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render control options - _showAppLauncher, _runTerminal, _openTerminateSessionDialog, and _showLogs
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   controlRenderer(root, column?, rowData?) {
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
+             .session-uuid="${rowData.item.id}"
              .session-name="${rowData.item[this.sessionNameField]}"
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
@@ -963,6 +1052,13 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render usages - cpu_used_time, io_read_bytes_mb, and io_write_bytes_mb
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   usageRenderer(root, column?, rowData?) {
     render(
       html`
@@ -1026,6 +1122,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
+  /**
+   * Toggle dateFrom and dateTo checkbox
+   *
+   * @param {Event} e - click the export-csv-checkbox switch
+   * */
   _toggleDialogCheckbox(e) {
     let checkbox = e.target;
     let dateFrom = this.shadowRoot.querySelector('#date-from');
@@ -1035,6 +1136,13 @@ export default class BackendAiSessionList extends BackendAIPage {
     dateTo.disabled = checkbox.checked;
   }
 
+  /**
+   * Render a checkbox
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   checkboxRenderer(root, column?, rowData?) {
     if ((this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4) {
       render(
@@ -1047,6 +1155,13 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
+  /**
+   * Render user's information. If _connectionMode is API, render access_key, else render user_email.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   userInfoRenderer(root, column?, rowData?) {
     render(
       html`
@@ -1080,6 +1195,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     return date + '_' + time;
   }
 
+  /**
+   * Check date-to < date-from.
+   * */
   _validateDateRange() {
     let dateTo = this.shadowRoot.querySelector('#date-to');
     let dateFrom = this.shadowRoot.querySelector('#date-from');
@@ -1101,7 +1219,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
 
     let group_id = globalThis.backendaiclient.current_group_id();
-    let fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info",
+    let fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"];
 
     if (this._connectionMode === "SESSION") {

@@ -6,6 +6,13 @@
 import {registerTranslateConfig} from "lit-translate";
 import {LitElement, property} from 'lit-element';
 
+/**
+ Backend AI Page
+
+ @group Backend.AI Console
+ @element backend-ai-page
+ */
+
 registerTranslateConfig({
   loader: lang => {
     return fetch(`/resources/i18n/${lang}.json`).then(res => {

@@ -30,6 +30,19 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend.AI Experiment View
+
+ Example:
+
+ <backend-ai-experiment-view class="page" name="experiment" ?active="${0}">
+ ... content ...
+ </backend-ai-experiment-view>
+
+ @group Backend.AI Console
+ @element backend-ai-experiment-view
+ */
+
 @customElement("backend-ai-experiment-view")
 export default class BackendAIExperimentView extends BackendAIPage {
   public supports: any;
@@ -228,6 +241,11 @@ export default class BackendAIExperimentView extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
   }
 
+  /**
+   * Dislplay tabs.
+   * 
+   * @param tab 
+   */
   _showTab(tab) {
     var els = this.shadowRoot.querySelectorAll(".tab-content");
     for (var x = 0; x < els.length; x++) {
@@ -236,6 +254,11 @@ export default class BackendAIExperimentView extends BackendAIPage {
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
   }
 
+  /**
+   * Hide a wl dialog.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-dialog');

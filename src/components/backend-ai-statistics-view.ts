@@ -21,6 +21,19 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend AI Statistics View
+
+ Example:
+
+ <backend-ai-statistics-view active>
+ ...
+ </backend-ai-statistics-view>
+
+ @group Backend.AI Console
+ @element backend-ai-statistics-view
+ */
+
 @customElement("backend-ai-statistics-view")
 export default class BackendAIStatisticsView extends BackendAIPage {
   @property({type: String}) _status = "inactive";
@@ -66,6 +79,12 @@ export default class BackendAIStatisticsView extends BackendAIPage {
     ]
   }
 
+  /**
+   * If active is false, set _status to inactive and remove active attribute.
+   * Else, set both _status and #usage-list items to active.
+   *
+   * @param {boolean} active
+   * */
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -80,6 +99,11 @@ export default class BackendAIStatisticsView extends BackendAIPage {
     this._status = "active";
   }
 
+  /**
+   * Show the contents contained in the selected tab.
+   *
+   * @param {EventTarget} tab - usage tab to want to show
+   * */
   _showTab(tab) {
     const els = this.shadowRoot.querySelectorAll(".tab-content");
 

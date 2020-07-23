@@ -38,7 +38,9 @@
       "SelectProject": "Select Project",
       "Experiments": "Experiments",
       "UserName": "User Name",
-      "Menu": "Menu"
+      "Menu": "Menu",
+      "Run": "Run",
+      "Import&Run": "Import & Run"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
@@ -134,7 +136,8 @@
       "AdvancedResourceAllocation": "AdvancedResourceAllocation",
       "ThisSettingTakesPrecedence": "Note: This setting takes precedence",
       "CustomResourceApplied": "Custom resource is applied",
-      "PleaseChooseFoldersToMount": "Please Choose Folders To Mount"
+      "PleaseChooseFoldersToMount": "Please Choose Folders To Mount",
+      "StartImportedNotebook": "Start Imported Notebook"
     },
     "Running": "Running",
     "Finished": "Finished",
@@ -405,7 +408,7 @@
     "EditUserConfigScript": "Edit User Config Script",
     "PackageInstallation": "Package Installation",
     "BootstrapScript": "Bootstrap Script",
-    "DialogSaveToSpecificFile": "Do you want to save the changes you made to File?",
+    "DialogSaveToSpecificFile": "Save the changes you made to File?",
     "DialogNoSaveNoPreserve": "Your changes will be lost if you don't save them.",
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
     "DescScriptCreated": "User config script created. This will be applied to new sessions only.",
@@ -645,5 +648,38 @@
     "Running": "Running...",
     "Notification": "Notification",
     "NoNotification": "No Notification."
+  },
+  "import": {
+    "Runtime": "Runtime",
+    "RunOnBackendAI": "Run On Backend.AI",
+    "ImportAndRun": "Import And Run",
+    "NoSuitableResourceFoundOnGivenURL": "No suitable resource found on given URL.",
+    "Importing": "Importing",
+    "ImportToStorage": "Import Code Repository To Storage",
+    "ReadyToImport": "Ready To Import",
+    "ImportNotebook": "Import Notebook",
+    "GetNotebook": "Get Notebook",
+    "NotebookURL": "Notebook URL",
+    "CreateNotebookButton": "Create Notebook Button",
+    "CreateButtonCode": "Create",
+    "NotebookButtonURL": "Notebook URL",
+    "YouCanCreateNotebookCode": "Enter the notebook URL to create a badge code like below that you can run directly on Backend.AI.",
+    "NotebookBadgeURL": "Notebook URL",
+    "NotebookBadgeCode": "Notebook Badge Code",
+    "GetAndRunNotebook": "Import & Run",
+    "ImportGithubRepo": "ImportGithubRepo",
+    "GitHubURL": "GitHubURL",
+    "GetToFolder": "GetToFolder",
+    "RepoWillBeFolder": "Imported GitHub repositories are converted to folders and can be mounted when session starts.",
+    "FolderAlreadyExists": "There is a folder with the same name, so rename it.",
+    "WrongURLType": "Wrong URL Type",
+    "Preparing": "Preparing...",
+    "FolderCreated": "Folder Created.",
+    "Downloading": "Downloading...",
+    "CleanUpImportTask": "Cleanup import task...",
+    "ImportFinished": "Import finished.",
+    "FolderName": "Imported folder name: ",
+    "NotebookBadgeCodeHTML": "Notebook Badge Code (HTML)",
+    "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)"
   }
 }

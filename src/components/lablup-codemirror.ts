@@ -9,7 +9,21 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 import '@vanillawc/wc-codemirror/index';
 import '@vanillawc/wc-codemirror/mode/python/python';
 import '@vanillawc/wc-codemirror/mode/shell/shell';
-import {CodemirrorThemeMonokai} from '../lib/codemirror/theme/monokai.css.js';
+import {CodemirrorThemeMonokai} from '../lib/codemirror/theme/monokai.css';
+import {CodemirrorBaseStyle} from '../lib/codemirror/base-style.css';
+
+/**
+ Lablup Codemirror
+
+ `lablup-codemirror` is wc-codemirror editor.
+
+ Example:
+
+ <lablup-codemirror></lablup-codemirror>
+
+ @group Backend.AI Console
+ @element lablup-codemirror
+ */
 
 declare const window: any;
 
@@ -46,12 +60,13 @@ export default class LablupCodemirror extends LitElement {
     this._initEditor();
   }
 
+  /**
+   * Initialize codemirror editor.
+   * */
   _initEditor() {
     const cm = this.shadowRoot.querySelector('#codemirror-editor');
     if (!cm.__initialized) {
-      setTimeout(() => {
-        this._initEditor()
-      }, 500);
+      setTimeout(this._initEditor.bind(this), 100);
       return;
     }
     this.editor = cm.editor;
@@ -59,14 +74,23 @@ export default class LablupCodemirror extends LitElement {
     this.refresh();
   }
 
+  /**
+   * Refresh the editor.
+   * */
   refresh() {
     globalThis.setTimeout(() => this.editor.refresh(), 100);
   }
 
+  /**
+   * Get the editor's contents.
+   * */
   getValue() {
     return this.editor.getValue();
   }
 
+  /**
+   * Set the editor's contents and then refresh.
+   * */
   setValue(val) {
     this.editor.setValue(val);
     this.refresh();
@@ -77,6 +101,7 @@ export default class LablupCodemirror extends LitElement {
       IronFlex,
       IronFlexAlignment,
       CodemirrorThemeMonokai,
+      CodemirrorBaseStyle,
       css`
         .CodeMirror {
           height: auto;
@@ -88,7 +113,7 @@ export default class LablupCodemirror extends LitElement {
 
   render() {
     return html`
-      <wc-codemirror id="codemirror-editor" src="" mode="${this.mode}" theme="monokai"></wc-codemirror>
+      <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai"></wc-codemirror>
     `;
   }
 }
