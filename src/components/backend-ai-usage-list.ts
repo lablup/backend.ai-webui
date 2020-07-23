@@ -255,10 +255,6 @@ export default class BackendAIUsageList extends BackendAIPage {
             </div>
             <div style="width:100%;min-height:180px;">
               <backend-ai-chart
-                width="1000"
-                height="180"
-                elevation="1"
-                type="line"
                 idx=${idx}
                 .collection=${this.collection[this.period][key]}
               ></backend-ai-chart>

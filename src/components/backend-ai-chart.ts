@@ -6,7 +6,6 @@
 import {customElement, html, LitElement, property} from "lit-element";
 
 import "weightless/card";
-import * as d3 from "d3";
 import "../plastics/chart-js";
 import format from 'date-fns/format';
 
@@ -28,7 +27,7 @@ const ByteConverter = {
   scale: function (data, targetUnit = '') {
     let minUnit;
     if (targetUnit === '') {
-      minUnit = this.readableUnit(d3.min(data, d => d.y));
+      minUnit = this.readableUnit(Math.min.apply(null, data.map(d => d.y)))
     } else {
       minUnit = 'MB';
     }
@@ -57,35 +56,8 @@ const capitalize = (s) => {
 @customElement("backend-ai-chart")
 export default class BackendAIChart extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: String}) title = '';
-  @property({type: Number}) elevation = 1;
-  @property({type: String}) message = '';
-  @property({type: Number}) width = 300;
-  @property({type: Number}) height = 300;
-  @property({type: Boolean}) autoRescale = true;
   @property({type: Number}) idx;
-  @property({type: Number}) graphWidth;
-  @property({type: Number}) graphHeight;
-  @property({type: Number}) margin;
-  @property({type: Number}) offsetWidth;
-  @property({type: Object}) data;
   @property({type: Object}) collection;
-  @property({type: Object}) xScale;
-  @property({type: Object}) yScale;
-  @property({type: Object}) xAxis;
-  @property({type: Object}) yAxis;
-  @property({type: Object}) line;
-  @property({type: Object}) rectHeight;
-  @property({type: Object}) axisTitle;
-
-  @property({type: Array}) colors = [
-    "#4bc0c0",
-    "#003f5c",
-    "#ff6e54",
-    "#ffa600"
-  ];
-
-
   @property({type: Object}) chartData;
   @property({type: Object}) options;
   @property({type: Object}) chart;
@@ -108,7 +80,6 @@ export default class BackendAIChart extends LitElement {
       this.type = (this.collection.axisTitle['y'] == 'Sessions' || this.collection.axisTitle['y'] == 'CPU') ? 'bar' : 'line';
     }
     this._updateChartData();
-    //this.shadowRoot.querySelector('#chart')
   }
 
   _updateChartData() {
@@ -198,8 +169,8 @@ export default class BackendAIChart extends LitElement {
       <div class="layout vertical center">
         <div id="ctn-chartjs${this.idx}">
         ${this.type == 'bar' ?
-          html`<chart-js id="chart" type="bar" .data="${this.chartData}" .options="${this.options}"></chart-js>` :
-          html`<chart-js id="chart" type="line" .data="${this.chartData}" .options="${this.options}"></chart-js>`}
+      html`<chart-js id="chart" type="bar" .data="${this.chartData}" .options="${this.options}"></chart-js>` :
+      html`<chart-js id="chart" type="line" .data="${this.chartData}" .options="${this.options}"></chart-js>`}
         </div>
       </div>
     `;
