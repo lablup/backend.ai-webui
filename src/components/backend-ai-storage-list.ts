@@ -1506,7 +1506,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   _downloadFile(e, archive = false) {
     let fn = e.target.getAttribute("filename");
     let path = this.explorer.breadcrumb.concat(fn).join("/");
-    let job = globalThis.backendaiclient.vfolder.request_download(path, this.explorer.id, archive);
+    let job = globalThis.backendaiclient.vfolder.request_download_token(path, this.explorer.id, archive);
     job.then(res => {
       const token = res.token;
       const url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token, archive);

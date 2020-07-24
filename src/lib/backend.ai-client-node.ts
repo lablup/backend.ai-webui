@@ -1367,7 +1367,7 @@ class VFolder {
    * @param {string} name - Virtual folder name that files are in.
    * @param {string} archive - Download target directory as an archive.
    */
-  async request_download(file, name = false, archive = false) {
+  async request_download_token(file, name = false, archive = false) {
     let body = {
       file,
       archive
