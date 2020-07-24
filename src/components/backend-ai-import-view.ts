@@ -223,7 +223,6 @@ export default class BackendAIImport extends BackendAIPage {
     }
     return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
       this.importMessage = _text('import.FolderName') + name;
-      console.log("name:", name);
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
