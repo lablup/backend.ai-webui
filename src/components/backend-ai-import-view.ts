@@ -235,7 +235,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   guessEnvironment(url) {
-    if (url.includes('tensorflow')) {
+    if (url.includes('tensorflow') || url.includes('keras') || url.includes('Keras')) {
       return 'index.docker.io/lablup/python-tensorflow';
     } else if (url.includes('pytorch')) {
       return 'index.docker.io/lablup/python-pytorch';
