@@ -77,7 +77,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) marker_limit = 25;
   @property({type: String}) gpu_mode;
   @property({type: Array}) gpu_modes = [];
-  @property({type: Number}) gpu_step = 0.05;
+  @property({type: Number}) gpu_step = 0.01;
   @property({type: Object}) cpu_metric = {
     'min': '1',
     'max': '1'
