@@ -249,7 +249,7 @@ export default class BackendAIImport extends BackendAIPage {
   createNotebookBadge() {
     let url = this.shadowRoot.querySelector('#notebook-badge-url').value;
     let rawURL = this.regularizeGithubURL(url);
-    let badgeURL = rawURL.replace('https://raw.githubusercontent.com', '');
+    let badgeURL = rawURL.replace('https://raw.githubusercontent.com/', '');
     let baseURL: string = '';
     if (globalThis.isElectron) {
       baseURL = "https://cloud.backend.ai/github?";
