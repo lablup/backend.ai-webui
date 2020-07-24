@@ -158,8 +158,8 @@ export default class BackendAIChart extends LitElement {
               return Math.round(value);
             },
             font: function (context) {
-              let width = context.chart.width;
-              let size = Math.round(width / 64);
+              let height = context.chart.height;
+              let size = Math.round(height / 16);
               return {
                 size: size,
               };
