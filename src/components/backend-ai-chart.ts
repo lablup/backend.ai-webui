@@ -126,16 +126,21 @@ export default class BackendAIChart extends LitElement {
             major: {
               enabled: true
             },
-            callback: function (value) {
-              return value.slice(0, -2) + '00';
-            },
             source: 'data',
             autoSkip: true,
-            labelOffset: 20,
             sampleSize: 100,
             maxTicksLimit: maxTicksLimit,
             maxRotation: maxRotation,
-            fontSize: 10,
+            callback: function (value) {
+              return value.slice(0, -2) + '00';
+            },
+            font: function (context) {
+              let width = context.chart.width;
+              let size = Math.round(width / 64);
+              return {
+                size: size,
+              };
+            },
           },
           scaleLabel: {
             display: true,
@@ -148,11 +153,17 @@ export default class BackendAIChart extends LitElement {
           beginAtZero: true,
           display: true,
           ticks: {
-            fontSize: 10,
+            maxTicksLimit: 5,
             callback: function (value) {
               return Math.round(value);
             },
-            maxTicksLimit: 5
+            font: function (context) {
+              let height = context.chart.height;
+              let size = Math.round(height / 16);
+              return {
+                size: size,
+              };
+            },
           },
           scaleLabel: {
             display: true,
