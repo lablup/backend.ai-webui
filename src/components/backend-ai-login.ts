@@ -563,6 +563,12 @@ export default class BackendAILogin extends BackendAIPage {
             this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
             this.notification.show();
           }
+        } else if (response.fail_reason) {
+          this.open();
+          if (this.user_id != '' && this.password != '') {
+            this.notification.text = PainKiller.relieve(response.fail_reason);
+            this.notification.show();
+          }
         } else {
           this.is_connected = true;
           return this._connectGQL();
