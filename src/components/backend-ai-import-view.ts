@@ -223,7 +223,6 @@ export default class BackendAIImport extends BackendAIPage {
     }
     return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
       this.importMessage = _text('import.FolderName') + name;
-      console.log("name:", name);
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -235,7 +234,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   guessEnvironment(url) {
-    if (url.includes('tensorflow')) {
+    if (url.includes('tensorflow') || url.includes('keras') || url.includes('Keras')) {
       return 'index.docker.io/lablup/python-tensorflow';
     } else if (url.includes('pytorch')) {
       return 'index.docker.io/lablup/python-pytorch';
@@ -249,7 +248,7 @@ export default class BackendAIImport extends BackendAIPage {
   createNotebookBadge() {
     let url = this.shadowRoot.querySelector('#notebook-badge-url').value;
     let rawURL = this.regularizeGithubURL(url);
-    let badgeURL = rawURL.replace('https://raw.githubusercontent.com', '');
+    let badgeURL = rawURL.replace('https://raw.githubusercontent.com/', '');
     let baseURL: string = '';
     if (globalThis.isElectron) {
       baseURL = "https://cloud.backend.ai/github?";
