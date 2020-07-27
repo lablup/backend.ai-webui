@@ -114,7 +114,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         mwc-textfield {
-          font-family: 'Quicksand', sans-serif;
+          font-family: var(--general-font-family);
           --mdc-theme-primary: black;
           --mdc-text-field-fill-color: rgb(250, 250, 250);
           width: 100%;
@@ -137,7 +137,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         mwc-menu {
-          font-family: 'Quicksand', sans-serif;
+          font-family: var(--general-font-family);
           --mdc-menu-min-width: 400px;
           --mdc-menu-max-width: 400px;
         }

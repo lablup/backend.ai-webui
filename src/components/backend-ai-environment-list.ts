@@ -116,7 +116,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         }
 
         wl-select, wl-textfield {
-          --input-font-family: Quicksand, Roboto;
+          --input-font-family: var(--general-font-family);
         }
 
         backend-ai-dialog wl-textfield {
