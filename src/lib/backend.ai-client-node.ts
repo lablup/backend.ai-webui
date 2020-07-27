@@ -1060,7 +1060,7 @@ class ResourcePreset {
         'name': name,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -1086,7 +1086,7 @@ class ResourcePreset {
         'name': name,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -1107,7 +1107,7 @@ class ResourcePreset {
       let v = {
         'name': name
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -1532,7 +1532,7 @@ class Agent {
       `  }` +
       `}`;
     let v = {'status': status};
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 }
 
@@ -1577,7 +1577,7 @@ class Keypair {
         `}`;
       v = {};
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -1609,7 +1609,7 @@ class Keypair {
         email: userId || this.client.email,
         is_active: isActive,
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       // From 20.03, there is no single query to fetch every keypairs, so
       // we iterate pages to gather all keypairs for client-side compability.
@@ -1637,7 +1637,7 @@ class Keypair {
           email: userId || this.client.email,
           is_active: isActive,
         }
-        const page = await this.client.gql(q, v);
+        const page = await this.client.query(q, v);
         keypairs.push(...page.keypair_list.items);
         if ((offset + 1) * limit >= page.keypair_list.total_count) {
           break;
@@ -1701,7 +1701,7 @@ class Keypair {
         },
       };
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -1726,7 +1726,7 @@ class Keypair {
       'access_key': accessKey,
       'input': input,
     };
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -1743,7 +1743,7 @@ class Keypair {
     let v = {
       'access_key': accessKey,
     };
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 }
 
@@ -1788,7 +1788,7 @@ class ResourcePolicy {
         '}';
       v = {'n': name};
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -1828,7 +1828,7 @@ class ResourcePolicy {
         'name': name,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -1861,7 +1861,7 @@ class ResourcePolicy {
         'name': name,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -1907,7 +1907,7 @@ class ContainerImage {
         '}';
       v = {};
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -2060,7 +2060,7 @@ class ComputeSession {
     if (group != '') {
       v['group_id'] = group;
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -2102,7 +2102,7 @@ class ComputeSession {
     if (group !== '') {
       v['group_id'] = group;
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -2128,7 +2128,7 @@ class ComputeSession {
       'domain_name': domainName,
       'session_name': sessionName
     };
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
 }
@@ -2327,7 +2327,7 @@ class Group {
         '}';
       v = {'is_active': is_active};
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 }
 
@@ -2370,7 +2370,7 @@ class Domain {
         `  domain(name: $name) { ${fields.join(" ")} }` +
         '}';
       v = {'name': domain_name};
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     }
   }
 
@@ -2380,7 +2380,7 @@ class Domain {
       `}`;
     let v = {};
 
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -2415,7 +2415,7 @@ class Domain {
         'name': domain_name,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -2461,7 +2461,7 @@ class Maintenance {
           `}`;
         v = {};
       }
-      return this.client.gql(q, v, null, 600 * 1000 );
+      return this.client.query(q, v, null, 600 * 1000 );
     } else {
       return Promise.resolve(false);
     }
@@ -2520,7 +2520,7 @@ class User {
         }
       `;
       v = this.client.is_admin ? {is_active} : {};
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       // From 20.03, there is no single query to fetch every users, so
       // we iterate pages to gather all users for client-side compability.
@@ -2544,7 +2544,7 @@ class User {
       // Prevent fetching more than 1000 users.
       for (let offset = 0; offset < 10 * limit; offset+=limit) {
         v = this.client.is_admin ? {offset, limit, is_active} : {offset, limit};
-        const page = await this.client.gql(q, v);
+        const page = await this.client.query(q, v);
         users.push(...page.user_list.items);
         if ((offset + 1) * limit >= page.user_list.total_count) {
           break;
@@ -2586,7 +2586,7 @@ class User {
         '}';
       v = {};
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -2618,7 +2618,7 @@ class User {
         'email': email,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -2652,7 +2652,7 @@ class User {
         'email': email,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -2673,7 +2673,7 @@ class User {
       let v = {
         'email': email
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -2700,7 +2700,7 @@ class ScalingGroup {
         `  scaling_groups { ${fields.join(" ")} }` +
         `}`;
       const v = {};
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -2737,7 +2737,7 @@ class ScalingGroup {
       name,
       input
     };
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
     // } else {
     //   return Promise.resolve(false);
     // }
@@ -2760,7 +2760,7 @@ class ScalingGroup {
       scaling_group
     };
 
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -2788,7 +2788,7 @@ class ScalingGroup {
       input
     };
 
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -2806,7 +2806,7 @@ class ScalingGroup {
       name
     };
 
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 }
 
