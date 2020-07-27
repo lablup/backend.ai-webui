@@ -13,6 +13,7 @@ import 'weightless/tab';
 import 'weightless/select';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
+import "./backend-ai-monthly-usage-panel";
 
 import {
   IronFlex,
@@ -236,6 +237,7 @@ export default class BackendAIUsageList extends BackendAIPage {
     // language=HTML
     return html`
       <wl-card elevation="0">
+          <backend-ai-monthly-usage-panel></backend-ai-monthly-usage-panel>
         <h3 class="horizontal center layout">
           <wl-select label="${_t("statistics.SelectPeriod")}" style="width: 130px;" @input=${this.pulldownChange}>
             <option value disabled>${_t("statistics.SelectPeriod")}</option>

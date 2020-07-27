@@ -67,7 +67,7 @@ export default class ChartJs extends LitElement {
   public render(): void | TemplateResult {
     return html`
       <div class="chart-top-container">
-        <div class="chart-shell chart-sub-container">
+        <div class="chart-sub-container">
           <canvas></canvas>
         </div>
       </div>
