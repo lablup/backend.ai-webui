@@ -387,7 +387,11 @@
     "ResourcePreset": "Resource Preset",
     "CreateResourcePreset": "Create Resource Preset",
     "PresetName": "Preset Name",
-    "AboutToDeletePreset": "You are about to delete this preset:"
+    "AboutToDeletePreset": "You are about to delete this preset:",
+    "NoPresetName": "Input preset name",
+    "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
+    "Created": "Resource preset created",
+    "Updated": "Resource preset updated"
   },
   "usersettings": {
     "General": "General",
