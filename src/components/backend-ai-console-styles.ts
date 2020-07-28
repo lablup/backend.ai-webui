@@ -31,6 +31,11 @@ export const BackendAiConsoleStyles = [
       opacity: 0;
     }
 
+    mwc-top-app-bar-fixed {
+      --mdc-typography-headline6-font-family: var(--general-font-family);
+      --mdc-typography-font-family: var(--general-font-family);
+    }
+
     .site-name {
       text-align: center;
       margin-left: 0;
