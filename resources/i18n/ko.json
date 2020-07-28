@@ -385,7 +385,11 @@
     "ResourcePreset": "자원 프리셋",
     "CreateResourcePreset": "자원 프리셋 생성",
     "PresetName": "자원 프리셋 이름",
-    "AboutToDeletePreset": "아래의 자원 프리셋을 삭제하려고 합니다:"
+    "AboutToDeletePreset": "아래의 자원 프리셋을 삭제하려고 합니다:",
+    "NoPresetName": "자원 프리셋의 이름을 입력하십시오",
+    "MemoryShouldBeLargerThanSHMEM": "메모리는 공유메모리보다 커야 합니다",
+    "Created": "자원 프리셋이 생성되었습니다",
+    "Updated": "자원 프리셋에 수정되었습니다"
   },
   "usersettings": {
     "General": "일반",
