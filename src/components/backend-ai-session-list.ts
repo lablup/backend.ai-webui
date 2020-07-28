@@ -1119,7 +1119,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">folder_open</wl-icon>
             ${rowData.item.mounts.length > 0 ? html`
-              <span>${rowData.item.mounts[0]}</span>
+              <span>${rowData.item.mounts[0][0]}</span>
             ` : html`
             `}
             <!-- <span>${rowData.item.storage_capacity}</span> -->
