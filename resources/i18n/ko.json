@@ -693,5 +693,16 @@
     "FolderName": "가져올 폴더 이름: ",
     "NotebookBadgeCodeHTML": "노트북 배지 코드(HTML)",
     "NotebookBadgeCodeMarkdown": "노트북 배지 코드(Markdown)"
+  },
+  "usagepanel": {
+    "StatisticsForThisMonth": "이번달 통계",
+    "NumSessions": "실행 세션 수",
+    "UsedTime": "사용 시간",
+    "CpuUsedTime": "CPU 사용량",
+    "GpuUsedTime": "GPU 사용량",
+    "DiskUsed": "디스크 사용량",
+    "TrafficUsed": "트래픽 사용",
+    "Hours": "시간",
+    "Minutes": "분"
   }
 }

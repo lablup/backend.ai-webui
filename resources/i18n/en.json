@@ -695,5 +695,16 @@
     "FolderName": "Imported folder name: ",
     "NotebookBadgeCodeHTML": "Notebook Badge Code (HTML)",
     "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)"
+  },
+  "usagepanel": {
+    "StatisticsForThisMonth": "Statistics for This Month",
+    "NumSessions": "Number of Sessions",
+    "UsedTime": "Used Time",
+    "CpuUsedTime": "CPU Used Time",
+    "GpuUsedTime": "GPU Used Time",
+    "DiskUsed": "Disk Usage",
+    "TrafficUsed": "Traffic Usage",
+    "Hours": "h",
+    "Minutes": "m"
   }
 }

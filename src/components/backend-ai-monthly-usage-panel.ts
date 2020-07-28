@@ -4,6 +4,7 @@
  */
 
 import {css, customElement, html, LitElement, property} from "lit-element";
+import {translate as _t} from "lit-translate";
 
 import 'weightless/title';
 
@@ -73,46 +74,45 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
   }
 
   /**
-   * @param {String} t - [days]:[hours]:[minutes].[seconds]
+   * @param {String} time - [days]:[hours]:[minutes].[seconds]
    * */
-  usedTimeFormatting(t) {
-    let days = parseInt(t.substring(0, t.indexOf(':')));
-    let hours = parseInt(t.substring(t.indexOf(':') + 1, t.lastIndexOf(':')));
-    let minutes = t.substring(t.lastIndexOf(':') + 1, t.indexOf('.'));
+  usedTimeFormatting(time) {
+    let days = parseInt(time.substring(0, time.indexOf(':')));
+    let hours = parseInt(time.substring(time.indexOf(':') + 1, time.lastIndexOf(':')));
+    let minutes = time.substring(time.lastIndexOf(':') + 1, time.indexOf('.'));
     hours = days * 24 + hours;
-
-    return hours + '시간' + minutes + '분';
+    return hours + 'h ' + minutes + 'm';
   }
 
   render() {
     // language=HTML
     return html`
       <wl-card>
-        <wl-title level="3">이번달 통계</wl-title>
+        <wl-title level="3">${_t("usagepanel.StatisticsForThisMonth")}</wl-title>
         <div class="horizontal layout">
           <div class="vertical center layout">
             <span class="value">${this.num_sessions}</span>
-            <span class="desc">실행 세션 수</span>
+            <span class="desc">${_t("usagepanel.NumSessions")}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.used_time}</span>
-            <span class="desc">사용 시간</span>
+            <span class="desc">${_t("usagepanel.UsedTime")}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.cpu_used_time}</span>
-            <span class="desc">CPU 사용량</span>
+            <span class="desc">${_t("usagepanel.CpuUsedTime")}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.gpu_used_time}</span>
-            <span class="desc">GPU 사용량</span>
+            <span class="desc">${_t("usagepanel.GpuUsedTime")}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.disk_used}GB</span>
-            <span class="desc">디스크 사용량</span>
+            <span class="desc">${_t("usagepanel.DiskUsed")}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.traffic_used}MB</span>
-            <span class="desc">트래픽 사용량</span>
+            <span class="desc">${_t("usagepanel.TrafficUsed")}</span>
           </div>
         </div>
       </wl-card>
