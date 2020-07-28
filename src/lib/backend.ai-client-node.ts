@@ -1335,8 +1335,9 @@ class VFolder {
    * @param {string} files - Files to delete.
    * @param {boolean} recursive - delete files recursively.
    * @param {string} name - Virtual folder name that files are in.
+   * @param {number} timeout - Custom timeout (sec.) If no timeout is given, default timeout is used.
    */
-  async delete_files(files, recursive = false, name = null) {
+  async delete_files(files, recursive = false, name = null, timeout = null) {
 
     if (name == null) {
       name = this.name;
@@ -1349,7 +1350,7 @@ class VFolder {
       'recursive': recursive,
     };
     let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}/delete_files`, body);
-    return this.client._wrapWithPromise(rqst);
+    return this.client._wrapWithPromise(rqst, false, null, timeout);
   }
 
   /**

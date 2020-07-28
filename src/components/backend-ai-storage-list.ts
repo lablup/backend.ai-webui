@@ -1611,7 +1611,10 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.show();
         this._clearExplorer();
         this.deleteFileDialog.hide();
-      });
+      }).catch(
+        err => {
+          throw err;
+        });
     } else {
       if (this.deleteFileDialog.filename != '') {
         let path = this.explorer.breadcrumb.concat(this.deleteFileDialog.filename).join("/");
