@@ -6,7 +6,6 @@
 import {css, customElement, html, LitElement, property} from "lit-element";
 
 import 'weightless/title';
-import format from 'date-fns/format';
 
 import {
   IronFlex,
@@ -25,11 +24,11 @@ import {
 @customElement("backend-ai-monthly-usage-panel")
 export default class BackendAIMonthlyUsagePanel extends LitElement {
   @property({type: Number}) num_sessions = 0;
-  @property({type: Date}) used_time = '00시간 00분';
-  @property({type: Date}) cpu_used_time = '00시간 00분';
-  @property({type: Date}) gpu_used_time = '00시간 00분';
-  @property({type: String}) disk_used = '0GB';
-  @property({type: String}) traffic_used = '0GB';
+  @property({type: String}) used_time = '0:00:00.00';
+  @property({type: String}) cpu_used_time = '0:00:00.00';
+  @property({type: String}) gpu_used_time = '0:00:00.00';
+  @property({type: Number}) disk_used = 0;
+  @property({type: Number}) traffic_used = 0;
 
   constructor() {
     super();
@@ -65,9 +64,24 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
   }
 
   formatting() {
-    this.used_time = format(new Date(this.used_time), 'HH시간 mm분');
-    this.cpu_used_time = format(new Date(this.cpu_used_time), 'HH시간 mm분');
-    this.gpu_used_time = format(new Date(this.gpu_used_time), 'HH시간 mm분');
+    this.used_time = this.usedTimeFormatting(this.used_time);
+    this.cpu_used_time = this.usedTimeFormatting(this.cpu_used_time);
+    this.gpu_used_time = this.usedTimeFormatting(this.gpu_used_time);
+
+    this.disk_used = Math.floor(this.disk_used / (1024 * 1024 * 1024)); // bytes to GB
+    this.traffic_used = Math.floor(this.traffic_used / (1024 * 1024));  // bytes to MB
+  }
+
+  /**
+   * @param {String} t - [days]:[hours]:[minutes].[seconds]
+   * */
+  usedTimeFormatting(t) {
+    let days = parseInt(t.substring(0, t.indexOf(':')));
+    let hours = parseInt(t.substring(t.indexOf(':') + 1, t.lastIndexOf(':')));
+    let minutes = t.substring(t.lastIndexOf(':') + 1, t.indexOf('.'));
+    hours = days * 24 + hours;
+
+    return hours + '시간' + minutes + '분';
   }
 
   render() {
@@ -93,11 +107,11 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
             <span class="desc">GPU 사용량</span>
           </div>
           <div class="vertical center layout">
-            <span class="value">${this.disk_used}</span>
+            <span class="value">${this.disk_used}GB</span>
             <span class="desc">디스크 사용량</span>
           </div>
           <div class="vertical center layout">
-            <span class="value">${this.traffic_used}</span>
+            <span class="value">${this.traffic_used}MB</span>
             <span class="desc">트래픽 사용량</span>
           </div>
         </div>
