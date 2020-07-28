@@ -20,6 +20,8 @@ import 'weightless/checkbox';
 import 'weightless/icon';
 import 'weightless/textfield';
 import 'weightless/title';
+import 'weightless/popover';
+
 import '@material/mwc-icon-button';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -63,6 +65,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) imageInfo = Object();
   @property({type: Array}) _selected_items = Array();
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) _boundConfigRenderer = this.configRenderer.bind(this);
   @property({type: Object}) _boundUsageRenderer = this.usageRenderer.bind(this);
   @property({type: Object}) _boundSessionInfoRenderer = this.sessionInfoRenderer.bind(this);
   @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
@@ -426,7 +429,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     let fields = [
       "id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
-      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
+      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key", "mounts"
     ];
     if (this.enableScalingGroup) {
       fields.push("scaling_group");
@@ -1053,6 +1056,81 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   /**
+   * Render configs
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that show the config of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
+  configRenderer(root, column?, rowData?) {
+    render(
+      html`
+        ${rowData.item.scaling_group ? html`
+        <div class="layout horizontal center flex">
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green indicator">work</wl-icon>
+            <span>${rowData.item.scaling_group}</span>
+            <span class="indicator">RG</span>
+          </div>
+        </div>` : html``}
+        <div class="layout horizontal center flex">
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green indicator">developer_board</wl-icon>
+            <span>${rowData.item.cpu_slot}</span>
+            <span class="indicator">${_t("session.core")}</span>
+          </div>
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green indicator">memory</wl-icon>
+            <span>${rowData.item.mem_slot}</span>
+            <span class="indicator">GB</span>
+          </div>
+        </div>
+        <div class="layout horizontal center flex">
+          <div class="layout horizontal configuration">
+            ${rowData.item.cuda_gpu_slot ? html`
+              <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+              <span>${rowData.item.cuda_gpu_slot}</span>
+              <span class="indicator">GPU</span>
+              ` : html``}
+            ${!rowData.item.cuda_gpu_slot && rowData.item.cuda_fgpu_slot ? html`
+              <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+              <span>${rowData.item.cuda_fgpu_slot}</span>
+              <span class="indicator">GPU</span>
+              ` : html``}
+            ${rowData.item.rocm_gpu_slot ? html`
+              <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
+              <span>${rowData.item.rocm_gpu_slot}</span>
+              <span class="indicator">GPU</span>
+              ` : html``}
+            ${rowData.item.tpu_slot ? html`
+              <wl-icon class="fg green indicator">view_module</wl-icon>
+              <span>${rowData.item.tpu_slot}</span>
+              <span class="indicator">TPU</span>
+              ` : html``}
+            ${!rowData.item.cuda_gpu_slot &&
+      !rowData.item.cuda_fgpu_slot &&
+      !rowData.item.rocm_gpu_slot &&
+      !rowData.item.tpu_slot ? html`
+              <wl-icon class="fg green indicator">view_module</wl-icon>
+              <span>-</span>
+              <span class="indicator">GPU</span>
+              ` : html``}
+          </div>
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green indicator">folder_open</wl-icon>
+            ${rowData.item.mounts.length > 0 ? html`
+              <span>${rowData.item.mounts[0]}</span>
+            ` : html`
+            `}
+            <!-- <span>${rowData.item.storage_capacity}</span> -->
+            <!-- <span class="indicator">${rowData.item.storage_unit}</span> -->
+          </div>
+        </div>
+     `, root
+    );
+  }
+
+  /**
    * Render usages - cpu_used_time, io_read_bytes_mb, and io_write_bytes_mb
    *
    * @param {Element} root - the row details content DOM element
@@ -1295,74 +1373,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <vaadin-grid-column width="90px" flex-grow="0" header="${_t("session.Status")}" resizable .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="160px" flex-grow="0" header="${_t("session.Configuration")}" resizable>
-          <template>
-            <template is="dom-if" if="[[item.scaling_group]]">
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">work</wl-icon>
-                <span>[[item.scaling_group]]</span>
-                <span class="indicator">RG</span>
-              </div>
-            </div>
-            </template>
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">developer_board</wl-icon>
-                <span>[[item.cpu_slot]]</span>
-                <span class="indicator">${_t("session.core")}</span>
-              </div>
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">memory</wl-icon>
-                <span>[[item.mem_slot]]</span>
-                <span class="indicator">GB</span>
-              </div>
-            </div>
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <template is="dom-if" if="[[item.cuda_gpu_slot]]">
-                  <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                  <span>[[item.cuda_gpu_slot]]</span>
-                  <span class="indicator">GPU</span>
-                </template>
-                <template is="dom-if" if="[[!item.cuda_gpu_slot]]">
-                  <template is="dom-if" if="[[item.cuda_fgpu_slot]]">
-                    <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                    <span>[[item.cuda_fgpu_slot]]</span>
-                    <span class="indicator">GPU</span>
-                  </template>
-                </template>
-                <template is="dom-if" if="[[item.rocm_gpu_slot]]">
-                  <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
-                  <span>[[item.rocm_gpu_slot]]</span>
-                  <span class="indicator">GPU</span>
-                </template>
-                <template is="dom-if" if="[[item.tpu_slot]]">
-                  <wl-icon class="fg green indicator">view_module</wl-icon>
-                  <span>[[item.tpu_slot]]</span>
-                  <span class="indicator">TPU</span>
-                </template>
-                <template is="dom-if" if="[[!item.cuda_gpu_slot]]">
-                  <template is="dom-if" if="[[!item.cuda_fgpu_slot]]">
-                    <template is="dom-if" if="[[!item.rocm_gpu_slot]]">
-                      <template is="dom-if" if="[[!item.tpu_slot]]">
-                        <wl-icon class="fg green indicator">view_module</wl-icon>
-                        <span>-</span>
-                        <span class="indicator">GPU</span>
-                      </template>
-                    </template>
-                  </template>
-                </template>
-              </div>
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">cloud_queue</wl-icon>
-                <!-- <wl-icon class="fg yellow" icon="device:storage"></wl-icon> -->
-                <!-- <span>[[item.storage_capacity]]</span> -->
-                <!-- <span class="indicator">[[item.storage_unit]]</span> -->
-              </div>
-            </div>
-          </template>
-        </vaadin-grid-column>
+        <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t("session.Configuration")}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t("session.Usage")}" .renderer="${this._boundUsageRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t("session.Starts")}" path="created_at">
