@@ -127,6 +127,16 @@ export default class BackendAIImport extends BackendAIPage {
 
   fetchNotebookURLResource(downloadURL): void {
     this.shadowRoot.querySelector("#notebook-url").value = downloadURL;
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._fetchNotebookURLResource(downloadURL);
+      }, true);
+    } else { // already connected
+      this._fetchNotebookURLResource(downloadURL);
+    }
+  }
+
+  _fetchNotebookURLResource(downloadURL) {
     fetch(downloadURL).then((res) => {
       this.notification.text = _text('import.ReadyToImport');
       this.importMessage = this.notification.text;
