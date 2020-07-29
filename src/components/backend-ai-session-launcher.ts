@@ -1574,7 +1574,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let environment = this.shadowRoot.querySelector('#environment');
     //await environment.updateComplete; async way.
     let obj = environment.items.find(o => o.value === this.default_language);
-    if (typeof obj === 'undefined') { // Not ready yet.
+    if (typeof obj === 'undefined' && typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient.ready === true) { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
         return this.selectDefaultLanguage(forceUpdate, language);
