@@ -158,6 +158,11 @@ export default class BackendAiStorageList extends BackendAIPage {
           font-size: 48px;
         }
 
+        div.mid.indicator {
+          font-size: 32px;
+          height: 48px;
+        }
+
         .folder-action-buttons wl-button {
           margin-right: 10px;
         }
@@ -453,44 +458,80 @@ export default class BackendAiStorageList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="info-folder-dialog" fixed backdrop>
         <span slot="title">${this.folderInfo.name}</span>
-        <div slot="content" role="listbox" style="margin: 0;width:100%;">
-          <div class="horizontal justified layout wrap">
+        <div slot="content" role="listbox" class="horizontal flex wrap layout" style="margin: 0;width:100%;">
+          <div>
+            <div class="horizontal justified layout wrap">
               <div class="vertical layout center info-indicator">
                 <div class="big indicator">${this.folderInfo.host}</div>
                 <span>${_t("data.folders.Location")}</span>
               </div>
-            <div class="vertical layout center info-indicator">
-              <div class="big indicator">${this.folderInfo.numFiles}</div>
-              <span>${_t("data.folders.NumberOfFiles")}</span>
-            </div>
-          </div>
-          <mwc-list>
-            <mwc-list-item twoline>
-              <span><strong>ID</strong></span>
-              <span class="monospace" slot="secondary">${this.folderInfo.id}</span>
-            </mwc-list-item>
-            ${this.folderInfo.is_owner ? html`
-              <mwc-list-item twoline>
-                <span><strong>${_t("data.folders.Ownership")}</strong></span>
-                <span slot="secondary">${_t("data.folders.DescYouAreFolderOwner")}</span>
-              </mwc-list-item>
-            ` : html``}
-            <mwc-list-item twoline>
-              <span><strong>${_t("data.folders.Permission")}</strong></span>
-              <div slot="secondary" class="horizontal layout">
-              ${this.folderInfo.permission ? html`
-                ${this._hasPermission(this.folderInfo, 'r') ? html`
-                    <lablup-shields app="" color="green"
-                                    description="R" ui="flat"></lablup-shields>` : html``}
-                ${this._hasPermission(this.folderInfo, 'w') ? html`
-                    <lablup-shields app="" color="blue"
-                                    description="W" ui="flat"></lablup-shields>` : html``}
-                ${this._hasPermission(this.folderInfo, 'd') ? html`
-                    <lablup-shields app="" color="red"
-                                    description="D" ui="flat"></lablup-shields>` : html``}` : html``}
+              <div class="vertical layout center info-indicator">
+                <div class="big indicator">${this.folderInfo.numFiles}</div>
+                <span>${_t("data.folders.NumberOfFiles")}</span>
               </div>
-            </mwc-list-item>
-          </mwc-list>
+            </div>
+            <mwc-list>
+              <mwc-list-item twoline>
+                <span><strong>ID</strong></span>
+                <span class="monospace" slot="secondary">${this.folderInfo.id}</span>
+              </mwc-list-item>
+              ${this.folderInfo.is_owner ? html`
+                <mwc-list-item twoline>
+                  <span><strong>${_t("data.folders.Ownership")}</strong></span>
+                  <span slot="secondary">${_t("data.folders.DescYouAreFolderOwner")}</span>
+                </mwc-list-item>
+              ` : html``}
+              <mwc-list-item twoline>
+                <span><strong>${_t("data.folders.Permission")}</strong></span>
+                <div slot="secondary" class="horizontal layout">
+                ${this.folderInfo.permission ? html`
+                  ${this._hasPermission(this.folderInfo, 'r') ? html`
+                      <lablup-shields app="" color="green"
+                                      description="R" ui="flat"></lablup-shields>` : html``}
+                  ${this._hasPermission(this.folderInfo, 'w') ? html`
+                      <lablup-shields app="" color="blue"
+                                      description="W" ui="flat"></lablup-shields>` : html``}
+                  ${this._hasPermission(this.folderInfo, 'd') ? html`
+                      <lablup-shields app="" color="red"
+                                      description="D" ui="flat"></lablup-shields>` : html``}` : html``}
+                </div>
+              </mwc-list-item>
+              ${this.folderInfo.storage_type === 'data' ? html`
+              <mwc-list-item twoline>
+                <span><strong>Source URL</strong></span>
+                <span class="monospace" slot="secondary"><a href="${this.folderInfo.URL}" target="_blank">CLICK TO VISIT</a></span>
+              </mwc-list-item>
+              `:html``}
+
+            </mwc-list>
+          </div>
+          ${this.folderInfo.storage_type === 'data' ? html`
+          <div>
+            <div style="max-width: 300px;padding:10px;">
+              ${this.folderInfo.description}
+            </div>
+            <mwc-list>
+              <mwc-list-item twoline graphic="icon">
+                <mwc-icon slot="graphic">visibility</mwc-icon>
+                <span><strong>${_t("data.folders.Features")}</strong></span>
+                <div slot="secondary">${Object.entries(this.folderInfo.features).map(items =>
+                  html`
+                  <div>
+                  ${items[0]} / ${items[1]}
+                  </div>
+                `)}
+                </div>
+              </mwc-list-item>
+              <mwc-list-item twoline graphic="icon">
+                <mwc-icon slot="graphic">folder</mwc-icon>
+                <span><strong>${_t("data.folders.Size")}</strong></span>
+                <div slot="secondary">${this.folderInfo.size}MB
+                </div>
+              </mwc-list-item>
+            </mwc-list>
+          </div>
+
+          `:html``}
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
@@ -1120,12 +1161,21 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    * @param {Event} e - click the info icon button
    * */
-  _infoFolder(e) {
+  async _infoFolder(e) {
+    console.log(this.storageType);
     const folderId = this._getControlId(e);
     let job = globalThis.backendaiclient.vfolder.info(folderId);
-    job.then((value) => {
+    job.then(async (value) => {
       this.folderInfo = value;
-      this.openDialog('info-folder-dialog');
+      if (this.storageType === 'data') {
+        let metadata = await globalThis.backendaiclient.vfolder.download('./metadata.json', this.folderInfo.name, 0);
+        let parsed = JSON.parse(await metadata.text());
+        this.folderInfo = {...parsed, ...this.folderInfo};
+        console.log(this.folderInfo);
+        this.openDialog('info-folder-dialog');
+      } else {
+        this.openDialog('info-folder-dialog');
+      }
     }).catch(err => {
       console.log(err);
       if (err && err.message) {

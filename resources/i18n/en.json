@@ -311,7 +311,9 @@
       "View": "View",
       "Edit": "Edit",
       "EditDelete": "Edit+Delete",
-      "KickOut": "Kick out user"
+      "KickOut": "Kick out user",
+      "Features": "Features",
+      "Size": "Size"
     },
     "explorer": {
       "Delete": "Delete...",

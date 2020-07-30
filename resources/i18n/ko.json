@@ -309,7 +309,9 @@
       "View": "읽기 전용",
       "Edit": "수정",
       "EditDelete": "수정 및 삭제",
-      "KickOut": "권한 회수"
+      "KickOut": "권한 회수",
+      "Features": "특징",
+      "Size": "용량"
     },
     "explorer": {
       "Delete": "삭제...",
