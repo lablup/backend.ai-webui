@@ -336,7 +336,12 @@
       "DownloadFile": "Download File",
       "TouchToDownload": "Touch to Download file"
     },
-    "NoStorageDescriptionFound": "No description."
+    "NoStorageDescriptionFound": "No description.",
+    "Data": "Data",
+    "DialogDataNeedsMetadataFile": "Datastore data requires a metadata specification file.",
+    "DialogModelRuntimeNeedsResource": "Please note that the model serving as an API consumes constant resources.",
+    "DataStore": "DataStore",
+    "ModelStore": "ModelStore"
   },
   "dialog": {
     "warning": {

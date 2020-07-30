@@ -1014,9 +1014,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     l.then((value) => {
       this.spinner.hide();
       let folders = value.filter(item => {
-        if (this.storageType === 'general' && !item.name.startsWith('.')) {
+        if (this.storageType === 'general' && item.usage_mode === 'general' && !item.name.startsWith('.')) {
           return item;
         } else if (this.storageType === 'automount' && item.name.startsWith('.')) {
+          return item;
+        } else if (this.storageType === 'data' && item.usage_mode === 'data') {
+          return item;
+        } else if (this.storageType === 'model' && item.usage_mode === 'model') {
           return item;
         }
       });

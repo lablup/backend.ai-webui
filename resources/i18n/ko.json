@@ -334,7 +334,12 @@
       "DownloadFile": "파일 다운로드",
       "TouchToDownload": "터치하여 다운로드하세요"
     },
-    "NoStorageDescriptionFound": "별도 정보가 없습니다."
+    "NoStorageDescriptionFound": "별도 정보가 없습니다.",
+    "Data": "데이터",
+    "DialogDataNeedsMetadataFile": "데이터스토어의 데이터들은 메타데이터 스펙 파일이 필요합니다.",
+    "DialogModelRuntimeNeedsResource": "모델을 API로 서빙하는 과정은 지속적인 연산자원을 소모하므로 주의하시기 바랍니다.",
+    "DataStore": "데이터",
+    "ModelStore": "모델"
   },
   "dialog": {
     "warning": {

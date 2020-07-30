@@ -230,8 +230,8 @@ export default class BackendAIData extends BackendAIPage {
           <wl-tab-group>
             <wl-tab value="general-folder" checked @click="${(e) => this._showTab(e.target)}">${_t("data.Folders")}</wl-tab>
             <wl-tab value="automount-folder" @click="${(e) => this._showTab(e.target)}">${_t("data.AutomountFolders")}</wl-tab>
-            <wl-tab value="shared-folder" disabled>${_t("data.SharedData")}</wl-tab>
-            <wl-tab value="model" disabled>${_t("data.Models")}</wl-tab>
+            <wl-tab value="data-folder" @click="${(e) => this._showTab(e.target)}">${_t("data.DataStore")}</wl-tab>
+            <wl-tab value="model-folder" @click="${(e) => this._showTab(e.target)}">${_t("data.ModelStore")}</wl-tab>
           </wl-tab-group>
           <span class="flex"></span>
           <wl-button class="fg red" id="add-folder" outlined @click="${() => this._addFolderDialog()}">
@@ -245,6 +245,14 @@ export default class BackendAIData extends BackendAIPage {
         <div id="automount-folder-lists" class="tab-content" style="display:none;">
           <p>${_t("data.DialogFolderStartingWithDotAutomount")}</p>
           <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
+        </div>
+        <div id="data-folder-lists" class="tab-content" style="display:none;">
+          <p>${_t("data.DialogDataNeedsMetadataFile")}</p>
+          <backend-ai-storage-list id="data-folder-storage" storageType="data" ?active="${this.active === true}"></backend-ai-storage-list>
+        </div>
+        <div id="model-folder-lists" class="tab-content" style="display:none;">
+          <p>${_t("data.DialogModelRuntimeNeedsResource")}</p>
+          <backend-ai-storage-list id="model-folder-storage" storageType="model" ?active="${this.active === true}"></backend-ai-storage-list>
         </div>
       </wl-card>
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
