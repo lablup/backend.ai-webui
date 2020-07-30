@@ -311,7 +311,8 @@
       "EditDelete": "수정 및 삭제",
       "KickOut": "권한 회수",
       "Features": "특징",
-      "Size": "용량"
+      "Size": "용량",
+      "ExampleCode": "예제 노트북"
     },
     "explorer": {
       "Delete": "삭제...",

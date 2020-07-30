@@ -313,7 +313,8 @@
       "EditDelete": "Edit+Delete",
       "KickOut": "Kick out user",
       "Features": "Features",
-      "Size": "Size"
+      "Size": "Size",
+      "ExampleCode": "Example Notebook"
     },
     "explorer": {
       "Delete": "Delete...",

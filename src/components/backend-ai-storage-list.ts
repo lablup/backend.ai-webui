@@ -275,6 +275,9 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-theme-primary: var(--paper-red-400) !important;
         }
 
+        mwc-list-item {
+        }
+
         wl-button.goto {
           margin: 0;
           padding: 5px;
@@ -507,26 +510,30 @@ export default class BackendAiStorageList extends BackendAIPage {
           </div>
           ${this.folderInfo.storage_type === 'data' ? html`
           <div>
-            <div style="max-width: 300px;padding:10px;">
+            <div style="max-width: 400px;padding:10px;">
               ${this.folderInfo.description}
             </div>
             <mwc-list>
               <mwc-list-item twoline graphic="icon">
                 <mwc-icon slot="graphic">visibility</mwc-icon>
                 <span><strong>${_t("data.folders.Features")}</strong></span>
-                <div slot="secondary">${Object.entries(this.folderInfo.features).map(items =>
-                  html`
-                  <div>
-                  ${items[0]} / ${items[1]}
-                  </div>
+                <span slot="secondary">${Object.entries(this.folderInfo.features).map(items =>
+      html`
+                  ${items[1]}
                 `)}
-                </div>
+                </span>
               </mwc-list-item>
               <mwc-list-item twoline graphic="icon">
                 <mwc-icon slot="graphic">folder</mwc-icon>
                 <span><strong>${_t("data.folders.Size")}</strong></span>
-                <div slot="secondary">${this.folderInfo.size}MB
-                </div>
+                <span slot="secondary">${this.folderInfo.size}MB
+                </span>
+              </mwc-list-item>
+              <mwc-list-item twoline graphic="icon">
+                <mwc-icon slot="graphic">book</mwc-icon>
+                <span><strong>${_t("data.folders.ExampleCode")}</strong></span>
+                <span slot="secondary">None
+                </span>
               </mwc-list-item>
             </mwc-list>
           </div>
