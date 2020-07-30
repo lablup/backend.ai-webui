@@ -166,6 +166,11 @@ export default class BackendAiSessionList extends BackendAIPage {
           margin-right: 5px;
         }
 
+        wl-popover {
+          /*position: relative;*/
+          margin-top: 15px;
+        }
+
         mwc-icon-button.apps {
           --mdc-icon-button-size: 48px;
           --mdc-icon-size: 36px;
@@ -1116,19 +1121,38 @@ export default class BackendAiSessionList extends BackendAIPage {
               <span class="indicator">GPU</span>
               ` : html``}
           </div>
-          <div class="layout horizontal configuration">
+          <div class="layout horizontal configuration mounts${rowData.index}">
             <wl-icon class="fg green indicator">folder_open</wl-icon>
-            ${rowData.item.mounts.length > 0 ? html`
-              <span>${rowData.item.mounts[0][0]}</span>
-            ` : html`
-            `}
+              ${rowData.item.mounts.length > 0 ? html`
+                <span>${rowData.item.mounts[0][0]}</span>
+                  <div style="display: ${rowData.item.mounts.length > 1 ? "block" : "none"};">
+                    <wl-popover
+                      anchor=".mounts${rowData.index}"
+                      .anchorOpenEvents="${["mouseover"]}"
+                      .anchorCloseEvents = ${["mouseout"]}";
+                      transformOriginX="center"
+                      transformOriginY="top"
+                      anchorOriginX="right"
+                      anchorOriginY="bottom"
+                      fixed
+                    >
+                      <wl-popover-card>
+                        ${rowData.item.mounts.map((key, index) => {
+                          if (index > 0) return html`<div style="padding: 5px">${key[0]}</div>`;
+                          return;
+                        })}
+                      </wl-popover-card>
+                    </wl-popover>
+                </div>
+              ` : html`
+              `}
             <!-- <span>${rowData.item.storage_capacity}</span> -->
             <!-- <span class="indicator">${rowData.item.storage_unit}</span> -->
           </div>
         </div>
      `, root
     );
-  }
+  };
 
   /**
    * Render usages - cpu_used_time, io_read_bytes_mb, and io_write_bytes_mb
