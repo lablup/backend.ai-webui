@@ -23,6 +23,8 @@ import 'weightless/title';
 import 'weightless/popover';
 
 import '@material/mwc-icon-button';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-menu';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
@@ -287,6 +289,28 @@ export default class BackendAiSessionList extends BackendAIPage {
           --input-font-size: small;
           --input-label-font-size: small;
           --input-font-family: Roboto, Noto, sans-serif;
+        }
+
+        .mount-button {
+          border: none;
+          background: none;
+          padding: 0;
+          outline-style: none;
+        }
+
+        mwc-menu {
+          --mdc-menu-item-height: 20px;
+          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+          position: absolute;
+        }
+
+        mwc-list-item {
+          font-weight: 400;
+        }
+
+        mwc-menu mwc-list-item {
+          font-family: var(--general-font-family);
+          font-size: 14px;
         }
       `];
   }
@@ -982,6 +1006,15 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.exportToCsvDialog.show();
   }
 
+  _toggleDropdown(idx) {
+    let menu = this.shadowRoot.querySelector('.dropdown-menu' + idx);
+    let menu_div = this.shadowRoot.querySelector('.mounts' + idx);
+    if (menu && menu_div) {
+      menu.anchor = menu_div;
+      menu.open = !menu.open;
+    }
+  }
+
   /**
    * Render session information - category, color, description, etc.
    *
@@ -1124,28 +1157,20 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div class="layout horizontal configuration mounts${rowData.index}">
             <wl-icon class="fg green indicator">folder_open</wl-icon>
               ${rowData.item.mounts.length > 0 ? html`
-                <span>${rowData.item.mounts[0][0]}</span>
-                  <div style="display: ${rowData.item.mounts.length > 1 ? "block" : "none"};">
-                    <wl-popover
-                      anchor=".mounts${rowData.index}"
-                      .anchorOpenEvents="${["mouseover"]}"
-                      .anchorCloseEvents = ${["mouseout"]}";
-                      transformOriginX="center"
-                      transformOriginY="top"
-                      anchorOriginX="right"
-                      anchorOriginY="bottom"
-                      fixed
-                    >
-                      <wl-popover-card>
-                        ${rowData.item.mounts.map((key, index) => {
-                          if (index > 0) return html`<div style="padding: 5px">${key[0]}</div>`;
-                          return;
-                        })}
-                      </wl-popover-card>
-                    </wl-popover>
-                </div>
-              ` : html`
-              `}
+                <button class="mount-button" @mouseover="${() => this._toggleDropdown(rowData.index)}">
+                  ${rowData.item.mounts[0][0]}
+                </button>
+                <mwc-menu
+                corner="BOTTOM_START"
+                class="dropdown-menu${rowData.index}"
+                style="display: ${rowData.item.mounts.length > 1 ? "block" : "none"};"
+                >
+                  ${rowData.item.mounts.map((key, index) => {
+                  if (index > 0) return html`<mwc-list-item disabled>${key[0]}</mwc-list-item>`;
+                  return html``;
+                  })}
+                </mwc-menu>
+              ` : html``}
             <!-- <span>${rowData.item.storage_capacity}</span> -->
             <!-- <span class="indicator">${rowData.item.storage_unit}</span> -->
           </div>
