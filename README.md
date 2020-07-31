@@ -127,10 +127,17 @@ Backend.AI console is built with
 ```
 $ npm i
 ```
+
+If this is not your first-time compilation, please clean the temporary directories with this command:
+
+```
+$ make clean
+```
+
 You must perform first-time compilation for testing. Some additional mandatory packages should be copied to proper location.
 
 ```
-$ make dep
+$ make compile_wsproxy
 ```
 
 Some necessary libraries will be copied to `src/lib`. Now you are ready to test.
