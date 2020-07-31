@@ -138,6 +138,14 @@
         "src": "./resources/icons/default_app.svg"
       }
     ],
+    "mlflow-ui": [
+      {
+        "name": "mlflow-ui",
+        "title": "MLFlow",
+        "redirect": "",
+        "src": "./resources/icons/mlflow.png"
+      }
+    ],
     "sftp": [
       {
         "name": "sftp",
