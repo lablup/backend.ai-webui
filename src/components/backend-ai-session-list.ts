@@ -389,7 +389,10 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   refreshList(refresh = true, repeat = true) {
-    return this._refreshJobData(refresh, repeat);
+    return this._refreshJobData(refresh, repeat).then(() => {
+      let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+      document.dispatchEvent(event);
+    });
   }
 
   /**
