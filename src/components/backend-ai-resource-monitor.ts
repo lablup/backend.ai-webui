@@ -399,7 +399,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.is_connected = true;
     }
     document.addEventListener('backend-ai-session-list-refreshed', () => {
-      console.log('list changed');
       this._updatePageVariables(true);
     });
   }
