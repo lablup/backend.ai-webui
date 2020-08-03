@@ -78,6 +78,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Number}) lastResourcePolicyQueryTime = 0;
   @property({type: Number}) lastVFolderQueryTime = 0;
   @property({type: String}) scaling_group;
+  @property({type: String}) current_user_group;
   @property({type: Array}) scaling_groups;
   @property({type: Array}) sessions_list;
   @property({type: Boolean}) metric_updating;
@@ -128,6 +129,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.concurrency_limit = 0;
     this.scaling_groups = [{name: ''}]; // if there is no scaling group, set the name as empty string
     this.scaling_group = '';
+    this.current_user_group = '';
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
@@ -240,8 +242,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         this.lastQueryTime = 0; // Reset query interval
       }
       if (this.scaling_group === '' || isChanged) {
-        const currentGroup = globalThis.backendaiclient.current_group || null;
-        const sgs = await globalThis.backendaiclient.scalingGroup.list(currentGroup);
+        if (this.current_user_group === '') {
+          this.current_user_group = globalThis.backendaiclient.current_group;
+        }
+        //const currentGroup = globalThis.backendaiclient.current_group || null;
+        const sgs = await globalThis.backendaiclient.scalingGroup.list(this.current_user_group);
         // Make empty scaling group item if there is no scaling groups.
         this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
         this.scaling_group = this.scaling_groups[0].name;
@@ -386,10 +391,16 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then(async (response) => {
       this.concurrency_used = response.keypair.concurrency_used;
+      if (this.current_user_group === '') {
+        this.current_user_group = globalThis.backendaiclient.current_group;
+      }
       const param: any = {group: globalThis.backendaiclient.current_group};
-      const sgs = await globalThis.backendaiclient.scalingGroup.list(globalThis.backendaiclient.current_group);
-      // Make empty scaling group item if there is no scaling groups.
-      this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
+      if (this.current_user_group !== globalThis.backendaiclient.current_group || this.scaling_groups.length == 0) {
+        this.current_user_group = globalThis.backendaiclient.current_group;
+        const sgs = await globalThis.backendaiclient.scalingGroup.list(this.current_user_group);
+        // Make empty scaling group item if there is no scaling groups.
+        this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
+      }
       if (this.scaling_groups.length > 0) {
         let scaling_groups: any = [];
         this.scaling_groups.map(group => {
