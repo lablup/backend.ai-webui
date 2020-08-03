@@ -6,7 +6,7 @@ For more information, see [manual](https://console.docs.backend.ai/en/latest/).
 
 ## Changelog
 
-View [changelog](https://github.com/lablup/backend.ai-console/main/CHANGELOG.md)
+View [changelog](https://github.com/lablup/backend.ai-console/blob/main/CHANGELOG.md)
 
 ## Role
 
