@@ -388,11 +388,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
-  refreshList(refresh = true, repeat = true) {
-    return this._refreshJobData(refresh, repeat).then(() => {
-      let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
-      document.dispatchEvent(event);
-    });
+  async refreshList(refresh = true, repeat = true) {
+    return this._refreshJobData(refresh, repeat);
   }
 
   /**
@@ -938,12 +935,16 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminationQueue.push(sessionName);
     return this._terminateApp(sessionName).then(() => {
       globalThis.backendaiclient.destroyKernel(sessionName, accessKey).then((req) => {
-        setTimeout(() => {
+        setTimeout(async () => {
           this.terminationQueue = [];
-          this.refreshList(true, false);
+          //await this.refreshList(true, false); // Will be called from session-view from the event below
+          let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+          document.dispatchEvent(event);
         }, 1000);
       }).catch((err) => {
-        this.refreshList(true, false);
+        //this.refreshList(true, false); // Will be called from session-view from the event below
+        let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+        document.dispatchEvent(event);
         this.notification.text = PainKiller.relieve('Problem occurred during termination.');
         this.notification.show(true, err);
       });
