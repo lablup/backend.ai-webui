@@ -772,6 +772,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       setTimeout(() => {
         this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName} (${sessionUuid})`;
         this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+        this.shadowRoot.querySelector('#work-dialog').sessionUuid = sessionUuid;
         this.shadowRoot.querySelector('#work-dialog').sessionName = sessionName;
         this.shadowRoot.querySelector('#work-dialog').accessKey = accessKey;
         this.shadowRoot.querySelector('#work-dialog').show();
