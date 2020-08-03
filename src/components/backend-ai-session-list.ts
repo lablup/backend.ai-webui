@@ -20,7 +20,6 @@ import 'weightless/checkbox';
 import 'weightless/icon';
 import 'weightless/textfield';
 import 'weightless/title';
-import 'weightless/popover';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
@@ -166,11 +165,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-fab-size: 32px;
           --button-padding: 3px;
           margin-right: 5px;
-        }
-
-        wl-popover {
-          /*position: relative;*/
-          margin-top: 15px;
         }
 
         mwc-icon-button.apps {
