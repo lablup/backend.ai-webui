@@ -420,8 +420,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
       if (forceUpdate === true) {
         //if (current_scaling_group != this.resourceBroker.scaling_group) {
-          await this._refreshResourcePolicy();
+        //await this._refreshResourcePolicy();
+        return this._refreshResourcePolicy().then(() => {
           this.aggregateResource('update-scaling-group (resource monitor)', forceUpdate);
+        });
         //}
       } else {
       }
