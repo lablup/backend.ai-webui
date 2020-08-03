@@ -414,7 +414,7 @@ class Client {
     }
     localStorage.setItem('backendaiconsole.logs', JSON.stringify(log_stack));
 
-    return body;
+    return Promise.resolve(body);
   }
 
   /**

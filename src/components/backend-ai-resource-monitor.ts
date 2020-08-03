@@ -399,6 +399,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.is_connected = true;
     }
     document.addEventListener('backend-ai-session-list-refreshed', () => {
+      console.log('list changed');
       this._updatePageVariables(true);
     });
   }
@@ -411,17 +412,23 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   async updateScalingGroup(forceUpdate = false, e) {
-    await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
+    let current_scaling_group = this.resourceBroker.scaling_group;
+    await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value); // AggregateResource handles it.
     if (this.active) {
       if (this.direction === 'vertical') {
         const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
         scaling_group_selection_box.firstChild.value = this.resourceBroker.scaling_group;
       }
       if (forceUpdate === true) {
-        await this._refreshResourcePolicy();
-        this.aggregateResource('update-scaling-group');
+        if (current_scaling_group != this.resourceBroker.scaling_group) {
+          await this._refreshResourcePolicy();
+          this.aggregateResource('update-scaling-group (resource monitor)', forceUpdate);
+        }
       } else {
       }
+      return Promise.resolve(true);
+    } else {
+      return Promise.resolve(false);
     }
   }
 
@@ -453,7 +460,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }, 1000);
       this.sessions_list = this.resourceBroker.sessions_list;
       await this._refreshResourcePolicy();
-      this.aggregateResource('update-page-variable');
+      this.aggregateResource('update-page-variable (resource monitor)');
       this.metadata_updating = false;
       return Promise.resolve(true);
     }
@@ -597,50 +604,57 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  async _aggregateResourceUse(from: string = '') {
-    return this.resourceBroker._aggregateCurrentResource(from).then((res) => {
-      if (res === false) {
-        return setTimeout(() => {
-          this._aggregateResourceUse(from);
-        }, 1000);
-      }
-      this.concurrency_used = this.resourceBroker.concurrency_used;
-      this.scaling_group = this.resourceBroker.scaling_group;
-      this.scaling_groups = this.resourceBroker.scaling_groups;
-      this.total_slot = this.resourceBroker.total_slot;
-      this.total_resource_group_slot = this.resourceBroker.total_resource_group_slot;
-      this.total_project_slot = this.resourceBroker.total_project_slot;
-      this.used_slot = this.resourceBroker.used_slot;
-      this.used_resource_group_slot = this.resourceBroker.used_resource_group_slot;
-      this.used_project_slot = this.resourceBroker.used_project_slot;
-      this.used_project_slot_percent = this.resourceBroker.used_project_slot_percent;
-      this.concurrency_limit = this.resourceBroker.concurrency_limit;
-      this.available_slot = this.resourceBroker.available_slot;
-      this.used_slot_percent = this.resourceBroker.used_slot_percent;
-      this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
-      //this.requestUpdate();
+  async _aggregateResourceUse(from: string = '', forceUpdate = false) {
+    if (forceUpdate) {
+      return this.resourceBroker._aggregateCurrentResource(from).then((res) => {
+        if (res === false) {
+          return setTimeout(() => {
+            this._aggregateResourceUse(from, forceUpdate);
+          }, 1000);
+        }
+        this._synchronizeWithBroker();
+        return Promise.resolve(true);
+      }).catch(err => {
+        if (err && err.message) {
+          console.log(err);
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+        return Promise.resolve(false);
+      });
+    } else {
+      this._synchronizeWithBroker();
       return Promise.resolve(true);
-      return this.available_slot;
-    }).catch(err => {
-      if (err && err.message) {
-        console.log(err);
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-      return Promise.resolve(false);
-    });
+    }
+  }
+
+  _synchronizeWithBroker() {
+    this.concurrency_used = this.resourceBroker.concurrency_used;
+    this.scaling_group = this.resourceBroker.scaling_group;
+    this.scaling_groups = this.resourceBroker.scaling_groups;
+    this.total_slot = this.resourceBroker.total_slot;
+    this.total_resource_group_slot = this.resourceBroker.total_resource_group_slot;
+    this.total_project_slot = this.resourceBroker.total_project_slot;
+    this.used_slot = this.resourceBroker.used_slot;
+    this.used_resource_group_slot = this.resourceBroker.used_resource_group_slot;
+    this.used_project_slot = this.resourceBroker.used_project_slot;
+    this.used_project_slot_percent = this.resourceBroker.used_project_slot_percent;
+    this.concurrency_limit = this.resourceBroker.concurrency_limit;
+    this.available_slot = this.resourceBroker.available_slot;
+    this.used_slot_percent = this.resourceBroker.used_slot_percent;
+    this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
   }
 
   // Get available / total resources from manager
-  aggregateResource(from: string = '') {
+  aggregateResource(from: string = '', forceUpdate = false) {
     //console.log('aggregate resource called - ', from);
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this._aggregateResourceUse(from);
+        this._aggregateResourceUse(from, forceUpdate);
       }, true);
     } else {
-      this._aggregateResourceUse(from);
+      this._aggregateResourceUse(from, forceUpdate);
     }
   }
 

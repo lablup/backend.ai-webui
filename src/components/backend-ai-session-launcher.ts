@@ -687,7 +687,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._updateSelectedScalingGroup();
       this.sessions_list = this.resourceBroker.sessions_list;
       await this._refreshResourcePolicy();
-      this.aggregateResource('update-page-variable');
+      this.aggregateResource('update-page-variable (session launcher)');
       this.metadata_updating = false;
     }
   }

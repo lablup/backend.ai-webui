@@ -338,7 +338,7 @@ class Client {
             log_stack = log_stack.concat(previous_log);
         }
         localStorage.setItem('backendaiconsole.logs', JSON.stringify(log_stack));
-        return body;
+        return Promise.resolve(body);
     }
     /**
      * Return the server-side API version.

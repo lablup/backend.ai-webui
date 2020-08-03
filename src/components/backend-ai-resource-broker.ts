@@ -236,17 +236,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   async _updatePageVariables(isChanged: boolean) {
     if (this.metadata_updating === false) {
       this.metadata_updating = true;
+      let testID = Math.random().toString().substring(3,10);
       if (isChanged) {
         this.lastQueryTime = 0; // Reset query interval
       }
-      if (this.scaling_group === '' || isChanged) {
-        const currentGroup = globalThis.backendaiclient.current_group || null;
-        const sgs = await globalThis.backendaiclient.scalingGroup.list(currentGroup);
-        // Make empty scaling group item if there is no scaling groups.
-        this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
-        this.scaling_group = this.scaling_groups[0].name;
-      }
-
       // Reload number of sessions
       let fields = ["created_at"];
       await globalThis.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
@@ -258,7 +251,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         });
       this._initAliases();
       await this._refreshResourcePolicy();
-      this.aggregateResource('update-page-variable');
+      this.aggregateResource(testID + ' update-page-variable');
       this.metadata_updating = false;
       let event = new CustomEvent("backend-ai-resource-broker-updated", {"detail": ''});
       document.dispatchEvent(event);
@@ -373,6 +366,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    */
   async _aggregateCurrentResource(from: string = '') {
     if (this.aggregate_updating) {
+      //console.log('updating blocked from: ', from);
       return Promise.resolve(false);
     }
     if (Date.now() - this.lastQueryTime < 1000) {
@@ -387,17 +381,18 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then(async (response) => {
       this.concurrency_used = response.keypair.concurrency_used;
       const param: any = {group: globalThis.backendaiclient.current_group};
+      const sgs = await globalThis.backendaiclient.scalingGroup.list(globalThis.backendaiclient.current_group);
+      // Make empty scaling group item if there is no scaling groups.
+      this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
       if (this.scaling_groups.length > 0) {
-        let scaling_group: string = '';
-        if (this.scaling_group !== '') {
-          scaling_group = this.scaling_group;
-        } else {
-          scaling_group = this.scaling_groups[0]['name'];
-          this.scaling_group = scaling_group;
+        let scaling_groups: any = [];
+        this.scaling_groups.map(group => {
+          scaling_groups.push(group.name);
+        })
+        if (this.scaling_group === '' || !scaling_groups.includes(this.scaling_group)) {
+          this.scaling_group = this.scaling_groups[0].name;
         }
-        if (scaling_group) {
-          param['scaling_group'] = scaling_group;
-        }
+        param['scaling_group'] = this.scaling_group;
       }
       return globalThis.backendaiclient.resourcePreset.check(param);
     }).then((response) => {
