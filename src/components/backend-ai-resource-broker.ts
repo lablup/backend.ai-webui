@@ -387,17 +387,18 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then(async (response) => {
       this.concurrency_used = response.keypair.concurrency_used;
       const param: any = {group: globalThis.backendaiclient.current_group};
+      const sgs = await globalThis.backendaiclient.scalingGroup.list(globalThis.backendaiclient.current_group);
+      // Make empty scaling group item if there is no scaling groups.
+      this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
       if (this.scaling_groups.length > 0) {
-        let scaling_group: string = '';
-        if (this.scaling_group !== '') {
-          scaling_group = this.scaling_group;
-        } else {
-          scaling_group = this.scaling_groups[0]['name'];
-          this.scaling_group = scaling_group;
+        let scaling_groups: any = [];
+        this.scaling_groups.map(group => {
+          scaling_groups.push(group.name);
+        })
+        if (this.scaling_group === '' || !scaling_groups.includes(this.scaling_group)) {
+          this.scaling_group = this.scaling_groups[0].name;
         }
-        if (scaling_group) {
-          param['scaling_group'] = scaling_group;
-        }
+        param['scaling_group'] = this.scaling_group;
       }
       return globalThis.backendaiclient.resourcePreset.check(param);
     }).then((response) => {
