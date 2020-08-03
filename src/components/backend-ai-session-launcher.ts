@@ -791,7 +791,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return;
     }
     if (!isSessionNameValid) {
-      this.notification.text = "Session name only allows at least 4 characters without any whitespaces."
+      this.notification.text = _text("Session name only allows at least 4 characters without any whitespaces.");
       this.notification.show();
       return;
     }
