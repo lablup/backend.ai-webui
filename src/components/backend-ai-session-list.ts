@@ -992,11 +992,11 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param e {Event} - mouseenter the mount-button
    * @param mounts {Array} - array of the mounted folders
    * */
-  _createDropdown(e, mounts) {
-    let menuButton: HTMLElement = e.target;
-    let menu = document.createElement('mwc-menu') as any;
+  _createMountedFolderDropdown(e, mounts) {
+    const menuButton: HTMLElement = e.target;
+    const menu = document.createElement('mwc-menu') as any;
     menu.anchor = menuButton;
-    menu.className = 'dropdown-menu'
+    menu.className = 'dropdown-menu';
     menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
     menu.setAttribute('open', '');
     menu.setAttribute('fixed', '');
@@ -1006,14 +1006,14 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (mounts.length > 1) {
       mounts.map((key, index) => {
         if (index > 0) {
-          let item = document.createElement('mwc-list-item');
-          item.innerHTML = key[0];
-          item.style.height = '25px';
-          item.style.fontWeight = '400';
-          item.style.fontSize = '14px';
-          item.style.fontFamily = 'var(--general-font-family)';
+          let mountedFolderItem = document.createElement('mwc-list-item');
+          mountedFolderItem.innerHTML = key[0];
+          mountedFolderItem.style.height = '25px';
+          mountedFolderItem.style.fontWeight = '400';
+          mountedFolderItem.style.fontSize = '14px';
+          mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
 
-          menu.appendChild(item);
+          menu.appendChild(mountedFolderItem);
         }
       })
     }
@@ -1036,7 +1036,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-  sessionInfoRenderer(root, column ?, rowData ?) {
+  sessionInfoRenderer(root, column?, rowData?) {
     render(
       html`
         <div class="layout vertical start">
@@ -1075,7 +1075,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-  controlRenderer(root, column ?, rowData ?) {
+  controlRenderer(root, column?, rowData?) {
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
@@ -1114,7 +1114,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Element} column - the column element that show the config of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-  configRenderer(root, column ?, rowData ?) {
+  configRenderer(root, column?, rowData?) {
     render(
       html`
         ${rowData.item.scaling_group ? html`
@@ -1172,7 +1172,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <wl-icon class="fg green indicator">folder_open</wl-icon>
               ${rowData.item.mounts.length > 0 ? html`
                 <button class="mount-button"
-                  @mouseenter="${(e) => this._createDropdown(e, rowData.item.mounts)}"
+                  @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
                   @mouseleave="${() => this._removeDropdown()}"
                 >
                   ${rowData.item.mounts[0][0]}
@@ -1193,7 +1193,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-  usageRenderer(root, column ?, rowData ?) {
+  usageRenderer(root, column?, rowData?) {
     render(
       html`
         <div class="layout horizontal center flex">
@@ -1277,7 +1277,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-  checkboxRenderer(root, column ?, rowData ?) {
+  checkboxRenderer(root, column?, rowData?) {
     if ((this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4) {
       render(
         html`
@@ -1296,7 +1296,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-  userInfoRenderer(root, column ?, rowData ?) {
+  userInfoRenderer(root, column?, rowData?) {
     render(
       html`
         <div class="layout vertical">
@@ -1306,7 +1306,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
-  statusRenderer(root, column ?, rowData ?) {
+  statusRenderer(root, column?, rowData?) {
     render(
       html`
         <span style="font-size: 12px;">${rowData.item.status}</span>
