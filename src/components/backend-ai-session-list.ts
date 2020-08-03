@@ -1188,7 +1188,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         </div>
      `, root
     );
-  };
+  }
 
   /**
    * Render usages - cpu_used_time, io_read_bytes_mb, and io_write_bytes_mb
