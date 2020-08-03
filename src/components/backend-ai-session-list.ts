@@ -1024,8 +1024,8 @@ export default class BackendAiSessionList extends BackendAIPage {
   /**
    * Remove the dropdown menu when mouseleave the mount-button.
    * */
-  _removeDropdown() {
-    let menu = document.getElementsByClassName('dropdown-menu') as any;
+  _removeMountedFolderDropdown() {
+    const menu = document.getElementsByClassName('dropdown-menu') as any;
     while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
   }
 
@@ -1173,7 +1173,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               ${rowData.item.mounts.length > 0 ? html`
                 <button class="mount-button"
                   @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
-                  @mouseleave="${() => this._removeDropdown()}"
+                  @mouseleave="${() => this._removeMountedFolderDropdown()}"
                 >
                   ${rowData.item.mounts[0][0]}
                 </button>
