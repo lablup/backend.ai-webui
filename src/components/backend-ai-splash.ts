@@ -143,11 +143,11 @@ export default class BackendAISplash extends LitElement {
             <li><span id="mode-detail" class="detail">${globalThis.isElectron ? 'App' : 'WebServer'}</span> <span id="build-detail" class="detail">Build ${globalThis.buildVersion}</span></li>
           </ul>
           <ul>
-            <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/master/LICENSE">open-source software</a></li>
+            <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/main/LICENSE">open-source software</a></li>
             <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
             <li class="release-note">
               <a target="_blank" href="https://github.com/lablup/backend.ai-console/releases/tag/v${this.version}">Release Note</a>
-              <a target="_blank" href="https://github.com/lablup/backend.ai-console/blob/master/LICENSE">License</a>
+              <a target="_blank" href="https://github.com/lablup/backend.ai-console/blob/main/LICENSE">License</a>
             </li>
             </ul>
           </ul>
