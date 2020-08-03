@@ -777,6 +777,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let kernel = selectedItem.id;
     let version = this.shadowRoot.querySelector('#version').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
+    let isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
     let vfolder = this.shadowRoot.querySelector('#vfolder').value;
     this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
     this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
@@ -789,6 +790,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.notification.show();
       return;
     }
+    if (!isSessionNameValid) {
+      this.notification.text = "Session name only allows at least 4 characters without any whitespaces."
+      this.notification.show();
+      return;
+    }
+
     if (kernel === "" || version === "" || version === "Not Selected") {
       this.notification.text = _text("session.launcher.MustSpecifyVersion");
       this.notification.show();
