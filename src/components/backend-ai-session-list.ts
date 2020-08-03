@@ -20,9 +20,10 @@ import 'weightless/checkbox';
 import 'weightless/icon';
 import 'weightless/textfield';
 import 'weightless/title';
-import 'weightless/popover';
 
 import '@material/mwc-icon-button';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-menu';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
@@ -282,6 +283,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           --input-font-size: small;
           --input-label-font-size: small;
           --input-font-family: Roboto, Noto, sans-serif;
+        }
+
+        .mount-button {
+          border: none;
+          background: none;
+          padding: 0;
+          outline-style: none;
         }
       `];
   }
@@ -764,6 +772,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       setTimeout(() => {
         this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName} (${sessionUuid})`;
         this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+        this.shadowRoot.querySelector('#work-dialog').sessionUuid = sessionUuid;
         this.shadowRoot.querySelector('#work-dialog').sessionName = sessionName;
         this.shadowRoot.querySelector('#work-dialog').accessKey = accessKey;
         this.shadowRoot.querySelector('#work-dialog').show();
@@ -982,6 +991,50 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   /**
+   * Create dropdown menu that shows mounted folder names.
+   * Added menu to document.body to show at the top.
+   *
+   * @param e {Event} - mouseenter the mount-button
+   * @param mounts {Array} - array of the mounted folders
+   * */
+  _createMountedFolderDropdown(e, mounts) {
+    const menuButton: HTMLElement = e.target;
+    const menu = document.createElement('mwc-menu') as any;
+    menu.anchor = menuButton;
+    menu.className = 'dropdown-menu';
+    menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
+    menu.setAttribute('open', '');
+    menu.setAttribute('fixed', '');
+    menu.setAttribute('x', 10);
+    menu.setAttribute('y', 15);
+
+    if (mounts.length > 1) {
+      mounts.map((key, index) => {
+        if (index > 0) {
+          let mountedFolderItem = document.createElement('mwc-list-item');
+          mountedFolderItem.innerHTML = key[0];
+          mountedFolderItem.style.height = '25px';
+          mountedFolderItem.style.fontWeight = '400';
+          mountedFolderItem.style.fontSize = '14px';
+          mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
+
+          menu.appendChild(mountedFolderItem);
+        }
+      })
+    }
+    document.body.appendChild(menu);
+  }
+
+
+  /**
+   * Remove the dropdown menu when mouseleave the mount-button.
+   * */
+  _removeMountedFolderDropdown() {
+    const menu = document.getElementsByClassName('dropdown-menu') as any;
+    while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
+  }
+
+  /**
    * Render session information - category, color, description, etc.
    *
    * @param {Element} root - the row details content DOM element
@@ -1122,10 +1175,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">folder_open</wl-icon>
-            ${rowData.item.mounts.length > 0 ? html`
-              <span>${rowData.item.mounts[0][0]}</span>
-            ` : html`
-            `}
+              ${rowData.item.mounts.length > 0 ? html`
+                <button class="mount-button"
+                  @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
+                  @mouseleave="${() => this._removeMountedFolderDropdown()}"
+                >
+                  ${rowData.item.mounts[0][0]}
+                </button>
+              ` : html``}
             <!-- <span>${rowData.item.storage_capacity}</span> -->
             <!-- <span class="indicator">${rowData.item.storage_unit}</span> -->
           </div>
