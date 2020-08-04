@@ -753,9 +753,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     const promiseArray = inputList.map(input => globalThis.backendaiclient.vfolder.modify_invitee_permission(input));
     Promise.all(promiseArray).then((response: any) => {
       if (response.length === 0) {
-        this.notification.text = 'No changes made.';
+        this.notification.text = _text('data.permission.NoChanges');
       } else {
-        this.notification.text = 'Permission successfully modified.';
+        this.notification.text = _text('data.permission.PermissionModified');
       }
       this.notification.show();
       this.shadowRoot.querySelector('#modify-permission-dialog').hide();
@@ -792,7 +792,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _addTextField(e) {
     let newTextField = document.createElement('wl-textfield');
-    newTextField.label = "Enter e-mail address";
+    newTextField.label = _text('data.invitation.EnterEmail');
     newTextField.type = "email";
 
     this.shadowRoot.querySelector('#textfields').appendChild(newTextField)
@@ -1182,7 +1182,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   _deleteFolderWithCheck() {
     let typedDeleteFolderName = this.shadowRoot.querySelector('#delete-folder-name').value;
     if (typedDeleteFolderName != this.deleteFolderId) {
-      this.notification.text = 'Folder name mismatched. Check your typing.';
+      this.notification.text = _text('data.folders.FolderNameMismatched');
       this.notification.show();
       return;
     }
@@ -1198,7 +1198,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   _deleteFolder(folderId) {
     let job = globalThis.backendaiclient.vfolder.delete(folderId);
     job.then((value) => {
-      this.notification.text = 'Folder is successfully deleted.';
       this.notification.text = _text('data.folders.FolderDeleted');
       this.notification.show();
       this._refreshFolderList();
@@ -1711,7 +1710,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const permission = 'r' + (this.shadowRoot.querySelector('#share-folder-write').checked ? 'w' : 'o');
 
     if (emailArray.length === 0) {
-      this.notification.text = 'No valid emails were entered';
+      this.notification.text = _text('data.invitation.NoValidEmails');
       this.notification.show();
       this.shadowRoot.querySelector('#share-folder-dialog').hide();
       for (let element of emailHtmlCollection) {
@@ -1724,9 +1723,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       .then(res => {
         let msg;
         if (res.invited_ids && res.invited_ids.length > 0) {
-          msg = res.invited_ids.reduce((cur, val) => cur + val + " ", "") + (emailArray.length === 1 ? 'was' : 'were') + " successfully invited";
+          msg = _text('data.invitation.Invited');
         } else {
-          msg = "No one was invited";
+          msg = _text('data.invitation.NoOneWasInvited');
         }
         this.notification.text = msg;
         this.notification.show();
@@ -1745,7 +1744,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     path_info.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          path_info.validationMessage = "Value is required."
+          path_info.validationMessage = _text('data.explorer.ValueRequired');
           return {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid
@@ -1761,7 +1760,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         let regex = /^([.a-zA-Z0-9-_]{1,})+(\/[a-zA-Z0-9-_]{1,})*([\/,\\]{0,1})$/gm;
         let isValid = regex.exec(path_info.value);
         if (!isValid) {
-          path_info.validationMessage = "Path should start with .(dot) or letters, numbers only."
+          path_info.validationMessage = _text('data.explorer.ValueShouldBeStarted');
         }
 
         return {
