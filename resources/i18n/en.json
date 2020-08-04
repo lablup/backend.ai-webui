@@ -343,7 +343,8 @@
       "EnterEmail": "Enter email address",
       "NoValidEmails": "No valid emails were entered",
       "Invited": "Successfully invited",
-      "NoOneWasInvited": "No one invited since invitation already exists"
+      "NoOneWasInvited": "No one invited since invitation already exists",
+      "InvitationError": "Invitation failed. User may already be invited."
     },
     "permission": {
       "NoChanges": "No changes made",

@@ -1679,7 +1679,6 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _shareFolderDialog(e) {
     this.selectedFolder = this._getControlId(e);
-
     this.openDialog('share-folder-dialog');
   }
 
@@ -1733,7 +1732,13 @@ export default class BackendAiStorageList extends BackendAIPage {
         for (let element of emailHtmlCollection) {
           element.value = '';
         }
-      })
+      }).catch(err => {
+        this.notification.text = _text('data.invitation.InvitationError');
+        if (err && err.message) {
+          this.notification.detail = err.message;
+        }
+        this.notification.show(true, err);
+      });
   }
 
   /**
