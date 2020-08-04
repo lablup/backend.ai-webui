@@ -1,5 +1,13 @@
 # Changelog
 
+## v20.08.0 (04/08/2020)
+
+#### Bug Fixes:
+
+- [**bug**][**UI / UX**] After terminating a session, resource occupation is not updated [#639](https://github.com/lablup/backend.ai-console/issues/639)
+- [**bug**] In a session log dialog, error message is raised when user clicks refresh log button [#640](https://github.com/lablup/backend.ai-console/issues/640)
+
+
 ## v20.07.9 (31/07/2020)
 
 #### Bug Fixes:
