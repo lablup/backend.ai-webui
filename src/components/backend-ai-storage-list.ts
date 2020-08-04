@@ -800,7 +800,9 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   _removeTextField(e) {
     const textfields = this.shadowRoot.querySelector('#textfields');
-    textfields.removeChild(textfields.lastChild);
+    if (textfields.children.length > 1) {
+      textfields.removeChild(textfields.lastChild);
+    }
   }
 
   indexRenderer(root, column?, rowData?) {
@@ -1729,8 +1731,9 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.text = msg;
         this.notification.show();
         this.shadowRoot.querySelector('#share-folder-dialog').hide();
-        for (let element of emailHtmlCollection) {
-          element.value = '';
+        for (let i = emailHtmlCollection.length - 1; i > 0; i--) {
+          const element = emailHtmlCollection[i];
+          element.parentElement.removeChild(element);
         }
       }).catch(err => {
         this.notification.text = _text('data.invitation.InvitationError');
