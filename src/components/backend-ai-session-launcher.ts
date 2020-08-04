@@ -77,7 +77,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) marker_limit = 25;
   @property({type: String}) gpu_mode;
   @property({type: Array}) gpu_modes = [];
-  @property({type: Number}) gpu_step = 0.05;
+  @property({type: Number}) gpu_step = 0.01;
   @property({type: Object}) cpu_metric = {
     'min': '1',
     'max': '1'
@@ -379,7 +379,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         wl-expansion {
-          --font-family-serif: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          --font-family-serif: var(--general-font-family);
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
@@ -407,8 +407,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         mwc-select,
         mwc-multi-select {
           width: 100%;
-          font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-          --mdc-typography-subtitle1-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
           --mdc-theme-primary: var(--paper-red-600);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
@@ -1574,7 +1574,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let environment = this.shadowRoot.querySelector('#environment');
     //await environment.updateComplete; async way.
     let obj = environment.items.find(o => o.value === this.default_language);
-    if (typeof obj === 'undefined') { // Not ready yet.
+    if (typeof obj === 'undefined' && typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient.ready === true) { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
         return this.selectDefaultLanguage(forceUpdate, language);

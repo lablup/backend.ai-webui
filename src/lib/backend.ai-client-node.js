@@ -480,7 +480,12 @@ class Client {
                 return this.check_login();
             }
             else if (result.authenticated === false) { // Authentication failed.
-                return Promise.resolve(false);
+                if (result.data && result.data.details) {
+                    return Promise.resolve({ fail_reason: result.data.details });
+                }
+                else {
+                    return Promise.resolve(false);
+                }
             }
         }
         catch (err) { // Manager / console server down.

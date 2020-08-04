@@ -20,7 +20,10 @@ import 'weightless/checkbox';
 import 'weightless/icon';
 import 'weightless/textfield';
 import 'weightless/title';
+
 import '@material/mwc-icon-button';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-menu';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
@@ -63,6 +66,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) imageInfo = Object();
   @property({type: Array}) _selected_items = Array();
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) _boundConfigRenderer = this.configRenderer.bind(this);
   @property({type: Object}) _boundUsageRenderer = this.usageRenderer.bind(this);
   @property({type: Object}) _boundSessionInfoRenderer = this.sessionInfoRenderer.bind(this);
   @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
@@ -280,6 +284,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           --input-label-font-size: small;
           --input-font-family: Roboto, Noto, sans-serif;
         }
+
+        .mount-button {
+          border: none;
+          background: none;
+          padding: 0;
+          outline-style: none;
+        }
       `];
   }
 
@@ -385,7 +396,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
-  refreshList(refresh = true, repeat = true) {
+  async refreshList(refresh = true, repeat = true) {
     return this._refreshJobData(refresh, repeat);
   }
 
@@ -426,7 +437,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     let fields = [
       "id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
-      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
+      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key", "mounts"
     ];
     if (this.enableScalingGroup) {
       fields.push("scaling_group");
@@ -761,6 +772,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       setTimeout(() => {
         this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName} (${sessionUuid})`;
         this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+        this.shadowRoot.querySelector('#work-dialog').sessionUuid = sessionUuid;
         this.shadowRoot.querySelector('#work-dialog').sessionName = sessionName;
         this.shadowRoot.querySelector('#work-dialog').accessKey = accessKey;
         this.shadowRoot.querySelector('#work-dialog').show();
@@ -932,12 +944,16 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminationQueue.push(sessionName);
     return this._terminateApp(sessionName).then(() => {
       globalThis.backendaiclient.destroyKernel(sessionName, accessKey).then((req) => {
-        setTimeout(() => {
+        setTimeout(async () => {
           this.terminationQueue = [];
-          this.refreshList(true, false);
+          //await this.refreshList(true, false); // Will be called from session-view from the event below
+          let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+          document.dispatchEvent(event);
         }, 1000);
       }).catch((err) => {
-        this.refreshList(true, false);
+        //this.refreshList(true, false); // Will be called from session-view from the event below
+        let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+        document.dispatchEvent(event);
         this.notification.text = PainKiller.relieve('Problem occurred during termination.');
         this.notification.show(true, err);
       });
@@ -972,6 +988,50 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _openExportToCsvDialog() {
     this.exportToCsvDialog.show();
+  }
+
+  /**
+   * Create dropdown menu that shows mounted folder names.
+   * Added menu to document.body to show at the top.
+   *
+   * @param e {Event} - mouseenter the mount-button
+   * @param mounts {Array} - array of the mounted folders
+   * */
+  _createMountedFolderDropdown(e, mounts) {
+    const menuButton: HTMLElement = e.target;
+    const menu = document.createElement('mwc-menu') as any;
+    menu.anchor = menuButton;
+    menu.className = 'dropdown-menu';
+    menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
+    menu.setAttribute('open', '');
+    menu.setAttribute('fixed', '');
+    menu.setAttribute('x', 10);
+    menu.setAttribute('y', 15);
+
+    if (mounts.length > 1) {
+      mounts.map((key, index) => {
+        if (index > 0) {
+          let mountedFolderItem = document.createElement('mwc-list-item');
+          mountedFolderItem.innerHTML = key[0];
+          mountedFolderItem.style.height = '25px';
+          mountedFolderItem.style.fontWeight = '400';
+          mountedFolderItem.style.fontSize = '14px';
+          mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
+
+          menu.appendChild(mountedFolderItem);
+        }
+      })
+    }
+    document.body.appendChild(menu);
+  }
+
+
+  /**
+   * Remove the dropdown menu when mouseleave the mount-button.
+   * */
+  _removeMountedFolderDropdown() {
+    const menu = document.getElementsByClassName('dropdown-menu') as any;
+    while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
   }
 
   /**
@@ -1049,6 +1109,85 @@ export default class BackendAiSessionList extends BackendAIPage {
           `}
         </div>
       `, root
+    );
+  }
+
+  /**
+   * Render configs
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that show the config of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
+  configRenderer(root, column?, rowData?) {
+    render(
+      html`
+        ${rowData.item.scaling_group ? html`
+        <div class="layout horizontal center flex">
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green indicator">work</wl-icon>
+            <span>${rowData.item.scaling_group}</span>
+            <span class="indicator">RG</span>
+          </div>
+        </div>` : html``}
+        <div class="layout horizontal center flex">
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green indicator">developer_board</wl-icon>
+            <span>${rowData.item.cpu_slot}</span>
+            <span class="indicator">${_t("session.core")}</span>
+          </div>
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green indicator">memory</wl-icon>
+            <span>${rowData.item.mem_slot}</span>
+            <span class="indicator">GB</span>
+          </div>
+        </div>
+        <div class="layout horizontal center flex">
+          <div class="layout horizontal configuration">
+            ${rowData.item.cuda_gpu_slot ? html`
+              <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+              <span>${rowData.item.cuda_gpu_slot}</span>
+              <span class="indicator">GPU</span>
+              ` : html``}
+            ${!rowData.item.cuda_gpu_slot && rowData.item.cuda_fgpu_slot ? html`
+              <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+              <span>${rowData.item.cuda_fgpu_slot}</span>
+              <span class="indicator">GPU</span>
+              ` : html``}
+            ${rowData.item.rocm_gpu_slot ? html`
+              <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
+              <span>${rowData.item.rocm_gpu_slot}</span>
+              <span class="indicator">GPU</span>
+              ` : html``}
+            ${rowData.item.tpu_slot ? html`
+              <wl-icon class="fg green indicator">view_module</wl-icon>
+              <span>${rowData.item.tpu_slot}</span>
+              <span class="indicator">TPU</span>
+              ` : html``}
+            ${!rowData.item.cuda_gpu_slot &&
+      !rowData.item.cuda_fgpu_slot &&
+      !rowData.item.rocm_gpu_slot &&
+      !rowData.item.tpu_slot ? html`
+              <wl-icon class="fg green indicator">view_module</wl-icon>
+              <span>-</span>
+              <span class="indicator">GPU</span>
+              ` : html``}
+          </div>
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green indicator">folder_open</wl-icon>
+              ${rowData.item.mounts.length > 0 ? html`
+                <button class="mount-button"
+                  @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
+                  @mouseleave="${() => this._removeMountedFolderDropdown()}"
+                >
+                  ${rowData.item.mounts[0][0]}
+                </button>
+              ` : html``}
+            <!-- <span>${rowData.item.storage_capacity}</span> -->
+            <!-- <span class="indicator">${rowData.item.storage_unit}</span> -->
+          </div>
+        </div>
+     `, root
     );
   }
 
@@ -1295,74 +1434,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <vaadin-grid-column width="90px" flex-grow="0" header="${_t("session.Status")}" resizable .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="160px" flex-grow="0" header="${_t("session.Configuration")}" resizable>
-          <template>
-            <template is="dom-if" if="[[item.scaling_group]]">
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">work</wl-icon>
-                <span>[[item.scaling_group]]</span>
-                <span class="indicator">RG</span>
-              </div>
-            </div>
-            </template>
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">developer_board</wl-icon>
-                <span>[[item.cpu_slot]]</span>
-                <span class="indicator">${_t("session.core")}</span>
-              </div>
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">memory</wl-icon>
-                <span>[[item.mem_slot]]</span>
-                <span class="indicator">GB</span>
-              </div>
-            </div>
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <template is="dom-if" if="[[item.cuda_gpu_slot]]">
-                  <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                  <span>[[item.cuda_gpu_slot]]</span>
-                  <span class="indicator">GPU</span>
-                </template>
-                <template is="dom-if" if="[[!item.cuda_gpu_slot]]">
-                  <template is="dom-if" if="[[item.cuda_fgpu_slot]]">
-                    <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                    <span>[[item.cuda_fgpu_slot]]</span>
-                    <span class="indicator">GPU</span>
-                  </template>
-                </template>
-                <template is="dom-if" if="[[item.rocm_gpu_slot]]">
-                  <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
-                  <span>[[item.rocm_gpu_slot]]</span>
-                  <span class="indicator">GPU</span>
-                </template>
-                <template is="dom-if" if="[[item.tpu_slot]]">
-                  <wl-icon class="fg green indicator">view_module</wl-icon>
-                  <span>[[item.tpu_slot]]</span>
-                  <span class="indicator">TPU</span>
-                </template>
-                <template is="dom-if" if="[[!item.cuda_gpu_slot]]">
-                  <template is="dom-if" if="[[!item.cuda_fgpu_slot]]">
-                    <template is="dom-if" if="[[!item.rocm_gpu_slot]]">
-                      <template is="dom-if" if="[[!item.tpu_slot]]">
-                        <wl-icon class="fg green indicator">view_module</wl-icon>
-                        <span>-</span>
-                        <span class="indicator">GPU</span>
-                      </template>
-                    </template>
-                  </template>
-                </template>
-              </div>
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">cloud_queue</wl-icon>
-                <!-- <wl-icon class="fg yellow" icon="device:storage"></wl-icon> -->
-                <!-- <span>[[item.storage_capacity]]</span> -->
-                <!-- <span class="indicator">[[item.storage_unit]]</span> -->
-              </div>
-            </div>
-          </template>
-        </vaadin-grid-column>
+        <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t("session.Configuration")}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t("session.Usage")}" .renderer="${this._boundUsageRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t("session.Starts")}" path="created_at">

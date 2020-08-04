@@ -66,7 +66,7 @@ export default class LablupNotification extends LitElement {
           right: 20px;
           font-size: 16px;
           font-weight: 400;
-          font-family: 'Quicksand', Roboto, sans-serif;
+          font-family: 'Ubuntu', 'Quicksand', Roboto, sans-serif;
           z-index: 12345678;
         }
 
@@ -264,7 +264,7 @@ export default class LablupNotification extends LitElement {
     notification.style.right = '20px';
     notification.style.fontSize = '16px';
     notification.style.fontWeight = '400';
-    notification.style.fontFamily = "'Quicksand', Roboto, sans-serif";
+    notification.style.fontFamily = "'Ubuntu', 'Quicksand', Roboto, sans-serif";
     notification.style.zIndex = "12345678";
     let d = new Date();
     notification.setAttribute('created', d.toLocaleString());

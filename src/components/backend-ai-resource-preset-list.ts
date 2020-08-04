@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -499,19 +499,19 @@ class BackendAiResourcePresetList extends BackendAIPage {
     const wrapper = v => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
     const mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g');
     if (!name) {
-      this.notification.text = 'No preset name';
+      this.notification.text = _text('resourcePreset.NoPresetName');
       this.notification.show();
       return;
     }
     let input = this._readResourcePresetInput();
     if (parseInt(input.shared_memory) >= parseInt(mem)) {
-      this.notification.text = 'Memory should be larger than shared memory';
+      this.notification.text = _text('resourcePreset.MemoryShouldBeLargerThanSHMEM');
       this.notification.show();
       return;
     }
     globalThis.backendaiclient.resourcePreset.mutate(name, input).then(response => {
       this.shadowRoot.querySelector('#modify-template-dialog').hide();
-      this.notification.text = "Resource preset successfully updated.";
+      this.notification.text = _text('resourcePreset.Updated');
       this.notification.show();
       this._refreshTemplateData();
     }).catch(err => {
@@ -586,12 +586,12 @@ class BackendAiResourcePresetList extends BackendAIPage {
     let sharedMemory = this.shadowRoot.querySelector('#create-shmem-resource').value;
     if (sharedMemory) sharedMemory = sharedMemory + 'g';
     if (!preset_name) {
-      this.notification.text = 'No preset name';
+      this.notification.text = _text('resourcePreset.NoPresetName');
       this.notification.show();
       return;
     }
-    if (sharedMemory >= mem) {
-      this.notification.text = 'Memory should be larger than shared memory';
+    if (parseInt(sharedMemory) >= parseInt(mem)) {
+      this.notification.text = _text('resourcePreset.MemoryShouldBeLargerThanSHMEM');
       this.notification.show();
       return;
     }
@@ -613,7 +613,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
       .then(res => {
         this.shadowRoot.querySelector('#create-preset-dialog').hide();
         if (res.create_resource_preset.ok) {
-          this.notification.text = "Resource preset successfully created";
+          this.notification.text = _text('resourcePreset.Created');
           this.refresh();
 
           // reset values

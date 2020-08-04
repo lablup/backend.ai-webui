@@ -31,6 +31,11 @@ export const BackendAiConsoleStyles = [
       opacity: 0;
     }
 
+    mwc-top-app-bar-fixed {
+      --mdc-typography-headline6-font-family: var(--general-font-family);
+      --mdc-typography-font-family: var(--general-font-family);
+    }
+
     .site-name {
       text-align: center;
       margin-left: 0;
@@ -214,8 +219,8 @@ export const BackendAiConsoleStyles = [
     mwc-multi-select {
       width: 135px;
       min-width: 135px;
-      font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-      --mdc-typography-subtitle1-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-size: 14px;
       --mdc-typography-subtitle1-font-color: white;
       --mdc-typography-subtitle1-font-weight: 400;
@@ -257,7 +262,7 @@ export const BackendAiConsoleStyles = [
 
     backend-ai-dialog wl-textfield,
     wl-dialog wl-textfield {
-      --input-font-family: 'Quicksand', Roboto, Noto, sans-serif;
+      --input-font-family: var(--general-font-family);
       --input-color-disabled: #222222;
       --input-label-color-disabled: #222222;
       --input-label-font-size: 12px;
@@ -265,7 +270,7 @@ export const BackendAiConsoleStyles = [
     }
 
     mwc-list-item {
-      font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      font-family: var(--general-font-family);
       font-weight: 400;
     }
 

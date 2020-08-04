@@ -1,5 +1,25 @@
 # Changelog
 
+## v20.08.0 (04/08/2020)
+
+#### Bug Fixes:
+
+- [**bug**][**UI / UX**] After terminating a session, resource occupation is not updated [#639](https://github.com/lablup/backend.ai-console/issues/639)
+- [**bug**] In a session log dialog, error message is raised when user clicks refresh log button [#640](https://github.com/lablup/backend.ai-console/issues/640)
+
+
+## v20.07.9 (31/07/2020)
+
+#### Bug Fixes:
+
+- [**bug**][**easy**][**minor**] Cannot create resource preset with proper mem/shmem values [#626](https://github.com/lablup/backend.ai-console/issues/626)
+
+#### UI / UX:
+
+- [**UI / UX**][**minor**] Change minimum fractional GPU step from 0.05 to 0.01 [#629](https://github.com/lablup/backend.ai-console/issues/629)
+- [**UI / UX**][**cloud**][**minor**] Show explicit message when user's account is inactive state [#593](https://github.com/lablup/backend.ai-console/issues/593)
+
+
 ## v20.07.8 (23/07/2020)
 
 #### Enhancements:

@@ -114,7 +114,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         mwc-textfield {
-          font-family: 'Quicksand', sans-serif;
+          font-family: var(--general-font-family);
           --mdc-theme-primary: black;
           --mdc-text-field-fill-color: rgb(250, 250, 250);
           width: 100%;
@@ -137,7 +137,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         mwc-menu {
-          font-family: 'Quicksand', sans-serif;
+          font-family: var(--general-font-family);
           --mdc-menu-min-width: 400px;
           --mdc-menu-max-width: 400px;
         }
@@ -561,6 +561,12 @@ export default class BackendAILogin extends BackendAIPage {
           this.open();
           if (this.user_id != '' && this.password != '') {
             this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
+            this.notification.show();
+          }
+        } else if (response.fail_reason) {
+          this.open();
+          if (this.user_id != '' && this.password != '') {
+            this.notification.text = PainKiller.relieve(response.fail_reason);
             this.notification.show();
           }
         } else {
