@@ -791,7 +791,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return;
     }
     if (!isSessionNameValid) {
-      this.notification.text = _text("Session name only allows at least 4 characters without any whitespaces.");
+      this.notification.text = _text("session.launcher.SessionNameAllowCondition");
       this.notification.show();
       return;
     }
@@ -1860,7 +1860,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </mwc-multi-select>
             <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
                            pattern="[a-zA-Z0-9_-]{4,}" fullwidth
-                           validationMessage="4 or more characters / no whitespace."
+                           validationMessage="${_t("session.launcher.SessionNameAllowCondition")}"
                            style="margin-left:5px;">
             </mwc-textfield>
           </div>
