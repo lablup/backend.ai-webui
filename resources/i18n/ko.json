@@ -334,7 +334,7 @@
       "EnterEmailAddress": "E-mail 주소를 입력하세요",
       "DownloadFile": "파일 다운로드",
       "TouchToDownload": "터치하여 다운로드하세요",
-      "ValueRequired": "값을 입력해주세요"
+      "ValueRequired": "값을 입력해주세요",
       "ValueShouldBeStarted": "경로는 .(점), 문자 또는 숫자만 포함해야 합니다"
     },
     "invitation": {
