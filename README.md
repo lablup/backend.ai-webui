@@ -122,6 +122,10 @@ Backend.AI console is built with
  * `rollup` as bundler
  * `electron` as app shell
 
+### Code of conduct
+
+View [Code of conduct](https://github.com/lablup/backend.ai-console/blob/main/CODE_OF_CONDUCT.md) for community guidelines.
+
 ### Initializing
 
 ```
