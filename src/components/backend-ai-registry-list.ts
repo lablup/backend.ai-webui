@@ -116,6 +116,13 @@ class BackendAIRegistryList extends BackendAIPage {
           height: 30px;
           --mdc-list-item-graphic-margin: 0px;
         }
+
+        input#registry-password {
+          border: none;
+          background: none;
+          pointer-events: none;
+        }
+
       `];
   }
 
@@ -518,7 +525,9 @@ class BackendAIRegistryList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t("registry.Password")}">
           <template>
-            <div> [[item.password]] </div>
+            <div>
+              <input type="password" id="registry-password" readonly value="[[item.password]]"/>
+            </div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="0" width="60px" header="${_t("general.Enabled")}" .renderer=${this.boundIsEnabledRenderer}></vaadin-grid-column>
