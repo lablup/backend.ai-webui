@@ -60,7 +60,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Array}) compute_sessions = Array();
   @property({type: Array}) terminationQueue = Array();
   @property({type: String}) filterAccessKey = '';
-  @property({type: String}) sessionNameField = 'session_name';
+  @property({type: String}) sessionNameField = 'name';
   @property({type: Array}) appSupportList = Array();
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
@@ -435,9 +435,15 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }
+    // let fields = [
+    //   "id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
+    //   "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key", "mounts"
+    // ];
+
+    // excepted fields: cpu_used, io_read_bytes, io_write_bytes
     let fields = [
-      "id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
-      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key", "mounts"
+      "id", "name", "image", "created_at", "terminated_at", "status", "status_info", "service_ports",
+      "occupied_slots", "access_key", "mounts",
     ];
     if (this.enableScalingGroup) {
       fields.push("scaling_group");
@@ -470,7 +476,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         Object.keys(sessions).map((objectKey, index) => {
           let session = sessions[objectKey];
           let occupied_slots = JSON.parse(session.occupied_slots);
-          const kernelImage = sessions[objectKey].lang.split('/')[2] || sessions[objectKey].lang.split('/')[1];
+          const kernelImage = sessions[objectKey].image.split('/')[2] || sessions[objectKey].image.split('/')[1];
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
@@ -511,8 +517,8 @@ export default class BackendAiSessionList extends BackendAIPage {
             sessions[objectKey].cuda_fgpu_slot = parseFloat(occupied_slots['cuda.shares']).toFixed(2);
           }
           sessions[objectKey].kernel_image = kernelImage;
-          sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
-          const specs = session.lang.split('/');
+          sessions[objectKey].sessionTags = this._getKernelInfo(session.image);
+          const specs = session.image.split('/');
           const tag = specs[specs.length - 1].split(':')[1]
           let tags = tag.split('-');
           if (tags[1] !== undefined) {
@@ -1000,6 +1006,8 @@ export default class BackendAiSessionList extends BackendAIPage {
   _createMountedFolderDropdown(e, mounts) {
     const menuButton: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as any;
+    const regExp = /[\[\]\,\'\"]/g
+
     menu.anchor = menuButton;
     menu.className = 'dropdown-menu';
     menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
@@ -1012,7 +1020,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       mounts.map((key, index) => {
         if (index > 0) {
           let mountedFolderItem = document.createElement('mwc-list-item');
-          mountedFolderItem.innerHTML = key[0];
+          mountedFolderItem.innerHTML = key.replace(regExp, '').split(' ')[0];
           mountedFolderItem.style.height = '25px';
           mountedFolderItem.style.fontWeight = '400';
           mountedFolderItem.style.fontSize = '14px';
@@ -1180,7 +1188,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                   @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
                   @mouseleave="${() => this._removeMountedFolderDropdown()}"
                 >
-                  ${rowData.item.mounts[0][0]}
+                  ${rowData.item.mounts[0].replace(/[\[\]\,\'\"]/g, '').split(' ')[0]}
                 </button>
               ` : html``}
             <!-- <span>${rowData.item.storage_capacity}</span> -->
@@ -1189,7 +1197,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         </div>
      `, root
     );
-  }
+  };
 
   /**
    * Render usages - cpu_used_time, io_read_bytes_mb, and io_write_bytes_mb

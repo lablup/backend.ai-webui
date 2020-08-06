@@ -398,7 +398,9 @@ class Client {
     }
     _updateFieldCompatibilityByAPIVersion(fields) {
         const v4_replacements = {
-            'session_name': 'sess_id'
+            // 'session_name': 'sess_id'
+            'session_name': 'name',
+            'lang': 'image',
         };
         if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
             Object.keys(v4_replacements).forEach(key => {
@@ -1883,22 +1885,12 @@ class ComputeSession {
     async list(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
         fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
         let q, v;
-        if (this.client._apiVersionMajor < 5) {
-            q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
-        compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
-          items { ${fields.join(" ")}}
-          total_count
-        }
-      }`;
-        }
-        else {
-            q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
-        legacy_compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
-          items { ${fields.join(" ")}}
-          total_count
-        }
-      }`;
-        }
+        q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
+        items { ${fields.join(" ")}}
+        total_count
+      }
+    }`;
         v = {
             'limit': limit,
             'offset': offset,
