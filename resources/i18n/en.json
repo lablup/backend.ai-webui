@@ -187,7 +187,9 @@
         "Delete": "Delete",
         "Dismiss": "Dismiss",
         "Close": "Close",
-        "Confirm": "Confirm"
+        "Confirm": "Confirm",
+        "Generate": "Generate",
+        "Refresh": "Refresh"
     },
     "agent": {
         "Endpoint": "Endpoint",

@@ -186,7 +186,9 @@
         "Delete": "삭제",
         "Dismiss": "해제",
         "Close": "닫기",
-        "Confirm": "확인"
+        "Confirm": "확인",
+        "Generate": "생성",
+        "Refresh": "갱신"
     },
     "agent": {
         "Endpoint": "엔드포인트",

@@ -881,10 +881,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       <span slot="title">${_t("usersettings.SSHKeypairManagement")}</span>
       <div slot="content" class="center-justified layout flex horizontal">
         <wl-button class="ssh-keypair" @click="${this._openSSHKeypairGenerationDialog}">
-        generate
+        ${_t("button.Generate")}
         </wl-button>
         <wl-button class="ssh-keypair" @click="${this._openSSHKeypairRefreshDialog}">
-        refresh
+        ${_t("button.Refresh")}
         </wl-button>
       </div>
       </backend-ai-dialog>
