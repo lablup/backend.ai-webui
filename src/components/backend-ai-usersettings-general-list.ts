@@ -81,6 +81,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           margin-right: 5px;
         }
 
+        span[slot="title"] {
+          font-weight: bold;
+        }
+
         div.description,
         span.description {
           font-size: 11px;
@@ -178,6 +182,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         wl-button.ssh-keypair {
           margin: 10px;
         }
+        
+        wl-button.copy {
+          --button-font-size: 10px;
+        }
 
         wl-button#ssh-keypair-details {
           --button-bg: none;
@@ -186,6 +194,16 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         wl-icon#ssh-keypair-icon {
           color: rgba(51,76,142,1);
         };
+
+        wl-expansion.ssh-key-generation {
+          display: inline-block;
+          width: auto;
+        }
+
+        ::-webkit-scrollbar {
+          display:none; 
+        }
+
       `];
   }
 
@@ -600,14 +618,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   _openSSHKeypairGenerationDialog() {
+    this._refreshSSHKeypair();
     this.shadowRoot.querySelector('#generate-ssh-keypair-dialog').show();
   }
 
   async _openSSHKeypairRefreshDialog() {
     this.shadowRoot.querySelector('#refresh-keypair-confirm-dialog').show();
-    const p = globalThis.backendaiclient.fetchSSHKeypair();
-    p.then((resp) => {
-      // resp.text().then((text) => {console.log(text)});
+    const p = globalThis.backendaiclient.fetchSSHKeypair().then((resp) => {
       const dialog = this.shadowRoot.querySelector('#refresh-keypair-confirm-dialog');
       dialog.querySelector('#current-ssh-public-key').textContent = resp.ssh_public_key;
       dialog.show();
@@ -619,16 +636,18 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.shadowRoot.querySelector('#refresh-keypair-confirm-dialog').hide();
   }
 
+  _hideSSHKeypairGenerationDialog() {
+    this.shadowRoot.querySelector('#refresh-keypair-confirm-dialog').hide();
+  }
+
   _hideSSHKeypairDialog() {
-    this.shadowRoot.querySelector('#ssh-keypair-dialog').hide();
+    this.shadowRoot.querySelector('#generate-ssh-keypair-dialog').hide();
   }
 
   async _refreshSSHKeypair() {
     const p = globalThis.backendaiclient.refreshSSHKeypair();
     p.then((resp) => {
-      console.log(resp.ssh_public_key);
-      this._hideSSHKeypairConfirmDialog();
-      const sshKeyDialog = this.shadowRoot.querySelector('#ssh-keypair-dialog');
+      const sshKeyDialog = this.shadowRoot.querySelector('#generate-ssh-keypair-dialog');
       sshKeyDialog.querySelector('#ssh-public-key').textContent = resp.ssh_public_key;
       sshKeyDialog.querySelector('#ssh-private-key').textContent = resp.ssh_private_key;
       sshKeyDialog.show();
@@ -650,6 +669,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _cancelCurrentEditorChange() {
     this._updateSelectedRcFileName(this.prevRcfile);
     this._hideCurrentEditorChangeDialog();
+  }
+
+  _copySSHKey(keyName : string) {
+    if (keyName !== "") {
+      let copyText = this.shadowRoot.querySelector(keyName);
+      navigator.clipboard.writeText(copyText.textContent);
+    }
   }
 
   render() {
@@ -762,7 +788,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout setting-item">
-            <wl-button class="fg teal" outlined @click="${() => this._editBootstrapScript()}" style="margin-right:20px; background: none;">
+            <wl-button class="fg teal" outlined @click="${() => this._editBootstrapScript()}" style="margin-right:20px; background: none; display: none;">
               <wl-icon>edit</wl-icon>
               ${_t("usersettings.EditBootstrapScript")}
             </wl-button>
@@ -864,29 +890,42 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="generate-ssh-keypair-dialog" fixed backdrop persistent>
         <span slot="title">${_t("usersettings.SSHKeypairGeneration")}</span>
-        <div slot="content" style="max-width:500px">
-          <h4>Public Key</h4>
-          <pre id="ssh-public-key"></pre>
-          <h4>Private Key</h4>
-          <pre id="ssh-private-key"></pre>
-          <div style="color:crimson">You cannot get private key again. Store on your local disk if needed.</div>
+        <div slot="content" style="max-width:500px;">
+        <span slot="title">${_t("usersettings.PublicKey")}</span>
+          <div class="horizontal">
+              <pre id="ssh-public-key" style="max-width:50ch; white-space:nowrap; overflow:scroll;  display:inline-block;"></pre>
+            <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-public-key")}" style="display:inline-block;">
+              <wl-icon>content_copy</wl-icon>
+            </wl-button>
+          </div>
+          <span slot="title">${_t("usersettings.PrivateKey")}</span>
+          <div class="horizontal">
+              <pre id="ssh-private-key" style="max-width:50ch; white-space:nowrap; overflow:scroll; display:inline-block;"></pre>
+              <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-private-key")}" style="display:inline-block;">
+              <wl-icon>content_copy</wl-icon>
+            </wl-button>
+          </div>
+          <div style="color:crimson">${_t("usersettings.SSHKeypairGenerationWarning")}</div>
         </div>
         <div slot="footer">
-          <wl-button class="ok" @click="${this._hideSSHKeypairDialog}">Close</wl-button>
+          <wl-button class="ok" @click="${this._hideSSHKeypairDialog}">${_t("button.Close")}</wl-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="refresh-keypair-confirm-dialog" fixed backdrop persistent>
         <span slot="title">${_t("usersettings.SSHKeypairRefresh")}</span>
         <div slot="content" style="max-width:500px">
-          <p>This action cannot be undone. Do you want to proceed?</p>
-          <p>
-            Current public key:
-            <pre id="current-ssh-public-key"></pre>
-          </p>
+        <p>${_t("usersettings.CheckAgainDialog")}</p>
+        <span slot="title"> ${_t("usersettings.CurrentSSHPublicKey")}</span>
+        <p>
+          <pre id="current-ssh-public-key" style="max-width:50ch;white-space:pre-wrap;word-wrap:break-word;"></pre>
+          <wl-button class="copy" @click="${() => this._copySSHKey("#current-ssh-public-key")}">
+            <wl-icon>content_copy</wl-icon>
+          </wl-button>
+        </p>
         </div>
         <div slot="footer">
-          <wl-button class="cancel" inverted flat @click="${this._hideSSHKeypairConfirmDialog}">Cancel</wl-button>
-          <wl-button class="ok" @click="${this._refreshSSHKeypair}">Confirm</wl-button>
+          <wl-button class="cancel" inverted flat @click="${this._hideSSHKeypairConfirmDialog}">${_t("button.Cancel")}</wl-button>
+          <wl-button class="ok" @click="${this._refreshSSHKeypair}">${_t("button.Confirm")}</wl-button>
         </div>
       </backend-ai-dialog>
     `;

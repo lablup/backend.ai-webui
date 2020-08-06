@@ -185,7 +185,8 @@
         "Update": "업데이트",
         "Delete": "삭제",
         "Dismiss": "해제",
-        "Close": "닫기"
+        "Close": "닫기",
+        "Confirm": "확인"
     },
     "agent": {
         "Endpoint": "엔드포인트",
@@ -423,7 +424,12 @@
         "SSHKeypairManagement": "SSH 키페어 관리",
         "DescSSHKeypairManagement": "이미 존재하는 SSH 키페어를 갱신하거나, 없을 경우 랜덤으로 생성할 수 있습니다. (커스텀 키페어 등록 기능은 추후 추가될 예정입니다.)",
         "SSHKeypairGeneration": "SSH 키페어 생성",
-        "SSHKeypairRefresh": "정말로 SSH Keypair를 갱신하시겠습니까?",
+        "SSHKeypairRefresh": "정말로 SSH 키페어를 갱신하시겠습니까?",
+        "CheckAgainDialog": "이 선택은 취소할 수 없습니다. 정말 진행하시겠습니까?",
+        "CurrentSSHPublicKey": "현재 공개 키: ",
+        "SSHKeypairGenerationWarning": "비밀 키는 다시 받을 수 없습니다. 필요할 경우 로컬 디스크에 저장하시기 바랍니다.",
+        "PublicKey": "공개 키",
+        "PrivateKey": "비밀 키",
         "InvalidPortNumber": "포트 번호는 1025~65534 사이의 양수여야 합니다."
     },
     "logs": {

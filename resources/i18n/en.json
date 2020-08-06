@@ -186,7 +186,8 @@
         "Update": "Update",
         "Delete": "Delete",
         "Dismiss": "Dismiss",
-        "Close": "Close"
+        "Close": "Close",
+        "Confirm": "Confirm"
     },
     "agent": {
         "Endpoint": "Endpoint",
@@ -426,6 +427,11 @@
         "DescSSHKeypairManagement": "Refresh SSH Keypair already exists or generate SSH Keypair by random. (Custom keypair registration may be applied in future.)",
         "SSHKeypairGeneration": "SSH Keypair Generation",
         "SSHKeypairRefresh": "Are you sure to refresh your SSH keypair?",
+        "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
+        "CurrentSSHPublicKey": "Current public key: ",
+        "SSHKeypairGenerationWarning": "You cannot get private key again. Store on your local disk if needed.",
+        "PublicKey": "Public Key",
+        "PrivateKey": "Private Key",
         "InvalidPortNumber": "Port number should be positive number between 1025~65534"
     },
     "logs": {
