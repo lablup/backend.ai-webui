@@ -1020,6 +1020,22 @@ class Client {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text + "-jsSDK";
   }
+
+  /**
+   * fetch SSH Keypair from container
+   */
+  async fetchSSHKeypair() {
+    let rqst = this.newSignedRequest('GET', `/auth/ssh-keypair`, null);
+    return this._wrapWithPromise(rqst, true);
+  }
+
+  /**
+   * refresh SSH Keypair from container
+   */
+  async refreshSSHKeypair() {
+    let rqst = this.newSignedRequest('PATCH', `/auth/ssh-keypair`, null);
+    return this._wrapWithPromise(rqst, true);
+  }
 }
 
 class ResourcePreset {
