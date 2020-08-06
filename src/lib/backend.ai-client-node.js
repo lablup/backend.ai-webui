@@ -398,9 +398,7 @@ class Client {
     }
     _updateFieldCompatibilityByAPIVersion(fields) {
         const v4_replacements = {
-            // 'session_name': 'sess_id'
-            'session_name': 'name',
-            'lang': 'image',
+            'session_name': 'sess_id'
         };
         if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
             Object.keys(v4_replacements).forEach(key => {
@@ -1882,7 +1880,7 @@ class ComputeSession {
      * @param {number} offset - offset for item query. Useful for pagination.
      * @param {string} group - project group id to query. Default returns sessions from all groups.
      */
-    async list(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
+    async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
         fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
         let q, v;
         q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {

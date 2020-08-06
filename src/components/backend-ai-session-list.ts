@@ -60,7 +60,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Array}) compute_sessions = Array();
   @property({type: Array}) terminationQueue = Array();
   @property({type: String}) filterAccessKey = '';
-  @property({type: String}) sessionNameField = 'name';
+  @property({type: String}) sessionNameField = 'session_name';
   @property({type: Array}) appSupportList = Array();
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
@@ -435,15 +435,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }
-    // let fields = [
-    //   "id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
-    //   "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key", "mounts"
-    // ];
 
-    // excepted fields: cpu_used, io_read_bytes, io_write_bytes
     let fields = [
-      "id", "name", "image", "created_at", "terminated_at", "status", "status_info", "service_ports",
-      "occupied_slots", "access_key", "mounts",
+      "id", "name", "image",
+      "created_at", "terminated_at", "status", "status_info",
+      "service_ports", "mounts",
+      "occupied_slots", "access_key",
     ];
     if (this.enableScalingGroup) {
       fields.push("scaling_group");
@@ -452,15 +449,15 @@ export default class BackendAiSessionList extends BackendAIPage {
       fields.push("user_email");
     }
     if (globalThis.backendaiclient.is_superadmin) {
-      fields.push("agent");
+      fields.push("containers {container_id agent occupied_slots live_stat last_stat}");
+    } else {
+      fields.push("containers {container_id occupied_slots live_stat last_stat}");
     }
     let group_id = globalThis.backendaiclient.current_group_id();
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
+      console.log(response)
       this.spinner.hide();
-      if (!response.compute_session_list && response.legacy_compute_session_list) {
-        response.compute_session_list = response.legacy_compute_session_list;
-      }
       this.total_session_count = response.compute_session_list.total_count;
       if (this.total_session_count === 0) {
         this.total_session_count = 1;
@@ -474,6 +471,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           previous_session_keys.push(previous_sessions[objectKey][this.sessionNameField]);
         });
         Object.keys(sessions).map((objectKey, index) => {
+          console.log(objectKey, sessions[objectKey])
           let session = sessions[objectKey];
           let occupied_slots = JSON.parse(session.occupied_slots);
           const kernelImage = sessions[objectKey].image.split('/')[2] || sessions[objectKey].image.split('/')[1];
@@ -481,11 +479,29 @@ export default class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
           // Readable text
-          sessions[objectKey].cpu_used_time = this._automaticScaledTime(sessions[objectKey].cpu_used);
           sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
           sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
-          sessions[objectKey].io_read_bytes_mb = this._byteToMB(sessions[objectKey].io_read_bytes);
-          sessions[objectKey].io_write_bytes_mb = this._byteToMB(sessions[objectKey].io_write_bytes);
+          if (sessions[objectKey].containers && sessions[objectKey].containers.length > 0) {
+            // Assume a session has only one container (no consideration on multi-container bundling)
+            const container = sessions[objectKey].containers[0];
+            const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
+            sessions[objectKey].agent = container.agent
+            if (liveStat && liveStat.cpu_used) {
+              sessions[objectKey].cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
+            } else {
+              sessions[objectKey].cpu_used_time = this._automaticScaledTime(0);
+            }
+            if (liveStat && liveStat.io_read) {
+              sessions[objectKey].io_read_bytes_mb = this._automaticScaledTime(liveStat.io_read.capacity);
+            } else {
+              sessions[objectKey].io_read_bytes_mb = 0;
+            }
+            if (liveStat && liveStat.io_write) {
+              sessions[objectKey].io_write_bytes_mb = this._automaticScaledTime(liveStat.io_write.capacity);
+            } else {
+              sessions[objectKey].io_write_bytes_mb = 0;
+            }
+          }
           let service_info = JSON.parse(sessions[objectKey].service_ports);
           if (Array.isArray(service_info) === true) {
             sessions[objectKey].app_services = service_info.map(a => a.name);
