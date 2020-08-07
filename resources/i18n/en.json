@@ -186,7 +186,9 @@
         "Update": "Update",
         "Delete": "Delete",
         "Dismiss": "Dismiss",
-        "Close": "Close"
+        "Close": "Close",
+        "Confirm": "Confirm",
+        "Generate": "Generate"
     },
     "agent": {
         "Endpoint": "Endpoint",
@@ -440,10 +442,17 @@
         "DescSSHKeypairManagement": "Refresh SSH Keypair already exists or generate SSH Keypair by random. (Custom keypair registration may be applied in future.)",
         "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
         "CurrentSSHPublicKey": "Current public key: ",
+        "SSHKeypairGeneration": "SSH Keypair Generation",
+        "SSHKeypairGenerationMethod": "Keypair Generation Method",
+        "SelectSSHKeypairGenerationMethod": "Select Keypair Generation method.",
         "SSHKeypairGenerationWarning": "You cannot get private key again. Store on your local disk if needed.",
+        "SSHKeypairGenerationError": "Cannot Generate SSH Keypair, please select the generation mode.",
         "PublicKey": "Public Key",
         "PrivateKey": "Private Key",
-        "InvalidPortNumber": "Port number should be positive number between 1025~65534"
+        "InvalidPortNumber": "Port number should be positive number between 1025~65534",
+        "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard.",
+        "Random": "Random",
+        "Custom": "Custom"
     },
     "logs": {
         "LogMessages": "Log Messages",
