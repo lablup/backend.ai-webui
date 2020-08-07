@@ -301,6 +301,7 @@
       "TypeNewFolderName": "새 폴더 이름을 입력하세요",
       "Rename": "이름 변경",
       "FolderRenamed": "폴더 이름이 변경되었습니다",
+      "FolderNameMismatched": "폴더 이름을 정확하게 입력하세요",
       "FolderDeleted": "폴더가 삭제되었습니다",
       "NumberOfFiles": "파일 갯수",
       "Ownership": "소유",
@@ -332,7 +333,20 @@
       "Foldername": "폴더 이름",
       "EnterEmailAddress": "E-mail 주소를 입력하세요",
       "DownloadFile": "파일 다운로드",
-      "TouchToDownload": "터치하여 다운로드하세요"
+      "TouchToDownload": "터치하여 다운로드하세요",
+      "ValueRequired": "값을 입력해주세요",
+      "ValueShouldBeStarted": "경로는 .(점), 문자 또는 숫자만 포함해야 합니다"
+    },
+    "invitation": {
+      "EnterEmail": "이메일을 입력하세요",
+      "NoValidEmails": "정상적인 이메일을 입력해주세요",
+      "Invited": "초대장을 보냈습니다",
+      "NoOneWasInvited": "초대장이 이미 존재하여 초대에 실패했습니다",
+      "InvitationError": "초대가 실패했습니다. 이미 초대된 사용자일 수 있습니다."
+    },
+    "permission": {
+      "NoChanges": "변경 사항이 없습니다",
+      "PermissionModified": "권한이 변경되었습니다"
     },
     "NoStorageDescriptionFound": "별도 정보가 없습니다."
   },
