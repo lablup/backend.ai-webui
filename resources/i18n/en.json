@@ -188,8 +188,7 @@
         "Dismiss": "Dismiss",
         "Close": "Close",
         "Confirm": "Confirm",
-        "Generate": "Generate",
-        "Refresh": "Refresh"
+        "Generate": "Generate"
     },
     "agent": {
         "Endpoint": "Endpoint",
@@ -306,6 +305,7 @@
             "FolderCreated": "Folder created",
             "Rename": "Rename",
             "FolderRenamed": "Folder renamed",
+            "FolderNameMismatched": "Folder name mismmatched",
             "FolderDeleted": "Folder deleted",
             "NumberOfFiles": "Number of files",
             "Ownership": "Ownership",
@@ -337,7 +337,20 @@
             "Foldername": "Folder name",
             "EnterEmailAddress": "Enter E-Mail address",
             "DownloadFile": "Download File",
-            "TouchToDownload": "Touch to Download file"
+            "TouchToDownload": "Touch to Download file",
+            "ValueRequired": "Value is required",
+            "ValueShouldBeStarted": "Path should start with .(dot) or letters, numbers only."
+        },
+        "invitation": {
+            "EnterEmail": "Enter email address",
+            "NoValidEmails": "No valid emails were entered",
+            "Invited": "Successfully invited",
+            "NoOneWasInvited": "No one invited since invitation already exists",
+            "InvitationError": "Invitation failed. User may already be invited."
+        },
+        "permission": {
+            "NoChanges": "No changes made",
+            "PermissionModified": "Permission updated"
         },
         "NoStorageDescriptionFound": "No description."
     },
@@ -427,8 +440,6 @@
         "DescPreferredSSHPort": "Use this value as an SSH/SFTP port if possible. <br />If the port is already in use, assign another random port to SSH/SFTP. Leave blank to auto-assign.",
         "SSHKeypairManagement": "SSH Keypair Management",
         "DescSSHKeypairManagement": "Refresh SSH Keypair already exists or generate SSH Keypair by random. (Custom keypair registration may be applied in future.)",
-        "SSHKeypairGeneration": "SSH Keypair Generation",
-        "SSHKeypairRefresh": "Are you sure to refresh your SSH keypair?",
         "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
         "CurrentSSHPublicKey": "Current public key: ",
         "SSHKeypairGenerationWarning": "You cannot get private key again. Store on your local disk if needed.",
