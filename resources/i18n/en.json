@@ -137,7 +137,8 @@
       "ThisSettingTakesPrecedence": "Note: This setting takes precedence",
       "CustomResourceApplied": "Custom resource is applied",
       "PleaseChooseFoldersToMount": "Please Choose Folders To Mount",
-      "StartImportedNotebook": "Start Imported Notebook"
+      "StartImportedNotebook": "Start Imported Notebook",
+      "SessionNameAllowCondition": "Session name only allows at least 4 characters without any whitespaces."
     },
     "Running": "Running",
     "Finished": "Finished",

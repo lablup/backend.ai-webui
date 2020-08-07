@@ -777,6 +777,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let kernel = selectedItem.id;
     let version = this.shadowRoot.querySelector('#version').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
+    let isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
     let vfolder = this.shadowRoot.querySelector('#vfolder').value;
     this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
     this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
@@ -789,6 +790,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.notification.show();
       return;
     }
+    if (!isSessionNameValid) {
+      this.notification.text = _text("session.launcher.SessionNameAllowCondition");
+      this.notification.show();
+      return;
+    }
+
     if (kernel === "" || version === "" || version === "Not Selected") {
       this.notification.text = _text("session.launcher.MustSpecifyVersion");
       this.notification.show();
@@ -1853,7 +1860,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </mwc-multi-select>
             <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
                            pattern="[a-zA-Z0-9_-]{4,}" fullwidth
-                           validationMessage="4 or more characters / no whitespace."
+                           validationMessage="${_t("session.launcher.SessionNameAllowCondition")}"
                            style="margin-left:5px;">
             </mwc-textfield>
           </div>
