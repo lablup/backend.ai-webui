@@ -694,9 +694,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _copySSHKey(keyName : string) {
     if (keyName !== "") {
-      const selectedMethod: string = this.shadowRoot.querySelector('#keypair-generation-dropdown').value;
       let copyText: string = this.shadowRoot.querySelector(keyName).value;
-      if (copyText.length == 0 || selectedMethod.length == 0) {
+      if (copyText.length == 0) {
         this.notification.text = _text("usersettings.SSHKeypairGenerationError");
         this.notification.show();
       }
