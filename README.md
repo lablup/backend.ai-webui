@@ -64,6 +64,9 @@ Backend.AI console focuses to
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
     * Needs backend.ai-wsproxy package
  * Service information
+    * Component compatibility 
+    * Security check
+    * License information
  * Work with console server (github/lablup/backend.ai-console-server)
     * Delegate login to console server
     * Support userid / password login
