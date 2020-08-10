@@ -187,7 +187,9 @@
         "Dismiss": "해제",
         "Close": "닫기",
         "Confirm": "확인",
-        "Generate": "생성"
+        "Generate": "생성하기",
+        "Continue": "계속"
+
 
     },
     "agent": {
@@ -446,6 +448,7 @@
         "SelectSSHKeypairGenerationMethod": "키페어 생성 방법을 선택해주세요.",
         "SSHKeypairGenerationWarning": "비밀 키는 다시 받을 수 없습니다. 필요한 경우 로컬 디스크에 저장하시기 바랍니다.",
         "SSHKeypairGenerationError": "SSH 키페어를 생성할 수 없습니다. 생성 방법을 선택해주세요.",
+        "ClearSSHKeypairInput": "지금까지 작성된 SSH 키페어는 삭제될 예정입니다. 계속하겠습니까?",
         "PublicKey": "공개 키",
         "PrivateKey": "비밀 키",
         "InvalidPortNumber": "포트 번호는 1025~65534 사이의 양수여야 합니다.",

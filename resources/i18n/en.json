@@ -447,6 +447,7 @@
         "SelectSSHKeypairGenerationMethod": "Select Keypair Generation method.",
         "SSHKeypairGenerationWarning": "You cannot get private key again. Store on your local disk if needed.",
         "SSHKeypairGenerationError": "Cannot Generate SSH Keypair, please select the generation mode.",
+        "ClearSSHKeypairInput": "Written SSH Keypair will be removed. Are you sure you want to continue?",
         "PublicKey": "Public Key",
         "PrivateKey": "Private Key",
         "InvalidPortNumber": "Port number should be positive number between 1025~65534",
