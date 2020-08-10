@@ -1011,7 +1011,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <div class="horizontal layout">
             <mwc-select id="keypair-generation-dropdown" outlined required label="${_t("usersettings.SelectSSHKeypairGenerationMethod")}" @opened=${(e) => {this.prevSSHKeypairGenerationMethod = e.target.index;}} @selected=${this._toggleSSHKeypairInput}>
               <mwc-list-item id="random-keypair-generation" value="${_t("usersettings.Random")}">${_t("usersettings.Random")}</mwc-list-item>
-              <mwc-list-item id="custom-keypair-generation" value="${_t("usersettings.Custom")}">${_t("usersettings.Custom")}</mwc-list-item>
+              <mwc-list-item id="custom-keypair-generation" style="display:none;" value="${_t("usersettings.Custom")}">${_t("usersettings.Custom")}</mwc-list-item>
             </mwc-select>
             <wl-button @click="${this._generateSSHKeypair}" style="max-height:20px;">${_t("button.Generate")}</wl-button>
           </div>
