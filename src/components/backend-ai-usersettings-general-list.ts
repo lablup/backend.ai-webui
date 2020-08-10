@@ -133,6 +133,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           white-space:pre-wrap;
           word-wrap:break-word;
           font-size:10px;
+          scrollbar-width: none; /* firefox */
         }
 
         #bootstrap-dialog wl-button {
@@ -224,7 +225,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         };
 
         ::-webkit-scrollbar {
-          display:none; 
+          display:none; /* Chrome and Safari */
         }
       `];
   }
@@ -643,6 +644,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.shadowRoot.querySelector('#generate-ssh-keypair-dialog').show();
   }
 
+  /**
+   * Fetch Existing Public key from Server.
+   * */
   async _openSSHKeypairRefreshDialog() {
     globalThis.backendaiclient.fetchSSHKeypair().then((resp) => {
       const dialog = this.shadowRoot.querySelector('#ssh-keypair-management-dialog');
@@ -672,6 +676,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.shadowRoot.querySelector('#clear-ssh-keypair-dialog').hide();
   }
 
+  /**
+   * Fetch Randomly refreshed keypair generated from server.
+   * */
   async _refreshSSHKeypair() {
     const p = globalThis.backendaiclient.refreshSSHKeypair();
     p.then((resp) => {
@@ -681,6 +688,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     });
   }
 
+  /**
+   *  Generate SSH Keypair By Selected method (Custom or Random)
+   */
   _generateSSHKeypair() {
     const generateMethodElement = this.shadowRoot.querySelector('#keypair-generation-dropdown');
     if (generateMethodElement.selected !== null) {
@@ -738,10 +748,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     if (this.shadowRoot.querySelector('#clear-ssh-keypair-dialog').open) {
       this._hideSSHKeypairClearDialog();
     }
-    
-
   }
 
+  /**
+   * Toggle readonly input in SSH keypair.
+   */
   _toggleSSHKeypairInput() {
     const selected: string = this.shadowRoot.querySelector('#keypair-generation-dropdown').value;
     const sshPublicKeyInput = this.shadowRoot.querySelector('#ssh-public-key').value;
@@ -762,6 +773,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
+ /**
+   * Copy SSH Keypair to clipboard
+   *
+   * @param {string} keyName - identify ssh-public-key or ssh-private-key
+   * */
   _copySSHKey(keyName : string) {
     if (keyName !== "") {
       let copyText: string = this.shadowRoot.querySelector(keyName).value;
@@ -1007,28 +1023,29 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       <backend-ai-dialog id="generate-ssh-keypair-dialog" fixed persistent>
         <span slot="title">${_t("usersettings.SSHKeypairGeneration")}</span>
         <div slot="content" style="max-width:500px;">
-        <div class="vertical layout">
-          <div class="horizontal layout">
-            <mwc-select id="keypair-generation-dropdown" outlined required label="${_t("usersettings.SelectSSHKeypairGenerationMethod")}" @opened=${(e) => {this.prevSSHKeypairGenerationMethod = e.target.index;}} @selected=${this._toggleSSHKeypairInput}>
-              <mwc-list-item id="random-keypair-generation" value="${_t("usersettings.Random")}">${_t("usersettings.Random")}</mwc-list-item>
-              <mwc-list-item id="custom-keypair-generation" style="display:none;" value="${_t("usersettings.Custom")}">${_t("usersettings.Custom")}</mwc-list-item>
-            </mwc-select>
-            <wl-button @click="${this._generateSSHKeypair}" style="max-height:20px;">${_t("button.Generate")}</wl-button>
-          </div>
-          <span slot="title">${_t("usersettings.PublicKey")}</span>
+          <div class="vertical layout">
+            <div class="horizontal layout">
+              <mwc-select id="keypair-generation-dropdown" outlined required label="${_t("usersettings.SelectSSHKeypairGenerationMethod")}"
+                          @opened=${(e) => {this.prevSSHKeypairGenerationMethod = e.target.index;}} @selected=${this._toggleSSHKeypairInput}>
+                <mwc-list-item id="random-keypair-generation" value="${_t("usersettings.Random")}">${_t("usersettings.Random")}</mwc-list-item>
+                <mwc-list-item id="custom-keypair-generation" style="display:none;" value="${_t("usersettings.Custom")}">${_t("usersettings.Custom")}</mwc-list-item>
+              </mwc-select>
+              <wl-button @click="${this._generateSSHKeypair}" style="max-height:20px;">${_t("button.Generate")}</wl-button>
+            </div>
+            <span slot="title">${_t("usersettings.PublicKey")}</span>
             <div class="horizontal layout flex">
-                <mwc-textarea class="ssh-keypair" id="ssh-public-key" outlined></mwc-textarea>
+              <mwc-textarea class="ssh-keypair" id="ssh-public-key" outlined></mwc-textarea>
               <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-public-key")}">
                 <wl-icon>content_copy</wl-icon>
               </wl-button>
             </div>
             <span slot="title">${_t("usersettings.PrivateKey")}</span>
-            <div class="horizontal layout flex">
+              <div class="horizontal layout flex">
                 <mwc-textarea class="ssh-keypair" id="ssh-private-key" outlined></mwc-textarea>
                 <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-private-key")}">
-                <wl-icon>content_copy</wl-icon>
-              </wl-button>
-            </div>
+                  <wl-icon>content_copy</wl-icon>
+                </wl-button>
+              </div>
             <div style="color:crimson">${_t("usersettings.SSHKeypairGenerationWarning")}</div>
           </div>
         </div>
@@ -1039,9 +1056,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       <backend-ai-dialog id="clear-ssh-keypair-dialog" fixed persistent>
         <span slot="title">${_t("usersettings.ClearSSHKeypairInput")}</span>
         <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${this._discardCurrentKeypairGenerationMethod}">${_t("button.Cancel")}</wl-button>
-            <wl-button class="ok" @click="${this._clearSSHKeypairText}">${_t("button.Okay")}</wl-button>
-          </div>
+          <wl-button class="cancel" inverted flat @click="${this._discardCurrentKeypairGenerationMethod}">${_t("button.Cancel")}</wl-button>
+          <wl-button class="ok" @click="${this._clearSSHKeypairText}">${_t("button.Okay")}</wl-button>
+        </div>
       </backend-ai-dialog>
     `;
   }
