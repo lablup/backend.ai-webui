@@ -123,6 +123,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           width: 75px;
         }
 
+
+        .ssh-keypair {
+          margin-right:10px;
+          width:450px;
+          min-height:100px;
+          overflow-y:scroll;
+          white-space:pre-wrap;
+          word-wrap:break-word;
+          font-size:10px;
+        }
+
         #bootstrap-dialog wl-button {
           margin-left: 5px;
         }
@@ -170,6 +181,16 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --mdc-list-item-graphic-margin: 0px;
         }
 
+        mwc-select#keypair-generation-dropdown {
+          width: 440px;
+          margin-right: 10px;
+          --mdc-theme-primary: var(--paper-indigo-400);
+        }
+
+        mwc-textarea {
+          --mdc-theme-primary: var(--paper-indigo-400);
+        }
+
         wl-icon.warning {
           --icon-size: 16px;
           padding: 0;
@@ -188,6 +209,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         
         wl-button.copy {
           --button-font-size: 10px;
+          display: inline-block;
           max-width: 15px;
           max-height: 15px;
         }
@@ -197,7 +219,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         wl-icon#ssh-keypair-icon {
-          color: rgba(51,76,142,1);
+          color: var(--paper-indigo-700);
         };
 
         ::-webkit-scrollbar {
@@ -924,7 +946,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <span slot="title">${_t("usersettings.SSHKeypairManagement")}</span>
           <div slot="content" style="max-width:500px">
             <span slot="title"> ${_t("usersettings.CurrentSSHPublicKey")}</span>
-            <mwc-textarea class="ssh-keypair" id="current-ssh-public-key" outlined style="margin-right:10px; width:420px; min-height:100px; overflow-y:scroll; white-space:pre-wrap; word-wrap:break-word; font-size:10px;"></mwc-textarea>
+            <mwc-textarea class="ssh-keypair" id="current-ssh-public-key" outlined></mwc-textarea>
             <wl-button class="copy" @click="${() => this._copySSHKey("#current-ssh-public-key")}">
               <wl-icon>content_copy</wl-icon>
             </wl-button>
@@ -939,7 +961,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <div slot="content" style="max-width:500px;">
         <div class="vertical layout">
           <div class="horizontal layout">
-            <mwc-select id="keypair-generation-dropdown" style="width:420px;margin-right:10px;" outlined required label="${_t("usersettings.SelectSSHKeypairGenerationMethod")}">
+            <mwc-select id="keypair-generation-dropdown" outlined required label="${_t("usersettings.SelectSSHKeypairGenerationMethod")}">
               <mwc-list-item id="random-keypair-generation" value="${_t("usersettings.Random")}">${_t("usersettings.Random")}</mwc-list-item>
               <mwc-list-item id="custom-keypair-generation" style="display:none;" value="${_t("usersettings.Custom")}">${_t("usersettings.Custom")}</mwc-list-item>
             </mwc-select>
@@ -947,15 +969,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
           <span slot="title">${_t("usersettings.PublicKey")}</span>
             <div class="horizontal layout flex">
-                <mwc-textarea class="ssh-keypair" id="ssh-public-key" outlined style="margin-right:10px; width:420px; min-height:100px; overflow-y:scroll; white-space:pre-wrap; word-wrap:break-word; font-size:10px;"></mwc-textarea>
-              <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-public-key")}" style="display:inline-block;">
+                <mwc-textarea class="ssh-keypair" id="ssh-public-key" outlined></mwc-textarea>
+              <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-public-key")}">
                 <wl-icon>content_copy</wl-icon>
               </wl-button>
             </div>
             <span slot="title">${_t("usersettings.PrivateKey")}</span>
             <div class="horizontal layout flex">
-                <mwc-textarea class="ssh-keypair" id="ssh-private-key" outlined style="margin-right:10px; width:420px; min-height:100px; overflow-y:scroll; white-space:pre-wrap; word-wrap:break-word;"></mwc-textarea>
-                <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-private-key")}" style="display:inline-block;">
+                <mwc-textarea class="ssh-keypair" id="ssh-private-key" outlined></mwc-textarea>
+                <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-private-key")}">
                 <wl-icon>content_copy</wl-icon>
               </wl-button>
             </div>
