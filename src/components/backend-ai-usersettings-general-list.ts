@@ -87,6 +87,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           font-weight: bold;
           margin-top: 15px !important;
           margin-bottom: 15px;
+          display:inline-block;
         }
 
         div.description,
@@ -126,8 +127,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
 
         .ssh-keypair {
-          margin-right:20px;
-          width: 445px;
+          margin-right:10px;
+          width: 450px;
           min-height:100px;
           overflow-y:scroll;
           white-space:pre-wrap;
@@ -184,7 +185,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         mwc-select#keypair-generation-dropdown {
-          width: 420px;
+          width: 380px;
           margin-right: 10px;
           --mdc-theme-primary: var(--paper-indigo-400);
         }
@@ -206,14 +207,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         wl-button.ssh-keypair {
+          display: inline-block;
           margin: 10px;
         }
         
         wl-button.copy {
           --button-font-size: 10px;
           display: inline-block;
-          max-width: 15px;
-          max-height: 15px;
+          max-width: 15px !important;
+          max-height: 15px !important;
         }
 
         wl-button#ssh-keypair-details {
@@ -1010,7 +1012,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <span slot="title">${_t("usersettings.SSHKeypairManagement")}</span>
           <div slot="content" style="max-width:500px">
             <span slot="title"> ${_t("usersettings.CurrentSSHPublicKey")}</span>
-            <mwc-textarea class="ssh-keypair" id="current-ssh-public-key" outlined readonly></mwc-textarea>
+            <mwc-textarea class="ssh-keypair" style="width:450px;" id="current-ssh-public-key" outlined readonly></mwc-textarea>
             <wl-button class="copy" @click="${() => this._copySSHKey("#current-ssh-public-key")}">
               <wl-icon>content_copy</wl-icon>
             </wl-button>
@@ -1023,8 +1025,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       <backend-ai-dialog id="generate-ssh-keypair-dialog" fixed persistent>
         <span slot="title">${_t("usersettings.SSHKeypairGeneration")}</span>
         <div slot="content" style="max-width:500px;">
-          <div class="vertical layout">
-            <div class="horizontal layout">
+          <div class="vertical layout" style="display:inline-block;">
+            <div class="horizontal layout" style="display:inline-block;">
               <mwc-select id="keypair-generation-dropdown" outlined required label="${_t("usersettings.SelectSSHKeypairGenerationMethod")}"
                           @opened=${(e) => {this.prevSSHKeypairGenerationMethod = e.target.index;}} @selected=${this._toggleSSHKeypairInput}>
                 <mwc-list-item id="random-keypair-generation" value="${_t("usersettings.Random")}">${_t("usersettings.Random")}</mwc-list-item>
