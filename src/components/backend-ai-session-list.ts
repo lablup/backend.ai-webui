@@ -60,7 +60,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Array}) compute_sessions = Array();
   @property({type: Array}) terminationQueue = Array();
   @property({type: String}) filterAccessKey = '';
-  @property({type: String}) sessionNameField = 'session_name';
+  @property({type: String}) sessionNameField = 'name';
   @property({type: Array}) appSupportList = Array();
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
@@ -1382,7 +1382,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
 
     let group_id = globalThis.backendaiclient.current_group_id();
-    let fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info",
+    let fields = ["id", "name", "lang", "created_at", "terminated_at", "status", "status_info",
       "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"];
 
     if (this._connectionMode === "SESSION") {
