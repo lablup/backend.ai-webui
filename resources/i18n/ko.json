@@ -138,7 +138,7 @@
       "CustomResourceApplied": "사용자 설정 자원이 할당됨",
       "PleaseChooseFoldersToMount": "마운트할 폴더들을 선택하세요",
       "StartImportedNotebook": "가져온 노트북 열기",
-      "SessionNameAllowCondition": "세션 이름은 빈 칸 없이 최소 4자 이상이어야 합니다."
+      "SessionNameAllowCondition": "세션 이름은 공백없이 4글자 이상 영문/숫자만 입력 가능합니다."
     },
     "Running": "실행중",
     "Finished": "종료",
