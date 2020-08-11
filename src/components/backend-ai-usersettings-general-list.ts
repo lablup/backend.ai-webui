@@ -87,7 +87,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           font-weight: bold;
           margin-top: 15px !important;
           margin-bottom: 15px;
-          display:inline-block;
+          display: inline-block;
         }
 
         div.description,
@@ -127,13 +127,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
 
         .ssh-keypair {
-          margin-right:10px;
+          margin-right: 10px;
           width: 450px;
-          min-height:100px;
-          overflow-y:scroll;
-          white-space:pre-wrap;
-          word-wrap:break-word;
-          font-size:10px;
+          min-height: 100px;
+          overflow-y: scroll;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          font-size: 10px;
           scrollbar-width: none; /* firefox */
         }
 
@@ -227,7 +227,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         };
 
         ::-webkit-scrollbar {
-          display:none; /* Chrome and Safari */
+          display: none; /* Chrome and Safari */
         }
       `];
   }
@@ -1042,12 +1042,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               </wl-button>
             </div>
             <span slot="title">${_t("usersettings.PrivateKey")}</span>
-              <div class="horizontal layout flex">
-                <mwc-textarea class="ssh-keypair" id="ssh-private-key" outlined></mwc-textarea>
-                <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-private-key")}">
-                  <wl-icon>content_copy</wl-icon>
-                </wl-button>
-              </div>
+            <div class="horizontal layout flex">
+              <mwc-textarea class="ssh-keypair" id="ssh-private-key" outlined></mwc-textarea>
+              <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-private-key")}">
+                <wl-icon>content_copy</wl-icon>
+              </wl-button>
+            </div>
             <div style="color:crimson">${_t("usersettings.SSHKeypairGenerationWarning")}</div>
           </div>
         </div>
