@@ -926,7 +926,7 @@ class Client {
      * only ssh_public_key will be received.
      */
     async fetchSSHKeypair() {
-        let rqst = this.newSignedRequest('GET', `/auth/ssh-keypair`, null);
+        let rqst = this.newSignedRequest('GET', '/auth/ssh-keypair', null);
         return this._wrapWithPromise(rqst, false);
     }
     /**
@@ -934,7 +934,7 @@ class Client {
      * gets randomly generated keypair (both ssh_public_key and ssh_private_key) will be received.
      */
     async refreshSSHKeypair() {
-        let rqst = this.newSignedRequest('PATCH', `/auth/ssh-keypair`, null);
+        let rqst = this.newSignedRequest('PATCH', '/auth/ssh-keypair', null);
         return this._wrapWithPromise(rqst, false);
     }
 }
