@@ -17,7 +17,8 @@ AllowBetaFeatures = false
 blocklist = "summary,statistics" # Separated by comma.
 
 [wsproxy]
-proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
+proxyURL = "http://127.0.0.1:5050/"
+#proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
 #proxyBaseURL = ""
 autoPortSelection = true
 disableCertCheck = true
