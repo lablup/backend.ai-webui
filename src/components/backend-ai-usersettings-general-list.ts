@@ -640,6 +640,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     });
   }
 
+  _openSSHKeypairClearDialog() {
+    this.shadowRoot.querySelector('#clear-ssh-keypair-dialog').show();
+  }
+
   _hideSSHKeypairGenerationDialog() {
     this.shadowRoot.querySelector('#generate-ssh-keypair-dialog').hide();
     const updatedSSHPublicKey: string = this.shadowRoot.querySelector('#ssh-public-key').value;
@@ -653,6 +657,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.shadowRoot.querySelector('#ssh-keypair-management-dialog').hide();
   }
 
+  _hideSSHKeypairClearDialog() {
+    this.shadowRoot.querySelector('#clear-ssh-keypair-dialog').hide();
+  }
+
   /**
    * Fetch Randomly refreshed keypair generated from server.
    * */
@@ -664,6 +672,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       sshKeyDialog.querySelector('#ssh-private-key').value = resp.ssh_private_key;
       sshKeyDialog.show();
     });
+  }
+
+  _clearCurrentSSHKeypair() {
+    this._hideSSHKeypairClearDialog();
+    this._hideSSHKeypairGenerationDialog();
   }
 
   _discardCurrentEditorChange() {
@@ -926,11 +939,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </wl-button>
         </div>
         <div slot="footer">
-          <wl-button class="cancel" inverted flat @click="${this._hideSSHKeypairDialog}">${_t("button.Cancel")}</wl-button>
+          <wl-button class="cancel" inverted flat @click="${this._hideSSHKeypairDialog}">${_t("button.Close")}</wl-button>
           <wl-button class="ok" @click="${this._refreshSSHKeypair}">${_t("button.Generate")}</wl-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="generate-ssh-keypair-dialog" fixed persistent>
+      <backend-ai-dialog id="generate-ssh-keypair-dialog" fixed persistent noclosebutton>
         <span slot="title">${_t("usersettings.SSHKeypairGeneration")}</span>
         <div slot="content" style="max-width:500px;">
           <div class="vertical layout" style="display:inline-block;">
@@ -952,7 +965,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
         </div>
         <div slot="footer">
-          <wl-button class="ok" @click="${this._hideSSHKeypairGenerationDialog}">${_t("button.Close")}</wl-button>
+          <wl-button class="ok" @click="${this._openSSHKeypairClearDialog}">${_t("button.Close")}</wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="clear-ssh-keypair-dialog" fixed persistent>
+        <span slot="title">${_t("usersettings.ClearSSHKeypairInput")}</span>
+        <div slot="footer">
+          <wl-button class="cancel" inverted flat @click="${this._hideSSHKeypairClearDialog}">${_t("button.No")}</wl-button>
+          <wl-button class="ok" @click="${this._clearCurrentSSHKeypair}">${_t("button.Yes")}</wl-button>
         </div>
       </backend-ai-dialog>
     `;
