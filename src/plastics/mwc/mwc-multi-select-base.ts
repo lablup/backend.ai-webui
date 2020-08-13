@@ -475,7 +475,6 @@ export abstract class SelectBase extends FormElement {
         this.dispatchEvent(ev);
       },
       setSelectedText: (value) => this.selectedText = value,
-      // @ts-ignore
       isSelectAnchorFocused: () => {
         const selectAnchorElement = this.anchorElement;
 

@@ -33,14 +33,6 @@
            return;
          }
  
-@@ -465,6 +476,7 @@
-         this.dispatchEvent(ev);
-       },
-       setSelectedText: (value) => this.selectedText = value,
-+      // @ts-ignore
-       isSelectAnchorFocused: () => {
-         const selectAnchorElement = this.anchorElement;
- 
 @@ -709,8 +721,11 @@
      }
    }
