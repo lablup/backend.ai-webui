@@ -421,7 +421,6 @@ export abstract class SelectBase extends FormElement {
         return !!this.label;
       },
       floatLabel: (shouldFloat) => {
-        shouldFloat = this.selectedText !== '' ? true : false; // this is a temporary change for label floating.
         if (this.labelElement) {
           this.labelElement.floatingLabelFoundation.float(shouldFloat);
         }

@@ -17,14 +17,6 @@
              .fullwidth=${!this.naturalMenuWidth}
              .open=${this.menuOpen}
              .anchor=${this.anchorElement}
-@@ -418,6 +421,7 @@
-         return !!this.label;
-       },
-       floatLabel: (shouldFloat) => {
-+        shouldFloat = this.selectedText !== '' ? true : false; // this is a temporary change for label floating.
-         if (this.labelElement) {
-           this.labelElement.floatingLabelFoundation.float(shouldFloat);
-         }
 @@ -454,7 +458,14 @@
          }
        },
