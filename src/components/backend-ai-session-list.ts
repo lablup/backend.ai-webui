@@ -456,7 +456,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     let group_id = globalThis.backendaiclient.current_group_id();
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
-      console.log(response)
       this.spinner.hide();
       this.total_session_count = response.compute_session_list.total_count;
       if (this.total_session_count === 0) {
@@ -471,7 +470,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           previous_session_keys.push(previous_sessions[objectKey][this.sessionNameField]);
         });
         Object.keys(sessions).map((objectKey, index) => {
-          console.log(objectKey, sessions[objectKey])
           let session = sessions[objectKey];
           let occupied_slots = JSON.parse(session.occupied_slots);
           const kernelImage = sessions[objectKey].image.split('/')[2] || sessions[objectKey].image.split('/')[1];

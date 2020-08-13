@@ -406,6 +406,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.appBody.style.setProperty('--mdc-drawer-width', '190px');
       this.appBody.type = 'modal';
       this.appBody.open = false;
+      this.contentBody.style.width = 'calc('+width+'px - 190px)';
       this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
       this.drawerToggleButton.style.display = 'block';
       if (this.mini_ui) {
@@ -416,12 +417,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (this.mini_ui) {
         this.appBody.style.setProperty('--mdc-drawer-width', '54px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', '54px');
+        this.contentBody.style.width = 'calc('+width+'px - 54px)';
         if (this.contentBody.open) {
           this.mainToolbar.style.setProperty('--mdc-drawer-width', '304px');// 54+250
         }
       } else {
         this.appBody.style.setProperty('--mdc-drawer-width', '190px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
+        this.contentBody.style.width = 'calc('+width+'px - 190px)';
         if (this.contentBody.open) {
           this.mainToolbar.style.setProperty('--mdc-drawer-width', '440px'); // 190+250
         }
@@ -901,7 +904,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     // language=HTML
     return html`
       <div id="loading-curtain" class="loading-background"></div>
-      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="visibility:hidden;">
+      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="position:fixed;visibility:hidden;">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
           <div id="portrait-bar" class="draggable">
             <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
@@ -1007,7 +1010,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
           </div>
         </div>
-        <div slot="appContent">
+        <div id="app-content" slot="appContent">
           <mwc-drawer id="content-body">
             <div class="sidepanel-drawer">
               <backend-ai-sidepanel-notification class="sidepanel" ?active="${this._sidepanel === 'notification'}"></backend-ai-sidepanel-notification>
