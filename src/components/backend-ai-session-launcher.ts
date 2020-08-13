@@ -12,7 +12,6 @@ import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
 
 import '@material/mwc-select';
-import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-list/mwc-check-list-item';
@@ -406,8 +405,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 40px;
         }
 
-        mwc-select,
-        mwc-multi-select {
+        mwc-select {
           width: 100%;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
@@ -429,7 +427,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           };
         }
 
-        mwc-multi-select#scaling-groups {
+        mwc-select#scaling-groups {
           margin-right: 0;
           padding-right: 0;
           width: 50%;
@@ -1851,7 +1849,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <wl-checkbox id="use-gpu-checkbox">${_t("session.launcher.UseGPU")}</wl-checkbox>
           </div>
           <div class="horizontal center layout">
-            <mwc-multi-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required naturalMenuWidth
+            <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required naturalMenuWidth
                         @selected="${(e) => this.updateScalingGroup(false, e)}">
               ${this.scaling_groups.map(item => html`
                 <mwc-list-item class="scaling-group-dropdown"
@@ -1860,7 +1858,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ${item.name}
                 </mwc-list-item>
               `)}
-            </mwc-multi-select>
+            </mwc-select>
             <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
                            pattern="[a-zA-Z0-9_-]{4,}" fullwidth
                            validationMessage="${_t("session.launcher.SessionNameAllowCondition")}"
