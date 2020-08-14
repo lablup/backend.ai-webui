@@ -277,7 +277,6 @@ export default class BackendAiSignup extends BackendAIPage {
     this.init_client();
     let rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
     this.client._wrapWithPromise(rqst).then((response) => {
-      console.log(response);
       this._toggleInputField(false);
       this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup succeed';
       this.notification.text = 'Signup succeed.';
