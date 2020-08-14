@@ -114,8 +114,8 @@ export const BackendAiConsoleStyles = [
 
     mwc-list.sidebar mwc-list-item[disabled],
     mwc-list.sidebar mwc-list-item[disabled] mwc-icon {
-      --mdc-theme-on-surface: #888;
-      color: #888 !important;
+      --mdc-theme-on-surface: #888888;
+      color: #888888 !important;
     }
 
     .mini-ui mwc-list.sidebar mwc-list-item {
@@ -187,8 +187,20 @@ export const BackendAiConsoleStyles = [
       top: calc(50vh - 24px);
     }
 
+    mwc-circular-progress {
+      width: 48px;
+      height: 48px;
+      position: fixed;
+      --mdc-theme-primary: #e91e63;
+      top: calc(50vh - 24px);
+    }
+
     @media screen and (max-width: 899px) {
       wl-progress-spinner {
+        left: calc(50% - 24px);
+      }
+
+      mwc-circular-progress {
         left: calc(50% - 24px);
       }
     }
@@ -199,6 +211,14 @@ export const BackendAiConsoleStyles = [
       }
 
       .mini-ui wl-progress-spinner {
+        left: calc(50% + 29px);
+      }
+
+      mwc-circular-progress {
+        left: calc(50% + 71px);
+      }
+
+      .mini-ui mwc-circular-progress {
         left: calc(50% + 29px);
       }
     }
@@ -253,7 +273,7 @@ export const BackendAiConsoleStyles = [
 
     mwc-list-item[activated] {
       color: black;
-      background-color: #E1E1E1;
+      background-color: #e1e1e1;
     }
 
     wl-popover-card {
