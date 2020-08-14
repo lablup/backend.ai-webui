@@ -561,6 +561,7 @@ class Client {
     try {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
+        await this.getManagerVersion();
         return this.check_login();
       } else if (result.authenticated === false) { // Authentication failed.
         if (result.data && result.data.details) {
