@@ -125,6 +125,24 @@ export default class BackendAiSignup extends BackendAIPage {
     }
   }
 
+  /**
+   * Change state to 'ALIVE' when backend.ai client connected.
+   *
+   * @param {Booelan} active - The component will work if active is true.
+   */
+  async _viewStateChanged(active: Boolean) {
+    await this.updateComplete;
+    if (active === false) {
+      return;
+    }
+    // If disconnected
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+      }, true);
+    } else { // already connected
+    }
+  }
+
   receiveTOSAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
@@ -272,23 +290,23 @@ export default class BackendAiSignup extends BackendAIPage {
         <div slot="content">
           <mwc-textfield type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
                        label="${_t("signup.E-mail")}" value="${this.user_email}"
-                       @change="${() => this._clear_info()}"></mwc-textfield>
+                       @change="${() => this._clear_info()}" required></mwc-textfield>
           <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
-                       label="${_t("signup.UserName")}" value="${this.user_name}"></mwc-textfield>
+                       label="${_t("signup.UserName")}" value="${this.user_name} required"></mwc-textfield>
           <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
-                       label="${_t("signup.InvitationToken")}"></mwc-textfield>
+                       label="${_t("signup.InvitationToken")}" required></mwc-textfield>
           <mwc-textfield type="password" name="password1" id="id_password1"
                        label="${_t("signup.Password")}" minlength="8"
                        pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                        error-message="At least 1 alphabet, 1 number and 1 special character is required."
                        auto-validate
-                       value=""></mwc-textfield>
+                       value="" required></mwc-textfield>
           <mwc-textfield type="password" name="password2" id="id_password2"
                        label="${_t("signup.PasswordAgain")}" minlength="8"
                        pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                        error-message="At least 1 alphabet, 1 number and 1 special character is required."
                        auto-validate
-                       value=""></mwc-textfield>
+                       value="" required></mwc-textfield>
           <div style="margin-top:10px;">
             <wl-checkbox id="approve-terms-of-service">
             </wl-checkbox>
