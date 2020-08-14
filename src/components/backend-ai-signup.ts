@@ -311,8 +311,10 @@ export default class BackendAiSignup extends BackendAIPage {
   _validateEmail() {
     const emailInput = this.shadowRoot.querySelector('#id_user_email');
     emailInput.validityTransform = (newValue, nativeValidity) => {
+      // console.dir(emailInput._validity);
       if (!nativeValidity) {
         let isValid: boolean = nativeValidity;
+        emailInput.validationMessage = _text('signup.EmailInputRequired');
         return {
           valid: !isValid,
           customError: isValid
@@ -423,9 +425,10 @@ export default class BackendAiSignup extends BackendAIPage {
         <span slot="title">${_t("signup.SignupBETA")}</span>
         <div slot="content">
           <mwc-textfield type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
-                       label="${_t("signup.E-mail")}" value="${this.user_email}" required
-                       pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
-                       @change="${this._validateEmail}"></mwc-textfield>
+                       label="${_t("signup.E-mail")}" validateOnInitialRender
+                       pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" @change="${this._validateEmail}" 
+                       validationMessage="${_t("signup.EmailInputRequired")}"
+                       value="${this.user_email}" required></mwc-textfield>
           <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
                        label="${_t("signup.UserName")}" value="${this.user_name}"
                        validationMessage="${_t("signup.UserNameInputRequired")}" required></mwc-textfield>
