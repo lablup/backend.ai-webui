@@ -477,6 +477,7 @@ class Client {
         try {
             result = await this._wrapWithPromise(rqst);
             if (result.authenticated === true) {
+                await this.getManagerVersion();
                 return this.check_login();
             }
             else if (result.authenticated === false) { // Authentication failed.
@@ -715,16 +716,19 @@ class Client {
         let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params);
         return this._wrapWithPromise(rqst);
     }
-    // legacy aliases
+    // legacy aliases (DO NOT USE for new codes)
     createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
         return this.createIfNotExists(kernelType, sessionId, resources, timeout);
     }
+    // legacy aliases (DO NOT USE for new codes)
     destroyKernel(sessionId, ownerKey = null) {
         return this.destroy(sessionId, ownerKey);
     }
+    // legacy aliases (DO NOT USE for new codes)
     refreshKernel(sessionId, ownerKey = null) {
         return this.restart(sessionId, ownerKey);
     }
+    // legacy aliases (DO NOT USE for new codes)
     runCode(code, sessionId, runId, mode) {
         return this.execute(sessionId, runId, mode, code, {});
     }
