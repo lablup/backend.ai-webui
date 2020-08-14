@@ -19,6 +19,7 @@ import '@material/mwc-icon-button';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu';
+import '@material/mwc-select';
 
 import toml from 'markty-toml';
 
@@ -47,6 +48,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/mwc/mwc-multi-select';
+
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
 

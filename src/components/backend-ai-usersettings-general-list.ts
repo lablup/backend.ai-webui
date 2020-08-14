@@ -22,7 +22,7 @@ import 'weightless/button';
 import 'weightless/label';
 
 import './backend-ai-dialog';
-import '../plastics/mwc/mwc-multi-select';
+import '@material/mwc-select';
 import '@material/mwc-textarea/mwc-textarea';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -166,11 +166,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --dialog-max-height: calc(100vh - 100px);
         }
 
-        mwc-multi-select {
+        mwc-select {
           --mdc-select-min-width: 140px;
         }
 
-        mwc-multi-select#select-rcfile-type {
+        mwc-select#select-rcfile-type {
           width: 300px;
           padding-right: 10px;
           --mdc-select-fill-color: transparent;
@@ -197,7 +197,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           display: inline-block;
           margin: 10px;
         }
-        
+
         wl-button.copy {
           --button-font-size: 10px;
           display: inline-block;
@@ -628,7 +628,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _openSSHKeypairManagementDialog() {
     this.shadowRoot.querySelector('#ssh-keypair-management-dialog').show();
   }
-  
+
   /**
    * Fetch Existing Public key from Server.
    * */
@@ -766,14 +766,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               </div>
             </div>
             <div class="vertical center-justified layout setting-select">
-              <mwc-multi-select id="ui-language"
+              <mwc-select id="ui-language"
                           required
                           @selected="${(e) => this.setUserLanguage(e)}">
               ${this.supportLanguages.map(item => html`
                 <mwc-list-item value="${item.code}" ?selected=${globalThis.backendaioptions.get('language') === item.code}>
                   ${item.name}
                 </mwc-list-item>`)}
-              </mwc-multi-select>
+              </mwc-select>
             </div>
           </div>
           ${globalThis.isElectron ? html`
@@ -880,7 +880,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
         <span slot="title">Edit ${this.rcfile} shell script</span>
         <div slot="action" class="vertical layout">
-          <mwc-multi-select id="select-rcfile-type"
+          <mwc-select id="select-rcfile-type"
                       label="config file name"
                       required
                       validationMessage="Please select one option."
@@ -889,7 +889,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
                 ${item.path}
               </mwc-list-item>`)}
-          </mwc-multi-select>
+          </mwc-select>
           <div class="horizontal layout">
             <wl-icon class="warning">warning</wl-icon>
             <wl-label class="warning" for="warning">
