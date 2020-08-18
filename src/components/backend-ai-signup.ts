@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/icon';
@@ -125,6 +125,24 @@ export default class BackendAiSignup extends BackendAIPage {
     }
   }
 
+  /**
+   * Change state to 'ALIVE' when backend.ai client connected.
+   *
+   * @param {Booelan} active - The component will work if active is true.
+   */
+  async _viewStateChanged(active: Boolean) {
+    await this.updateComplete;
+    if (active === false) {
+      return;
+    }
+    // If disconnected
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+      }, true);
+    } else { // already connected
+    }
+  }
+
   receiveTOSAgreement() {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
@@ -147,6 +165,7 @@ export default class BackendAiSignup extends BackendAIPage {
 
   open() {
     if (this.signupPanel.open !== true) {
+      this._clearUserInput();
       this.signupPanel.show();
     }
   }
@@ -199,47 +218,68 @@ export default class BackendAiSignup extends BackendAIPage {
     //this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
   }
 
+  _clearUserInput() {
+    this._toggleInputField(true);
+    const inputFields: Array<string> = ["#id_user_email", "#id_token", "#id_password1", "#id_password2"];
+    inputFields.map((el: string) => {
+      this.shadowRoot.querySelector(el).value = "";
+    });
+    this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup';
+  }
+
+  _toggleInputField(isActive: boolean) {
+    if (isActive) {
+      this.shadowRoot.querySelector('#id_user_name').removeAttribute('disabled');
+      this.shadowRoot.querySelector('#id_token').removeAttribute('disabled');
+      this.shadowRoot.querySelector('#signup-button').removeAttribute('disabled');
+    } else {
+      this.shadowRoot.querySelector('#id_user_name').setAttribute('disabled', 'true');
+      this.shadowRoot.querySelector('#id_token').setAttribute('disabled', 'true');
+      this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
+    }
+  }
+
   _signup() {
+    const inputFields: Array<string> = ["#id_user_email", "#id_token", "#id_password1", "#id_password2"];
+    let inputFieldsValidity: Array<boolean> = inputFields.map((el: string) => {
+      this.shadowRoot.querySelector(el).reportValidity();
+      return this.shadowRoot.querySelector(el).checkValidity();
+    });
+
     let approved = (this.shadowRoot.querySelector('#approve-terms-of-service') as HTMLInputElement).checked;
     if (approved === false) {
-      this.notification.text = "Please read and agree with the terms of service to proceed.";
+      this.notification.text = _text("signup.RequestAgreementTermsOfService");
       this.notification.show();
       return;
     }
-    let password1 = (this.shadowRoot.querySelector('#id_password1') as HTMLInputElement).value;
-    let password2 = (this.shadowRoot.querySelector('#id_password2') as HTMLInputElement).value;
-    if (this.shadowRoot.querySelector("#id_password1").getAttribute("invalid") !== null) {
-      this.notification.text = "Password must contain at least one alphabet, one digit, and one special character";
-      this.notification.show();
+
+    // if any input is invalid, signup fails.
+    if (inputFieldsValidity.includes(false)) {
       return;
     }
-    if (password1 !== password2) {
-      this.notification.text = 'Password mismatch. Please check your password.';
-      this.notification.show();
-      return;
-    }
+
     const token = (this.shadowRoot.querySelector('#id_token') as HTMLInputElement).value;
     const user_email = (this.shadowRoot.querySelector('#id_user_email') as HTMLInputElement).value;
     const user_name = (this.shadowRoot.querySelector('#id_user_name') as HTMLInputElement).value;
+    const password = (this.shadowRoot.querySelector('#id_password1') as HTMLInputElement).value;
     this.notification.text = 'Processing...';
     this.notification.show();
-    let body = {
+    const body = {
       'email': user_email,
       'user_name': user_name,
-      'password': password1,
+      'password': password,
       'token': token
     };
     this.init_client();
     let rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
     this.client._wrapWithPromise(rqst).then((response) => {
-      this.shadowRoot.querySelector('#id_user_name').setAttribute('disabled', 'true');
-      this.shadowRoot.querySelector('#id_token').setAttribute('disabled', 'true');
-      this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
+      this._toggleInputField(false);
       this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup succeed';
       this.notification.text = 'Signup succeed.';
       this.notification.show();
       setTimeout(() => {
         this.signupPanel.hide();
+        this._clearUserInput();
         this.shadowRoot.querySelector('#email-sent-dialog').show();
       }, 1000);
     }).catch((e) => {
@@ -264,31 +304,132 @@ export default class BackendAiSignup extends BackendAIPage {
     return err;
   }
 
+  _validateEmail() {
+    const emailInput = this.shadowRoot.querySelector('#id_user_email');
+    emailInput.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          emailInput.validationMessage = _text('signup.EmailInputRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else {
+          emailInput.validationMessage = _text('signup.InvalidEmail');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        // custom validation for email address using regex
+        let regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let isValid = regex.exec(emailInput.value);
+        if (!isValid) {
+          emailInput.validationMessage = _text('signup.InvalidEmail');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
+    }
+  }
+
+  _validatePassword1() {
+    const passwordInput = this.shadowRoot.querySelector('#id_password1');
+    const password2Input = this.shadowRoot.querySelector('#id_password2');
+    password2Input.reportValidity();
+    passwordInput.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          passwordInput.validationMessage = _text('signup.PasswordInputRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        } else {
+          passwordInput.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        }
+      } else {
+        return {
+          valid: nativeValidity.valid,
+          customError: !nativeValidity.valid
+        }
+      }
+    }
+  }
+
+  _validatePassword2() {
+    const password2Input = this.shadowRoot.querySelector('#id_password2');
+    password2Input.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          password2Input.validationMessage = _text('signup.PasswordInputRequired');
+          return {
+            valid: nativeValidity.valid, 
+            customError: !nativeValidity.valid
+          }
+        } else {
+          password2Input.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          } 
+        }
+      } else {
+        // custom validation for password input match
+        const passwordInput = this.shadowRoot.querySelector('#id_password1');
+        let isMatched = (passwordInput.value === password2Input.value);
+        if (!isMatched) {
+          password2Input.validationMessage = _text('signup.PasswordNotMatched');         
+        }
+        return {
+          valid: isMatched,
+          customError: !isMatched
+        }
+      }
+    }
+  }
+
+  _validatePassword() {
+    this._validatePassword1();
+    this._validatePassword2();
+  }
+
   render() {
     // language=HTML
     return html`
       <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <span slot="title">${_t("signup.SignupBETA")}</span>
         <div slot="content">
-          <mwc-textfield type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
-                       label="${_t("signup.E-mail")}" value="${this.user_email}"
-                       @change="${() => this._clear_info()}"></mwc-textfield>
+          <mwc-textfield type="email" name="user_email" id="id_user_email" maxlength="50" autofocus
+                       label="${_t("signup.E-mail")}" validateOnInitialRender
+                       @change="${this._validateEmail}" 
+                       validationMessage="${_t("signup.EmailInputRequired")}"
+                       value="${this.user_email}" required></mwc-textfield>
           <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
-                       label="${_t("signup.UserName")}" value="${this.user_name}"></mwc-textfield>
+                       label="${_t("signup.UserName")}" value="${this.user_name}"
+                       validationMessage="${_t("signup.UserNameInputRequired")}"></mwc-textfield>
           <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
-                       label="${_t("signup.InvitationToken")}"></mwc-textfield>
+                       label="${_t("signup.InvitationToken")}"
+                       validationMessage="${_t("signup.TokenInputRequired")}" required></mwc-textfield>
           <mwc-textfield type="password" name="password1" id="id_password1"
                        label="${_t("signup.Password")}" minlength="8"
                        pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                       error-message="At least 1 alphabet, 1 number and 1 special character is required."
-                       auto-validate
-                       value=""></mwc-textfield>
+                       validationMessage="${_t("signup.PasswordInputRequired")}"
+                       @change="${this._validatePassword}"
+                       value="" required></mwc-textfield>
           <mwc-textfield type="password" name="password2" id="id_password2"
                        label="${_t("signup.PasswordAgain")}" minlength="8"
                        pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                       error-message="At least 1 alphabet, 1 number and 1 special character is required."
-                       auto-validate
-                       value=""></mwc-textfield>
+                       validationMessage="${_t("signup.PasswordInputRequired")}"
+                       @change="${this._validatePassword}"
+                       value="" required></mwc-textfield>
           <div style="margin-top:10px;">
             <wl-checkbox id="approve-terms-of-service">
             </wl-checkbox>
