@@ -1906,9 +1906,9 @@ class ComputeSession {
      * list all status of compute sessions.
      *
      * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
-     * @param {String} status - status to query.
+     * @param {String} status - status to query. The default is string with all status combined.
      * @param {string} accessKey - access key that is used to start compute sessions.
-     * @param {number} limit - limit number of query items. The default is string with all status combined.
+     * @param {number} limit - limit number of query items.
      * @param {number} offset - offset for item query. Useful for pagination.
      * @param {string} group - project group id to query. Default returns sessions from all groups.
      */
