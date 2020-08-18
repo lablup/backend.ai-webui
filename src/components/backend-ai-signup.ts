@@ -8,7 +8,7 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
 import '@material/mwc-textfield';
-import '@material/mwc-icon-button-toggle'
+import '@material/mwc-icon-button-toggle';
 import './lablup-terms-of-service';
 import './backend-ai-dialog';
 
