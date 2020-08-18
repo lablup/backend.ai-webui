@@ -220,7 +220,7 @@ export default class BackendAiSignup extends BackendAIPage {
 
   _clearUserInput() {
     this._toggleInputField(true);
-    const inputFields: Array<string> = ['#id_user_email', '#id_user_name', '#id_token', '#id_password1', '#id_password2'];
+    const inputFields: Array<string> = ["#id_user_email", "#id_token", "#id_password1", "#id_password2"];
     inputFields.map((el: string) => {
       this.shadowRoot.querySelector(el).value = "";
     });
@@ -240,11 +240,11 @@ export default class BackendAiSignup extends BackendAIPage {
   }
 
   _signup() {
-    const inputFields: Array<string> = ['#id_user_email', '#id_user_name', '#id_token', '#id_password1', '#id_password2'];
+    const inputFields: Array<string> = ["#id_user_email", "#id_token", "#id_password1", "#id_password2"];
     let inputFieldsValidity: Array<boolean> = inputFields.map((el: string) => {
       this.shadowRoot.querySelector(el).reportValidity();
       return this.shadowRoot.querySelector(el).checkValidity();
-    })
+    });
 
     let approved = (this.shadowRoot.querySelector('#approve-terms-of-service') as HTMLInputElement).checked;
     if (approved === false) {
@@ -254,11 +254,7 @@ export default class BackendAiSignup extends BackendAIPage {
     }
 
     // if any input is invalid, signup fails.
-    if (inputFieldsValidity.map((el: boolean) => {
-      if (!el) {
-        return !el;
-      }
-    })) {
+    if (inputFieldsValidity.includes(false)) {
       return;
     }
 
@@ -268,7 +264,7 @@ export default class BackendAiSignup extends BackendAIPage {
     const password = (this.shadowRoot.querySelector('#id_password1') as HTMLInputElement).value;
     this.notification.text = 'Processing...';
     this.notification.show();
-    let body = {
+    const body = {
       'email': user_email,
       'user_name': user_name,
       'password': password,
@@ -311,21 +307,12 @@ export default class BackendAiSignup extends BackendAIPage {
   _validateEmail() {
     const emailInput = this.shadowRoot.querySelector('#id_user_email');
     emailInput.validityTransform = (newValue, nativeValidity) => {
-      // console.dir(emailInput._validity);
-      if (!nativeValidity) {
-        let isValid: boolean = nativeValidity;
-        emailInput.validationMessage = _text('signup.EmailInputRequired');
-        return {
-          valid: !isValid,
-          customError: isValid
-        }
-      }
       if (!nativeValidity.valid) {
         if (nativeValidity.patternMismatch) {
           emailInput.validationMessage = _text('signup.InvalidEmail');
           return {
             valid: nativeValidity.valid,
-            patternMismatch: !nativeValidity.valid
+            customError: !nativeValidity.valid
           };
         } else {
           emailInput.validationMessage = _text('signup.EmailInputRequired');
@@ -334,6 +321,17 @@ export default class BackendAiSignup extends BackendAIPage {
             customError: !nativeValidity.valid
           };
         }
+      } else {
+        // custom validation for email address using regex
+        let regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let isValid = regex.exec(emailInput.value);
+        if (!isValid) {
+          emailInput.validationMessage = _text('signup.InvalidEmail');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
       }
     }
   }
@@ -343,32 +341,24 @@ export default class BackendAiSignup extends BackendAIPage {
     const password2Input = this.shadowRoot.querySelector('#id_password2');
     password2Input.reportValidity();
     passwordInput.validityTransform = (newValue, nativeValidity) => {
-      if (!nativeValidity) {
-        let isValid: boolean = nativeValidity;
-        return {
-          valid: !isValid,
-          customError: isValid
-        }
-      }
       if (!nativeValidity.valid) {
-        if (nativeValidity.tooShort) {
-          passwordInput.validationMessage = _text('signup.PasswordInvalid');
-          return {
-            valid: nativeValidity.valid,
-            tooShort: !nativeValidity.valid
-          }
-        } else if (nativeValidity.patternMismatch){
-          passwordInput.validationMessage = _text('signup.PasswordInvalid');
-          return {
-            valid: nativeValidity.valid,
-            patternMismatch: !nativeValidity.valid
-          }
-        } else {
+        if (nativeValidity.valueMissing) {
           passwordInput.validationMessage = _text('signup.PasswordInputRequired');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
           }
+        } else {
+          passwordInput.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        }
+      } else {
+        return {
+          valid: nativeValidity.valid,
+          customError: !nativeValidity.valid
         }
       }
     }
@@ -377,26 +367,19 @@ export default class BackendAiSignup extends BackendAIPage {
   _validatePassword2() {
     const password2Input = this.shadowRoot.querySelector('#id_password2');
     password2Input.validityTransform = (newValue, nativeValidity) => {
-      if (!nativeValidity) {
-        let isValid: boolean = nativeValidity;
-        return {
-          valid: !isValid,
-          customError: isValid
-        }
-      }
       if (!nativeValidity.valid) {
-        if (nativeValidity.tooShort) {
-          password2Input.validationMessage = _text('signup.PasswordInvalid');
+        if (nativeValidity.valueMissing) {
+          password2Input.validationMessage = _text('signup.PasswordInputRequired');
           return {
-            valid: nativeValidity.valid,
-            tooShort: !nativeValidity.valid
-          } 
-        } else if (nativeValidity.patternMismatch) {
-          password2Input.validationMessage = _text('signup.PasswordInvalid');
-          return {
-            valid: nativeValidity.valid,
-            patternMismatch: !nativeValidity.valid
+            valid: nativeValidity.valid, 
+            customError: !nativeValidity.valid
           }
+        } else {
+          password2Input.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          } 
         }
       } else {
         // custom validation for password input match
@@ -424,14 +407,14 @@ export default class BackendAiSignup extends BackendAIPage {
       <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <span slot="title">${_t("signup.SignupBETA")}</span>
         <div slot="content">
-          <mwc-textfield type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
+          <mwc-textfield type="email" name="user_email" id="id_user_email" maxlength="50" autofocus
                        label="${_t("signup.E-mail")}" validateOnInitialRender
-                       pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$" @change="${this._validateEmail}" 
+                       @change="${this._validateEmail}" 
                        validationMessage="${_t("signup.EmailInputRequired")}"
                        value="${this.user_email}" required></mwc-textfield>
           <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
                        label="${_t("signup.UserName")}" value="${this.user_name}"
-                       validationMessage="${_t("signup.UserNameInputRequired")}" required></mwc-textfield>
+                       validationMessage="${_t("signup.UserNameInputRequired")}"></mwc-textfield>
           <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
                        label="${_t("signup.InvitationToken")}"
                        validationMessage="${_t("signup.TokenInputRequired")}" required></mwc-textfield>
