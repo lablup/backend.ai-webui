@@ -308,14 +308,14 @@ export default class BackendAiSignup extends BackendAIPage {
     const emailInput = this.shadowRoot.querySelector('#id_user_email');
     emailInput.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
-        if (nativeValidity.patternMismatch) {
-          emailInput.validationMessage = _text('signup.InvalidEmail');
+        if (nativeValidity.valueMissing) {
+          emailInput.validationMessage = _text('signup.EmailInputRequired');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
           };
         } else {
-          emailInput.validationMessage = _text('signup.EmailInputRequired');
+          emailInput.validationMessage = _text('signup.InvalidEmail');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
