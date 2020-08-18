@@ -8,6 +8,7 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
 import '@material/mwc-textfield';
+import '@material/mwc-icon-button-toggle'
 import './lablup-terms-of-service';
 import './backend-ai-dialog';
 
@@ -106,6 +107,11 @@ export default class BackendAiSignup extends BackendAIPage {
               --button-bg-hover: var(--paper-green-300);
               --button-bg-active: var(--paper-green-300);
           }
+
+          mwc-icon-button-toggle.password {
+            
+          }
+
           mwc-textfield {
             width: 100%;
             --mdc-text-field-fill-color: transparent;
@@ -264,6 +270,16 @@ export default class BackendAiSignup extends BackendAIPage {
     return err;
   }
 
+  _togglePasswordVisibility(element) {
+    const visibility = element.__on;
+    const password = element.closest('div').querySelector('mwc-textfield');
+    if (visibility) {
+      password.setAttribute('type', 'text');
+    } else {
+      password.setAttribute('type', 'password');
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -277,18 +293,26 @@ export default class BackendAiSignup extends BackendAIPage {
                        label="${_t("signup.UserName")}" value="${this.user_name}"></mwc-textfield>
           <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
                        label="${_t("signup.InvitationToken")}"></mwc-textfield>
-          <mwc-textfield type="password" name="password1" id="id_password1"
-                       label="${_t("signup.Password")}" minlength="8"
-                       pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                       error-message="At least 1 alphabet, 1 number and 1 special character is required."
-                       auto-validate
-                       value=""></mwc-textfield>
-          <mwc-textfield type="password" name="password2" id="id_password2"
-                       label="${_t("signup.PasswordAgain")}" minlength="8"
-                       pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                       error-message="At least 1 alphabet, 1 number and 1 special character is required."
-                       auto-validate
-                       value=""></mwc-textfield>
+          <div class="horizontal flex layout">
+            <mwc-textfield type="password" name="password1" id="id_password1"
+                        label="${_t("signup.Password")}" minlength="8"
+                        pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                        error-message="At least 1 alphabet, 1 number and 1 special character is required."
+                        auto-validate
+                        value=""></mwc-textfield>
+            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                                    @click="${(e) => this._togglePasswordVisibility(e.target)}"></mwc-icon-button-toggle>
+          </div>
+          <div class="horizontal flex layout">
+            <mwc-textfield type="password" name="password2" id="id_password2"
+                        label="${_t("signup.PasswordAgain")}" minlength="8"
+                        pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                        error-message="At least 1 alphabet, 1 number and 1 special character is required."
+                        auto-validate
+                        value=""></mwc-textfield>
+            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                                    @click="${(e) => this._togglePasswordVisibility(e.target)}"></mwc-icon-button-toggle>
+          </div>
           <div style="margin-top:10px;">
             <wl-checkbox id="approve-terms-of-service">
             </wl-checkbox>
