@@ -108,10 +108,6 @@ export default class BackendAiSignup extends BackendAIPage {
               --button-bg-active: var(--paper-green-300);
           }
 
-          mwc-icon-button-toggle.password {
-            
-          }
-
           mwc-textfield {
             width: 100%;
             --mdc-text-field-fill-color: transparent;
@@ -271,13 +267,9 @@ export default class BackendAiSignup extends BackendAIPage {
   }
 
   _togglePasswordVisibility(element) {
-    const visibility = element.__on;
+    const isVisible = element.__on;
     const password = element.closest('div').querySelector('mwc-textfield');
-    if (visibility) {
-      password.setAttribute('type', 'text');
-    } else {
-      password.setAttribute('type', 'password');
-    }
+    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
   }
 
   render() {
