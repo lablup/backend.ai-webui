@@ -1906,42 +1906,43 @@ class ComputeSession {
      * list all status of compute sessions.
      *
      * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
+     * @param {String} status - status to query.
      * @param {string} accessKey - access key that is used to start compute sessions.
-     * @param {number} limit - limit number of query items.
+     * @param {number} limit - limit number of query items. The default is string with all status combined.
      * @param {number} offset - offset for item query. Useful for pagination.
      * @param {string} group - project group id to query. Default returns sessions from all groups.
      */
-    async listAll(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], accessKey = '', group = '') {
+    async listAll(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"], status = "RUNNING,RESTARTING,TERMINATING,PENDING,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR", accessKey = '', limit = 100, offset = 0, group = '') {
         fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
-        // For V3/V4 API compatibility
         let q, v;
-        if (this.client._apiVersionMajor < 5) {
-            q = `query($domain_name:String, $group_id:String, $ak:String, $status:String) {
-        compute_sessions(domain_name:$domain_name, group_id:$group_id, access_key:$ak, status:$status) {
-          ${fields.join(" ")}
+        // session_list
+        const sessions = [];
+        q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
+        items { ${fields.join(" ")}}
+        total_count
+      }
+    }`;
+        // Prevent fetching more than 1000 sessions.
+        for (let offset = 0; offset < 10 * limit; offset += limit) {
+            v = {
+                'limit': limit,
+                'offset': offset,
+                'status': status,
+            };
+            if (accessKey != '') {
+                v['ak'] = accessKey;
+            }
+            if (group != '') {
+                v['group_id'] = group;
+            }
+            const session = await this.client.gql(q, v);
+            sessions.push(...session.compute_session_list.items);
+            if ((offset + 1) * limit >= session.compute_session_list.total_count) {
+                break;
+            }
         }
-      }`;
-        }
-        else {
-            q = `query($domain_name:String, $group_id:String, $ak:String, $status:String) {
-        legacy_compute_sessions(domain_name:$domain_name, group_id:$group_id, access_key:$ak, status:$status) {
-          ${fields.join(" ")}
-        }
-      }`;
-        }
-        v = {
-        // domain_name: null,
-        // group_id: null,
-        // access_key: accessKey,
-        // status: status
-        };
-        if (accessKey !== '') {
-            v['access_key'] = accessKey;
-        }
-        if (group !== '') {
-            v['group_id'] = group;
-        }
-        return this.client.gql(q, v);
+        return Promise.resolve(sessions);
     }
     /**
      * get compute session with specific condition.

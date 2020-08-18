@@ -456,7 +456,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     let group_id = globalThis.backendaiclient.current_group_id();
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
-      console.log(response)
+      // console.log(response)
       this.spinner.hide();
       this.total_session_count = response.compute_session_list.total_count;
       if (this.total_session_count === 0) {
@@ -471,7 +471,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           previous_session_keys.push(previous_sessions[objectKey][this.sessionNameField]);
         });
         Object.keys(sessions).map((objectKey, index) => {
-          console.log(objectKey, sessions[objectKey])
+          // console.log(objectKey, sessions[objectKey])
           let session = sessions[objectKey];
           let occupied_slots = JSON.parse(session.occupied_slots);
           const kernelImage = sessions[objectKey].image.split('/')[2] || sessions[objectKey].image.split('/')[1];
@@ -1380,28 +1380,87 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (!fileNameEl.validity.valid) {
       return;
     }
+    let export_list : any = [];
 
-    let group_id = globalThis.backendaiclient.current_group_id();
-    let fields = ["id", "name", "lang", "created_at", "terminated_at", "status", "status_info",
-      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"];
-
+    // status
+    let status: any = ["RUNNING", "RESTARTING", "TERMINATING",  "PENDING", "PREPARING", "PULLING", "TERMINATED", "CANCELLED", "ERROR"];
+    if (globalThis.backendaiclient.supports('detailed-session-states')) {
+      status = status.join(',');
+    }
+    // fields
+    let fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "access_key"];
     if (this._connectionMode === "SESSION") {
       fields.push("user_email");
     }
     if (globalThis.backendaiclient.is_superadmin) {
-      fields.push("agent");
+      fields.push("containers {container_id agent occupied_slots live_stat last_stat}");
+    } else {
+      fields.push("containers {container_id occupied_slots live_stat last_stat}");
     }
+    // group_id
+    let group_id = globalThis.backendaiclient.current_group_id();
+    // limit
+    const limit = 100;
+    // get session list and export to csv file
+    globalThis.backendaiclient.computeSession.listAll(fields, status, this.filterAccessKey, limit, (this.current_page - 1) * limit, group_id).then((response) => {
+    let sessions = response;
 
-    globalThis.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
-      if (!response.compute_session_list && response.legacy_compute_session_list) {
-        response.compute_session_list = response.legacy_compute_session_list;
-      }
-      let sessions = response.compute_sessions;
-      JsonToCsv.exportToCsv(fileNameEl.value, sessions);
+    if (sessions !== undefined && sessions.length != 0) {
+      let previous_sessions = this.compute_sessions;
+      let export_list_item : any = {};
 
-      this.notification.text = "Downloading CSV file..."
-      this.notification.show();
-      this.exportToCsvDialog.hide();
+      let previous_session_keys: any = [];
+      Object.keys(previous_sessions).map((objectKey, index) => {
+        previous_session_keys.push(previous_sessions[objectKey][this.sessionNameField]);
+      });
+      Object.keys(sessions).map((objectKey, index) => {
+        let session = sessions[objectKey];
+        export_list_item.id = session.id;
+        export_list_item.name = session.name;
+        export_list_item.image = session.image.split('/')[2] || session.image.split('/')[1];
+        export_list_item.status = session.status;
+        export_list_item.status_info = session.status_info;
+        export_list_item.access_key = session.access_key;
+        // Readable text
+        export_list_item.created_at = this._humanReadableTime(session.created_at);
+        export_list_item.terminated_at = this._humanReadableTime(session.terminated_at);
+
+        if (session.containers && session.containers.length > 0) {
+          // Assume a session has only one container (no consideration on multi-container bundling)
+          const container = session.containers[0];
+          export_list_item.container_id = container.container_id;
+          if (container.agent) export_list_item.agent = container.agent;
+
+          const occupied_slots = container.occupied_slots ? JSON.parse(container.occupied_slots) : null;
+          export_list_item.cpu_slot = parseInt(occupied_slots.cpu);
+          export_list_item.mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g')).toFixed(2);
+
+          const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
+          export_list_item.agent = container.agent
+          if (liveStat && liveStat.cpu_used) {
+            export_list_item.cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
+          } else {
+            export_list_item.cpu_used_time = this._automaticScaledTime(0);
+          }
+          if (liveStat && liveStat.io_read) {
+            export_list_item.io_read_bytes_mb = this._automaticScaledTime(liveStat.io_read.capacity);
+          } else {
+            export_list_item.io_read_bytes_mb = 0;
+          }
+          if (liveStat && liveStat.io_write) {
+            export_list_item.io_write_bytes_mb = this._automaticScaledTime(liveStat.io_write.capacity);
+          } else {
+            export_list_item.io_write_bytes_mb = 0;
+          }
+        }
+        export_list.push(export_list_item);
+      });
+    }
+    JsonToCsv.exportToCsv(fileNameEl.value, export_list);
+
+    this.notification.text = "Downloading CSV file..."
+    this.notification.show();
+    this.exportToCsvDialog.hide();
     });
 
     // let isUnlimited = this.shadowRoot.querySelector('#export-csv-checkbox').checked;
