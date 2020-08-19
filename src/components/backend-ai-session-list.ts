@@ -456,7 +456,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     let group_id = globalThis.backendaiclient.current_group_id();
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
-      // console.log(response)
       this.spinner.hide();
       this.total_session_count = response.compute_session_list.total_count;
       if (this.total_session_count === 0) {
@@ -464,14 +463,13 @@ export default class BackendAiSessionList extends BackendAIPage {
       }
       let sessions = response.compute_session_list.items;
       if (sessions !== undefined && sessions.length != 0) {
-        let previous_sessions = this.compute_sessions;
+        const previousSessions = this.compute_sessions;
 
-        let previous_session_keys: any = [];
-        Object.keys(previous_sessions).map((objectKey, index) => {
-          previous_session_keys.push(previous_sessions[objectKey][this.sessionNameField]);
+        const previousSessionKeys: any = [];
+        Object.keys(previousSessions).map((objectKey, index) => {
+          previousSessionKeys.push(previousSessions[objectKey][this.sessionNameField]);
         });
         Object.keys(sessions).map((objectKey, index) => {
-          // console.log(objectKey, sessions[objectKey])
           let session = sessions[objectKey];
           let occupied_slots = JSON.parse(session.occupied_slots);
           const kernelImage = sessions[objectKey].image.split('/')[2] || sessions[objectKey].image.split('/')[1];
@@ -1375,20 +1373,19 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _exportToCSV() {
-    let fileNameEl = this.shadowRoot.querySelector('#export-file-name');
+    const fileNameEl = this.shadowRoot.querySelector('#export-file-name');
 
     if (!fileNameEl.validity.valid) {
       return;
     }
-    let export_list : any = [];
+    const exportList: any = [];
 
-    // status
+    // Parameters
     let status: any = ["RUNNING", "RESTARTING", "TERMINATING",  "PENDING", "PREPARING", "PULLING", "TERMINATED", "CANCELLED", "ERROR"];
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }
-    // fields
-    let fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "access_key"];
+    const fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "access_key"];
     if (this._connectionMode === "SESSION") {
       fields.push("user_email");
     }
@@ -1397,70 +1394,78 @@ export default class BackendAiSessionList extends BackendAIPage {
     } else {
       fields.push("containers {container_id occupied_slots live_stat last_stat}");
     }
-    // group_id
-    let group_id = globalThis.backendaiclient.current_group_id();
-    // limit
+    const groupId = globalThis.backendaiclient.current_group_id();
     const limit = 100;
-    // get session list and export to csv file
-    globalThis.backendaiclient.computeSession.listAll(fields, status, this.filterAccessKey, limit, (this.current_page - 1) * limit, group_id).then((response) => {
-    let sessions = response;
 
-    if (sessions !== undefined && sessions.length != 0) {
-      let previous_sessions = this.compute_sessions;
-      let export_list_item : any = {};
-
-      let previous_session_keys: any = [];
-      Object.keys(previous_sessions).map((objectKey, index) => {
-        previous_session_keys.push(previous_sessions[objectKey][this.sessionNameField]);
-      });
-      Object.keys(sessions).map((objectKey, index) => {
-        let session = sessions[objectKey];
-        export_list_item.id = session.id;
-        export_list_item.name = session.name;
-        export_list_item.image = session.image.split('/')[2] || session.image.split('/')[1];
-        export_list_item.status = session.status;
-        export_list_item.status_info = session.status_info;
-        export_list_item.access_key = session.access_key;
-        // Readable text
-        export_list_item.created_at = this._humanReadableTime(session.created_at);
-        export_list_item.terminated_at = this._humanReadableTime(session.terminated_at);
-
+    // Get session list and export to csv file
+    globalThis.backendaiclient.computeSession.listAll(fields, status, this.filterAccessKey, limit, 0, groupId).then((response) => {
+      const sessions = response;
+      if (sessions.length === 0) {
+        this.notification.text = "No sessions";
+        this.notification.show();
+        this.exportToCsvDialog.hide();
+        return;
+      }
+      sessions.forEach((session) => {
+        const exportListItem: any = {};
+        exportListItem.id = session.id;
+        exportListItem.name = session.name;
+        exportListItem.image = session.image.split('/')[2] || session.image.split('/')[1];
+        exportListItem.status = session.status;
+        exportListItem.status_info = session.status_info;
+        exportListItem.access_key = session.access_key;
+        exportListItem.created_at = session.created_at;
+        exportListItem.terminated_at = session.terminated_at;
         if (session.containers && session.containers.length > 0) {
           // Assume a session has only one container (no consideration on multi-container bundling)
           const container = session.containers[0];
-          export_list_item.container_id = container.container_id;
-          if (container.agent) export_list_item.agent = container.agent;
-
-          const occupied_slots = container.occupied_slots ? JSON.parse(container.occupied_slots) : null;
-          export_list_item.cpu_slot = parseInt(occupied_slots.cpu);
-          export_list_item.mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g')).toFixed(2);
-
+          exportListItem.container_id = container.container_id;
+          const occupiedSlots = container.occupied_slots ? JSON.parse(container.occupied_slots) : null;
+          if (occupiedSlots) {
+            exportListItem.cpu_slot = parseInt(occupiedSlots.cpu);
+            exportListItem.mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupiedSlots.mem, 'g')).toFixed(2);
+            if (occupiedSlots['cuda.shares']) {
+              exportListItem.cuda_shares = occupiedSlots['cuda.shares'];
+            }
+            if (occupiedSlots['cuda.device']) {
+              exportListItem.cuda_device = occupiedSlots['cuda.device'];
+            }
+            if (occupiedSlots['tpu.device']) {
+              exportListItem.tpu_device = occupiedSlots['tpu.device'];
+            }
+            if (occupiedSlots['rocm.device']) {
+              exportListItem.rocm_device = occupiedSlots['rocm.device'];
+            }
+          }
           const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
-          export_list_item.agent = container.agent
-          if (liveStat && liveStat.cpu_used) {
-            export_list_item.cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
-          } else {
-            export_list_item.cpu_used_time = this._automaticScaledTime(0);
+          if (liveStat) {
+            if (liveStat.cpu_used && liveStat.cpu_used.capacity) {
+              exportListItem.cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
+            } else {
+              exportListItem.cpu_used_time = 0;
+            }
+            if (liveStat.io_read) {
+              exportListItem.io_read_bytes_mb = this._automaticScaledTime(liveStat.io_read.capacity);
+            } else {
+              exportListItem.io_read_bytes_mb = 0;
+            }
+            if (liveStat.io_write) {
+              exportListItem.io_write_bytes_mb = this._automaticScaledTime(liveStat.io_write.capacity);
+            } else {
+              exportListItem.io_write_bytes_mb = 0;
+            }
           }
-          if (liveStat && liveStat.io_read) {
-            export_list_item.io_read_bytes_mb = this._automaticScaledTime(liveStat.io_read.capacity);
-          } else {
-            export_list_item.io_read_bytes_mb = 0;
-          }
-          if (liveStat && liveStat.io_write) {
-            export_list_item.io_write_bytes_mb = this._automaticScaledTime(liveStat.io_write.capacity);
-          } else {
-            export_list_item.io_write_bytes_mb = 0;
+          if (container.agent) {
+            exportListItem.agent = container.agent;
           }
         }
-        export_list.push(export_list_item);
+        exportList.push(exportListItem);
       });
-    }
-    JsonToCsv.exportToCsv(fileNameEl.value, export_list);
 
-    this.notification.text = "Downloading CSV file..."
-    this.notification.show();
-    this.exportToCsvDialog.hide();
+      JsonToCsv.exportToCsv(fileNameEl.value, exportList);
+      this.notification.text = "Downloading CSV file...";
+      this.notification.show();
+      this.exportToCsvDialog.hide();
     });
 
     // let isUnlimited = this.shadowRoot.querySelector('#export-csv-checkbox').checked;

@@ -1651,7 +1651,7 @@ class Keypair {
         }
         const page = await this.client.gql(q, v);
         keypairs.push(...page.keypair_list.items);
-        if ((offset + 1) * limit >= page.keypair_list.total_count) {
+        if (offset >= page.keypair_list.total_count) {
           break;
         }
       }
@@ -2080,7 +2080,6 @@ class ComputeSession {
                 accessKey = '', limit = 100, offset = 0, group = '') {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
     let q, v;
-    // session_list
     const sessions: any = [];
 
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
@@ -2092,20 +2091,17 @@ class ComputeSession {
 
     // Prevent fetching more than 1000 sessions.
     for (let offset = 0; offset < 10 * limit; offset+=limit) {
-      v = {
-        'limit': limit,
-        'offset': offset,
-        'status': status,
-      }
+      v = {limit, offset, status};
       if (accessKey != '') {
-        v['ak'] = accessKey;
+        v.ak = accessKey;
       }
       if (group != '') {
-        v['group_id'] = group;
+        v.group_id = group;
       }
       const session = await this.client.gql(q, v);
+      console.log(session.compute_session_list.total_count)
       sessions.push(...session.compute_session_list.items);
-      if ((offset + 1) * limit >= session.compute_session_list.total_count) {
+      if (offset >= session.compute_session_list.total_count) {
           break;
       }
     }
@@ -2553,7 +2549,7 @@ class User {
         v = this.client.is_admin ? {offset, limit, is_active} : {offset, limit};
         const page = await this.client.gql(q, v);
         users.push(...page.user_list.items);
-        if ((offset + 1) * limit >= page.user_list.total_count) {
+        if (offset >= page.user_list.total_count) {
           break;
         }
       }
