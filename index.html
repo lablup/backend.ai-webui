@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,9 +24,13 @@
     globalThis.isElectron = isElectron();
     globalThis.enableSW = true;
 
-    globalThis.process = {env: {NODE_ENV: 'production'}};
-    globalThis.packageVersion = "20.08.0";
-    globalThis.buildVersion = "200804.090818";
+    globalThis.process = {
+      env: {
+        NODE_ENV: 'production'
+      }
+    };
+    globalThis.packageVersion = "20.8.1";
+    globalThis.buildVersion = "200814.090836";
   </script>
   <style>
     body {
@@ -148,17 +153,20 @@
     }
 
     @-webkit-keyframes sk-foldCubeAngle {
-      0%, 10% {
+      0%,
+      10% {
         -webkit-transform: perspective(140px) rotateX(-180deg);
         transform: perspective(140px) rotateX(-180deg);
         opacity: 0;
       }
-      25%, 75% {
+      25%,
+      75% {
         -webkit-transform: perspective(140px) rotateX(0deg);
         transform: perspective(140px) rotateX(0deg);
         opacity: 1;
       }
-      90%, 100% {
+      90%,
+      100% {
         -webkit-transform: perspective(140px) rotateY(180deg);
         transform: perspective(140px) rotateY(180deg);
         opacity: 0;
@@ -166,17 +174,20 @@
     }
 
     @keyframes sk-foldCubeAngle {
-      0%, 10% {
+      0%,
+      10% {
         -webkit-transform: perspective(140px) rotateX(-180deg);
         transform: perspective(140px) rotateX(-180deg);
         opacity: 0;
       }
-      25%, 75% {
+      25%,
+      75% {
         -webkit-transform: perspective(140px) rotateX(0deg);
         transform: perspective(140px) rotateX(0deg);
         opacity: 1;
       }
-      90%, 100% {
+      90%,
+      100% {
         -webkit-transform: perspective(140px) rotateY(180deg);
         transform: perspective(140px) rotateY(180deg);
         opacity: 0;
@@ -201,10 +212,10 @@
         <li><span id="license-detail"></span></li>
         <li><span id="mode-detail" class="detail"></span> <span id="build-detail" class="detail"></span></li>
       </ul>
-        <ul>
-          <li>Powered by open-source software</li>
-          <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
-        </ul>
+      <ul>
+        <li>Powered by open-source software</li>
+        <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
+      </ul>
     </div>
     <div class="sk-folding-cube">
       <div class="sk-cube1 sk-cube"></div>
@@ -245,4 +256,5 @@
   }
 </script>
 </body>
+
 </html>

@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.07.0)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.8.1)
 ====================================================================
 
 (C) Copyright 2016-2020 Lablup Inc.
@@ -107,7 +107,7 @@ class Client {
         this.code = null;
         this.sessionId = null;
         this.kernelType = null;
-        this.clientVersion = '19.09.0';
+        this.clientVersion = '20.8.1';
         this.agentSignature = agentSignature;
         if (config === undefined) {
             this._config = ClientConfig.createFromEnv();
@@ -477,6 +477,7 @@ class Client {
         try {
             result = await this._wrapWithPromise(rqst);
             if (result.authenticated === true) {
+                await this.getManagerVersion();
                 return this.check_login();
             }
             else if (result.authenticated === false) { // Authentication failed.
@@ -715,16 +716,19 @@ class Client {
         let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params);
         return this._wrapWithPromise(rqst);
     }
-    // legacy aliases
+    // legacy aliases (DO NOT USE for new codes)
     createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
         return this.createIfNotExists(kernelType, sessionId, resources, timeout);
     }
+    // legacy aliases (DO NOT USE for new codes)
     destroyKernel(sessionId, ownerKey = null) {
         return this.destroy(sessionId, ownerKey);
     }
+    // legacy aliases (DO NOT USE for new codes)
     refreshKernel(sessionId, ownerKey = null) {
         return this.restart(sessionId, ownerKey);
     }
+    // legacy aliases (DO NOT USE for new codes)
     runCode(code, sessionId, runId, mode) {
         return this.execute(sessionId, runId, mode, code, {});
     }
@@ -920,6 +924,22 @@ class Client {
         for (var i = 0; i < 8; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         return text + "-jsSDK";
+    }
+    /**
+     * fetch existing pubic key of SSH Keypair from container
+     * only ssh_public_key will be received.
+     */
+    async fetchSSHKeypair() {
+        let rqst = this.newSignedRequest('GET', '/auth/ssh-keypair', null);
+        return this._wrapWithPromise(rqst, false);
+    }
+    /**
+     * refresh SSH Keypair from container
+     * gets randomly generated keypair (both ssh_public_key and ssh_private_key) will be received.
+     */
+    async refreshSSHKeypair() {
+        let rqst = this.newSignedRequest('PATCH', '/auth/ssh-keypair', null);
+        return this._wrapWithPromise(rqst, false);
     }
 }
 class ResourcePreset {

@@ -12,9 +12,9 @@ import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
 
 import '@material/mwc-select';
-import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-list/mwc-check-list-item';
 import '@material/mwc-icon-button';
 import '@material/mwc-textfield/mwc-textfield';
 
@@ -116,6 +116,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) concurrency_max;
   @property({type: Number}) concurrency_limit;
   @property({type: Array}) vfolders;
+  @property({type: Array}) selectedVfolders;
   @property({type: Object}) used_slot_percent;
   @property({type: Object}) used_resource_group_slot_percent;
   @property({type: Object}) used_project_slot_percent;
@@ -404,8 +405,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 40px;
         }
 
-        mwc-select,
-        mwc-multi-select {
+        mwc-select {
           width: 100%;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
@@ -427,7 +427,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           };
         }
 
-        mwc-multi-select#scaling-groups {
+        mwc-select#scaling-groups {
           margin-right: 0;
           padding-right: 0;
           width: 50%;
@@ -518,6 +518,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.resource_templates = [];
     this.resource_templates_filtered = [];
     this.vfolders = [];
+    this.selectedVfolders = [];
     this.default_language = '';
     this.concurrency_used = 0;
     this.concurrency_max = 0;
@@ -645,14 +646,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   _updateSelectedFolder() {
     let folders = this.shadowRoot.querySelector('#vfolder');
-    let selectedFolders = folders.value;
-    let indexes = Array<number>();
-    folders.items.map((item, index: number) => {
-      if (selectedFolders.indexOf(item.value) > -1) {
-        indexes.push(index);
-      }
-    });
-    folders.select(indexes);
+    let selectedFolderItems = folders.selected;
+    let selectedFolders: String[] = [];
+    if (selectedFolderItems.length > 0) {
+      selectedFolders = selectedFolderItems.map(item => item.value);
+    } else {
+      selectedFolders = [];
+    }
+    this.selectedVfolders = selectedFolders;
   }
 
   /**
@@ -778,7 +779,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let version = this.shadowRoot.querySelector('#version').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     let isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
-    let vfolder = this.shadowRoot.querySelector('#vfolder').value;
+    let vfolder = this.selectedVfolders;
     this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
     this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
     this.shmem_request = this.shadowRoot.querySelector('#shmem-resource').value;
@@ -1848,7 +1849,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <wl-checkbox id="use-gpu-checkbox">${_t("session.launcher.UseGPU")}</wl-checkbox>
           </div>
           <div class="horizontal center layout">
-            <mwc-multi-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required naturalMenuWidth
+            <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required naturalMenuWidth
                         @selected="${(e) => this.updateScalingGroup(false, e)}">
               ${this.scaling_groups.map(item => html`
                 <mwc-list-item class="scaling-group-dropdown"
@@ -1857,21 +1858,24 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ${item.name}
                 </mwc-list-item>
               `)}
-            </mwc-multi-select>
+            </mwc-select>
             <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
                            pattern="[a-zA-Z0-9_-]{4,}" fullwidth
                            validationMessage="${_t("session.launcher.SessionNameAllowCondition")}"
                            style="margin-left:5px;">
             </mwc-textfield>
           </div>
-          <div class="horizontal center layout">
-            <mwc-multi-select fullwidth id="vfolder" label="${_t("session.launcher.FolderToMount")}" multi
-            @selected="${this._updateSelectedFolder}">
+
+          <wl-expansion name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
+            <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
+            <span slot="description" style="font-size:12px;color:#646464;">${this.selectedVfolders.toString()}</span>
+            <mwc-list fullwidth multi id="vfolder"
+              @selected="${this._updateSelectedFolder}">
             ${this.vfolders.map(item => html`
-              <mwc-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}</mwc-list-item>
+              <mwc-check-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}</mwc-check-list-item>
             `)}
-            </mwc-multi-select>
-          </div>
+            </mwc-list>
+          </wl-expansion>
           <div class="vertical center layout" style="padding-top:15px;">
             <mwc-select id="resource-templates" label="${_t("session.launcher.ResourceAllocation")}" fullwidth required>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
