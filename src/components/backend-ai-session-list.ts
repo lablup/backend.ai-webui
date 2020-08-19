@@ -463,11 +463,11 @@ export default class BackendAiSessionList extends BackendAIPage {
       }
       let sessions = response.compute_session_list.items;
       if (sessions !== undefined && sessions.length != 0) {
-        let previous_sessions = this.compute_sessions;
+        const previousSessions = this.compute_sessions;
 
-        let previous_session_keys: any = [];
-        Object.keys(previous_sessions).map((objectKey, index) => {
-          previous_session_keys.push(previous_sessions[objectKey][this.sessionNameField]);
+        const previousSessionKeys: any = [];
+        Object.keys(previousSessions).map((objectKey, index) => {
+          previousSessionKeys.push(previousSessions[objectKey][this.sessionNameField]);
         });
         Object.keys(sessions).map((objectKey, index) => {
           let session = sessions[objectKey];
@@ -1373,31 +1373,97 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _exportToCSV() {
-    let fileNameEl = this.shadowRoot.querySelector('#export-file-name');
+    const fileNameEl = this.shadowRoot.querySelector('#export-file-name');
 
     if (!fileNameEl.validity.valid) {
       return;
     }
+    const exportList: any = [];
 
-    let group_id = globalThis.backendaiclient.current_group_id();
-    let fields = ["id", "name", "lang", "created_at", "terminated_at", "status", "status_info",
-      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"];
-
+    // Parameters
+    let status: any = ["RUNNING", "RESTARTING", "TERMINATING",  "PENDING", "PREPARING", "PULLING", "TERMINATED", "CANCELLED", "ERROR"];
+    if (globalThis.backendaiclient.supports('detailed-session-states')) {
+      status = status.join(',');
+    }
+    const fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "access_key"];
     if (this._connectionMode === "SESSION") {
       fields.push("user_email");
     }
     if (globalThis.backendaiclient.is_superadmin) {
-      fields.push("agent");
+      fields.push("containers {container_id agent occupied_slots live_stat last_stat}");
+    } else {
+      fields.push("containers {container_id occupied_slots live_stat last_stat}");
     }
+    const groupId = globalThis.backendaiclient.current_group_id();
+    const limit = 100;
 
-    globalThis.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
-      if (!response.compute_session_list && response.legacy_compute_session_list) {
-        response.compute_session_list = response.legacy_compute_session_list;
+    // Get session list and export to csv file
+    globalThis.backendaiclient.computeSession.listAll(fields, status, this.filterAccessKey, limit, 0, groupId).then((response) => {
+      const sessions = response;
+      if (sessions.length === 0) {
+        this.notification.text = "No sessions";
+        this.notification.show();
+        this.exportToCsvDialog.hide();
+        return;
       }
-      let sessions = response.compute_sessions;
-      JsonToCsv.exportToCsv(fileNameEl.value, sessions);
+      sessions.forEach((session) => {
+        const exportListItem: any = {};
+        exportListItem.id = session.id;
+        exportListItem.name = session.name;
+        exportListItem.image = session.image.split('/')[2] || session.image.split('/')[1];
+        exportListItem.status = session.status;
+        exportListItem.status_info = session.status_info;
+        exportListItem.access_key = session.access_key;
+        exportListItem.created_at = session.created_at;
+        exportListItem.terminated_at = session.terminated_at;
+        if (session.containers && session.containers.length > 0) {
+          // Assume a session has only one container (no consideration on multi-container bundling)
+          const container = session.containers[0];
+          exportListItem.container_id = container.container_id;
+          const occupiedSlots = container.occupied_slots ? JSON.parse(container.occupied_slots) : null;
+          if (occupiedSlots) {
+            exportListItem.cpu_slot = parseInt(occupiedSlots.cpu);
+            exportListItem.mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupiedSlots.mem, 'g')).toFixed(2);
+            if (occupiedSlots['cuda.shares']) {
+              exportListItem.cuda_shares = occupiedSlots['cuda.shares'];
+            }
+            if (occupiedSlots['cuda.device']) {
+              exportListItem.cuda_device = occupiedSlots['cuda.device'];
+            }
+            if (occupiedSlots['tpu.device']) {
+              exportListItem.tpu_device = occupiedSlots['tpu.device'];
+            }
+            if (occupiedSlots['rocm.device']) {
+              exportListItem.rocm_device = occupiedSlots['rocm.device'];
+            }
+          }
+          const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
+          if (liveStat) {
+            if (liveStat.cpu_used && liveStat.cpu_used.capacity) {
+              exportListItem.cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
+            } else {
+              exportListItem.cpu_used_time = 0;
+            }
+            if (liveStat.io_read) {
+              exportListItem.io_read_bytes_mb = this._automaticScaledTime(liveStat.io_read.capacity);
+            } else {
+              exportListItem.io_read_bytes_mb = 0;
+            }
+            if (liveStat.io_write) {
+              exportListItem.io_write_bytes_mb = this._automaticScaledTime(liveStat.io_write.capacity);
+            } else {
+              exportListItem.io_write_bytes_mb = 0;
+            }
+          }
+          if (container.agent) {
+            exportListItem.agent = container.agent;
+          }
+        }
+        exportList.push(exportListItem);
+      });
 
-      this.notification.text = "Downloading CSV file..."
+      JsonToCsv.exportToCsv(fileNameEl.value, exportList);
+      this.notification.text = "Downloading CSV file...";
       this.notification.show();
       this.exportToCsvDialog.hide();
     });
