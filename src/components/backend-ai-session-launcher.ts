@@ -759,8 +759,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Else, make new session by call _newSession().
    * */
   _newSessionWithConfirmation() {
-    let vfolder = this.shadowRoot.querySelector('#vfolder').value;
-    if (vfolder.length === 0) {
+    const vfolderItems = this.shadowRoot.querySelector('#vfolder').selected;
+    const vfolders = vfolderItems.map((el) => el.value);
+    if (vfolders.length === 0) {
       let confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
       confirmationDialog.show();
     } else {
