@@ -416,22 +416,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
     //resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
     this.shadowRoot.querySelector('#modify-id-preset-name').value = preset_name;
     this.shadowRoot.querySelector('#modify-cpu-resource').value = resourcePreset.resource_slots.cpu;
-    if ('cuda.device' in resourcePreset.resource_slots) {
-      this.shadowRoot.querySelector('#modify-gpu-resource').value = resourcePreset.resource_slots['cuda.device'];
-    } else {
-      this.shadowRoot.querySelector('#modify-gpu-resource').value = "";
-    }
-    if ('cuda.shares' in resourcePreset.resource_slots) {
-      this.shadowRoot.querySelector('#modify-fgpu-resource').value = resourcePreset.resource_slots['cuda.shares'];
-    } else {
-      this.shadowRoot.querySelector('#modify-fgpu-resource').value = "";
-    }
+    this.shadowRoot.querySelector('#modify-gpu-resource').value = 'cuda.device' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.device'] : '';
+    this.shadowRoot.querySelector('#modify-fgpu-resource').value = 'cuda.shares' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.shares'] : '';
     this.shadowRoot.querySelector('#modify-ram-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
-    if (resourcePreset.shared_memory) {
-      this.shadowRoot.querySelector('#modify-shmem-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g')).toFixed(2);
-    } else {
-      this.shadowRoot.querySelector('#modify-shmem-resource').value = '';
-    }
+    this.shadowRoot.querySelector('#modify-shmem-resource').value = resourcePreset.shared_memory ? parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g')).toFixed(2) : '';
   }
 
   _refreshTemplateData() {
