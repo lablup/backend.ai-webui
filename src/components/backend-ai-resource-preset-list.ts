@@ -272,7 +272,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
               </div>
               <div class="horizontal center layout">
                 <mwc-textfield id="shmem-resource" class="modify" type="number"
-                    label="Shared Memory (GB)" min="0" step="0.01" maxLength="8"
+                    label="Shared Memory (GB)" min="0" step="0.01"
                     validationMessage="${_t("resourcePreset.MinimumShmemUnit")}"></mwc-textfield>
               </div>
               <br/><br/>
