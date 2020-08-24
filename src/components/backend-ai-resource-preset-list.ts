@@ -251,26 +251,26 @@ class BackendAiResourcePresetList extends BackendAIPage {
         <div slot="content" class="login-panel intro centered">
           <form id="login-form">
             <fieldset>
-              <mwc-textfield type="text" name="preset_name" id="id_preset_name" label="${_t("resourcePreset.PresetName")}"
+              <mwc-textfield type="text" name="preset_name" id="modify-id-preset-name" label="${_t("resourcePreset.PresetName")}"
                           auto-validate required
                           pattern="[a-zA-Z0-9_-]+"
                           disabled
                           error-message="Policy name only accepts letters, numbers, underscore, and dash"></mwc-textfield>
               <h4>${_t("resourcePreset.ResourcePreset")}</h4>
               <div class="horizontal center layout">
-                <mwc-textfield id="cpu-resource" type="number" label="CPU"
+                <mwc-textfield id="modify-cpu-resource" type="number" label="CPU"
                     min="1" value="1"></mwc-textfield>
-                <mwc-textfield id="ram-resource" type="number" label="RAM (GB)"
+                <mwc-textfield id="modify-ram-resource" type="number" label="RAM (GB)"
                     min="1" value="1"></mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <mwc-textfield id="gpu-resource" type="number" label="GPU"
+                <mwc-textfield id="modify-gpu-resource" type="number" label="GPU"
                     min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
-                <mwc-textfield id="fgpu-resource" type="number" label="fGPU"
+                <mwc-textfield id="modify-fgpu-resource" type="number" label="fGPU"
                     min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <mwc-textfield id="shmem-resource" type="number" label="Shared Memory (GB)" min="0"></mwc-textfield>
+                <mwc-textfield id="modify-shmem-resource" type="number" label="Shared Memory (GB)" min="0"></mwc-textfield>
               </div>
               <br/><br/>
               <wl-button class="fg orange create-button full-size" outlined type="button"
@@ -413,25 +413,24 @@ class BackendAiResourcePresetList extends BackendAIPage {
     const preset_name = controls['preset-name'];
     let resourcePresets = globalThis.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
     let resourcePreset = resourcePresets[preset_name];
-    console.log(resourcePreset);
     //resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
-    this.shadowRoot.querySelector('#id_preset_name').value = preset_name;
-    this.shadowRoot.querySelector('#cpu-resource').value = resourcePreset.resource_slots.cpu;
+    this.shadowRoot.querySelector('#modify-id-preset-name').value = preset_name;
+    this.shadowRoot.querySelector('#modify-cpu-resource').value = resourcePreset.resource_slots.cpu;
     if ('cuda.device' in resourcePreset.resource_slots) {
-      this.shadowRoot.querySelector('#gpu-resource').value = resourcePreset.resource_slots['cuda.device'];
+      this.shadowRoot.querySelector('#modify-gpu-resource').value = resourcePreset.resource_slots['cuda.device'];
     } else {
-      this.shadowRoot.querySelector('#gpu-resource').value = "";
+      this.shadowRoot.querySelector('#modify-gpu-resource').value = "";
     }
     if ('cuda.shares' in resourcePreset.resource_slots) {
-      this.shadowRoot.querySelector('#fgpu-resource').value = resourcePreset.resource_slots['cuda.shares'];
+      this.shadowRoot.querySelector('#modify-fgpu-resource').value = resourcePreset.resource_slots['cuda.shares'];
     } else {
-      this.shadowRoot.querySelector('#fgpu-resource').value = "";
+      this.shadowRoot.querySelector('#modify-fgpu-resource').value = "";
     }
-    this.shadowRoot.querySelector('#ram-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
+    this.shadowRoot.querySelector('#modify-ram-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
     if (resourcePreset.shared_memory) {
-      this.shadowRoot.querySelector('#shmem-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g')).toFixed(2);
+      this.shadowRoot.querySelector('#modify-shmem-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g')).toFixed(2);
     } else {
-      this.shadowRoot.querySelector('#shmem-resource').value = '';
+      this.shadowRoot.querySelector('#modify-shmem-resource').value = '';
     }
   }
 
@@ -495,9 +494,13 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   _modifyResourceTemplate() {
-    const name = this.shadowRoot.querySelector('#id_preset_name').value;
+    // continue only if all input is valid
+    if (!this._validityCheck('modify')) {
+      return;
+    }
+    const name = this.shadowRoot.querySelector('#modify-id-preset-name').value;
     const wrapper = v => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
-    const mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g');
+    const mem = wrapper(this.shadowRoot.querySelector('#modify-ram-resource').value + 'g');
     if (!name) {
       this.notification.text = _text('resourcePreset.NoPresetName');
       this.notification.show();
@@ -573,7 +576,31 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }
   }
 
+  /**
+   * Check Validity of input value in a dialog
+   * 
+   * @param {string} idPrefix - same prefix used in input field of each dialog
+   * (e.g. 'create' : create-preset-dialog, 'modify' : modify-template-dialog)
+   */
+
+  _validityCheck(idPrefix: string = '') {
+    const query = 'mwc-textfield[id^="'.concat(idPrefix).concat('"]');
+    const createDialogTextfields = this.shadowRoot.querySelectorAll(query);
+    let isValid: boolean = true;
+    for (const textfield of createDialogTextfields) {
+      isValid = textfield.checkValidity();
+      if (!isValid) {
+        return textfield.checkValidity();
+      }
+    }
+    return isValid;
+  }
+
   _createPreset() {
+    // continue only if all input is valid
+    if (!this._validityCheck('create')) {
+      return;
+    }
     const wrapper = (v) => {
       v = v.toString();
       return typeof (v) !== "undefined" && v.includes('Unlimited') ? 'Infinity' : v;
