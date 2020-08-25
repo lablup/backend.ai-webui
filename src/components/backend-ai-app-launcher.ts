@@ -486,7 +486,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </div>
           <div class="horizontal layout center center-justified">
             <wl-checkbox id="chk-open-to-public" style="margin-right:0.5em"></wl-checkbox>
-            Open app to public
+            Open app to public (BETA)
           </div>
         </div>
       </backend-ai-dialog>
