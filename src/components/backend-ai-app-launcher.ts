@@ -257,6 +257,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return false;
     }
     const openToPublic = this.shadowRoot.querySelector('#chk-open-to-public').checked;
+    this.shadowRoot.querySelector('#chk-open-to-public').checked = false;
     let param = {
       endpoint: globalThis.backendaiclient._config.endpoint
     };
@@ -484,10 +485,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               </div>
             `)}
           </div>
-          <div class="horizontal layout center center-justified">
-            <wl-checkbox id="chk-open-to-public" style="margin-right:0.5em"></wl-checkbox>
-            Open app to public (BETA)
-          </div>
+          ${globalThis.isElectron ? ``: html`
+            <div class="horizontal layout center center-justified">
+              <wl-checkbox id="chk-open-to-public" style="margin-right:0.5em"></wl-checkbox>
+              Open app to public (BETA)
+            </div>
+          `}
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="ssh-dialog" fixed backdrop>
