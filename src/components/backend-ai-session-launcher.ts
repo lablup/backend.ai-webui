@@ -452,7 +452,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #environment {
           --mdc-menu-item-height: 40px;
-          z-index: 10000;
           max-height: 300px;
         }
 
