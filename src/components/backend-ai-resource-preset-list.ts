@@ -331,7 +331,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </wl-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="delete-resource-preset-dialog" fixed backdrop blqockscrolling>
+      <backend-ai-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
          <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
             <p>${_t("resourcePreset.AboutToDeletePreset")}</p>
