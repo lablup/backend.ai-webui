@@ -300,7 +300,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         uri += `&port=${port}`;
       }
       if (openToPublic) {
-        uri += `&open_to_public=true`;
+        uri += '&open_to_public=true';
       }
       this.indicator.set(50, 'Adding kernel to socket queue...');
       const rqst_proxy = {
@@ -383,6 +383,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         if (port === '0' || port === 0) { // setting store does not accept null.
           port = null;
         }
+      }
+      const usePreferredPort = this.shadowRoot.querySelector('#chk-preferred-port').checked;
+      const userPort = parseInt(this.shadowRoot.querySelector('#app-port').value);
+      console.log(usePreferredPort, userPort)
+      if (usePreferredPort && userPort) {
+        port = userPort;
       }
       this._open_wsproxy(sessionName, appName, port)
         .then((response) => {
@@ -486,24 +492,30 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             `)}
           </div>
           ${globalThis.isElectron ? ``: html`
-            <div class="horizontal layout center center-justified">
+            <div class="horizontal layout center">
               <wl-checkbox id="chk-open-to-public" style="margin-right:0.5em"></wl-checkbox>
-              Open app to public (BETA)
+              ${_t("session.OpenToPublic")}
             </div>
           `}
+          <div class="horizontal layout center">
+            <wl-checkbox id="chk-preferred-port" style="margin-right:0.5em"></wl-checkbox>
+            ${_t("session.TryPreferredPort")}
+            <wl-textfield id="app-port" type="number" no-label-float value="10250"
+                min="1025" max="65534" style="margin-left:1em; width:70px"></wl-textfield>
+          </div>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="ssh-dialog" fixed backdrop>
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content" style="padding:15px;">
-          <div style="padding:15px 0;" >Use your favorite SSH/SFTP application to connect.</div>
+          <div style="padding:15px 0;" >${_t("session.SFTPDescription")}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t("session.ConnectionInformation")}</h4>
             <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a></div>
             <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
             <div><span>Port:</span> ${this.sshPort}</div>
             <a id="sshkey-download-link" style="margin-top:15px;" href="">
-              <mwc-button class="fg apps green">Download SSH key file (id_container)</mwc-button>
+              <mwc-button class="fg apps green">${_t("DownloadSSHKey")}</mwc-button>
             </a>
           </section>
         </div>
@@ -518,7 +530,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </section>
         </div>
       </backend-ai-dialog>
-      `;
+    `;
   }
 
 }
