@@ -268,7 +268,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 <mwc-textfield id="gpu-resource" class="modify" type="number" label="GPU" 
                     min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
                 <mwc-textfield id="fgpu-resource" class="modify" type="number" label="fGPU"
-                    min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
+                    min="0" value="0" step="0.01" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
               </div>
               <div class="horizontal center layout">
                 <mwc-textfield id="shmem-resource" class="modify" type="number"
