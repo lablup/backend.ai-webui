@@ -409,7 +409,8 @@
         "NoPresetName": "Input preset name",
         "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
         "Created": "Resource preset created",
-        "Updated": "Resource preset updated"
+        "Updated": "Resource preset updated",
+        "MinimumShmemUnit" : "The minimum unit for shared memory is 0.01 GB."
     },
     "usersettings": {
         "General": "General",
