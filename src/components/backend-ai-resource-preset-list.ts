@@ -265,7 +265,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
                     min="1" value="1"></mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <mwc-textfield id="gpu-resource" class="modify" type="number" label="GPU" 
+                <mwc-textfield id="gpu-resource" class="modify" type="number" label="GPU"
                     min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
                 <mwc-textfield id="fgpu-resource" class="modify" type="number" label="fGPU"
                     min="0" value="0" step="0.01" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
@@ -310,7 +310,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <mwc-textfield id="create-gpu-resource" class="create" type="number" label="GPU"
                 min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
             <mwc-textfield id="create-fgpu-resource" class="create" type="number" label="fGPU"
-                min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
+                min="0" value="0" step="0.01" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
           </div>
           <div class="horizontal center layout">
             <mwc-textfield id="create-shmem-resource" class="create" type="number"
@@ -572,7 +572,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
   /**
    * Check Validity of input value in a dialog
-   * 
+   *
    * @param {string} prefix - same prefix used in input field of each dialog
    * (e.g. 'create' : create-preset-dialog, 'modify' : modify-template-dialog)
    */
