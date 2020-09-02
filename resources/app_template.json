@@ -153,6 +153,14 @@
         "redirect": "",
         "src": "./resources/icons/sftp.png"
       }
+    ],
+    "xrdp": [
+      {
+        "name": "xrdp",
+        "title": "Remote Desktop",
+        "redirect": "",
+        "src": "./resources/icons/xrdp.png"
+      }
     ]
   }
 }
