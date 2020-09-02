@@ -968,7 +968,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, config) {
-    return globalThis.backendaiclient.createKernel(kernelName, sessionName, config, 10000);
+    const task = globalThis.backendaiclient.createKernel(kernelName, sessionName, config, 10000);
+    task.catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
+      }
+    });
+    return task;
   }
 
   _hideSessionDialog() {
