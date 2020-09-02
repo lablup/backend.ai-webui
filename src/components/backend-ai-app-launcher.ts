@@ -345,6 +345,25 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       urlPostfix = '';
     }
 
+    if (appName === 'tensorboard') {
+      this._openTensorboardDialog();
+      let port = null;
+      this.indicator = await globalThis.lablupIndicator.start();
+      // wait for button click event
+      document.addEventListener('tensorboard-path-completed', () => {
+        this.indicator.set(100, 'Prepared.');
+        this._open_wsproxy(sessionName, appName, port).then((response) => {
+          this._hideAppLauncher();
+              setTimeout(() => {
+                globalThis.open(response.url + urlPostfix, '_blank');
+                console.log(appName + " proxy loaded: ");
+                console.log(sessionName);
+          }, 1000);
+        });
+      })
+      return;
+    }
+
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
@@ -391,9 +410,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (appName === 'tensorboard') {
       this._openTensorboardDialog();
       let port = null;
-      this.indicator = await globalThis.lablupIndicator.start();
       // wait for button click event
-      document.addEventListener('tensorboard-path-completed', () => {
+      document.addEventListener('tensorboard-path-completed', async () => {
+        this.indicator = await globalThis.lablupIndicator.start();
         this.indicator.set(100, 'Prepared.');
         this._open_wsproxy(sessionName, appName, port).then((response) => {
           this._hideAppLauncher();
@@ -516,6 +535,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     dialog.hide();
   }
 
+  /**
+   * add Tensorboard path and dispatch the event
+   */
+
   _addTensorboardPath() {
     const event = new CustomEvent("tensorboard-path-completed", {});
     document.dispatchEvent(event);
@@ -555,7 +578,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </section>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="tensorboard-dialog" fixed noclosebutton>
+      <backend-ai-dialog id="tensorboard-dialog" fixed>
         <span slot="title">${_t("session.TensorboardPath")}</span>
         <div slot="content" style="padding:15px;">
           <div style="padding:15px 0;">${_t('session.InputTensorboardPath')}</div>
