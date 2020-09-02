@@ -839,8 +839,8 @@ export default class BackendAiSessionList extends BackendAIPage {
   async _runTerminal(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
-    const sessionName = controls['session-name'];
-    return globalThis.appLauncher.runTerminal(sessionName);
+    const sessionUuid = controls['session-uuid'];
+    return globalThis.appLauncher.runTerminal(sessionUuid);
   }
 
   // Single session closing
