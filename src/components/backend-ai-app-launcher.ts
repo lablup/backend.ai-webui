@@ -51,6 +51,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
+  @property({type: String}) tensorboardPath = '';
 
   constructor() {
     super();
@@ -67,6 +68,24 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           --mdc-icon-button-size: 48px;
           --mdc-icon-size: 36px;
           padding: 3px;
+        }
+
+        mwc-textfield#tensorboard-path {
+          width: 75%;
+        }
+
+        mwc-icon-button#tensorboard-button {
+          background-color: #e9852e;
+          color: white;
+          --mdc-icon-button-size: 24px;
+          --mdc-icon-size: 24px;
+          padding: 10px;
+          margin-left: 10px;
+          border-radius: 10px;
+        }
+
+        mwc-textfield#tensorboard-path {
+          --mdc-text-field-fill-color: transparent;
         }
 
         #app-dialog {
@@ -188,7 +207,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   /**
    * Display the app launcher.
    *
-   * @param detail
+   * @param controls
    */
   _showAppLauncher(controls) {
     const sessionName = controls['session-name'];
@@ -369,6 +388,25 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       urlPostfix = '';
     }
 
+    if (appName === 'tensorboard') {
+      this._openTensorboardDialog();
+      let port = null;
+      this.indicator = await globalThis.lablupIndicator.start();
+      // wait for button click event
+      document.addEventListener('tensorboard-path-completed', () => {
+        this.indicator.set(100, 'Prepared.');
+        this._open_wsproxy(sessionName, appName, port).then((response) => {
+          this._hideAppLauncher();
+              setTimeout(() => {
+                globalThis.open(response.url + urlPostfix, '_blank');
+                console.log(appName + " proxy loaded: ");
+                console.log(sessionName);
+          }, 1000);
+        });
+      })
+      return;
+    }
+
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
@@ -450,7 +488,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * Open a SSH dialog.
    */
   _openSSHDialog() {
-    let dialog = this.shadowRoot.querySelector('#ssh-dialog');
+    const dialog = this.shadowRoot.querySelector('#ssh-dialog');
     dialog.show();
   }
 
@@ -458,8 +496,30 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * Open a VNC dialog.
    */
   _openVNCDialog() {
-    let dialog = this.shadowRoot.querySelector('#vnc-dialog');
+    const dialog = this.shadowRoot.querySelector('#vnc-dialog');
     dialog.show();
+  }
+
+  /**
+   * Open a Tensorboard dialog for path input.
+   */
+  _openTensorboardDialog() {
+    const dialog = this.shadowRoot.querySelector('#tensorboard-dialog');
+    dialog.show();
+  }
+
+  /**
+   * Close a Tensorboard dialog.
+   */
+  _hideTensorboardDialog() {
+    const dialog = this.shadowRoot.querySelector('#tensorboard-dialog');
+    dialog.hide();
+  }
+
+  _addTensorboardPath() {
+    const event = new CustomEvent("tensorboard-path-completed", {});
+    document.dispatchEvent(event);
+    this._hideTensorboardDialog();
   }
 
   render() {
@@ -492,6 +552,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <a id="sshkey-download-link" style="margin-top:15px;" href="">
               <mwc-button class="fg apps green">Download SSH key file (id_container)</mwc-button>
             </a>
+          </section>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="tensorboard-dialog" fixed noclosebutton>
+        <span slot="title">${_t("session.TensorboardPath")}</span>
+        <div slot="content" style="padding:15px;">
+          <div style="padding:15px 0;">${_t('session.InputTensorboardPath')}</div>
+          <section class="horizontal wrap layout center">
+            <mwc-textfield id="tensorboard-path" value="${_t('session.DefaultTensorboardPath')}"></mwc-textfield>
+            <mwc-icon-button dense id="tensorboard-button" icon="forward" @click="${this._addTensorboardPath}"></mwc-button>
           </section>
         </div>
       </backend-ai-dialog>
