@@ -19,10 +19,11 @@ import '@material/mwc-icon-button';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu';
+import '@material/mwc-select';
+import '@material/mwc-circular-progress';
 
 import toml from 'markty-toml';
 
-import 'weightless/progress-spinner';
 import 'weightless/popover';
 import 'weightless/popover-card';
 
@@ -47,6 +48,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/mwc/mwc-multi-select';
+
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
 
@@ -99,6 +101,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) splash = Object();
   @property({type: Object}) loginPanel = Object();
   @property({type: String}) _page = '';
+  @property({type: Object}) _pageParams = {};
   @property({type: String}) _sidepanel = '';
   @property({type: Boolean}) _drawerOpened = false;
   @property({type: Boolean}) _offlineIndicatorOpened = false;
@@ -135,6 +138,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
     globalThis.appLauncher = this.shadowRoot.querySelector('#app-launcher');
     globalThis.resourceBroker = this.shadowRoot.querySelector('#resource-broker');
+    globalThis.currentPage = this._page;
+    globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
     this.appPage = this.shadowRoot.querySelector('#app-page');
@@ -374,8 +379,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Control the side panel by panel's state.
-   * 
-   * @param {string} panel 
+   *
+   * @param {string} panel
    */
   _openSidePanel(panel): void {
     if (this.contentBody.open === true) {
@@ -393,9 +398,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Change the drawer layout according to browser size.
-   * 
-   * @param {number} width 
-   * @param {number} height 
+   *
+   * @param {number} width
+   * @param {number} height
    */
   _changeDrawerLayout(width, height): void {
     this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
@@ -403,6 +408,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.appBody.style.setProperty('--mdc-drawer-width', '190px');
       this.appBody.type = 'modal';
       this.appBody.open = false;
+      this.contentBody.style.width = 'calc('+width+'px - 190px)';
       this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
       this.drawerToggleButton.style.display = 'block';
       if (this.mini_ui) {
@@ -413,12 +419,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (this.mini_ui) {
         this.appBody.style.setProperty('--mdc-drawer-width', '54px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', '54px');
+        this.contentBody.style.width = 'calc('+width+'px - 54px)';
         if (this.contentBody.open) {
           this.mainToolbar.style.setProperty('--mdc-drawer-width', '304px');// 54+250
         }
       } else {
         this.appBody.style.setProperty('--mdc-drawer-width', '190px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
+        this.contentBody.style.width = 'calc('+width+'px - 190px)';
         if (this.contentBody.open) {
           this.mainToolbar.style.setProperty('--mdc-drawer-width', '440px'); // 190+250
         }
@@ -547,7 +555,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view: string = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'information', 'statistics'].includes(view) !== true) { // Fallback for Windows OS
+      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'information', 'statistics', 'github', 'import'].includes(view) !== true) { // Fallback for Windows OS
         let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
         if (typeof modified_view != 'undefined') {
           view = modified_view;
@@ -562,7 +570,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Update the sidebar menu title according to view.
-   * 
+   *
    * @param {string} view - Sidebar menu title string.
    */
   _updateSidebar(view) {
@@ -621,6 +629,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.menuTitle = _text("console.menu.Logs");
         this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
+      case 'github':
+      case 'import':
+        this.menuTitle = _text("console.menu.Import&Run");
+        this.updateTitleColor('var(--paper-blue-800)', '#efefef');
+        break;
       default:
         this._page = 'error';
         this.menuTitle = _text("console.NOTFOUND");
@@ -630,8 +643,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * When user close the app window, delete login information.
-   * 
-   * @param {Boolean} performClose 
+   *
+   * @param {Boolean} performClose
    */
   async close_app_window(performClose = false) {
     if (globalThis.backendaioptions.get('preserve_login') === false) { // Delete login information.
@@ -657,8 +670,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Logout from the backend.ai client.
-   * 
-   * @param {Boolean} performClose 
+   *
+   * @param {Boolean} performClose
    */
   async logout(performClose = false) {
     console.log('also close the app:', performClose);
@@ -699,9 +712,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Update the title color.
-   * 
-   * @param {string} backgroundColorVal 
-   * @param {string} colorVal 
+   *
+   * @param {string} backgroundColorVal
+   * @param {string} colorVal
    */
   updateTitleColor(backgroundColorVal: string, colorVal: string) {
     (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.setProperty('--mdc-theme-primary', backgroundColorVal);
@@ -710,7 +723,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Change the backend.ai client's current group.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   changeGroup(e) {
@@ -771,7 +784,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Move to input url.
-   * 
+   *
    * @param {string} url
    */
   _moveTo(url) {
@@ -811,8 +824,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Set the project group according to current group.
-   * 
-   * @param {string} value 
+   *
+   * @param {string} value
    */
   _writeRecentProjectGroup(value: string) {
     let endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
@@ -864,9 +877,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Create a popover.
-   * 
-   * @param {string} anchor 
-   * @param {string} title 
+   *
+   * @param {string} anchor
+   * @param {string} title
    */
   _createPopover(anchor: string, title: string) {
     let popover = document.createElement('wl-popover');
@@ -893,7 +906,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     // language=HTML
     return html`
       <div id="loading-curtain" class="loading-background"></div>
-      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="visibility:hidden;">
+      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="position:fixed;visibility:hidden;">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
           <div id="portrait-bar" class="draggable">
             <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
@@ -931,6 +944,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
               <span class="full-menu">${_t("console.menu.Experiments")}</span>
             </mwc-list-item>` : html``}
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'github' || this._page === 'import'}" @click="${() => this._moveTo('/import')}" ?disabled="${this.blockedMenuitem.includes('import')}">
+              <mwc-icon id="import-menu-icon" slot="graphic" class="fg blue">play_arrow</mwc-icon>
+              <span class="full-menu">${_t("console.menu.Import&Run")}</span>
+            </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}" ?disabled="${this.blockedMenuitem.includes('data')}">
               <mwc-icon id="data-menu-icon" slot="graphic" class="fg orange">cloud_upload</mwc-icon>
               <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
@@ -987,7 +1004,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.07.6.200720</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.8.1.200814</small>
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
@@ -995,7 +1012,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
           </div>
         </div>
-        <div slot="appContent">
+        <div id="app-content" slot="appContent">
           <mwc-drawer id="content-body">
             <div class="sidepanel-drawer">
               <backend-ai-sidepanel-notification class="sidepanel" ?active="${this._sidepanel === 'notification'}"></backend-ai-sidepanel-notification>
@@ -1055,21 +1072,22 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
                 <section role="main" id="content" class="container layout vertical center">
                   <div id="app-page">
-                    <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-summary-view>
-                    <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-session-view>
-                    <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-experiment-view>
-                    <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usersettings-view>
-                    <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-credential-view>
-                    <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-agent-view>
-                    <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-data-view>
-                    <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-environment-view>
-                    <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-settings-view>
-                    <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-maintenance-view>
-                    <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-information-view>
-                    <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-statistics-view>
-                    <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-email-verification-view>
-                    <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${this._page === 'change-password'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-change-forgot-password-view>
-                    <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><wl-progress-spinner active></wl-progress-spinner></backend-ai-error-view>
+                    <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
+                    <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
+                    <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
+                    <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>
+                    <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
+                    <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
+                    <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
+                    <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
+                    <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view>
+                    <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-settings-view>
+                    <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>
+                    <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-information-view>
+                    <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view>
+                    <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
+                    <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${this._page === 'change-password'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>
+                    <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view>
                   </div>
                 </section>
               </div>
@@ -1126,14 +1144,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   /**
    * Change the state.
-   * 
-   * @param {object} state 
+   *
+   * @param {object} state
    */
   stateChanged(state) {
     this._page = state.app.page;
+    this._pageParams = state.app.params;
     this._offline = state.app.offline;
     this._offlineIndicatorOpened = state.app.offlineIndicatorOpened;
     this._drawerOpened = state.app.drawerOpened;
+    globalThis.currentPage = this._page;
+    globalThis.currentPageParams = this._pageParams;
   }
 }
 

@@ -250,7 +250,7 @@ export default class BackendAIData extends BackendAIPage {
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
         <div slot="content">
-          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]*"
+          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]+"
               auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
           <div class="horizontal layout">
             <mwc-multi-select id="add-folder-host" label="${_t("data.Host")}">
@@ -357,8 +357,8 @@ export default class BackendAIData extends BackendAIPage {
 
   /**
    * Initialize the admin.
-   * 
-   * @param {Boolean} active 
+   *
+   * @param {Boolean} active
    */
   async _viewStateChanged(active) {
     await this.updateComplete;
@@ -388,9 +388,9 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   /**
-   * display tabs 
-   * 
-   * @param {object} tab 
+   * display tabs
+   *
+   * @param {object} tab
    */
   _showTab(tab) {
     let els = this.shadowRoot.querySelectorAll(".tab-content");
@@ -430,7 +430,7 @@ export default class BackendAIData extends BackendAIPage {
 
   /**
    * Display the storage description.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    * @param {object} item
    */

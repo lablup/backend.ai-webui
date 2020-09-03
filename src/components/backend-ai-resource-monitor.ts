@@ -245,8 +245,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         #scaling-group-select-box mwc-multi-select {
           width: 245px;
           margin-left: -4px;
-          font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-          --mdc-typography-subtitle1-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-size: 14px;
           --mdc-typography-subtitle1-font-color: rgb(24, 24, 24);
           --mdc-typography-subtitle1-font-weight: 400;
@@ -312,8 +312,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         mwc-select,
         mwc-multi-select {
           width: 100%;
-          font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-          --mdc-typography-subtitle1-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+          font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
           --mdc-theme-primary: var(--paper-red-600);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
@@ -696,8 +696,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.used_resource_group_slot.cpu}/${this.total_resource_group_slot.cpu}</span>
-              <mwc-linear-progress id="cpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cpu / 100.0}" buffer="${this.used_resource_group_slot_percent.cpu / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="cpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cpu / 100.0}" buffer="${this.used_slot_percent.cpu / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="cpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cpu / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="cpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cpu / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.cpu}/${this.total_slot.cpu}</span>
             </div>
           </div>
@@ -708,8 +708,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical start-justified wrap">
               <span class="gauge-label">${this.used_resource_group_slot.mem}/${this.total_resource_group_slot.mem}GB</span>
-              <mwc-linear-progress id="mem-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.mem / 100.0}" buffer="${this.used_resource_group_slot_percent.mem / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="mem-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.mem / 100.0}" buffer="${this.used_slot_percent.mem / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="mem-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.mem / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="mem-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.mem / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.mem}/${this.total_slot.mem}GB</span>
             </div>
           </div>
@@ -722,8 +722,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
               <span class="gauge-label">${this.used_resource_group_slot.cuda_device}/${this.total_resource_group_slot.cuda_device}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cuda_device / 100.0}" buffer="${this.used_resource_group_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_device / 100.0}" buffer="${this.used_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.cuda_device}/${this.total_slot.cuda_device}</span>
             </div>
           </div>` :
@@ -737,8 +737,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.used_resource_group_slot.cuda_shares}/${this.total_resource_group_slot.cuda_shares}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cuda_shares / 100.0}" buffer="${this.used_resource_group_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_shares / 100.0}" buffer="${this.used_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
+              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
               <span class="gauge-label">${this.used_slot.cuda_shares}/${this.total_slot.cuda_shares}</span>
             </div>
           </div>` :
