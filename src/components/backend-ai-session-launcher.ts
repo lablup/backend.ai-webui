@@ -630,13 +630,27 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {any} e
    * */
   async updateScalingGroup(forceUpdate = false, e) {
-    if (this.active) {
-      await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
+    try {
+      if (this.active) {
+        await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
 
-      if (forceUpdate === true) {
-        await this._refreshResourcePolicy();
+        if (forceUpdate === true) {
+          await this._refreshResourcePolicy();
+        } else {
+          this.updateResourceAllocationPane('session dialog');
+        }
+      }
+    } catch(err) {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
       } else {
-        this.updateResourceAllocationPane('session dialog');
+        this.notification.text = PainKiller.relieve(err);
+        this.notification.show(true, err);
       }
     }
   }
@@ -703,20 +717,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.gpu_modes = this.resourceBroker.gpu_modes;
       this.updateResourceAllocationPane('refresh resource policy');
     }).catch((err) => {
-      console.log(err);
       this.metadata_updating = false;
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      } else if (err && err.title) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show(true, err);
-      } else {
-        this.notification.text = PainKiller.relieve(err);
-        this.notification.detail = err;
-        this.notification.show(true, err);
-      }
+      throw err;
     });
   }
 
@@ -768,6 +770,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (vfolders.length === 0) {
       let confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
       confirmationDialog.show();
+      return;
     } else {
       return this._newSession();
     }
@@ -905,40 +908,44 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
-      setTimeout(() => {
-        this.metadata_updating = true;
-        this.aggregateResource('session-creation');
-        this.metadata_updating = false;
-      }, 1500);
+      await Promise.all([
+        this.metadata_updating = true,
+        this.aggregateResource('session-creation'),
+        this.metadata_updating = false]);
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
       if (res.length === 1) {
-        const onlyOneSession = res[0].taskobj;
+        res[0].taskobj.then( res => {
           let appOptions;
-          if ('kernelId' in onlyOneSession) {
-            appOptions = {
-              'session-name': onlyOneSession.kernelId,
-              'access-key': ''
-            };
-          } else {
-            appOptions = {
-              'session-name': onlyOneSession.sessionId,
-              'access-key': ''
-            };
-          }
-          let service_info = onlyOneSession.servicePorts;
-          if (Array.isArray(service_info) === true) {
-            appOptions['app-services'] = service_info.map(a => a.name);
-          } else {
-            appOptions['app-services'] = [];
-          }
-          if (this.mode === 'import') {
-            appOptions['runtime'] = 'jupyter';
-            appOptions['filename'] = this.importFilename;
-          }
-          globalThis.appLauncher.showLauncher(appOptions);
+        if ('kernelId' in res) {
+          appOptions = {
+            'session-name': res.kernelId,
+            'access-key': ''
+          };
+        } else {
+          appOptions = {
+            'session-name': res.sessionId,
+            'access-key': ''
+          };
+        }
+        let service_info = res.servicePorts;
+        if (Array.isArray(service_info) === true) {
+          appOptions['app-services'] = service_info.map(a => a.name);
+        } else {
+          appOptions['app-services'] = [];
+        }
+        if (this.mode === 'import') {
+          appOptions['runtime'] = 'jupyter';
+          appOptions['filename'] = this.importFilename;
+        }
+        globalThis.appLauncher.showLauncher(appOptions);
+        });
       }
     } catch (err) {
+      // hide session create dialog if TIMEOUT error occured.
+      if (err.title === 'Request timeout') {
+        this.shadowRoot.querySelector('#new-session-dialog').hide();
+      }
       // enable launch button
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
@@ -1157,7 +1164,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return Promise.resolve(true);
     }).catch(err => {
       if (err && err.message) {
-        console.log(err);
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true, err);
