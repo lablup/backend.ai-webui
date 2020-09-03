@@ -355,7 +355,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       // wait for button click event
       document.addEventListener('tensorboard-path-completed', () => {
         this.indicator.set(100, 'Prepared.');
-        this._open_wsproxy(sessionName, appName, port).then((response) => {
+        // if tensorboard path is empty, --logdir will be '/home/work/logs'
+        this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
+        this._open_wsproxy(sessionName, appName, port, {'--logdir': this.tensorboardPath}).then((response) => {
           this._hideAppLauncher();
               setTimeout(() => {
                 globalThis.open(response.url + urlPostfix, '_blank');
@@ -417,7 +419,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       document.addEventListener('tensorboard-path-completed', async () => {
         this.indicator = await globalThis.lablupIndicator.start();
         this.indicator.set(100, 'Prepared.');
-        this._open_wsproxy(sessionName, appName, port).then((response) => {
+        // if tensorboard path is empty, --logdir will be '/home/work/logs'
+        this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
+        this._open_wsproxy(sessionName, appName, port, {'--logdir': this.tensorboardPath}).then((response) => {
           this._hideAppLauncher();
               setTimeout(() => {
                 globalThis.open(response.url + urlPostfix, '_blank');
@@ -543,6 +547,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
 
   _addTensorboardPath() {
+    this.tensorboardPath = this.shadowRoot.querySelector('#tensorboard-path').value;
     const event = new CustomEvent("tensorboard-path-completed", {});
     document.dispatchEvent(event);
     this._hideTensorboardDialog();
