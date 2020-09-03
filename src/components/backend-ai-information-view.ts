@@ -232,7 +232,7 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
           </div>
           <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-descw">
+            <div class="vertical center-justified layout setting-desc">
               <div>${_t("information.LicenseKey")}</div>
               <div class="description">${_t("information.DescLicenseKey")}
               </div>
