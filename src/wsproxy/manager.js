@@ -116,7 +116,7 @@ class Manager extends EventEmitter {
       }
       let sessionName = req.params["sessionName"];
       let app = req.query.app || "jupyter";
-      let params = JSON.parse(req.query.parameters) || undefined;
+      let app_args = JSON.parse(req.query.app_args) || undefined;
       let port = parseInt(req.query.port) || undefined;
       let p = sessionName + "|" + app;
       let gateway;
@@ -137,7 +137,7 @@ class Manager extends EventEmitter {
         let maxtry = 5;
         for (let i = 0; i < maxtry; i++) {
           try {
-            await gateway.start_proxy(sessionName, app, ip, port, params);
+            await gateway.start_proxy(sessionName, app, ip, port, app_args);
             port = gateway.getPort();
             assigned = true;
             break;

@@ -47,27 +47,27 @@ module.exports = (proxy = class Proxy {
     return hdrs;
   }
 
-  start(sessionName, app, ip, port, params) {
+  start(sessionName, app, ip, port, app_args) {
     return new Promise(resolve => {
       this._resolve = resolve;
-      this._start(sessionName, app, ip, port, params);
+      this._start(sessionName, app, ip, port, app_args);
     });
   }
 
-  _start(sessionName, app, ip, port, params) {
+  _start(sessionName, app, ip, port, app_args) {
     this.ip = ip;
     this.port = port;
-    this._conn(sessionName, app, params);
+    this._conn(sessionName, app, app_args);
     this.tcpServer.listen(this.port, this.ip);
   }
 
-  _conn(sessionName, app, params) {
+  _conn(sessionName, app, app_args) {
     let queryString = `/stream/${this.sessionPrefix}/` + sessionName + "/httpproxy?app=" + app;
     let hdrs = () => {
       return this.get_header(queryString);
     };
-    if (typeof params !==  "undefined") {
-      queryString = queryString + '&arguments=' + encodeURIComponent(JSON.stringify(params));
+    if (typeof app_args !== "undefined") {
+      queryString = queryString + '&arguments=' + encodeURIComponent(JSON.stringify(app_args));
     }
     let url = this._env.endpoint + queryString;
     url = url.replace(/^http/, "ws");

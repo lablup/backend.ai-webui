@@ -271,7 +271,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} app
    * @param {number} port
    */
-  async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null, params: object | null = null) {
+  async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null, app_args: object | null = null) {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
@@ -316,8 +316,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       if (port !== null && port > 1024 && port < 65535) {
         uri += `&port=${port}`;
       }
-      if (params !== null) {
-        uri += `&parameters=${encodeURIComponent(JSON.stringify(params))}`;
+      if (app_args !== null) {
+        uri += `&app_args=${encodeURIComponent(JSON.stringify(app_args))}`;
       }
       this.indicator.set(50, 'Adding kernel to socket queue...');
       let rqst_proxy = {

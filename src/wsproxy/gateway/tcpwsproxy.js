@@ -4,9 +4,10 @@ module.exports = (proxy = class Proxy {
   constructor(env) {
     this.env = env;
   }
-  async start_proxy(kernelId, app, ip, port, params) {
+
+  async start_proxy(kernelId, app, ip, port, app_args) {
     this.c = new Server(this.env);
-    return this.c.start(kernelId, app, ip, port, params);
+    return this.c.start(kernelId, app, ip, port, app_args);
   }
 
   stop_proxy() {
