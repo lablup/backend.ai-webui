@@ -315,7 +315,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   _updateGPUMode() {
     if (!this._GPUmodeUpdated) {
       this._GPUmodeUpdated = true;
-      return globalThis.backendaiclient.getResourceSlots().then((response) => {
+      return globalThis.backendaiclient.get_resource_slots().then((response) => {
         let results = response;
         ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
           if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
