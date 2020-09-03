@@ -377,7 +377,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
-      let port = null;
+      let port;
       if (globalThis.isElectron && appName === 'sshd') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
         if (port === '0' || port === 0) { // setting store does not accept null.
