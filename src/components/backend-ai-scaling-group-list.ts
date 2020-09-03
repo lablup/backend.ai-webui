@@ -128,7 +128,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        globalThis.backendaiclient.scalingGroup.list_avaiable()
+        globalThis.backendaiclient.scalingGroup.list_available()
           .then(res => {
             this.scalingGroups = res.scaling_groups;
           });
@@ -140,7 +140,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           })
       }, true);
     } else { // already connected
-      globalThis.backendaiclient.scalingGroup.list_avaiable()
+      globalThis.backendaiclient.scalingGroup.list_available()
         .then(res => {
           this.scalingGroups = res.scaling_groups;
         });
@@ -325,7 +325,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _refreshList() {
-    globalThis.backendaiclient.scalingGroup.list_avaiable()
+    globalThis.backendaiclient.scalingGroup.list_available()
       .then(({scaling_groups}) => {
         this.scalingGroups = scaling_groups;
         this.requestUpdate(); // without this render is called beforehands, so update is required
