@@ -54,24 +54,24 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     return hdrs;
   }
 
-  start(sessionName, app, ip, port) {
+  start(sessionName, app, ip, port, params) {
     return new Promise(resolve => {
       this._resolve = resolve;
-      this._start(sessionName, app, ip, port);
+      this._start(sessionName, app, ip, port, params);
     });
   }
 
-  _start(sessionName, app, ip, port, args = null) {
+  _start(sessionName, app, ip, port, params = undefined) {
     this.ip = ip;
     this.port = port;
-    this._conn(sessionName, app,  args);
+    this._conn(sessionName, app,  params);
     this.tcpServer.listen(this.port, this.ip);
   }
 
-  _conn(sessionName, app, args) {
+  _conn(sessionName, app, params) {
     let queryString = `/stream/${this.sessionPrefix}/` + sessionName + "/httpproxy?app=" + app;
-    if (args !== null) {
-      queryString = queryString + '&arguments=' + JSON.stringify(args);
+    if (typeof params !==  "undefined") {
+      queryString = queryString + '&arguments=' + encodeURIComponent(JSON.stringify(params));
     }
 
     let hdrs = () => {

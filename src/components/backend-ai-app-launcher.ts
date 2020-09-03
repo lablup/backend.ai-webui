@@ -271,7 +271,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} app
    * @param {number} port
    */
-  async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null) {
+  async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null, args: object | null = null) {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
