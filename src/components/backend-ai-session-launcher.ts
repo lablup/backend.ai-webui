@@ -712,6 +712,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.show(true, err);
+      } else {
+        this.notification.text = PainKiller.relieve(err);
+        this.notification.detail = err;
+        this.notification.show(true, err);
       }
     });
   }
@@ -772,7 +776,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   /**
    * Make a new session.
    * */
-  _newSession() {
+  async _newSession() {
     let confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
     confirmationDialog.hide();
     let selectedItem = this.shadowRoot.querySelector('#environment').selected;
@@ -890,11 +894,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       sessions.push({'kernelName': kernelName, 'sessionName': sessionName, config});
     }
-
-    const createSessionQueue = sessions.map(item => {
-      return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
-    });
-    Promise.all(createSessionQueue).then((res: any) => {
+    
+    try {
+      const createSessionQueue = sessions.map( async (item) => {
+        const kernelInfo = await this._createKernel(item.kernelName, item.sessionName, item.config);
+        return this.tasker.add("Creating " + item.sessionName, kernelInfo, '', "session");
+      });
+      // waits until all promises are resolved unless there's any error occurred.
+      const res: any = await Promise.all(createSessionQueue); 
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
@@ -906,20 +913,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
       if (res.length === 1) {
-        res[0].taskobj.then(res => {
+        const onlyOneSession = res[0].taskobj;
           let appOptions;
-          if ('kernelId' in res) {
+          if ('kernelId' in onlyOneSession) {
             appOptions = {
-              'session-name': res.kernelId,
+              'session-name': onlyOneSession.kernelId,
               'access-key': ''
             };
           } else {
             appOptions = {
-              'session-name': res.sessionId,
+              'session-name': onlyOneSession.sessionId,
               'access-key': ''
             };
           }
-          let service_info = res.servicePorts;
+          let service_info = onlyOneSession.servicePorts;
           if (Array.isArray(service_info) === true) {
             appOptions['app-services'] = service_info.map(a => a.name);
           } else {
@@ -930,23 +937,24 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             appOptions['filename'] = this.importFilename;
           }
           globalThis.appLauncher.showLauncher(appOptions);
-        });
       }
-    }).catch((err) => {
-      this.metadata_updating = false;
+    } catch (err) {
+      // enable launch button
+      this.shadowRoot.querySelector('#launch-button').disabled = false;
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.detail = err.message;
         this.notification.show(true, err);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.show(true, err);
+      } else {
+        this.notification.text = PainKiller.relieve(err);
+        this.notification.show(true, err);
       }
-      let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
-      document.dispatchEvent(event);
-      this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
-    });
+      return;
+    }
   }
 
   _getRandomString() {
@@ -968,18 +976,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, config) {
-    const task = globalThis.backendaiclient.createKernel(kernelName, sessionName, config, 10000);
-    task.catch((err) => {
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      } else if (err && err.title) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show(true, err);
-      }
-    });
-    return task;
+    return globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 10000).catch(err => {
+      throw err;
+    })
   }
 
   _hideSessionDialog() {
