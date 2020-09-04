@@ -357,7 +357,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         this.indicator.set(100, 'Prepared.');
         // if tensorboard path is empty, --logdir will be '/home/work/logs'
         this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
-        this._open_wsproxy(sessionName, appName, port, {'--logdir': this.tensorboardPath}).then((response) => {
+        const path: Object  = {'--logdir': this.tensorboardPath};
+        this._open_wsproxy(sessionName, appName, port, path).then((response) => {
           this._hideAppLauncher();
               setTimeout(() => {
                 globalThis.open(response.url + urlPostfix, '_blank');
@@ -421,7 +422,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         this.indicator.set(100, 'Prepared.');
         // if tensorboard path is empty, --logdir will be '/home/work/logs'
         this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
-        this._open_wsproxy(sessionName, appName, port, {'--logdir': this.tensorboardPath}).then((response) => {
+        const path: Object  = {'--logdir': this.tensorboardPath};
+        this._open_wsproxy(sessionName, appName, port, path).then((response) => {
           this._hideAppLauncher();
               setTimeout(() => {
                 globalThis.open(response.url + urlPostfix, '_blank');

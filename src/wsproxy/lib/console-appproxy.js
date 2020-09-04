@@ -67,7 +67,8 @@ module.exports = (proxy = class Proxy {
       return this.get_header(queryString);
     };
     if (typeof app_args !== "undefined") {
-      queryString = queryString + '&arguments=' + encodeURIComponent(JSON.stringify(app_args));
+      // app_args is already stringified.
+      queryString = queryString + '&arguments=' + encodeURIComponent(app_args);
     }
     let url = this._env.endpoint + queryString;
     url = url.replace(/^http/, "ws");
