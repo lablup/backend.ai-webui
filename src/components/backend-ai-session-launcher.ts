@@ -899,9 +899,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     
     try {
-      const createSessionQueue = sessions.map( async (item) => {
-        const kernelInfo = await this._createKernel(item.kernelName, item.sessionName, item.config);
-        return this.tasker.add("Creating " + item.sessionName, kernelInfo, '', "session");
+      const createSessionQueue = await sessions.map(item => {
+        return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
       });
       // waits until all promises are resolved unless there's any error occurred.
       const res: any = await Promise.all(createSessionQueue); 
