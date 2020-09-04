@@ -322,7 +322,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       this.update(this.options);
     });
-    globalThis.backendaiclient.getResourceSlots().then((response) => {
+    globalThis.backendaiclient.get_resource_slots().then((response) => {
       if ('cuda.device' in response) {
         this.options['cuda_gpu'] = true;
       }
