@@ -103,11 +103,15 @@ export default class BackendAiTasker extends LitElement {
     }
     let item = new Task(title, task, taskid, tasktype);
     if (task != null && typeof task.then === 'function') { // For Promise type task
-      task.then(() => {
+      task.then().catch((err) => {
+        // NOTICE: this is a stop-gap measure for error handling.
+        console.log(err);
+      }).finally(() => {
+        // No matter any error occurred or not during the session creating,
+        // Task list have to be updated.
         this.finished.push(taskid);
         this.gc();
-        }
-      );
+      });
     } else { // For function type task (not supported yet)
       return false;
     }
