@@ -149,7 +149,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     //this.mainToolbar.scrollTarget = this.appPage;
     this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
     this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
-    this.splash = this.shadowRoot.querySelector('#about-panel');
+    this.splash = this.shadowRoot.querySelector('#about-backend.ai-panel');
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
     if (globalThis.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
@@ -995,7 +995,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 ·
                 <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">${_t("console.menu.PrivacyPolicy")}</a>
                 ·
-                <a @click="${() => this.splash.show()}">${_t("console.menu.About")}</a>
+                <a @click="${() => this.splash.show()}">${_t("console.menu.AboutBackend.AI")}</a>
                 ${this.allow_signout === true ? html`
                 ·
                 <a @click="${() => this.loginPanel.signout()}">${_t("console.menu.LeaveService")}</a>
@@ -1047,7 +1047,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   </mwc-list-item>
                   <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
                       <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
-                      ${_t("console.menu.About")}
+                      ${_t("console.menu.AboutBackend.AI")}
                   </mwc-list-item>
                   <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                       <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
@@ -1111,7 +1111,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         ${this._offline ? _t("console.YouAreOffline") : _t("console.YouAreOnline")}.
       </backend-ai-offline-indicator>
       <backend-ai-login active id="login-panel"></backend-ai-login>
-      <backend-ai-splash id="about-panel"></backend-ai-splash>
+      <backend-ai-splash id="about-backend.ai-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
