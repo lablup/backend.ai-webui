@@ -630,27 +630,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {any} e
    * */
   async updateScalingGroup(forceUpdate = false, e) {
-    try {
-      if (this.active) {
-        await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
+    if (this.active) {
+      await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
 
-        if (forceUpdate === true) {
-          await this._refreshResourcePolicy();
-        } else {
-          this.updateResourceAllocationPane('session dialog');
-        }
-      }
-    } catch(err) {
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      } else if (err && err.title) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.show(true, err);
+      if (forceUpdate === true) {
+        await this._refreshResourcePolicy();
       } else {
-        this.notification.text = PainKiller.relieve(err);
-        this.notification.show(true, err);
+        this.updateResourceAllocationPane('session dialog');
       }
     }
   }
@@ -717,8 +703,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.gpu_modes = this.resourceBroker.gpu_modes;
       this.updateResourceAllocationPane('refresh resource policy');
     }).catch((err) => {
+      console.log(err);
       this.metadata_updating = false;
-      throw err;
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
+      }
     });
   }
 
@@ -770,7 +764,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (vfolders.length === 0) {
       let confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
       confirmationDialog.show();
-      return;
     } else {
       return this._newSession();
     }
@@ -779,7 +772,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   /**
    * Make a new session.
    * */
-  async _newSession() {
+  _newSession() {
     let confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
     confirmationDialog.hide();
     let selectedItem = this.shadowRoot.querySelector('#environment').selected;
@@ -897,70 +890,63 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       sessions.push({'kernelName': kernelName, 'sessionName': sessionName, config});
     }
-    
-    try {
-      const createSessionQueue = await sessions.map(item => {
-        return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
-      });
-      // waits until all promises are resolved unless there's any error occurred.
-      const res: any = await Promise.all(createSessionQueue); 
+
+    const createSessionQueue = sessions.map(item => {
+      return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
+    });
+    Promise.all(createSessionQueue).then((res: any) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
-      await Promise.all([
-        this.metadata_updating = true,
-        this.aggregateResource('session-creation'),
-        this.metadata_updating = false]);
+      setTimeout(() => {
+        this.metadata_updating = true;
+        this.aggregateResource('session-creation');
+        this.metadata_updating = false;
+      }, 1500);
       let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
       if (res.length === 1) {
-        res[0].taskobj.then( res => {
+        res[0].taskobj.then(res => {
           let appOptions;
-        if ('kernelId' in res) {
-          appOptions = {
-            'session-name': res.kernelId,
-            'access-key': ''
-          };
-        } else {
-          appOptions = {
-            'session-name': res.sessionId,
-            'access-key': ''
-          };
-        }
-        let service_info = res.servicePorts;
-        if (Array.isArray(service_info) === true) {
-          appOptions['app-services'] = service_info.map(a => a.name);
-        } else {
-          appOptions['app-services'] = [];
-        }
-        if (this.mode === 'import') {
-          appOptions['runtime'] = 'jupyter';
-          appOptions['filename'] = this.importFilename;
-        }
-        globalThis.appLauncher.showLauncher(appOptions);
+          if ('kernelId' in res) {
+            appOptions = {
+              'session-name': res.kernelId,
+              'access-key': ''
+            };
+          } else {
+            appOptions = {
+              'session-name': res.sessionId,
+              'access-key': ''
+            };
+          }
+          let service_info = res.servicePorts;
+          if (Array.isArray(service_info) === true) {
+            appOptions['app-services'] = service_info.map(a => a.name);
+          } else {
+            appOptions['app-services'] = [];
+          }
+          if (this.mode === 'import') {
+            appOptions['runtime'] = 'jupyter';
+            appOptions['filename'] = this.importFilename;
+          }
+          globalThis.appLauncher.showLauncher(appOptions);
         });
       }
-    } catch (err) {
-      // hide session create dialog if TIMEOUT error occured.
-      if (err.title === 'Request timeout') {
-        this.shadowRoot.querySelector('#new-session-dialog').hide();
-      }
-      // enable launch button
-      this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
+    }).catch((err) => {
+      this.metadata_updating = false;
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true, err);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.show(true, err);
-      } else {
-        this.notification.text = PainKiller.relieve(err);
-        this.notification.show(true, err);
       }
-      return;
-    }
+      let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+      document.dispatchEvent(event);
+      this.shadowRoot.querySelector('#launch-button').disabled = false;
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
+    });
   }
 
   _getRandomString() {
@@ -982,9 +968,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, config) {
-    return globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 10000).catch(err => {
-      throw err;
-    })
+    const task = globalThis.backendaiclient.createKernel(kernelName, sessionName, config, 10000);
+    task.catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
+      }
+    });
+    return task;
   }
 
   _hideSessionDialog() {
@@ -1163,6 +1158,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return Promise.resolve(true);
     }).catch(err => {
       if (err && err.message) {
+        console.log(err);
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true, err);

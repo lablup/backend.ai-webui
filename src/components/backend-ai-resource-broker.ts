@@ -208,9 +208,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     if (this.active) {
       this.lastQueryTime = 0; // Reset query interval
       if (forceUpdate === true) {
-        await this._refreshResourcePolicy().catch(err => {
-          throw err;
-        });
+        await this._refreshResourcePolicy();
       }
     }
   }
