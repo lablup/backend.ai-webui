@@ -386,7 +386,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
       const usePreferredPort = this.shadowRoot.querySelector('#chk-preferred-port').checked;
       const userPort = parseInt(this.shadowRoot.querySelector('#app-port').value);
-      console.log(usePreferredPort, userPort)
       if (usePreferredPort && userPort) {
         port = userPort;
       }
