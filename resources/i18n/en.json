@@ -410,7 +410,7 @@
         "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
         "Created": "Resource preset created",
         "Updated": "Resource preset updated",
-        "MinimumShmemUnit" : "The minimum unit for shared memory is 0.01 GB."
+        "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB."
     },
     "usersettings": {
         "General": "General",
@@ -453,6 +453,13 @@
         "PrivateKey": "Private Key",
         "InvalidPortNumber": "Port number should be positive number between 1025~65534",
         "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard."
+    },
+    "webTerminalUsageGuide": {
+        "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
+        "CopyGuideOne": "Press Ctrl-Bkey to enter tmux control mode.",
+        "CopyGuideTwo": "Type :set -g mouse off and Press EnterKey.",
+        "CopyGuideThree": "Now you can copy text from the terminal.",
+        "CopyGuideFour": "To turn on mouse scroll again, Press Ctrl-B, Type :set -g mouse on and Press Enterkey."
     },
     "logs": {
         "LogMessages": "Log Messages",
