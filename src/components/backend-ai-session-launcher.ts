@@ -930,14 +930,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           }
           globalThis.appLauncher.showLauncher(appOptions);
         }).catch((err) => {
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.message);
-            this.notification.detail = err.message;
-            this.notification.show(true, err);
-          } else if (err && err.title) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.show(true, err);
-          }
+          // remove redundant error message
         });
       }
     }).catch((err) => {
