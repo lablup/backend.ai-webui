@@ -105,7 +105,7 @@ export default class BackendAiTasker extends LitElement {
     if (task != null && typeof task.then === 'function') { // For Promise type task
       task.then().catch((err) => {
         // NOTICE: this is a stop-gap measure for error handling.
-        console.log(err);
+        // console.log(err);
       }).finally(() => {
         // No matter any error occurred or not during the session creating,
         // Task list have to be updated.
