@@ -367,7 +367,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
     } else { // already connected
       this._refreshTemplateData();
       this.is_admin = globalThis.backendaiclient.is_admin;
-      globalThis.backendaiclient.getResourceSlots()
+      globalThis.backendaiclient.get_resource_slots()
         .then(res => {
           this.gpu_allocatable = (Object.keys(res).length !== 2);
           if (Object.keys(res).includes('cuda.shares')) {

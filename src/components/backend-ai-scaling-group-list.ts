@@ -128,7 +128,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        globalThis.backendaiclient.scalingGroup.list_all()
+        globalThis.backendaiclient.scalingGroup.list_available()
           .then(res => {
             this.scalingGroups = res.scaling_groups;
           });
@@ -140,7 +140,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           })
       }, true);
     } else { // already connected
-      globalThis.backendaiclient.scalingGroup.list_all()
+      globalThis.backendaiclient.scalingGroup.list_available()
         .then(res => {
           this.scalingGroups = res.scaling_groups;
         });
@@ -235,7 +235,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     globalThis.backendaiclient.scalingGroup.create(scalingGroup, description)
       .then(({create_scaling_group: res}) => {
         if (res.ok) {
-          return globalThis.backendaiclient.scalingGroup.associateWithDomain(domain, scalingGroup);
+          return globalThis.backendaiclient.scalingGroup.associate_domain(domain, scalingGroup);
         } else {
           this.notification.text = PainKiller.relieve(res.title);
           this.notification.detail = res.msg;
@@ -284,7 +284,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       return;
     }
 
-    globalThis.backendaiclient.scalingGroup.modify(name, input)
+    globalThis.backendaiclient.scalingGroup.update(name, input)
       .then(({modify_scaling_group}) => {
         if (modify_scaling_group.ok) {
           this.notification.text = "Resource group successfully modified";
@@ -325,7 +325,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _refreshList() {
-    globalThis.backendaiclient.scalingGroup.list_all()
+    globalThis.backendaiclient.scalingGroup.list_available()
       .then(({scaling_groups}) => {
         this.scalingGroups = scaling_groups;
         this.requestUpdate(); // without this render is called beforehands, so update is required
