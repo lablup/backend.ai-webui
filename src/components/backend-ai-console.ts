@@ -149,7 +149,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     //this.mainToolbar.scrollTarget = this.appPage;
     this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
     this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
-    this.splash = this.shadowRoot.querySelector('#about-backend.ai-panel');
+    this.splash = this.shadowRoot.querySelector('#about-backendai-panel');
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
     if (globalThis.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
@@ -1111,7 +1111,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         ${this._offline ? _t("console.YouAreOffline") : _t("console.YouAreOnline")}.
       </backend-ai-offline-indicator>
       <backend-ai-login active id="login-panel"></backend-ai-login>
-      <backend-ai-splash id="about-backend.ai-panel"></backend-ai-splash>
+      <backend-ai-splash id="about-backendai-panel"></backend-ai-splash>
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
