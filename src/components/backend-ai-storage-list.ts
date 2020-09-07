@@ -10,15 +10,19 @@ import {BackendAIPage} from './backend-ai-page';
 
 import '@polymer/paper-item/paper-item';
 import './lablup-loading-spinner';
+import './backend-ai-dialog';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@material/mwc-textfield';
+import '@material/mwc-list/mwc-list';
+import '@material/mwc-list/mwc-list-item';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
+import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 
 import '@vaadin/vaadin-item/vaadin-item';
 import '@vaadin/vaadin-upload/vaadin-upload';
@@ -36,13 +40,25 @@ import 'weightless/title';
 import 'weightless/tab-group';
 import 'weightless/textfield';
 import '@material/mwc-icon-button';
-
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
 import tus from '../lib/tus';
 
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
+
+/**
+ Backend AI Storage List
+
+ `backend-ai-storage-list` is list of storage folder.
+
+ Example:
+
+ <backend-ai-storage-list storageType="general" ?active="${!0===this.active}"></backend-ai-storage-list>
+
+ @group Backend.AI Console
+ @element backend-ai-storage-list
+ */
 
 @customElement("backend-ai-storage-list")
 export default class BackendAiStorageList extends BackendAIPage {
@@ -110,7 +126,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         vaadin-grid.folderlist {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 200px);
+          height: calc(100vh - 165px);
         }
 
         vaadin-grid.explorer {
@@ -131,6 +147,15 @@ export default class BackendAiStorageList extends BackendAIPage {
         span.indicator {
           width: 100px;
           font-size: 10px;
+        }
+
+        .info-indicator {
+          min-width: 90px;
+          padding: 0 10px;
+        }
+
+        div.big.indicator {
+          font-size: 48px;
         }
 
         .folder-action-buttons wl-button {
@@ -166,8 +191,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         #folder-explorer-dialog {
-          --dialog-height: calc(100vh - 170px);
-          height: calc(100vh - 170px);
+          --component-height: calc(100vh - 170px);
           right: 0;
           top: 0;
           position: fixed;
@@ -187,22 +211,20 @@ export default class BackendAiStorageList extends BackendAIPage {
           #folder-explorer-dialog,
           #folder-explorer-dialog.mini_ui {
             left: 0;
-            --dialog-width: 100%;
+            --component-width: 100%;
             width: 100%;
           }
         }
 
         @media screen and (min-width: 900px) {
           #folder-explorer-dialog {
-            left: 150px;
-            --dialog-width: calc(100% - 100px);
-            width: calc(100% - 100px);
+            left: 190px;
+            --component-width: calc(100% - 30px);
           }
 
           #folder-explorer-dialog.mini_ui {
             left: 65px;
-            --dialog-width: calc(100% - 45px);
-            width: calc(100% - 45px);
+            --component-width: calc(100% - 45px);
           }
         }
 
@@ -312,8 +334,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           color: var(--paper-orange-900);
         }
 
-        wl-dialog wl-textfield,
-        wl-dialog wl-select {
+        backend-ai-dialog wl-textfield,
+        backend-ai-dialog wl-select {
           --input-font-family: Roboto, Noto, sans-serif;
           --input-color-disabled: #222222;
           --input-label-color-disabled: #222222;
@@ -330,7 +352,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           --label-font-family: Roboto, Noto, sans-serif;
           --label-color: black;
         }
-
         wl-checkbox {
           --checkbox-color: var(--paper-orange-900);
           --checkbox-color-checked: var(--paper-orange-900);
@@ -341,6 +362,11 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         #modify-permission-dialog {
           --dialog-min-width: 600px;
+          --component-min-width: 600px;
+        }
+
+        backend-ai-dialog {
+          --component-min-width: 350px;
         }
 
       `];
@@ -364,7 +390,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <vaadin-grid class="folderlist" theme="row-stripes column-borders compact" aria-label="Folder list" .items="${this.folders}">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
+        <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t("data.folders.Name")}">
           <template>
@@ -393,100 +419,98 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t("data.folders.Control")}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
       </vaadin-grid>
 
-      <wl-dialog id="rename-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
-        <wl-card class="login-panel intro centered">
-          <h3 class="horizontal center layout">
-            <span>${_t('data.folders.RenameAFolder')}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <section>
-            <div>
-              <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
-                pattern="[a-zA-Z0-9_-.]*"
-                validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
-              <br/>
-              <wl-button class="blue button" type="submit" id="rename-button" outlined @click="${() => this._renameFolder()}">
-                <wl-icon>edit</wl-icon>
-                ${_t('data.folders.Rename')}
-              </wl-button>
-            </div>
-            </section>
-        </wl-card>
-      </wl-dialog>
+      <backend-ai-dialog id="rename-folder-dialog" fixed backdrop>
+        <span slot="title">${_t('data.folders.RenameAFolder')}</span>
+        <div slot="content">
+          <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
+            pattern="[a-zA-Z0-9_-.]*"
+            validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
+        </div>
+        <div slot="footer">
+          <wl-button class="blue button" type="submit" id="rename-button" outlined @click="${() => this._renameFolder()}">
+            <wl-icon>edit</wl-icon>
+            ${_t('data.folders.Rename')}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
 
-      <wl-dialog id="delete-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
-        <wl-card class="login-panel intro centered">
-          <h3 class="horizontal center layout">
-            <span>${_t("data.folders.DeleteAFolder")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <section>
-            <div class="warning">${_t("dialog.warning.CannotBeUndone")}</div>
-            <div>
-              <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
-                           pattern="[a-zA-Z0-9_-.]*"
-                           validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
-              <br/>
-              <wl-button class="blue button" type="submit" id="delete-button" outlined @click="${() => this._deleteFolderWithCheck()}">
-                <wl-icon>close</wl-icon>
-                ${_t("data.folders.Delete")}
-              </wl-button>
-            </div>
-            </section>
-        </wl-card>
-      </wl-dialog>
-
-      <wl-dialog id="info-folder-dialog" class="dialog-ask" fixed backdrop blockscrolling>
-        <wl-card class="intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span>${this.folderInfo.name}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <div role="listbox" style="margin: 0;">
-            <vaadin-item>
-              <div><strong>ID</strong></div>
-              <div class="monospace" secondary>${this.folderInfo.id}</div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>${_t("data.folders.Location")}</strong></div>
-              <div secondary>${this.folderInfo.host}</div>
-            </vaadin-item>
-            <vaadin-item>
-              <div><strong>${_t("data.folders.NumberOfFiles")}</strong></div>
-              <div secondary>${this.folderInfo.numFiles}</div>
-            </vaadin-item>
-            ${this.folderInfo.is_owner ? html`
-              <vaadin-item>
-                <div><strong>${_t("data.folders.Ownership")}</strong></div>
-                <div secondary>${_t("data.folders.DescYouAreFolderOwner")}</div>
-              </vaadin-item>
-            ` : html``}
-            <vaadin-item>
-              <div><strong>${_t("data.folders.Permission")}</strong></div>
-              <div secondary>${this.folderInfo.permission}</div>
-            </vaadin-item>
+      <backend-ai-dialog id="delete-folder-dialog" fixed backdrop>
+        <span slot="title">${_t("data.folders.DeleteAFolder")}</span>
+        <div slot="content" style="width:100%;">
+          <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
+          <div>
+            <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
+                         pattern="[a-zA-Z0-9_-.]*"
+                         validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
           </div>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="folder-explorer-dialog" class="folder-explorer">
-        <wl-card>
-          <h3 class="horizontal center layout" style="font-weight:bold">
-            <span>${this.explorer.id}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-
+        </div>
+        <div slot="footer">
+          <wl-button class="blue button" type="submit" id="delete-button" outlined @click="${() => this._deleteFolderWithCheck()}">
+            <wl-icon>close</wl-icon>
+            ${_t("data.folders.Delete")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="info-folder-dialog" fixed backdrop>
+        <span slot="title">${this.folderInfo.name}</span>
+        <div slot="content" role="listbox" style="margin: 0;width:100%;">
+          <div class="horizontal justified layout wrap">
+              <div class="vertical layout center info-indicator">
+                <div class="big indicator">${this.folderInfo.host}</div>
+                <span>${_t("data.folders.Location")}</span>
+              </div>
+            <div class="vertical layout center info-indicator">
+              <div class="big indicator">${this.folderInfo.numFiles}</div>
+              <span>${_t("data.folders.NumberOfFiles")}</span>
+            </div>
+          </div>
+          <mwc-list>
+            <mwc-list-item twoline>
+              <span><strong>ID</strong></span>
+              <span class="monospace" slot="secondary">${this.folderInfo.id}</span>
+            </mwc-list-item>
+            ${this.folderInfo.is_owner ? html`
+              <mwc-list-item twoline>
+                <span><strong>${_t("data.folders.Ownership")}</strong></span>
+                <span slot="secondary">${_t("data.folders.DescYouAreFolderOwner")}</span>
+              </mwc-list-item>
+            ` : html``}
+            <mwc-list-item twoline>
+              <span><strong>${_t("data.folders.Permission")}</strong></span>
+              <div slot="secondary" class="horizontal layout">
+              ${this.folderInfo.permission ? html`
+                ${this._hasPermission(this.folderInfo, 'r') ? html`
+                    <lablup-shields app="" color="green"
+                                    description="R" ui="flat"></lablup-shields>` : html``}
+                ${this._hasPermission(this.folderInfo, 'w') ? html`
+                    <lablup-shields app="" color="blue"
+                                    description="W" ui="flat"></lablup-shields>` : html``}
+                ${this._hasPermission(this.folderInfo, 'd') ? html`
+                    <lablup-shields app="" color="red"
+                                    description="D" ui="flat"></lablup-shields>` : html``}` : html``}
+              </div>
+            </mwc-list-item>
+          </mwc-list>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
+        <span slot="title">${this.explorer.id}</span>
+        <div slot="action" class="horizontal layout flex folder-action-buttons">
+          <div class="flex"></div>
+          <wl-button outlined class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
+            <div class="horizontal center layout">
+            <wl-icon style="--icon-size: 20px;margin-right:5px;">delete</wl-icon><span>${_t("data.explorer.Delete")}</span></div>
+          </wl-button>
+          <wl-button outlined id="add-btn" @click="${(e) => this._uploadFileBtnClick(e)}">
+            <wl-icon style="--icon-size: 20px;margin-right:5px;">cloud_upload</wl-icon>
+            ${_t("data.explorer.UploadFiles")}
+          </wl-button>
+          <wl-button outlined id="mkdir" @click="${() => this._mkdirDialog()}">
+            <wl-icon style="--icon-size: 20px;margin-right:5px;">create_new_folder</wl-icon>
+            ${_t("data.explorer.NewFolder")}
+          </wl-button>
+        </div>
+        <div slot="content">
           <div class="breadcrumb">
             ${this.explorer.breadcrumb ? html`
               <ul>
@@ -504,20 +528,6 @@ export default class BackendAiStorageList extends BackendAIPage {
                 `)}
               </ul>
             ` : html``}
-          </div>
-          <div class="horizontal layout folder-action-buttons">
-            <wl-button outlined class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
-              <div class="horizontal center layout">
-              <wl-icon style="--icon-size: 20px;margin-right:5px;">delete</wl-icon><span>${_t("data.explorer.Delete")}</span></div>
-            </wl-button>
-            <wl-button outlined id="add-btn" @click="${(e) => this._uploadFileBtnClick(e)}">
-              <wl-icon style="--icon-size: 20px;margin-right:5px;">cloud_upload</wl-icon>
-              ${_t("data.explorer.UploadFiles")}
-            </wl-button>
-            <wl-button outlined id="mkdir" @click="${() => this._mkdirDialog()}">
-              <wl-icon style="--icon-size: 20px;margin-right:5px;">create_new_folder</wl-icon>
-              ${_t("data.explorer.NewFolder")}
-            </wl-button>
           </div>
           <div id="dropzone"><p>drag</p></div>
           <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
@@ -578,120 +588,88 @@ export default class BackendAiStorageList extends BackendAIPage {
             </vaadin-grid-column>
             <vaadin-grid-column resizable flex-grow="2" header="${_t("data.explorer.Actions")}" .renderer="${this._boundControlFileListRenderer}"></vaadin-grid-column>
           </vaadin-grid>
-        </wl-card>
-      </wl-dialog>
-
-      <wl-dialog id="mkdir-dialog" class="dialog-ask" fixed blockscrolling backdrop>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("data.explorer.CreateANewFolder")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <section>
-            <mwc-textfield id="mkdir-name"
-                           label="${_t("data.explorer.Foldername")}"
-                           auto-validate
-                           required
-                           validationMessage="Value is required."></mwc-textfield>
-            <br/>
-            <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
-              <wl-icon>rowing</wl-icon>
-              ${_t("button.Create")}
-            </wl-button>
-          </section>
-        </wl-card>
-      </wl-dialog>
-
-      <wl-dialog
-        id="share-folder-dialog"
-        class="dialog-ask"
-        fixed
-        backdrop
-        blockscrolling
-      >
-        <wl-card class="intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span>${_t("data.explorer.ShareFolder")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <div role="listbox" style="margin: 0; padding: 20px 25px 25px 25px;">
-            <div style="margin: 10px 0px">${_t("data.explorer.People")}</div>
-            <div style="display: flex;">
-              <div id="textfields" style="flex-grow: 2">
-                <wl-textfield type="email" label="${_t("data.explorer.EnterEmailAddress")}"></wl-textfield>
-              </div>
-              <div>
-                <wl-button fab flat @click="${(e) => this._addTextField(e)}">
-                  <wl-icon>add</wl-icon>
-                </wl-button>
-                <wl-button fab flat @click="${(e) => this._removeTextField(e)}">
-                  <wl-icon>remove</wl-icon>
-                </wl-button>
-              </div>
-            </div>
-            <div style="margin: 10px 0px">${_t("data.explorer.Permissions")}</div>
-            <div style="display: flex; justify-content: space-evenly;">
-              <wl-label>
-                <wl-checkbox checked disabled></wl-checkbox>
-                ${_t("button.View")}
-              </wl-label>
-              <wl-label>
-                <wl-checkbox id="share-folder-write"></wl-checkbox>
-                ${_t("button.Edit")}
-              </wl-label>
-            </div>
-
-            <wl-button
-              type="button"
-              outlined
-              id="share-button"
-              style="width: 100%; box-sizing: border-box;"
-              @click=${e => this._shareFolder(e)}
-            >
-              <wl-icon>share</wl-icon>
-              ${_t("button.Share")}
-            </wl-button>
-          </div>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog
-        id="modify-permission-dialog"
-        class="dialog-ask"
-        fixed backdrop blockscrolling
-      >
-        <wl-card class="intro" style="margin: 0; width: 100%;">
-          <h3 class="horizontal center layout" style="border-bottom:1px solid #ddd;">
-            <span>${_t("data.explorer.ModifyPermissions")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <div role="listbox" style="margin: 0; padding: 10px;">
-            <vaadin-grid theme="row-stripes column-borders compact" .items="${this.invitees}">
-              <vaadin-grid-column
-                width="30px"
-                flex-grow="0"
-                header="#"
-                .renderer="${this._boundIndexRenderer}"
-              ></vaadin-grid-column>
-              <vaadin-grid-column header="${_t("data.explorer.InviteeEmail")}">
-                <template>
-                  <div>[[item.shared_to.email]]</div>
-                </template>
-              </vaadin-grid-column>
-              <vaadin-grid-column header="${_t("data.explorer.Permission")}" .renderer="${this._boundPermissionRenderer}">
-              </vaadin-grid-column>
-            </vaadin-grid>
-          </div>
-        </wl-card>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="mkdir-dialog" fixed backdrop>
+        <span slot="title">${_t("data.explorer.CreateANewFolder")}</span>
+        <div slot="content">
+          <mwc-textfield id="mkdir-name"
+                         label="${_t("data.explorer.Foldername")}"
+                         auto-validate
+                         required
+                         validationMessage="Value is required."></mwc-textfield>
+          <br/>
+        </div>
         <div slot="footer">
+          <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
+            <wl-icon>rowing</wl-icon>
+            ${_t("button.Create")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="share-folder-dialog" fixed backdrop>
+        <span slot="title">${_t("data.explorer.ShareFolder")}</span>
+        <div slot="content" role="listbox" style="margin: 0;width:100%;" >
+          <div style="margin: 10px 0px">${_t("data.explorer.People")}</div>
+          <div style="display: flex;">
+            <div id="textfields" style="flex-grow: 2">
+              <wl-textfield type="email" label="${_t("data.explorer.EnterEmailAddress")}"></wl-textfield>
+            </div>
+            <div>
+              <wl-button fab flat @click="${(e) => this._addTextField(e)}">
+                <wl-icon>add</wl-icon>
+              </wl-button>
+              <wl-button fab flat @click="${(e) => this._removeTextField(e)}">
+                <wl-icon>remove</wl-icon>
+              </wl-button>
+            </div>
+          </div>
+          <div style="margin: 10px 0px">${_t("data.explorer.Permissions")}</div>
+          <div style="display: flex; justify-content: space-evenly;">
+            <wl-label>
+              <wl-checkbox checked disabled></wl-checkbox>
+              ${_t("button.View")}
+            </wl-label>
+            <wl-label>
+              <wl-checkbox id="share-folder-write"></wl-checkbox>
+              ${_t("button.Edit")}
+            </wl-label>
+          </div>
+        </div>
+        <div slot="footer" class="horizontal flex end layout">
+          <wl-button slot="footer"
+            type="button"
+            outlined
+            id="share-button"
+            style="width: 100%; box-sizing: border-box;"
+            @click=${e => this._shareFolder(e)}
+          >
+            <wl-icon>share</wl-icon>
+            ${_t("button.Share")}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
+
+      <backend-ai-dialog id="modify-permission-dialog" fixed backdrop>
+        <span slot="title">${_t("data.explorer.ModifyPermissions")}</span>
+        <div slot="content" role="listbox" style="margin: 0; padding: 10px;">
+          <vaadin-grid theme="row-stripes column-borders compact" .items="${this.invitees}">
+            <vaadin-grid-column
+              width="30px"
+              flex-grow="0"
+              header="#"
+              .renderer="${this._boundIndexRenderer}"
+            ></vaadin-grid-column>
+            <vaadin-grid-column header="${_t("data.explorer.InviteeEmail")}">
+              <template>
+                <div>[[item.shared_to.email]]</div>
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column header="${_t("data.explorer.Permission")}" .renderer="${this._boundPermissionRenderer}">
+            </vaadin-grid-column>
+          </vaadin-grid>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button
             type="button"
             outlined
@@ -702,50 +680,42 @@ export default class BackendAiStorageList extends BackendAIPage {
             ${_t("button.SaveChanges")}
           </wl-button>
         </div>
-      </wl-dialog>
-      <wl-dialog id="rename-file-dialog" class="dialog-ask" fixed backdrop blockscrolling>
-        <wl-card class="login-panel intro centered">
-          <h3 class="horizontal center layout">
-            <span>${_t('data.explorer.RenameAFile')}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <section>
-            <div>
-              <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"></mwc-textfield>
-              <div id="old-file-name" style="height:2.5em"></div>
-              <wl-button class="blue button" type="submit" id="rename-file-button" outlined @click="${(e) => this._renameFile(e)}">
-                <wl-icon>edit</wl-icon>
-                ${_t('data.explorer.RenameAFile')}
-              </wl-button>
-            </div>
-          </section>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="delete-file-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">${_t("dialog.title.LetsDouble-Check")}</wl-title>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="rename-file-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t('data.explorer.RenameAFile')}</span>
+        <div slot="content">
+          <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"></mwc-textfield>
+          <div id="old-file-name" style="height:2.5em"></div>
+        </div>
+        <div slot="footer">
+          <wl-button class="blue button" type="button" id="rename-file-button" outlined @click="${(e) => this._renameFile(e)}">
+            <wl-icon>edit</wl-icon>
+            ${_t('data.explorer.RenameAFile')}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="delete-file-dialog" fixed backdrop>
+         <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
             <p>${_t("dialog.warning.CannotBeUndone")}
             ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
-         <div slot="footer">
+         <div slot="footer" class="horizontal end-justified flex layout">
             <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
             <wl-button @click="${(e) => this._deleteFileWithCheck(e)}">${_t("button.Okay")}</wl-button>
          </div>
-      </wl-dialog>
-      <wl-dialog id="download-file-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">${_t("data.explorer.DownloadFile")}</wl-title>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="download-file-dialog" fixed backdrop>
+         <span slot="title">${_t("data.explorer.DownloadFile")}</span>
          <div slot="content">
             <a href="${this.downloadURL}">
               <wl-button outlined>${_t("data.explorer.TouchToDownload")}</wl-button>
             </a>
          </div>
-         <div slot="footer">
+         <div slot="footer" class="horizontal end-justified flex layout">
             <wl-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</wl-button>
          </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `;
   }
 
@@ -776,22 +746,29 @@ export default class BackendAiStorageList extends BackendAIPage {
     const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog wl-select');
     const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as any)[idx].perm)
       .map((pulldown, idx) => ({
-        'perm': pulldown.value,
+        'perm': pulldown.value === 'kickout' ? null : pulldown.value,
         'user': (this.invitees as any)[idx].shared_to.uuid,
         'vfolder': (this.invitees as any)[idx].vfolder_id
       }));
     const promiseArray = inputList.map(input => globalThis.backendaiclient.vfolder.modify_invitee_permission(input));
     Promise.all(promiseArray).then((response: any) => {
       if (response.length === 0) {
-        this.notification.text = 'No changes made.';
+        this.notification.text = _text('data.permission.NoChanges');
       } else {
-        this.notification.text = 'Permission successfully modified.';
+        this.notification.text = _text('data.permission.PermissionModified');
       }
       this.notification.show();
       this.shadowRoot.querySelector('#modify-permission-dialog').hide();
     })
   }
 
+  /**
+   * Render permission options - View, Edit, EditDelete, KickOut.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   permissionRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -801,15 +778,21 @@ export default class BackendAiStorageList extends BackendAIPage {
             <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
             <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
             <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
+            <option value="kickout">${_t('data.folders.KickOut')}</option>
           </wl-select>
         </div>
       `, root
     )
   }
 
+  /**
+   * Add textfield to write email.
+   *
+   * @param {Event} e - click the add button
+   * */
   _addTextField(e) {
     let newTextField = document.createElement('wl-textfield');
-    newTextField.label = "Enter e-mail address";
+    newTextField.label = _text('data.invitation.EnterEmail');
     newTextField.type = "email";
 
     this.shadowRoot.querySelector('#textfields').appendChild(newTextField)
@@ -817,7 +800,9 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   _removeTextField(e) {
     const textfields = this.shadowRoot.querySelector('#textfields');
-    textfields.removeChild(textfields.lastChild);
+    if (textfields.children.length > 1) {
+      textfields.removeChild(textfields.lastChild);
+    }
   }
 
   indexRenderer(root, column?, rowData?) {
@@ -827,6 +812,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render control folder options - infoFolder, folderExplorer, shareFolderDialog, etc.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   controlFolderListRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -854,7 +846,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           }
 
           ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
-
           ${rowData.item.is_owner && rowData.item.type == 'user'
             ? html`
               <mwc-icon-button
@@ -897,12 +888,24 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render control file options - downloadFile, openRenameFileDialog, openDeleteFileDialog, etc.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   controlFileListRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
-        <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
-            filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
+        ${this._isDir(rowData.item) ? html`
+          <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
+              filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e, true)}"></mwc-icon-button>
+        ` : html`
+          <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
+              filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
+        `}
         <mwc-icon-button id="rename-btn" class="tiny fg green" icon="edit" required
             filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
         <mwc-icon-button id="delete-btn" class="tiny fg red" icon="delete_forever"
@@ -911,6 +914,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render file name as rowData.item.filename.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   fileNameRenderer(root, column?, rowData?) {
     render(
       html`
@@ -931,6 +941,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render permission view - r, w, d.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   permissionViewRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -949,6 +966,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     )
   }
 
+  /**
+   * Render created time.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   createdTimeRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -959,6 +983,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     )
   }
 
+  /**
+   * Render type of user - person, group.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   typeRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -1059,6 +1090,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     return index + 1;
   }
 
+  /**
+   * Return whether item has permission or not.
+   *
+   * @param {object} item
+   * @param {char} perm - permission
+   * */
   _hasPermission(item, perm) {
     if (item.permission.includes(perm)) {
       return true;
@@ -1076,6 +1113,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     return folderId;
   }
 
+  /**
+   * Inform about folder using dialog.
+   *
+   * @param {Event} e - click the info icon button
+   * */
   _infoFolder(e) {
     const folderId = this._getControlId(e);
     let job = globalThis.backendaiclient.vfolder.info(folderId);
@@ -1092,12 +1134,20 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Open rename-folder-dialog to rename folder name.
+   *
+   * @param {Event} e - click the edit icon button
+   * */
   _renameFolderDialog(e) {
     this.renameFolderId = this._getControlId(e);
     this.shadowRoot.querySelector('#new-folder-name').value = '';
     this.openDialog('rename-folder-dialog');
   }
 
+  /**
+   * Rename the folder with the name on the new-folder-name.
+   * */
   _renameFolder() {
     globalThis.backendaiclient.vfolder.name = this.renameFolderId;
     const newName = this.shadowRoot.querySelector('#new-folder-name').value;
@@ -1117,16 +1167,24 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Open delete-folder-dialog to delete folder.
+   *
+   * @param {Event} e - click the delete icon button
+   * */
   _deleteFolderDialog(e) {
     this.deleteFolderId = this._getControlId(e);
     this.shadowRoot.querySelector('#delete-folder-name').value = '';
     this.openDialog('delete-folder-dialog');
   }
 
+  /**
+   * Check folder name to delete folder.
+   * */
   _deleteFolderWithCheck() {
     let typedDeleteFolderName = this.shadowRoot.querySelector('#delete-folder-name').value;
     if (typedDeleteFolderName != this.deleteFolderId) {
-      this.notification.text = 'Folder name mismatched. Check your typing.';
+      this.notification.text = _text('data.folders.FolderNameMismatched');
       this.notification.show();
       return;
     }
@@ -1134,10 +1192,14 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._deleteFolder(this.deleteFolderId);
   }
 
+  /**
+   * Delete folder and notice.
+   *
+   * @param {string} folderId
+   * */
   _deleteFolder(folderId) {
     let job = globalThis.backendaiclient.vfolder.delete(folderId);
     job.then((value) => {
-      this.notification.text = 'Folder is successfully deleted.';
       this.notification.text = _text('data.folders.FolderDeleted');
       this.notification.show();
       this._refreshFolderList();
@@ -1152,6 +1214,13 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /*Folder Explorer*/
+  /**
+   * Clear the folder explorer.
+   *
+   * @param path - explorer path
+   * @param id - explorer id
+   * @param {boolean} dialog - whether open folder-explorer-dialog or not
+   * */
   _clearExplorer(path = this.explorer.breadcrumb.join('/'),
                  id = this.explorer.id,
                  dialog = false) {
@@ -1166,6 +1235,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Set up the explorer of the folder and call the _clearExplorer() function.
+   *
+   * @param {Event} e - click the folder_open icon button
+   * */
   _folderExplorer(e) {
     let folderId = this._getControlId(e);
     let explorer = {
@@ -1177,6 +1251,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._clearExplorer(explorer.breadcrumb.join('/'), explorer.id, true);
   }
 
+  /**
+   * Enqueue the folder and call the _clearExplorer() function.
+   *
+   * @param {Event} e - click the folder_open icon button
+   * */
   _enqueueFolder(e) {
     const fn = e.target.getAttribute('name');
     this.explorer.breadcrumb.push(fn);
@@ -1229,6 +1308,9 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /* File upload and download */
+  /**
+   * Add eventListener to the dropzone - dragleave, dragover, drop.
+   * */
   _addEventListenerDropZone() {
     const dndZoneEl = this.shadowRoot.querySelector('#folder-explorer-dialog');
     const dndZonePlaceholderEl = this.shadowRoot.querySelector('#dropzone');
@@ -1273,6 +1355,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Create MouseEvents when cloud_upload button is clicked.
+   *
+   * @param {Event} e - click the cloud_upload button
+   * */
   _uploadFileBtnClick(e) {
     const elem = this.shadowRoot.querySelector('#fileInput');
     if (elem && document.createEvent) {  // sanity check
@@ -1282,6 +1369,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+  /**
+   * If file is added, call the fileUpload() function and initialize fileInput string
+   *
+   * @param {Event} e - add file to the input element
+   * */
   _uploadFileChange(e) {
     const length = e.target.files.length;
     for (let i = 0; i < length; i++) {
@@ -1306,6 +1398,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.shadowRoot.querySelector('#fileInput').value = '';
   }
 
+  /**
+   * Running file upload queue to upload files.
+   *
+   * @param session - upload session
+   * */
   runFileUploadQueue(session = null) {
     if (session !== null) {
       (this.fileUploadQueue as any).push(session);
@@ -1320,6 +1417,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+  /**
+   * Upload the file.
+   *
+   * @param {Object} fileObj - file object
+   * */
   fileUpload(fileObj) {
     this._uploadFlag = true;
     this.uploadFilesExist = this.uploadFiles.length > 0;
@@ -1387,17 +1489,28 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Cancel upload files.
+   *
+   * @param {Event} e - click the cancle button
+   * */
   _cancelUpload(e) {
     this._uploadFlag = false;
   }
 
-  _downloadFile(e) {
+  /**
+   * Download the file.
+   *
+   * @param {Event} e - click the cloud_download icon button
+   * @param {boolean} archive - whether archive or not
+   * */
+  _downloadFile(e, archive = false) {
     let fn = e.target.getAttribute("filename");
     let path = this.explorer.breadcrumb.concat(fn).join("/");
-    let job = globalThis.backendaiclient.vfolder.request_download_token(path, this.explorer.id);
+    let job = globalThis.backendaiclient.vfolder.request_download_token(path, this.explorer.id, archive);
     job.then(res => {
       const token = res.token;
-      const url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
+      const url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token, archive);
       if (globalThis.iOSSafari) {
         this.downloadURL = url;
         this.downloadFileDialog.show();
@@ -1419,6 +1532,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Open the renameFileDialog to rename the file.
+   *
+   * @param {Event} e - click the edit icon button
+   * */
   _openRenameFileDialog(e) {
     const fn = e.target.getAttribute("filename");
     this.renameFileDialog.querySelector('#old-file-name').textContent = fn;
@@ -1426,6 +1544,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.renameFileDialog.show();
   }
 
+  /**
+   * Rename the file.
+   *
+   * @param {Event} e - click the rename-file-button
+   * */
   _renameFile(e) {
     const fn = this.renameFileDialog.filename;
     const path = this.explorer.breadcrumb.concat(fn).join("/");
@@ -1447,6 +1570,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Open delete file dialog to delete file.
+   *
+   * @param {Event} e - click the delete-btn
+   * */
   _openDeleteFileDialog(e) {
     let fn = e.target.getAttribute("filename");
     this.deleteFileDialog.filename = fn;
@@ -1454,12 +1582,22 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.deleteFileDialog.show();
   }
 
+  /**
+   * Open the deleteFileDialog of selected files.
+   *
+   * @param {Event} e - click the delete button
+   * */
   _openDeleteMultipleFileDialog(e?) {
     this.deleteFileDialog.files = this.fileListGrid.selectedItems;
     this.deleteFileDialog.filename = '';
     this.deleteFileDialog.show();
   }
 
+  /**
+   * If the user presses the Delete File button, and the Okay button on the double check dialogue, delete the file.
+   *
+   * @param {Event} e - click the Okay button
+   * */
   _deleteFileWithCheck(e) {
     let files = this.deleteFileDialog.files;
     if (files.length > 0) {
@@ -1489,6 +1627,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+  /**
+   * Delete a file.
+   * */
   _deleteFile(e) {
     let fn = e.target.getAttribute("filename");
     let path = this.explorer.breadcrumb.concat(fn).join("/");
@@ -1500,6 +1641,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Returns the time of the utc type for human reading.
+   *
+   * @param {Date} d - date
+   * */
   _humanReadableTime(d) {
     const date = new Date(d * 1000);
     const offset = date.getTimezoneOffset() / 60;
@@ -1508,22 +1654,41 @@ export default class BackendAiStorageList extends BackendAIPage {
     return date.toUTCString();
   }
 
+  /**
+   * Return whether file is downloadable.
+   *
+   * @param {Object} file
+   * */
   _isDownloadable(file) {
     return true;
   }
 
+  /**
+   * Hide the current dialog.
+   *
+   * @param {Event} e - click the close or cancel button
+   * */
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
+  /**
+   * Open dialog to share folder.
+   *
+   * @param {Event} e - click the share button
+   * */
   _shareFolderDialog(e) {
     this.selectedFolder = this._getControlId(e);
-
     this.openDialog('share-folder-dialog');
   }
 
+  /**
+   * Open modify-permission-dialog.
+   *
+   * @param vfolder_id - vfolder id to modify
+   * */
   _modifyPermissionDialog(vfolder_id) {
     globalThis.backendaiclient.vfolder.list_invitees(vfolder_id)
       .then(res => {
@@ -1532,6 +1697,11 @@ export default class BackendAiStorageList extends BackendAIPage {
       })
   }
 
+  /**
+   * Share the folder to people with the email user entered.
+   *
+   * @param {Event} e - click the share-button
+   * */
   _shareFolder(e) {
     // the .children property is an HtmlCollection. They don't have the map function like an array would
     const emailHtmlCollection = this.shadowRoot.querySelector('#textfields').children;
@@ -1541,7 +1711,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const permission = 'r' + (this.shadowRoot.querySelector('#share-folder-write').checked ? 'w' : 'o');
 
     if (emailArray.length === 0) {
-      this.notification.text = 'No valid emails were entered';
+      this.notification.text = _text('data.invitation.NoValidEmails');
       this.notification.show();
       this.shadowRoot.querySelector('#share-folder-dialog').hide();
       for (let element of emailHtmlCollection) {
@@ -1554,25 +1724,35 @@ export default class BackendAiStorageList extends BackendAIPage {
       .then(res => {
         let msg;
         if (res.invited_ids && res.invited_ids.length > 0) {
-          msg = res.invited_ids.reduce((cur, val) => cur + val + " ", "") + (emailArray.length === 1 ? 'was' : 'were') + " successfully invited";
+          msg = _text('data.invitation.Invited');
         } else {
-          msg = "No one was invited";
+          msg = _text('data.invitation.NoOneWasInvited');
         }
         this.notification.text = msg;
         this.notification.show();
         this.shadowRoot.querySelector('#share-folder-dialog').hide();
-        for (let element of emailHtmlCollection) {
-          element.value = '';
+        for (let i = emailHtmlCollection.length - 1; i > 0; i--) {
+          const element = emailHtmlCollection[i];
+          element.parentElement.removeChild(element);
         }
-      })
+      }).catch(err => {
+        this.notification.text = _text('data.invitation.InvitationError');
+        if (err && err.message) {
+          this.notification.detail = err.message;
+        }
+        this.notification.show(true, err);
+      });
   }
 
+  /**
+   * Validate path name
+   * */
   _validatePathName() {
     let path_info = this.shadowRoot.querySelector('#mkdir-name');
     path_info.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          path_info.validationMessage = "Value is required."
+          path_info.validationMessage = _text('data.explorer.ValueRequired');
           return {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid
@@ -1588,7 +1768,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         let regex = /^([.a-zA-Z0-9-_]{1,})+(\/[a-zA-Z0-9-_]{1,})*([\/,\\]{0,1})$/gm;
         let isValid = regex.exec(path_info.value);
         if (!isValid) {
-          path_info.validationMessage = "Path should start with .(dot) or letters, numbers only."
+          path_info.validationMessage = _text('data.explorer.ValueShouldBeStarted');
         }
 
         return {

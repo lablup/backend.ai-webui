@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 import {render} from 'lit-html';
@@ -16,19 +16,25 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-spinner';
+import './backend-ai-dialog';
 
 import 'weightless/button';
-import 'weightless/card';
 import 'weightless/checkbox';
-import 'weightless/divider';
 import 'weightless/icon';
 import 'weightless/select';
 import 'weightless/textfield';
 
-import './backend-ai-resource-preset-list';
 import {default as PainKiller} from "./backend-ai-painkiller";
+
+/**
+ Backend.AI Environment List
+
+ @group Backend.AI Console
+ @element backend-ai-environment-list
+ */
 
 @customElement("backend-ai-environment-list")
 export default class BackendAIEnvironmentList extends BackendAIPage {
@@ -100,30 +106,30 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           color: var(--paper-orange-900);
         }
 
-        wl-dialog {
-          --dialog-min-width: 350px;
+        backend-ai-dialog {
+          --component-min-width: 350px;
         }
 
-        wl-dialog#modify-image-dialog wl-select,
-        wl-dialog#modify-image-dialog wl-textfield {
+        backend-ai-dialog#modify-image-dialog wl-select,
+        backend-ai-dialog#modify-image-dialog wl-textfield {
           margin-bottom: 20px;
         }
 
         wl-select, wl-textfield {
-          --input-font-family: Quicksand, Roboto;
+          --input-font-family: var(--general-font-family);
         }
 
-        wl-dialog wl-textfield {
+        backend-ai-dialog wl-textfield {
           --input-font-size: 14px;
         }
 
         #modify-app-dialog {
-          --dialog-height: 500px;
-          --dialog-max-height: 550px;
-          --dialog-min-width: 600px;
+          --component-height: 500px;
+          --component-max-height: 550px;
+          --component-min-width: 600px;
         }
 
-        wl-dialog vaadin-grid {
+        backend-ai-dialog vaadin-grid {
           margin: 0px 20px;
         }
 
@@ -145,6 +151,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       `];
   }
 
+  /**
+   * If value includes unlimited contents, mark as unlimited.
+   *
+   * @param value
+   */
   _markIfUnlimited(value) {
     if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
@@ -153,20 +164,38 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
   }
 
+  /**
+   * Hide a backend.ai dialog.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
+  /**
+   * Hide a dialog by id.
+   *
+   * @param id
+   */
   _hideDialogById(id) {
     return this.shadowRoot.querySelector(id).hide();
   }
 
+  /**
+   * Display a dialog by id.
+   *
+   * @param id
+   */
   _launchDialogById(id) {
     return this.shadowRoot.querySelector(id).show();
   }
 
+  /**
+   * Modify images of cpu, memory, cuda-gpu, cuda-fgpu, rocm-gpu and tpu.
+   */
   modifyImage() {
     const cpu = this.shadowRoot.querySelector("#modify-image-cpu").value,
       mem = this.shadowRoot.querySelector("#modify-image-mem").value,
@@ -216,8 +245,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       })
   }
 
-  openInstallImageDialog(index) {
-    this.selectedIndex = index;
+  /**
+   * Open the selected image.
+   *
+   * @param {object} index - Selected image's digest.
+   */
+  openInstallImageDialog(digest) {
+    this.selectedIndex = this.images.findIndex(image => image.digest === digest);
     let chosenImage = this.images[this.selectedIndex];
     this.installImageName = chosenImage['registry'] + '/' + chosenImage['name'] + ':' + chosenImage['tag'];
     this.installImageResource = {};
@@ -277,6 +311,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
   }
 
+  /**
+   * Render requirments such as cpu limit, memoty limit
+   * cuda share limit, rocm device limit and tpu limit.
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+   */
   requirementsRenderer(root, column?, rowData?) {
     render(
       html`
@@ -340,6 +382,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     );
   }
 
+  /**
+   * Set resource limits to default value.
+   *
+   * @param {object} resource_limits
+   */
   _setPulldownDefaults(resource_limits) {
     this._cuda_gpu_disabled = resource_limits.filter(e => e.key === "cuda_device").length === 0;
     this._cuda_fgpu_disabled = resource_limits.filter(e => e.key === "cuda_shares").length === 0;
@@ -363,6 +410,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.shadowRoot.querySelector("#modify-image-mem").value = this._addUnit(resource_limits[mem_idx].min);
   }
 
+  /**
+   * Decode backend.ai service ports.
+   */
   _decodeServicePort() {
     if (this.images[this.selectedIndex].labels["ai.backend.service-ports"] === "") {
       this.servicePorts = [];
@@ -381,6 +431,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
   }
 
+  /**
+   * Parse backend.ai service ports.
+   */
   _parseServicePort() {
     const container = this.shadowRoot.querySelector("#modify-app-container");
     const rows = container.querySelectorAll(".row:not(.header)");
@@ -394,15 +447,18 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return Array.prototype.filter.call(rows, row => valid(row)).map(row => encodeRow(row)).join(",");
   }
 
+  /**
+   * Modify backend.ai service ports.
+   */
   modifyServicePort() {
     const value = this._parseServicePort();
     const image = this.images[this.selectedIndex];
     globalThis.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
       .then(({result}) => {
         if (result === "ok") {
-          this.notification.text = _t("environment.DescServicePortModified");
+          this.notification.text = _text("environment.DescServicePortModified");
         } else {
-          this.notification.text = _t("dialog.ErrorOccurred");
+          this.notification.text = _text("dialog.ErrorOccurred");
         }
         this._getImages();
         this.requestUpdate();
@@ -412,6 +468,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       })
   }
 
+  /**
+   * Render controllers.
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+   */
   controlsRenderer(root, column, rowData) {
     render(
       html`
@@ -446,6 +509,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     )
   }
 
+  /**
+   * Render an install dialog.
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+   */
   installRenderer(root, column, rowData) {
     render(
       // language=HTML
@@ -455,7 +525,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               ?checked="${rowData.item.installed}"
               ?disabled="${rowData.item.installed}"
               @click="${(e) => {
-                this.openInstallImageDialog(rowData.index);
+                this.openInstallImageDialog(rowData.item.digest);
                 this.selectedCheckbox = e.target;
               }}">
           </wl-checkbox>
@@ -474,41 +544,15 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="80px" resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="registry">${_t("environment.Registry")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout vertical">
-              <span>[[item.registry]]</span>
-            </div>
-          </template>
-        </vaadin-grid-column>
+        <vaadin-grid-filter-column path="registry" width="80px" resizable
+            header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="namespace" width="60px" resizable
+            header="${_t('environment.Namespace')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="lang" resizable
+            header="${_t('environment.Language')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="baseversion" resizable
+            header="${_t('environment.Version')}"></vaadin-grid-filter-column>
 
-        <vaadin-grid-column width="60px" resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="namespace">${_t("environment.Namespace")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div>[[item.namespace]]</div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="lang">${_t("environment.Language")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div>[[item.lang]]</div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column width="40px" resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="baseversion">${_t("environment.Version")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div>[[item.baseversion]]</div>
-          </template>
-        </vaadin-grid-column>
         <vaadin-grid-column width="60px" resizable>
           <template class="header">${_t("environment.Base")}</template>
           <template>
@@ -525,33 +569,23 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             </template>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="150px" flex-grow="0" resizable>
-          <template class="header">
-            ${_t("environment.Digest")}
-          </template>
+        <vaadin-grid-filter-column path="digest" resizable
+            header="${_t('environment.Digest')}">
           <template>
             <div class="layout vertical">
-              <span class="indicator">[[item.digest]]</span>
+              <span class="indicator monospace">[[item.digest]]</span>
             </div>
           </template>
-        </vaadin-grid-column>
+        </vaadin-grid-filter-column>
 
         <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t("environment.ResourceLimit")}" .renderer="${this._boundRequirementsRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer=${this._boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
-      <wl-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
-        <wl-card elevation="1" class="login-panel intro" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <span>${_t("environment.ModifyImage")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <form>
-            <fieldset>
+      <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t("environment.ModifyImage")}</span>
+        <div slot="content" style="margin: 0;">
               <div style="display: flex; flex-direction: column;">
                 <div style="display: flex;">
                   <wl-select
@@ -635,26 +669,15 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 outlined
                 type="button"
                 style="box-sizing: border-box; width: 100%"
-                @click=${this.modifyImage}
+                @click=${() => this.modifyImage()}
               >
                 <wl-icon>check</wl-icon>
                 ${_t("button.SaveChanges")}
               </wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="modify-app-dialog" fixed backdrop blockscrolling>
-        <div slot="header" class="gutterBottom">
-          <div class="horizontal center layout">
-            <span style="font-family: Quicksand, Roboto; font-size: 20px;">${_t("environment.ManageApps")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${e => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </div>
-          <wl-divider></wl-divider>
         </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="modify-app-dialog" fixed backdrop>
+        <span slot="title">${_t("environment.ManageApps")}</span>
         <div slot="content" id="modify-app-container" class="container">
           <div class="row header">
             <div> ${_t("environment.AppName")} </div>
@@ -698,39 +721,43 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             </wl-button>
           </div>
         </div>
-        <div slot="footer">
-          <wl-button
-            class="fg orange"
-            outlined
-            type="button"
-            style="box-sizing: border-box; width: 100%;"
-            @click=${this.modifyServicePort}
-          >
-            <wl-icon>check</wl-icon>
-            ${_t("button.Finish")}
-          </wl-button>
+        <wl-button slot="footer"
+          class="fg orange"
+          outlined
+          type="button"
+          style="box-sizing: border-box; width: 100%;"
+          @click=${this.modifyServicePort}
+        >
+          <wl-icon>check</wl-icon>
+          ${_t("button.Finish")}
+        </wl-button>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="install-image-dialog" fixed backdrop persistent>
+        <span slot="title">Let's double-check</span>
+        <div slot="content">
+          <p>${_t("environment.DescDownloadImage")} <span style="color:blue;">${this.installImageName}</span></p>
+          <p>${_t("environment.DescSignificantDownloadTime")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
         </div>
-      </wl-dialog>
-      <wl-dialog id="install-image-dialog" fixed backdrop blockscrolling persistent>
-         <wl-title level="3" slot="header">Let's double-check</wl-title>
-         <div slot="content">
-            <p>${_t("environment.DescDownloadImage")} <span style="color:blue;">${this.installImageName}</span></p>
-            <p>${_t("environment.DescSignificantDownloadTime")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
-         </div>
-         <div slot="footer">
-            <wl-button class="cancel" inverted flat
-                @click="${(e) => {
+        <div slot="footer" class="horizontal flex layout">
+          <div class="flex"></div>
+          <wl-button class="cancel" inverted flat
+              @click="${(e) => {
       this._hideDialog(e)
       this._uncheckSelectedRow();
     }}">
-              ${_t("button.Cancel")}
-            </wl-button>
-            <wl-button class="ok" @click="${() => this._installImage()}">${_t("button.Okay")}</wl-button>
-         </div>
-      </wl-dialog>
+            ${_t("button.Cancel")}
+          </wl-button>
+          <wl-button class="ok" @click="${() => this._installImage()}">${_t("button.Okay")}</wl-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 
+  /**
+   * Remove a row in the environment list.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _removeRow(e) {
     const path = e.composedPath();
     let i = 0;
@@ -738,6 +765,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     path[i].remove();
   }
 
+  /**
+   * Add a row to the environment list.
+   */
   _addRow() {
     const container = this.shadowRoot.querySelector("#modify-app-container");
     const lastChild = container.children[container.children.length - 1];
@@ -745,6 +775,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     container.insertBefore(div, lastChild);
   }
 
+  /**
+   * Create a row in the environment list.
+   */
   _createRow() {
     const div = document.createElement("div");
     div.setAttribute("class", "row extra");
@@ -776,6 +809,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return div;
   }
 
+  /**
+   * Clear rows from the environment list.
+   */
   _clearRows() {
     const container = this.shadowRoot.querySelector("#modify-app-container");
     const rows = container.querySelectorAll(".row");
@@ -789,6 +825,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
   }
 
+  /**
+   * Deselect the selected row from the environment list.
+   */
   _uncheckSelectedRow() {
     this.selectedCheckbox.checked = false;
   }
@@ -813,6 +852,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
   }
 
+  /**
+   * Refresh the sorter.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _refreshSorter(e) {
     let sorter = e.target;
     let sorterPath = sorter.path.toString();
@@ -836,6 +880,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
   }
 
+  /**
+   * Get backend.ai client images.
+   */
   _getImages() {
     this.spinner.show();
 
@@ -919,6 +966,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
   }
 
+  /**
+   * Add unit to the value.
+   *
+   * @param {string} value
+   */
   _addUnit(value) {
     let unit = value.substr(-1);
     if (unit == 'm') {
@@ -933,6 +985,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return value;
   }
 
+  /**
+   * Change unit to symbol.
+   *
+   * @param {string} value
+   */
   _symbolicUnit(value) {
     let unit = value.substr(-2);
     if (unit == 'MB') {
@@ -947,6 +1004,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return value;
   }
 
+  /**
+   * Humanize the value.
+   *
+   * @param {string} value
+   */
   _humanizeName(value) {
     this.alias = {
       'python': 'Python',

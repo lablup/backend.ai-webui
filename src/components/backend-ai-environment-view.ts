@@ -15,10 +15,23 @@ import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
+import './backend-ai-dialog';
 import './backend-ai-environment-list';
 import './backend-ai-resource-preset-list';
 import './backend-ai-registry-list';
 
+/**
+ Backend.AI Environment View
+
+ Example:
+
+ <backend-ai-environment-view class="page" name="environment" ?active="${0}">
+ ... content ...
+ </backend-ai-environment-view>
+
+ @group Backend.AI Console
+ @element backend-ai-environment-view
+ */
 
 @customElement("backend-ai-environment-view")
 export default class BackendAIEnvironmentView extends BackendAIPage {
@@ -83,6 +96,11 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     }
   }
 
+  /**
+   * Set backend.ai client to super admin.
+   * 
+   * @param {Boolean} active 
+   */
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -99,6 +117,11 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     return false;
   }
 
+  /**
+   * Display the tab.
+   * 
+   * @param tab 
+   */
   _showTab(tab) {
     var els = this.shadowRoot.querySelectorAll(".tab-content");
     for (var x = 0; x < els.length; x++) {
@@ -106,12 +129,6 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     }
     this._activeTab = tab.value;
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
-  }
-
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
   }
 
   render() {

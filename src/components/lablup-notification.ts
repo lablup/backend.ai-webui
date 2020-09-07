@@ -12,6 +12,19 @@ import 'weightless/icon';
 import {navigate} from '../backend-ai-app';
 import {store} from '../store';
 
+/**
+ Lablup Notification
+
+ `lablup-notification` notifies backend.ai console logs.
+
+ Example:
+
+ <lablup-notification></lablup-notification>
+
+ @group Backend.AI Console
+ @element lablup-notification
+ */
+
 @customElement("lablup-notification")
 export default class LablupNotification extends LitElement {
   public shadowRoot: any;
@@ -53,7 +66,7 @@ export default class LablupNotification extends LitElement {
           right: 20px;
           font-size: 16px;
           font-weight: 400;
-          font-family: 'Quicksand', Roboto, sans-serif;
+          font-family: 'Ubuntu', 'Quicksand', Roboto, sans-serif;
           z-index: 12345678;
         }
 
@@ -114,6 +127,9 @@ export default class LablupNotification extends LitElement {
 
   }
 
+  /**
+   * Get user settings and set options according to user settings.
+   * */
   _readUserSetting(name, default_value = true) {
     let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
     if (value !== null && value != '' && value != '""') {
@@ -129,12 +145,22 @@ export default class LablupNotification extends LitElement {
     }
   }
 
+  /**
+   * When click the close_button, hide dialog(wl-snackbar).
+   *
+   * @param {Event} e - Click the close_button
+   * */
   _hideNotification(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('wl-snackbar');
     dialog.hide();
   }
 
+  /**
+   * When click the more_button, dispatch 'backend-ai-usersettings-logs' event.
+   *
+   * @param {Event} e - Click the more_button
+   * */
   _moreNotification(e) {
     // const notification = e.target.closest('wl-snackbar');
     // const button = e.target.closest('wl-button');
@@ -156,6 +182,9 @@ export default class LablupNotification extends LitElement {
     }
   }
 
+  /**
+   * Create close_button that bind with function '_hideNotification(e)'
+   * */
   _createCloseButton(notification) {
     let button = document.createElement('wl-button');
     button.setAttribute('slot', "action");
@@ -166,6 +195,12 @@ export default class LablupNotification extends LitElement {
     notification.appendChild(button);
   }
 
+  /**
+   * Show notifications
+   *
+   * @param {boolean} persistent - if persistent is false, the snackbar is hidden automatically after 3000ms
+   * @param {object} log
+   * */
   async show(persistent: boolean = false, log: object = Object()) {
     let snackbar = document.querySelector("wl-snackbar[persistent='true']");
     if (snackbar) {
@@ -229,7 +264,7 @@ export default class LablupNotification extends LitElement {
     notification.style.right = '20px';
     notification.style.fontSize = '16px';
     notification.style.fontWeight = '400';
-    notification.style.fontFamily = "'Quicksand', Roboto, sans-serif";
+    notification.style.fontFamily = "'Ubuntu', 'Quicksand', Roboto, sans-serif";
     notification.style.zIndex = "12345678";
     let d = new Date();
     notification.setAttribute('created', d.toLocaleString());
@@ -242,6 +277,13 @@ export default class LablupNotification extends LitElement {
     this._spawnDesktopNotification("Backend.AI", this.text, '');
   }
 
+  /**
+   * Spawn new desktop notification that is used to configure and display desktop notifications to the user.
+   *
+   * @param {string} title - Title of Notification
+   * @param {string} body  - Body of Notification
+   * @param {string} icon  - Icon of Notification
+   * */
   _spawnDesktopNotification(title, body, icon) {
     if (this.supportDesktopNotification === false) {
       return;
@@ -253,6 +295,11 @@ export default class LablupNotification extends LitElement {
     this.newDesktopNotification = new Notification(title, options);
   }
 
+  /**
+   * Open a blank page with url.
+   *
+   * @param {string} url - Address of open page
+   * */
   _openURL(url) {
     window.open(url, '_blank');
   }
@@ -266,6 +313,10 @@ export default class LablupNotification extends LitElement {
     localStorage.setItem(key, JSON.stringify(current_log));
   }
 
+  /**
+   * Collect only the open notification and slice the log so that it does not exceed a certain length.
+   * And, set step as the length of notification.
+   * */
   gc() {
     if (this.notifications.length > 0) {
       let opened_notifications = this.notifications.filter(noti => noti.open === true);

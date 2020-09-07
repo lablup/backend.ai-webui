@@ -1,12 +1,14 @@
 # backend.ai-console
 
+[![GitHub version](https://badge.fury.io/gh/lablup%2Fbackend.ai-console.svg)](https://badge.fury.io/gh/lablup%2Fbackend.ai-console)
+
 Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin / DevOps.
 
 For more information, see [manual](https://console.docs.backend.ai/en/latest/).
 
 ## Changelog
 
-View [changelog](https://github.com/lablup/backend.ai-console/master/CHANGELOG.md)
+View [changelog](https://github.com/lablup/backend.ai-console/blob/main/CHANGELOG.md)
 
 ## Role
 
@@ -25,8 +27,8 @@ Backend.AI console focuses to
     * Terminal for each session
     * Fully-featured VSCode editor and environments
  * Pipeline
-    * Experiments (with SACRED)
-    * AutoML (with NNI)
+    * Experiments (with SACRED / MLFlow)
+    * AutoML (with NNI / MLFlow)
     * Manages container streams with pipeline vfolders
     * Checks queue and scheduled jobs
  * Storage management
@@ -63,6 +65,10 @@ Backend.AI console focuses to
     * Plugin support
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
     * Needs backend.ai-wsproxy package
+ * Service information
+    * Component compatibility 
+    * Security check
+    * License information
  * Work with console server (github/lablup/backend.ai-console-server)
     * Delegate login to console server
     * Support userid / password login
@@ -87,6 +93,7 @@ connectionMode = "[Connection mode. Default is API. Currenly supports API and SE
 allowChangeSigninMode = false # Allows user to change signin mode between `API` and `SESSION`
 signupSupport = false # Enable / disable signup feature support. Manager plugin is required.
 allowSignout = false # Let users signout from service. Signup plugin is required.
+allowAnonymousChangePassword = false # Enable / disable anonymous user can send change password email. Manager plugin is required.
 allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
 debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
 
@@ -116,20 +123,31 @@ consoleServerURL = "[Console server website URL. App will use the site instead o
 ## Development Guide
 
 Backend.AI console is built with
- * `lit-element` / `Polymer 3 `as webcomponent framework
+ * `lit-element` as webcomponent framework
  * `npm` as package manager
  * `rollup` as bundler
  * `electron` as app shell
+
+### Code of conduct
+
+View [Code of conduct](https://github.com/lablup/backend.ai-console/blob/main/CODE_OF_CONDUCT.md) for community guidelines.
 
 ### Initializing
 
 ```
 $ npm i
 ```
+
+If this is not your first-time compilation, please clean the temporary directories with this command:
+
+```
+$ make clean
+```
+
 You must perform first-time compilation for testing. Some additional mandatory packages should be copied to proper location.
 
 ```
-$ make dep
+$ make compile_wsproxy
 ```
 
 Some necessary libraries will be copied to `src/lib`. Now you are ready to test.
@@ -346,7 +364,8 @@ $ make all # build win64/macos/linux app
 $ make win
 ```
 Note: Building Windows x86-64 on other than Windows requires Wine > 3.0
-Note: On macOS Catalina, use scripts/build-windows-app.sh to build Windows package. From macOS 10.15+, wine 32x is not supported.
+Note: On macOS Catalina, use scripts/build-windows-app.sh to build Windows 32bitpackage. From macOS 10.15+, wine 32x is not supported.
+Note: Now the `make win` command support only Windows x64 app, therefore you do not need to use `build-windows-app.sh` anymore.
 
 #### macOS version
 

@@ -7,6 +7,7 @@ import {css, customElement, html, LitElement, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/dialog';
 import 'weightless/icon';
+
 /**
  Backend.AI Splash component
 
@@ -30,6 +31,8 @@ export default class BackendAISplash extends LitElement {
   @property({type: String}) license = 'Subscription';
   @property({type: String}) validUntil = '';
   @property({type: String}) version = '';
+  @property({type: String}) managerVersion = '';
+
 
   constructor() {
     super();
@@ -40,7 +43,7 @@ export default class BackendAISplash extends LitElement {
       // language=CSS
       css`
         :host > *, html {
-          font-family: 'Quicksand', Roboto, sans-serif;
+          font-family: var(--general-font-family);
         }
 
         a,
@@ -54,7 +57,8 @@ export default class BackendAISplash extends LitElement {
 
         #splash-panel {
           --dialog-width: 345px;
-          --dialog-height: 300px;
+          --dialog-height: 345px;
+          --dialog-border-radius: 10px;
         }
 
         .splash-header {
@@ -100,6 +104,7 @@ export default class BackendAISplash extends LitElement {
     this.edition = globalThis.packageEdition;
     this.validUntil = globalThis.packageValidUntil;
     this.version = globalThis.packageVersion;
+    this.managerVersion = globalThis.backendaiclient.managerVersion;
     if (this.edition !== 'Open Source') {
       if (globalThis.packageValidUntil === "2099-12-31" || this.validUntil === '""' || this.validUntil == "") {
         this.license = "Perpetual";
@@ -120,32 +125,33 @@ export default class BackendAISplash extends LitElement {
     // language=HTML
     return html`
       <wl-dialog id="splash-panel" fixed backdrop blockscrolling persistent>
-          <div class="splash-header">
-            <img src="manifest/backend.ai-text.svg" style="height:50px;padding:35px 20px;" />
-            <wl-button style="position:absolute;top:0;right:0;" fab flat inverted @click="${() => this.hide()}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </div>
-          <div class="splash-information">
-            <ul>
-              <li>Backend.AI Console <span id="version-detail" class="detail">${globalThis.packageVersion}</span></li>
-              <li><span id="license-detail">${this.edition} Edition</span></li>
-              <li><span id="valid-until" class="detail">
-                ${this.license === "Subscription" ? html`Subscription is active until ${this.validUntil}` : html``}
-                ${this.license === "Perpetual" ? html`Perpetual License` : html``}
-                </span></li>
-              <li><span id="mode-detail" class="detail">${globalThis.isElectron ? 'App' : 'WebServer'}</span> <span id="build-detail" class="detail">Build ${globalThis.buildVersion}</span></li>
+        <div class="splash-header">
+          <img src="manifest/backend.ai-text.svg" style="height:50px;padding:35px 20px;" />
+          <wl-button style="position:absolute;top:0;right:0;" fab flat inverted @click="${() => this.hide()}">
+            <wl-icon>close</wl-icon>
+          </wl-button>
+        </div>
+        <div class="splash-information">
+          <ul>
+            <li>Backend.AI Console <span id="version-detail" class="detail">${globalThis.packageVersion}</span></li>
+            <li><span id="license-detail">${this.edition} Edition</span></li>
+            <li><span id="valid-until" class="detail">
+              ${this.license === "Subscription" ? html`Subscription is active until ${this.validUntil}` : html``}
+              ${this.license === "Perpetual" ? html`Perpetual License` : html``}
+              </span></li>
+            <li style="margin-top:15px;"><span id="mode-detail" class="detail">Backend.AI Cluster</span> <span id="manager-build-detail" class="detail">${this.managerVersion}</span></li>
+            <li><span id="mode-detail" class="detail">${globalThis.isElectron ? 'App' : 'WebServer'}</span> <span id="build-detail" class="detail">Build ${globalThis.buildVersion}</span></li>
+          </ul>
+          <ul>
+            <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/main/LICENSE">open-source software</a></li>
+            <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
+            <li class="release-note">
+              <a target="_blank" href="https://github.com/lablup/backend.ai-console/releases/tag/v${this.version}">Release Note</a>
+              <a target="_blank" href="https://github.com/lablup/backend.ai-console/blob/main/LICENSE">License</a>
+            </li>
             </ul>
-            <ul>
-              <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/master/LICENSE">open-source software</a></li>
-              <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
-              <li class="release-note">
-                <a target="_blank" href="https://github.com/lablup/backend.ai-console/releases/tag/v${this.version}">Release Note</a>
-                <a target="_blank" href="https://github.com/lablup/backend.ai-console/blob/master/LICENSE">License</a>
-              </li>
-              </ul>
-            </ul>
-          </div>
+          </ul>
+        </div>
       </wl-dialog>
     `;
   }

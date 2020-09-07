@@ -20,6 +20,19 @@ import 'weightless/card';
 
 import './lablup-loading-spinner';
 
+/**
+ Backend.AI Information View
+
+ Example:
+
+ <backend-ai-information-view page="class" id="information" ?active="${0}">
+ ... content ...
+ </backend-ai-information-view>
+
+ @group Backend.AI Console
+ @element backend-ai-information-view
+ */
+
 @customElement("backend-ai-information-view")
 export default class BackendAiInformationView extends BackendAIPage {
 
@@ -32,6 +45,11 @@ export default class BackendAiInformationView extends BackendAIPage {
   @property({type: String}) pgsql_version = '';
   @property({type: String}) redis_version = '';
   @property({type: String}) etcd_version = '';
+  @property({type: Boolean}) license_valid = false;
+  @property({type: String}) license_type = '';
+  @property({type: String}) license_licensee = '';
+  @property({type: String}) license_key = '';
+  @property({type: String}) license_expiration = '';
   @property({type: Boolean}) account_changed = true;
   @property({type: Boolean}) use_ssl = true;
 
@@ -181,6 +199,60 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
           </div>
         </div>
+        <h4>${_t("information.License")}</h4>
+        <div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>${_t("information.IsLicenseValid")}</div>
+              <div class="description">${_t("information.DescIsLicenseValid")}
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+            ${this.license_valid ? html`<wl-icon>done</wl-icon>` : html`<wl-icon class="fg red">warning</wl-icon>`}
+            </div>
+          </div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>${_t("information.LicenseType")}</div>
+              <div class="description">${_tr("information.DescLicenseType")}
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+            ${this.license_type === 'fixed' ? _t('information.FixedLicense') : _t('information.DynamicLicense')}
+            </div>
+          </div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>${_t("information.Licensee")}</div>
+              <div class="description">${_t("information.DescLicensee")}
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+            ${this.license_licensee}
+            </div>
+          </div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>${_t("information.LicenseKey")}</div>
+              <div class="description">${_t("information.DescLicenseKey")}
+              </div>
+            </div>
+            <div class="vertical center-justified layout monospace indicator">
+            ${this.license_key}
+            </div>
+          </div>
+          <div class="horizontal flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>${_t("information.Expiration")}</div>
+              <div class="description">${_t("information.DescExpiration")}
+              </div>
+            </div>
+            <div class="vertical center-justified layout">
+            ${this.license_expiration}
+            </div>
+          </div>
+        </div>
+
       </wl-card>
     `;
   }
@@ -203,6 +275,26 @@ export default class BackendAiInformationView extends BackendAIPage {
       return;
     }
   }
+
+  _updateLicenseInfo() {
+    globalThis.backendaiclient.enterprise.getLicense().then((response) => {
+      this.license_valid = response.valid;
+      this.license_type = response.type;
+      this.license_licensee = response.licensee;
+      this.license_key = response.licenseKey;
+      this.license_expiration = response.expiration;
+    }).catch((err) => {
+      this.license_valid = false;
+      this.license_type = _text('information.CannotRead');
+      this.license_licensee = _text('information.CannotRead');
+      this.license_key = _text('information.CannotRead');
+      this.license_expiration = _text('information.CannotRead');
+    });
+  }
+
+  /**
+   * Update information of the client
+   */
   updateInformation() {
     this.manager_version = globalThis.backendaiclient.managerVersion;
     this.console_version = globalThis.packageVersion;
@@ -211,6 +303,14 @@ export default class BackendAiInformationView extends BackendAIPage {
     this.pgsql_version = _text('information.Compatible');
     this.redis_version = _text('information.Compatible');
     this.etcd_version = _text('information.Compatible');
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._updateLicenseInfo();
+      }, true);
+    } else { // already connected
+      this._updateLicenseInfo();
+    }
+
     if (globalThis.backendaiclient._config.endpoint.startsWith('https:')) {
       this.use_ssl = true;
     } else {

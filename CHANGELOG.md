@@ -1,5 +1,192 @@
 # Changelog
 
+## v20.08.0 (04/08/2020)
+
+#### Bug Fixes:
+
+- [**bug**][**UI / UX**] After terminating a session, resource occupation is not updated [#639](https://github.com/lablup/backend.ai-console/issues/639)
+- [**bug**] In a session log dialog, error message is raised when user clicks refresh log button [#640](https://github.com/lablup/backend.ai-console/issues/640)
+
+
+## v20.07.9 (31/07/2020)
+
+#### Bug Fixes:
+
+- [**bug**][**easy**][**minor**] Cannot create resource preset with proper mem/shmem values [#626](https://github.com/lablup/backend.ai-console/issues/626)
+
+#### UI / UX:
+
+- [**UI / UX**][**minor**] Change minimum fractional GPU step from 0.05 to 0.01 [#629](https://github.com/lablup/backend.ai-console/issues/629)
+- [**UI / UX**][**cloud**][**minor**] Show explicit message when user's account is inactive state [#593](https://github.com/lablup/backend.ai-console/issues/593)
+
+
+## v20.07.8 (23/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**enterprise**][**library / SDK**][**major**] License information viewer [#623](https://github.com/lablup/backend.ai-console/issues/623)
+- [**enhancement**][**urgency**] Add feature to search and/or filter user and keypair by fields such as email, username, etc [#618](https://github.com/lablup/backend.ai-console/issues/618)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Migrate d3.js charts into chart.js [#607](https://github.com/lablup/backend.ai-console/issues/607)
+
+
+## v20.07.7 (23/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Migrate repository notebook into cluster [#599](https://github.com/lablup/backend.ai-console/issues/599)
+
+#### Bug Fixes:
+
+- [**bug**][**library / SDK**][**major**][**urgency**] User and keypair page displays only 100 users/keypairs in >20.03 manager [#617](https://github.com/lablup/backend.ai-console/issues/617)
+
+
+## v20.07.6 (20/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Project color in pull-down menu on top-right corner becomes white when selected [#614](https://github.com/lablup/backend.ai-console/issues/614)
+- [**UI / UX**][**blocker**][**easy**][**enhancement**] Problems that do not support password autocomplete in web browsers [#613](https://github.com/lablup/backend.ai-console/issues/613)
+- [**UI / UX**][**enhancement**][**library / SDK**] Add edit feature of .Renviron file in home directory [#608](https://github.com/lablup/backend.ai-console/issues/608)
+
+#### Bug Fixes:
+
+- [**blocker**][**bug**][**library / SDK**][**major**] 502 error found when launching app with Backend.AI 20.03 / Enterprise R2 beta [#601](https://github.com/lablup/backend.ai-console/issues/601)
+
+
+## v20.07.5 (09/07/2020)
+
+#### Bug Fixes:
+
+- [**blocker**][**bug**][**library / SDK**][**major**] 502 error found when launching app with Backend.AI 20.03 / Enterprise R2 beta [#601](https://github.com/lablup/backend.ai-console/issues/601)
+
+
+## v20.07.4 (06/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Set environment name with tags [#598](https://github.com/lablup/backend.ai-console/issues/598)
+
+
+## v20.07.3 (06/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**][**hard**] Stabilize the resource broker with refactoring [#596](https://github.com/lablup/backend.ai-console/issues/596)
+
+
+## v20.07.2 (03/07/2020)
+
+#### Bug Fixes:
+
+- [**bug**][**cloud**][**easy**] Error on re-send signup verification email [#595](https://github.com/lablup/backend.ai-console/issues/595)
+
+
+## v20.07.1 (03/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**minor**] Show agent version on resource pane to check upgradable agents [#590](https://github.com/lablup/backend.ai-console/issues/590)
+
+#### Bug Fixes:
+
+- [**blocker**][**bug**][**major**] Cannot see templates / assign resource without GPU [#591](https://github.com/lablup/backend.ai-console/issues/591)
+
+
+## v20.07.0 (02/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Migrate legacy dialogs to backend.ai dialog for unified look and feel [#584](https://github.com/lablup/backend.ai-console/issues/584)
+- [**UI / UX**][**enhancement**][**minor**] Open notification when no virtual folder is attached on console [#583](https://github.com/lablup/backend.ai-console/issues/583)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**][**working**] Unified session information crawler / store [#496](https://github.com/lablup/backend.ai-console/issues/496)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**minor**] TOS is not scrollable [#588](https://github.com/lablup/backend.ai-console/issues/588)
+
+
+## v20.06.3 (22/06/2020)
+
+#### Enhancements:
+
+- [**enhancement**] Feature to download vfolder directory [#580](https://github.com/lablup/backend.ai-console/issues/580)
+- [**UI / UX**][**enhancement**][**minor**] Migrate legacy dialogs to backend.ai dialog for unified look and feel [#584](https://github.com/lablup/backend.ai-console/issues/584)
+- [**UI / UX**][**enhancement**][**minor**] Open notification when no virtual folder is attached on console [#583](https://github.com/lablup/backend.ai-console/issues/583)
+
+#### Bug Fixes:
+
+- [**bug**] After selecting resource template without GPU, advanced panel's GPU value is not respected in creating session [#581](https://github.com/lablup/backend.ai-console/issues/581)
+
+
+## v20.06.2 (16/06/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**hard**][**major**][**UI / UX**][**library / SDK**] Show app launcher after launch a session on summary page (#575) [#575](https://github.com/lablup/backend.ai-console/issues/575)
+
+
+## v20.06.1 (13/06/2020)
+
+#### Bug Fixes:
+- [**UI / UX**][**bug**][**major**][**blocker**] Sometimes environment list did not refreshed correctly [#576](https://github.com/lablup/backend.ai-console/issues/576)
+
+
+## v20.06.0 (12/06/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**library / SDK**][**minor**] Change session store method for console-server [#567](https://github.com/lablup/backend.ai-console/issues/567)
+- [**cloud**][**enhancement**][**library / SDK**] Let Cloud users to change their forgot password by email verification [#564](https://github.com/lablup/backend.ai-console/issues/564)
+- [**UI / UX**][**cloud**][**enhancement**][**enterprise**][**major**] Provide method to turn off some menus by setting [#562](https://github.com/lablup/backend.ai-console/issues/562)
+- [**cloud**][**enhancement**][**major**][**web**] Re-enable service worker to reduce traffic load [#554](https://github.com/lablup/backend.ai-console/issues/554)
+- [**UI / UX**][**cloud**][**enhancement**][**library / SDK**][**major**] Add support for signup user email verification [#536](https://github.com/lablup/backend.ai-console/issues/536)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**minor**] Resource monitor panel is not updated after session creation [#566](https://github.com/lablup/backend.ai-console/issues/566)
+- [**UI / UX**][**bug**] Session list has scrollbar on admin mode [#560](https://github.com/lablup/backend.ai-console/issues/560)
+- [**blocker**][**bug**][**major**] 'No suitable preset' is not shown when preset does not exist [#559](https://github.com/lablup/backend.ai-console/issues/559)
+- [**bug**][**minor**] Preset does not work after cpu/memory values are set manually by Advanced panel [#555](https://github.com/lablup/backend.ai-console/issues/555)
+- [**UI / UX**][**bug**][**hard**] Resource slider shows zero on first launch dialog [#553](https://github.com/lablup/backend.ai-console/issues/553)
+- [**UI / UX**][**bug**][**minor**] Wait to enable session launch button before SDK is connected to manager [#552](https://github.com/lablup/backend.ai-console/issues/552)
+- [**UI / UX**][**blocker**][**bug**] Resource preset is not refreshed at the first launch [#551](https://github.com/lablup/backend.ai-console/issues/551)
+- [**UI / UX**][**blocker**][**bug**][**library / SDK**] Check password condition on change [#549](https://github.com/lablup/backend.ai-console/issues/549)
+
+#### UI / UX:
+
+- [**UI / UX**][**easy**][**minor**] Limit maximum allowed CPU cores to 64 [#571](https://github.com/lablup/backend.ai-console/issues/571)
+- [**UI / UX**][**minor**] Display TensorFlow/PyTorch versions for NGC images [#569](https://github.com/lablup/backend.ai-console/issues/569)
+
+
+## v20.05.5 (26/05/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**major**] Notification stack UI on sidepanel [#547](https://github.com/lablup/backend.ai-console/issues/547)
+- [**UI / UX**][**enhancement**][**major**] Asychronous tooltip to increase UI response speed [#543](https://github.com/lablup/backend.ai-console/issues/543)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] UI for Background task [#542](https://github.com/lablup/backend.ai-console/issues/542)
+- [**UI / UX**][**cloud**][**enhancement**][**library / SDK**][**major**] Add support for signup user email verification [#536](https://github.com/lablup/backend.ai-console/issues/536)
+- [**UI / UX**][**app**][**enhancement**][**hard**][**library / SDK**][**major**] Task monitor UI component  [#505](https://github.com/lablup/backend.ai-console/issues/505)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**] Resource preset is not refreshed at the first launch [#551](https://github.com/lablup/backend.ai-console/issues/551)
+- [**UI / UX**][**bug**][**major**] Tooltip overrided by main content adrea on mini sidebar mode on Safari [#544](https://github.com/lablup/backend.ai-console/issues/544)
+- [**UI / UX**][**bug**][**library / SDK**][**minor**] Image install shows error message if it takes more than 5 sec. [#541](https://github.com/lablup/backend.ai-console/issues/541)
+
+
+## v20.05.4 (22/05/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**library / SDK**][**maintenance**] Adopt tus v2 client [#530](https://github.com/lablup/backend.ai-console/issues/530)
+- [**UI / UX**][**enhancement**][**major**] New UI for 20.03 (with summary / sidebar) [#518](https://github.com/lablup/backend.ai-console/issues/518)
+
+#### Bug Fixes:
+
+- [**bug**][**easy**] Exception when logged in as a user (or in login page) [#532](https://github.com/lablup/backend.ai-console/issues/532)
+
+
 ## v20.05.3 (15/05/2020)
 
 #### Enhancements:

@@ -16,6 +16,8 @@ Icons made by Kiranshastry from www.flaticon.com
 Icons from pngwave https://www.pngwave.com/png-clip-art-cdsrv
  * xfce.png
 
+Icons from iconfinder by Paomedia (https://www.iconfinder.com/paomedia) under CC Attribution 3.0 ( https://creativecommons.org/licenses/by/3.0/ ) 
+ * terminal.svg
 
 tpu.svg, TPU icon is trademark of google.com
 

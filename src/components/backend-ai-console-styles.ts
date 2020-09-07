@@ -31,6 +31,11 @@ export const BackendAiConsoleStyles = [
       opacity: 0;
     }
 
+    mwc-top-app-bar-fixed {
+      --mdc-typography-headline6-font-family: var(--general-font-family);
+      --mdc-typography-font-family: var(--general-font-family);
+    }
+
     .site-name {
       text-align: center;
       margin-left: 0;
@@ -107,6 +112,12 @@ export const BackendAiConsoleStyles = [
       font-weight: 900;
     }
 
+    mwc-list.sidebar mwc-list-item[disabled],
+    mwc-list.sidebar mwc-list-item[disabled] mwc-icon {
+      --mdc-theme-on-surface: #888888;
+      color: #888888 !important;
+    }
+
     .mini-ui mwc-list.sidebar mwc-list-item {
       --mdc-list-item-graphic-margin: 0;
     }
@@ -176,8 +187,20 @@ export const BackendAiConsoleStyles = [
       top: calc(50vh - 24px);
     }
 
+    mwc-circular-progress {
+      width: 48px;
+      height: 48px;
+      position: fixed;
+      --mdc-theme-primary: #e91e63;
+      top: calc(50vh - 24px);
+    }
+
     @media screen and (max-width: 899px) {
       wl-progress-spinner {
+        left: calc(50% - 24px);
+      }
+
+      mwc-circular-progress {
         left: calc(50% - 24px);
       }
     }
@@ -188,6 +211,14 @@ export const BackendAiConsoleStyles = [
       }
 
       .mini-ui wl-progress-spinner {
+        left: calc(50% + 29px);
+      }
+
+      mwc-circular-progress {
+        left: calc(50% + 71px);
+      }
+
+      .mini-ui mwc-circular-progress {
         left: calc(50% + 29px);
       }
     }
@@ -207,23 +238,28 @@ export const BackendAiConsoleStyles = [
 
     mwc-multi-select {
       width: 135px;
-      font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-      --mdc-typography-subtitle1-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      min-width: 135px;
+      font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-size: 14px;
       --mdc-typography-subtitle1-font-color: white;
       --mdc-typography-subtitle1-font-weight: 400;
       --mdc-typography-subtitle1-line-height: 16px;
+      --mdc-theme-primary: rgba(255, 255, 255, 1.0);
+      --mdc-select-idle-line-color: transparent;
+      --mdc-select-hover-line-color: transparent;
+      --mdc-select-outlined-idle-border-color: rgba(255, 255, 255, 0.42);
+      --mdc-select-outlined-hover-border-color: rgba(255, 255, 255, 0.87);
+      --mdc-select-outlined-disabled-border-color: rgba(255, 255, 255, 0.87);
       --mdc-select-fill-color: transparent;
+      --mdc-select-disabled-fill-color: transparent;
+      --mdc-select-ink-color: rgba(255, 255, 255, 1.0);
       --mdc-select-label-ink-color: rgba(255, 255, 255, 1.0);
+      --mdc-select-focused-label-color: rgba(24, 24, 24, 1.0);
       --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
       --mdc-select-dropdown-icon-color: rgba(255, 255, 255, 1.0);
       --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
       --mdc-select-disabled-dropdown-icon-color: rgba(255, 255, 255, 0.87);
-      --mdc-select-idle-line-color: transparent;
-      --mdc-select-hover-line-color: rgba(255, 255, 255, 0.87);
-      --mdc-select-ink-color: rgba(255, 255, 255, 1.0);
-      --mdc-select-outlined-idle-border-color: rgba(255, 255, 255, 0.42);
-      --mdc-select-outlined-hover-border-color: rgba(255, 255, 255, 0.87);
       --mdc-theme-surface: white;
       --mdc-list-vertical-padding: 5px;
       --mdc-list-side-padding: 10px;
@@ -235,12 +271,18 @@ export const BackendAiConsoleStyles = [
       --mdc-select-min-width: 100px;
     }
 
+    mwc-list-item[activated] {
+      color: black;
+      background-color: #e1e1e1;
+    }
+
     wl-popover-card {
       padding: 5px;
     }
 
+    backend-ai-dialog wl-textfield,
     wl-dialog wl-textfield {
-      --input-font-family: 'Quicksand', Roboto, Noto, sans-serif;
+      --input-font-family: var(--general-font-family);
       --input-color-disabled: #222222;
       --input-label-color-disabled: #222222;
       --input-label-font-size: 12px;
@@ -248,7 +290,7 @@ export const BackendAiConsoleStyles = [
     }
 
     mwc-list-item {
-      font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      font-family: var(--general-font-family);
       font-weight: 400;
     }
 
@@ -258,7 +300,7 @@ export const BackendAiConsoleStyles = [
 
     mwc-menu.user-menu {
       --mdc-theme-surface: #f1f1f1;
-      --mdc-menu-item-height: auto;
+      --mdc-menu-item-height: 28px;
       box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     }
 

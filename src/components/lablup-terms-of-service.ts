@@ -8,10 +8,10 @@ import {css, customElement, html, LitElement, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/title';
 import 'weightless/checkbox';
 
+import './backend-ai-dialog';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
   IronFlex,
@@ -69,16 +69,16 @@ export default class LablupTermsOfService extends LitElement {
       // language=CSS
       css`
         @media screen and (max-width: 669px) {
-          wl-dialog.terms-of-service-dialog {
-            --dialog-width: 80% !important;
-            --dialog-height: 80vh;
+          backend-ai-dialog.terms-of-service-dialog {
+            --component-width: 85% !important;
+            --component-height: 80vh;
           }
         }
 
         @media screen and (min-width: 670px) {
-          wl-dialog.terms-of-service-dialog {
-            --dialog-width: 650px !important;
-            --dialog-height: 80vh;
+          backend-ai-dialog.terms-of-service-dialog {
+            --component-width: 650px !important;
+            --component-height: 80vh;
           }
         }
 
@@ -109,12 +109,11 @@ export default class LablupTermsOfService extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable>
-        <div slot="header" class="horizontal center flex layout" style="padding:0 15px;">
-          <h3>${this.title}</h3>
-          <div class="flex"></div>
+      <backend-ai-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable>
+        <span slot="title">${this.title}</span>
+        <div slot="action" class="horizontal end-justified center flex layout">
           ${this.tosLanguages ? html`
-            ${_t("language.Language")}:
+            <span style="font-size:14px;">${_t("language.Language")}</span>
             ${this.tosLanguages.map(item => html`
             <wl-button class="fg blue language" outlined type="button" ?active="${this.tosLanguage === item.code}" @click="${() => {
       this.changeLanguage(item.code)
@@ -125,22 +124,28 @@ export default class LablupTermsOfService extends LitElement {
         </div>
         <div slot="content">
           <div id="terms-of-service-dialog-content"></div>
-        </div>
-        <div slot="footer" class="horizontal flex layout">
-          <div class="flex"></div>
-          <wl-button class="fg green dismiss" id="dismiss-button" outlined type="button" @click="${() => {
+          <div class="horizontal end-justified flex layout">
+            <div class="flex"></div>
+            <wl-button class="fg green dismiss" id="dismiss-button" outlined type="button" @click="${() => {
       this.close();
     }}">
-              ${_t("button.Dismiss")}
-          </wl-button>
+                ${_t("button.Dismiss")}
+            </wl-button>
+          </div>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `;
   }
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     this.dialog = this.shadowRoot.querySelector('#terms-of-service-dialog');
+    this.dialog.addEventListener('didShow', () => {
+      this._syncOpenState()
+    });
+    this.dialog.addEventListener('didHide', () => {
+      this._syncOpenState()
+    });
     if (this.block) {
       this.dialog.backdrop = true;
     }
@@ -153,6 +158,10 @@ export default class LablupTermsOfService extends LitElement {
 
   attributeChangedCallback(name, oldval, newval) {
     super.attributeChangedCallback(name, oldval, newval);
+  }
+
+  _syncOpenState() {
+    this.show = this.dialog.open;
   }
 
   async open() {
@@ -238,12 +247,6 @@ export default class LablupTermsOfService extends LitElement {
         this.dialog.show();
       }
     }
-  }
-
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
-    dialog.hide();
   }
 
   _hideTOSdialog() {

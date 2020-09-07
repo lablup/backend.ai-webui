@@ -9,6 +9,21 @@ import 'weightless/icon';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Lablup Activitiy Panel
+
+ `lablup-activity-panel` is activity panel with close button.
+
+ Example:
+
+ <lablup-activity-panel>
+ ...
+ </lablup-activity-panel>
+
+ @group Backend.AI Console
+ @element lablup-activity-panel
+ */
+
 @customElement("lablup-activity-panel")
 export default class LablupActivityPanel extends LitElement {
   public shadowRoot: any; // ShadowRoot
@@ -16,6 +31,7 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: String}) message = '';
   @property({type: String}) panelId = '';
   @property({type: String}) horizontalsize = '';
+  @property({type: String}) headerColor = '';
   @property({type: Number}) elevation = 1;
   @property({type: Number}) width = 280;
   @property({type: Number}) marginWidth = 16;
@@ -40,7 +56,7 @@ export default class LablupActivityPanel extends LitElement {
           box-sizing: border-box;
           margin: 16px;
           padding: 0;
-          border-radius: 5px;
+          border-radius: 10px;
           --card-elevation: rgba(4, 7, 22, 0.15) 0px 5px 10px -2px;
         }
 
@@ -53,6 +69,7 @@ export default class LablupActivityPanel extends LitElement {
           height: 32px;
           padding: 5px 15px 5px 20px;
           margin: 0 0 10px 0;
+          border-radius: 10px 10px 0 0;
           border-bottom: 1px solid #DDD;
           @apply --layout-justified;
           display: flex;
@@ -86,7 +103,7 @@ export default class LablupActivityPanel extends LitElement {
     // language=HTML
     return html`
       <wl-card id="activity" elevation="${this.elevation}" ?disabled="${this.disabled}">
-        <h4 class="horizontal center layout" style="font-weight:bold">
+        <h4 id="header" class="horizontal center layout" style="font-weight:bold">
           <span>${this.title}</span>
           <div class="flex"></div>
           <wl-button id="button" fab flat inverted @click="${() => this._removePanel()}">
@@ -121,6 +138,9 @@ export default class LablupActivityPanel extends LitElement {
       }
     }
     (this.shadowRoot.querySelector('wl-card') as any).style.margin = this.marginWidth + "px";
+    if (this.headerColor !== '') {
+      this.shadowRoot.querySelector("#header").style.backgroundColor = this.headerColor;
+    }
   }
 
   connectedCallback() {

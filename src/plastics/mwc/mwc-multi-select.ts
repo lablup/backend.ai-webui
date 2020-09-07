@@ -16,7 +16,7 @@
  */
 
 import {css, customElement} from 'lit-element';
-import {SelectBase} from './mwc-multi-select-base';
+import {SelectBase} from '@material/mwc-select/mwc-select-base';
 import {style} from '@material/mwc-select/mwc-select-css.js';
 
 declare global {
@@ -31,6 +31,9 @@ export class Select extends SelectBase {
     return [style,
       css`
         .mdc-select__anchor {
+          min-width: var(--mdc-select-min-width, 200px);
+        }
+        .mdc-select--filled {
           min-width: var(--mdc-select-min-width, 200px);
         }
       `];

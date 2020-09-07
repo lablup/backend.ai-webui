@@ -30,7 +30,7 @@ export const BackendAiStyles = [
       --general-background-color-2: rgba(244, 245, 247, 1);
       --general-sidebar-color: #dddddd;
       --general-sidebar-background-color: rgba(24, 24, 24, 1.0);
-      --general-sidebar-h3-color: #ccc;
+      --general-sidebar-h3-color: #cccccc;
       --general-sidebar-h3-border-color: 1px solid #444444;
       --general-sidebar-topbar-background-color-3: #383e48;
       --general-sidebar-topbar-background-color-2: rgba(103, 172, 91, 1.00);
@@ -50,7 +50,7 @@ export const BackendAiStyles = [
       --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
       --general-dialog-background-color: #ffffff;
       --app-drawer-width: 190px;
-      --general-font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      --general-font-family: 'Ubuntu', 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
     }
 
@@ -78,7 +78,7 @@ export const BackendAiStyles = [
 
     body,
     .fonts-loaded body {
-      font-family: 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Sans KR", "Noto Sans", AppleSDGothic, NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      font-family: 'Ubuntu', 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Sans KR", "Noto Sans", AppleSDGothic, NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
     }
 
     section {
@@ -504,38 +504,16 @@ export const BackendAiStyles = [
       --button-font-size: 14px;
     }
 
+    wl-button.full-size,
+    wl-button.full {
+      width: 100%;
+    }
+
     wl-button,
-    wl-expansion {
+    wl-expansion,
+    wl-textfield {
       --font-family-serif: var(--general-font-family);
       --font-family-sans-serif: var(--general-font-family);
-    }
-
-    wl-dialog > wl-card {
-      --card-elevation: 0;
-    }
-
-    wl-dialog > wl-card > section {
-      margin: 5px 20px;
-    }
-
-    wl-dialog wl-title {
-      border-bottom: 1px solid #cccccc;
-    }
-
-    wl-dialog wl-button.cancel {
-      margin-right: 5px;
-    }
-
-    wl-dialog wl-button.ok {
-      margin-right: 5px;
-    }
-
-    wl-dialog.dialog-ask {
-      --dialog-min-width: 350px;
-    }
-
-    wl-dialog > wl-card > h3 {
-      background-color: var(--general-dialog-background-color, #ffffff);
     }
 
     vaadin-grid {

@@ -2,17 +2,18 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/icon';
-import 'weightless/dialog';
 import 'weightless/card';
 import '@material/mwc-textfield';
+import '@material/mwc-icon-button-toggle';
 import './lablup-terms-of-service';
+import './backend-ai-dialog';
 
 import '../lib/backend.ai-client-es6';
-
+import './backend-ai-dialog';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
   IronFlex,
@@ -106,6 +107,7 @@ export default class BackendAiSignup extends BackendAIPage {
               --button-bg-hover: var(--paper-green-300);
               --button-bg-active: var(--paper-green-300);
           }
+
           mwc-textfield {
             width: 100%;
             --mdc-text-field-fill-color: transparent;
@@ -122,6 +124,24 @@ export default class BackendAiSignup extends BackendAIPage {
     let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {
       this._addInputValidator(textfield);
+    }
+  }
+
+  /**
+   * Change state to 'ALIVE' when backend.ai client connected.
+   *
+   * @param {Booelan} active - The component will work if active is true.
+   */
+  async _viewStateChanged(active: Boolean) {
+    await this.updateComplete;
+    if (active === false) {
+      return;
+    }
+    // If disconnected
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+      }, true);
+    } else { // already connected
     }
   }
 
@@ -147,6 +167,7 @@ export default class BackendAiSignup extends BackendAIPage {
 
   open() {
     if (this.signupPanel.open !== true) {
+      this._clearUserInput();
       this.signupPanel.show();
     }
   }
@@ -177,7 +198,7 @@ export default class BackendAiSignup extends BackendAIPage {
 
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
@@ -199,50 +220,69 @@ export default class BackendAiSignup extends BackendAIPage {
     //this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
   }
 
+  _clearUserInput() {
+    this._toggleInputField(true);
+    const inputFields: Array<string> = ["#id_user_email", "#id_token", "#id_password1", "#id_password2"];
+    inputFields.map((el: string) => {
+      this.shadowRoot.querySelector(el).value = "";
+    });
+    this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup';
+  }
+
+  _toggleInputField(isActive: boolean) {
+    if (isActive) {
+      this.shadowRoot.querySelector('#id_user_name').removeAttribute('disabled');
+      this.shadowRoot.querySelector('#id_token').removeAttribute('disabled');
+      this.shadowRoot.querySelector('#signup-button').removeAttribute('disabled');
+    } else {
+      this.shadowRoot.querySelector('#id_user_name').setAttribute('disabled', 'true');
+      this.shadowRoot.querySelector('#id_token').setAttribute('disabled', 'true');
+      this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
+    }
+  }
+
   _signup() {
+    const inputFields: Array<string> = ["#id_user_email", "#id_token", "#id_password1", "#id_password2"];
+    let inputFieldsValidity: Array<boolean> = inputFields.map((el: string) => {
+      this.shadowRoot.querySelector(el).reportValidity();
+      return this.shadowRoot.querySelector(el).checkValidity();
+    });
+
     let approved = (this.shadowRoot.querySelector('#approve-terms-of-service') as HTMLInputElement).checked;
     if (approved === false) {
-      this.notification.text = "Please read and agree with the terms of service to proceed.";
+      this.notification.text = _text("signup.RequestAgreementTermsOfService");
       this.notification.show();
       return;
     }
-    let password1 = (this.shadowRoot.querySelector('#id_password1') as HTMLInputElement).value;
-    let password2 = (this.shadowRoot.querySelector('#id_password2') as HTMLInputElement).value;
-    if (this.shadowRoot.querySelector("#id_password1").getAttribute("invalid") !== null) {
-      this.notification.text = "Password must contain at least one alphabet, one digit, and one special character";
-      this.notification.show();
+
+    // if any input is invalid, signup fails.
+    if (inputFieldsValidity.includes(false)) {
       return;
     }
-    if (password1 !== password2) {
-      this.notification.text = 'Password mismatch. Please check your password.';
-      this.notification.show();
-      return;
-    }
+
     const token = (this.shadowRoot.querySelector('#id_token') as HTMLInputElement).value;
     const user_email = (this.shadowRoot.querySelector('#id_user_email') as HTMLInputElement).value;
     const user_name = (this.shadowRoot.querySelector('#id_user_name') as HTMLInputElement).value;
+    const password = (this.shadowRoot.querySelector('#id_password1') as HTMLInputElement).value;
     this.notification.text = 'Processing...';
     this.notification.show();
-    let body = {
+    const body = {
       'email': user_email,
       'user_name': user_name,
-      'password': password1,
+      'password': password,
       'token': token
     };
     this.init_client();
     let rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
     this.client._wrapWithPromise(rqst).then((response) => {
-      this.shadowRoot.querySelector('#id_user_name').setAttribute('disabled', 'true');
-      this.shadowRoot.querySelector('#id_token').setAttribute('disabled', 'true');
-      this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
+      this._toggleInputField(false);
       this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup succeed';
       this.notification.text = 'Signup succeed.';
       this.notification.show();
       setTimeout(() => {
         this.signupPanel.hide();
-        if (response.verification_email_sent) {
-          this.shadowRoot.querySelector('#email-sent-dialog').show();
-        }
+        this._clearUserInput();
+        this.shadowRoot.querySelector('#email-sent-dialog').show();
       }, 1000);
     }).catch((e) => {
       if (e.message) {
@@ -266,72 +306,178 @@ export default class BackendAiSignup extends BackendAIPage {
     return err;
   }
 
+  _togglePasswordVisibility(element) {
+    const isVisible = element.__on;
+    const password = element.closest('div').querySelector('mwc-textfield');
+    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+  }
+  
+  _validateEmail() {
+    const emailInput = this.shadowRoot.querySelector('#id_user_email');
+    emailInput.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          emailInput.validationMessage = _text('signup.EmailInputRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else {
+          emailInput.validationMessage = _text('signup.InvalidEmail');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        // custom validation for email address using regex
+        let regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let isValid = regex.exec(emailInput.value);
+        if (!isValid) {
+          emailInput.validationMessage = _text('signup.InvalidEmail');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
+    }
+  }
+
+  _validatePassword1() {
+    const passwordInput = this.shadowRoot.querySelector('#id_password1');
+    const password2Input = this.shadowRoot.querySelector('#id_password2');
+    password2Input.reportValidity();
+    passwordInput.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          passwordInput.validationMessage = _text('signup.PasswordInputRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        } else {
+          passwordInput.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        }
+      } else {
+        return {
+          valid: nativeValidity.valid,
+          customError: !nativeValidity.valid
+        }
+      }
+    }
+  }
+
+  _validatePassword2() {
+    const password2Input = this.shadowRoot.querySelector('#id_password2');
+    password2Input.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          password2Input.validationMessage = _text('signup.PasswordInputRequired');
+          return {
+            valid: nativeValidity.valid, 
+            customError: !nativeValidity.valid
+          }
+        } else {
+          password2Input.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          } 
+        }
+      } else {
+        // custom validation for password input match
+        const passwordInput = this.shadowRoot.querySelector('#id_password1');
+        let isMatched = (passwordInput.value === password2Input.value);
+        if (!isMatched) {
+          password2Input.validationMessage = _text('signup.PasswordNotMatched');         
+        }
+        return {
+          valid: isMatched,
+          customError: !isMatched
+        }
+      }
+    }
+  }
+
+  _validatePassword() {
+    this._validatePassword1();
+    this._validatePassword2();
+  }
+
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
-        <wl-card elevation="1" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout">
-            <div>${_t("signup.SignupBETA")}</div>
-            <div class="flex"></div>
-            <wl-button class="fab"  style="width:40px;" fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <form id="signup-form">
-            <fieldset>
-              <mwc-textfield type="text" name="user_email" id="id_user_email" maxlength="50" autofocus
-                           label="${_t("signup.E-mail")}" value="${this.user_email}"
-                           @change="${() => this._clear_info()}"></mwc-textfield>
-              <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
-                           label="${_t("signup.UserName")}" value="${this.user_name}"></mwc-textfield>
-              <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
-                           label="${_t("signup.InvitationToken")}"></mwc-textfield>
-              <mwc-textfield type="password" name="password1" id="id_password1"
-                           label="${_t("signup.Password")}" minlength="8"
-                           pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                           error-message="At least 1 alphabet, 1 number and 1 special character is required."
-                           auto-validate
-                           value=""></mwc-textfield>
-              <mwc-textfield type="password" name="password2" id="id_password2"
-                           label="${_t("signup.PasswordAgain")}" minlength="8"
-                           pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                           error-message="At least 1 alphabet, 1 number and 1 special character is required."
-                           auto-validate
-                           value=""></mwc-textfield>
-              <div style="margin-top:10px;">
-                <wl-checkbox id="approve-terms-of-service">
-                </wl-checkbox>
-                 I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">${_t("signup.TermsOfService")}</a> and <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">${_t("signup.PrivacyPolicy")}</a>.
-              </div>
-              <br/><br/>
-              <wl-button class="full" id="signup-button" outlined type="button"
-                          @click="${() => this._signup()}">
-                          <wl-icon>check</wl-icon>
-                          <span id="signup-button-message">${_t("signup.Signup")}</span></wl-button>
-            </fieldset>
-          </form>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="block-panel" fixed backdrop blockscrolling persistent>
-        <wl-card>
-          <h3>Error</h3>
-          <div style="text-align:center;">
-          ${this.errorMsg}
+      <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
+        <span slot="title">${_t("signup.SignupBETA")}</span>
+        <div slot="content">
+          <mwc-textfield type="email" name="user_email" id="id_user_email" maxlength="50" autofocus
+                       label="${_t("signup.E-mail")}" validateOnInitialRender
+                       @change="${this._validateEmail}" 
+                       validationMessage="${_t("signup.EmailInputRequired")}"
+                       value="${this.user_email}" required></mwc-textfield>
+          <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
+                       label="${_t("signup.UserName")}" value="${this.user_name}"
+                       validationMessage="${_t("signup.UserNameInputRequired")}"></mwc-textfield>
+          <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
+                       label="${_t("signup.InvitationToken")}"
+                       validationMessage="${_t("signup.TokenInputRequired")}" required></mwc-textfield>
+          <div class="horizontal flex layout">
+            <mwc-textfield type="password" name="password1" id="id_password1"
+                        label="${_t("signup.Password")}" minlength="8"
+                        pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                        validationMessage="${_t("signup.PasswordInputRequired")}"
+                        @change="${this._validatePassword}"
+                        value="" required></mwc-textfield>
+            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                                    @click="${(e) => this._togglePasswordVisibility(e.target)}">
+            </mwc-icon-button-toggle>             
           </div>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="email-sent-dialog" fixed backdrop blockscrolling persistent>
-        <wl-card>
-          <h3>${_t("signup.ThankYou")}</h3>
-          <div style="max-width:350px">${_t("signup.VerificationMessage")}</div>
-        </wl-card>
-        <div slot="footer">
+          <div class="horizontal flex layout">
+            <mwc-textfield type="password" name="password2" id="id_password2"
+                        label="${_t("signup.PasswordAgain")}" minlength="8"
+                        pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                        validationMessage="${_t("signup.PasswordInputRequired")}"
+                        @change="${this._validatePassword}"
+                        value="" required></mwc-textfield>
+            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                                    @click="${(e) => this._togglePasswordVisibility(e.target)}">
+            </mwc-icon-button-toggle>              
+          </div>
+          <div style="margin-top:10px;">
+            <wl-checkbox id="approve-terms-of-service">
+            </wl-checkbox>
+             I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">${_t("signup.TermsOfService")}</a> and <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">${_t("signup.PrivacyPolicy")}</a>.
+          </div>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <wl-button class="full" id="signup-button" outlined type="button"
+                      @click="${() => this._signup()}">
+                      <wl-icon>check</wl-icon>
+                      <span id="signup-button-message">${_t("signup.Signup")}</span></wl-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="block-panel" fixed type="error" backdrop blockscrolling persistent>
+        <span slot="title">${_t('dialog.error.Error')}</span>
+        <div slot="content" style="text-align:center;">
+          ${this.errorMsg}
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="email-sent-dialog" noclosebutton fixed backdrop blockscrolling persistent>
+        <span slot="title">${_t("signup.ThankYou")}</span>
+        <div slot="content">
+          <p style="max-width:350px">${_t("signup.VerificationMessage")}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button class="ok" @click="${(e) => {
-      e.target.closest('wl-dialog').hide()
+      e.target.closest('backend-ai-dialog').hide()
     }}">${_t("button.Okay")}</wl-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
       <lablup-terms-of-service id="terms-of-service"></lablup-terms-of-service>
     `;
   }

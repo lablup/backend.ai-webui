@@ -11,27 +11,44 @@ import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@material/mwc-textfield/mwc-textfield';
 
 import {default as AnsiUp} from '../lib/ansiup';
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/checkbox';
-import 'weightless/dialog';
 import 'weightless/icon';
 import 'weightless/textfield';
 import 'weightless/title';
+
 import '@material/mwc-icon-button';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-menu';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
 import '../plastics/lablup-shields/lablup-shields';
+import './backend-ai-dialog';
 
 import JsonToCsv from '../lib/json_to_csv';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+
+/**
+ Backend AI Session List
+
+ `backend-ai-session-list` is list of backend ai session.
+
+ Example:
+
+ <backend-ai-session-list>
+ ...
+ </backend-ai-session-list>
+
+ @group Backend.AI Console
+ @element backend-ai-session-list
+ */
 
 @customElement("backend-ai-session-list")
 export default class BackendAiSessionList extends BackendAIPage {
@@ -43,12 +60,13 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Array}) compute_sessions = Array();
   @property({type: Array}) terminationQueue = Array();
   @property({type: String}) filterAccessKey = '';
-  @property({type: String}) sessionNameField = 'session_name';
+  @property({type: String}) sessionNameField = 'name';
   @property({type: Array}) appSupportList = Array();
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Array}) _selected_items = Array();
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) _boundConfigRenderer = this.configRenderer.bind(this);
   @property({type: Object}) _boundUsageRenderer = this.usageRenderer.bind(this);
   @property({type: Object}) _boundSessionInfoRenderer = this.sessionInfoRenderer.bind(this);
   @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
@@ -101,12 +119,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 260px);
-        }
-
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
+          height: calc(100vh - 265px);
         }
 
         wl-icon.indicator {
@@ -115,6 +128,10 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         wl-icon.pagination {
           color: var(--paper-grey-700);
+        }
+
+        wl-button.pagination[disabled] wl-icon.pagination {
+          color: var(--paper-grey-300);
         }
 
         wl-icon.warning {
@@ -136,6 +153,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
           --button-bg-active-flat: var(--paper-red-600);
+          --button-bg-disabled: var(--paper-grey-50);
+          --button-color-disabled: var(--paper-grey-200);
+        }
+
+        wl-button.pagination[disabled] {
+          --button-shadow-color: transparent;
         }
 
         wl-button.controls-running {
@@ -152,36 +175,28 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
 
         #work-dialog {
-          --dialog-height: calc(100vh - 130px);
+          --component-height: calc(100vh - 50px);
           right: 0;
           top: 50px;
-        }
-
-        #app-dialog {
-          --dialog-width: 330px;
-        }
-
-        #ssh-dialog {
-          --dialog-width: 330px;
         }
 
         @media screen and (max-width: 899px) {
           #work-dialog,
           #work-dialog.mini_ui {
-            left: 0;
-            --dialog-width: 100%;
+            --left: 0;
+            --component-width: 100%;
           }
         }
 
         @media screen and (min-width: 900px) {
           #work-dialog {
-            left: 100px;
-            --dialog-width: calc(100% - 220px);
+            --left: 100px;
+            --component-width: calc(100% - 50px);
           }
 
           #work-dialog.mini_ui {
-            left: 40px;
-            --dialog-width: calc(100% - 102px);
+            --left: 40px;
+            --component-width: calc(100% - 50px);
           }
         }
 
@@ -204,24 +219,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           font-size: 12px;
         }
 
-        .app-icon {
-          margin-left: 5px;
-          margin-right: 5px;
-        }
-
         div.configuration {
           width: 70px !important;
         }
 
         div.configuration wl-icon {
           padding-right: 5px;
-        }
-
-        .app-icon .label {
-          display: block;
-          width: 80px;
-          text-align: center;
-          height: 25px;
         }
 
         wl-button.multiple-action-button {
@@ -234,7 +237,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-bg-active-flat: var(--paper-red-600);
         }
 
-        wl-dialog wl-textfield {
+        backend-ai-dialog wl-textfield {
           padding: 10px 0px;
           --input-font-family: Roboto, Noto, sans-serif;
           --input-font-size: 12px;
@@ -280,6 +283,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           --input-font-size: small;
           --input-label-font-size: small;
           --input-font-family: Roboto, Noto, sans-serif;
+        }
+
+        .mount-button {
+          border: none;
+          background: none;
+          padding: 0;
+          outline-style: none;
         }
       `];
   }
@@ -343,7 +353,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         if (!globalThis.backendaiclient.is_admin) {
           this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-          this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 220px)!important';
+          this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
         } else {
           this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
         }
@@ -360,7 +370,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     } else { // already connected
       if (!globalThis.backendaiclient.is_admin) {
         this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-        this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 220px)!important';
+        this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
       } else {
         this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
       }
@@ -386,10 +396,16 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
-  refreshList(refresh = true, repeat = true) {
+  async refreshList(refresh = true, repeat = true) {
     return this._refreshJobData(refresh, repeat);
   }
 
+  /**
+   * Refresh the job data - data fields, sessions, etc.
+   *
+   * @param {boolean} refresh - if true, dispatch the 'backend-ai-resource-refreshed' event
+   * @param {boolean} repeat - set refreshTime to 5000 if true else 30000
+   * */
   async _refreshJobData(refresh = false, repeat = true) {
     await this.updateComplete;
     if (this.active !== true) {
@@ -419,9 +435,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }
+
     let fields = [
-      "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "service_ports",
-      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"
+      "id", "name", "image",
+      "created_at", "terminated_at", "status", "status_info",
+      "service_ports", "mounts",
+      "occupied_slots", "access_key",
     ];
     if (this.enableScalingGroup) {
       fields.push("scaling_group");
@@ -430,7 +449,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       fields.push("user_email");
     }
     if (globalThis.backendaiclient.is_superadmin) {
-      fields.push("agent");
+      fields.push("containers {container_id agent occupied_slots live_stat last_stat}");
+    } else {
+      fields.push("containers {container_id occupied_slots live_stat last_stat}");
     }
     let group_id = globalThis.backendaiclient.current_group_id();
 
@@ -442,25 +463,43 @@ export default class BackendAiSessionList extends BackendAIPage {
       }
       let sessions = response.compute_session_list.items;
       if (sessions !== undefined && sessions.length != 0) {
-        let previous_sessions = this.compute_sessions;
+        const previousSessions = this.compute_sessions;
 
-        let previous_session_keys: any = [];
-        Object.keys(previous_sessions).map((objectKey, index) => {
-          previous_session_keys.push(previous_sessions[objectKey][this.sessionNameField]);
+        const previousSessionKeys: any = [];
+        Object.keys(previousSessions).map((objectKey, index) => {
+          previousSessionKeys.push(previousSessions[objectKey][this.sessionNameField]);
         });
         Object.keys(sessions).map((objectKey, index) => {
           let session = sessions[objectKey];
           let occupied_slots = JSON.parse(session.occupied_slots);
-          const kernelImage = sessions[objectKey].lang.split('/')[2] || sessions[objectKey].lang.split('/')[1];
+          const kernelImage = sessions[objectKey].image.split('/')[2] || sessions[objectKey].image.split('/')[1];
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
           // Readable text
-          sessions[objectKey].cpu_used_time = this._automaticScaledTime(sessions[objectKey].cpu_used);
           sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
           sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
-          sessions[objectKey].io_read_bytes_mb = this._byteToMB(sessions[objectKey].io_read_bytes);
-          sessions[objectKey].io_write_bytes_mb = this._byteToMB(sessions[objectKey].io_write_bytes);
+          if (sessions[objectKey].containers && sessions[objectKey].containers.length > 0) {
+            // Assume a session has only one container (no consideration on multi-container bundling)
+            const container = sessions[objectKey].containers[0];
+            const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
+            sessions[objectKey].agent = container.agent
+            if (liveStat && liveStat.cpu_used) {
+              sessions[objectKey].cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
+            } else {
+              sessions[objectKey].cpu_used_time = this._automaticScaledTime(0);
+            }
+            if (liveStat && liveStat.io_read) {
+              sessions[objectKey].io_read_bytes_mb = this._automaticScaledTime(liveStat.io_read.capacity);
+            } else {
+              sessions[objectKey].io_read_bytes_mb = 0;
+            }
+            if (liveStat && liveStat.io_write) {
+              sessions[objectKey].io_write_bytes_mb = this._automaticScaledTime(liveStat.io_write.capacity);
+            } else {
+              sessions[objectKey].io_write_bytes_mb = 0;
+            }
+          }
           let service_info = JSON.parse(sessions[objectKey].service_ports);
           if (Array.isArray(service_info) === true) {
             sessions[objectKey].app_services = service_info.map(a => a.name);
@@ -492,8 +531,8 @@ export default class BackendAiSessionList extends BackendAIPage {
             sessions[objectKey].cuda_fgpu_slot = parseFloat(occupied_slots['cuda.shares']).toFixed(2);
           }
           sessions[objectKey].kernel_image = kernelImage;
-          sessions[objectKey].sessionTags = this._getKernelInfo(session.lang);
-          const specs = session.lang.split('/');
+          sessions[objectKey].sessionTags = this._getKernelInfo(session.image);
+          const specs = session.image.split('/');
           const tag = specs[specs.length - 1].split(':')[1]
           let tags = tag.split('-');
           if (tags[1] !== undefined) {
@@ -541,6 +580,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     });
   }
 
+  /**
+   * Refresh work dialog.
+   *
+   * @param {Event} e
+   * */
   _refreshWorkDialogUI(e) {
     let work_dialog = this.shadowRoot.querySelector('#work-dialog');
     if (e.detail.hasOwnProperty('mini-ui') && e.detail['mini-ui'] === true) {
@@ -550,11 +594,21 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
+  /**
+   * Return human readable time.
+   *
+   * @param {any} d - date
+   * */
   _humanReadableTime(d: any) {
     d = new Date(d);
     return d.toLocaleString();
   }
 
+  /**
+   * Get kernel information - category, tag, color.
+   *
+   * @param {string} lang - session language
+   * */
   _getKernelInfo(lang) {
     let tags: any = [];
     if (lang === undefined) return [];
@@ -595,6 +649,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     return value / 1024;
   }
 
+  /**
+   * Scale the time in units of D, H, M, S, and MS.
+   *
+   * @param {number} value - time to want to scale
+   * */
   _automaticScaledTime(value: number) { // number: msec.
     let result = Object();
     let unitText = ['D', 'H', 'M', 'S'];
@@ -620,10 +679,23 @@ export default class BackendAiSessionList extends BackendAIPage {
     return Number(value / 1000).toFixed(0);
   }
 
+  /**
+   * Return elapsed time
+   *
+   * @param {any} start - start time
+   * @param {any} end - end time
+   * */
   _elapsed(start, end) {
     return globalThis.backendaiclient.utils.elapsedTime(start, end);
   }
 
+  /**
+   * Render index of rowData
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   _indexRenderer(root, column, rowData) {
     let idx = rowData.index + 1;
     render(
@@ -634,6 +706,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
+  /**
+   * Send request according to rqst method.
+   *
+   * @param {XMLHttpRequest} rqst
+   * */
   async sendRequest(rqst) {
     let resp, body;
     try {
@@ -697,17 +774,25 @@ export default class BackendAiSessionList extends BackendAIPage {
     return url;
   }
 
+  /**
+   * Show logs - work title, session logs, session name, and access key.
+   *
+   * @param {Event} e - click the assignment button
+   * */
   _showLogs(e) {
     const controls = e.target.closest('#controls');
+    const sessionUuid = controls['session-uuid'];
     const sessionName = controls['session-name'];
+    const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = controls['access-key'];
 
-    globalThis.backendaiclient.getLogs(sessionName, accessKey).then((req) => {
+    globalThis.backendaiclient.get_logs(sessionId, accessKey).then((req) => {
       const ansi_up = new AnsiUp();
       let logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
-        this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName}`;
+        this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName} (${sessionUuid})`;
         this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+        this.shadowRoot.querySelector('#work-dialog').sessionUuid = sessionUuid;
         this.shadowRoot.querySelector('#work-dialog').sessionName = sessionName;
         this.shadowRoot.querySelector('#work-dialog').accessKey = accessKey;
         this.shadowRoot.querySelector('#work-dialog').show();
@@ -725,9 +810,11 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _refreshLogs() {
+    const sessionUuid = this.shadowRoot.querySelector('#work-dialog').sessionUuid;
     const sessionName = this.shadowRoot.querySelector('#work-dialog').sessionName;
+    const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = this.shadowRoot.querySelector('#work-dialog').accessKey;
-    globalThis.backendaiclient.getLogs(sessionName, accessKey).then((req) => {
+    globalThis.backendaiclient.getLogs(sessionId, accessKey).then((req) => {
       const ansi_up = new AnsiUp();
       const logs = ansi_up.ansi_to_html(req.result.logs);
       this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
@@ -746,180 +833,14 @@ export default class BackendAiSessionList extends BackendAIPage {
   _showAppLauncher(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
-    const sessionName = controls['session-name'];
-    const accessKey = controls['access-key'];
-    const appServices = controls['app-services'];
-    this.appSupportList = [];
-    appServices.forEach((elm) => {
-      if (elm in this.appTemplate) {
-        if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
-          this.appTemplate[elm].forEach((app) => {
-            this.appSupportList.push(app);
-          });
-        }
-      } else {
-        if (!['ttyd', 'ipython'].includes(elm)) { // They are default apps from Backend.AI agent.
-          this.appSupportList.push({
-            'name': elm,
-            'title': elm,
-            'redirect': "",
-            'src': './resources/icons/default_app.svg'
-          });
-        }
-      }
-    });
-    let dialog = this.shadowRoot.querySelector('#app-dialog');
-    dialog.setAttribute('session-name', sessionName);
-    dialog.setAttribute('access-key', accessKey);
-    dialog.positionTarget = e.target;
-
-    this.shadowRoot.querySelector('#app-dialog').show();
-  }
-
-  _hideAppLauncher() {
-    this.shadowRoot.querySelector('#app-dialog').hide();
-  }
-
-  async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null) {
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      return false;
-    }
-
-    let param = {
-      endpoint: globalThis.backendaiclient._config.endpoint
-    };
-    if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
-      param['mode'] = "SESSION";
-      param['session'] = globalThis.backendaiclient._config._session_id;
-    } else {
-      param['mode'] = "DEFAULT";
-      param['access_key'] = globalThis.backendaiclient._config.accessKey;
-      param['secret_key'] = globalThis.backendaiclient._config.secretKey;
-    }
-    param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
-    if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
-      this.indicator.end();
-      this.notification.text = 'Proxy is not ready yet. Check proxy settings for detail.';
-      this.notification.show();
-      return Promise.resolve(false);
-    }
-    let rqst = {
-      method: 'PUT',
-      body: JSON.stringify(param),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      uri: this._getProxyURL() + 'conf'
-    };
-    this.indicator.set(20, 'Setting up proxy for the app...');
-    try {
-      let response = await this.sendRequest(rqst);
-      if (response === undefined) {
-        this.indicator.end();
-        this.notification.text = 'Proxy configurator is not responding.';
-        this.notification.show();
-        return Promise.resolve(false);
-      }
-      let token = response.token;
-      let uri = this._getProxyURL() + `proxy/${token}/${sessionName}/add?app=${app}`;
-      if (port !== null && port > 1024 && port < 65535) {
-        uri += `&port=${port}`;
-      }
-      this.indicator.set(50, 'Adding kernel to socket queue...');
-      let rqst_proxy = {
-        method: 'GET',
-        app: app,
-        uri: uri
-      };
-      return await this.sendRequest(rqst_proxy);
-    } catch (err) {
-      throw err;
-    }
-  }
-
-  async _runApp(e) {
-    const controller = e.target;
-    let controls = controller.closest('#app-dialog');
-    let sessionName = controls.getAttribute('session-name');
-    let urlPostfix = controller['url-postfix'];
-    let appName = controller['app-name'];
-    if (appName === undefined || appName === null) {
-      return;
-    }
-
-    if (urlPostfix === undefined || urlPostfix === null) {
-      urlPostfix = '';
-    }
-
-    if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
-      this._hideAppLauncher();
-      this.indicator = await globalThis.lablupIndicator.start();
-      let port = null;
-      if (globalThis.isElectron && appName === 'sshd') {
-        port = globalThis.backendaioptions.get('custom_ssh_port', 0);
-        if (port === '0' || port === 0) { // setting store does not accept null.
-          port = null;
-        }
-      }
-      this._open_wsproxy(sessionName, appName, port)
-        .then((response) => {
-          if (appName === 'sshd') {
-            this.indicator.set(100, 'Prepared.');
-            this.sshPort = response.port;
-            this._readSSHKey(sessionName);
-            this._openSSHDialog();
-            setTimeout(() => {
-              this.indicator.end();
-            }, 1000);
-          } else if (appName === 'vnc') {
-            this.indicator.set(100, 'Prepared.');
-            this.vncPort = response.port;
-            this._openVNCDialog();
-          } else if (response.url) {
-            this.indicator.set(100, 'Prepared.');
-            setTimeout(() => {
-              globalThis.open(response.url + urlPostfix, '_blank');
-              console.log(appName + " proxy loaded: ");
-              console.log(sessionName);
-            }, 1000);
-          }
-        });
-    }
-  }
-
-  async _readSSHKey(sessionName) {
-    const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
-    const file = '/home/work/id_container';
-    const blob = await globalThis.backendaiclient.download_single(sessionName, file);
-    // TODO: This blob has additional leading letters in front of key texts.
-    //       Manually trim those letters.
-    const rawText = await blob.text();
-    const index = rawText.indexOf('-----');
-    const trimmedBlob = await blob.slice(index, blob.size, blob.type);
-    downloadLinkEl.href = globalThis.URL.createObjectURL(trimmedBlob);
-    downloadLinkEl.download = 'id_container';
+    return globalThis.appLauncher.showLauncher(controls);
   }
 
   async _runTerminal(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const sessionName = controls['session-name'];
-    if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
-      this.indicator = await globalThis.lablupIndicator.start();
-      this._open_wsproxy(sessionName, 'ttyd')
-        .then((response) => {
-          if (response.url) {
-            this.indicator.set(100, 'Prepared.');
-            setTimeout(() => {
-              globalThis.open(response.url, '_blank');
-              this.indicator.end();
-              console.log("Terminal proxy loaded: ");
-              console.log(sessionName);
-            }, 1000);
-          }
-        });
-    }
+    return globalThis.appLauncher.runTerminal(sessionName);
   }
 
   // Single session closing
@@ -931,16 +852,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSessionDialog.sessionName = sessionName;
     this.terminateSessionDialog.accessKey = accessKey;
     this.terminateSessionDialog.show();
-  }
-
-  _openSSHDialog() {
-    let dialog = this.shadowRoot.querySelector('#ssh-dialog');
-    dialog.show();
-  }
-
-  _openVNCDialog() {
-    let dialog = this.shadowRoot.querySelector('#vnc-dialog');
-    dialog.show();
   }
 
   _terminateSession(e) {
@@ -990,6 +901,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSelectedSessionsDialog.show();
   }
 
+  /**
+   * Clear checked attributes.
+   * */
   _clearCheckboxes() {
     let elm = this.shadowRoot.querySelectorAll('wl-checkbox.list-check');
     [...elm].forEach((checkbox) => {
@@ -1020,6 +934,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     });
   }
 
+  /**
+   * Terminate selected sessions without check.
+   * */
   _terminateSelectedSessions() {
     this.notification.text = 'Terminating sessions...';
     this.notification.show();
@@ -1047,12 +964,16 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminationQueue.push(sessionName);
     return this._terminateApp(sessionName).then(() => {
       globalThis.backendaiclient.destroyKernel(sessionName, accessKey).then((req) => {
-        setTimeout(() => {
+        setTimeout(async () => {
           this.terminationQueue = [];
-          this.refreshList(true, false);
+          //await this.refreshList(true, false); // Will be called from session-view from the event below
+          let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+          document.dispatchEvent(event);
         }, 1000);
       }).catch((err) => {
-        this.refreshList(true, false);
+        //this.refreshList(true, false); // Will be called from session-view from the event below
+        let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+        document.dispatchEvent(event);
         this.notification.text = PainKiller.relieve('Problem occurred during termination.');
         this.notification.show(true, err);
       });
@@ -1068,7 +989,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _hideDialog(e) {
     let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
 
     if (dialog.id === 'ssh-dialog') {
@@ -1089,6 +1010,59 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.exportToCsvDialog.show();
   }
 
+  /**
+   * Create dropdown menu that shows mounted folder names.
+   * Added menu to document.body to show at the top.
+   *
+   * @param e {Event} - mouseenter the mount-button
+   * @param mounts {Array} - array of the mounted folders
+   * */
+  _createMountedFolderDropdown(e, mounts) {
+    const menuButton: HTMLElement = e.target;
+    const menu = document.createElement('mwc-menu') as any;
+    const regExp = /[\[\]\,\'\"]/g
+
+    menu.anchor = menuButton;
+    menu.className = 'dropdown-menu';
+    menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
+    menu.setAttribute('open', '');
+    menu.setAttribute('fixed', '');
+    menu.setAttribute('x', 10);
+    menu.setAttribute('y', 15);
+
+    if (mounts.length > 1) {
+      mounts.map((key, index) => {
+        if (index > 0) {
+          let mountedFolderItem = document.createElement('mwc-list-item');
+          mountedFolderItem.innerHTML = key.replace(regExp, '').split(' ')[0];
+          mountedFolderItem.style.height = '25px';
+          mountedFolderItem.style.fontWeight = '400';
+          mountedFolderItem.style.fontSize = '14px';
+          mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
+
+          menu.appendChild(mountedFolderItem);
+        }
+      })
+    }
+    document.body.appendChild(menu);
+  }
+
+
+  /**
+   * Remove the dropdown menu when mouseleave the mount-button.
+   * */
+  _removeMountedFolderDropdown() {
+    const menu = document.getElementsByClassName('dropdown-menu') as any;
+    while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
+  }
+
+  /**
+   * Render session information - category, color, description, etc.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   sessionInfoRenderer(root, column?, rowData?) {
     render(
       html`
@@ -1121,10 +1095,18 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render control options - _showAppLauncher, _runTerminal, _openTerminateSessionDialog, and _showLogs
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   controlRenderer(root, column?, rowData?) {
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
+             .session-uuid="${rowData.item.id}"
              .session-name="${rowData.item[this.sessionNameField]}"
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
@@ -1134,13 +1116,11 @@ export default class BackendAiSessionList extends BackendAIPage {
                                @click="${(e) => this._showAppLauncher(e)}"
                                icon="vaadin:caret-right"><wl-icon>launch</wl-icon></wl-button>
             <wl-button fab flat inverted class="fg controls-running"
-                               @click="${(e) => this._runTerminal(e)}"
-                               icon="vaadin:terminal"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
+                               @click="${(e) => this._runTerminal(e)}"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg red controls-running"
-                               @click="${(e) => this._openTerminateSessionDialog(e)}"
-                               icon="delete"><wl-icon>delete</wl-icon></wl-button>
+                               @click="${(e) => this._openTerminateSessionDialog(e)}"><wl-icon>power_settings_new</wl-icon></wl-button>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <wl-button fab flat inverted class="fg blue controls-running" icon="assignment"
@@ -1154,6 +1134,92 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render configs
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that show the config of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
+  configRenderer(root, column?, rowData?) {
+    render(
+      html`
+        ${rowData.item.scaling_group ? html`
+        <div class="layout horizontal center flex">
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green indicator">work</wl-icon>
+            <span>${rowData.item.scaling_group}</span>
+            <span class="indicator">RG</span>
+          </div>
+        </div>` : html``}
+        <div class="layout horizontal center flex">
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green indicator">developer_board</wl-icon>
+            <span>${rowData.item.cpu_slot}</span>
+            <span class="indicator">${_t("session.core")}</span>
+          </div>
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green indicator">memory</wl-icon>
+            <span>${rowData.item.mem_slot}</span>
+            <span class="indicator">GB</span>
+          </div>
+        </div>
+        <div class="layout horizontal center flex">
+          <div class="layout horizontal configuration">
+            ${rowData.item.cuda_gpu_slot ? html`
+              <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+              <span>${rowData.item.cuda_gpu_slot}</span>
+              <span class="indicator">GPU</span>
+              ` : html``}
+            ${!rowData.item.cuda_gpu_slot && rowData.item.cuda_fgpu_slot ? html`
+              <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+              <span>${rowData.item.cuda_fgpu_slot}</span>
+              <span class="indicator">GPU</span>
+              ` : html``}
+            ${rowData.item.rocm_gpu_slot ? html`
+              <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
+              <span>${rowData.item.rocm_gpu_slot}</span>
+              <span class="indicator">GPU</span>
+              ` : html``}
+            ${rowData.item.tpu_slot ? html`
+              <wl-icon class="fg green indicator">view_module</wl-icon>
+              <span>${rowData.item.tpu_slot}</span>
+              <span class="indicator">TPU</span>
+              ` : html``}
+            ${!rowData.item.cuda_gpu_slot &&
+      !rowData.item.cuda_fgpu_slot &&
+      !rowData.item.rocm_gpu_slot &&
+      !rowData.item.tpu_slot ? html`
+              <wl-icon class="fg green indicator">view_module</wl-icon>
+              <span>-</span>
+              <span class="indicator">GPU</span>
+              ` : html``}
+          </div>
+          <div class="layout horizontal configuration">
+            <wl-icon class="fg green indicator">folder_open</wl-icon>
+              ${rowData.item.mounts.length > 0 ? html`
+                <button class="mount-button"
+                  @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
+                  @mouseleave="${() => this._removeMountedFolderDropdown()}"
+                >
+                  ${rowData.item.mounts[0].replace(/[\[\]\,\'\"]/g, '').split(' ')[0]}
+                </button>
+              ` : html``}
+            <!-- <span>${rowData.item.storage_capacity}</span> -->
+            <!-- <span class="indicator">${rowData.item.storage_unit}</span> -->
+          </div>
+        </div>
+     `, root
+    );
+  };
+
+  /**
+   * Render usages - cpu_used_time, io_read_bytes_mb, and io_write_bytes_mb
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   usageRenderer(root, column?, rowData?) {
     render(
       html`
@@ -1217,6 +1283,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
+  /**
+   * Toggle dateFrom and dateTo checkbox
+   *
+   * @param {Event} e - click the export-csv-checkbox switch
+   * */
   _toggleDialogCheckbox(e) {
     let checkbox = e.target;
     let dateFrom = this.shadowRoot.querySelector('#date-from');
@@ -1226,6 +1297,13 @@ export default class BackendAiSessionList extends BackendAIPage {
     dateTo.disabled = checkbox.checked;
   }
 
+  /**
+   * Render a checkbox
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   checkboxRenderer(root, column?, rowData?) {
     if ((this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4) {
       render(
@@ -1238,6 +1316,13 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
+  /**
+   * Render user's information. If _connectionMode is API, render access_key, else render user_email.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   userInfoRenderer(root, column?, rowData?) {
     render(
       html`
@@ -1271,6 +1356,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     return date + '_' + time;
   }
 
+  /**
+   * Check date-to < date-from.
+   * */
   _validateDateRange() {
     let dateTo = this.shadowRoot.querySelector('#date-to');
     let dateFrom = this.shadowRoot.querySelector('#date-from');
@@ -1285,28 +1373,97 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _exportToCSV() {
-    let fileNameEl = this.shadowRoot.querySelector('#export-file-name');
+    const fileNameEl = this.shadowRoot.querySelector('#export-file-name');
 
     if (!fileNameEl.validity.valid) {
       return;
     }
+    const exportList: any = [];
 
-    let group_id = globalThis.backendaiclient.current_group_id();
-    let fields = ["session_name", "lang", "created_at", "terminated_at", "status", "status_info",
-      "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "access_key"];
-
+    // Parameters
+    let status: any = ["RUNNING", "RESTARTING", "TERMINATING",  "PENDING", "PREPARING", "PULLING", "TERMINATED", "CANCELLED", "ERROR"];
+    if (globalThis.backendaiclient.supports('detailed-session-states')) {
+      status = status.join(',');
+    }
+    const fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "access_key"];
     if (this._connectionMode === "SESSION") {
       fields.push("user_email");
     }
     if (globalThis.backendaiclient.is_superadmin) {
-      fields.push("agent");
+      fields.push("containers {container_id agent occupied_slots live_stat last_stat}");
+    } else {
+      fields.push("containers {container_id occupied_slots live_stat last_stat}");
     }
+    const groupId = globalThis.backendaiclient.current_group_id();
+    const limit = 100;
 
-    globalThis.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
-      let sessions = response.compute_sessions;
-      JsonToCsv.exportToCsv(fileNameEl.value, sessions);
+    // Get session list and export to csv file
+    globalThis.backendaiclient.computeSession.listAll(fields, status, this.filterAccessKey, limit, 0, groupId).then((response) => {
+      const sessions = response;
+      if (sessions.length === 0) {
+        this.notification.text = "No sessions";
+        this.notification.show();
+        this.exportToCsvDialog.hide();
+        return;
+      }
+      sessions.forEach((session) => {
+        const exportListItem: any = {};
+        exportListItem.id = session.id;
+        exportListItem.name = session.name;
+        exportListItem.image = session.image.split('/')[2] || session.image.split('/')[1];
+        exportListItem.status = session.status;
+        exportListItem.status_info = session.status_info;
+        exportListItem.access_key = session.access_key;
+        exportListItem.created_at = session.created_at;
+        exportListItem.terminated_at = session.terminated_at;
+        if (session.containers && session.containers.length > 0) {
+          // Assume a session has only one container (no consideration on multi-container bundling)
+          const container = session.containers[0];
+          exportListItem.container_id = container.container_id;
+          const occupiedSlots = container.occupied_slots ? JSON.parse(container.occupied_slots) : null;
+          if (occupiedSlots) {
+            exportListItem.cpu_slot = parseInt(occupiedSlots.cpu);
+            exportListItem.mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupiedSlots.mem, 'g')).toFixed(2);
+            if (occupiedSlots['cuda.shares']) {
+              exportListItem.cuda_shares = occupiedSlots['cuda.shares'];
+            }
+            if (occupiedSlots['cuda.device']) {
+              exportListItem.cuda_device = occupiedSlots['cuda.device'];
+            }
+            if (occupiedSlots['tpu.device']) {
+              exportListItem.tpu_device = occupiedSlots['tpu.device'];
+            }
+            if (occupiedSlots['rocm.device']) {
+              exportListItem.rocm_device = occupiedSlots['rocm.device'];
+            }
+          }
+          const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
+          if (liveStat) {
+            if (liveStat.cpu_used && liveStat.cpu_used.capacity) {
+              exportListItem.cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
+            } else {
+              exportListItem.cpu_used_time = 0;
+            }
+            if (liveStat.io_read) {
+              exportListItem.io_read_bytes_mb = this._automaticScaledTime(liveStat.io_read.capacity);
+            } else {
+              exportListItem.io_read_bytes_mb = 0;
+            }
+            if (liveStat.io_write) {
+              exportListItem.io_write_bytes_mb = this._automaticScaledTime(liveStat.io_write.capacity);
+            } else {
+              exportListItem.io_write_bytes_mb = 0;
+            }
+          }
+          if (container.agent) {
+            exportListItem.agent = container.agent;
+          }
+        }
+        exportList.push(exportListItem);
+      });
 
-      this.notification.text = "Downloading CSV file..."
+      JsonToCsv.exportToCsv(fileNameEl.value, exportList);
+      this.notification.text = "Downloading CSV file...";
       this.notification.show();
       this.exportToCsvDialog.hide();
     });
@@ -1324,7 +1481,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     //   let dateFrom = this.shadowRoot.querySelector('#date-from');
 
     //   if(dateTo.validity.valid && dateFrom.validity.valid) {
-    //     // TODO : new backendaiclien.computeSession query will be added (date range)
+    //      TODO : new backendaiclient.computeSession query will be added (date range)
     //     console.log('Session between ' , dateFrom.value, ' ~ ', dateTo.value, " will be downloaded.");
     //   }
     // }
@@ -1365,74 +1522,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <vaadin-grid-column width="90px" flex-grow="0" header="${_t("session.Status")}" resizable .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="160px" flex-grow="0" header="${_t("session.Configuration")}" resizable>
-          <template>
-            <template is="dom-if" if="[[item.scaling_group]]">
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">work</wl-icon>
-                <span>[[item.scaling_group]]</span>
-                <span class="indicator">RG</span>
-              </div>
-            </div>
-            </template>
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">developer_board</wl-icon>
-                <span>[[item.cpu_slot]]</span>
-                <span class="indicator">${_t("session.core")}</span>
-              </div>
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">memory</wl-icon>
-                <span>[[item.mem_slot]]</span>
-                <span class="indicator">GB</span>
-              </div>
-            </div>
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <template is="dom-if" if="[[item.cuda_gpu_slot]]">
-                  <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                  <span>[[item.cuda_gpu_slot]]</span>
-                  <span class="indicator">GPU</span>
-                </template>
-                <template is="dom-if" if="[[!item.cuda_gpu_slot]]">
-                  <template is="dom-if" if="[[item.cuda_fgpu_slot]]">
-                    <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                    <span>[[item.cuda_fgpu_slot]]</span>
-                    <span class="indicator">GPU</span>
-                  </template>
-                </template>
-                <template is="dom-if" if="[[item.rocm_gpu_slot]]">
-                  <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
-                  <span>[[item.rocm_gpu_slot]]</span>
-                  <span class="indicator">GPU</span>
-                </template>
-                <template is="dom-if" if="[[item.tpu_slot]]">
-                  <wl-icon class="fg green indicator">view_module</wl-icon>
-                  <span>[[item.tpu_slot]]</span>
-                  <span class="indicator">TPU</span>
-                </template>
-                <template is="dom-if" if="[[!item.cuda_gpu_slot]]">
-                  <template is="dom-if" if="[[!item.cuda_fgpu_slot]]">
-                    <template is="dom-if" if="[[!item.rocm_gpu_slot]]">
-                      <template is="dom-if" if="[[!item.tpu_slot]]">
-                        <wl-icon class="fg green indicator">view_module</wl-icon>
-                        <span>-</span>
-                        <span class="indicator">GPU</span>
-                      </template>
-                    </template>
-                  </template>
-                </template>
-              </div>
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green indicator">cloud_queue</wl-icon>
-                <!-- <wl-icon class="fg yellow" icon="device:storage"></wl-icon> -->
-                <!-- <span>[[item.storage_capacity]]</span> -->
-                <!-- <span class="indicator">[[item.storage_unit]]</span> -->
-              </div>
-            </div>
-          </template>
-        </vaadin-grid-column>
+        <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t("session.Configuration")}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t("session.Usage")}" .renderer="${this._boundUsageRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t("session.Starts")}" path="created_at">
@@ -1477,115 +1567,40 @@ export default class BackendAiSessionList extends BackendAIPage {
           <wl-icon class="pagination">navigate_next</wl-icon>
         </wl-button>
       </div>
-      <wl-dialog id="work-dialog" fixed blockscrolling scrollable
-                    style="padding:0;">
-        <wl-card elevation="1" class="intro" style="margin: 0; box-shadow: none; height: 100%;">
-          <h3 class="horizontal center layout" style="font-weight:bold">
-            <span id="work-title"></span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._refreshLogs()}">
-              <wl-icon>refresh</wl-icon>
-            </wl-button>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h3>
-          <div id="work-area" style="overflow:scroll;"></div>
-          <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
-                  style="border-style: none;width: 100%;"></iframe>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="app-dialog" fixed backdrop blockscrolling
-                    style="padding:0;">
-        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h4 class="horizontal center layout" style="font-weight:bold">
-            <span>App</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h4>
-          <div style="padding:15px;" class="horizontal layout wrap center center-justified">
-          ${this.appSupportList.map(item => html`
-            <div class="vertical layout center center-justified app-icon">
-              <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
-                                 .url-postfix="${item.redirect}"
-                                 @click="${(e) => this._runApp(e)}">
-                <img src="${item.src}" />
-              </mwc-icon-button>
-              <span class="label">${item.title}</span>
-            </div>
-          `)}
-           </div>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="ssh-dialog" fixed backdrop blockscrolling persistent
-                 style="padding:0;">
-        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h4 class="horizontal center layout" style="font-weight:bold">
-            <span>SSH / SFTP connection</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h4>
-          <div style="padding:0 15px;" >Use your favorite SSH/SFTP application to connect.</div>
-          <section class="vertical layout wrap start start-justified">
-            <h4>${_t("session.ConnectionInformation")}</h4>
-            <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a></div>
-            <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
-            <div><span>Port:</span> ${this.sshPort}</div>
-            <div><a id="sshkey-download-link" href="">Download SSH key file (id_container)</a></div>
-          </section>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="vnc-dialog" fixed backdrop blockscrolling
-                    style="padding:0;">
-        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h4 class="horizontal center layout" style="font-weight:bold">
-            <span>${_t("session.VNCconnection")}</span>
-            <div class="flex"></div>
-            <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
-          </h4>
-          <div style="padding:0 15px;" >${_t("session.UseYourFavoriteSSHApp")}</div>
-          <section class="vertical layout wrap start start-justified">
-            <h4>${_t("session.ConnectionInformation")}</h4>
-            <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a></div>
-          </section>
-        </wl-card>
-      </wl-dialog>
-      <wl-dialog id="terminate-session-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">${_t("dialog.title.LetsDouble-Check")}</wl-title>
+      <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
+        <span slot="title" id="work-title"></span>
+        <div slot="action">
+          <wl-button fab flat inverted @click="${(e) => this._refreshLogs()}">
+            <wl-icon>refresh</wl-icon>
+          </wl-button>
+        </div>
+        <div slot="content" id="work-area" style="overflow:scroll;"></div>
+        <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
+                style="border-style: none;width: 100%;"></iframe>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="terminate-session-dialog" fixed backdrop>
+         <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
             <p>${_t("session.CheckAgainDialog")}</p>
          </div>
-         <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">Cancel</wl-button>
-            <wl-button class="ok" @click="${(e) => this._terminateSessionWithCheck(e)}">Okay</wl-button>
+         <div slot="footer" class="horizontal end-justified flex layout">
+            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
+            <wl-button class="ok" @click="${(e) => this._terminateSessionWithCheck(e)}">${_t("button.Okay")}</wl-button>
          </div>
-      </wl-dialog>
-      <wl-dialog id="terminate-selected-sessions-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">Let's double-check</wl-title>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
+         <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
             <p>${_t("session.TerminatingSessionDialog")} ${_t("session.CheckAgainDialog")}</p>
          </div>
-         <div slot="footer">
+         <div slot="footer" class="horizontal end-justified flex layout">
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
             <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t("button.Okay")}</wl-button>
          </div>
-      </wl-dialog>
-      <wl-dialog id="export-to-csv" fixed backdrop blockscrolling>
-      <wl-card elevation="1" class="intro centered login-panel" style="margin:0;">
-        <h3 class="horizontal center layout" style="padding:10px;">
-          <span style="margin-left:10px;">${_t("session.ExportSessionListToCSVFile")}</span>
-          <div class="flex"></div>
-          <wl-button fab flat inverted @click="${(e) => this._hideDialog(e)}">
-            <wl-icon>close</wl-icon>
-          </wl-button>
-        </h3>
-        <section style="padding: 10px;">
+      </backend-ai-dialog>
+      <backend-ai-dialog id="export-to-csv" fixed backdrop>
+        <span slot="title">${_t("session.ExportSessionListToCSVFile")}</span>
+        <div slot="content">
           <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
                           validationMessage="Allows letters, numbers and -_."
                           value="${'session_' + this._defaultFileName}" required
@@ -1617,9 +1632,8 @@ export default class BackendAiSessionList extends BackendAIPage {
               ${_t("session.ExportCSVFile")}
             </wl-button>
           </div>
-          </section>
-        </wl-card>
-      </wl-dialog>
+        </div>
+      </backend-ai-dialog>
       `;
   }
 

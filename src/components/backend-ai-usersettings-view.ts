@@ -25,10 +25,24 @@ import 'weightless/icon';
 import 'weightless/button';
 
 
+import './backend-ai-dialog';
 import './lablup-codemirror';
 import './lablup-loading-spinner';
 import './backend-ai-error-log-list';
 import './backend-ai-usersettings-general-list';
+
+/**
+ Backend AI Usersettings View
+
+ Example:
+
+ <backend-ai-usersettings-view active>
+  ...
+ </backend-ai-usersettings-view>
+
+ @group Backend.AI Console
+ @element backend-ai-usersettings-view
+ */
 
 @customElement("backend-ai-usersettings-view")
 export default class BackendAiUserSettingsView extends BackendAIPage {
@@ -166,9 +180,10 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
         </wl-card>
       </wl-card>
-      <wl-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling style="border-bottom:none;">
-        <div slot="header" style="border-bottom:none;">${_t("dialog.warning.LogDeletion")} ${_t("dialog.warning.CannotBeUndone")}</div>
-        <div slot="footer" style="border-top:none;">
+      <backend-ai-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling>
+        <span slot="title">${_t("dialog.warning.LogDeletion")}</span>
+        <div slot="content">${_t("dialog.warning.CannotBeUndone")}</div>
+        <div slot="footer" class="horizontal end-justified flex layout">
           <wl-button inverted flat id="discard-removal"
                      style="margin: 0 5px;"
                      @click="${() => this._hideClearLogsDialog()}">${_t("button.No")}</wl-button>
@@ -176,7 +191,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
                      style="margin: 0 5px;"
                      @click="${() => this._removeLogMessage()}">${_t("button.Yes")}</wl-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `;
   }
 
@@ -200,6 +215,11 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     })
   }
 
+  /**
+   * Change view state when the user clicks the tab.
+   *
+   * @param {Boolean} active
+   * */
   async _viewStateChanged(active) {
     const params = store.getState().app.params;
     const tab = params.tab;
@@ -219,10 +239,16 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   updateSettings() {
   }
 
+  /**
+   * Hide clearLogsDialog.
+   * */
   _hideClearLogsDialog() {
     this.clearLogsDialog.hide();
   }
 
+  /**
+   * Remove log message.
+   * */
   _removeLogMessage() {
     let currentLogs = localStorage.getItem('backendaiconsole.logs');
     if (currentLogs) {
@@ -237,16 +263,27 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     this.spinner.hide();
   }
 
+  /**
+   * Show clearLogsDialog.
+   * */
   _showClearLogsDialog() {
     this.clearLogsDialog.show();
   }
 
+  /**
+   * Refresh log messages.
+   * */
   _refreshLogs() {
     this.logGrid = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
     let event = new CustomEvent("log-message-refresh", this.logGrid);
     document.dispatchEvent(event);
   }
 
+  /**
+   * Show only one tab clicked by user.
+   *
+   * @param {EventTarget} tab - clicked tab
+   * */
   _showTab(tab) {
     let els = this.shadowRoot.querySelectorAll(".tab-content");
     for (let x = 0; x < els.length; x++) {
