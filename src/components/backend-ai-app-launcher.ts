@@ -230,7 +230,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
     });
-    let dialog = this.shadowRoot.querySelector('#app-dialog');
+    const dialog = this.shadowRoot.querySelector('#app-dialog');
     dialog.setAttribute('session-uuid', sessionUuid);
     dialog.setAttribute('access-key', accessKey);
     //dialog.positionTarget = e.target;
@@ -471,8 +471,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         ${this.appSupportList.map(item => html`
           <div class="vertical layout center center-justified app-icon">
             <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
-                               .url-postfix="${item.redirect}"
-                               @click="${(e) => this._runThisApp(e)}">
+                             .url-postfix="${item.redirect}"
+                             @click="${(e) => this._runThisApp(e)}">
               <img src="${item.src}" />
             </mwc-icon-button>
             <span class="label">${item.title}</span>
