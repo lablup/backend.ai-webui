@@ -261,6 +261,7 @@ export default class LablupNotification extends LitElement {
     notification.style.bottom = (20 + 55 * this.step) + 'px';
     notification.style.position = 'fixed';
     (notification.querySelector('span') as any).style.overflowX = 'hidden';
+    (notification.querySelector('span') as any).style.maxWidth = '70vw';
     notification.style.right = '20px';
     notification.style.fontSize = '16px';
     notification.style.fontWeight = '400';
@@ -329,9 +330,10 @@ export default class LablupNotification extends LitElement {
     // }
     let logs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
     if (logs.length > 3000) {
-      logs = logs.slice(1, 3000);
+      logs = logs.slice(0, 2999);
     }
     this.step = this.notifications.length;
+    localStorage.setItem('backendaiconsole.logs', JSON.stringify(logs));
   }
 }
 declare global {

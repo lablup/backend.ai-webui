@@ -452,7 +452,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #environment {
           --mdc-menu-item-height: 40px;
-          z-index: 10000;
           max-height: 300px;
         }
 
@@ -890,7 +889,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       sessions.push({'kernelName': kernelName, 'sessionName': sessionName, config});
     }
-
     const createSessionQueue = sessions.map(item => {
       return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
     });
@@ -930,12 +928,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             appOptions['filename'] = this.importFilename;
           }
           globalThis.appLauncher.showLauncher(appOptions);
+        }).catch((err) => {
+          // remove redundant error message
         });
       }
     }).catch((err) => {
-      this.metadata_updating = false;
+      // this.metadata_updating = false;
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.detail = err.message;
         this.notification.show(true, err);
       } else if (err && err.title) {
@@ -968,7 +968,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, config) {
-    return globalThis.backendaiclient.createKernel(kernelName, sessionName, config, 10000);
+    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config);
+    task.catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
+      }
+    });
+    return task;
   }
 
   _hideSessionDialog() {

@@ -411,7 +411,8 @@
         "NoPresetName": "자원 프리셋의 이름을 입력하십시오",
         "MemoryShouldBeLargerThanSHMEM": "메모리는 공유메모리보다 커야 합니다",
         "Created": "자원 프리셋이 생성되었습니다",
-        "Updated": "자원 프리셋에 수정되었습니다"
+        "Updated": "자원 프리셋에 수정되었습니다",
+        "MinimumShmemUnit" : "공유메모리 최소 단위는 0.01 GB 입니다."
     },
     "usersettings": {
         "General": "일반",

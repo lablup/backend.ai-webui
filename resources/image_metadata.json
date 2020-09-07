@@ -629,6 +629,20 @@
         }
       ]
     },
+    "mask-rcnn": {
+      "name": "MLPerf Mask-RCNN",
+      "description": "MLPerf Mask-RCNN module",
+      "group": "Benchmarks",
+      "tags": [],
+      "icon": "python.png",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Pytorch",
+          "color": "blue"
+        }
+      ]
+    },
     "lablup-pytorch": {
       "name": "PyTorch (Cloudia)",
       "description": "PyTorch is an open source machine learning framework that accelerates the path from research prototyping to production deployment. This environment is fully integrated with Cloudia platform.",
