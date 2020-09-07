@@ -2,17 +2,19 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+import {translate as _t, get as _text} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/icon';
+import 'weightless/label';
 import 'weightless/textfield';
 import 'weightless/title';
 import '@material/mwc-icon-button';
 import '@material/mwc-button';
+import 'macro-carousel';
 
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
@@ -90,6 +92,79 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           text-align: center;
           height: 25px;
           font-size: 13px;
+        }
+
+        macro-carousel {
+          max-width: 700px;
+          height: 450px;
+          padding: 0;
+          margin: 0 10px;
+        }
+      
+        .slide {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .slide > span {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-repeat: no-repeat;
+          background-size: contain;
+          background-position: top center;
+        }
+
+        .slide > p {
+          font-size: 14px;
+        }
+      
+        macro-carousel-pagination-indicator {
+          /* Change the dots color */
+          --macro-carousel-pagination-color: var(--paper-grey-400);
+          /* Change the aspect of the selected dot */
+          --macro-carousel-pagination-color-selected: var(--paper-green-400);
+          /* Change the dots size */
+          --macro-carousel-pagination-size-clickable: 32px;
+          --macro-carousel-pagination-size-dot: 10px;
+        }
+
+        wl-label.keyboard {
+          font-family: Menlo, Courier, "Courier New";
+          padding: 20px;
+          background-color: var(--paper-grey-200);
+          border-radius: 10px;
+          margin: 0px 10px;
+        }
+
+        wl-label.invert {
+          font-size: 26px;
+          color: var(--paper-grey-200);
+          background-color: transparent;
+          margin: 0px 10px;
+        }
+
+        wl-label.one-key {
+          text-align: center;
+          width: 24px;
+        }
+
+        p code {
+          font: 12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+          color: #52595d;
+          -webkit-border-radius: 3px;
+          -moz-border-radius: 3px;
+          border-radius: 3px;
+          -moz-background-clip: padding;
+          -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+          border: 1px solid #ccc;
+          background-color: #f9f9f9;
+          padding: 0px 3px;
+          display: inline-block;
         }
       `];
   }
@@ -369,6 +444,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       urlPostfix = '';
     }
 
+    if (appName === 'ttyd') {
+      this._openTerminalGuideDialog();
+    }
+
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
@@ -429,6 +508,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionName
    */
   async runTerminal(sessionName: string) {
+    this._openTerminalGuideDialog();
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
       this.indicator = await globalThis.lablupIndicator.start();
       this._open_wsproxy(sessionName, 'ttyd')
@@ -459,6 +539,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   _openVNCDialog() {
     let dialog = this.shadowRoot.querySelector('#vnc-dialog');
+    dialog.show();
+  }
+
+  /**
+   * Open a guide for terminal
+   */
+  _openTerminalGuideDialog() {
+    let dialog = this.shadowRoot.querySelector('#terminal-guide');
     dialog.show();
   }
 
@@ -504,6 +592,37 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a></div>
           </section>
         </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="terminal-guide" fixed backdrop>
+      <span slot="title">${_t("webTerminalUsageGuide.CopyGuide")}</span>
+       <div slot="content">
+        <macro-carousel pagination navigation selected="0" auto-focus reduced-motion>
+          <article class="slide vertical layout center">
+            <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-1.png); border:auto;">
+              <wl-label class="keyboard">Ctrl</wl-label>
+              <wl-label class="keyboard invert">+</wl-label>
+              <wl-label class="keyboard one-key">B</wl-label>
+            </span>
+            <p>Press <code>Ctrl + B</code> key to enter tmux control mode.</p>
+          </article>
+          <article class="slide vertical layout center">
+            <span style="background-image:url(/resources/images/web-terminal-guide-2.png);"></span>
+            <p>Type <code>:set -g mouse off</code> and Press <code>Enter</code> Key.</p>
+          </article>
+          <article class="slide vertical layout center">
+            <span style="background-image:url(/resources/images/web-terminal-guide-3.png);"></span>
+            <p>Now you can copy text from the terminal.</p>
+          </article>
+          <article class="slide vertical layout center">
+            <span style="background-image:url(/resources/images/web-terminal-guide-4.png);">
+              <wl-label class="keyboard">Ctrl</wl-label>
+              <wl-label class="keyboard invert">+</wl-label>
+              <wl-label class="keyboard one-key">B</wl-label>
+            </span>
+            <p>To turn on mouse scroll again, Press <code>Ctrl + B</code> and Type <code>:set -g mouse on</code> and Press <code>Enter</code> key.</p>
+          </article>
+        </macro-carousel>
+       </div>
       </backend-ai-dialog>
       `;
   }
