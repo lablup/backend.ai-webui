@@ -39,7 +39,6 @@ import '@material/mwc-menu';
 import '@material/mwc-textfield';
 
 import Sortable from 'sortablejs';
-import '@vaadin/vaadin-dialog/vaadin-dialog';
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/dialog';
@@ -61,7 +60,7 @@ import {
 import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-session-list';
 import './lablup-codemirror';
-import './lablup-loading-indicator';
+import './lablup-loading-spinner';
 
 @customElement("backend-ai-pipeline-view")
 export default class BackendAIPipelineView extends BackendAIPage {
@@ -278,7 +277,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     })
 
     this.notification = globalThis.lablupNotification;
-    this.indicator = this.shadowRoot.querySelector('#loading-indicator');
+    this.indicator = this.shadowRoot.querySelector('#loading-spinner');
   }
 
   async _viewStateChanged(active) {
@@ -1415,7 +1414,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
          </div>
       </wl-dialog>
 
-      <lablup-loading-indicator id="loading-indicator"></lablup-loading-indicator>
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
     `;
   }
 }
