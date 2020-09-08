@@ -191,12 +191,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param detail
    */
   _showAppLauncher(controls) {
-    const sessionName = controls['session-name'];
+    const sessionUuid = controls['session-uuid'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
     if ('runtime' in controls) {
       let param: Object = {};
-      param['session-name'] = sessionName;
+      param['session-uuid'] = sessionUuid;
       param['app-name'] = controls['runtime'];
       param['url-postfix'] = '';
       param['file-name'] = controls['filename'];
@@ -230,8 +230,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
     });
-    let dialog = this.shadowRoot.querySelector('#app-dialog');
-    dialog.setAttribute('session-name', sessionName);
+    const dialog = this.shadowRoot.querySelector('#app-dialog');
+    dialog.setAttribute('session-uuid', sessionUuid);
     dialog.setAttribute('access-key', accessKey);
     //dialog.positionTarget = e.target;
     this.shadowRoot.querySelector('#app-dialog').show();
@@ -248,11 +248,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   /**
    * Open a WsProxy with session and app and port number.
    *
-   * @param {string} sessionName
+   * @param {string} sessionUuid
    * @param {string} app
    * @param {number} port
    */
-  async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null) {
+  async _open_wsproxy(sessionUuid, app = 'jupyter', port: number | null = null) {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
@@ -294,8 +294,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         this.notification.show();
         return Promise.resolve(false);
       }
-      const token = response.token;
-      let uri = this._getProxyURL() + `proxy/${token}/${sessionName}/add?app=${app}`;
+      let token = response.token;
+      let uri = this._getProxyURL() + `proxy/${token}/${sessionUuid}/add?app=${app}`;
       if (port !== null && port > 1024 && port < 65535) {
         uri += `&port=${port}`;
       }
@@ -320,7 +320,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   async _runAppWithParameters(param) {
-    let sessionName = param['session-name'];
+    let sessionUuid = param['session-uuid'];
     let urlPostfix = param['url-postfix'];
     let appName = param['app-name'];
     if (appName === undefined || appName === null) {
@@ -341,14 +341,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      this._open_wsproxy(sessionName, appName, port)
+      this._open_wsproxy(sessionUuid, appName, port)
         .then((response) => {
           if (response.url) {
             this.indicator.set(100, 'Prepared.');
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
               console.log(appName + " proxy loaded: ");
-              console.log(sessionName);
+              console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -362,9 +362,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async _runThisApp(e) {
     const controller = e.target;
-    const controls = controller.closest('#app-dialog');
-    const sessionName = controls.getAttribute('session-name');
     const appName = controller['app-name'];
+    let controls = controller.closest('#app-dialog');
+    let sessionUuid = controls.getAttribute('session-uuid');
     let urlPostfix = controller['url-postfix'];
     if (appName === undefined || appName === null) {
       return;
@@ -389,12 +389,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       if (usePreferredPort && userPort) {
         port = userPort;
       }
-      this._open_wsproxy(sessionName, appName, port)
+      this._open_wsproxy(sessionUuid, appName, port)
         .then((response) => {
           if (appName === 'sshd') {
             this.indicator.set(100, 'Prepared.');
             this.sshPort = response.port;
-            this._readSSHKey(sessionName);
+            this._readSSHKey(sessionUuid);
             this._openSSHDialog();
             setTimeout(() => {
               this.indicator.end();
@@ -408,7 +408,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
               console.log(appName + " proxy loaded: ");
-              console.log(sessionName);
+              console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -418,12 +418,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   /**
    * Read a SSH key.
    *
-   * @param {string} sessionName
+   * @param {string} sessionUuid
    */
-  async _readSSHKey(sessionName) {
+  async _readSSHKey(sessionUuid) {
     const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
     const file = '/home/work/id_container';
-    const blob = await globalThis.backendaiclient.download_single(sessionName, file);
+    const blob = await globalThis.backendaiclient.download_single(sessionUuid, file);
     // TODO: This blob has additional leading letters in front of key texts.
     //       Manually trim those letters.
     const rawText = await blob.text();
@@ -436,12 +436,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   /**
    * Run terminal with session name.
    *
-   * @param {string} sessionName
+   * @param {string} sessionUuid
    */
-  async runTerminal(sessionName: string) {
+  async runTerminal(sessionUuid: string) {
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
       this.indicator = await globalThis.lablupIndicator.start();
-      this._open_wsproxy(sessionName, 'ttyd')
+      this._open_wsproxy(sessionUuid, 'ttyd')
         .then((response) => {
           if (response.url) {
             this.indicator.set(100, 'Prepared.');
@@ -449,7 +449,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               globalThis.open(response.url, '_blank');
               this.indicator.end();
               console.log("Terminal proxy loaded: ");
-              console.log(sessionName);
+              console.log(sessionUuid);
             }, 1000);
           }
         });
