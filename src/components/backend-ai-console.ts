@@ -1047,7 +1047,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   </mwc-list-item>
                   <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
                       <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
-                      ${_t("console.menu.AboutBackend.AI")}
+                      ${_t("console.menu.AboutBackendAI")}
                   </mwc-list-item>
                   <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                       <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
