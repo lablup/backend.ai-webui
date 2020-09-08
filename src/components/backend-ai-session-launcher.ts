@@ -906,14 +906,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (res.length === 1) {
         res[0].taskobj.then(res => {
           let appOptions;
-          if ('kernelId' in res) {
+          if ('kernelId' in res) { // API v4
             appOptions = {
               'session-name': res.kernelId,
               'access-key': ''
             };
-          } else {
+          } else { // API >= v5
             appOptions = {
-              'session-name': res.sessionId,
+              'session-uuid': res.sessionId,
+              'session-name': res.sessionName,
               'access-key': ''
             };
           }
