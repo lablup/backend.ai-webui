@@ -2164,25 +2164,18 @@ class ComputeSession {
    * get compute session with specific condition.
    *
    * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
-   * @param {string} sessionName - session name to query specific compute session.
-   * @param {string} domainName - domain name to query specific compute session.
-   * @param {string} accessKey - access key that is used to start compute sessions.
+   * @param {string} sessionUuid - session ID to query specific compute session.
    */
   async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
-            sessionName = '', domainName = '', accessKey = '') {
+            sessionUuid = '') {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
-    q = `query($ak:String, $domain_name:String, $session_name:String!) {
-      compute_session(access_key:$ak, domain_name:$domain_name, sess_id:$session_name) {
+    q = `query($session_uuid: UUID!) {
+      compute_session(id:$session_uuid) {
         ${fields.join(" ")}
       }
     }`;
-
-    v = {
-      'ak': accessKey,
-      'domain_name': domainName,
-      'session_name': sessionName
-    };
+    v = {session_uuid: sessionUuid};
     return this.client.query(q, v);
   }
 }

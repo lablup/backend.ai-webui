@@ -991,7 +991,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   _subscribeKernelEventStream(sessionId, idx, component, kernelId) {
-    const url = window.backendaiclient._config.endpoint + `/func/stream/kernel/_/events?sessionId=${sessionId}`;
+    const url = window.backendaiclient._config.endpoint + `/func/stream/session/_/events?sessionId=${sessionId}`;
     const sse = new EventSource(url, {withCredentials: true});
     let execSuccess;
 
@@ -1099,12 +1099,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
     await this._ensureComponentMainCode(component);
     try {
       const kernel = await window.backendaiclient.createKernel(image, undefined, opts);
-      const sessionName = kernel.kernelId;
+      const sessionUuid = kernel.sessionId;
       let kernelId = undefined;
       for (let i = 0; i < 10; i++) {
         // Wait 10 s for kernel id to make enqueueOnly option work.
         // TODO: make wait time configurable?
-        const kinfo = await window.backendaiclient.computeSession.get(sessionName, ['id']);
+        const kinfo = await window.backendaiclient.computeSession.get(['id'], sessionUuid);
         if (kinfo.compute_session && kinfo.compute_session.id) {
           kernelId = kinfo.compute_session.id;
           break;
@@ -1112,7 +1112,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
         await new Promise(r => setTimeout(r, 1000)); // wait 1 second
       }
       if (kernelId) {
-        sse = this._subscribeKernelEventStream(sessionName, idx, component, kernelId);
+        sse = this._subscribeKernelEventStream(sessionUuid, idx, component, kernelId);
       } else {
         throw new Error('Unable to get information on compute session');
       }
