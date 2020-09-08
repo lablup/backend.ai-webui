@@ -990,8 +990,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this._hideCodeDialog();
   }
 
-  _subscribeKernelEventStream(sessionId, idx, component, kernelId) {
-    const url = window.backendaiclient._config.endpoint + `/func/stream/session/_/events?sessionId=${sessionId}`;
+  _subscribeKernelEventStream(sessionName, idx, component, kernelId) {
+    const url = window.backendaiclient._config.endpoint + `/func/events/session?sessionName=${sessionName}`;
     const sse = new EventSource(url, {withCredentials: true});
     let execSuccess;
 
@@ -1003,7 +1003,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     });
     sse.addEventListener('kernel_started', (e) => {
       const data = JSON.parse((<any>e).data);
-      this.notification.text = `Kernel started (${data.sessionId}). Running component...`;
+      this.notification.text = `Kernel started (${data.sessionName}). Running component...`;
       this.notification.show();
     });
     sse.addEventListener('kernel_success', async (e) => {
@@ -1031,9 +1031,9 @@ export default class BackendAIPipelineView extends BackendAIPage {
       // Final handling.
       sse.close();
       if (execSuccess) {
-        this.notification.text = `Execution succeed (${data.sessionId})`;
+        this.notification.text = `Execution succeed (${data.sessionName})`;
       } else {
-        this.notification.text = `Execution error (${data.sessionId})`;
+        this.notification.text = `Execution error (${data.sessionName})`;
       }
       this.notification.show();
       this.indicator.hide();
@@ -1100,6 +1100,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     try {
       const kernel = await window.backendaiclient.createKernel(image, undefined, opts);
       const sessionUuid = kernel.sessionId;
+      const sessionName = kernel.sessionName;
       let kernelId = undefined;
       for (let i = 0; i < 10; i++) {
         // Wait 10 s for kernel id to make enqueueOnly option work.
@@ -1112,7 +1113,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
         await new Promise(r => setTimeout(r, 1000)); // wait 1 second
       }
       if (kernelId) {
-        sse = this._subscribeKernelEventStream(sessionUuid, idx, component, kernelId);
+        sse = this._subscribeKernelEventStream(sessionName, idx, component, kernelId);
       } else {
         throw new Error('Unable to get information on compute session');
       }

@@ -679,7 +679,7 @@ class Client {
      * @param {string} sessionId - the sessionId given when created
      */
     getTaskLogs(sessionId) {
-        const queryString = `${this.kernelPrefix}/_/logs?kernel_id=${sessionId}`;
+        const queryString = `${this.kernelPrefix}/_/logs?session_name=${sessionId}`;
         let rqst = this.newSignedRequest('GET', queryString, null);
         return this._wrapWithPromise(rqst);
     }
