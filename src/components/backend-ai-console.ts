@@ -995,7 +995,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 ·
                 <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">${_t("console.menu.PrivacyPolicy")}</a>
                 ·
-                <a @click="${() => this.splash.show()}">${_t("console.menu.AboutBackend.AI")}</a>
+                <a @click="${() => this.splash.show()}">${_t("console.menu.AboutBackendAI")}</a>
                 ${this.allow_signout === true ? html`
                 ·
                 <a @click="${() => this.loginPanel.signout()}">${_t("console.menu.LeaveService")}</a>
