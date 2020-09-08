@@ -256,6 +256,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
+    const openToPublic = this.shadowRoot.querySelector('#chk-open-to-public').checked;
+    this.shadowRoot.querySelector('#chk-open-to-public').checked = false;
     let param = {
       endpoint: globalThis.backendaiclient._config.endpoint
     };
@@ -285,7 +287,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     };
     this.indicator.set(20, 'Setting up proxy for the app...');
     try {
-      let response = await this.sendRequest(rqst);
+      const response = await this.sendRequest(rqst);
       if (response === undefined) {
         this.indicator.end();
         this.notification.text = 'Proxy configurator is not responding.';
@@ -297,8 +299,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       if (port !== null && port > 1024 && port < 65535) {
         uri += `&port=${port}`;
       }
+      if (openToPublic) {
+        uri += '&open_to_public=true';
+      }
       this.indicator.set(50, 'Adding kernel to socket queue...');
-      let rqst_proxy = {
+      const rqst_proxy = {
         method: 'GET',
         app: app,
         uri: uri
@@ -357,10 +362,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async _runThisApp(e) {
     const controller = e.target;
+    const appName = controller['app-name'];
     let controls = controller.closest('#app-dialog');
     let sessionUuid = controls.getAttribute('session-uuid');
     let urlPostfix = controller['url-postfix'];
-    let appName = controller['app-name'];
     if (appName === undefined || appName === null) {
       return;
     }
@@ -372,12 +377,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
-      let port = null;
+      let port;
       if (globalThis.isElectron && appName === 'sshd') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
         if (port === '0' || port === 0) { // setting store does not accept null.
           port = null;
         }
+      }
+      const usePreferredPort = this.shadowRoot.querySelector('#chk-preferred-port').checked;
+      const userPort = parseInt(this.shadowRoot.querySelector('#app-port').value);
+      if (usePreferredPort && userPort) {
+        port = userPort;
       }
       this._open_wsproxy(sessionUuid, appName, port)
         .then((response) => {
@@ -467,30 +477,44 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     return html`
       <backend-ai-dialog id="app-dialog" fixed backdrop>
         <span slot="title">App</span>
-        <div slot="content" style="padding:15px;" class="horizontal layout wrap center start-justified">
-        ${this.appSupportList.map(item => html`
-          <div class="vertical layout center center-justified app-icon">
-            <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
-                             .url-postfix="${item.redirect}"
-                             @click="${(e) => this._runThisApp(e)}">
-              <img src="${item.src}" />
-            </mwc-icon-button>
-            <span class="label">${item.title}</span>
+        <div slot="content">
+          <div style="padding:15px;" class="horizontal layout wrap center start-justified">
+            ${this.appSupportList.map(item => html`
+              <div class="vertical layout center center-justified app-icon">
+                <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
+                                 .url-postfix="${item.redirect}"
+                                 @click="${(e) => this._runThisApp(e)}">
+                  <img src="${item.src}" />
+                </mwc-icon-button>
+                <span class="label">${item.title}</span>
+              </div>
+            `)}
           </div>
-        `)}
-         </div>
+          ${globalThis.isElectron ? ``: html`
+            <div class="horizontal layout center">
+              <wl-checkbox id="chk-open-to-public" style="margin-right:0.5em"></wl-checkbox>
+              ${_t("session.OpenToPublic")}
+            </div>
+          `}
+          <div class="horizontal layout center">
+            <wl-checkbox id="chk-preferred-port" style="margin-right:0.5em"></wl-checkbox>
+            ${_t("session.TryPreferredPort")}
+            <wl-textfield id="app-port" type="number" no-label-float value="10250"
+                min="1025" max="65534" style="margin-left:1em; width:70px"></wl-textfield>
+          </div>
+        </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="ssh-dialog" fixed backdrop>
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content" style="padding:15px;">
-          <div style="padding:15px 0;" >Use your favorite SSH/SFTP application to connect.</div>
+          <div style="padding:15px 0;" >${_t("session.SFTPDescription")}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t("session.ConnectionInformation")}</h4>
             <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a></div>
             <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
             <div><span>Port:</span> ${this.sshPort}</div>
             <a id="sshkey-download-link" style="margin-top:15px;" href="">
-              <mwc-button class="fg apps green">Download SSH key file (id_container)</mwc-button>
+              <mwc-button class="fg apps green">${_t("DownloadSSHKey")}</mwc-button>
             </a>
           </section>
         </div>
@@ -505,7 +529,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </section>
         </div>
       </backend-ai-dialog>
-      `;
+    `;
   }
 
 }
