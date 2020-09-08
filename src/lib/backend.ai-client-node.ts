@@ -2118,25 +2118,6 @@ class ComputeSession {
   }
 
   /**
-   * Get information of a compute session with specific conditions.
-   *
-   * @param {string} sessionId - user-defined session ID
-   * @param {array} fields - fields to query. Default fields are: ["sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"]
-   */
-  async get(sessionId, fields = ["id", "sess_id", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots"]) {
-    let q, v;
-    q = `query($sess_id: String!) {
-      compute_session(sess_id: $sess_id) {
-        ${fields.join(" ")}
-      }
-    }`;
-    v = {
-      'sess_id': sessionId,
-    };
-    return this.client.gql(q, v);
-  }
-
-  /**
    * list all status of compute sessions.
    *
    * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
@@ -2204,7 +2185,6 @@ class ComputeSession {
     };
     return this.client.query(q, v);
   }
-
 }
 
 class Resources {
