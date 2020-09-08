@@ -8,7 +8,7 @@ import {css, customElement, html, LitElement, property} from "lit-element";
 class Task {
   tasktitle: string;
   taskid: string;
-  taskobj: Object;
+  taskobj?: Object;
   tasktype: string;
   status: string;
   created_at: number;
@@ -41,7 +41,6 @@ class Task {
 @customElement("backend-ai-tasker")
 export default class BackendAiTasker extends LitElement {
   public shadowRoot: any;
-  public updateComplete: any;
 
   @property({type: Object}) indicator;
   @property({type: Array}) taskstore;

@@ -28,7 +28,6 @@ import {store} from '../store';
 @customElement("lablup-notification")
 export default class LablupNotification extends LitElement {
   public shadowRoot: any;
-  public updateComplete: any;
 
   @property({type: String}) text = '';
   @property({type: String}) detail = '';
