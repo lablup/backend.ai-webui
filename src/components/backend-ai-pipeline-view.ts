@@ -6,25 +6,25 @@
  /*
   Assumptions on the vFolder structure for storing pipeline configs and data.
 
-  /home/work/config.json  # pipeline configuration file which stores following fields
+  /home/work/<vfolder-name>/config.json  # pipeline configuration file which stores following fields
     - title
     - description
     - environment
     - version
     - scaling_group
     - folder_host
-  /home/work/components.json  # stores whole pipeline components
+  /home/work/<vfolder-name>/components.json  # stores whole pipeline components
     - id
     - title
     - description
-    - path  # eg) /home/work/001-load-data/
+    - path  # eg) /home/work/<vfolder-name>/001-load-data/
             # code is assumed to be stored in `main.py` inside `path`
     - cpu
     - mem
     - gpu
     - executed
-  /home/work/001-load-data/      # root path for each pipeline component
-  /home/work/002-validate-data/
+  /home/work/<vfolder-name>/001-load-data/      # root path for each pipeline component
+  /home/work/<vfolder-name>/002-validate-data/
   ...
   */
 
@@ -910,10 +910,14 @@ export default class BackendAIPipelineView extends BackendAIPage {
     try {
       await window.backendaiclient.vfolder.mkdir(folder, this.pipelineFolderName);
     } catch (err) {
-      console.error(err)
-      this.notification.text = PainKiller.relieve(err.title);
-      this.notification.detail = err.message;
-      this.notification.show(true);
+      if (err && err.message && err.message.includes('already exists')) {
+        // silently pass if the target folder alrady exists
+      } else {
+        console.error(err)
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true);
+      }
     }
   }
 
