@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t, get as _text} from "lit-translate";
+import {translate as _t, translateUnsafeHTML as _tr, get as _text} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import 'weightless/button';
@@ -132,6 +132,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           --macro-carousel-pagination-size-dot: 10px;
         }
 
+        wl-label {
+          font-family: 'Ubuntu', 'Quicksand', Roboto, sans-serif;
+        }
+
         wl-label.keyboard {
           font-family: Menlo, Courier, "Courier New";
           padding: 20px;
@@ -150,6 +154,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         wl-label.one-key {
           text-align: center;
           width: 24px;
+        }
+
+        wl-checkbox#hide-guide {
+          margin-right: 10px;
         }
 
         p code {
@@ -189,6 +197,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
     );
     this.notification = globalThis.lablupNotification;
+    const checkbox = this.shadowRoot.querySelector('#hide-guide');
+    checkbox.addEventListener('change', (event) => {
+      if (!event.target.checked) {
+        localStorage.setItem('backendaiconsole.terminalguide', 'true');
+      } else {
+        localStorage.removeItem('backendaiconsole.terminalguide');
+      }
+    });
   }
 
   async _viewStateChanged(active) {
@@ -445,7 +461,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
 
     if (appName === 'ttyd') {
-      this._openTerminalGuideDialog();
+      let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
+      if (isVisible) {
+        this._openTerminalGuideDialog();
+      }
     }
 
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
@@ -508,7 +527,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionName
    */
   async runTerminal(sessionName: string) {
-    this._openTerminalGuideDialog();
+    let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
+    if (isVisible) {
+      this._openTerminalGuideDialog();
+    }
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
       this.indicator = await globalThis.lablupIndicator.start();
       this._open_wsproxy(sessionName, 'ttyd')
@@ -594,35 +616,41 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminal-guide" fixed backdrop>
-      <span slot="title">${_t("webTerminalUsageGuide.CopyGuide")}</span>
-       <div slot="content">
-        <macro-carousel pagination navigation selected="0" auto-focus reduced-motion>
-          <article class="slide vertical layout center">
-            <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-1.png); border:auto;">
-              <wl-label class="keyboard">Ctrl</wl-label>
-              <wl-label class="keyboard invert">+</wl-label>
-              <wl-label class="keyboard one-key">B</wl-label>
-            </span>
-            <p>Press <code>Ctrl + B</code> key to enter tmux control mode.</p>
-          </article>
-          <article class="slide vertical layout center">
-            <span style="background-image:url(/resources/images/web-terminal-guide-2.png);"></span>
-            <p>Type <code>:set -g mouse off</code> and Press <code>Enter</code> Key.</p>
-          </article>
-          <article class="slide vertical layout center">
-            <span style="background-image:url(/resources/images/web-terminal-guide-3.png);"></span>
-            <p>Now you can copy text from the terminal.</p>
-          </article>
-          <article class="slide vertical layout center">
-            <span style="background-image:url(/resources/images/web-terminal-guide-4.png);">
-              <wl-label class="keyboard">Ctrl</wl-label>
-              <wl-label class="keyboard invert">+</wl-label>
-              <wl-label class="keyboard one-key">B</wl-label>
-            </span>
-            <p>To turn on mouse scroll again, Press <code>Ctrl + B</code> and Type <code>:set -g mouse on</code> and Press <code>Enter</code> key.</p>
-          </article>
-        </macro-carousel>
-       </div>
+        <span slot="title">${_t("webTerminalUsageGuide.CopyGuide")}</span>
+        <div slot="content">
+          <div class="vertical layout">
+            <macro-carousel pagination navigation selected="0" auto-focus reduced-motion>
+              <article class="slide vertical layout center">
+                <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-1.png); border:auto;">
+                  <wl-label class="keyboard">Ctrl</wl-label>
+                  <wl-label class="keyboard invert">+</wl-label>
+                  <wl-label class="keyboard one-key">B</wl-label>
+                </span>
+                <p>Press <code>Ctrl + B</code> key to enter tmux control mode.</p>
+              </article>
+              <article class="slide vertical layout center">
+                <span style="background-image:url(/resources/images/web-terminal-guide-2.png);"></span>
+                <p>Type <code>:set -g mouse off</code> and Press <code>Enter</code> Key.</p>
+              </article>
+              <article class="slide vertical layout center">
+                <span style="background-image:url(/resources/images/web-terminal-guide-3.png);"></span>
+                <p>Now you can copy text from the terminal.</p>
+              </article>
+              <article class="slide vertical layout center">
+                <span style="background-image:url(/resources/images/web-terminal-guide-4.png);">
+                  <wl-label class="keyboard">Ctrl</wl-label>
+                  <wl-label class="keyboard invert">+</wl-label>
+                  <wl-label class="keyboard one-key">B</wl-label>
+                </span>
+                <p>To turn on mouse scroll again, Press <code>Ctrl + B</code> and Type <code>:set -g mouse on</code> and Press <code>Enter</code> key.</p>
+              </article>
+            </macro-carousel>
+          </div>
+        </div>
+        <div slot="footer" class="horizontal start-justified flex layout" style="margin:0px auto 10px auto;">
+          <wl-checkbox id="hide-guide"></wl-checkbox>
+          <wl-label>Don't show it again.</wl-label>
+        </div>
       </backend-ai-dialog>
       `;
   }
