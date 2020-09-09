@@ -52,6 +52,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
   @property({type: String}) tensorboardPath = '';
+  @property({type: Boolean}) isPathConfigured = false;
 
   constructor() {
     super();
@@ -351,9 +352,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (appName === 'tensorboard') {
       this._openTensorboardDialog();
       let port = null;
-      this.indicator = await globalThis.lablupIndicator.start();
       // wait for button click event
-      document.addEventListener('tensorboard-path-completed', () => {
+      document.addEventListener('tensorboard-path-completed', async () => {
+        this.indicator = await globalThis.lablupIndicator.start();
+        if (this.isPathConfigured) {
+          await globalThis.backendaiclient.shutdown_service(sessionName, 'tensorboard');
+        }
+        this.isPathConfigured = false;
         this.indicator.set(100, 'Prepared.');
         // if tensorboard path is empty, --logdir will be '/home/work/logs'
         this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
@@ -419,6 +424,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       // wait for button click event
       document.addEventListener('tensorboard-path-completed', async () => {
         this.indicator = await globalThis.lablupIndicator.start();
+        if (this.isPathConfigured) {
+          await globalThis.backendaiclient.shutdown_service(sessionName, 'tensorboard');
+        }
+        this.isPathConfigured = false;
         this.indicator.set(100, 'Prepared.');
         // if tensorboard path is empty, --logdir will be '/home/work/logs'
         this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
@@ -550,6 +559,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
   _addTensorboardPath() {
     this.tensorboardPath = this.shadowRoot.querySelector('#tensorboard-path').value;
+    this.isPathConfigured = true;
     const event = new CustomEvent("tensorboard-path-completed", {});
     document.dispatchEvent(event);
     this._hideTensorboardDialog();
