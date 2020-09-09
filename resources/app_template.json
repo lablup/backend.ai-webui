@@ -58,10 +58,10 @@
         "src": "./resources/icons/vscode.svg"
       }
     ],
-    "nniboard": [
+    "nni": [
       {
         "name": "nniboard",
-        "title": "NNI Board",
+        "title": "NNI monitor",
         "redirect": "",
         "src": "./resources/icons/nni.png"
       }
