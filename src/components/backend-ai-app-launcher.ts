@@ -457,6 +457,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   /**
+   * Open a warning dialog.
+   */
+  _openNotificationDialog() {
+    let dialog = this.shadowRoot.querySelector('#notification-dialog');
+    dialog.show();
+  }
+  
+  /**
    * Open a SSH dialog.
    */
   _openSSHDialog() {
