@@ -196,13 +196,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
     );
+    // add WebTerminalGuide UI dynamically
+    this._createTerminalGuide();
+    // add DonotShowOption dynamically
+    this._createDonotShowOption();
     this.notification = globalThis.lablupNotification;
     const checkbox = this.shadowRoot.querySelector('#hide-guide');
     checkbox.addEventListener('change', (event) => {
       if (!event.target.checked) {
         localStorage.setItem('backendaiconsole.terminalguide', 'true');
       } else {
-        localStorage.removeItem('backendaiconsole.terminalguide');
+        localStorage.setItem('backendaiconsole.terminalguide', 'false');
       }
     });
   }
@@ -462,7 +466,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
     if (appName === 'ttyd') {
       let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
-      if (isVisible) {
+      if (!isVisible || isVisible === 'true') {
         this._openTerminalGuideDialog();
       }
     }
@@ -528,7 +532,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async runTerminal(sessionName: string) {
     let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
-    if (isVisible) {
+    if (!isVisible || isVisible === 'true') {
       this._openTerminalGuideDialog();
     }
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
@@ -570,6 +574,63 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   _openTerminalGuideDialog() {
     let dialog = this.shadowRoot.querySelector('#terminal-guide');
     dialog.show();
+  }
+
+  /**
+   * Dynamically add Do not show Option
+   */
+  _createDonotShowOption() {
+    let dialog = this.shadowRoot.querySelector('#terminal-guide');
+    const lastChild = dialog.children[dialog.children.length - 1];
+    const div: HTMLElement = document.createElement('div');
+    div.setAttribute('class', 'horizontal layout flex');
+
+    const checkbox = document.createElement('wl-checkbox');
+    checkbox.setAttribute("id", "hide-guide");
+    const checkboxMsg = document.createElement('wl-label');
+    checkboxMsg.innerHTML = `${_text("dialog.hide.DonotShowThisAgain")}`;
+
+    div.appendChild(checkbox);
+    div.appendChild(checkboxMsg);
+    lastChild.appendChild(div);
+  }
+
+  /**
+   * Dynamically add Web Terminal Guide Carousel
+   */
+  _createTerminalGuide() {
+    let dialog = this.shadowRoot.querySelector('#terminal-guide');
+    const content = dialog.children[1];
+    const div: HTMLElement = document.createElement('div');
+    div.setAttribute('class', 'vertical layout flex');
+    div.innerHTML = `
+      <macro-carousel pagination navigation selected="0" auto-focus reduced-motion>
+        <article class="slide vertical layout center">
+          <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-1.png); border:auto;">
+            <wl-label class="keyboard">Ctrl</wl-label>
+            <wl-label class="keyboard invert">+</wl-label>
+            <wl-label class="keyboard one-key">B</wl-label>
+          </span>
+          <p>${_text("webTerminalUsageGuide.CopyGuideOne")}</p>
+        </article>
+        <article class="slide vertical layout center">
+          <span style="background-image:url(/resources/images/web-terminal-guide-2.png);"></span>
+          <p>${_text("webTerminalUsageGuide.CopyGuideTwo")}</p>
+        </article>
+        <article class="slide vertical layout center">
+          <span style="background-image:url(/resources/images/web-terminal-guide-3.png);"></span>
+          <p>${_text("webTerminalUsageGuide.CopyGuideThree")}</p>
+        </article>
+        <article class="slide vertical layout center">
+          <span style="background-image:url(/resources/images/web-terminal-guide-4.png);">
+            <wl-label class="keyboard">Ctrl</wl-label>
+            <wl-label class="keyboard invert">+</wl-label>
+            <wl-label class="keyboard one-key">B</wl-label>
+          </span>
+          <p>${_text("webTerminalUsageGuide.CopyGuideFour")}</p>
+        </article>
+      </macro-carousel>`;
+      content.appendChild(div);
   }
 
   render() {
@@ -617,40 +678,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="terminal-guide" fixed backdrop>
         <span slot="title">${_t("webTerminalUsageGuide.CopyGuide")}</span>
-        <div slot="content">
-          <div class="vertical layout">
-            <macro-carousel pagination navigation selected="0" auto-focus reduced-motion>
-              <article class="slide vertical layout center">
-                <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-1.png); border:auto;">
-                  <wl-label class="keyboard">Ctrl</wl-label>
-                  <wl-label class="keyboard invert">+</wl-label>
-                  <wl-label class="keyboard one-key">B</wl-label>
-                </span>
-                <p>Press <code>Ctrl + B</code> key to enter tmux control mode.</p>
-              </article>
-              <article class="slide vertical layout center">
-                <span style="background-image:url(/resources/images/web-terminal-guide-2.png);"></span>
-                <p>Type <code>:set -g mouse off</code> and Press <code>Enter</code> Key.</p>
-              </article>
-              <article class="slide vertical layout center">
-                <span style="background-image:url(/resources/images/web-terminal-guide-3.png);"></span>
-                <p>Now you can copy text from the terminal.</p>
-              </article>
-              <article class="slide vertical layout center">
-                <span style="background-image:url(/resources/images/web-terminal-guide-4.png);">
-                  <wl-label class="keyboard">Ctrl</wl-label>
-                  <wl-label class="keyboard invert">+</wl-label>
-                  <wl-label class="keyboard one-key">B</wl-label>
-                </span>
-                <p>To turn on mouse scroll again, Press <code>Ctrl + B</code> and Type <code>:set -g mouse on</code> and Press <code>Enter</code> key.</p>
-              </article>
-            </macro-carousel>
-          </div>
-        </div>
-        <div slot="footer" class="horizontal start-justified flex layout" style="margin:0px auto 10px auto;">
-          <wl-checkbox id="hide-guide"></wl-checkbox>
-          <wl-label>Don't show it again.</wl-label>
-        </div>
+        <div slot="content"></div>
+        <div slot="footer"></div>
       </backend-ai-dialog>
       `;
   }
