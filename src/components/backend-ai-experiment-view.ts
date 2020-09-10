@@ -73,7 +73,6 @@ export default class BackendAIExperimentView extends BackendAIPage {
   public _status: any;
   public notification: any;
   public shadowRoot: any;
-  public updateComplete: any;
   public vgpu_metric: any;
   public $: any;
 
@@ -243,8 +242,8 @@ export default class BackendAIExperimentView extends BackendAIPage {
 
   /**
    * Dislplay tabs.
-   * 
-   * @param tab 
+   *
+   * @param tab
    */
   _showTab(tab) {
     var els = this.shadowRoot.querySelectorAll(".tab-content");
@@ -256,7 +255,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
 
   /**
    * Hide a wl dialog.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _hideDialog(e) {

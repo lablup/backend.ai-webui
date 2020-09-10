@@ -889,7 +889,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       sessions.push({'kernelName': kernelName, 'sessionName': sessionName, config});
     }
-
     const createSessionQueue = sessions.map(item => {
       return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
     });
@@ -907,14 +906,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (res.length === 1) {
         res[0].taskobj.then(res => {
           let appOptions;
-          if ('kernelId' in res) {
+          if ('kernelId' in res) { // API v4
             appOptions = {
               'session-name': res.kernelId,
               'access-key': ''
             };
-          } else {
+          } else { // API >= v5
             appOptions = {
-              'session-name': res.sessionId,
+              'session-uuid': res.sessionId,
+              'session-name': res.sessionName,
               'access-key': ''
             };
           }
@@ -929,12 +929,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             appOptions['filename'] = this.importFilename;
           }
           globalThis.appLauncher.showLauncher(appOptions);
+        }).catch((err) => {
+          // remove redundant error message
         });
       }
     }).catch((err) => {
-      this.metadata_updating = false;
+      // this.metadata_updating = false;
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.text = PainKiller.relieve(err.message);
         this.notification.detail = err.message;
         this.notification.show(true, err);
       } else if (err && err.title) {
@@ -967,7 +969,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, config) {
-    return globalThis.backendaiclient.createKernel(kernelName, sessionName, config, 10000);
+    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config);
+    task.catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.message);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
+      }
+    });
+    return task;
   }
 
   _hideSessionDialog() {

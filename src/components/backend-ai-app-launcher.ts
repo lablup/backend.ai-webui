@@ -286,12 +286,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param detail
    */
   _showAppLauncher(controls) {
-    const sessionName = controls['session-name'];
+    const sessionUuid = controls['session-uuid'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
     if ('runtime' in controls) {
       let param: Object = {};
-      param['session-name'] = sessionName;
+      param['session-uuid'] = sessionUuid;
       param['app-name'] = controls['runtime'];
       param['url-postfix'] = '';
       param['file-name'] = controls['filename'];
@@ -325,8 +325,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
     });
-    let dialog = this.shadowRoot.querySelector('#app-dialog');
-    dialog.setAttribute('session-name', sessionName);
+    const dialog = this.shadowRoot.querySelector('#app-dialog');
+    dialog.setAttribute('session-uuid', sessionUuid);
     dialog.setAttribute('access-key', accessKey);
     //dialog.positionTarget = e.target;
     this.shadowRoot.querySelector('#app-dialog').show();
@@ -343,14 +343,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   /**
    * Open a WsProxy with session and app and port number.
    *
-   * @param {string} sessionName
+   * @param {string} sessionUuid
    * @param {string} app
    * @param {number} port
    */
-  async _open_wsproxy(sessionName, app = 'jupyter', port: number | null = null) {
+  async _open_wsproxy(sessionUuid, app = 'jupyter', port: number | null = null) {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
+    const openToPublic = this.shadowRoot.querySelector('#chk-open-to-public').checked;
+    this.shadowRoot.querySelector('#chk-open-to-public').checked = false;
     let param = {
       endpoint: globalThis.backendaiclient._config.endpoint
     };
@@ -380,7 +382,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     };
     this.indicator.set(20, 'Setting up proxy for the app...');
     try {
-      let response = await this.sendRequest(rqst);
+      const response = await this.sendRequest(rqst);
       if (response === undefined) {
         this.indicator.end();
         this.notification.text = 'Proxy configurator is not responding.';
@@ -388,12 +390,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         return Promise.resolve(false);
       }
       let token = response.token;
-      let uri = this._getProxyURL() + `proxy/${token}/${sessionName}/add?app=${app}`;
+      let uri = this._getProxyURL() + `proxy/${token}/${sessionUuid}/add?app=${app}`;
       if (port !== null && port > 1024 && port < 65535) {
         uri += `&port=${port}`;
       }
+      if (openToPublic) {
+        uri += '&open_to_public=true';
+      }
       this.indicator.set(50, 'Adding kernel to socket queue...');
-      let rqst_proxy = {
+      const rqst_proxy = {
         method: 'GET',
         app: app,
         uri: uri
@@ -410,7 +415,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   async _runAppWithParameters(param) {
-    let sessionName = param['session-name'];
+    let sessionUuid = param['session-uuid'];
     let urlPostfix = param['url-postfix'];
     let appName = param['app-name'];
     if (appName === undefined || appName === null) {
@@ -431,14 +436,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      this._open_wsproxy(sessionName, appName, port)
+      this._open_wsproxy(sessionUuid, appName, port)
         .then((response) => {
           if (response.url) {
             this.indicator.set(100, 'Prepared.');
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
               console.log(appName + " proxy loaded: ");
-              console.log(sessionName);
+              console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -452,10 +457,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async _runThisApp(e) {
     const controller = e.target;
+    const appName = controller['app-name'];
     let controls = controller.closest('#app-dialog');
-    let sessionName = controls.getAttribute('session-name');
+    let sessionUuid = controls.getAttribute('session-uuid');
     let urlPostfix = controller['url-postfix'];
-    let appName = controller['app-name'];
     if (appName === undefined || appName === null) {
       return;
     }
@@ -474,19 +479,24 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
-      let port = null;
+      let port;
       if (globalThis.isElectron && appName === 'sshd') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
         if (port === '0' || port === 0) { // setting store does not accept null.
           port = null;
         }
       }
-      this._open_wsproxy(sessionName, appName, port)
+      const usePreferredPort = this.shadowRoot.querySelector('#chk-preferred-port').checked;
+      const userPort = parseInt(this.shadowRoot.querySelector('#app-port').value);
+      if (usePreferredPort && userPort) {
+        port = userPort;
+      }
+      this._open_wsproxy(sessionUuid, appName, port)
         .then((response) => {
           if (appName === 'sshd') {
             this.indicator.set(100, 'Prepared.');
             this.sshPort = response.port;
-            this._readSSHKey(sessionName);
+            this._readSSHKey(sessionUuid);
             this._openSSHDialog();
             setTimeout(() => {
               this.indicator.end();
@@ -500,7 +510,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
               console.log(appName + " proxy loaded: ");
-              console.log(sessionName);
+              console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -510,12 +520,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   /**
    * Read a SSH key.
    *
-   * @param {string} sessionName
+   * @param {string} sessionUuid
    */
-  async _readSSHKey(sessionName) {
+  async _readSSHKey(sessionUuid) {
     const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
     const file = '/home/work/id_container';
-    const blob = await globalThis.backendaiclient.download_single(sessionName, file);
+    const blob = await globalThis.backendaiclient.download_single(sessionUuid, file);
     // TODO: This blob has additional leading letters in front of key texts.
     //       Manually trim those letters.
     const rawText = await blob.text();
@@ -528,16 +538,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   /**
    * Run terminal with session name.
    *
-   * @param {string} sessionName
-   */
-  async runTerminal(sessionName: string) {
+   * @param {string} sessionUuid
+   */    
+  async runTerminal(sessionUuid: string) {
     let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
     if (!isVisible || isVisible === 'true') {
       this._openTerminalGuideDialog();
     }
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
       this.indicator = await globalThis.lablupIndicator.start();
-      this._open_wsproxy(sessionName, 'ttyd')
+      this._open_wsproxy(sessionUuid, 'ttyd')
         .then((response) => {
           if (response.url) {
             this.indicator.set(100, 'Prepared.');
@@ -545,7 +555,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               globalThis.open(response.url, '_blank');
               this.indicator.end();
               console.log("Terminal proxy loaded: ");
-              console.log(sessionName);
+              console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -638,30 +648,44 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     return html`
       <backend-ai-dialog id="app-dialog" fixed backdrop>
         <span slot="title">App</span>
-        <div slot="content" style="padding:15px;" class="horizontal layout wrap center start-justified">
-        ${this.appSupportList.map(item => html`
-          <div class="vertical layout center center-justified app-icon">
-            <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
-                               .url-postfix="${item.redirect}"
-                               @click="${(e) => this._runThisApp(e)}">
-              <img src="${item.src}" />
-            </mwc-icon-button>
-            <span class="label">${item.title}</span>
+        <div slot="content">
+          <div style="padding:15px;" class="horizontal layout wrap center start-justified">
+            ${this.appSupportList.map(item => html`
+              <div class="vertical layout center center-justified app-icon">
+                <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
+                                 .url-postfix="${item.redirect}"
+                                 @click="${(e) => this._runThisApp(e)}">
+                  <img src="${item.src}" />
+                </mwc-icon-button>
+                <span class="label">${item.title}</span>
+              </div>
+            `)}
           </div>
-        `)}
-         </div>
+          ${globalThis.isElectron ? ``: html`
+            <div class="horizontal layout center">
+              <wl-checkbox id="chk-open-to-public" style="margin-right:0.5em"></wl-checkbox>
+              ${_t("session.OpenToPublic")}
+            </div>
+          `}
+          <div class="horizontal layout center">
+            <wl-checkbox id="chk-preferred-port" style="margin-right:0.5em"></wl-checkbox>
+            ${_t("session.TryPreferredPort")}
+            <wl-textfield id="app-port" type="number" no-label-float value="10250"
+                min="1025" max="65534" style="margin-left:1em; width:70px"></wl-textfield>
+          </div>
+        </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="ssh-dialog" fixed backdrop>
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content" style="padding:15px;">
-          <div style="padding:15px 0;" >Use your favorite SSH/SFTP application to connect.</div>
+          <div style="padding:15px 0;" >${_t("session.SFTPDescription")}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t("session.ConnectionInformation")}</h4>
             <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a></div>
             <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
             <div><span>Port:</span> ${this.sshPort}</div>
             <a id="sshkey-download-link" style="margin-top:15px;" href="">
-              <mwc-button class="fg apps green">Download SSH key file (id_container)</mwc-button>
+              <mwc-button class="fg apps green">${_t("DownloadSSHKey")}</mwc-button>
             </a>
           </section>
         </div>
@@ -683,7 +707,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       </backend-ai-dialog>
       `;
   }
-
 }
 
 declare global {

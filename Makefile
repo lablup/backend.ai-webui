@@ -30,6 +30,7 @@ compile_wsproxy:
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
 all: dep mac win linux
 dep:
+	./src/plastics/weightless/patch-input-behavior.sh
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
 		make compile_wsproxy; \

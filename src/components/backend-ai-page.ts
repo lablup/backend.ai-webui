@@ -23,7 +23,6 @@ registerTranslateConfig({
 
 export class BackendAIPage extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  public updateComplete: any;
   public notification: any; // Global notification
   public tasker: any; // Global Background tasker
   @property({type: Boolean}) active = false;
