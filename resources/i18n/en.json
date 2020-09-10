@@ -459,10 +459,10 @@
     },
     "webTerminalUsageGuide": {
         "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
-        "CopyGuideOne": "Press Ctrl-Bkey to enter tmux control mode.",
-        "CopyGuideTwo": "Type :set -g mouse off and Press EnterKey.",
+        "CopyGuideOne": "Press <code>Ctrl + B</code> key to enter tmux control mode.",
+        "CopyGuideTwo": "Type <code>:set -g mouse off</code> and Press <code>Enter</code> Key.",
         "CopyGuideThree": "Now you can copy text from the terminal.",
-        "CopyGuideFour": "To turn on mouse scroll again, Press Ctrl-B, Type :set -g mouse on and Press Enterkey."
+        "CopyGuideFour": "To turn on mouse scroll again, Press <code>Ctrl + B</code> and Type <code>:set -g mouse on</code> and Press <code>Enter</code> key."
     },
     "logs": {
         "LogMessages": "Log Messages",

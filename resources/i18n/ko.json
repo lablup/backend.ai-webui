@@ -457,10 +457,10 @@
     },
     "webTerminalUsageGuide": {
         "CopyGuide":"웹 터미널 고급 사용법: 터미널 내용 복사하기",
-        "CopyGuideOne":"Ctrl-B를 눌러 tmux의 제어 모드로 진입",
-        "CopyGuideTwo":":set -g mouse off를 입력하고 엔터키 입력",
-        "CopyGuideThree":"이제 터미널의 텍스트를 복사할 수 있습니다.",
-        "CopyGuideFour":"원래 상태로 되돌아가려면 Ctrl-B 입력 후 :set -g mouse on 입력하고 엔터키 입력"
+        "CopyGuideOne":"<code>Ctrl + B</code>를 입력하여 tmux의 제어 모드로 진입",
+        "CopyGuideTwo":"<code>:set -g mouse off</code>를 입력하고 엔터키 입력",
+        "CopyGuideThree":"이제 마우스로 드래그하여 터미널의 텍스트를 복사할 수 있습니다.",
+        "CopyGuideFour":"원래 상태로 되돌아가려면 <code>Ctrl + B</code> 입력 후 <code>:set -g mouse on</code> 입력하고 엔터키 입력"
     },
     "logs": {
         "LogMessages": "로그 메세지",
