@@ -402,7 +402,7 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   /**
-   * Login according to connection_mode and api_endpoint.
+   * Automatic login according to connection_mode and api_endpoint.
    * */
   login() {
     if (this.api_endpoint === '') {
@@ -410,8 +410,6 @@ export default class BackendAILogin extends BackendAIPage {
       if (api_endpoint != null) {
         this.api_endpoint = api_endpoint.replace(/^\"+|\"+$/g, '');
       } else {
-        this.notification.text = 'API Endpoint is empty. Please specify Backend.AI API endpoint to signup.';
-        this.notification.show();
         this.open();
         return;
       }
@@ -425,6 +423,28 @@ export default class BackendAILogin extends BackendAIPage {
       this._connectUsingAPI();
     } else {
       this.open();
+    }
+  }
+
+  /**
+   * User-clicked login according to connection_mode and api_endpoint.
+   * */
+  _login() {
+    this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
+    this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
+    if (this.api_endpoint === '') {
+      this.notification.text = _text('login.APIEndpointEmpty');
+      this.notification.show();
+      return;
+    }
+    if (this.connection_mode === 'SESSION') {
+      this.user_id = (this.shadowRoot.querySelector('#id_user_id') as any).value;
+      this.password = (this.shadowRoot.querySelector('#id_password') as any).value;
+      this._connectUsingSession();
+    } else {
+      this.api_key = (this.shadowRoot.querySelector('#id_api_key') as any).value;
+      this.secret_key = (this.shadowRoot.querySelector('#id_secret_key') as any).value;
+      this._connectUsingAPI();
     }
   }
 
@@ -523,25 +543,6 @@ export default class BackendAILogin extends BackendAIPage {
         this.notification.show();
       }
     });
-  }
-
-  _login() {
-    this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
-    this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
-    if (this.api_endpoint === '') {
-      this.notification.text = _text('login.APIEndpointEmpty');
-      this.notification.show();
-      return;
-    }
-    if (this.connection_mode === 'SESSION') {
-      this.user_id = (this.shadowRoot.querySelector('#id_user_id') as any).value;
-      this.password = (this.shadowRoot.querySelector('#id_password') as any).value;
-      this._connectUsingSession();
-    } else {
-      this.api_key = (this.shadowRoot.querySelector('#id_api_key') as any).value;
-      this.secret_key = (this.shadowRoot.querySelector('#id_secret_key') as any).value;
-      this._connectUsingAPI();
-    }
   }
 
   /**

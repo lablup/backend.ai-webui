@@ -536,15 +536,16 @@ class Client {
       if (result.authenticated === true) {
         this._config._accessKey = result.data.access_key;
         this._config._session_id = result.session_id;
-        //console.log("login succeed");
+        console.log("login succeed");
+        return Promise.resolve(result.authenticated);
       } else {
-        //console.log("login failed");
+        console.log("login failed");
+        return Promise.resolve(false);
       }
     } catch (err) {
       console.log(err);
       return Promise.resolve(false);
     }
-    return result.authenticated;
   }
 
   /**
