@@ -409,6 +409,11 @@ export default class BackendAILogin extends BackendAIPage {
       let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
       if (api_endpoint != null) {
         this.api_endpoint = api_endpoint.replace(/^\"+|\"+$/g, '');
+      } else {
+        this.notification.text = 'API Endpoint is empty. Please specify Backend.AI API endpoint to signup.';
+        this.notification.show();
+        this.open();
+        return;
       }
     }
     this.api_endpoint = this.api_endpoint.trim();
