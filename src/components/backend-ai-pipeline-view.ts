@@ -1080,7 +1080,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
       domain: window.backendaiclient._config.domainName,
       group_name: window.backendaiclient.current_group,
       type: 'batch',
-      // enqueueOnly: true,
+      // startsAt: '1s',
+      enqueueOnly: true,
       startupCommand: `
         cd /home/work/${this.pipelineFolderName}/;
         python /home/work/${this.pipelineFolderName}/${component.path}/main.py

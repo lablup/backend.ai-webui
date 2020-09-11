@@ -602,6 +602,9 @@ class Client {
             if (resources['type']) {
                 params['type'] = resources['type'];
             }
+            if (resources['startsAt']) {
+                params['starts_at'] = resources['startsAt'];
+            }
             if (resources['enqueueOnly']) {
                 params['enqueueOnly'] = resources['enqueueOnly'];
             }
