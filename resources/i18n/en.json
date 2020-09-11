@@ -375,6 +375,9 @@
         "ErrorOccurred": "Error Occurred",
         "error": {
             "Error": "Error"
+        },
+        "hide": {
+            "DonotShowThisAgain": "Don't show this again."
         }
     },
     "environment": {
@@ -414,7 +417,7 @@
         "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
         "Created": "Resource preset created",
         "Updated": "Resource preset updated",
-        "MinimumShmemUnit" : "The minimum unit for shared memory is 0.01 GB."
+        "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB."
     },
     "usersettings": {
         "General": "General",
@@ -457,6 +460,14 @@
         "PrivateKey": "Private Key",
         "InvalidPortNumber": "Port number should be positive number between 1025~65534",
         "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard."
+    },
+    "webTerminalUsageGuide": {
+        "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
+        "CopyGuideOne": "Press <code>Ctrl + B</code> key to enter tmux control mode.",
+        "CopyGuideTwo": "Type <code>:set -g mouse off</code> and Press <code>Enter</code> Key.",
+        "CopyGuideThree": "Now you can copy text from the terminal.",
+        "CopyGuideFour": "To turn on mouse scroll again, Press <code>Ctrl + B</code> and Type <code>:set -g mouse on</code> and Press <code>Enter</code> key.",
+        "LearnMore":"Learn More &gt;"
     },
     "logs": {
         "LogMessages": "Log Messages",

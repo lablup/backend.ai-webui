@@ -228,7 +228,7 @@ export default class LablupNotification extends LitElement {
     // }
     // this.notificationstore.push(log);
     if (Object.keys(log).length !== 0) {
-      this._saveToLocalStoarge("backendaiconsole.logs", log);
+      this._saveToLocalStorage("backendaiconsole.logs", log);
     }
 
     if (this.detail !== '') {
@@ -304,7 +304,7 @@ export default class LablupNotification extends LitElement {
     window.open(url, '_blank');
   }
 
-  _saveToLocalStoarge(key, logMessages) {
+  _saveToLocalStorage(key, logMessages) {
     const previous_log = JSON.parse(localStorage.getItem(key) || '{}');
     let current_log = Array();
 
