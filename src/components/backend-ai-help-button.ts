@@ -33,7 +33,8 @@ export default class BackendAiHelpButton extends BackendAIPage {
     'credential': 'admin_user_keypair_management/admin_user_keypair_management.html',
     'environment': 'admin_user_keypair_management/admin_user_keypair_management.html#manage-images',
     'agent': 'admin_user_keypair_management/admin_user_keypair_management.html#query-agent-nodes',
-    'settings': 'admin_user_keypair_management/admin_user_keypair_management.html#system-settings'
+    'settings': 'admin_user_keypair_management/admin_user_keypair_management.html#system-settings',
+    'usersettings':'usersettings/usersettings.html'
   };
 
   constructor() {
