@@ -97,7 +97,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         macro-carousel {
           max-width: 700px;
           height: 450px;
-          padding: 0;
+          padding: 0 30px;
           margin: 0 10px;
         }
       
@@ -613,8 +613,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const content = dialog.children[1];
     const div: HTMLElement = document.createElement('div');
     div.setAttribute('class', 'vertical layout flex');
+    let lang = globalThis.backendaioptions.get('current_language');
+    // if current_language is OS default, then link to English docs
+    if (!["ko", 'en'].includes(lang)) {
+      lang = 'en';
+    }
     div.innerHTML = `
-      <macro-carousel pagination navigation selected="0" auto-focus reduced-motion>
+      <macro-carousel pagination navigation selected="0" auto-focus reduced-motion disable-drag>
         <article class="slide vertical layout center">
           <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-1.png); border:auto;">
             <wl-label class="keyboard">Ctrl</wl-label>
@@ -637,7 +642,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <wl-label class="keyboard invert">+</wl-label>
             <wl-label class="keyboard one-key">B</wl-label>
           </span>
-          <p>${_text("webTerminalUsageGuide.CopyGuideFour")}</p>
+          <div class="flex layout center-justified vertic center">
+            <p>${_text("webTerminalUsageGuide.CopyGuideFour")}</p>
+            <a href="https://console.docs.backend.ai/${lang}/latest/session_use/session_use.html#advanced-web-terminal-usage"
+               target="_blank" style="width:100%;text-align:right;">
+              <p>${_text("webTerminalUsageGuide.LearnMore")}</p>
+            </a>
+          </div>
         </article>
       </macro-carousel>`;
       content.appendChild(div);
