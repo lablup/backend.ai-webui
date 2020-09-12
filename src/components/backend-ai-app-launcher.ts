@@ -460,7 +460,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * Open a warning dialog.
    */
   _openNotificationDialog() {
-    let dialog = this.shadowRoot.querySelector('#notification-dialog');
+    let dialog = this.shadowRoot.querySelector('#warning-dialog');
     dialog.show();
   }
   
