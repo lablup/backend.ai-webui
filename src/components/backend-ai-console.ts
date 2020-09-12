@@ -906,6 +906,36 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     // language=HTML
     return html`
       <div id="loading-curtain" class="loading-background"></div>
+      <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=55>
+        ${this.domain !== 'default' && this.domain !== '' ? html`
+        <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+            ${this.domain}
+        </mwc-list-item>
+        ` : html``}
+        <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+            ${this.user_id}
+        </mwc-list-item>
+        <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
+            <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
+            ${_t("console.menu.AboutBackendAI")}
+        </mwc-list-item>
+        <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
+            <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
+            ${_t("console.menu.ChangePassword")}
+        </mwc-list-item>
+        <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
+            <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
+            ${_t("console.menu.Preferences")}
+        </mwc-list-item>
+        <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
+            <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
+            ${_t("console.menu.LogsErrors")}
+        </mwc-list-item>
+        <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
+            <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
+            ${_t("console.menu.LogOut")}
+        </mwc-list-item>
+      </mwc-menu>
       <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="position:fixed;visibility:hidden;">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
           <div id="portrait-bar" class="draggable">
@@ -1036,36 +1066,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                                  icon="more_vert"
                                  @click="${() => this._toggleDropdown()}">
                 </mwc-icon-button>
-                <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=55>
-                  ${this.domain !== 'default' && this.domain !== '' ? html`
-                  <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                      ${this.domain}
-                  </mwc-list-item>
-                  ` : html``}
-                  <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                      ${this.user_id}
-                  </mwc-list-item>
-                  <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
-                      <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
-                      ${_t("console.menu.AboutBackendAI")}
-                  </mwc-list-item>
-                  <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
-                      <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
-                      ${_t("console.menu.ChangePassword")}
-                  </mwc-list-item>
-                  <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
-                      <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
-                      ${_t("console.menu.Preferences")}
-                  </mwc-list-item>
-                  <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
-                      <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
-                      ${_t("console.menu.LogsErrors")}
-                  </mwc-list-item>
-                  <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
-                      <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
-                      ${_t("console.menu.LogOut")}
-                  </mwc-list-item>
-                </mwc-menu>
               </mwc-top-app-bar-fixed>
 
               <div class="content">
