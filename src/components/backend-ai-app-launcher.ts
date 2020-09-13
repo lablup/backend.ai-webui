@@ -537,6 +537,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </section>
         </div>
       </backend-ai-dialog>
+      <backend-ai-dialog id="warning-dialog" fixed backdrop>
+        <span slot="title">${_t("session.WarningDialog")}</span>
+        <div slot="content" style="padding:15px;">
+          <div style="padding:15px 0;">${_t("session.WarningWithoutApp")}</div>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 
