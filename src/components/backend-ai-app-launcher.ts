@@ -51,7 +51,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
-  @property({type: Array}) appLaunchBeforeTunneling = ['mlflow-ui', 'nniboard'];
+  @property({type: Array}) appLaunchBeforeTunneling = ['nniboard'];
   @property({type: Object}) appController = Object();
 
   constructor() {
