@@ -1517,7 +1517,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (this._APIMajorVersion < 6) {
         url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
       } else {
-        url = `${res.url}?token=${res.token}`;
+        url = `${res.url}?token=${res.token}&archive=${archive}`;
       }
       if (globalThis.iOSSafari) {
         this.downloadURL = url;
