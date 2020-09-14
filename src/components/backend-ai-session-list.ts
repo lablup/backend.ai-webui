@@ -1122,7 +1122,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <wl-button fab flat inverted class="fg controls-running"
                                @click="${(e) => this._runTerminal(e)}"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
           ` : html``}
-          ${(this._isRunning && !this._isPreparing(rowData.item.status)) && this._isError(rowData.item.status) ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._isError(rowData.item.status) ? html`
             <wl-button fab flat inverted class="fg red controls-running"
                                @click="${(e) => this._openTerminateSessionDialog(e)}"><wl-icon>power_settings_new</wl-icon></wl-button>
           ` : html``}
