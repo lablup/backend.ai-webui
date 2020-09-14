@@ -52,6 +52,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
   @property({type: Array}) appLaunchBeforeTunneling = ['mlflow-ui', 'nniboard'];
+  @property({type: Object}) appController = Object();
 
   constructor() {
     super();
@@ -375,22 +376,40 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const controller = e.target;
     const appName = controller['app-name'];
     if (this.appLaunchBeforeTunneling.includes(appName)) {
+      const controller = e.target;
+      this.appController['app-name'] = controller['app-name'];
+      let controls = controller.closest('#app-dialog');
+      this.appController['session-uuid'] = controls.getAttribute('session-uuid');
+      this.appController['url-postfix'] = controller['url-postfix'];
       this._openAppLaunchConfirmationDialog(e);
     } else {
       return this._runThisApp(e);
     }
   }
+
   /**
-   * Run backend.ai app.
+   * Run backend.ai app from the event
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   async _runThisApp(e) {
     const controller = e.target;
-    const appName = controller['app-name'];
+    this.appController['app-name'] = controller['app-name'];
     let controls = controller.closest('#app-dialog');
-    let sessionUuid = controls.getAttribute('session-uuid');
-    let urlPostfix = controller['url-postfix'];
+    this.appController['session-uuid'] = controls.getAttribute('session-uuid');
+    this.appController['url-postfix'] = controller['url-postfix'];
+    return this._runApp(this.appController);
+  }
+
+  /**
+   * Run backend.ai app with config
+   *
+   * @param {Object} config - Configuration to run app. It should contain `app-name`, 'session-uuid` and `url-postfix`.
+   */
+  async _runApp(config) {
+    let appName = config['app-name'];
+    let sessionUuid = config['session-uuid'];
+    let urlPostfix = config['url-postfix'];
     if (appName === undefined || appName === null) {
       return;
     }
@@ -482,10 +501,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   /**
-   * Open a warning dialog.
+   * Open a confirmation dialog.
    */
   _openAppLaunchConfirmationDialog(e) {
-    //const controller = e.target;
     let dialog = this.shadowRoot.querySelector('#app-launch-confirmation-dialog');
     dialog.show();
   }
@@ -571,7 +589,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         </div>
         <div slot="footer" style="padding-top:0;margin:0 5px;">
           <wl-button class="app-launch-confirmation-button" type="button" id="app-launch-confirmation-button"
-                                       outlined @click="${(e) => this._runThisApp(e)}">
+                                       outlined @click="${() => this._runApp(this.appController)}">
                                       <wl-icon>rowing</wl-icon>
             <span>${_t('session.applauncher.ConfirmAndRun')}</span>
           </wl-button>
