@@ -1417,7 +1417,13 @@ class VFolder {
       file,
       archive
     };
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
+    let rqstUrl;
+    if (this.client._apiVersionMajor < 6) {
+      rqstUrl = `${this.urlPrefix}/${name}/request_download`;
+    } else {
+      rqstUrl = `${this.urlPrefix}/${name}/request-download`;
+    }
+    const rqst = this.client.newSignedRequest('POST', rqstUrl, body);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1441,9 +1447,7 @@ class VFolder {
    * @param {string} token - Temporary token to download specific file.
    */
   get_download_url_with_token(token: string = '') {
-    let params = {
-      'token': token
-    };
+    const params = {token};
     let q = querystring.stringify(params);
     if (this.client._config.connectionMode === 'SESSION') {
       return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;

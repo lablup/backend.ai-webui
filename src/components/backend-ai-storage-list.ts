@@ -62,6 +62,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-storage-list")
 export default class BackendAiStorageList extends BackendAIPage {
+  @property({type: Number}) _APIMajorVersion = 5;
   @property({type: String}) storageType = 'general';
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
@@ -1047,11 +1048,13 @@ export default class BackendAiStorageList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
+        this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._refreshFolderList();
       }, true);
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
+      this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._refreshFolderList();
     }
   }
@@ -1510,7 +1513,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     let job = globalThis.backendaiclient.vfolder.request_download_token(path, this.explorer.id, archive);
     job.then(res => {
       const token = res.token;
-      const url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token, archive);
+      let url;
+      if (this._APIMajorVersion < 6) {
+        url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
+      } else {
+        url = `${res.url}?token=${res.token}`;
+      }
       if (globalThis.iOSSafari) {
         this.downloadURL = url;
         this.downloadFileDialog.show();
