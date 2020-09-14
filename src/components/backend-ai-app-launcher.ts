@@ -53,6 +53,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
+  @property({type: Array}) appLaunchBeforeTunneling = ['nniboard'];
+  @property({type: Object}) appController = Object();
 
   constructor() {
     super();
@@ -93,6 +95,20 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           height: 25px;
           font-size: 13px;
         }
+        #app-launch-confirmation-dialog {
+          --component-width: 400px;
+          --component-font-size: 14px;
+        }
+        wl-button.app-launch-confirmation-button {
+          width: 335px;
+          --button-bg: var(--paper-red-50);
+          --button-bg-active: var(--paper-red-300);
+          --button-bg-hover: var(--paper-red-300);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-color: var(--paper-red-600);
+          --button-color-active: red;
+          --button-color-hover: red;
+        }
 
         macro-carousel {
           max-width: 700px;
@@ -100,7 +116,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           padding: 0 30px;
           margin: 0 10px;
         }
-      
+
         .slide {
           display: flex;
           align-items: center;
@@ -121,7 +137,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         .slide > p {
           font-size: 14px;
         }
-      
+
         macro-carousel-pagination-indicator {
           /* Change the dots color */
           --macro-carousel-pagination-color: var(--paper-grey-400);
@@ -450,17 +466,44 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
+  async _runThisAppWithConfirmationIfNeeded(e) {
+    const controller = e.target;
+    const appName = controller['app-name'];
+    if (this.appLaunchBeforeTunneling.includes(appName)) {
+      const controller = e.target;
+      this.appController['app-name'] = controller['app-name'];
+      let controls = controller.closest('#app-dialog');
+      this.appController['session-uuid'] = controls.getAttribute('session-uuid');
+      this.appController['url-postfix'] = controller['url-postfix'];
+      this._openAppLaunchConfirmationDialog(e);
+    } else {
+      return this._runThisApp(e);
+    }
+  }
+
   /**
-   * Run backend.ai app.
+   * Run backend.ai app from the event
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   async _runThisApp(e) {
     const controller = e.target;
-    const appName = controller['app-name'];
+    this.appController['app-name'] = controller['app-name'];
     let controls = controller.closest('#app-dialog');
-    let sessionUuid = controls.getAttribute('session-uuid');
-    let urlPostfix = controller['url-postfix'];
+    this.appController['session-uuid'] = controls.getAttribute('session-uuid');
+    this.appController['url-postfix'] = controller['url-postfix'];
+    return this._runApp(this.appController);
+  }
+
+  /**
+   * Run backend.ai app with config
+   *
+   * @param {Object} config - Configuration to run app. It should contain `app-name`, 'session-uuid` and `url-postfix`.
+   */
+  async _runApp(config) {
+    let appName = config['app-name'];
+    let sessionUuid = config['session-uuid'];
+    let urlPostfix = config['url-postfix'];
     if (appName === undefined || appName === null) {
       return;
     }
@@ -539,7 +582,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * Run terminal with session name.
    *
    * @param {string} sessionUuid
-   */    
+   */
   async runTerminal(sessionUuid: string) {
     let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
     if (!isVisible || isVisible === 'true') {
@@ -560,6 +603,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           }
         });
     }
+  }
+
+  /**
+   * Open a confirmation dialog.
+   */
+  _openAppLaunchConfirmationDialog(e) {
+    let dialog = this.shadowRoot.querySelector('#app-launch-confirmation-dialog');
+    dialog.show();
   }
 
   /**
@@ -665,7 +716,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               <div class="vertical layout center center-justified app-icon">
                 <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
                                  .url-postfix="${item.redirect}"
-                                 @click="${(e) => this._runThisApp(e)}">
+                                 @click="${(e) => this._runThisAppWithConfirmationIfNeeded(e)}">
                   <img src="${item.src}" />
                 </mwc-icon-button>
                 <span class="label">${item.title}</span>
@@ -709,6 +760,20 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <h4>${_t("session.ConnectionInformation")}</h4>
             <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a></div>
           </section>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="app-launch-confirmation-dialog" warning fixed backdrop>
+        <span slot="title">${_t('session.applauncher.AppMustBeRun')}</span>
+        <div slot="content" class="vertical layout">
+          <p>${_t('session.applauncher.AppMustBeRunDialog')}</p>
+          <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+        </div>
+        <div slot="footer" style="padding-top:0;margin:0 5px;">
+          <wl-button class="app-launch-confirmation-button" type="button" id="app-launch-confirmation-button"
+                                       outlined @click="${() => this._runApp(this.appController)}">
+                                      <wl-icon>rowing</wl-icon>
+            <span>${_t('session.applauncher.ConfirmAndRun')}</span>
+          </wl-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminal-guide" fixed backdrop>

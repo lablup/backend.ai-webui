@@ -166,7 +166,12 @@
     "OnlyRecent100SessionExport": "최근 100개의 세션 실행 기록만 내보낼 수 있습니다.",
     "ExportCSVFile": "CSV로 내보내기",
     "ResourceGroup": "자원 그룹",
-    "NoLogs": "로그가 없습니다."
+    "NoLogs": "로그가 없습니다.",
+    "applauncher": {
+      "AppMustBeRun": "이미 앱이 실행중일 때만 시작하세요",
+      "AppMustBeRunDialog": "이 앱은 터미널을 통해 미리 실행되고 있는 경우에만 접근 및 사용할 수 있습니다. 그렇지 않은 경우, 앱이 실행중이 아닐때 발생하는 오류 페이지에 접속될 것입니다.",
+      "ConfirmAndRun": "확인하였으며 시작하겠습니다"
+    }
   },
   "button": {
     "Cancel": "취소",

@@ -19,7 +19,7 @@
     "copyresource": "cp -Rp resources build/rollup && cp -Rp manifest build/rollup",
     "copyconfig": "cp config.toml build/rollup && cp version.json build/rollup && cp manifest.json build/rollup",
     "copyindex": "cp index.html build/rollup",
-	  "patchLib": "cd ./src/plastics/weightless && bash patch-input-behavior.sh",
+    "patchLib": "cd ./src/plastics/weightless && bash patch-input-behavior.sh",
     "update": "./node_modules/typescript/bin/tsc"
   },
   "dependencies": {

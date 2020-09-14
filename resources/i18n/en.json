@@ -13,6 +13,7 @@
       "Configurations": "Configurations",
       "Maintenance": "Maintenance",
       "Information": "Information",
+      "About": "About",
       "AboutBackendAI": "About Backend.AI",
       "ChangePassword": "Change Password",
       "Preferences": "Preferences",
@@ -167,7 +168,12 @@
     "OnlyRecent100SessionExport": "Only recent 100 session logs will be exported.",
     "ExportCSVFile": "Export CSV File",
     "ResourceGroup": "Resource Group",
-    "NoLogs": "No logs."
+    "NoLogs": "No logs.",
+    "applauncher": {
+      "AppMustBeRun": "Start only when the app is already running",
+      "AppMustBeRunDialog": "This app can only be accessed and used if it is already running through the terminal. If not, you will be directed to an error page that occurs when the app is not running.",
+      "ConfirmAndRun": "I checked and I'll start"
+    }
   },
   "button": {
     "Cancel": "Cancel",
