@@ -40,7 +40,8 @@
       "UserName": "User Name",
       "Menu": "Menu",
       "Run": "Run",
-      "Import&Run": "Import & Run"
+      "Import&Run": "Import & Run",
+      "AboutBackendAI": "About Backend.AI"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
