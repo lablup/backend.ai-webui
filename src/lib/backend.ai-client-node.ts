@@ -675,7 +675,7 @@ class Client {
         config['environ'] = resources['env'];
       }
       if (resources['clustersize']) {
-        config['clusterSize'] = resources['clustersize'];
+        config['cluster_size'] = resources['cluster_size'];
       }
       if (resources['group_name']) {
         params['group_name'] = resources['group_name'];

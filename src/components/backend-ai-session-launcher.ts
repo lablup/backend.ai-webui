@@ -812,7 +812,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     config['domain'] = globalThis.backendaiclient._config.domainName;
     config['scaling_group'] = this.scaling_group;
     config['maxWaitSeconds'] = 10;
-    //config['clustersize'] = this.cluster_size;
+    config['cluster_size'] = this.cluster_size;
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     if (ownerEnabled && ownerEnabled.checked) {
       config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;

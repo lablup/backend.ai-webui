@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.8.1)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.9.0)
 ====================================================================
 
 (C) Copyright 2016-2020 Lablup Inc.
@@ -591,7 +591,7 @@ class Client {
                 config['environ'] = resources['env'];
             }
             if (resources['clustersize']) {
-                config['clusterSize'] = resources['clustersize'];
+                config['cluster_size'] = resources['cluster_size'];
             }
             if (resources['group_name']) {
                 params['group_name'] = resources['group_name'];
