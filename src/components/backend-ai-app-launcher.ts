@@ -2,17 +2,19 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
+import {translate as _t, translateUnsafeHTML as _tr, get as _text} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/icon';
+import 'weightless/label';
 import 'weightless/textfield';
 import 'weightless/title';
 import '@material/mwc-icon-button';
 import '@material/mwc-button';
+import 'macro-carousel';
 
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
@@ -108,6 +110,86 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           --button-color-hover: red;
         }
 
+        macro-carousel {
+          max-width: 700px;
+          height: 450px;
+          padding: 0 30px;
+          margin: 0 10px;
+        }
+
+        .slide {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .slide > span {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-repeat: no-repeat;
+          background-size: contain;
+          background-position: top center;
+        }
+
+        .slide > p {
+          font-size: 14px;
+        }
+
+        macro-carousel-pagination-indicator {
+          /* Change the dots color */
+          --macro-carousel-pagination-color: var(--paper-grey-400);
+          /* Change the aspect of the selected dot */
+          --macro-carousel-pagination-color-selected: var(--paper-green-400);
+          /* Change the dots size */
+          --macro-carousel-pagination-size-clickable: 32px;
+          --macro-carousel-pagination-size-dot: 10px;
+        }
+
+        wl-label {
+          font-family: 'Ubuntu', 'Quicksand', Roboto, sans-serif;
+        }
+
+        wl-label.keyboard {
+          font-family: Menlo, Courier, "Courier New";
+          padding: 20px;
+          background-color: var(--paper-grey-200);
+          border-radius: 10px;
+          margin: 0px 10px;
+        }
+
+        wl-label.invert {
+          font-size: 26px;
+          color: var(--paper-grey-200);
+          background-color: transparent;
+          margin: 0px 10px;
+        }
+
+        wl-label.one-key {
+          text-align: center;
+          width: 24px;
+        }
+
+        wl-checkbox#hide-guide {
+          margin-right: 10px;
+        }
+
+        p code {
+          font: 12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+          color: #52595d;
+          -webkit-border-radius: 3px;
+          -moz-border-radius: 3px;
+          border-radius: 3px;
+          -moz-background-clip: padding;
+          -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+          border: 1px solid #ccc;
+          background-color: #f9f9f9;
+          padding: 0px 3px;
+          display: inline-block;
+        }
       `];
   }
 
@@ -130,7 +212,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
     );
+    // add WebTerminalGuide UI dynamically
+    this._createTerminalGuide();
+    // add DonotShowOption dynamically
+    this._createDonotShowOption();
     this.notification = globalThis.lablupNotification;
+    const checkbox = this.shadowRoot.querySelector('#hide-guide');
+    checkbox.addEventListener('change', (event) => {
+      if (!event.target.checked) {
+        localStorage.setItem('backendaiconsole.terminalguide', 'true');
+      } else {
+        localStorage.setItem('backendaiconsole.terminalguide', 'false');
+      }
+    });
   }
 
   async _viewStateChanged(active) {
@@ -418,6 +512,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       urlPostfix = '';
     }
 
+    if (appName === 'ttyd') {
+      let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
+      if (!isVisible || isVisible === 'true') {
+        this._openTerminalGuideDialog();
+      }
+    }
+
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
@@ -483,6 +584,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    */
   async runTerminal(sessionUuid: string) {
+    let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
+    if (!isVisible || isVisible === 'true') {
+      this._openTerminalGuideDialog();
+    }
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
       this.indicator = await globalThis.lablupIndicator.start();
       this._open_wsproxy(sessionUuid, 'ttyd')
@@ -522,6 +627,82 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   _openVNCDialog() {
     let dialog = this.shadowRoot.querySelector('#vnc-dialog');
     dialog.show();
+  }
+
+  /**
+   * Open a guide for terminal
+   */
+  _openTerminalGuideDialog() {
+    let dialog = this.shadowRoot.querySelector('#terminal-guide');
+    dialog.show();
+  }
+
+  /**
+   * Dynamically add Do not show Option
+   */
+  _createDonotShowOption() {
+    let dialog = this.shadowRoot.querySelector('#terminal-guide');
+    const lastChild = dialog.children[dialog.children.length - 1];
+    const div: HTMLElement = document.createElement('div');
+    div.setAttribute('class', 'horizontal layout flex');
+
+    const checkbox = document.createElement('wl-checkbox');
+    checkbox.setAttribute("id", "hide-guide");
+    const checkboxMsg = document.createElement('wl-label');
+    checkboxMsg.innerHTML = `${_text("dialog.hide.DonotShowThisAgain")}`;
+
+    div.appendChild(checkbox);
+    div.appendChild(checkboxMsg);
+    lastChild.appendChild(div);
+  }
+
+  /**
+   * Dynamically add Web Terminal Guide Carousel
+   */
+  _createTerminalGuide() {
+    let dialog = this.shadowRoot.querySelector('#terminal-guide');
+    const content = dialog.children[1];
+    const div: HTMLElement = document.createElement('div');
+    div.setAttribute('class', 'vertical layout flex');
+    let lang = globalThis.backendaioptions.get('current_language');
+    // if current_language is OS default, then link to English docs
+    if (!["ko", 'en'].includes(lang)) {
+      lang = 'en';
+    }
+    div.innerHTML = `
+      <macro-carousel pagination navigation selected="0" auto-focus reduced-motion disable-drag>
+        <article class="slide vertical layout center">
+          <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-1.png); border:auto;">
+            <wl-label class="keyboard">Ctrl</wl-label>
+            <wl-label class="keyboard invert">+</wl-label>
+            <wl-label class="keyboard one-key">B</wl-label>
+          </span>
+          <p>${_text("webTerminalUsageGuide.CopyGuideOne")}</p>
+        </article>
+        <article class="slide vertical layout center">
+          <span style="background-image:url(/resources/images/web-terminal-guide-2.png);"></span>
+          <p>${_text("webTerminalUsageGuide.CopyGuideTwo")}</p>
+        </article>
+        <article class="slide vertical layout center">
+          <span style="background-image:url(/resources/images/web-terminal-guide-3.png);"></span>
+          <p>${_text("webTerminalUsageGuide.CopyGuideThree")}</p>
+        </article>
+        <article class="slide vertical layout center">
+          <span style="background-image:url(/resources/images/web-terminal-guide-4.png);">
+            <wl-label class="keyboard">Ctrl</wl-label>
+            <wl-label class="keyboard invert">+</wl-label>
+            <wl-label class="keyboard one-key">B</wl-label>
+          </span>
+          <div class="flex layout center-justified vertic center">
+            <p>${_text("webTerminalUsageGuide.CopyGuideFour")}</p>
+            <a href="https://console.docs.backend.ai/${lang}/latest/session_use/session_use.html#advanced-web-terminal-usage"
+               target="_blank" style="width:100%;text-align:right;">
+              <p>${_text("webTerminalUsageGuide.LearnMore")}</p>
+            </a>
+          </div>
+        </article>
+      </macro-carousel>`;
+      content.appendChild(div);
   }
 
   render() {
@@ -595,9 +776,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </wl-button>
         </div>
       </backend-ai-dialog>
-    `;
+      <backend-ai-dialog id="terminal-guide" fixed backdrop>
+        <span slot="title">${_t("webTerminalUsageGuide.CopyGuide")}</span>
+        <div slot="content"></div>
+        <div slot="footer"></div>
+      </backend-ai-dialog>
+      `;
   }
-
 }
 
 declare global {

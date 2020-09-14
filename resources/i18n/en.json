@@ -14,6 +14,7 @@
       "Maintenance": "Maintenance",
       "Information": "Information",
       "About": "About",
+      "AboutBackendAI": "About Backend.AI",
       "ChangePassword": "Change Password",
       "Preferences": "Preferences",
       "LogsErrors": "Logs / Errors",
@@ -40,8 +41,7 @@
       "UserName": "User Name",
       "Menu": "Menu",
       "Run": "Run",
-      "Import&Run": "Import & Run",
-      "AboutBackendAI": "About Backend.AI"
+      "Import&Run": "Import & Run"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
@@ -381,6 +381,9 @@
     "ErrorOccurred": "Error Occurred",
     "error": {
       "Error": "Error"
+    },
+    "hide": {
+      "DonotShowThisAgain": "Don't show this again."
     }
   },
   "environment": {
@@ -463,6 +466,14 @@
     "PrivateKey": "Private Key",
     "InvalidPortNumber": "Port number should be positive number between 1025~65534",
     "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard."
+  },
+  "webTerminalUsageGuide": {
+    "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
+    "CopyGuideOne": "Press <code>Ctrl + B</code> key to enter tmux control mode.",
+    "CopyGuideTwo": "Type <code>:set -g mouse off</code> and Press <code>Enter</code> Key.",
+    "CopyGuideThree": "Now you can copy text from the terminal.",
+    "CopyGuideFour": "To turn on mouse scroll again, Press <code>Ctrl + B</code> and Type <code>:set -g mouse on</code> and Press <code>Enter</code> key.",
+    "LearnMore": "Learn More &gt;"
   },
   "logs": {
     "LogMessages": "Log Messages",
@@ -747,5 +758,5 @@
     "NotebookBadgeCodeHTML": "Notebook Badge Code (HTML)",
     "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)"
   },
-  "DownloadSSHKey": "DownloadSSHKey"
+  "DownloadSSHKey": "Download SSH Key"
 }

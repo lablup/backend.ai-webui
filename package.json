@@ -19,7 +19,7 @@
     "copyresource": "cp -Rp resources build/rollup && cp -Rp manifest build/rollup",
     "copyconfig": "cp config.toml build/rollup && cp version.json build/rollup && cp manifest.json build/rollup",
     "copyindex": "cp index.html build/rollup",
-	  "patchLib": "cd ./src/plastics/weightless && bash patch-input-behavior.sh",
+    "patchLib": "cd ./src/plastics/weightless && bash patch-input-behavior.sh",
     "update": "./node_modules/typescript/bin/tsc"
   },
   "dependencies": {
@@ -63,6 +63,7 @@
     "lit-html": "^1.3.0",
     "lit-translate": "^1.2.1",
     "log": "^6.0.0",
+    "macro-carousel": "^1.0.0",
     "marked": "^1.1.1",
     "markty-toml": "0.1.1",
     "rollup-plugin-commonjs": "^10.1.0",
