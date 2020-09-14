@@ -812,7 +812,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     config['domain'] = globalThis.backendaiclient._config.domainName;
     config['scaling_group'] = this.scaling_group;
     config['maxWaitSeconds'] = 10;
-    config['clustersize'] = this.cluster_size;
+    //config['clustersize'] = this.cluster_size;
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     if (ownerEnabled && ownerEnabled.checked) {
       config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
@@ -1811,7 +1811,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>
         <form slot="content" id="launch-session-form" class="horizontal center layout centered">
-          <div class="vertical center start-justified layout" style="max-width:400px;">
+          <div class="vertical center start-justified layout" style="max-width:400px;border-right:1px solid #ccc;">
             <div class="vertical center layout" style="padding-top:15px;max-width:400px;">
               <mwc-select id="environment" label="${_t("session.launcher.Environments")}" fullwidth required
                 value="${this.default_language}">
