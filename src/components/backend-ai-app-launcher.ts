@@ -51,6 +51,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
+  @property({type: Array}) appLaunchBeforeTunneling = ['mlflow-ui', 'nniboard'];
 
   constructor() {
     super();
@@ -91,6 +92,21 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           height: 25px;
           font-size: 13px;
         }
+        #app-launch-confirmation-dialog {
+          --component-width: 400px;
+          --component-font-size: 14px;
+        }
+        wl-button.app-launch-confirmation-button {
+          width: 335px;
+          --button-bg: var(--paper-red-50);
+          --button-bg-active: var(--paper-red-300);
+          --button-bg-hover: var(--paper-red-300);
+          --button-bg-active-flat: var(--paper-orange-50);
+          --button-color: var(--paper-red-600);
+          --button-color-active: red;
+          --button-color-hover: red;
+        }
+
       `];
   }
 
@@ -355,6 +371,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
+  async _runThisAppWithConfirmationIfNeeded(e) {
+    const controller = e.target;
+    const appName = controller['app-name'];
+    if (this.appLaunchBeforeTunneling.includes(appName)) {
+      this._openAppLaunchConfirmationDialog(e);
+    } else {
+      return this._runThisApp(e);
+    }
+  }
   /**
    * Run backend.ai app.
    *
@@ -459,11 +484,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   /**
    * Open a warning dialog.
    */
-  _openNotificationDialog() {
-    let dialog = this.shadowRoot.querySelector('#warning-dialog');
+  _openAppLaunchConfirmationDialog(e) {
+    //const controller = e.target;
+    let dialog = this.shadowRoot.querySelector('#app-launch-confirmation-dialog');
     dialog.show();
   }
-  
+
   /**
    * Open a SSH dialog.
    */
@@ -491,7 +517,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               <div class="vertical layout center center-justified app-icon">
                 <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
                                  .url-postfix="${item.redirect}"
-                                 @click="${(e) => this._runThisApp(e)}">
+                                 @click="${(e) => this._runThisAppWithConfirmationIfNeeded(e)}">
                   <img src="${item.src}" />
                 </mwc-icon-button>
                 <span class="label">${item.title}</span>
@@ -537,10 +563,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </section>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="warning-dialog" fixed backdrop>
-        <span slot="title">${_t("session.WarningDialog")}</span>
-        <div slot="content" style="padding:15px;">
-          <div style="padding:15px 0;">${_t("session.WarningWithoutApp")}</div>
+      <backend-ai-dialog id="app-launch-confirmation-dialog" warning fixed backdrop>
+        <span slot="title">${_t('session.applauncher.AppMustBeRun')}</span>
+        <div slot="content" class="vertical layout">
+          <p>${_t('session.applauncher.AppMustBeRunDialog')}</p>
+          <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+        </div>
+        <div slot="footer" style="padding-top:0;margin:0 5px;">
+          <wl-button class="app-launch-confirmation-button" type="button" id="app-launch-confirmation-button"
+                                       outlined @click="${(e) => this._runThisApp(e)}">
+                                      <wl-icon>rowing</wl-icon>
+            <span>${_t('session.applauncher.ConfirmAndRun')}</span>
+          </wl-button>
         </div>
       </backend-ai-dialog>
     `;
