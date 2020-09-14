@@ -152,6 +152,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
+  @property({type: Number}) cluster_size = 1;
   @property({type: Number}) max_cpu_core_per_session = 64;
   @property({type: Number}) max_cuda_device_per_session = 16;
   @property({type: Number}) max_shm_per_session = 2;
@@ -808,6 +809,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     config['domain'] = globalThis.backendaiclient._config.domainName;
     config['scaling_group'] = this.scaling_group;
     config['maxWaitSeconds'] = 10;
+    config['clustersize'] = this.cluster_size;
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     if (ownerEnabled && ownerEnabled.checked) {
       config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
