@@ -291,6 +291,20 @@ export default class BackendAiSessionList extends BackendAIPage {
           padding: 0;
           outline-style: none;
         }
+        #no-list-indicator {
+          width: 250px;
+          height: 50px;
+          position: fixed;
+          text-align: center;
+          top: calc(50vh - 25px);
+          left: calc(50% - 40px);
+          z-index:10000;
+        }
+
+        #no-list-indicator.mini_ui {
+          left: calc(50% - 125px)!important;
+        }
+
       `];
   }
 
@@ -587,10 +601,13 @@ export default class BackendAiSessionList extends BackendAIPage {
    * */
   _refreshWorkDialogUI(e) {
     let work_dialog = this.shadowRoot.querySelector('#work-dialog');
+    let no_session_indicator = this.shadowRoot.querySelector('#no-list-indicator');
     if (e.detail.hasOwnProperty('mini-ui') && e.detail['mini-ui'] === true) {
       work_dialog.classList.add('mini_ui');
+      no_session_indicator.classList.add('mini_ui');
     } else {
       work_dialog.classList.remove('mini_ui');
+      no_session_indicator.classList.remove('mini_ui');
     }
   }
 
@@ -1505,7 +1522,9 @@ export default class BackendAiSessionList extends BackendAIPage {
                      on-change="_updateFilterAccessKey">
         </wl-textfield>
       </div>
-
+      ${this.compute_sessions.length === 0 ? html`
+        <div id="no-list-indicator">${_t('session.NoSessionExists')}</div>
+      `:html``}
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}" height-by-rows>
         ${this._isRunning ? html`

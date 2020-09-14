@@ -173,7 +173,8 @@
       "AppMustBeRun": "Start only when the app is already running",
       "AppMustBeRunDialog": "This app can only be accessed and used if it is already running through the terminal. If not, you will be directed to an error page that occurs when the app is not running.",
       "ConfirmAndRun": "I checked and I'll start"
-    }
+    },
+    "NoSessionExists": "No session. Start a new one?"
   },
   "button": {
     "Cancel": "Cancel",
@@ -364,7 +365,8 @@
       "NoChanges": "No changes made",
       "PermissionModified": "Permission updated"
     },
-    "NoStorageDescriptionFound": "No description."
+    "NoStorageDescriptionFound": "No description.",
+    "NoFolderExists": "NoFolderExists"
   },
   "dialog": {
     "warning": {

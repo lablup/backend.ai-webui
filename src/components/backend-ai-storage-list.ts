@@ -369,6 +369,20 @@ export default class BackendAiStorageList extends BackendAIPage {
           --component-min-width: 350px;
         }
 
+        #no-list-indicator {
+          width: 250px;
+          height: 50px;
+          position: fixed;
+          text-align: center;
+          top: calc(50vh - 25px);
+          left: calc(50% - 40px);
+          z-index:10000;
+        }
+
+        #no-list-indicator.mini_ui {
+          left: calc(50% - 125px)!important;
+        }
+
       `];
   }
 
@@ -389,6 +403,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+      ${this.folders.length === 0 ? html`
+        <div id="no-list-indicator">${_t('data.NoFolderExists')}</div>
+      `:html``}
       <vaadin-grid class="folderlist" theme="row-stripes column-borders compact" aria-label="Folder list" .items="${this.folders}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
         </vaadin-grid-column>
@@ -1031,10 +1048,13 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   _refreshFolderUI(e) {
     let folder_explorer = this.shadowRoot.querySelector('#folder-explorer-dialog');
+    let no_folder_indicator = this.shadowRoot.querySelector('#no-list-indicator');
     if (e.detail.hasOwnProperty('mini-ui') && e.detail['mini-ui'] === true) {
       folder_explorer.classList.add('mini_ui');
+      no_folder_indicator.classList.add('mini_ui');
     } else {
       folder_explorer.classList.remove('mini_ui');
+      no_folder_indicator.classList.remove('mini_ui');
     }
   }
 
