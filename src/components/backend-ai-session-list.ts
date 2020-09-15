@@ -453,7 +453,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     let fields = [
       "id", "name", "image",
       "created_at", "terminated_at", "status", "status_info",
-      "service_ports", "mounts", //"cluster_size",
+      "service_ports", "mounts", "cluster_size",
       "occupied_slots", "access_key",
     ];
     if (this.enableScalingGroup) {
