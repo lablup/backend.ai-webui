@@ -448,7 +448,7 @@
     "DescNewUserConfigFileCreated": "새 사용자 스크립트 생성을 위한 내용이 필요합니다.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "스크립트 수정을 위한 내용을 입력하세요.",
     "AutomaticUpdateCheck": "자동 업데이트 체크",
-    "DescAutomaticUpdateCheck": "새 콘솔 버전이 출시된 경우 알려줍니다.<br />오프라인 또는 인터넷 연경 상태가 불안정한 환경에서는 몇 차례 시도후 자동으로 사용이 중지됩니다. 이 경우 이 스위치를 켜서 다시 자동 업데이트 체크를 시작할 수 있습니다.",
+    "DescAutomaticUpdateCheck": "새 콘솔 버전이 출시된 경우 알려줍니다.<br />오프라인 또는 인터넷 연결 상태가 불안정한 환경에서는 몇 차례 시도후 자동으로 사용이 중지됩니다. 이 경우 이 스위치를 켜서 다시 자동 업데이트 체크를 시작할 수 있습니다.",
     "PreferredSSHPort": "선호하는 SSH 포트",
     "DescPreferredSSHPort": "가능하면 이 값을 SSH/SFTP 포트번호로 사용합니다.<br />만약 해당 포트가 이미 사용중이라면, SSH/SFTP를 위한 임의의 다른 포트를 할당합니다. 자동 할당을 위해서는 빈 칸으로 남겨두세요.",
     "SSHKeypairManagement": "SSH 키페어 관리",
