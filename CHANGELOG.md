@@ -1,5 +1,79 @@
 # Changelog
 
+## v20.08.0 (04/08/2020)
+
+#### Bug Fixes:
+
+- [**bug**][**UI / UX**] After terminating a session, resource occupation is not updated [#639](https://github.com/lablup/backend.ai-console/issues/639)
+- [**bug**] In a session log dialog, error message is raised when user clicks refresh log button [#640](https://github.com/lablup/backend.ai-console/issues/640)
+
+
+## v20.07.9 (31/07/2020)
+
+#### Bug Fixes:
+
+- [**bug**][**easy**][**minor**] Cannot create resource preset with proper mem/shmem values [#626](https://github.com/lablup/backend.ai-console/issues/626)
+
+#### UI / UX:
+
+- [**UI / UX**][**minor**] Change minimum fractional GPU step from 0.05 to 0.01 [#629](https://github.com/lablup/backend.ai-console/issues/629)
+- [**UI / UX**][**cloud**][**minor**] Show explicit message when user's account is inactive state [#593](https://github.com/lablup/backend.ai-console/issues/593)
+
+
+## v20.07.8 (23/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**enterprise**][**library / SDK**][**major**] License information viewer [#623](https://github.com/lablup/backend.ai-console/issues/623)
+- [**enhancement**][**urgency**] Add feature to search and/or filter user and keypair by fields such as email, username, etc [#618](https://github.com/lablup/backend.ai-console/issues/618)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Migrate d3.js charts into chart.js [#607](https://github.com/lablup/backend.ai-console/issues/607)
+
+
+## v20.07.7 (23/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Migrate repository notebook into cluster [#599](https://github.com/lablup/backend.ai-console/issues/599)
+
+#### Bug Fixes:
+
+- [**bug**][**library / SDK**][**major**][**urgency**] User and keypair page displays only 100 users/keypairs in >20.03 manager [#617](https://github.com/lablup/backend.ai-console/issues/617)
+
+
+## v20.07.6 (20/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Project color in pull-down menu on top-right corner becomes white when selected [#614](https://github.com/lablup/backend.ai-console/issues/614)
+- [**UI / UX**][**blocker**][**easy**][**enhancement**] Problems that do not support password autocomplete in web browsers [#613](https://github.com/lablup/backend.ai-console/issues/613)
+- [**UI / UX**][**enhancement**][**library / SDK**] Add edit feature of .Renviron file in home directory [#608](https://github.com/lablup/backend.ai-console/issues/608)
+
+#### Bug Fixes:
+
+- [**blocker**][**bug**][**library / SDK**][**major**] 502 error found when launching app with Backend.AI 20.03 / Enterprise R2 beta [#601](https://github.com/lablup/backend.ai-console/issues/601)
+
+
+## v20.07.5 (09/07/2020)
+
+#### Bug Fixes:
+
+- [**blocker**][**bug**][**library / SDK**][**major**] 502 error found when launching app with Backend.AI 20.03 / Enterprise R2 beta [#601](https://github.com/lablup/backend.ai-console/issues/601)
+
+
+## v20.07.4 (06/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Set environment name with tags [#598](https://github.com/lablup/backend.ai-console/issues/598)
+
+
+## v20.07.3 (06/07/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**][**hard**] Stabilize the resource broker with refactoring [#596](https://github.com/lablup/backend.ai-console/issues/596)
+
+
 ## v20.07.2 (03/07/2020)
 
 #### Bug Fixes:

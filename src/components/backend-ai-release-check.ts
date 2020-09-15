@@ -6,6 +6,19 @@
 import {get as _text} from "lit-translate";
 import {customElement, html, LitElement, property} from "lit-element";
 
+/**
+ Backend AI Release Check
+
+ `backend-ai-release-check` checks which is latest version.
+
+ Example:
+
+ <backend-ai-release-check></backend-ai-release-check>
+
+ @group Backend.AI Console
+ @element backend-ai-release-check
+ */
+
 @customElement("backend-ai-release-check")
 export default class BackendAiReleaseCheck extends LitElement {
   public shadowRoot: any; // ShadowRoot
@@ -41,6 +54,9 @@ export default class BackendAiReleaseCheck extends LitElement {
     }
   }
 
+  /**
+   * Check package version is latest
+   * */
   async checkRelease() {
     if (!this.updateChecked) {
       fetch(this.releaseURL).then(
@@ -73,6 +89,14 @@ export default class BackendAiReleaseCheck extends LitElement {
     }
   }
 
+  /**
+   * Return  1 if v1 is latest.
+   * Return -1 if v2 is latest.
+   * Return  0 if v1 and v2 is same version.
+   *
+   * @param {string} v1 - version 1
+   * @param {string} v2 - version 2
+   * */
   compareVersion(v1, v2) {
     if (typeof v1 !== 'string') return false;
     if (typeof v2 !== 'string') return false;

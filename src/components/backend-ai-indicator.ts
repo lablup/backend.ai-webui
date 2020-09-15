@@ -9,6 +9,13 @@ import 'weightless/banner';
 import 'weightless/progress-bar';
 import 'weightless/title';
 
+/**
+ Backend.AI Indicator
+
+ @group Backend.AI Console
+ @element backend-ai-indicator
+ */
+
 @customElement("backend-ai-indicator")
 export default class BackendAIIndicator extends LitElement {
   public shadowRoot: any; // ShadowRoot

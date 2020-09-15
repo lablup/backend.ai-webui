@@ -11,7 +11,6 @@ import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 
 import 'weightless/card';
 import 'weightless/dialog';
@@ -29,6 +28,13 @@ import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+
+/**
+ Backend.AI Error Log List
+
+ @group Backend.AI Console
+ @element backend-ai-error-log-list
+ */
 
 @customElement("backend-ai-error-log-list")
 export default class BackendAiErrorLogList extends BackendAIPage {
@@ -49,7 +55,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: Number}) _totalLogCount = 0;
 
   constructor() {
-      super();
+    super();
   }
 
   static get styles() {
@@ -114,11 +120,17 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     document.addEventListener('log-message-clear', () => this._clearLogData());
   }
 
+  /**
+   * Update the page size according to tab size.
+   */
   _updatePageItemSize() {
     let tableSize = window.innerHeight - 275 - 30;
     this._pageSize = Math.floor(tableSize / 31);
   }
 
+  /**
+   * Refresh log data.
+   */
   _refreshLogData() {
     this.spinner.show();
     this._updatePageItemSize();
@@ -129,6 +141,9 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     this.spinner.hide();
   }
 
+  /**
+   * Clear log data.
+   */
   _clearLogData() {
     this.logs = [];
     this.logView = [];
@@ -137,6 +152,11 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     this._grid.clearCache();
   }
 
+  /**
+   * Update items from page target.
+   *
+   * @param page
+   */
   _updateItemsFromPage(page) {
     if (typeof page !== 'number') {
       let page_action = page.target;
@@ -157,11 +177,21 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     }
   }
 
+  /**
+   * Change d of any type to human readable date time.
+   *
+   * @param {any} d
+   */
   _humanReadableTime(d: any) {
     d = new Date(d);
     return d.toLocaleString();
   }
 
+  /**
+   * Change d of any type to ISO date time.
+   *
+   * @param {any} d
+   */
   _toISOTime(d: any) {
     d = new Date(d);
     return d.toISOString();

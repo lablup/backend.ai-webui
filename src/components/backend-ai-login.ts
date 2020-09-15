@@ -36,7 +36,6 @@ declare global {
   const ai: typeof aiSDK;
 }
 
-
 /**
  Backend.AI Login for GUI Console
 
@@ -115,7 +114,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         mwc-textfield {
-          font-family: 'Quicksand', sans-serif;
+          font-family: var(--general-font-family);
           --mdc-theme-primary: black;
           --mdc-text-field-fill-color: rgb(250, 250, 250);
           width: 100%;
@@ -138,7 +137,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         mwc-menu {
-          font-family: 'Quicksand', sans-serif;
+          font-family: var(--general-font-family);
           --mdc-menu-min-width: 400px;
           --mdc-menu-max-width: 400px;
         }
@@ -202,6 +201,25 @@ export default class BackendAILogin extends BackendAIPage {
           --icon-size: 16px;
           padding: 0;
         }
+
+        .login-input {
+          background-color: #FAFAFA;
+          border-bottom: 1px solid #ccc;
+          height: 50px;
+        }
+
+        .login-input mwc-icon {
+          margin: 5px 15px 5px 15px;
+          color: #737373;
+        }
+
+        .login-input input {
+          width: 100%;
+          background-color: #FAFAFA;
+          margin-bottom: 5px;
+          font-size: 18px;
+          margin-top: 5px;
+        }
       `];
   }
 
@@ -213,6 +231,9 @@ export default class BackendAILogin extends BackendAIPage {
     this.endpoints = globalThis.backendaioptions.get("endpoints", []);
   }
 
+  /**
+   * Change the signin mode with SESSION or API
+   * */
   _changeSigninMode() {
     if (this.change_signin_support === true) {
       if (this.connection_mode == 'SESSION') {
@@ -329,6 +350,9 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
+  /**
+   * Open loginPanel.
+   * */
   open() {
     if (this.loginPanel.open !== true) {
       this.loginPanel.show();
@@ -338,6 +362,9 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
+  /**
+  * Close the loginPanel
+  * */
   close() {
     if (this.loginPanel.open === true) {
       this.loginPanel.hide();
@@ -347,6 +374,12 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
+  /**
+   * Show the blockPanel.
+   *
+   * @param {string} message - block message
+   * @param {string} type - block type
+   * */
   block(message = '', type = '') {
     this.blockMessage = message;
     this.blockType = type;
@@ -357,6 +390,9 @@ export default class BackendAILogin extends BackendAIPage {
     }, 2000);
   }
 
+  /**
+   * Hide the blockPanel.
+   * */
   free() {
     this.blockPanel.hide();
   }
@@ -365,6 +401,9 @@ export default class BackendAILogin extends BackendAIPage {
     return str.replace(/^\|+|\|+$/g, '');
   }
 
+  /**
+   * Login according to connection_mode and api_endpoint.
+   * */
   login() {
     if (this.api_endpoint === '') {
       let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
@@ -388,6 +427,9 @@ export default class BackendAILogin extends BackendAIPage {
     this.signoutPanel.show();
   }
 
+  /**
+   * Show signup dialog. And notify message if API Endpoint is empty.
+   * */
   _showSignupDialog() {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.api_endpoint === '') {
@@ -497,6 +539,9 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
+  /**
+   * Connect GQL when SESSION mode.
+   * */
   async _connectUsingSession() {
     this.clientConfig = new ai.backend.ClientConfig(
       this.user_id,
@@ -516,6 +561,12 @@ export default class BackendAILogin extends BackendAIPage {
           this.open();
           if (this.user_id != '' && this.password != '') {
             this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
+            this.notification.show();
+          }
+        } else if (response.fail_reason) {
+          this.open();
+          if (this.user_id != '' && this.password != '') {
+            this.notification.text = PainKiller.relieve(response.fail_reason);
             this.notification.show();
           }
         } else {
@@ -549,6 +600,9 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
+  /**
+   * Connect GQL when API mode.
+   * */
   _connectUsingAPI() {
     this.clientConfig = new ai.backend.ClientConfig(
       this.api_key,
@@ -563,12 +617,15 @@ export default class BackendAILogin extends BackendAIPage {
     this._connectGQL();
   }
 
+  /**
+   * Call _connectViaGQL() to connect to GQL.
+   * */
   _connectGQL() {
     // Test connection
     if (this.loginPanel.open !== true) {
       this.block();
     }
-    this.client.getManagerVersion().then(response => {
+    this.client.get_manager_version().then(response => {
       this._connectViaGQL();
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
@@ -594,11 +651,14 @@ export default class BackendAILogin extends BackendAIPage {
     });
   }
 
+  /**
+   * Connect client via GQL and set up the globalThis.backendaiclient's attributes.
+   * */
   _connectViaGQL() {
     let fields = ["user_id", "resource_policy", "user"];
     let q = `query { keypair { ${fields.join(" ")} } }`;
     let v = {};
-    return this.client.gql(q, v).then(response => {
+    return this.client.query(q, v).then(response => {
       this.is_connected = true;
       globalThis.backendaiclient = this.client;
       let resource_policy = response['keypair'].resource_policy;
@@ -607,7 +667,7 @@ export default class BackendAILogin extends BackendAIPage {
       let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups {name, id}"];
       let q = `query { user{ ${fields.join(" ")} } }`;
       let v = {'uuid': this.user};
-      return globalThis.backendaiclient.gql(q, v);
+      return globalThis.backendaiclient.query(q, v);
     }).then(response => {
       let email = response['user'].email;
       if (this.email !== email) {
@@ -743,17 +803,23 @@ export default class BackendAILogin extends BackendAIPage {
           </h3>
           <form id="session-login-form" style="${this.connection_mode == 'SESSION' ? `display:block;` : `display:none;`}">
             <fieldset>
-              <mwc-textfield type="email" name="user_id" id="id_user_id" maxlength="50"  autocomplete="username"
-                           label="${_t("login.E-mail")}" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></mwc-textfield>
-              <mwc-textfield type="password" name="password" id="id_password" autocomplete="current-password"
-                           label="${_t("login.Password")}" icon="vpn_key" value="${this.password}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+              <div class="horizontal layout start-justified center login-input">
+                <mwc-icon>email</mwc-icon>
+                <input type="email" id="id_user_id" maxlength="50" autocomplete="username"
+                             label="${_t("login.E-mail")}" placeholder="${_t("login.E-mail")}" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></input>
+              </div>
+              <div class="horizontal layout start-justified center login-input">
+                <mwc-icon>vpn_key</mwc-icon>
+                <input type="password" id="id_password" autocomplete="current-password"
+                             label="${_t("login.Password")}" placeholder="${_t("login.Password")}" icon="vpn_key" value="${this.password}" @keyup="${this._submitIfEnter}"></input>
+              </div>
             </fieldset>
           </form>
           <form id="api-login-form" style="${this.connection_mode == 'SESSION' ? `display:none;` : `display:block;`}">
             <fieldset>
-              <mwc-textfield type="text" name="api_key" id="id_api_key" maxlength="30"
+              <mwc-textfield type="text" id="id_api_key" maxlength="30"
                            label="${_t("login.APIKey")}" icon="lock" value="${this.api_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
-              <mwc-textfield type="password" name="secret_key" id="id_secret_key"
+              <mwc-textfield type="password" id="id_secret_key"
                            label="${_t("login.SecretKey")}" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
             </fieldset>
           </form>
@@ -775,11 +841,12 @@ export default class BackendAILogin extends BackendAIPage {
                     </div>
                   </mwc-list-item>`)}
                 </mwc-menu>
-                <mwc-textfield class="endpoint-text" type="text" name="api_endpoint" id="id_api_endpoint"
+                <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
+                             style="--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
                              label="${_t("login.Endpoint")}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
               </div>
-              <mwc-textfield class="endpoint-text" type="text" name="api_endpoint_humanized" id="id_api_endpoint_humanized"
-                           style="display:none;"
+              <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized"
+                           style="display:none;--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
                            label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
               <wl-button class="fg red full login-button" id="login-button" outlined type="button"
                           @click="${() => this._login()}">

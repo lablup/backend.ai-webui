@@ -16,6 +16,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
@@ -27,6 +28,13 @@ import 'weightless/select';
 import 'weightless/textfield';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
+
+/**
+ Backend.AI Environment List
+
+ @group Backend.AI Console
+ @element backend-ai-environment-list
+ */
 
 @customElement("backend-ai-environment-list")
 export default class BackendAIEnvironmentList extends BackendAIPage {
@@ -108,7 +116,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         }
 
         wl-select, wl-textfield {
-          --input-font-family: Quicksand, Roboto;
+          --input-font-family: var(--general-font-family);
         }
 
         backend-ai-dialog wl-textfield {
@@ -143,6 +151,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       `];
   }
 
+  /**
+   * If value includes unlimited contents, mark as unlimited.
+   *
+   * @param value
+   */
   _markIfUnlimited(value) {
     if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
@@ -151,20 +164,38 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
   }
 
+  /**
+   * Hide a backend.ai dialog.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
+  /**
+   * Hide a dialog by id.
+   *
+   * @param id
+   */
   _hideDialogById(id) {
     return this.shadowRoot.querySelector(id).hide();
   }
 
+  /**
+   * Display a dialog by id.
+   *
+   * @param id
+   */
   _launchDialogById(id) {
     return this.shadowRoot.querySelector(id).show();
   }
 
+  /**
+   * Modify images of cpu, memory, cuda-gpu, cuda-fgpu, rocm-gpu and tpu.
+   */
   modifyImage() {
     const cpu = this.shadowRoot.querySelector("#modify-image-cpu").value,
       mem = this.shadowRoot.querySelector("#modify-image-mem").value,
@@ -214,8 +245,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       })
   }
 
-  openInstallImageDialog(index) {
-    this.selectedIndex = index;
+  /**
+   * Open the selected image.
+   *
+   * @param {object} index - Selected image's digest.
+   */
+  openInstallImageDialog(digest) {
+    this.selectedIndex = this.images.findIndex(image => image.digest === digest);
     let chosenImage = this.images[this.selectedIndex];
     this.installImageName = chosenImage['registry'] + '/' + chosenImage['name'] + ':' + chosenImage['tag'];
     this.installImageResource = {};
@@ -275,6 +311,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
   }
 
+  /**
+   * Render requirments such as cpu limit, memoty limit
+   * cuda share limit, rocm device limit and tpu limit.
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+   */
   requirementsRenderer(root, column?, rowData?) {
     render(
       html`
@@ -338,6 +382,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     );
   }
 
+  /**
+   * Set resource limits to default value.
+   *
+   * @param {object} resource_limits
+   */
   _setPulldownDefaults(resource_limits) {
     this._cuda_gpu_disabled = resource_limits.filter(e => e.key === "cuda_device").length === 0;
     this._cuda_fgpu_disabled = resource_limits.filter(e => e.key === "cuda_shares").length === 0;
@@ -361,6 +410,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.shadowRoot.querySelector("#modify-image-mem").value = this._addUnit(resource_limits[mem_idx].min);
   }
 
+  /**
+   * Decode backend.ai service ports.
+   */
   _decodeServicePort() {
     if (this.images[this.selectedIndex].labels["ai.backend.service-ports"] === "") {
       this.servicePorts = [];
@@ -379,6 +431,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
   }
 
+  /**
+   * Parse backend.ai service ports.
+   */
   _parseServicePort() {
     const container = this.shadowRoot.querySelector("#modify-app-container");
     const rows = container.querySelectorAll(".row:not(.header)");
@@ -392,6 +447,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return Array.prototype.filter.call(rows, row => valid(row)).map(row => encodeRow(row)).join(",");
   }
 
+  /**
+   * Modify backend.ai service ports.
+   */
   modifyServicePort() {
     const value = this._parseServicePort();
     const image = this.images[this.selectedIndex];
@@ -410,6 +468,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       })
   }
 
+  /**
+   * Render controllers.
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+   */
   controlsRenderer(root, column, rowData) {
     render(
       html`
@@ -444,6 +509,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     )
   }
 
+  /**
+   * Render an install dialog.
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+   */
   installRenderer(root, column, rowData) {
     render(
       // language=HTML
@@ -453,7 +525,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               ?checked="${rowData.item.installed}"
               ?disabled="${rowData.item.installed}"
               @click="${(e) => {
-                this.openInstallImageDialog(rowData.index);
+                this.openInstallImageDialog(rowData.item.digest);
                 this.selectedCheckbox = e.target;
               }}">
           </wl-checkbox>
@@ -472,41 +544,15 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="80px" resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="registry">${_t("environment.Registry")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout vertical">
-              <span>[[item.registry]]</span>
-            </div>
-          </template>
-        </vaadin-grid-column>
+        <vaadin-grid-filter-column path="registry" width="80px" resizable
+            header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="namespace" width="60px" resizable
+            header="${_t('environment.Namespace')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="lang" resizable
+            header="${_t('environment.Language')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="baseversion" resizable
+            header="${_t('environment.Version')}"></vaadin-grid-filter-column>
 
-        <vaadin-grid-column width="60px" resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="namespace">${_t("environment.Namespace")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div>[[item.namespace]]</div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="lang">${_t("environment.Language")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div>[[item.lang]]</div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column width="40px" resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="baseversion">${_t("environment.Version")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div>[[item.baseversion]]</div>
-          </template>
-        </vaadin-grid-column>
         <vaadin-grid-column width="60px" resizable>
           <template class="header">${_t("environment.Base")}</template>
           <template>
@@ -523,16 +569,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             </template>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="150px" flex-grow="0" resizable>
-          <template class="header">
-            ${_t("environment.Digest")}
-          </template>
+        <vaadin-grid-filter-column path="digest" resizable
+            header="${_t('environment.Digest')}">
           <template>
             <div class="layout vertical">
               <span class="indicator monospace">[[item.digest]]</span>
             </div>
           </template>
-        </vaadin-grid-column>
+        </vaadin-grid-filter-column>
 
         <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t("environment.ResourceLimit")}" .renderer="${this._boundRequirementsRenderer}">
         </vaadin-grid-column>
@@ -709,6 +753,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     `;
   }
 
+  /**
+   * Remove a row in the environment list.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _removeRow(e) {
     const path = e.composedPath();
     let i = 0;
@@ -716,6 +765,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     path[i].remove();
   }
 
+  /**
+   * Add a row to the environment list.
+   */
   _addRow() {
     const container = this.shadowRoot.querySelector("#modify-app-container");
     const lastChild = container.children[container.children.length - 1];
@@ -723,6 +775,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     container.insertBefore(div, lastChild);
   }
 
+  /**
+   * Create a row in the environment list.
+   */
   _createRow() {
     const div = document.createElement("div");
     div.setAttribute("class", "row extra");
@@ -754,6 +809,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return div;
   }
 
+  /**
+   * Clear rows from the environment list.
+   */
   _clearRows() {
     const container = this.shadowRoot.querySelector("#modify-app-container");
     const rows = container.querySelectorAll(".row");
@@ -767,6 +825,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
   }
 
+  /**
+   * Deselect the selected row from the environment list.
+   */
   _uncheckSelectedRow() {
     this.selectedCheckbox.checked = false;
   }
@@ -791,6 +852,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
   }
 
+  /**
+   * Refresh the sorter.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _refreshSorter(e) {
     let sorter = e.target;
     let sorterPath = sorter.path.toString();
@@ -814,6 +880,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
   }
 
+  /**
+   * Get backend.ai client images.
+   */
   _getImages() {
     this.spinner.show();
 
@@ -897,6 +966,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
   }
 
+  /**
+   * Add unit to the value.
+   *
+   * @param {string} value
+   */
   _addUnit(value) {
     let unit = value.substr(-1);
     if (unit == 'm') {
@@ -911,6 +985,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return value;
   }
 
+  /**
+   * Change unit to symbol.
+   *
+   * @param {string} value
+   */
   _symbolicUnit(value) {
     let unit = value.substr(-2);
     if (unit == 'MB') {
@@ -925,6 +1004,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return value;
   }
 
+  /**
+   * Humanize the value.
+   *
+   * @param {string} value
+   */
   _humanizeName(value) {
     this.alias = {
       'python': 'Python',

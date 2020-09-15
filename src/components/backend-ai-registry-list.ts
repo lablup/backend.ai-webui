@@ -8,7 +8,6 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
@@ -26,6 +25,15 @@ import './backend-ai-dialog';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+
+/**
+ Backend AI Registry List
+
+ `backend-ai-registry-list` manages registries.
+
+ @group Backend.AI Console
+ @element backend-ai-release-check
+ */
 
 @customElement("backend-ai-registry-list")
 class BackendAIRegistryList extends BackendAIPage {
@@ -108,6 +116,13 @@ class BackendAIRegistryList extends BackendAIPage {
           height: 30px;
           --mdc-list-item-graphic-margin: 0px;
         }
+
+        input#registry-password {
+          border: none;
+          background: none;
+          pointer-events: none;
+        }
+
       `];
   }
 
@@ -116,6 +131,11 @@ class BackendAIRegistryList extends BackendAIPage {
     this.indicator = globalThis.lablupIndicator;
   }
 
+  /**
+   * Parse registry list according to whether obj[hostname] is string or not.
+   *
+   * @param {Object} obj - registry list
+   * */
   _parseRegistryList(obj) {
     const isString = (val) => typeof val === "string" || val instanceof String;
     return Object.keys(obj).map(hostname =>
@@ -141,6 +161,11 @@ class BackendAIRegistryList extends BackendAIPage {
     })
   }
 
+  /**
+   * Change view state. If disconnected, try connecting.
+   *
+   * @param {Boolean} active - whether view state change or not
+   * */
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -158,6 +183,11 @@ class BackendAIRegistryList extends BackendAIPage {
     }
   }
 
+  /**
+   * Get host name from url
+   *
+   * @param {string} url
+   * */
   _getHostname(url) {
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -165,6 +195,9 @@ class BackendAIRegistryList extends BackendAIPage {
     return anchor.hostname;
   }
 
+  /**
+   * Add registry with validation
+   * */
   _addRegistry() {
     // somehow type casting is needed to prevent errors, unlike similar use cases in other files
     const hostname = (<HTMLInputElement>this.shadowRoot.querySelector("#add-registry-hostname")).value,
@@ -221,6 +254,9 @@ class BackendAIRegistryList extends BackendAIPage {
       })
   }
 
+  /**
+   * Delete registry
+   * */
   _deleteRegistry() {
     const name = (<HTMLInputElement>this.shadowRoot.querySelector("#delete-registry")).value;
 
@@ -242,6 +278,9 @@ class BackendAIRegistryList extends BackendAIPage {
     }
   }
 
+  /**
+   * Rescan the images if registry has been updated.
+   * */
   async _rescanImage() {
     let indicator = await this.indicator.start('indeterminate');
     indicator.set(10, 'Updating registry information...');
@@ -332,6 +371,13 @@ class BackendAIRegistryList extends BackendAIPage {
     }
   }
 
+  /**
+   * If state is true, turn on the registry.
+   * If state is false, turn off the registry.
+   *
+   * @param {string} hostname
+   * @param {boolean} state
+   * */
   _changeRegistryState(hostname, state) {
     if (state === true) {
       this.allowed_registries.push(hostname);
@@ -380,6 +426,14 @@ class BackendAIRegistryList extends BackendAIPage {
       root
     )
   }
+
+  /**
+   * Render a switch to check that registry is turned on or off.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   _isEnabledRenderer(root, column, rowData) {
     render(
       html`
@@ -391,6 +445,13 @@ class BackendAIRegistryList extends BackendAIPage {
     )
   }
 
+  /**
+   * Render control units - delete (delete registry), refresh (rescan image).
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   _controlsRenderer(root, column, rowData) {
     render(
       html`
@@ -464,7 +525,9 @@ class BackendAIRegistryList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t("registry.Password")}">
           <template>
-            <div> [[item.password]] </div>
+            <div>
+              <input type="password" id="registry-password" readonly value="[[item.password]]"/>
+            </div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="0" width="60px" header="${_t("general.Enabled")}" .renderer=${this.boundIsEnabledRenderer}></vaadin-grid-column>

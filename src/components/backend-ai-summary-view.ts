@@ -18,7 +18,6 @@ import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 
 import './lablup-activity-panel';
-import './backend-ai-chart';
 import './backend-ai-resource-monitor';
 import './backend-ai-resource-panel';
 import './backend-ai-session-launcher';
@@ -286,6 +285,11 @@ export default class BackendAISummary extends BackendAIPage {
     return num.toString().replace(regexp, ',');
   }
 
+  /**
+   * If both refreshOnly and activeConnected are true, refresh invitations.
+   *
+   * @param {boolean} refreshOnly
+   * */
   _refreshInvitations(refreshOnly = false) {
     if (!this.activeConnected) {
       return;
@@ -300,6 +304,12 @@ export default class BackendAISummary extends BackendAIPage {
     });
   }
 
+  /**
+   * Accept invitation and make you can access vfloder.
+   *
+   * @param {Event} e - Click the accept button
+   * @param {any} invitation
+   * */
   _acceptInvitation(e, invitation: any) {
     if (!this.activeConnected) {
       return;
@@ -322,6 +332,12 @@ export default class BackendAISummary extends BackendAIPage {
       });
   }
 
+  /**
+   * Delete invitation folder.
+   *
+   * @param {Event} e - Click the decline button
+   * @param {any} invitation
+   * */
   _deleteInvitation(e, invitation: any) {
     if (!this.activeConnected) {
       return;

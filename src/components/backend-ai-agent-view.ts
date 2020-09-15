@@ -26,6 +26,7 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
  </backend-ai-agent-view>
 
  @group Backend.AI Console
+ @element backend-ai-agent-view
  */
 
 @customElement("backend-ai-agent-view")
@@ -44,6 +45,11 @@ export default class BackendAIAgentView extends BackendAIPage {
   firstUpdated() {
   }
 
+  /**
+   * Change agent's backend.ai running state.
+   * 
+   * @param {Boolean} active
+   */
   async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
     if (active === false) {
@@ -59,6 +65,11 @@ export default class BackendAIAgentView extends BackendAIPage {
     this._status = 'active';
   }
 
+  /**
+   * Display the tab.
+   * 
+   * @param tab 
+   */
   _showTab(tab) {
     let els = this.shadowRoot.querySelectorAll(".tab-content");
     for (let x = 0; x < els.length; x++) {

@@ -11,15 +11,30 @@ import 'weightless/card';
 import 'weightless/tab-group';
 import 'weightless/tab';
 import 'weightless/select';
-
 import {BackendAiStyles} from './backend-ai-general-styles';
-import './backend-ai-chart.js'
+import './backend-ai-chart';
+
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+
+/**
+ Backend AI Usage List
+
+ `backend-ai-usage-list` is usage list of resources.
+
+ Example:
+
+ <backend-ai-usage-list>
+ ...
+ </backend-ai-usage-list>
+
+ @group Backend.AI Console
+ @element backend-ai-usage-list
+ */
 
 @customElement("backend-ai-usage-list")
 export default class BackendAIUsageList extends BackendAIPage {
@@ -90,6 +105,11 @@ export default class BackendAIUsageList extends BackendAIPage {
     super.attributeChangedCallback(name, oldval, newval);
   }
 
+  /**
+   * Wipe all of backend-ai-chart if active is false. Else, initialize the backend-ai-chart.
+   *
+   * @param {Boolean} active - flag to decide whether to change menu or not
+   * */
   async _menuChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -105,6 +125,9 @@ export default class BackendAIUsageList extends BackendAIPage {
     //this.init();
   }
 
+  /**
+   * Initialize backend-ai-chart
+   * */
   init() {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener("backend-ai-connected", () => {
@@ -139,6 +162,9 @@ export default class BackendAIUsageList extends BackendAIPage {
     }
   }
 
+  /**
+   * Read user stats that belongs to specific period
+   * */
   readUserStat() {
     return globalThis.backendaiclient.resources.user_stats()
       .then(res => {
@@ -152,6 +178,13 @@ export default class BackendAIUsageList extends BackendAIPage {
               res
                 .filter((e, i) => res.length - templates[period].length <= i)
                 .map(e => ({x: new Date(1000 * e["date"]), y: e[key]["value"]})),
+                //.map(e => ({x: 1000 * e["date"], y: e[key]["value"]})),
+            ],
+            labels: [
+              res
+                .filter((e, i) => res.length - templates[period].length <= i)
+                .map(e => (new Date(1000 * e["date"]).toString())),
+              //.map(e => ({x: 1000 * e["date"], y: e[key]["value"]})),
             ],
             axisTitle: {
               x: "Date",
@@ -168,6 +201,11 @@ export default class BackendAIUsageList extends BackendAIPage {
       });
   }
 
+  /**
+   * Change the data according to the item selected in the pull down menu.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   * */
   pulldownChange(e) {
     this.period = e.target.value;
 
@@ -181,6 +219,7 @@ export default class BackendAIUsageList extends BackendAIPage {
             data
               .filter((e, i) => data.length - templates[period].length <= i)
               .map(e => ({x: new Date(1000 * e["date"]), y: e[key]["value"]})),
+            //.map(e => ({x: 1000 * e["date"], y: e[key]["value"]})),
           ],
           axisTitle: {
             x: "Date",
@@ -189,7 +228,7 @@ export default class BackendAIUsageList extends BackendAIPage {
           period,
           unit_hint: data[data.length - 1][key].unit_hint
         }
-      })
+      });
     }
   }
 
@@ -216,10 +255,6 @@ export default class BackendAIUsageList extends BackendAIPage {
             </div>
             <div style="width:100%;min-height:180px;">
               <backend-ai-chart
-                width="1000"
-                height="180"
-                elevation="1"
-                type="line"
                 idx=${idx}
                 .collection=${this.collection[this.period][key]}
               ></backend-ai-chart>

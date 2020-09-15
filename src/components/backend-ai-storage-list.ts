@@ -22,6 +22,7 @@ import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
+import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 
 import '@vaadin/vaadin-item/vaadin-item';
 import '@vaadin/vaadin-upload/vaadin-upload';
@@ -45,6 +46,19 @@ import tus from '../lib/tus';
 
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
+
+/**
+ Backend AI Storage List
+
+ `backend-ai-storage-list` is list of storage folder.
+
+ Example:
+
+ <backend-ai-storage-list storageType="general" ?active="${!0===this.active}"></backend-ai-storage-list>
+
+ @group Backend.AI Console
+ @element backend-ai-storage-list
+ */
 
 @customElement("backend-ai-storage-list")
 export default class BackendAiStorageList extends BackendAIPage {
@@ -423,7 +437,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="delete-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.folders.DeleteAFolder")}</span>
         <div slot="content" style="width:100%;">
-          <div class="warning">${_t("dialog.warning.CannotBeUndone")}</div>
+          <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
           <div>
             <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
                          pattern="[a-zA-Z0-9_-.]*"
@@ -739,15 +753,22 @@ export default class BackendAiStorageList extends BackendAIPage {
     const promiseArray = inputList.map(input => globalThis.backendaiclient.vfolder.modify_invitee_permission(input));
     Promise.all(promiseArray).then((response: any) => {
       if (response.length === 0) {
-        this.notification.text = 'No changes made.';
+        this.notification.text = _text('data.permission.NoChanges');
       } else {
-        this.notification.text = 'Permission successfully modified.';
+        this.notification.text = _text('data.permission.PermissionModified');
       }
       this.notification.show();
       this.shadowRoot.querySelector('#modify-permission-dialog').hide();
     })
   }
 
+  /**
+   * Render permission options - View, Edit, EditDelete, KickOut.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   permissionRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -764,9 +785,14 @@ export default class BackendAiStorageList extends BackendAIPage {
     )
   }
 
+  /**
+   * Add textfield to write email.
+   *
+   * @param {Event} e - click the add button
+   * */
   _addTextField(e) {
     let newTextField = document.createElement('wl-textfield');
-    newTextField.label = "Enter e-mail address";
+    newTextField.label = _text('data.invitation.EnterEmail');
     newTextField.type = "email";
 
     this.shadowRoot.querySelector('#textfields').appendChild(newTextField)
@@ -774,7 +800,9 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   _removeTextField(e) {
     const textfields = this.shadowRoot.querySelector('#textfields');
-    textfields.removeChild(textfields.lastChild);
+    if (textfields.children.length > 1) {
+      textfields.removeChild(textfields.lastChild);
+    }
   }
 
   indexRenderer(root, column?, rowData?) {
@@ -784,6 +812,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render control folder options - infoFolder, folderExplorer, shareFolderDialog, etc.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   controlFolderListRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -853,6 +888,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render control file options - downloadFile, openRenameFileDialog, openDeleteFileDialog, etc.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   controlFileListRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -872,6 +914,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render file name as rowData.item.filename.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   fileNameRenderer(root, column?, rowData?) {
     render(
       html`
@@ -892,6 +941,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render permission view - r, w, d.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   permissionViewRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -910,6 +966,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     )
   }
 
+  /**
+   * Render created time.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   createdTimeRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -920,6 +983,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     )
   }
 
+  /**
+   * Render type of user - person, group.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
   typeRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -1020,6 +1090,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     return index + 1;
   }
 
+  /**
+   * Return whether item has permission or not.
+   *
+   * @param {object} item
+   * @param {char} perm - permission
+   * */
   _hasPermission(item, perm) {
     if (item.permission.includes(perm)) {
       return true;
@@ -1037,6 +1113,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     return folderId;
   }
 
+  /**
+   * Inform about folder using dialog.
+   *
+   * @param {Event} e - click the info icon button
+   * */
   _infoFolder(e) {
     const folderId = this._getControlId(e);
     let job = globalThis.backendaiclient.vfolder.info(folderId);
@@ -1053,12 +1134,20 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Open rename-folder-dialog to rename folder name.
+   *
+   * @param {Event} e - click the edit icon button
+   * */
   _renameFolderDialog(e) {
     this.renameFolderId = this._getControlId(e);
     this.shadowRoot.querySelector('#new-folder-name').value = '';
     this.openDialog('rename-folder-dialog');
   }
 
+  /**
+   * Rename the folder with the name on the new-folder-name.
+   * */
   _renameFolder() {
     globalThis.backendaiclient.vfolder.name = this.renameFolderId;
     const newName = this.shadowRoot.querySelector('#new-folder-name').value;
@@ -1078,16 +1167,24 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Open delete-folder-dialog to delete folder.
+   *
+   * @param {Event} e - click the delete icon button
+   * */
   _deleteFolderDialog(e) {
     this.deleteFolderId = this._getControlId(e);
     this.shadowRoot.querySelector('#delete-folder-name').value = '';
     this.openDialog('delete-folder-dialog');
   }
 
+  /**
+   * Check folder name to delete folder.
+   * */
   _deleteFolderWithCheck() {
     let typedDeleteFolderName = this.shadowRoot.querySelector('#delete-folder-name').value;
     if (typedDeleteFolderName != this.deleteFolderId) {
-      this.notification.text = 'Folder name mismatched. Check your typing.';
+      this.notification.text = _text('data.folders.FolderNameMismatched');
       this.notification.show();
       return;
     }
@@ -1095,10 +1192,14 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._deleteFolder(this.deleteFolderId);
   }
 
+  /**
+   * Delete folder and notice.
+   *
+   * @param {string} folderId
+   * */
   _deleteFolder(folderId) {
     let job = globalThis.backendaiclient.vfolder.delete(folderId);
     job.then((value) => {
-      this.notification.text = 'Folder is successfully deleted.';
       this.notification.text = _text('data.folders.FolderDeleted');
       this.notification.show();
       this._refreshFolderList();
@@ -1113,6 +1214,13 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /*Folder Explorer*/
+  /**
+   * Clear the folder explorer.
+   *
+   * @param path - explorer path
+   * @param id - explorer id
+   * @param {boolean} dialog - whether open folder-explorer-dialog or not
+   * */
   _clearExplorer(path = this.explorer.breadcrumb.join('/'),
                  id = this.explorer.id,
                  dialog = false) {
@@ -1127,6 +1235,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Set up the explorer of the folder and call the _clearExplorer() function.
+   *
+   * @param {Event} e - click the folder_open icon button
+   * */
   _folderExplorer(e) {
     let folderId = this._getControlId(e);
     let explorer = {
@@ -1138,6 +1251,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._clearExplorer(explorer.breadcrumb.join('/'), explorer.id, true);
   }
 
+  /**
+   * Enqueue the folder and call the _clearExplorer() function.
+   *
+   * @param {Event} e - click the folder_open icon button
+   * */
   _enqueueFolder(e) {
     const fn = e.target.getAttribute('name');
     this.explorer.breadcrumb.push(fn);
@@ -1190,6 +1308,9 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /* File upload and download */
+  /**
+   * Add eventListener to the dropzone - dragleave, dragover, drop.
+   * */
   _addEventListenerDropZone() {
     const dndZoneEl = this.shadowRoot.querySelector('#folder-explorer-dialog');
     const dndZonePlaceholderEl = this.shadowRoot.querySelector('#dropzone');
@@ -1234,6 +1355,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Create MouseEvents when cloud_upload button is clicked.
+   *
+   * @param {Event} e - click the cloud_upload button
+   * */
   _uploadFileBtnClick(e) {
     const elem = this.shadowRoot.querySelector('#fileInput');
     if (elem && document.createEvent) {  // sanity check
@@ -1243,6 +1369,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+  /**
+   * If file is added, call the fileUpload() function and initialize fileInput string
+   *
+   * @param {Event} e - add file to the input element
+   * */
   _uploadFileChange(e) {
     const length = e.target.files.length;
     for (let i = 0; i < length; i++) {
@@ -1267,6 +1398,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.shadowRoot.querySelector('#fileInput').value = '';
   }
 
+  /**
+   * Running file upload queue to upload files.
+   *
+   * @param session - upload session
+   * */
   runFileUploadQueue(session = null) {
     if (session !== null) {
       (this.fileUploadQueue as any).push(session);
@@ -1281,6 +1417,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+  /**
+   * Upload the file.
+   *
+   * @param {Object} fileObj - file object
+   * */
   fileUpload(fileObj) {
     this._uploadFlag = true;
     this.uploadFilesExist = this.uploadFiles.length > 0;
@@ -1348,10 +1489,21 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Cancel upload files.
+   *
+   * @param {Event} e - click the cancle button
+   * */
   _cancelUpload(e) {
     this._uploadFlag = false;
   }
 
+  /**
+   * Download the file.
+   *
+   * @param {Event} e - click the cloud_download icon button
+   * @param {boolean} archive - whether archive or not
+   * */
   _downloadFile(e, archive = false) {
     let fn = e.target.getAttribute("filename");
     let path = this.explorer.breadcrumb.concat(fn).join("/");
@@ -1380,6 +1532,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Open the renameFileDialog to rename the file.
+   *
+   * @param {Event} e - click the edit icon button
+   * */
   _openRenameFileDialog(e) {
     const fn = e.target.getAttribute("filename");
     this.renameFileDialog.querySelector('#old-file-name').textContent = fn;
@@ -1387,6 +1544,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.renameFileDialog.show();
   }
 
+  /**
+   * Rename the file.
+   *
+   * @param {Event} e - click the rename-file-button
+   * */
   _renameFile(e) {
     const fn = this.renameFileDialog.filename;
     const path = this.explorer.breadcrumb.concat(fn).join("/");
@@ -1408,6 +1570,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Open delete file dialog to delete file.
+   *
+   * @param {Event} e - click the delete-btn
+   * */
   _openDeleteFileDialog(e) {
     let fn = e.target.getAttribute("filename");
     this.deleteFileDialog.filename = fn;
@@ -1415,12 +1582,22 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.deleteFileDialog.show();
   }
 
+  /**
+   * Open the deleteFileDialog of selected files.
+   *
+   * @param {Event} e - click the delete button
+   * */
   _openDeleteMultipleFileDialog(e?) {
     this.deleteFileDialog.files = this.fileListGrid.selectedItems;
     this.deleteFileDialog.filename = '';
     this.deleteFileDialog.show();
   }
 
+  /**
+   * If the user presses the Delete File button, and the Okay button on the double check dialogue, delete the file.
+   *
+   * @param {Event} e - click the Okay button
+   * */
   _deleteFileWithCheck(e) {
     let files = this.deleteFileDialog.files;
     if (files.length > 0) {
@@ -1450,6 +1627,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+  /**
+   * Delete a file.
+   * */
   _deleteFile(e) {
     let fn = e.target.getAttribute("filename");
     let path = this.explorer.breadcrumb.concat(fn).join("/");
@@ -1461,6 +1641,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Returns the time of the utc type for human reading.
+   *
+   * @param {Date} d - date
+   * */
   _humanReadableTime(d) {
     const date = new Date(d * 1000);
     const offset = date.getTimezoneOffset() / 60;
@@ -1469,22 +1654,41 @@ export default class BackendAiStorageList extends BackendAIPage {
     return date.toUTCString();
   }
 
+  /**
+   * Return whether file is downloadable.
+   *
+   * @param {Object} file
+   * */
   _isDownloadable(file) {
     return true;
   }
 
+  /**
+   * Hide the current dialog.
+   *
+   * @param {Event} e - click the close or cancel button
+   * */
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
+  /**
+   * Open dialog to share folder.
+   *
+   * @param {Event} e - click the share button
+   * */
   _shareFolderDialog(e) {
     this.selectedFolder = this._getControlId(e);
-
     this.openDialog('share-folder-dialog');
   }
 
+  /**
+   * Open modify-permission-dialog.
+   *
+   * @param vfolder_id - vfolder id to modify
+   * */
   _modifyPermissionDialog(vfolder_id) {
     globalThis.backendaiclient.vfolder.list_invitees(vfolder_id)
       .then(res => {
@@ -1493,6 +1697,11 @@ export default class BackendAiStorageList extends BackendAIPage {
       })
   }
 
+  /**
+   * Share the folder to people with the email user entered.
+   *
+   * @param {Event} e - click the share-button
+   * */
   _shareFolder(e) {
     // the .children property is an HtmlCollection. They don't have the map function like an array would
     const emailHtmlCollection = this.shadowRoot.querySelector('#textfields').children;
@@ -1502,7 +1711,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const permission = 'r' + (this.shadowRoot.querySelector('#share-folder-write').checked ? 'w' : 'o');
 
     if (emailArray.length === 0) {
-      this.notification.text = 'No valid emails were entered';
+      this.notification.text = _text('data.invitation.NoValidEmails');
       this.notification.show();
       this.shadowRoot.querySelector('#share-folder-dialog').hide();
       for (let element of emailHtmlCollection) {
@@ -1515,25 +1724,35 @@ export default class BackendAiStorageList extends BackendAIPage {
       .then(res => {
         let msg;
         if (res.invited_ids && res.invited_ids.length > 0) {
-          msg = res.invited_ids.reduce((cur, val) => cur + val + " ", "") + (emailArray.length === 1 ? 'was' : 'were') + " successfully invited";
+          msg = _text('data.invitation.Invited');
         } else {
-          msg = "No one was invited";
+          msg = _text('data.invitation.NoOneWasInvited');
         }
         this.notification.text = msg;
         this.notification.show();
         this.shadowRoot.querySelector('#share-folder-dialog').hide();
-        for (let element of emailHtmlCollection) {
-          element.value = '';
+        for (let i = emailHtmlCollection.length - 1; i > 0; i--) {
+          const element = emailHtmlCollection[i];
+          element.parentElement.removeChild(element);
         }
-      })
+      }).catch(err => {
+        this.notification.text = _text('data.invitation.InvitationError');
+        if (err && err.message) {
+          this.notification.detail = err.message;
+        }
+        this.notification.show(true, err);
+      });
   }
 
+  /**
+   * Validate path name
+   * */
   _validatePathName() {
     let path_info = this.shadowRoot.querySelector('#mkdir-name');
     path_info.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          path_info.validationMessage = "Value is required."
+          path_info.validationMessage = _text('data.explorer.ValueRequired');
           return {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid
@@ -1549,7 +1768,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         let regex = /^([.a-zA-Z0-9-_]{1,})+(\/[a-zA-Z0-9-_]{1,})*([\/,\\]{0,1})$/gm;
         let isValid = regex.exec(path_info.value);
         if (!isValid) {
-          path_info.validationMessage = "Path should start with .(dot) or letters, numbers only."
+          path_info.validationMessage = _text('data.explorer.ValueShouldBeStarted');
         }
 
         return {

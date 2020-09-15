@@ -6,7 +6,7 @@ import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import '@material/mwc-textfield/mwc-textfield';
-import 'weightless/card';
+import 'weightless/button';
 
 import './backend-ai-dialog';
 import {BackendAIPage} from './backend-ai-page';
@@ -18,6 +18,18 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/**
+ Backend.AI Email Verification View
+
+ Example:
+
+ <backend-ai-email-verification-view class="page" name="email-verification" ?active="${0}">
+ ... content ...
+ </backend-ai-email-verification-view>
+
+ @group Backend.AI Console
+ @element backend-ai-email-verification-view
+ */
 
 @customElement("backend-ai-email-verification-view")
 export default class BackendAIEmailVerificationView extends BackendAIPage {
@@ -44,6 +56,11 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     ];
   }
 
+  /**
+   * Initialize the client.
+   *
+   * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
+   */
   _initClient(apiEndpoint: string) {
     this.consoleShell = document.querySelector('#console-shell');
     this.consoleShell.appBody.style.visibility = 'visible';
@@ -58,10 +75,18 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     );
   }
 
+  /**
+   * Redirect to login page.
+   */
   _redirectToLoginPage() {
     window.location.href = '/';
   }
 
+  /**
+   * Verify the client.
+   *
+   * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
+   */
   async verify(apiEndpoint: string) {
     const queryParams = new URLSearchParams(window.location.search);
     const token = queryParams.get('verification_code');
@@ -83,6 +108,9 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     }
   }
 
+  /**
+   * Send verification code to use email.
+   */
   async sendVerificationCode() {
     const emailEl = this.shadowRoot.querySelector('#email');
     if (!emailEl.value || !emailEl.validity.valid) return;

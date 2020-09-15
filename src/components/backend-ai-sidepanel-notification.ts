@@ -31,7 +31,6 @@ import {
 @customElement("backend-ai-sidepanel-notification")
 export default class BackendAiSidepanelNotification extends BackendAIPage {
   public shadowRoot: any;
-  public updateComplete: any;
 
   @property({type: Boolean}) active = true;
   @property({type: Array}) notifications = Array();

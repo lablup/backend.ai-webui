@@ -66,6 +66,14 @@
         "src": "./resources/icons/nni.png"
       }
     ],
+    "mlflow-ui": [
+      {
+        "name": "mlflow-ui",
+        "title": "MLFlow UI",
+        "redirect": "",
+        "src": "./resources/icons/mlflow.png"
+      }
+    ],
     "vnc": [
       {
         "name": "vnc",
@@ -94,7 +102,7 @@
       {
         "name": "novnc",
         "title": "VNC (Web)",
-        "redirect": "/resize",
+        "redirect": "",
         "src": "./resources/icons/novnc.svg"
       }
     ],
@@ -102,7 +110,7 @@
       {
         "name": "xfce",
         "title": "XFCE",
-        "redirect": "/resize",
+        "redirect": "",
         "src": "./resources/icons/xfce.png"
       }
     ],
@@ -110,7 +118,7 @@
       {
         "name": "gnome",
         "title": "GNOME Desktop",
-        "redirect": "/resize",
+        "redirect": "",
         "src": "./resources/icons/gnome.svg"
       }
     ],

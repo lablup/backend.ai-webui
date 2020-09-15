@@ -13,7 +13,7 @@
       "Configurations": "환경 설정",
       "Maintenance": "관리",
       "Information": "정보",
-      "About": "대하여",
+      "AboutBackendAI": "Backend.AI에 대하여",
       "ChangePassword": "패스워드 변경",
       "Preferences": "설정",
       "LogsErrors": "로그 / 에러기록",
@@ -38,7 +38,9 @@
       "SelectProject": "프로젝트 선택",
       "Experiments": "실험",
       "UserName": "사용자 이름",
-      "Menu": "메뉴"
+      "Menu": "메뉴",
+      "Run": "실행",
+      "Import&Run": "가져오기 & 실행"
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",
@@ -102,7 +104,7 @@
       "ResourceAllocation": "자원 할당",
       "NoSuitablePreset": "해당되는 프리셋 없음",
       "Advanced": "고급 설정",
-      "CustomAllocation": "임의 자원 할당",
+      "CustomAllocation": "사용자 설정 자원 할당",
       "Core": "코어",
       "SharedMemory": "공유 메모리",
       "Ownership": "소유자",
@@ -129,7 +131,14 @@
       "HomeDirectoryDeletionDialog": "세션 안의 홈 디렉토리는 세션을 종료하면 자동으로 삭제됩니다.",
       "LaunchConfirmationDialog": "코드 및 데이터를 계속 유지하거나 다른 공동 작업자들과 공유하기 위해서는 데이터 & 폴더 메뉴에서 스토리지 폴더를 생성하신 후, 자원을 시작할 때 해당 폴더를 마운트하고 그 안에 보관하시면 됩니다.",
       "Launch": "시작",
-      "LaunchWithoutMount": "스토리지 폴더 없이 시작"
+      "LaunchWithoutMount": "스토리지 폴더 없이 시작",
+      "Accelerator": "가속기",
+      "AdvancedResourceAllocation": "상세 자원 할당",
+      "ThisSettingTakesPrecedence": "알림: 이 설정이 우선합니다",
+      "CustomResourceApplied": "사용자 설정 자원이 할당됨",
+      "PleaseChooseFoldersToMount": "마운트할 폴더들을 선택하세요",
+      "StartImportedNotebook": "가져온 노트북 열기",
+      "SessionNameAllowCondition": "세션 이름은 공백없이 4글자 이상 영문/숫자만 입력 가능합니다."
     },
     "Running": "실행중",
     "Finished": "종료",
@@ -144,8 +153,12 @@
     "Reservation": "예약시간",
     "Agent": "실행노드",
     "Usage": "사용량",
+    "OpenToPublic": "앱을 외부에 공개",
+    "TryPreferredPort": "선호 포트",
+    "SFTPDescription": "SSH/SFTP 클라이언트를 이용해서 접속하세요.",
     "ConnectionInformation": "연결 정보",
     "VNCconnection": "VNC 연결",
+    "DownloadSSHKey": "SSH 키 파일 다운로드 (id_container)",
     "UseYourFavoriteSSHApp": "연결을 위해 선호하는 SSH/SFTP 앱을 사용하세요.",
     "CheckAgainDialog": "이 선택은 취소할 수 없습니다. 정말 진행하시겠습니까?",
     "TerminatingSessionDialog": "여러 세션을 동시에 종료하려고 합니다.",
@@ -153,7 +166,12 @@
     "OnlyRecent100SessionExport": "최근 100개의 세션 실행 기록만 내보낼 수 있습니다.",
     "ExportCSVFile": "CSV로 내보내기",
     "ResourceGroup": "자원 그룹",
-    "NoLogs": "로그가 없습니다."
+    "NoLogs": "로그가 없습니다.",
+    "applauncher": {
+      "AppMustBeRun": "이미 앱이 실행중일 때만 시작하세요",
+      "AppMustBeRunDialog": "이 앱은 터미널을 통해 미리 실행되고 있는 경우에만 접근 및 사용할 수 있습니다. 그렇지 않은 경우, 앱이 실행중이 아닐때 발생하는 오류 페이지에 접속될 것입니다.",
+      "ConfirmAndRun": "확인하였으며 시작하겠습니다"
+    }
   },
   "button": {
     "Cancel": "취소",
@@ -177,7 +195,10 @@
     "Update": "업데이트",
     "Delete": "삭제",
     "Dismiss": "해제",
-    "Close": "닫기"
+    "Close": "닫기",
+    "Confirm": "확인",
+    "Generate": "생성하기",
+    "Continue": "계속"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -293,6 +314,7 @@
       "TypeNewFolderName": "새 폴더 이름을 입력하세요",
       "Rename": "이름 변경",
       "FolderRenamed": "폴더 이름이 변경되었습니다",
+      "FolderNameMismatched": "폴더 이름을 정확하게 입력하세요",
       "FolderDeleted": "폴더가 삭제되었습니다",
       "NumberOfFiles": "파일 갯수",
       "Ownership": "소유",
@@ -324,7 +346,20 @@
       "Foldername": "폴더 이름",
       "EnterEmailAddress": "E-mail 주소를 입력하세요",
       "DownloadFile": "파일 다운로드",
-      "TouchToDownload": "터치하여 다운로드하세요"
+      "TouchToDownload": "터치하여 다운로드하세요",
+      "ValueRequired": "값을 입력해주세요",
+      "ValueShouldBeStarted": "경로는 .(점), 문자 또는 숫자만 포함해야 합니다"
+    },
+    "invitation": {
+      "EnterEmail": "이메일을 입력하세요",
+      "NoValidEmails": "정상적인 이메일을 입력해주세요",
+      "Invited": "초대장을 보냈습니다",
+      "NoOneWasInvited": "초대장이 이미 존재하여 초대에 실패했습니다",
+      "InvitationError": "초대가 실패했습니다. 이미 초대된 사용자일 수 있습니다."
+    },
+    "permission": {
+      "NoChanges": "변경 사항이 없습니다",
+      "PermissionModified": "권한이 변경되었습니다"
     },
     "NoStorageDescriptionFound": "별도 정보가 없습니다."
   },
@@ -343,6 +378,9 @@
     },
     "error": {
       "Error": "오류"
+    },
+    "hide": {
+      "DonotShowThisAgain": "다시 보지 않기"
     }
   },
   "environment": {
@@ -377,7 +415,12 @@
     "ResourcePreset": "자원 프리셋",
     "CreateResourcePreset": "자원 프리셋 생성",
     "PresetName": "자원 프리셋 이름",
-    "AboutToDeletePreset": "아래의 자원 프리셋을 삭제하려고 합니다:"
+    "AboutToDeletePreset": "아래의 자원 프리셋을 삭제하려고 합니다:",
+    "NoPresetName": "자원 프리셋의 이름을 입력하십시오",
+    "MemoryShouldBeLargerThanSHMEM": "메모리는 공유메모리보다 커야 합니다",
+    "Created": "자원 프리셋이 생성되었습니다",
+    "Updated": "자원 프리셋에 수정되었습니다",
+    "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다."
   },
   "usersettings": {
     "General": "일반",
@@ -405,10 +448,29 @@
     "DescNewUserConfigFileCreated": "새 사용자 스크립트 생성을 위한 내용이 필요합니다.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "스크립트 수정을 위한 내용을 입력하세요.",
     "AutomaticUpdateCheck": "자동 업데이트 체크",
-    "DescAutomaticUpdateCheck": "새 콘솔 버전이 출시된 경우 알려줍니다.<br />오프라인 또는 인터넷 연경 상태가 불안정한 환경에서는 몇 차례 시도후 자동으로 사용이 중지됩니다. 이 경우 이 스위치를 켜서 다시 자동 업데이트 체크를 시작할 수 있습니다.",
+    "DescAutomaticUpdateCheck": "새 콘솔 버전이 출시된 경우 알려줍니다.<br />오프라인 또는 인터넷 연결 상태가 불안정한 환경에서는 몇 차례 시도후 자동으로 사용이 중지됩니다. 이 경우 이 스위치를 켜서 다시 자동 업데이트 체크를 시작할 수 있습니다.",
     "PreferredSSHPort": "선호하는 SSH 포트",
     "DescPreferredSSHPort": "가능하면 이 값을 SSH/SFTP 포트번호로 사용합니다.<br />만약 해당 포트가 이미 사용중이라면, SSH/SFTP를 위한 임의의 다른 포트를 할당합니다. 자동 할당을 위해서는 빈 칸으로 남겨두세요.",
-    "InvalidPortNumber": "포트 번호는 1025~65534 사이의 양수여야 합니다."
+    "SSHKeypairManagement": "SSH 키페어 관리",
+    "DescSSHKeypairManagement": "이미 존재하는 SSH 키페어를 갱신하거나, 없을 경우 랜덤으로 생성할 수 있습니다.",
+    "CheckAgainDialog": "이 선택은 취소할 수 없습니다. 정말 진행하시겠습니까?",
+    "CurrentSSHPublicKey": "현재 공개 키: ",
+    "SSHKeypairGeneration": "SSH 키페어 생성",
+    "SSHKeypairGenerationWarning": "비밀 키는 다시 받을 수 없습니다. 필요한 경우 로컬 디스크에 저장하시기 바랍니다.",
+    "NoExistingSSHKeypair": "복사할 키페어가 없습니다. 생성하기 버튼을 클릭 또는 SSH 키페어를 직접 입력해주세요.",
+    "ClearSSHKeypairInput": "지금까지 작성된 SSH 키페어는 삭제될 예정입니다. 계속하겠습니까?",
+    "PublicKey": "공개 키",
+    "PrivateKey": "비밀 키",
+    "InvalidPortNumber": "포트 번호는 1025~65534 사이의 양수여야 합니다.",
+    "SSHKeyClipboardCopy": "SSH 키가 클립보드에 복사되었습니다."
+  },
+  "webTerminalUsageGuide": {
+    "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",
+    "CopyGuideOne": "<code>Ctrl + B</code>를 입력하여 tmux의 제어 모드로 진입",
+    "CopyGuideTwo": "<code>:set -g mouse off</code>를 입력하고 엔터키 입력",
+    "CopyGuideThree": "이제 마우스로 드래그하여 터미널의 텍스트를 복사할 수 있습니다.",
+    "CopyGuideFour": "원래 상태로 되돌아가려면 <code>Ctrl + B</code> 입력 후 <code>:set -g mouse on</code> 입력하고 엔터키 입력",
+    "LearnMore": "더 알아보기 &gt;"
   },
   "logs": {
     "LogMessages": "로그 메세지",
@@ -572,7 +634,21 @@
     "DescDefaultAdministratorAccountChanged": "실제 사용을 위해서는 초기 계정 정보를 반드시 변경해야 합니다.",
     "UsesSSL": "SSL 사용",
     "DescUsesSSL": "적절하게 설정된 SSL을 통한 HTTPS 통신은 시스템 보안을 강화합니다.",
-    "Compatible": "호환"
+    "Compatible": "호환",
+    "License": "사용권",
+    "LicenseType": "사용 허가 종류",
+    "Licensee": "사용허가권자",
+    "LicenseKey": "인증키",
+    "Expiration": "유효기간",
+    "FixedLicense": "고정 라이선스",
+    "DynamicLicense": "가변 라이선스",
+    "IsLicenseValid": "유효성 검증",
+    "DescIsLicenseValid": "현재 시스템에 설치된 사용권의 유효성을 검증합니다.",
+    "DescLicenseType": "현재 시스템에서 사용하는 사용 허가권의 종류입니다.<br/> 고정 라이선스의 경우 미리 정해진 하드웨어에만 실행 권한이 주어집니다. 가변 라이선스의 경우, 계약 한도 내의 클러스터 하드웨어에 대해 실행 권한이 주어집니다.",
+    "DescLicensee": "사용 허가를 받은 조직 또는 구입자 정보입니다.",
+    "DescLicenseKey": "사용 허가를 위한 인증키입니다. 잘 보관하시기 바랍니다.",
+    "DescExpiration": "사용허가권의 유효기간입니다. 기간이 넘으면 클러스터 소프트웨어 사용이 중지됩니다.",
+    "CannotRead": "읽을 수 없음"
   },
   "login": {
     "Login": "로그인",
@@ -612,11 +688,17 @@
     "SignupBETA": "가입 (베타 초대 대상)",
     "E-mail": "E-mail",
     "UserName": "사용자명",
+    "UserNameInputRequired": "사용자명은 필수 입력입니다.",
     "Password": " 암호",
     "PasswordAgain": "암호 (다시입력)",
+    "PasswordInputRequired": "암호는 필수 입력입니다.",
+    "PasswordInvalid": "암호는 최소 8자 이상, 영문 및 숫자와 특수문자를 최소 1자 이상 포함해야 합니다.",
+    "PasswordNotMatched": "암호가 불일치합니다. 다시 입력해주세요.",
     "Signup": "가입",
     "InvitationToken": "초대 토큰",
+    "TokenInputRequired": "토큰은 필수 입력입니다.",
     "TermsOfService": "약관",
+    "RequestAgreementTermsOfService": "상기 서비스 이용약관에 동의합니다.",
     "PrivacyPolicy": "개인정보보호정책",
     "ThankYou": "감사합니다!",
     "VerificationMessage": "인증 메일을 전송했습니다. 가입하신 계정으로 로그인 하기 전에 전송된 메일을 읽고 인증을 완료해 주십시오.",
@@ -624,6 +706,7 @@
     "EmailVerifiedMessage": "이메일 인증이 완료되었습니다. 가입하신 계정으로 로그인 하실 수 있습니다.",
     "EmailVerificationFailed": "이메일 인증에 실패했습니다",
     "EmailVerificationFailedMessage": "이메일을 인증할 수 없습니다. 인증 토큰에 문제가 있거나 만료되었을 가능성이 있습니다. 이메일을 입력하고 버튼을 클릭하면 새로운 인증 링크를 받을 수 있습니다.",
+    "EmailInputRequired": "이메일 주소는 필수 입력입니다.",
     "InvalidEmail": "정상적인 이메일 주소가 아닙니다",
     "SendEmail": "인증 메일 전송",
     "EmailSent": "이메일을 보냈습니다",
@@ -638,5 +721,44 @@
     "Running": "실행중...",
     "Notification": "알림",
     "NoNotification": "알림이 없습니다."
+  },
+  "import": {
+    "Runtime": "런타임",
+    "RunOnBackendAI": "Backend.AI 에서 실행",
+    "ImportAndRun": "가져오기 & 실행",
+    "NoSuitableResourceFoundOnGivenURL": "URL에서 가져올 수 있는 항목이 없습니다.",
+    "Importing": "가져오는 중",
+    "ImportToStorage": "코드 저장소를 폴더로 가져오기",
+    "ReadyToImport": "가져올 준비가 완료되었습니다.",
+    "ImportNotebook": "노트북 가져오기",
+    "NotebookURL": "가져올 노트북 URL",
+    "GetNotebook": "가져오기",
+    "CreateNotebookButton": "노트북 런치 버튼 만들기",
+    "CreateButtonCode": "배지 코드 생성",
+    "NotebookButtonURL": "노트북 주소",
+    "YouCanCreateNotebookCode": "노트북의 주소를 입력하면 어디에서나 Backend.AI로 바로 연결되어 실행할 수 있는 아래와 같은 배지 코드를 만들어 줍니다.",
+    "NotebookBadgeURL": "노트북 주소",
+    "NotebookBadgeCode": "노트북 배지 코드",
+    "GetAndRunNotebook": "가져와 실행",
+    "ImportGithubRepo": "GitHub 저장소 가져오기",
+    "GitHubURL": "GitHub 주소",
+    "GetToFolder": "가져오기",
+    "RepoWillBeFolder": "가져온 GitHub 저장소는 폴더로 변환되며, 세션을 시작할 때 마운트할 수 있습니다.",
+    "FolderAlreadyExists": "같은 이름의 폴더가 있어서 이름을 변경합니다.",
+    "WrongURLType": "잘못된 URL 형식입니다.",
+    "Preparing": "준비중...",
+    "FolderCreated": "폴더를 생성했습니다.",
+    "Downloading": "다운로드중...",
+    "CleanUpImportTask": "가져오기를 완료하는 중...",
+    "ImportFinished": "가져오기를 완료했습니다.",
+    "FolderName": "가져올 폴더 이름: ",
+    "NotebookBadgeCodeHTML": "노트북 배지 코드(HTML)",
+    "NotebookBadgeCodeMarkdown": "노트북 배지 코드(Markdown)"
+  },
+  "DownloadSSHKey": "SSH 키 다운로드",
+  "license": {
+    "Perpetual": "영구 라이선스",
+    "Subscription": "구독 라이선스",
+    "OpenSource": "오픈소스"
   }
 }

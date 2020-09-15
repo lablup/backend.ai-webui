@@ -9,7 +9,6 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
@@ -26,6 +25,19 @@ import './backend-ai-dialog';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+
+/**
+ Backend AI Scaling Group List
+
+ `backend-ai-scaling-group-list` manages scaling group.
+
+ Example:
+
+ <backend-ai-scaling-group-list active></backend-ai-scaling-group-list>
+
+ @group Backend.AI Console
+ @element backend-ai-scaling-group-list
+ */
 
 @customElement("backend-ai-scaling-group-list")
 export default class BackendAIScalingGroupList extends BackendAIPage {
@@ -116,7 +128,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        globalThis.backendaiclient.scalingGroup.list_all()
+        globalThis.backendaiclient.scalingGroup.list_available()
           .then(res => {
             this.scalingGroups = res.scaling_groups;
           });
@@ -128,7 +140,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           })
       }, true);
     } else { // already connected
-      globalThis.backendaiclient.scalingGroup.list_all()
+      globalThis.backendaiclient.scalingGroup.list_available()
         .then(res => {
           this.scalingGroups = res.scaling_groups;
         });
@@ -174,6 +186,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     this.shadowRoot.querySelector(id).hide();
   }
 
+  /**
+   * Render control units - settings (modify-scaling-group), delete (delete-scaling-group)
+   * */
   _controlRenderer(root, column, rowData) {
     render(
       html`
@@ -202,6 +217,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     )
   }
 
+  /**
+   * Create scaling group and associate scaling group with domain.
+   * */
   _createScalingGroup() {
     const scalingGroup = this.shadowRoot.querySelector("#scaling-group-name").value,
       description = this.shadowRoot.querySelector("#scaling-group-description").value,
@@ -217,7 +235,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     globalThis.backendaiclient.scalingGroup.create(scalingGroup, description)
       .then(({create_scaling_group: res}) => {
         if (res.ok) {
-          return globalThis.backendaiclient.scalingGroup.associateWithDomain(domain, scalingGroup);
+          return globalThis.backendaiclient.scalingGroup.associate_domain(domain, scalingGroup);
         } else {
           this.notification.text = PainKiller.relieve(res.title);
           this.notification.detail = res.msg;
@@ -246,6 +264,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       })
   }
 
+  /**
+   * Modify scaling group such as description, scheduler, is_active, and name.
+   * */
   _modifyScalingGroup() {
     const description = this.shadowRoot.querySelector("#modify-scaling-group-description").value,
       scheduler = this.shadowRoot.querySelector("#modify-scaling-group-scheduler").value,
@@ -263,7 +284,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       return;
     }
 
-    globalThis.backendaiclient.scalingGroup.modify(name, input)
+    globalThis.backendaiclient.scalingGroup.update(name, input)
       .then(({modify_scaling_group}) => {
         if (modify_scaling_group.ok) {
           this.notification.text = "Resource group successfully modified";
@@ -304,7 +325,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _refreshList() {
-    globalThis.backendaiclient.scalingGroup.list_all()
+    globalThis.backendaiclient.scalingGroup.list_available()
       .then(({scaling_groups}) => {
         this.scalingGroups = scaling_groups;
         this.requestUpdate(); // without this render is called beforehands, so update is required

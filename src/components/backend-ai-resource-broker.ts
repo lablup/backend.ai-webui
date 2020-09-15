@@ -75,7 +75,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     'max': '1'
   };
   @property({type: Number}) lastQueryTime = 0;
+  @property({type: Number}) lastResourcePolicyQueryTime = 0;
+  @property({type: Number}) lastVFolderQueryTime = 0;
   @property({type: String}) scaling_group;
+  @property({type: String}) current_user_group;
   @property({type: Array}) scaling_groups;
   @property({type: Array}) sessions_list;
   @property({type: Boolean}) metric_updating;
@@ -85,9 +88,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   // Flags
   @property({type: Boolean}) _default_language_updated = false;
   @property({type: Boolean}) _default_version_updated = false;
+  @property({type: Boolean}) _GPUmodeUpdated = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Array}) disableLaunch;
-
   // Custom information
   @property({type: Number}) max_cpu_core_per_session = 64;
 
@@ -126,6 +129,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.concurrency_limit = 0;
     this.scaling_groups = [{name: ''}]; // if there is no scaling group, set the name as empty string
     this.scaling_group = '';
+    this.current_user_group = '';
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
@@ -238,8 +242,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         this.lastQueryTime = 0; // Reset query interval
       }
       if (this.scaling_group === '' || isChanged) {
-        const currentGroup = globalThis.backendaiclient.current_group || null;
-        const sgs = await globalThis.backendaiclient.scalingGroup.list(currentGroup);
+        if (this.current_user_group === '') {
+          this.current_user_group = globalThis.backendaiclient.current_group;
+        }
+        //const currentGroup = globalThis.backendaiclient.current_group || null;
+        const sgs = await globalThis.backendaiclient.scalingGroup.list(this.current_user_group);
         // Make empty scaling group item if there is no scaling groups.
         this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
         this.scaling_group = this.scaling_groups[0].name;
@@ -281,11 +288,13 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    *
    */
   async _refreshResourcePolicy() {
+    if (Date.now() - this.lastResourcePolicyQueryTime < 2000) {
+      return Promise.resolve(false);
+    }
+    this.lastResourcePolicyQueryTime = Date.now();
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['resource_policy', 'concurrency_used']).then((response) => {
       let policyName = response.keypair.resource_policy;
       this.concurrency_used = response.keypair.concurrency_used;
-      // Workaround: We need a new API for user mode resource policy access, and current resource usage.
-      // TODO: Fix it to use API-based resource max.
       return globalThis.backendaiclient.resourcePolicy.get(policyName, ['default_for_unspecified',
         'total_resource_slots',
         'max_concurrent_sessions',
@@ -296,7 +305,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
       //this._refreshResourceTemplate('refresh-resource-policy');
-      this._updateGPUMode();
+      return this._updateGPUMode();
     }).catch((err) => {
       this.metadata_updating = false;
       throw err;
@@ -304,20 +313,28 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   }
 
   _updateGPUMode() {
-    globalThis.backendaiclient.getResourceSlots().then((response) => {
-      let results = response;
-      ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
-        if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
-          this.gpu_mode = item;
-          (this.gpu_modes as Array<string>).push(item);
-          if (item === 'cuda.shares') {
-            this.gpu_step = 0.05;
-          } else {
-            this.gpu_step = 1;
+    if (!this._GPUmodeUpdated) {
+      this._GPUmodeUpdated = true;
+      return globalThis.backendaiclient.get_resource_slots().then((response) => {
+        let results = response;
+        ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
+          if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
+            this.gpu_mode = item;
+            (this.gpu_modes as Array<string>).push(item);
+            if (item === 'cuda.shares') {
+              this.gpu_step = 0.05;
+            } else {
+              this.gpu_step = 1;
+            }
           }
+        });
+        if (typeof this.gpu_mode == 'undefined') {
+          this.gpu_mode = 'none';
         }
       });
-    });
+    } else {
+      return Promise.resolve(true);
+    }
   }
 
   generateSessionId() {
@@ -333,8 +350,12 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    *
    */
   async updateVirtualFolderList() {
+    if (Date.now() - this.lastVFolderQueryTime < 2000) {
+      return Promise.resolve(false);
+    }
     let l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id());
     return l.then((value) => {
+      this.lastVFolderQueryTime = Date.now();
       let selectableFolders: object[] = [];
       let automountFolders: object[] = [];
       value.forEach((item) => {
@@ -368,20 +389,29 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     let total_resource_group_slot = {};
     let total_project_slot = {};
 
-    return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
+    return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then(async (response) => {
       this.concurrency_used = response.keypair.concurrency_used;
+      if (this.current_user_group === '') {
+        this.current_user_group = globalThis.backendaiclient.current_group;
+      }
       const param: any = {group: globalThis.backendaiclient.current_group};
+      if (this.current_user_group !== globalThis.backendaiclient.current_group
+        || this.scaling_groups.length == 0
+        || this.scaling_groups.length === 1 && this.scaling_groups[0].name === "") {
+        this.current_user_group = globalThis.backendaiclient.current_group;
+        const sgs = await globalThis.backendaiclient.scalingGroup.list(this.current_user_group);
+        // Make empty scaling group item if there is no scaling groups.
+        this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
+      }
       if (this.scaling_groups.length > 0) {
-        let scaling_group: string = '';
-        if (this.scaling_group !== '') {
-          scaling_group = this.scaling_group;
-        } else {
-          scaling_group = this.scaling_groups[0]['name'];
-          this.scaling_group = scaling_group;
+        let scaling_groups: any = [];
+        this.scaling_groups.map(group => {
+          scaling_groups.push(group.name);
+        })
+        if (this.scaling_group === '' || !scaling_groups.includes(this.scaling_group)) {
+          this.scaling_group = this.scaling_groups[0].name;
         }
-        if (scaling_group) {
-          param['scaling_group'] = scaling_group;
-        }
+        param['scaling_group'] = this.scaling_group;
       }
       return globalThis.backendaiclient.resourcePreset.check(param);
     }).then((response) => {
@@ -411,6 +441,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             available_presets.push(item);
           }
         });
+        available_presets.sort((a, b) => (a['name'] > b['name'] ? 1 : -1));
         this.resource_templates = available_presets;
         if (this.resource_templates_filtered.length === 0) {
           this.resource_templates_filtered = this.resource_templates;
@@ -427,13 +458,15 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'rocm.device': 'rocm_device',
         'tpu.device': 'tpu_device'
       }
-
       //let scaling_group_resource_remaining = response.scaling_group_remaining;
-      if (this.scaling_group === '') { // no scaling group in the current project
+      if (this.scaling_group === '' && this.scaling_groups.length > 0) { // no scaling group in the current project
         response.scaling_groups[''] = {
           using: {'cpu': 0, 'mem': 0},
           remaining: {'cpu': 0, 'mem': 0},
         }
+      } else if (this.scaling_groups.length === 0) {
+        this.aggregate_updating = false;
+        return Promise.resolve(false);
       }
       let scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
       let scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;

@@ -11,12 +11,12 @@ import {BackendAIPage} from './backend-ai-page';
 
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
 import 'weightless/button';
-import 'weightless/card';
 import 'weightless/label';
 import 'weightless/select';
 import 'weightless/textfield';
@@ -32,6 +32,13 @@ import {
   IronFlexFactors,
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
+
+/**
+ Backend.AI Credential List
+
+ @group Backend.AI Console
+ @element backend-ai-credential-list
+ */
 
 @customElement("backend-ai-credential-list")
 export default class BackendAICredentialList extends BackendAIPage {
@@ -55,10 +62,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Object}) _boundKeyageRenderer = this.keyageRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
-  @property({type: Object}) keypairView = Object();
-  @property({type: Number}) _pageSize = 10;
   @property({type: Object}) keypairGrid = Object();
-  @property({type: Number}) _currentPage = 1;
   @property({type: Number}) _totalCredentialCount = 0;
 
   constructor() {
@@ -77,7 +81,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 400px);
+          height: calc(100vh - 235px);
         }
 
         wl-button > wl-icon {
@@ -144,27 +148,6 @@ export default class BackendAICredentialList extends BackendAIPage {
           --label-color: black;
         }
 
-        wl-icon.pagination {
-          color: var(--paper-grey-700);
-        }
-
-        wl-button.pagination[disabled] wl-icon.pagination {
-          color: var(--paper-grey-300);
-        }
-
-        wl-button.pagination {
-          width: 15px;
-          height: 15px;
-          padding: 10 10px;
-          box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
-          --button-bg: transparent;
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-red-600);
-          --button-bg-disabled: var(--paper-grey-50);
-          --button-color-disabled: var(--paper-grey-200);
-        }
-
         backend-ai-dialog {
           --component-min-width: 400px;
         }
@@ -175,6 +158,11 @@ export default class BackendAICredentialList extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
   }
 
+  /**
+   * Check the admin and set the keypair grid when backend.ai client connected.
+   *
+   * @param {Booelan} active - The component will work if active is true.
+   */
   async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
     if (active === false) {
@@ -194,6 +182,11 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
+  /**
+   * Refresh key datas when user id is null.
+   *
+   * @param {string} user_id
+   */
   _refreshKeyData(user_id: null|string = null) {
     let is_active = true;
     switch (this.condition) {
@@ -270,7 +263,6 @@ export default class BackendAICredentialList extends BackendAIPage {
       });
       this.keypairs = keypairs;
       this._totalCredentialCount = this.keypairs.length > 0 ? this.keypairs.length : 1;
-      this._updateItemsFromPage(1);
       //setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch(err => {
       console.log(err);
@@ -282,6 +274,11 @@ export default class BackendAICredentialList extends BackendAIPage {
     });
   }
 
+  /**
+   * Display a keypair information dialog.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   async _showKeypairDetail(e) {
     const controls = e.target.closest('#controls');
     const access_key = controls['access-key'];
@@ -298,6 +295,11 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
+  /**
+   * Modify resource policy by displaying keypair modify dialog.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   async _modifyResourcePolicy(e) {
     const controls = e.target.closest('#controls');
     const access_key = controls['access-key'];
@@ -317,20 +319,36 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
+  /**
+   * Get key data from access key.
+   *
+   * @param accessKey
+   */
   async _getKeyData(accessKey) {
     let fields = ["access_key", 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
       'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'];
     return globalThis.backendaiclient.keypair.info(accessKey, fields);
   }
 
+  /**
+   * Refresh the key data.
+   */
   refresh() {
     this._refreshKeyData();
   }
 
+  /**
+   * Return the condtion is active.
+   */
   _isActive() {
     return this.condition === 'active';
   }
 
+  /**
+   * Delete the access key.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _deleteKey(e) {
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
@@ -352,14 +370,30 @@ export default class BackendAICredentialList extends BackendAIPage {
     });
   }
 
+  /**
+   * Revoke the access key.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _revokeKey(e) {
     this._mutateKey(e, false);
   }
 
+  /**
+   * Reuse the access key.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _reuseKey(e) {
     this._mutateKey(e, true);
   }
 
+  /**
+   * Mutate the access key.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   * @param {Boolean} is_active
+   */
   _mutateKey(e, is_active) {
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
@@ -384,10 +418,21 @@ export default class BackendAICredentialList extends BackendAIPage {
     });
   }
 
+  /**
+   * Find the access key.
+   *
+   * @param element
+   */
   _findKeyItem(element) {
     return element.access_key = this;
   }
 
+  /**
+   * Return backend.ai client elapsed time.
+   *
+   * @param {Date} start - Start time of backend.ai client.
+   * @param {Date} end - End time of backend.ai client.
+   */
   _elapsed(start, end?) {
     var startDate = new Date(start);
     if (this.condition == 'active') {
@@ -400,12 +445,24 @@ export default class BackendAICredentialList extends BackendAIPage {
     return days;
   }
 
+  /**
+   * Change d of any type to human readable date time.
+   *
+   * @param {any} d
+   */
   _humanReadableTime(d) {
     return new Date(d).toUTCString();
   }
 
+  /**
+   * Render an index.
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+   */
   _indexRenderer(root, column, rowData) {
-    let idx = rowData.index + 1;
+    const idx = rowData.index + 1;
     render(
       html`
         <div>${idx}</div>
@@ -414,6 +471,11 @@ export default class BackendAICredentialList extends BackendAIPage {
     );
   }
 
+  /**
+   * If value includes unlimited contents, mark as unlimited.
+   *
+   * @param value
+   */
   _markIfUnlimited(value) {
     if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
@@ -422,24 +484,13 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
-  _updateItemsFromPage(page) {
-    if (typeof page !== 'number') {
-      let page_action = page.target;
-      if (page_action['role'] !== 'button') {
-        page_action = page.target.closest('wl-button');
-      }
-      if (page_action.id === 'previous-page') {
-        this._currentPage -= 1;
-      } else {
-        this._currentPage += 1;
-      }
-    }
-    let start = (this._currentPage - 1) * this.keypairGrid.pageSize;
-    let end = this._currentPage * this.keypairGrid.pageSize;
-    this.keypairView = this.keypairs.slice(start, end);
-    console.log()
-  }
-
+  /**
+   * Render a key elasped time.
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+   */
   keyageRenderer(root, column?, rowData?) {
     render(
       html`
@@ -451,6 +502,13 @@ export default class BackendAICredentialList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render key control buttons.
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+   */
   controlRenderer(root, column?, rowData?) {
     render(
       html`
@@ -480,12 +538,22 @@ export default class BackendAICredentialList extends BackendAIPage {
     );
   }
 
+  /**
+   * Hide the backend.ai dialog.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _hideDialog(e) {
     let hideButton = e.target;
     let dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
   }
 
+  /**
+   * Save a keypair modification.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _saveKeypairModification(e) {
     const resource_policy = this.shadowRoot.querySelector('#policy-list').value;
     const rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
@@ -520,27 +588,16 @@ export default class BackendAICredentialList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <vaadin-grid page-size="${this._pageSize}" theme="row-stripes column-borders compact" aria-label="Credential list"
-                   id="keypair-grid" .items="${this.keypairView}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
+                   id="keypair-grid" .items="${this.keypairs}">
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="user_id">${_t("credential.UserID")}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout horizontal center flex">
-              <div>[[item.user_id]]</div>
-            </div>
-          </template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">${_t("general.AccessKey")}</template>
+        <vaadin-grid-filter-column path="user_id" header="${_t("credential.UserID")}" resizable></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="access_key" header="${_t("general.AccessKey")}" resizable>
           <template>
             <div class="monospace">[[item.access_key]]</div>
           </template>
-        </vaadin-grid-column>
+        </vaadin-grid-filter-column>
 
         <vaadin-grid-column resizable>
           <template class="header">
@@ -625,23 +682,6 @@ export default class BackendAICredentialList extends BackendAIPage {
         <vaadin-grid-column width="150px" resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
-      <div class="horizontal center-justified layout flex" style="padding: 10px;">
-        <wl-button class="pagination" id="previous-page"
-                   ?disabled="${this._currentPage === 1}"
-                   @click="${(e) => {
-      this._updateItemsFromPage(e)
-    }}">
-          <wl-icon class="pagination">navigate_before</wl-icon>
-        </wl-button>
-        <wl-label style="padding: 5px 15px 0px 15px;"> ${this._currentPage} / ${Math.ceil(this._totalCredentialCount / this._pageSize)} </wl-label>
-        <wl-button class="pagination" id="next-page"
-                   ?disabled="${this._totalCredentialCount <= this._pageSize * this._currentPage}"
-                   @click="${(e) => {
-      this._updateItemsFromPage(e)
-    }}">
-          <wl-icon class="pagination">navigate_next</wl-icon>
-        </wl-button>
-      </div>
       <backend-ai-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
         <span slot="title">Keypair Detail</span>
         <div slot="action" class="horizontal end-justified flex layout">

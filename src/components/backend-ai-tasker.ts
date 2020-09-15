@@ -8,7 +8,7 @@ import {css, customElement, html, LitElement, property} from "lit-element";
 class Task {
   tasktitle: string;
   taskid: string;
-  taskobj: Object;
+  taskobj?: Object;
   tasktype: string;
   status: string;
   created_at: number;
@@ -41,7 +41,6 @@ class Task {
 @customElement("backend-ai-tasker")
 export default class BackendAiTasker extends LitElement {
   public shadowRoot: any;
-  public updateComplete: any;
 
   @property({type: Object}) indicator;
   @property({type: Array}) taskstore;
@@ -103,11 +102,15 @@ export default class BackendAiTasker extends LitElement {
     }
     let item = new Task(title, task, taskid, tasktype);
     if (task != null && typeof task.then === 'function') { // For Promise type task
-      task.then(() => {
+      task.then().catch((err) => {
+        // NOTICE: this is a stop-gap measure for error handling.
+        // console.log(err);
+      }).finally(() => {
+        // No matter any error occurred or not during the session creating,
+        // Task list have to be updated.
         this.finished.push(taskid);
         this.gc();
-        }
-      );
+      });
     } else { // For function type task (not supported yet)
       return false;
     }

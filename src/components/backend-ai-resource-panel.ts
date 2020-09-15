@@ -9,7 +9,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
 
-import 'weightless/card';
 import 'weightless/icon';
 
 import '@material/mwc-linear-progress/mwc-linear-progress';
@@ -17,7 +16,6 @@ import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 
 import './lablup-activity-panel';
-import './backend-ai-chart';
 import './backend-ai-resource-monitor';
 import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';

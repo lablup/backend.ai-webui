@@ -1,3 +1,12 @@
+/**
+ Backend AI Painkiller
+
+ `backend-ai-painkiller` informs error messages.
+
+ @group Backend.AI Console
+ @element backend-ai-painkiller
+ */
+
 'use strict';
 declare global {
   interface Window {
@@ -28,6 +37,9 @@ export default class BackendAIPainKiller {
   public errorMessageTable: any;
   public regexTable: any;
 
+  /**
+   * Return error message.
+   * */
   static relieve(msg) {
     if (typeof msg === 'undefined') {
       return 'Problem occurred.';
