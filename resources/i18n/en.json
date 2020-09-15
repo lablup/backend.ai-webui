@@ -15,6 +15,8 @@
       "Information": "Information",
       "About": "About",
       "AboutBackendAI": "About Backend.AI",
+      "ChangeUserInformation": "Change User Information",
+      "Username": "Username",
       "ChangePassword": "Change Password",
       "Preferences": "Preferences",
       "LogsErrors": "Logs / Errors",

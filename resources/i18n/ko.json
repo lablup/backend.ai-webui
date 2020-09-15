@@ -675,6 +675,8 @@
     "PleaseWait": "로그인 진행중. 기다려주세요.",
     "ConnectingToCluster": "Backend.AI 클러스터에 연결중...",
     "ForgotPassword": "비밀번호를 잊어버렸습니까?",
+    "ChangeUserInformation": "계정 정보 변경",
+    "Username": "Username",
     "ChangePassword": "비밀번호 변경",
     "SendChangePasswordEmail": "비밀번호 변경 이메일 보내기",
     "DescChangePasswordEmail": "비밀번호 변경을 위한 이메일을 보내기 위해 이메일을 입력하고 보내기 버튼을 눌러주세요.",
