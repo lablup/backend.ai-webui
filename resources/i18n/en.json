@@ -758,5 +758,10 @@
     "NotebookBadgeCodeHTML": "Notebook Badge Code (HTML)",
     "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)"
   },
-  "DownloadSSHKey": "Download SSH Key"
+  "DownloadSSHKey": "Download SSH Key",
+  "license": {
+    "Perpetual": "Perpetual",
+    "Subscription": "Subscription",
+    "OpenSource": "Open Source"
+  }
 }
