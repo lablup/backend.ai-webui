@@ -173,7 +173,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
             <span>${_t("login.InvalidChangePasswordToken")}</span>
           </h3>
           <div class="horizontal layout center" style="margin:10px;">
-            <p style="width:350;">${_t("login.InvalidChangePasswordTokenMessage")}</p>
+            <p style="width:350px;">${_t("login.InvalidChangePasswordTokenMessage")}</p>
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
