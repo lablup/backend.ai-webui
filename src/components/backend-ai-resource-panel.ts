@@ -9,7 +9,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
 
-import 'weightless/card';
 import 'weightless/icon';
 
 import '@material/mwc-linear-progress/mwc-linear-progress';
