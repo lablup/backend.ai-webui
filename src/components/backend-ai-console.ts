@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
-import {customElement, html, LitElement, property} from "lit-element";
+import {css, customElement, html, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
 import {installOfflineWatcher} from 'pwa-helpers/network';
@@ -16,6 +16,7 @@ import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
+import '@material/mwc-icon-button-toggle';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu';
@@ -107,6 +108,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) _offlineIndicatorOpened = false;
   @property({type: Boolean}) _offline = false;
   @property({type: Object}) config = Object();
+  @property({type: Object}) client = Object();
   @property({type: Object}) appBody;
   @property({type: Object}) appPage;
   @property({type: Object}) contentBody;
@@ -130,7 +132,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
-      IronPositioning];
+      IronPositioning,
+      // language=CSS
+      css`
+        mwc-textfield {
+          width: 100%;
+          --mdc-text-field-fill-color: transparent;
+        }
+      `
+    ];
   }
 
   firstUpdated() {
@@ -212,6 +222,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.backendaioptions.set('current_language', this.lang);
     await setLanguage(this.lang);
     this.hasLoadedStrings = true;
+    this._initClient();
   }
 
   disconnectedCallback() {
@@ -327,6 +338,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }).catch(err => {
         console.log("Configuration file missing.");
       });
+  }
+
+  _initClient() {
+    this.client = new ai.backend.Client(
+      this.config,
+      'Backend.AI Console.',
+    );
   }
 
   /**
@@ -507,43 +525,155 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.shadowRoot.querySelector('#user-preference-dialog').hide();
   }
 
+  _togglePasswordVisibility(element) {
+    const isVisible = element.__on;
+    const password = element.closest('div').querySelector('mwc-textfield');
+    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+  }
+
+  _validatePassword1() {
+    const passwordInput = this.shadowRoot.querySelector('#pref-new-password');
+    const password2Input = this.shadowRoot.querySelector('#pref-new-password2');
+    password2Input.reportValidity();
+    passwordInput.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          passwordInput.validationMessage = _text('signup.PasswordInputRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        } else {
+          passwordInput.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        }
+      } else {
+        return {
+          valid: nativeValidity.valid,
+          customError: !nativeValidity.valid
+        }
+      }
+    }
+  }
+
+  _validatePassword2() {
+    const password2Input = this.shadowRoot.querySelector('#pref-new-password2');
+    password2Input.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          password2Input.validationMessage = _text('signup.PasswordInputRequired');
+          return {
+            valid: nativeValidity.valid, 
+            customError: !nativeValidity.valid
+          }
+        } else {
+          password2Input.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          } 
+        }
+      } else {
+        // custom validation for password input match
+        const passwordInput = this.shadowRoot.querySelector('#pref-new-password');
+        let isMatched = (passwordInput.value === password2Input.value);
+        if (!isMatched) {
+          password2Input.validationMessage = _text('signup.PasswordNotMatched');         
+        }
+        return {
+          valid: isMatched,
+          customError: !isMatched
+        }
+      }
+    }
+  }
+
+  /**
+   * Validate User input in password automatically, and show error message if any input error occurs.
+   */
+  _validatePassword() {
+    this._validatePassword1();
+    this._validatePassword2();
+  }
+
+  /**
+   * Update the user information include username and password
+   */
+  _updateUserInformation() {
+    this._updateUsername();
+    this._updateUserPassword();
+  }
+
+  /**
+   * Update the username
+   */
+  async _updateUsername() {
+    const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
+    const userName = this.shadowRoot.querySelector('#pref-original-name').value;
+
+    // if user input in username is not null and not same as the original username, then it updates.
+    if (userName && userName !== this.full_name) {
+      /**
+       * TO DO: update username by API
+       */
+    }
+  }
+
   /**
    * Update the user password.
    */
-  _updateUserPassword() {
+  async _updateUserPassword() {
     const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
     const oldPassword = dialog.querySelector('#pref-original-password').value;
     const newPassword1El = dialog.querySelector('#pref-new-password');
     const newPassword2El = dialog.querySelector('#pref-new-password2');
+
+    // no update in user's password
+    if (!oldPassword && !newPassword1El.value && !newPassword2El.value) {
+      this._hideUserPrefDialog();
+      return;
+    }
+
     if (!oldPassword) {
-      this.notification.text = 'Enter old password';
+      this.notification.text = _text('console.menu.InputOriginalPassword');
       this.notification.show();
       return;
     }
     if (!newPassword1El.value || !newPassword1El.validity.valid) {
-      this.notification.text = 'Invalid new password';
+      this.notification.text = _text('console.menu.InvalidPasswordMessage');
       this.notification.show();
       return;
     }
     if (newPassword1El.value !== newPassword2El.value) {
-      this.notification.text = 'Two new passwords do not match';
+      this.notification.text = _text('console.menu.NewPasswordMismatch');
       this.notification.show();
       return;
     }
-    const p = globalThis.backendaiclient.updatePassword(oldPassword, newPassword1El.value, newPassword2El.value);
-    p.then((resp) => {
-      this.notification.text = 'Password updated';
+
+    globalThis.backendaiclient.update_password(oldPassword, newPassword1El.value, newPassword2El.value).then((resp) => {
+      this.notification.text = _text('console.menu.PasswordUpdated');
       this.notification.show();
       this._hideUserPrefDialog();
-      this.shadowRoot.querySelector('#prefj-original-password').value = '';
-      this.shadowRoot.querySelector('#prefj-new-password').value = '';
-      this.shadowRoot.querySelector('#prefj-new-password2').value = '';
     }).catch((err) => {
-      if (err && err.title) {
+      if (err && err.message) {
+        this.notification.text = err.message;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+        return;
+      }
+      else if (err && err.title) {
         this.notification.text = err.title;
         this.notification.detail = err.message;
         this.notification.show(true, err);
+        return;
       }
+    }).finally(() => { // remove input value again
+      this.shadowRoot.querySelector('#pref-original-password').value = '';
+      this.shadowRoot.querySelector('#pref-new-password').value = '';
+      this.shadowRoot.querySelector('#pref-new-password2').value = '';
     });
   }
 
@@ -1118,7 +1248,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-dialog id="user-preference-dialog" fixed backdrop>
         <span slot="title">${_t("console.menu.ChangeUserInformation")}</span>
         <div slot="content" class="layout vertical" style="width:300px;">
-          <mwc-textfield id="pref-original-id" type="text"
+          <mwc-textfield id="pref-original-name" type="text"
               label="${_t('console.menu.Username')}" max-length="30" autofocus
               style="margin-bottom:20px;" value="${this.full_name}">
           </mwc-text-field>
@@ -1128,19 +1258,31 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               label="${_t('console.menu.OriginalPassword')}" max-length="30"
               style="margin-bottom:20px;">
           </mwc-textfield>
-          <mwc-textfield id="pref-new-password" label="${_t('console.menu.NewPassword')}"
-              type="password" min-length="8" max-length="30"
-              auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
-              pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$">
-          </mwc-textfield>
-          <mwc-textfield id="pref-new-password2" label="${_t('console.menu.NewPasswordAgain')}"
-              type="password" min-length="8" max-length="30">
-          </mwc-textfield>
+          <div class="horizontal flex layout">
+            <mwc-textfield id="pref-new-password" label="${_t('console.menu.NewPassword')}"
+                type="password" min-length="8" max-length="30"
+                auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
+                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                @change="${this._validatePassword}">
+            </mwc-textfield>
+            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                                      @click="${(e) => this._togglePasswordVisibility(e.target)}">
+            </mwc-icon-button-toggle>   
+          </div>
+          <div class="horizontal flex layout">
+            <mwc-textfield id="pref-new-password2" label="${_t('console.menu.NewPasswordAgain')}"
+                type="password" min-length="8" max-length="30"
+                @change="${this._validatePassword}">
+            </mwc-textfield>
+            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                                      @click="${(e) => this._togglePasswordVisibility(e.target)}">
+              </mwc-icon-button-toggle>   
+          </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
           <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>
-          <wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>
+          <wl-button class="ok" @click="${this._updateUserInformation}">${_t("console.menu.Update")}</wl-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
