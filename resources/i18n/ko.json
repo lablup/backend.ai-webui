@@ -755,5 +755,10 @@
     "NotebookBadgeCodeHTML": "노트북 배지 코드(HTML)",
     "NotebookBadgeCodeMarkdown": "노트북 배지 코드(Markdown)"
   },
-  "DownloadSSHKey": "SSH 키 다운로드"
+  "DownloadSSHKey": "SSH 키 다운로드",
+  "license": {
+    "Perpetual": "영구 라이선스",
+    "Subscription": "구독 라이선스",
+    "OpenSource": "오픈소스"
+  }
 }
