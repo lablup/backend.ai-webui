@@ -1051,7 +1051,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   </mwc-list-item>
                   <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                       <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
-                      ${_t("console.menu.ChangePassword")}
+                      ${_t("console.menu.ChangeUserInformation")}
                   </mwc-list-item>
                   <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
                       <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
@@ -1116,11 +1116,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
       <backend-ai-dialog id="user-preference-dialog" fixed backdrop>
-        <span slot="title">${_t("console.menu.ChangePassword")}</span>
+        <span slot="title">${_t("console.menu.ChangeUserInformation")}</span>
+        <div slot="content" class="layout vertical" style="width:300px;">
+          <mwc-textfield id="pref-original-id" type="text"
+              label="${_t('console.menu.Username')}" max-length="30" autofocus
+              style="margin-bottom:20px;" value="${this.full_name}">
+          </mwc-text-field>
+        </div>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-password" type="password"
-              label="${_t('console.menu.OriginalPassword')}" max-length="30" autofocus
-              style="margin-bottom:20px">
+              label="${_t('console.menu.OriginalPassword')}" max-length="30"
+              style="margin-bottom:20px;">
           </mwc-textfield>
           <mwc-textfield id="pref-new-password" label="${_t('console.menu.NewPassword')}"
               type="password" min-length="8" max-length="30"
