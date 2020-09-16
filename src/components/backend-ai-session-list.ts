@@ -487,6 +487,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           let session = sessions[objectKey];
           let occupied_slots = JSON.parse(session.occupied_slots);
           const kernelImage = sessions[objectKey].image.split('/')[2] || sessions[objectKey].image.split('/')[1];
+          sessions[objectKey].cluster_size = parseInt(session[objectKey].cluster_size);
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
@@ -1212,6 +1213,8 @@ export default class BackendAiSessionList extends BackendAIPage {
               <span class="indicator">GPU</span>
               ` : html``}
           </div>
+            ${!rowData.item.cluster_size ? html ``:html ``} 
+
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">folder_open</wl-icon>
               ${rowData.item.mounts.length > 0 ? html`
