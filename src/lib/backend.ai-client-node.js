@@ -533,6 +533,20 @@ class Client {
         return this._wrapWithPromise(rqst);
     }
     /**
+     *  Update user's fullname.
+     *
+     *  CAUTION: username attribute is unique key.
+     *           therefore full_name should be changed, not the username.
+     */
+    async update_username(oldFullname, newFullname) {
+        let body = {
+            'old_full_name': oldFullname,
+            'new_full_name': newFullname
+        };
+        let rqst = this.newSignedRequest('POST', `/auth/update-fullname`, body);
+        return this._wrapWithPromise(rqst);
+    }
+    /**
      * Return the resource slots.
      */
     async get_resource_slots() {
