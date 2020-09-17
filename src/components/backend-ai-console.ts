@@ -611,14 +611,29 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * Update the username
    */
   async _updateUsername() {
-    const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
     const userName = this.shadowRoot.querySelector('#pref-original-name').value;
-
     // if user input in username is not null and not same as the original username, then it updates.
-    if (userName && userName !== this.full_name) {
-      /**
-       * TO DO: update username by API
-       */
+    if (userName && (userName !== this.full_name)) {
+      globalThis.backendaiclient.update_username(this.full_name, userName).then((resp) => {
+        this.notification.text = _text('console.menu.UsernameUpdated');
+        this.notification.show();
+        this._hideUserPrefDialog();
+        this.full_name = globalThis.backendaiclient.full_name = userName;
+        this.shadowRoot.querySelector('#pref-original-name').value = this.full_name;
+      }).catch((err) => {
+        if (err && err.message) {
+          this.notification.text = err.message;
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+          return;
+        }
+        else if (err && err.title) {
+          this.notification.text = err.title;
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+          return;
+        }
+      });
     }
   }
 
