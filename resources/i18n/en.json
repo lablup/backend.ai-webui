@@ -31,6 +31,7 @@
       "NewPasswordMismatch": "Two new passwords do not match.",
       "PasswordMismatch": "Password mismatch",
       "PasswordUpdated": "Password is successfully updated.",
+      "UsernameUpdated": "User full name is successfully updated.",
       "TermsOfService": "Terms of Service",
       "PrivacyPolicy": "Privacy Policy",
       "LeaveService": "Leave service",
