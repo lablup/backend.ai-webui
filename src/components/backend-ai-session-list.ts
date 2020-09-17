@@ -1213,7 +1213,11 @@ export default class BackendAiSessionList extends BackendAIPage {
               <span class="indicator">GPU</span>
               ` : html``}
           </div>
-            ${!rowData.item.cluster_size ? html ``:html ``} 
+		  ${rowData.item.cluster_size > 1 ? html `
+              <wl-icon class="fg green indicator">view_module</wl-icon>
+              <span>${rowData.item.cluster_size}</span>
+              <span class="indicator">Nodes</span>
+			  `:html ``} 
 
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">folder_open</wl-icon>
