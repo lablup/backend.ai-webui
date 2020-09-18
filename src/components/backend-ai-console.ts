@@ -600,25 +600,25 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   /**
-   * Update the user information include username and password
+   * Update the user information including full_name of user and password
    */
   _updateUserInformation() {
-    this._updateUsername();
+    this._updateFullname();
     this._updateUserPassword();
   }
 
   /**
-   * Update the username
+   * Update the full_name of user information
    */
-  async _updateUsername() {
-    const userName = this.shadowRoot.querySelector('#pref-original-name').value;
-    // if user input in username is not null and not same as the original username, then it updates.
-    if (userName && (userName !== this.full_name)) {
-      globalThis.backendaiclient.update_username(this.full_name, userName).then((resp) => {
-        this.notification.text = _text('console.menu.UsernameUpdated');
+  async _updateFullname() {
+    const newFullname = this.shadowRoot.querySelector('#pref-original-name').value;
+    // if user input in full name is not null and not same as the original full name, then it updates.
+    if (newFullname && (newFullname !== this.full_name)) {
+      globalThis.backendaiclient.user.update(this.user_id, {'full_name': newFullname}).then((resp) => {
+        this.notification.text = _text('console.menu.FullNameUpdated');
         this.notification.show();
         this._hideUserPrefDialog();
-        this.full_name = globalThis.backendaiclient.full_name = userName;
+        this.full_name = globalThis.backendaiclient.full_name = newFullname;
         this.shadowRoot.querySelector('#pref-original-name').value = this.full_name;
       }).catch((err) => {
         if (err && err.message) {
@@ -1172,7 +1172,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 </div>
                 <div slot="actionItems">
                   <div class="vertical center-justified flex layout" style="height:48px;">
-                    <span class="email" style="font-size: 11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;">${_t("console.menu.UserName")}</span>
+                    <span class="email" style="font-size: 11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;">${_t("console.menu.FullName")}</span>
                     <span class="full_name" style="font-size: 14px;text-align:right;-webkit-font-smoothing:antialiased;">${this.full_name}</span>
                     <!--<div style="font-size: 12px;text-align:right">${this.domain !== 'default' && this.domain !== '' ? html`${this.domain}` : html``}</div>-->
                   </div>
@@ -1264,7 +1264,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         <span slot="title">${_t("console.menu.ChangeUserInformation")}</span>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-name" type="text"
-              label="${_t('console.menu.Username')}" max-length="30" autofocus
+              label="${_t('console.menu.FullName')}" max-length="30" autofocus
               style="margin-bottom:20px;" value="${this.full_name}">
           </mwc-text-field>
         </div>
