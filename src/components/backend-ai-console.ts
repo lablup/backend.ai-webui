@@ -617,7 +617,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       globalThis.backendaiclient.user.update(this.user_id, {'full_name': newFullname}).then((resp) => {
         this.notification.text = _text('console.menu.FullnameUpdated');
         this.notification.show();
-        this._hideUserPrefDialog();
         this.full_name = globalThis.backendaiclient.full_name = newFullname;
         this.shadowRoot.querySelector('#pref-original-name').value = this.full_name;
       }).catch((err) => {
