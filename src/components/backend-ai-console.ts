@@ -615,7 +615,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     // if user input in full name is not null and not same as the original full name, then it updates.
     if (newFullname && (newFullname !== this.full_name)) {
       globalThis.backendaiclient.user.update(this.user_id, {'full_name': newFullname}).then((resp) => {
-        this.notification.text = _text('console.menu.FullNameUpdated');
+        this.notification.text = _text('console.menu.FullnameUpdated');
         this.notification.show();
         this._hideUserPrefDialog();
         this.full_name = globalThis.backendaiclient.full_name = newFullname;
