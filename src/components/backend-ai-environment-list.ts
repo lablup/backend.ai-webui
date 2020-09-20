@@ -57,6 +57,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) installImageResource = Object();
   @property({type: Object}) selectedCheckbox = Object();
   @property({type: Object}) _grid = Object();
+  @property({type: String}) servicePortsMsg = '';
 
   constructor() {
     super();
@@ -432,40 +433,79 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
+   * Validate backend.ai service ports.
+   */
+  _isServicePortValid() {
+    const container = this.shadowRoot.querySelector("#modify-app-container");
+    const rows = container.querySelectorAll(".row:not(.header)");
+    const ports = new Set();
+    for (const row of rows) {
+      const textFields = row.querySelectorAll("wl-textfield");
+      if (Array.prototype.every.call(textFields, field => field.value === "")) {
+        continue;
+      }
+
+      const appName = textFields[0].value, protocol = textFields[1].value, port = parseInt(textFields[2].value);
+      if (appName === "") {
+        this.servicePortsMsg = '*App Name must not be empty.'
+        return false;
+      }
+      if (!["http", "tcp", "pty"].includes(protocol)) {
+        this.servicePortsMsg = '*Protocol must be one of "http", "tcp", "pty".';
+        return false;
+      }
+      if (ports.has(port)) {
+        this.servicePortsMsg = `*Port ${port} cannot be used for multiple apps.`
+        return false;
+      }
+      if (port >= 66535 || port < 0) {
+        this.servicePortsMsg = '*Port should be betwwen 0 to 66534'
+        return false;
+      }
+      if ([2000, 2001, 2002, 2003, 2200, 7681].includes(port)) {
+        this.servicePortsMsg = `*Port ${port} is reserved for interanl use.`
+        return false;
+      }
+      ports.add(port);
+    }
+    return true;
+  }
+
+  /**
    * Parse backend.ai service ports.
    */
   _parseServicePort() {
     const container = this.shadowRoot.querySelector("#modify-app-container");
     const rows = container.querySelectorAll(".row:not(.header)");
-
-    const valid = row => Array.prototype.filter.call(
-      row.querySelectorAll("wl-textfield"),
-      (tf, idx) => tf.value === "" || (idx === 1 && !["http", "tcp", "pty"].includes(tf.value))
+    const nonempty = row => Array.prototype.filter.call(
+      row.querySelectorAll("wl-textfield"), (tf, idx) => tf.value === ""
     ).length === 0;
     const encodeRow = row => Array.prototype.map.call(row.querySelectorAll("wl-textfield"), tf => tf.value).join(":");
 
-    return Array.prototype.filter.call(rows, row => valid(row)).map(row => encodeRow(row)).join(",");
+    return Array.prototype.filter.call(rows, row => nonempty(row)).map(row => encodeRow(row)).join(",");
   }
 
   /**
    * Modify backend.ai service ports.
    */
   modifyServicePort() {
-    const value = this._parseServicePort();
-    const image = this.images[this.selectedIndex];
-    globalThis.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
-      .then(({result}) => {
-        if (result === "ok") {
-          this.notification.text = _text("environment.DescServicePortModified");
-        } else {
-          this.notification.text = _text("dialog.ErrorOccurred");
-        }
-        this._getImages();
-        this.requestUpdate();
-        this._clearRows();
-        this.notification.show();
-        this._hideDialogById("#modify-app-dialog");
-      })
+    if (this._isServicePortValid()) {
+      const value = this._parseServicePort();
+      const image = this.images[this.selectedIndex];
+      globalThis.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
+        .then(({result}) => {
+          if (result === "ok") {
+            this.notification.text = _text("environment.DescServicePortModified");
+          } else {
+            this.notification.text = _text("dialog.ErrorOccurred");
+          }
+          this._getImages();
+          this.requestUpdate();
+          this._clearRows();
+          this.notification.show();
+          this._hideDialogById("#modify-app-dialog");
+        })
+    }
   }
 
   /**
@@ -720,6 +760,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <wl-icon>add</wl-icon>
             </wl-button>
           </div>
+          <span style="color:red;">${this.servicePortsMsg}</span>
         </div>
         <wl-button slot="footer"
           class="fg orange"
