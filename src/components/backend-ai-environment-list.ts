@@ -447,7 +447,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
       const appName = textFields[0].value, protocol = textFields[1].value, port = parseInt(textFields[2].value);
       if (appName === "") {
-        this.servicePortsMsg = '*App Name must not be empty.'
+        this.servicePortsMsg = '*App Name may not be empty.'
         return false;
       }
       if (!["http", "tcp", "pty"].includes(protocol)) {
@@ -455,11 +455,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         return false;
       }
       if (ports.has(port)) {
-        this.servicePortsMsg = `*Port ${port} cannot be used for multiple apps.`
+        this.servicePortsMsg = `*Port must be unique for each app.`
         return false;
       }
       if (port >= 66535 || port < 0) {
-        this.servicePortsMsg = '*Port should be betwwen 0 to 66534'
+        this.servicePortsMsg = '*Port must be between 0 to 66534.'
         return false;
       }
       if ([2000, 2001, 2002, 2003, 2200, 7681].includes(port)) {
@@ -492,6 +492,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     if (this._isServicePortValid()) {
       const value = this._parseServicePort();
       const image = this.images[this.selectedIndex];
+      this.servicePortsMsg = '';
       globalThis.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
         .then(({result}) => {
           if (result === "ok") {
