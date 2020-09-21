@@ -926,9 +926,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         ${this._isDir(rowData.item) ?
         html`
-          <div class="indicator horizontal center layout" @click="${(e) => this._enqueueFolder(e)}" name="${rowData.item.filename}">
-            <mwc-icon-button class="fg controls-running" icon="folder_open"
-                               name="${rowData.item.filename}"></mwc-icon-button>
+          <div class="indicator horizontal center layout" name="${rowData.item.filename}">
+            <mwc-icon-button class="fg controls-running" icon="folder_open" name="${rowData.item.filename}"
+                               @click="${(e) => this._enqueueFolder(e)}"></mwc-icon-button>
             ${rowData.item.filename}
           </div>
        ` : html`
@@ -1256,10 +1256,21 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    * @param {Event} e - click the folder_open icon button
    * */
-  _enqueueFolder(e) {
+  async _enqueueFolder(e) {
+    const button = e.target;
+    const minDelay = 300;
+    
+    // disable button to avoid executing extra onclick event
+    button.setAttribute('disabled', 'true');
     const fn = e.target.getAttribute('name');
     this.explorer.breadcrumb.push(fn);
     this._clearExplorer();
+
+    // set minimum delay to enable the button
+    await setTimeout(() => {
+      button.removeAttribute('disabled');
+    }, minDelay);
+
   }
 
   _gotoFolder(e) {
