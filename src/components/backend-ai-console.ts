@@ -1296,7 +1296,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
           <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>
-          <wl-button class="ok" @click="${this._updateUserInformation}">${_t("console.menu.Update")}</wl-button>
+          <wl-button class="ok" @click="${() => this._updateUserInformation}">${_t("console.menu.Update")}</wl-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
