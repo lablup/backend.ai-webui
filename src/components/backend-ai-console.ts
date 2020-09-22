@@ -108,7 +108,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) _offlineIndicatorOpened = false;
   @property({type: Boolean}) _offline = false;
   @property({type: Object}) config = Object();
-  @property({type: Object}) client = Object();
   @property({type: Object}) appBody;
   @property({type: Object}) appPage;
   @property({type: Object}) contentBody;
@@ -222,7 +221,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.backendaioptions.set('current_language', this.lang);
     await setLanguage(this.lang);
     this.hasLoadedStrings = true;
-    this._initClient();
+    // this._initClient();
   }
 
   disconnectedCallback() {
@@ -338,13 +337,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }).catch(err => {
         console.log("Configuration file missing.");
       });
-  }
-
-  _initClient() {
-    this.client = new ai.backend.Client(
-      this.config,
-      'Backend.AI Console.',
-    );
   }
 
   /**
@@ -1296,7 +1288,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
           <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>
-          <wl-button class="ok" @click="${() => this._updateUserInformation}">${_t("console.menu.Update")}</wl-button>
+          <wl-button class="ok" @click="${() => this._updateUserInformation()}">${_t("console.menu.Update")}</wl-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
