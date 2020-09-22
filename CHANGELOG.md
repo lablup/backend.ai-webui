@@ -1,5 +1,52 @@
 # Changelog
 
+## v20.09.1 (22/09/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**blocker**][**bug**] Local proxy is not working on the app mode with Backend.AI 20.09 alpha [#720](https://github.com/lablup/backend.ai-console/issues/720)
+- [**UI / UX**][**bug**][**easy**][**good first issue**] Usage shows [Object Object] on finished tab of session list [#685](https://github.com/lablup/backend.ai-console/issues/685)
+
+
+## v20.09.0 (18/09/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**] Provide help about 'copying text from terminal' [#698](https://github.com/lablup/backend.ai-console/issues/698)
+- [**UI / UX**][**enhancement**][**good first issue**] Update manual to explain 'SSH Keypair change' menu [#695](https://github.com/lablup/backend.ai-console/issues/695)
+- [**UI / UX**][**bug**][**enhancement**][**good first issue**][**minor**] Disable turn off button on finished session list [#686](https://github.com/lablup/backend.ai-console/issues/686)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Refactor storage selection on session launch [#662](https://github.com/lablup/backend.ai-console/issues/662)
+- [**UI / UX**][**enhancement**][**minor**] Skip rendering paths to increase speed [#661](https://github.com/lablup/backend.ai-console/issues/661)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Migrate compute_session from v4 to v5 [#651](https://github.com/lablup/backend.ai-console/issues/651)
+- [**enhancement**][**maintenance**] Change default branch from master to main [#637](https://github.com/lablup/backend.ai-console/issues/637)
+- [**UI / UX**][**enhancement**][**minor**] Show mounted folder information on session list [#628](https://github.com/lablup/backend.ai-console/issues/628)
+- [**enhancement**] Add comments on source code [#402](https://github.com/lablup/backend.ai-console/issues/402)
+- [**UI / UX**][**enhancement**][**minor**] Support NNI [#207](https://github.com/lablup/backend.ai-console/issues/207)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**good first issue**] Dropdown menu is positioned incorrectly [#707](https://github.com/lablup/backend.ai-console/issues/707)
+- [**bug**] Login Information mismatch error, when build&run console-server in local environment [#700](https://github.com/lablup/backend.ai-console/issues/700)
+- [**bug**][**minor**] Error logs are not displayed [#689](https://github.com/lablup/backend.ai-console/issues/689)
+- [**bug**][**major**] Session's app cannot be accessed if there are multiple sessions with the same name prefix [#687](https://github.com/lablup/backend.ai-console/issues/687)
+- [**UI / UX**][**bug**] Incorrect image downloaded after filtered by keywords [#679](https://github.com/lablup/backend.ai-console/issues/679)
+- [**UI / UX**][**bug**][**easy**] Fix resource preset dialog validation [#672](https://github.com/lablup/backend.ai-console/issues/672)
+- [**bug**][**urgency**] Unable to create a session due to vfolder-related issue [#670](https://github.com/lablup/backend.ai-console/issues/670)
+- [**UI / UX**][**blocker**][**bug**][**cloud**][**minor**] Wrong password condition error message on signup [#663](https://github.com/lablup/backend.ai-console/issues/663)
+- [**UI / UX**][**blocker**][**bug**] Sometimes GitHub notebook import does not work [#660](https://github.com/lablup/backend.ai-console/issues/660)
+- [**UI / UX**][**bug**] After terminating a session, resource occupation is not updated [#639](https://github.com/lablup/backend.ai-console/issues/639)
+- [**UI / UX**][**bug**][**easy**] Although user inputs invalid session name, session creating dialog get closed. [#638](https://github.com/lablup/backend.ai-console/issues/638)
+
+#### UI / UX:
+
+- [**UI / UX**][**easy**][**good first issue**][**minor**] Change 'About' to 'About Backend.AI' [#694](https://github.com/lablup/backend.ai-console/issues/694)
+- [**UI / UX**][**minor**] No error messages when kernel creation request has error response [#691](https://github.com/lablup/backend.ai-console/issues/691)
+- [**UI / UX**][**good first issue**][**minor**] Fix layout overlap in Start new session dialog [#676](https://github.com/lablup/backend.ai-console/issues/676)
+- [**UI / UX**][**easy**] Apply toggle visibility in password input field [#665](https://github.com/lablup/backend.ai-console/issues/665)
+- [**UI / UX**] Add UI to specify SSH Keypair by user [#657](https://github.com/lablup/backend.ai-console/issues/657)
+- [**UI / UX**] Neater message when vfolder invitation is duplicated [#653](https://github.com/lablup/backend.ai-console/issues/653)
+
+
 ## v20.08.0 (04/08/2020)
 
 #### Bug Fixes:

@@ -24,7 +24,7 @@ Backend.AI console focuses to
  * Session management
     * Set default resources for runs
     * Choose and run environment-supported apps
-    * Terminal for each session
+    * Web-based Terminal for each session
     * Fully-featured VSCode editor and environments
  * Pipeline
     * Experiments (with SACRED / MLFlow)
