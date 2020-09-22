@@ -1225,7 +1225,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                  id = this.explorer.id,
                  dialog = false) {
     let job = globalThis.backendaiclient.vfolder.list_files(path, id);
-    job.then(value => {
+    return job.then(value => {
       this.shadowRoot.querySelector('#fileList-grid').selectedItems = [];
       this.explorer.files = JSON.parse(value.files);
       this.explorerFiles = this.explorer.files;
@@ -1256,21 +1256,18 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    * @param {Event} e - click the folder_open icon button
    * */
-  async _enqueueFolder(e) {
+  _enqueueFolder(e) {
     const button = e.target;
-    const minDelay = 300;
     
     // disable button to avoid executing extra onclick event
     button.setAttribute('disabled', 'true');
     const fn = e.target.getAttribute('name');
     this.explorer.breadcrumb.push(fn);
-    this._clearExplorer();
 
-    // set minimum delay to enable the button
-    await setTimeout(() => {
+    // enable button only if the operation is done.
+    this._clearExplorer().then(res => {
       button.removeAttribute('disabled');
-    }, minDelay);
-
+    });
   }
 
   _gotoFolder(e) {
