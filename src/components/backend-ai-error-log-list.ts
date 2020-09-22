@@ -55,7 +55,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: Number}) _totalLogCount = 0;
 
   constructor() {
-      super();
+    super();
   }
 
   static get styles() {
@@ -154,8 +154,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
 
   /**
    * Update items from page target.
-   * 
-   * @param page 
+   *
+   * @param page
    */
   _updateItemsFromPage(page) {
     if (typeof page !== 'number') {
@@ -179,8 +179,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
 
   /**
    * Change d of any type to human readable date time.
-   * 
-   * @param {any} d 
+   *
+   * @param {any} d
    */
   _humanReadableTime(d: any) {
     d = new Date(d);
@@ -189,8 +189,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
 
   /**
    * Change d of any type to ISO date time.
-   * 
-   * @param {any} d 
+   *
+   * @param {any} d
    */
   _toISOTime(d: any) {
     d = new Date(d);

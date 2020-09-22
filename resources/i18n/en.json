@@ -14,6 +14,7 @@
       "Maintenance": "Maintenance",
       "Information": "Information",
       "About": "About",
+      "AboutBackendAI": "About Backend.AI",
       "ChangePassword": "Change Password",
       "Preferences": "Preferences",
       "LogsErrors": "Logs / Errors",
@@ -33,7 +34,7 @@
       "Environments&Presets": "Environments & Presets",
       "ComputationResources": "Computation Resources",
       "Logs": "Logs",
-      "Project": "Current Project",
+      "Project": "Project",
       "NoProject": "No Project",
       "SelectProject": "Select Project",
       "Experiments": "Experiments",
@@ -137,7 +138,8 @@
       "ThisSettingTakesPrecedence": "Note: This setting takes precedence",
       "CustomResourceApplied": "Custom resource is applied",
       "PleaseChooseFoldersToMount": "Please Choose Folders To Mount",
-      "StartImportedNotebook": "Start Imported Notebook"
+      "StartImportedNotebook": "Start Imported Notebook",
+      "SessionNameAllowCondition": "Session name only allows at least 4 characters without any whitespaces."
     },
     "Running": "Running",
     "Finished": "Finished",
@@ -153,7 +155,11 @@
     "Reservation": "Reservation",
     "Agent": "Agent",
     "Usage": "Usage",
+    "OpenToPublic": "Open app to public",
+    "TryPreferredPort": "Try preferred port",
+    "SFTPDescription": "Use your favorite SSH/SFTP application to connect.",
     "ConnectionInformation": "Connection Information",
+    "DownloadSSHKey": "Download SSH key file (id_container)",
     "VNCconnection": "VNC connection",
     "UseYourFavoriteSSHApp": "Use your favorite SSH/SFTP application to connect.",
     "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
@@ -162,7 +168,12 @@
     "OnlyRecent100SessionExport": "Only recent 100 session logs will be exported.",
     "ExportCSVFile": "Export CSV File",
     "ResourceGroup": "Resource Group",
-    "NoLogs": "No logs."
+    "NoLogs": "No logs.",
+    "applauncher": {
+      "AppMustBeRun": "Start only when the app is already running",
+      "AppMustBeRunDialog": "This app can only be accessed and used if it is already running through the terminal. If not, you will be directed to an error page that occurs when the app is not running.",
+      "ConfirmAndRun": "I checked and I'll start"
+    }
   },
   "button": {
     "Cancel": "Cancel",
@@ -186,7 +197,10 @@
     "Update": "Update",
     "Delete": "Delete",
     "Dismiss": "Dismiss",
-    "Close": "Close"
+    "Close": "Close",
+    "Confirm": "Confirm",
+    "Generate": "Generate",
+    "Continue": "Continue"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -303,6 +317,7 @@
       "FolderCreated": "Folder created",
       "Rename": "Rename",
       "FolderRenamed": "Folder renamed",
+      "FolderNameMismatched": "Folder name mismmatched",
       "FolderDeleted": "Folder deleted",
       "NumberOfFiles": "Number of files",
       "Ownership": "Ownership",
@@ -334,7 +349,20 @@
       "Foldername": "Folder name",
       "EnterEmailAddress": "Enter E-Mail address",
       "DownloadFile": "Download File",
-      "TouchToDownload": "Touch to Download file"
+      "TouchToDownload": "Touch to Download file",
+      "ValueRequired": "Value is required",
+      "ValueShouldBeStarted": "Path should start with .(dot) or letters, numbers only."
+    },
+    "invitation": {
+      "EnterEmail": "Enter email address",
+      "NoValidEmails": "No valid emails were entered",
+      "Invited": "Successfully invited",
+      "NoOneWasInvited": "No one invited since invitation already exists",
+      "InvitationError": "Invitation failed. User may already be invited."
+    },
+    "permission": {
+      "NoChanges": "No changes made",
+      "PermissionModified": "Permission updated"
     },
     "NoStorageDescriptionFound": "No description."
   },
@@ -353,6 +381,9 @@
     "ErrorOccurred": "Error Occurred",
     "error": {
       "Error": "Error"
+    },
+    "hide": {
+      "DonotShowThisAgain": "Don't show this again."
     }
   },
   "environment": {
@@ -387,7 +418,12 @@
     "ResourcePreset": "Resource Preset",
     "CreateResourcePreset": "Create Resource Preset",
     "PresetName": "Preset Name",
-    "AboutToDeletePreset": "You are about to delete this preset:"
+    "AboutToDeletePreset": "You are about to delete this preset:",
+    "NoPresetName": "Input preset name",
+    "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
+    "Created": "Resource preset created",
+    "Updated": "Resource preset updated",
+    "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB."
   },
   "usersettings": {
     "General": "General",
@@ -418,7 +454,26 @@
     "DescAutomaticUpdateCheck": "Notify when a new console version is released.<br />In where the Internet is unstable or offline, this option will be automatically turned off. You can toggle this switch to start the automatic update check again.",
     "PreferredSSHPort": "Preferred SSH Port",
     "DescPreferredSSHPort": "Use this value as an SSH/SFTP port if possible. <br />If the port is already in use, assign another random port to SSH/SFTP. Leave blank to auto-assign.",
-    "InvalidPortNumber": "Port number should be positive number between 1025~65534"
+    "SSHKeypairManagement": "SSH Keypair Management",
+    "DescSSHKeypairManagement": "Refresh SSH Keypair already exists or generate SSH Keypair by random.",
+    "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
+    "CurrentSSHPublicKey": "Current public key: ",
+    "SSHKeypairGeneration": "SSH Keypair Generation",
+    "SSHKeypairGenerationWarning": "You cannot get private key again. Store on your local disk if needed.",
+    "NoExistingSSHKeypair": "No SSH Keypair to be copied. Please press Generate button or input SSH keypair.",
+    "ClearSSHKeypairInput": "Written SSH Keypair will be removed. Are you sure you want to continue?",
+    "PublicKey": "Public Key",
+    "PrivateKey": "Private Key",
+    "InvalidPortNumber": "Port number should be positive number between 1025~65534",
+    "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard."
+  },
+  "webTerminalUsageGuide": {
+    "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
+    "CopyGuideOne": "Press <code>Ctrl + B</code> key to enter tmux control mode.",
+    "CopyGuideTwo": "Type <code>:set -g mouse off</code> and Press <code>Enter</code> Key.",
+    "CopyGuideThree": "Now you can copy text from the terminal.",
+    "CopyGuideFour": "To turn on mouse scroll again, Press <code>Ctrl + B</code> and Type <code>:set -g mouse on</code> and Press <code>Enter</code> key.",
+    "LearnMore": "Learn More &gt;"
   },
   "logs": {
     "LogMessages": "Log Messages",
@@ -636,11 +691,17 @@
     "SignupBETA": "Signup (Beta invitation only)",
     "E-mail": "E-mail",
     "UserName": "UserName",
+    "UserNameInputRequired": "Username is required.",
     "Password": "Password",
     "PasswordAgain": "Password (again)",
+    "PasswordInputRequired": "Password is required.",
+    "PasswordInvalid": "Use 8 or more characters with a mix of letters, numbers & symbols.",
+    "PasswordNotMatched": "Those passwords didn't match. Try it again.",
     "Signup": "Signup",
     "InvitationToken": "Invitation Token",
+    "TokenInputRequired": "Token is required.",
     "TermsOfService": "Terms of service",
+    "RequestAgreementTermsOfService": "Please read and agree with the terms of service to proceed.",
     "PrivacyPolicy": "Privacy Policy",
     "ThankYou": "Thank you!",
     "VerificationMessage": "Verification email is sent to your email address. Please read and follow the steps specified in the email before login with your account.",
@@ -648,6 +709,7 @@
     "EmailVerifiedMessage": "Your email is verified! Now you can login with your account.",
     "EmailVerificationFailed": "Email verification failed",
     "EmailVerificationFailedMessage": "We're unable to verify your email. Your token may be invalid or expired. Write your email address and click send button to get new verification code.",
+    "EmailInputRequired": "Email address is required.",
     "InvalidEmail": "Invalid email address",
     "SendEmail": "Send verification email",
     "EmailSent": "Email sent",
@@ -681,9 +743,9 @@
     "NotebookBadgeURL": "Notebook URL",
     "NotebookBadgeCode": "Notebook Badge Code",
     "GetAndRunNotebook": "Import & Run",
-    "ImportGithubRepo": "ImportGithubRepo",
-    "GitHubURL": "GitHubURL",
-    "GetToFolder": "GetToFolder",
+    "ImportGithubRepo": "Import Github Repository",
+    "GitHubURL": "GitHub URL",
+    "GetToFolder": "Get To Folder",
     "RepoWillBeFolder": "Imported GitHub repositories are converted to folders and can be mounted when session starts.",
     "FolderAlreadyExists": "There is a folder with the same name, so rename it.",
     "WrongURLType": "Wrong URL Type",
@@ -706,5 +768,11 @@
     "TrafficUsed": "Traffic Usage",
     "Hours": "h",
     "Minutes": "m"
+  },
+  "DownloadSSHKey": "Download SSH Key",
+  "license": {
+    "Perpetual": "Perpetual",
+    "Subscription": "Subscription",
+    "OpenSource": "Open Source"
   }
 }

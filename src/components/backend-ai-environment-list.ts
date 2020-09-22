@@ -116,7 +116,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         }
 
         wl-select, wl-textfield {
-          --input-font-family: Quicksand, Roboto;
+          --input-font-family: var(--general-font-family);
         }
 
         backend-ai-dialog wl-textfield {
@@ -248,10 +248,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   /**
    * Open the selected image.
    *
-   * @param {object} index - Selected image's index object.
+   * @param {object} index - Selected image's digest.
    */
-  openInstallImageDialog(index) {
-    this.selectedIndex = index;
+  openInstallImageDialog(digest) {
+    this.selectedIndex = this.images.findIndex(image => image.digest === digest);
     let chosenImage = this.images[this.selectedIndex];
     this.installImageName = chosenImage['registry'] + '/' + chosenImage['name'] + ':' + chosenImage['tag'];
     this.installImageResource = {};
@@ -525,7 +525,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               ?checked="${rowData.item.installed}"
               ?disabled="${rowData.item.installed}"
               @click="${(e) => {
-                this.openInstallImageDialog(rowData.index);
+                this.openInstallImageDialog(rowData.item.digest);
                 this.selectedCheckbox = e.target;
               }}">
           </wl-checkbox>

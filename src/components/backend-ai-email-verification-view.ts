@@ -6,7 +6,7 @@ import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import '@material/mwc-textfield/mwc-textfield';
-import 'weightless/card';
+import 'weightless/button';
 
 import './backend-ai-dialog';
 import {BackendAIPage} from './backend-ai-page';
@@ -58,7 +58,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
 
   /**
    * Initialize the client.
-   * 
+   *
    * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   _initClient(apiEndpoint: string) {
@@ -84,7 +84,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
 
   /**
    * Verify the client.
-   * 
+   *
    * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   async verify(apiEndpoint: string) {

@@ -5,7 +5,6 @@
 
 import {customElement, html, LitElement, property} from "lit-element";
 
-import "weightless/card";
 import "../plastics/chart-js";
 import format from 'date-fns/format';
 
