@@ -405,6 +405,9 @@
     "ResourceLimit": "Resource Limit",
     "DescDownloadImage": "You are about to install the image: ",
     "DescSignificantDownloadTime": "This process requires significant download time.",
+    "Installed": "installed",
+    "Installing": "installing",
+    "Status": "Status",
     "Images": "Images",
     "ResourcePresets": "Resource Presets",
     "Registries": "Registries"
