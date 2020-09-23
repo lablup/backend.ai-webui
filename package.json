@@ -9,7 +9,7 @@
     "lint": "eslint *.js",
     "test": "./node_modules/testcafe/bin/testcafe-with-v8-flag-filter.js chrome ./tests/*.js",
     "wsproxy": "node ./src/wsproxy/local_proxy.js",
-    "build": "rm -rf build/rollup && mkdir -p build/rollup/src/components && npm run copyindex && npm run copywc && npm run copywa && npm run copyresource && npm run copyconfig && rollup -c rollup.config.ts",
+    "build": "rm -rf build/rollup && npm run patchLib && mkdir -p build/rollup/src/components && npm run copyindex && npm run copywc && npm run copywa && npm run copyresource && npm run copyconfig && rollup -c rollup.config.ts",
     "server:p": "npm run patchLib && ./node_modules/serve/bin/serve.js build/rollup",
     "server:d": "npm run patchLib && ./node_modules/es-dev-server/dist/cli.js --file-extensions .ts --compatibility min",
     "build:d": "npm run patchLib && ./node_modules/typescript/bin/tsc --watch",
