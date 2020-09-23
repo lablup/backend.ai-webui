@@ -408,7 +408,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.appBody.style.setProperty('--mdc-drawer-width', '190px');
       this.appBody.type = 'modal';
       this.appBody.open = false;
-      this.contentBody.style.width = 'calc('+width+'px - 190px)';
+      //this.contentBody.style.width = 'calc('+width+'px - 190px)';
       this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
       this.drawerToggleButton.style.display = 'block';
       if (this.mini_ui) {
@@ -1012,7 +1012,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.9.0.200903</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.9.1.200922</small>
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout">

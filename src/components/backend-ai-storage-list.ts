@@ -926,9 +926,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         ${this._isDir(rowData.item) ?
         html`
-          <div class="indicator horizontal center layout" @click="${(e) => this._enqueueFolder(e)}" name="${rowData.item.filename}">
-            <mwc-icon-button class="fg controls-running" icon="folder_open"
-                               name="${rowData.item.filename}"></mwc-icon-button>
+          <div class="indicator horizontal center layout" name="${rowData.item.filename}">
+            <mwc-icon-button class="fg controls-running" icon="folder_open" name="${rowData.item.filename}"
+                               @click="${(e) => this._enqueueFolder(e)}"></mwc-icon-button>
             ${rowData.item.filename}
           </div>
        ` : html`
@@ -1225,7 +1225,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                  id = this.explorer.id,
                  dialog = false) {
     let job = globalThis.backendaiclient.vfolder.list_files(path, id);
-    job.then(value => {
+    return job.then(value => {
       this.shadowRoot.querySelector('#fileList-grid').selectedItems = [];
       this.explorer.files = JSON.parse(value.files);
       this.explorerFiles = this.explorer.files;
@@ -1257,9 +1257,17 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the folder_open icon button
    * */
   _enqueueFolder(e) {
+    const button = e.target;
+    
+    // disable button to avoid executing extra onclick event
+    button.setAttribute('disabled', 'true');
     const fn = e.target.getAttribute('name');
     this.explorer.breadcrumb.push(fn);
-    this._clearExplorer();
+
+    // enable button only if the operation is done.
+    this._clearExplorer().then(res => {
+      button.removeAttribute('disabled');
+    });
   }
 
   _gotoFolder(e) {
