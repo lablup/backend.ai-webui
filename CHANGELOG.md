@@ -1,5 +1,12 @@
 # Changelog
 
+## v20.09.1 (22/09/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**blocker**][**bug**] Local proxy is not working on the app mode with Backend.AI 20.09 alpha [#720](https://github.com/lablup/backend.ai-console/issues/720)
+- [**UI / UX**][**bug**][**easy**][**good first issue**] Usage shows [Object Object] on finished tab of session list [#685](https://github.com/lablup/backend.ai-console/issues/685)
+
 
 ## v20.09.0 (18/09/2020)
 

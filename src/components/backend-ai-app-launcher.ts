@@ -367,8 +367,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
-    const openToPublic = this.shadowRoot.querySelector('#chk-open-to-public').checked;
-    this.shadowRoot.querySelector('#chk-open-to-public').checked = false;
+    let openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
+    let openToPublic = false;
+    if (openToPublicCheckBox == null) { // Null or undefined
+    } else {
+      openToPublic = openToPublicCheckBox.checked;
+      openToPublicCheckBox.checked = false;
+    }
     let param = {
       endpoint: globalThis.backendaiclient._config.endpoint
     };

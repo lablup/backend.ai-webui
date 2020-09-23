@@ -494,12 +494,12 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].cpu_used_time = this._automaticScaledTime(0);
             }
             if (liveStat && liveStat.io_read) {
-              sessions[objectKey].io_read_bytes_mb = this._automaticScaledTime(liveStat.io_read.capacity);
+              sessions[objectKey].io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
             } else {
               sessions[objectKey].io_read_bytes_mb = 0;
             }
             if (liveStat && liveStat.io_write) {
-              sessions[objectKey].io_write_bytes_mb = this._automaticScaledTime(liveStat.io_write.capacity);
+              sessions[objectKey].io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
             } else {
               sessions[objectKey].io_write_bytes_mb = 0;
             }
@@ -682,7 +682,9 @@ export default class BackendAiSessionList extends BackendAIPage {
   _msecToSec(value) {
     return Number(value / 1000).toFixed(0);
   }
-
+  _bytesToMB(value) {
+    return Number(value / (1024 * 1024)).toFixed(1);
+  }
   /**
    * Return elapsed time
    *
@@ -1449,12 +1451,12 @@ export default class BackendAiSessionList extends BackendAIPage {
               exportListItem.cpu_used_time = 0;
             }
             if (liveStat.io_read) {
-              exportListItem.io_read_bytes_mb = this._automaticScaledTime(liveStat.io_read.capacity);
+              exportListItem.io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
             } else {
               exportListItem.io_read_bytes_mb = 0;
             }
             if (liveStat.io_write) {
-              exportListItem.io_write_bytes_mb = this._automaticScaledTime(liveStat.io_write.capacity);
+              exportListItem.io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
             } else {
               exportListItem.io_write_bytes_mb = 0;
             }
