@@ -16,16 +16,17 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
 import 'weightless/button';
-import 'weightless/checkbox';
 import 'weightless/icon';
 import 'weightless/select';
 import 'weightless/textfield';
+import 'weightless/label';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 
@@ -42,9 +43,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Array}) allowed_registries = Array();
   @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
   @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
+  @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
   @property({type: Array}) servicePorts = Array();
   @property({type: Number}) selectedIndex = 0;
+  @property({type: Object}) selectedIndices = Object();
   @property({type: Boolean}) _cuda_gpu_disabled = false;
   @property({type: Boolean}) _cuda_fgpu_disabled = false;
   @property({type: Boolean}) _rocm_gpu_disabled = false;
@@ -87,6 +90,30 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           padding: 0;
         }
 
+        wl-label {
+          --label-font-size: 13px;
+          --label-font-family: 'Ubuntu', 'Quicksand', Roboto;
+          -webkit-border-radius: 3px;
+          -moz-border-radius: 3px;
+          border-radius: 3px;
+          -moz-background-clip: padding;
+          -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+          border: 1px solid #ccc;
+          background-color: #f9f9f9;
+          padding: 0px 3px;
+          display: inline-block;
+          margin: 0px;
+        }
+
+        wl-label.installed {
+          --label-color: #52595d;
+        }
+
+        wl-label.installing {
+          --label-color: var(--paper-orange-700);
+        }
+
         img.indicator-icon {
           width: 16px;
           height: 16px;
@@ -104,6 +131,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           --button-bg-active: var(--paper-orange-600);
           --button-color: #242424;
           color: var(--paper-orange-900);
+        }
+
+        wl-button.operation {
+          margin: auto 10px;
+          padding: auto 10px;
         }
 
         backend-ai-dialog {
@@ -245,20 +277,29 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       })
   }
 
-  /**
-   * Open the selected image.
-   *
-   * @param {object} index - Selected image's digest.
-   */
-  openInstallImageDialog(digest) {
-    this.selectedIndex = this.images.findIndex(image => image.digest === digest);
-    let chosenImage = this.images[this.selectedIndex];
-    this.installImageName = chosenImage['registry'] + '/' + chosenImage['name'] + ':' + chosenImage['tag'];
-    this.installImageResource = {};
-    chosenImage['resource_limits'].forEach(elm => {
-      this.installImageResource[elm['key'].replace("_", ".")] = elm.min;
-    });
-    this.installImageDialog.show();
+  // /**
+  //  * Open the selected image.
+  //  *
+  //  * @param {object} index - Selected image's digest.
+  //  */
+  // openInstallImageDialog(digest) {
+  //   this.selectedIndices = this._grid.selectedItems;
+  //   console.log(this._grid);
+  //   console.dir(this._grid);
+  //   console.log(this.selectedIndices);
+  //   this.selectedIndex = this.images.findIndex(image => image.digest === digest);
+  //   let chosenImage = this.images[this.selectedIndex];
+  //   this.installImageName = chosenImage['registry'] + '/' + chosenImage['name'] + ':' + chosenImage['tag'];
+  //   this.installImageResource = {};
+  //   chosenImage['resource_limits'].forEach(elm => {
+  //     this.installImageResource[elm['key'].replace("_", ".")] = elm.min;
+  //   });
+  //   this.installImageDialog.show();
+  // }
+
+  openInstallImageDialog() {
+    this.selectedIndices = this._grid.selectedItems;
+    
   }
 
   async _installImage() {
@@ -516,34 +557,62 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * @param {<vaadin-grid-column> element} column
    * @param {object} rowData
    */
-  installRenderer(root, column, rowData) {
+  checkboxRenderer(root, column, rowData) {
     render(
       // language=HTML
       html`
         <div class="layout horizontal center center-justified" style="margin:0; padding:0;">
           <wl-checkbox id="${rowData.item.name}" style="--checkbox-size:12px;"
-              ?checked="${rowData.item.installed}"
-              ?disabled="${rowData.item.installed}"
               @click="${(e) => {
-                this.openInstallImageDialog(rowData.item.digest);
-                this.selectedCheckbox = e.target;
+                if (e.target.checked) {
+                  this.selectedCheckbox =  e.target;
+                }
               }}">
           </wl-checkbox>
         </div>
       `, root);
   }
 
+/**
+ * Render an installed tag for each image.
+ * 
+ * @param {DOM element} root 
+ * @param {<vaadin-grid-column> element} column 
+ * @param {object} rowData 
+ */
+  installRenderer(root, column, rowData) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout horizontal center center-justified">
+          ${rowData.item.installed ? html`<wl-label class="installed">installed</wl-label>` : html``}
+        </div>
+      `
+    , root);
+  }
+
   render() {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+      <div class="horizontal layout flex end-justified" style="margin:10px;">
+        <wl-button outlined class="operation" id="install-image" @click="${this.openInstallImageDialog}">
+          <wl-icon>get_app</wl-icon>
+          Install
+        </wl-button>
+        <wl-button outlined class="operation" id="delete-image">
+          <wl-icon>delete</wl-icon>
+          Delete
+        </wl-button>
+      </div>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
-        <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundInstallRenderer}">
-          <template class="header">
-            <vaadin-grid-sorter path="installed"></vaadin-grid-sorter>
-          </template>
-        </vaadin-grid-column>
-
+        <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
+        </vaadin-grid-selection-column>
+        <vaadin-grid-column path="installed" flex-grow="0" .renderer="${this._boundInstallRenderer}">
+            <template class="header">
+              <vaadin-grid-sorter path="installed">${_t('environment.Status')}</vaadin-grid-sorter>
+            </template>
+          </vaadin-grid-column>
         <vaadin-grid-filter-column path="registry" width="80px" resizable
             header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
         <vaadin-grid-filter-column path="namespace" width="60px" resizable
