@@ -447,23 +447,23 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
       const appName = textFields[0].value, protocol = textFields[1].value, port = parseInt(textFields[2].value);
       if (appName === "") {
-        this.servicePortsMsg = '*App Name may not be empty.'
+        this.servicePortsMsg = _text('environment.AppNameMustNotBeEmpty');
         return false;
       }
       if (!["http", "tcp", "pty"].includes(protocol)) {
-        this.servicePortsMsg = '*Protocol must be one of "http", "tcp", "pty".';
+        this.servicePortsMsg = _text('environment.ProtocolMustBeOneOfHttpTcpPty');
         return false;
       }
       if (ports.has(port)) {
-        this.servicePortsMsg = `*Port must be unique for each app.`
+        this.servicePortsMsg = _text('environment.PortMustBeUnique');
         return false;
       }
       if (port >= 66535 || port < 0) {
-        this.servicePortsMsg = '*Port must be between 0 to 66534.'
+        this.servicePortsMsg = _text('environment.PortMustBeInRange');
         return false;
       }
       if ([2000, 2001, 2002, 2003, 2200, 7681].includes(port)) {
-        this.servicePortsMsg = `*Port ${port} is reserved for interanl use.`
+        this.servicePortsMsg = _text('environment.PortReservedForInternalUse');
         return false;
       }
       ports.add(port);
