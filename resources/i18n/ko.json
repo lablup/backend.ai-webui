@@ -405,7 +405,7 @@
     "Images": "이미지",
     "ResourcePresets": "자원 프리셋",
     "Registries": "레지스트리",
-    "ProtocolMustBeOneOfHttpTcpPty": "프로토콜은 'http', 'tcp', and 'pty' 중 하나여야 합니다",
+    "ProtocolMustBeOneOfHttpTcpPty": "프로토콜은 'http', 'tcp', 'pty' 중 하나여야 합니다",
     "AppNameMustNotBeEmpty": "앱 이름은 필수입니다",
     "PortMustBeUnique": "포트는 중복 사용이 불가능합니다",
     "PortMustBeInRange": "포트는 0부터 65534까지의 번호여야 합니다",
