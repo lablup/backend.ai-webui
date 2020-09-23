@@ -282,7 +282,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.notification.show();
     let indicator = await this.indicator.start('indeterminate');
     indicator.set(10, 'Downloading...');
-    globalThis.backendaiclient.getResourceSlots().then((response) => {
+    globalThis.backendaiclient.get_resource_slots().then((response) => {
       let results = response;
       if ('cuda.device' in results && 'cuda.shares' in results) { // Can be possible after 20.03
         if ('fgpu' in this.installImageResource && 'gpu' in this.installImageResource) { // Keep fgpu only.
