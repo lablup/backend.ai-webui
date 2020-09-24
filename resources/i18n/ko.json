@@ -400,14 +400,19 @@
     "Base": "기반",
     "Constraint": "제약",
     "ResourceLimit": "자원 제한",
-    "DescDownloadImage": "이미지를 다운로드하려고 합니다: ",
+    "DescDeleteImage": "다음 설치된 이미지를 삭제하려고 합니다: ",
+    "DescDownloadImage": "다음 이미지를 다운로드하려고 합니다: ",
     "DescSignificantDownloadTime": "다운로드에 매우 오랜 시간이 걸릴 것입니다.",
+    "Install": "설치",
+    "Delete": "삭제",
     "Installed": "설치 완료",
     "Installing": "설치 중",
     "Status": "상태",
     "Images": "이미지",
     "ResourcePresets": "자원 프리셋",
-    "Registries": "레지스트리"
+    "Registries": "레지스트리",
+    "SelectedImagesAlreadyInstalled": "선택된 이미지가 없거나 이미 설치 완료되었습니다. 다시 한 번 확인해주시기 바랍니다.",
+    "SelectedImagesNotInstalled": "선택된 이미지가 없거나 설치되지 않아 삭제할 수 없습니다. 다시 한 번 확인해주시기 바랍니다."
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
