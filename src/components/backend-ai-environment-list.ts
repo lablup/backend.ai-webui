@@ -634,7 +634,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <wl-icon>get_app</wl-icon>
           ${_t('environment.Install')}
         </wl-button>
-        <wl-button outlined class="operation" id="delete-image" @click="${this.openDeleteImageDialog}">
+        <wl-button outlined class="operation" id="delete-image" @click="${this.openDeleteImageDialog}" disabled>
           <wl-icon>delete</wl-icon>
           ${_t('environment.Delete')}
         </wl-button>
