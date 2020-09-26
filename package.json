@@ -90,7 +90,7 @@
     "electron-installer-dmg": "^3.0.0",
     "electron-packager": "^15.1.0",
     "electron-tabs": "^0.15.0",
-    "es-dev-server": "^1.57.4",
+    "es-dev-server": "^1.57.5",
     "eslint": "^7.9.0",
     "eslint-config-google": "^0.14.0",
     "express": "^4.17.1",
