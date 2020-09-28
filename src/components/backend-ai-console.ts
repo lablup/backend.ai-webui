@@ -118,6 +118,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ["en", "ko"];
   @property({type: Array}) blockedMenuitem;
+  @property({type: Number}) minibarWidth = 54;
+  @property({type: Number}) sidebarWidth = 250;
+  @property({type: Number}) sidepanelWidth = 250;
 
   constructor() {
     super();
@@ -351,17 +354,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (this.contentBody.open) {
       this.contentBody.open = false;
       if (this.mini_ui) {
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', '54px');// 54
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');// 54
       } else {
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');// 190
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', this.sidebarWidth + 'px');// 250
       }
     } else {
       this.contentBody.open = true;
-      this.contentBody.style.setProperty('--mdc-drawer-width', '250px');
+      this.contentBody.style.setProperty('--mdc-drawer-width', this.sidepanelWidth + 'px');
       if (this.mini_ui) {
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', '304px');// 54+250
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + this.sidepanelWidth + 'px');// 54+250
       } else {
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', '440px');// 190+250
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', this.sidebarWidth + this.sidepanelWidth + 'px');// 250+250
       }
     }
   }
@@ -405,7 +408,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   _changeDrawerLayout(width, height): void {
     this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
     if (width < 700) {  // Close drawer
-      this.appBody.style.setProperty('--mdc-drawer-width', '190px');
+      this.appBody.style.setProperty('--mdc-drawer-width', this.sidebarWidth + 'px');
       this.appBody.type = 'modal';
       this.appBody.open = false;
       //this.contentBody.style.width = 'calc('+width+'px - 190px)';
@@ -417,18 +420,18 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }
     } else { // Open drawer
       if (this.mini_ui) {
-        this.appBody.style.setProperty('--mdc-drawer-width', '54px');
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', '54px');
-        this.contentBody.style.width = 'calc('+width+'px - 54px)';
+        this.appBody.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');
+        this.contentBody.style.width = 'calc(' + width + 'px - ' + this.minibarWidth + 'px)';
         if (this.contentBody.open) {
           this.mainToolbar.style.setProperty('--mdc-drawer-width', '304px');// 54+250
         }
       } else {
-        this.appBody.style.setProperty('--mdc-drawer-width', '190px');
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', '190px');
-        this.contentBody.style.width = 'calc('+width+'px - 190px)';
+        this.appBody.style.setProperty('--mdc-drawer-width', this.sidebarWidth + 'px');
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', this.sidebarWidth + 'px');
+        this.contentBody.style.width = 'calc(' + width + 'px - ' + this.sidebarWidth + 'px)';
         if (this.contentBody.open) {
-          this.mainToolbar.style.setProperty('--mdc-drawer-width', '440px'); // 190+250
+          this.mainToolbar.style.setProperty('--mdc-drawer-width', this.sidebarWidth + this.sidepanelWidth + 'px'); // 250+250
         }
       }
       this.appBody.type = 'dismissible';
@@ -436,7 +439,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.drawerToggleButton.style.display = 'none';
     }
     if (this.contentBody.open) {
-      this.contentBody.style.setProperty('--mdc-drawer-width', '250px');
+      this.contentBody.style.setProperty('--mdc-drawer-width', this.sidepanelWidth + 'px');
     }
   }
 

@@ -38,10 +38,10 @@ export const BackendAiStyles = [
       --general-sidebar-topbar-color-4: #222222;
       --general-sidebar-topbar-background-color: rgba(24, 24, 24, 1);
       --general-sidebar-topbar-color: #efefef;
-      --general-sidebar-selected-color: var(--paper-green-400);
-      --general-sidebar-selected-background-color: rgba(255, 255, 255, 1); /* removed transparent */
+      --general-sidebar-selected-color: #72EB51; /*var(--paper-green-400);*/
+      --general-sidebar-selected-background-color: rgba(24, 24, 24, 1); /* removed transparent */
       --general-sidebar-selected-background-gradient-color: transparent;
-      --general-sidebar-selected-border-left: 5px solid #2ab6f6;
+      --general-sidebar-selected-border-left: 5px solid #72EB51;
       --general-sidebar-footer-color: #777777;
       --general-sidebar-navbar-footer-color: #222222;
       --general-sidebar-item-even-background-color: transparent;
@@ -49,7 +49,6 @@ export const BackendAiStyles = [
       --general-sidepanel-color: #dddddd;
       --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
       --general-dialog-background-color: #ffffff;
-      --app-drawer-width: 190px;
       --general-font-family: 'Ubuntu', 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
     }

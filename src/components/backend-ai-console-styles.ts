@@ -78,7 +78,7 @@ export const BackendAiConsoleStyles = [
       font-weight: 400;
       line-height: 20px;
       padding: 5px 15px 10px 0;
-      margin: 10px 15px 0 15px;
+      margin: 20px 25px 20px 25px;
       display: block;
       color: var(--general-sidebar-h3-color);
       border-bottom: var(--general-sidebar-h3-border-color);
@@ -94,20 +94,23 @@ export const BackendAiConsoleStyles = [
     mwc-list.sidebar {
       cursor: pointer;
       color: var(--general-sidebar-color, #eeeeee);
+      --mdc-list-side-padding: 32px;
     }
 
     mwc-list.sidebar mwc-list-item {
       --mdc-theme-primary: var(--general-sidebar-selected-color, #eeeeee);
       --mdc-theme-text-primary-on-background: var(--general-sidebar-color, #eeeeee);
       --mdc-list-item-graphic-margin: 15px;
-      height: 48px;
+      height: 36px;
+      margin-top: 10px;
+      margin-bottom: 10px;
     }
 
     mwc-list.sidebar mwc-list-item[selected] {
       color: var(--general-sidebar-selected-color, #eeeeee);
       background: var(--general-sidebar-selected-background-color, #23252b);
       border-left: var(--general-sidebar-selected-border-left);
-      padding-left: 11px;
+      padding-left: 27px; /* 32px - 5px */
       border-right: 0;
       padding-right: 11px;
       font-weight: 900;
@@ -230,7 +233,7 @@ export const BackendAiConsoleStyles = [
     }
 
     .drawer-menu footer {
-      width: 190px;
+      width: 250px;
     }
 
     mwc-tab {
