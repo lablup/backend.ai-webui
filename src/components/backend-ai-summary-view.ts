@@ -181,6 +181,7 @@ export default class BackendAISummary extends BackendAIPage {
           --component-bg: linear-gradient(180deg, rgba(104, 185, 155, 1) 0%, rgba(98, 180, 131, 1) 50%, rgba(93, 178, 113, 1) 100%);
           --component-bg-hover: linear-gradient(180deg, rgba(98, 180, 131, 1) 0%, rgba(104, 185, 155, 1) 50%, rgba(93, 178, 113, 1) 100%);
           --component-bg-active: rgb(104, 185, 155);
+          --component-shadow-color: hsla(120, 60%, 70%, 0.7);
         }
 
         .start-menu-items {

@@ -337,6 +337,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --button-bg: var(--component-bg, var(--paper-red-50));
           --button-bg-hover: var(--component-bg-hover, var(--paper-red-100));
           --button-bg-active: var(--component-bg-active, var(--paper-red-600));
+          --button-shadow-color: var(--component-shadow-color, hsla(224, 47%, 38%, 0.2));
         }
 
         #launch-session[disabled] {
