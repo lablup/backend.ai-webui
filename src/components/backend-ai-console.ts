@@ -40,7 +40,6 @@ import './backend-ai-app-launcher';
 import './backend-ai-resource-broker';
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 import '../lib/backend.ai-client-es6';
-import 'fa-icons';
 
 import {
   IronFlex,
@@ -581,6 +580,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     switch (view) {
       case 'summary':
       case 'verify-email':
+        this.menuTitle = _text("console.menu.Summary");
+        this.updateTitleColor('var(--paper-green-800)', '#efefef');
+        break;
       case 'change-password':
         this.menuTitle = _text("console.menu.Summary") + this.user_id;
         this.updateTitleColor('var(--paper-green-800)', '#efefef');
