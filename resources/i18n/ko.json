@@ -1,6 +1,7 @@
 {
   "console": {
     "menu": {
+      "WelcomeMessage": "환영합니다. ",
       "Summary": "요약",
       "Sessions": "세션",
       "Data&Storage": "데이터 & 폴더",

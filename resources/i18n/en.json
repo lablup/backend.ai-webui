@@ -1,6 +1,7 @@
 {
   "console": {
     "menu": {
+      "WelcomeMessage": "Welcome, ",
       "Summary": "Summary",
       "Sessions": "Sessions",
       "Data&Storage": "Data & Storage",
