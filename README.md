@@ -1,5 +1,7 @@
 # backend.ai-console
 
+[![GitHub version](https://badge.fury.io/gh/lablup%2Fbackend.ai-console.svg)](https://badge.fury.io/gh/lablup%2Fbackend.ai-console)
+
 Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin / DevOps.
 
 For more information, see [manual](https://console.docs.backend.ai/en/latest/).
@@ -22,11 +24,11 @@ Backend.AI console focuses to
  * Session management
     * Set default resources for runs
     * Choose and run environment-supported apps
-    * Terminal for each session
+    * Web-based Terminal for each session
     * Fully-featured VSCode editor and environments
  * Pipeline
     * Experiments (with SACRED / MLFlow)
-    * AutoML (with NNI)
+    * AutoML (with Microsoft NNI / MLFlow)
     * Manages container streams with pipeline vfolders
     * Checks queue and scheduled jobs
  * Storage management
@@ -63,6 +65,10 @@ Backend.AI console focuses to
     * Plugin support
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
     * Needs backend.ai-wsproxy package
+ * Service information
+    * Component compatibility 
+    * Security check
+    * License information
  * Work with console server (github/lablup/backend.ai-console-server)
     * Delegate login to console server
     * Support userid / password login

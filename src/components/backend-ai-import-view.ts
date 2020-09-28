@@ -107,6 +107,7 @@ export default class BackendAIImport extends BackendAIPage {
     this.environment = this.guessEnvironment(this.queryString);
     if (queryString !== "") {
       let downloadURL = 'https://raw.githubusercontent.com/' + this.queryString;
+      downloadURL = downloadURL.replace('/blob/', '/');
       this.fetchNotebookURLResource(downloadURL);
     }
   }
@@ -191,7 +192,7 @@ export default class BackendAIImport extends BackendAIPage {
     indicator.set(20, _text('import.FolderCreated'));
     imageResource['mounts'] = [folderName];
     imageResource['bootstrap_script'] = "#!/bin/sh\ncurl -o repo.zip " + url + "\ncd /home/work/" + folderName + "\nunzip -u /home/work/repo.zip";
-    return globalThis.backendaiclient.getResourceSlots().then((response) => {
+    return globalThis.backendaiclient.get_resource_slots().then((response) => {
       //let results = response;
       indicator.set(50, _text('import.Downloading'));
       return globalThis.backendaiclient.createIfNotExists('index.docker.io/lablup/python:3.8-ubuntu18.04', null, imageResource, 60000);

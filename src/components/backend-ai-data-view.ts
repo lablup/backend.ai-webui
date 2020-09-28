@@ -373,7 +373,7 @@ export default class BackendAIData extends BackendAIPage {
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
         this._vfolderInnatePermissionSupport = true;
       }
-      globalThis.backendaiclient.vfolder.allowed_types().then(response => {
+      globalThis.backendaiclient.vfolder.list_allowed_types().then(response => {
         this.allowed_folder_type = response;
       });
     }

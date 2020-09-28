@@ -625,7 +625,7 @@ export default class BackendAILogin extends BackendAIPage {
     if (this.loginPanel.open !== true) {
       this.block();
     }
-    this.client.getManagerVersion().then(response => {
+    this.client.get_manager_version().then(response => {
       this._connectViaGQL();
     }).catch((err) => {   // Connection failed
       if (this.loginPanel.open !== true) {
@@ -658,7 +658,7 @@ export default class BackendAILogin extends BackendAIPage {
     let fields = ["user_id", "resource_policy", "user"];
     let q = `query { keypair { ${fields.join(" ")} } }`;
     let v = {};
-    return this.client.gql(q, v).then(response => {
+    return this.client.query(q, v).then(response => {
       this.is_connected = true;
       globalThis.backendaiclient = this.client;
       let resource_policy = response['keypair'].resource_policy;
@@ -667,7 +667,7 @@ export default class BackendAILogin extends BackendAIPage {
       let fields = ["username", "email", "full_name", "is_active", "role", "domain_name", "groups {name, id}"];
       let q = `query { user{ ${fields.join(" ")} } }`;
       let v = {'uuid': this.user};
-      return globalThis.backendaiclient.gql(q, v);
+      return globalThis.backendaiclient.query(q, v);
     }).then(response => {
       let email = response['user'].email;
       if (this.email !== email) {

@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.07.0)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.8.1)
 ====================================================================
 
 (C) Copyright 2016-2020 Lablup Inc.
@@ -185,7 +185,7 @@ class Client {
     this.code = null;
     this.sessionId = null;
     this.kernelType = null;
-    this.clientVersion = '19.09.0';
+    this.clientVersion = '20.8.1';
     this.agentSignature = agentSignature;
     if (config === undefined) {
       this._config = ClientConfig.createFromEnv();
@@ -448,7 +448,7 @@ class Client {
    *
    * @param {AbortController.signal} signal - Request signal to abort fetch
    */
-  async getManagerVersion(signal = null) {
+  async get_manager_version(signal = null) {
     if (this._managerVersion === null) {
       let v = await this.getServerVersion(signal);
       this._managerVersion = v.manager;
@@ -561,6 +561,7 @@ class Client {
     try {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
+        await this.get_manager_version();
         return this.check_login();
       } else if (result.authenticated === false) { // Authentication failed.
         if (result.data && result.data.details) {
@@ -606,7 +607,7 @@ class Client {
    * Update user's password.
    *
    */
-  async updatePassword(oldPassword, newPassword, newPassword2) {
+  async update_password(oldPassword, newPassword, newPassword2) {
     let body = {
       'old_password': oldPassword,
       'new_password': newPassword,
@@ -619,7 +620,7 @@ class Client {
   /**
    * Return the resource slots.
    */
-  async getResourceSlots() {
+  async get_resource_slots() {
     let rqst;
     if (this.isAPIVersionCompatibleWith('v4.20190601')) {
       rqst = this.newPublicRequest('GET', '/config/resource-slots', null, '');
@@ -731,7 +732,7 @@ class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  async getInformation(sessionId, ownerKey = null) {
+  async get_info(sessionId, ownerKey = null) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
@@ -746,7 +747,7 @@ class Client {
    * @param {string} sessionId - the sessionId given when created
    * @param {string | null} ownerKey - owner key to access
    */
-  async getLogs(sessionId, ownerKey = null) {
+  async get_logs(sessionId, ownerKey = null) {
     let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
@@ -806,19 +807,22 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  // legacy aliases
+  // legacy aliases (DO NOT USE for new codes)
   createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
     return this.createIfNotExists(kernelType, sessionId, resources, timeout);
   }
 
+  // legacy aliases (DO NOT USE for new codes)
   destroyKernel(sessionId, ownerKey = null) {
     return this.destroy(sessionId, ownerKey);
   }
 
+  // legacy aliases (DO NOT USE for new codes)
   refreshKernel(sessionId, ownerKey = null) {
     return this.restart(sessionId, ownerKey);
   }
 
+  // legacy aliases (DO NOT USE for new codes)
   runCode(code, sessionId, runId, mode) {
     return this.execute(sessionId, runId, mode, code, {});
   }
@@ -856,7 +860,7 @@ class Client {
   }
 
   /* GraphQL requests */
-  async gql(q, v, signal = null, timeout: number = 0) {
+  async query(q, v, signal = null, timeout: number = 0) {
     let query = {
       'query': q,
       'variables': v
@@ -1020,6 +1024,24 @@ class Client {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text + "-jsSDK";
   }
+
+  /**
+   * fetch existing pubic key of SSH Keypair from container
+   * only ssh_public_key will be received.
+   */
+  async fetchSSHKeypair() {
+    let rqst = this.newSignedRequest('GET', '/auth/ssh-keypair', null);
+    return this._wrapWithPromise(rqst, false);
+  }
+
+  /**
+   * refresh SSH Keypair from container
+   * gets randomly generated keypair (both ssh_public_key and ssh_private_key) will be received.
+   */
+  async refreshSSHKeypair() {
+    let rqst = this.newSignedRequest('PATCH', '/auth/ssh-keypair', null);
+    return this._wrapWithPromise(rqst, false);
+  }
 }
 
 class ResourcePreset {
@@ -1072,7 +1094,7 @@ class ResourcePreset {
         'name': name,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -1098,7 +1120,7 @@ class ResourcePreset {
         'name': name,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -1119,7 +1141,7 @@ class ResourcePreset {
       let v = {
         'name': name
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -1147,7 +1169,7 @@ class VFolder {
    * Get allowed types of folders
    *
    */
-  async allowed_types() {
+  async list_allowed_types() {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/allowed_types`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1544,7 +1566,7 @@ class Agent {
       `  }` +
       `}`;
     let v = {'status': status};
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 }
 
@@ -1589,7 +1611,7 @@ class Keypair {
         `}`;
       v = {};
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -1621,7 +1643,7 @@ class Keypair {
         email: userId || this.client.email,
         is_active: isActive,
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       // From 20.03, there is no single query to fetch every keypairs, so
       // we iterate pages to gather all keypairs for client-side compability.
@@ -1649,9 +1671,9 @@ class Keypair {
           email: userId || this.client.email,
           is_active: isActive,
         }
-        const page = await this.client.gql(q, v);
+        const page = await this.client.query(q, v);
         keypairs.push(...page.keypair_list.items);
-        if ((offset + 1) * limit >= page.keypair_list.total_count) {
+        if (offset >= page.keypair_list.total_count) {
           break;
         }
       }
@@ -1713,7 +1735,7 @@ class Keypair {
         },
       };
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -1738,7 +1760,7 @@ class Keypair {
       'access_key': accessKey,
       'input': input,
     };
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -1755,7 +1777,7 @@ class Keypair {
     let v = {
       'access_key': accessKey,
     };
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 }
 
@@ -1800,7 +1822,7 @@ class ResourcePolicy {
         '}';
       v = {'n': name};
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -1840,7 +1862,7 @@ class ResourcePolicy {
         'name': name,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -1873,7 +1895,7 @@ class ResourcePolicy {
         'name': name,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -1919,7 +1941,7 @@ class ContainerImage {
         '}';
       v = {};
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -2041,26 +2063,16 @@ class ComputeSession {
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    */
-  async list(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
+  async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"],
              status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
-    if (this.client._apiVersionMajor < 5) {
-      q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
-        compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
-          items { ${fields.join(" ")}}
-          total_count
-        }
-      }`;
-    } else {
-      q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
-        legacy_compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
-          items { ${fields.join(" ")}}
-          total_count
-        }
-      }`;
-    }
-
+    q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
+        items { ${fields.join(" ")}}
+        total_count
+      }
+    }`;
     v = {
       'limit': limit,
       'offset': offset,
@@ -2072,49 +2084,50 @@ class ComputeSession {
     if (group != '') {
       v['group_id'] = group;
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
    * list all status of compute sessions.
    *
    * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
+   * @param {String} status - status to query. The default is string with all status combined.
    * @param {string} accessKey - access key that is used to start compute sessions.
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    */
-  async listAll(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], accessKey = '', group = '') {
+  async listAll(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"],
+                status = "RUNNING,RESTARTING,TERMINATING,PENDING,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR",
+                accessKey = '', limit = 100, offset = 0, group = '') {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
-    // For V3/V4 API compatibility
     let q, v;
-    if (this.client._apiVersionMajor < 5) {
-      q = `query($domain_name:String, $group_id:String, $ak:String, $status:String) {
-        compute_sessions(domain_name:$domain_name, group_id:$group_id, access_key:$ak, status:$status) {
-          ${fields.join(" ")}
-        }
-      }`;
-    } else {
-      q = `query($domain_name:String, $group_id:String, $ak:String, $status:String) {
-        legacy_compute_sessions(domain_name:$domain_name, group_id:$group_id, access_key:$ak, status:$status) {
-          ${fields.join(" ")}
-        }
-      }`;
-    }
+    const sessions: any = [];
 
-    v = {
-      // domain_name: null,
-      // group_id: null,
-      // access_key: accessKey,
-      // status: status
-    };
-    if (accessKey !== '') {
-      v['access_key'] = accessKey;
+    q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
+        items { ${fields.join(" ")}}
+        total_count
+      }
+    }`;
+
+    // Prevent fetching more than 1000 sessions.
+    for (let offset = 0; offset < 10 * limit; offset+=limit) {
+      v = {limit, offset, status};
+      if (accessKey != '') {
+        v.ak = accessKey;
+      }
+      if (group != '') {
+        v.group_id = group;
+      }
+      const session = await this.client.gql(q, v);
+      console.log(session.compute_session_list.total_count)
+      sessions.push(...session.compute_session_list.items);
+      if (offset >= session.compute_session_list.total_count) {
+          break;
+      }
     }
-    if (group !== '') {
-      v['group_id'] = group;
-    }
-    return this.client.gql(q, v);
+    return Promise.resolve(sessions);
   }
 
   /**
@@ -2140,7 +2153,7 @@ class ComputeSession {
       'domain_name': domainName,
       'session_name': sessionName
     };
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
 }
@@ -2339,7 +2352,7 @@ class Group {
         '}';
       v = {'is_active': is_active};
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 }
 
@@ -2382,7 +2395,7 @@ class Domain {
         `  domain(name: $name) { ${fields.join(" ")} }` +
         '}';
       v = {'name': domain_name};
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     }
   }
 
@@ -2392,7 +2405,7 @@ class Domain {
       `}`;
     let v = {};
 
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -2414,7 +2427,7 @@ class Domain {
    *   'scaling_groups': [String],   // Scaling groups
    * };
    */
-  async modify(domain_name = false, input) {
+  async update(domain_name = false, input) {
     //let fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
     //  'allowed_docker_registries', 'integration_id', 'scaling_groups'];
     if (this.client.is_superadmin === true) {
@@ -2427,7 +2440,7 @@ class Domain {
         'name': domain_name,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -2473,7 +2486,7 @@ class Maintenance {
           `}`;
         v = {};
       }
-      return this.client.gql(q, v, null, 600 * 1000 );
+      return this.client.query(q, v, null, 600 * 1000 );
     } else {
       return Promise.resolve(false);
     }
@@ -2532,7 +2545,7 @@ class User {
         }
       `;
       v = this.client.is_admin ? {is_active} : {};
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       // From 20.03, there is no single query to fetch every users, so
       // we iterate pages to gather all users for client-side compability.
@@ -2556,9 +2569,9 @@ class User {
       // Prevent fetching more than 1000 users.
       for (let offset = 0; offset < 10 * limit; offset+=limit) {
         v = this.client.is_admin ? {offset, limit, is_active} : {offset, limit};
-        const page = await this.client.gql(q, v);
+        const page = await this.client.query(q, v);
         users.push(...page.user_list.items);
-        if ((offset + 1) * limit >= page.user_list.total_count) {
+        if (offset >= page.user_list.total_count) {
           break;
         }
       }
@@ -2598,7 +2611,7 @@ class User {
         '}';
       v = {};
     }
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -2618,7 +2631,7 @@ class User {
    *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async add(email = null, input) {
+  async create(email = null, input) {
     let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups{id, name}'];
     if (this.client.is_admin === true) {
       let q = `mutation($email: String!, $input: UserInput!) {` +
@@ -2630,7 +2643,7 @@ class User {
         'email': email,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -2653,7 +2666,7 @@ class User {
    *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async modify(email = null, input) {
+  async update(email = null, input) {
     if (this.client.is_superadmin === true) {
       let q = `mutation($email: String!, $input: ModifyUserInput!) {` +
         `  modify_user(email: $email, props: $input) {` +
@@ -2664,7 +2677,7 @@ class User {
         'email': email,
         'input': input
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -2685,7 +2698,7 @@ class User {
       let v = {
         'email': email
       };
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -2705,14 +2718,14 @@ class ScalingGroup {
     this.client = client;
   }
 
-  async list_all() {
+  async list_available() {
     if (this.client.is_superadmin === true) {
       const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
       const q = `query {` +
         `  scaling_groups { ${fields.join(" ")} }` +
         `}`;
       const v = {};
-      return this.client.gql(q, v);
+      return this.client.query(q, v);
     } else {
       return Promise.resolve(false);
     }
@@ -2749,7 +2762,7 @@ class ScalingGroup {
       name,
       input
     };
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
     // } else {
     //   return Promise.resolve(false);
     // }
@@ -2761,7 +2774,7 @@ class ScalingGroup {
    * @param {string} domain - domain name
    * @param {string} scaling_group - scaling group name
    */
-  async associateWithDomain(domain, scaling_group) {
+  async associate_domain(domain, scaling_group) {
     let q = `mutation($domain: String!, $scaling_group: String!) {` +
       `  associate_scaling_group_with_domain(domain: $domain, scaling_group: $scaling_group) {` +
       `    ok msg` +
@@ -2772,7 +2785,7 @@ class ScalingGroup {
       scaling_group
     };
 
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -2789,7 +2802,7 @@ class ScalingGroup {
    *   'scheduler_opts': JSONString
    * }
    */
-  async modify(name, input) {
+  async update(name, input) {
     let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
       `  modify_scaling_group(name: $name, props: $input) {` +
       `    ok msg` +
@@ -2800,7 +2813,7 @@ class ScalingGroup {
       input
     };
 
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 
   /**
@@ -2818,7 +2831,7 @@ class ScalingGroup {
       name
     };
 
-    return this.client.gql(q, v);
+    return this.client.query(q, v);
   }
 }
 
@@ -2995,7 +3008,7 @@ class UserConfig {
    * @param {string} data - text content of script dotfile
    * @param {string} path - path of script dotfile. (cwd: home directory)
    */
-  async create_dotfile_script(data: string = '', path: string) {
+  async create(data: string = '', path: string) {
     if (!this.client._config.accessKey) {
       throw 'Your access key is not set';
     }
@@ -3011,7 +3024,7 @@ class UserConfig {
   /**
    * Get content of script dotfile
    */
-  async get_dotfile_script() {
+  async get() {
     if (!this.client._config.accessKey) {
       throw 'Your access key is not set';
     }
@@ -3028,7 +3041,7 @@ class UserConfig {
    * @param {string} data - text content of script dotfile.
    * @param {string} path - path of script dotfile. (cwd: home directory)
    */
-  async update_dotfile_script(data: string, path: string) {
+  async update(data: string, path: string) {
     let params = {
       "data": data,
       "path": path,
@@ -3043,7 +3056,7 @@ class UserConfig {
    *
    * @param {string} path - path of script dotfile.
    */
-  async delete_dotfile_script(path: string) {
+  async delete(path: string) {
     let params = {
       "path": path
     }
