@@ -349,12 +349,19 @@ export const BackendAiConsoleStyles = [
     }
 
     .portrait-canvas {
-      margin-left: 16px;
-      padding-right: 5px;
+      margin-left: 18px;
+      border-radius: 8px;
+      width: 48px;
+      height: 48px;
+      background-color: #ffffff;
+      background-image: url("/manifest/backend.ai-brand-simple.svg");
+      background-repeat: no-repeat;
+      background-size: 36px 36px;
+      background-position: center center;
     }
 
     .mini-ui .portrait-canvas {
-      margin-left: 8px;
+      margin-left: 18px;
       padding-right: 0;
     }
 
@@ -363,7 +370,8 @@ export const BackendAiConsoleStyles = [
     }
 
     #portrait-bar {
-      height: 48px;
+      height: 64px;
+      padding-top: 15px;
     }
 
     #content-body {

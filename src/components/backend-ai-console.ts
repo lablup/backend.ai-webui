@@ -118,7 +118,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ["en", "ko"];
   @property({type: Array}) blockedMenuitem;
-  @property({type: Number}) minibarWidth = 54;
+  @property({type: Number}) minibarWidth = 88;
   @property({type: Number}) sidebarWidth = 250;
   @property({type: Number}) sidepanelWidth = 250;
 
@@ -424,7 +424,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');
         this.contentBody.style.width = 'calc(' + width + 'px - ' + this.minibarWidth + 'px)';
         if (this.contentBody.open) {
-          this.mainToolbar.style.setProperty('--mdc-drawer-width', '304px');// 54+250
+          this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + this.sidebarWidth + 'px');// 54+250
         }
       } else {
         this.appBody.style.setProperty('--mdc-drawer-width', this.sidebarWidth + 'px');
@@ -917,8 +917,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <div id="portrait-bar" class="draggable">
             <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
               <div class="portrait-canvas">
-                <img style="width:43px; height:43px;" src="manifest/backend.ai-brand-white.svg"
-                  sizing="contain" />
               </div>
               <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
                 <div class="site-name"><span class="bold">Backend</span>.AI</div>
@@ -930,7 +928,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="flex"></span>
             </div>
           </div>
-          <div class="horizontal start-justified center layout flex" style="max-height:40px;">
+          <div class="horizontal start-justified center layout flex" style="max-height:40px;margin-left:16px;">
             <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;margin-left:4px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
             <mwc-icon-button disabled class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'yellow' : 'white'}" id="feedback-icon" icon="question_answer"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
@@ -1013,7 +1011,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <small class="sidebar-footer" style="font-size:9px;">20.9.2.200928</small>
             </address>
           </footer>
-          <div id="sidebar-navbar-footer" class="vertical start end-justified layout">
+          <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
             <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
             <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
           </div>
