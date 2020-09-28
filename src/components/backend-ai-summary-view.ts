@@ -174,14 +174,14 @@ export default class BackendAISummary extends BackendAIPage {
         }
 
         #session-launcher {
-          --component-width: 305px;
-          --component-height: 70px;
+          --component-width: 284px;
+          --component-height: 57px;
           --component-color: #ffffff;
           --component-bg: rgb(104, 185, 155);
-          --component-bg: linear-gradient(180deg, rgba(104, 185, 155, 1) 0%, rgba(98, 180, 131, 1) 50%, rgba(93, 178, 113, 1) 100%);
+          --component-bg: linear-gradient(rgba(56,189,115, 0.5), rgba(56,189,115, 0.5)), linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
           --component-bg-hover: linear-gradient(180deg, rgba(98, 180, 131, 1) 0%, rgba(104, 185, 155, 1) 50%, rgba(93, 178, 113, 1) 100%);
           --component-bg-active: rgb(104, 185, 155);
-          --component-shadow-color: hsla(120, 60%, 70%, 0.7);
+          --component-shadow-color: #37c995;
         }
 
         .start-menu-items {
@@ -209,8 +209,14 @@ export default class BackendAISummary extends BackendAIPage {
           color: red;
         }
 
-        mwc-icon.fontAwesome {
-          --mdc-icon-font: 'FontAwesome';
+        a > i {
+          color: #5b5b5b;
+          margin: 10px;
+        }
+
+        a > span {
+          max-width: 70px;
+          color: #838383;
         }
 
         mwc-icon.update-icon {
@@ -394,6 +400,7 @@ export default class BackendAISummary extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="item" elevation="1" style="padding-bottom:20px;">
         ${this.announcement != '' ? html`
@@ -407,23 +414,22 @@ export default class BackendAISummary extends BackendAIPage {
           <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1" height="500">
             <div slot="message">
               <img src="/resources/images/launcher-background.png" style="width:300px;margin-bottom:30px;"/>
-              <div class="horizontal justified layout wrap">
+              <div class="horizontal center-justified layout wrap">
                 <backend-ai-session-launcher location="summary" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
               </div>
-              <div class="horizontal justified layout wrap">
+              <div class="horizontal center-justified layout wrap">
                 <a href="/data" class="vertical center center-justified layout start-menu-items">
-                  <img src="/resources/menu_icons/icon_upload_files.svg" style="width:24px;"/>
-                  <mwc-icon class="fontAwesome"></mwc-icon>
+                  <i class="fas fa-upload fa-2x"></i>
                   <span>${_t('summary.UploadFiles')}</span>
                 </a>
               ${this.is_admin
       ? html`
                 <a href="/credential" class="vertical center center-justified layout start-menu-items" style="border-left:1px solid #ccc;">
-                  <img src="/resources/menu_icons/icon_create_a_key_pair.svg" style="width:24px;"/>
+                  <i class="fas fa-key fa-2x"></i>
                   <span>${_t('summary.CreateANewKeypair')}</span>
                 </a>
                 <a href="/credential" class="vertical center center-justified layout start-menu-items" style="border-left:1px solid #ccc;">
-                  <img src="/resources/menu_icons/icon_keypair_management.svg" style="width:24px;"/>
+                  <i class="fas fa-cogs fa-2x"></i>
                   <span>${_t('summary.MaintainKeypairs')}</span>
                 </a>`
       : html``}
