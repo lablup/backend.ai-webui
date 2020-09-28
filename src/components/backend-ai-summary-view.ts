@@ -161,6 +161,17 @@ export default class BackendAISummary extends BackendAIPage {
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
         }
+        .notice-ticker {
+          margin-left: 15px;
+          font-size:13px;
+          font-weight: 400;
+          max-height: 20px;
+          overflow: scroll;
+        }
+
+        .notice-ticker lablup-shields {
+          margin-right: 15px;
+        }
 
         #session-launcher {
           --component-width: 305px;
@@ -195,6 +206,10 @@ export default class BackendAISummary extends BackendAIPage {
           --mdc-icon-size: 16px;
           --mdc-icon-button-size: 24px;
           color: red;
+        }
+
+        mwc-icon.fontAwesome {
+          --mdc-icon-font: 'FontAwesome';
         }
 
         mwc-icon.update-icon {
@@ -371,11 +386,22 @@ export default class BackendAISummary extends BackendAIPage {
       });
   }
 
+  _stripHTMLTags(str) {
+    return str.replace(/(<([^>]+)>)/gi, "");
+  }
+
   render() {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="item" elevation="1" style="padding-bottom:20px;">
+        ${this.announcement != '' ? html`
+          <h3 class="notice-ticker plastic-material-title horizontal center layout">
+            <lablup-shields app="" color="red" description="Notice" ui="round"></lablup-shields>
+            <span>${this._stripHTMLTags(this.announcement)}</span>
+          </h3>
+        `:html``}
+
         <div class="horizontal wrap layout">
           <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1">
             <div slot="message">
@@ -386,6 +412,7 @@ export default class BackendAISummary extends BackendAIPage {
               <div class="horizontal justified layout wrap">
                 <a href="/data" class="vertical center center-justified layout start-menu-items">
                   <img src="/resources/menu_icons/icon_upload_files.svg" style="width:24px;"/>
+                  <mwc-icon class="fontAwesome"></mwc-icon>
                   <span>${_t('summary.UploadFiles')}</span>
                 </a>
               ${this.is_admin
