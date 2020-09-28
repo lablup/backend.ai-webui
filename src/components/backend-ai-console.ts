@@ -470,9 +470,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     select.addEventListener('selected', (e) => this.changeGroup(e));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
-    console.dir(select)
-    // opt.innerHTML = _text("console.menu.SelectProject");
-    // opt.style.borderBottom = "1px solid #ccc";
+    opt.innerHTML = _text("console.menu.SelectProject");
+    opt.style.borderBottom = "1px solid #ccc";
     select.appendChild(opt);
     this.groups.map(group => {
       opt = document.createElement('mwc-list-item');
@@ -917,6 +916,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   protected render() {
     // language=HTML
     return html`
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
       <div id="loading-curtain" class="loading-background"></div>
       <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="position:fixed;visibility:hidden;">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
@@ -934,7 +934,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="flex"></span>
             </div>
           </div>
-          <div class="horizontal start-justified center layout flex" style="max-height:40px;margin-left:16px;">
+          <div class="horizontal start-justified center layout flex" style="max-height:40px;margin-left:16px; display:none;">
             <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;margin-left:4px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
             <mwc-icon-button disabled class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'yellow' : 'white'}" id="feedback-icon" icon="question_answer"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
@@ -942,58 +942,58 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}">
-              <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg green">widgets</mwc-icon>
+              <i class="fas fa-th-large" slot="graphic" id="activities-icon"></i>
               <span class="full-menu">${_t("console.menu.Summary")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}" ?disabled="${this.blockedMenuitem.includes('job')}">
-              <mwc-icon id="sessions-menu-icon" slot="graphic" class="fg red">ballot</mwc-icon>
+              <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Sessions")}</span>
             </mwc-list-item>
             ${false ? html`
             <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}">
-              <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
+              <i class="fas fa-flask" slot="graphic"></i>
               <span class="full-menu">${_t("console.menu.Experiments")}</span>
             </mwc-list-item>` : html``}
             <mwc-list-item graphic="icon" ?selected="${this._page === 'github' || this._page === 'import'}" @click="${() => this._moveTo('/import')}" ?disabled="${this.blockedMenuitem.includes('import')}">
-              <mwc-icon id="import-menu-icon" slot="graphic" class="fg blue">play_arrow</mwc-icon>
+              <i class="fas fa-play" slot="graphic" id="mport-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Import&Run")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}" ?disabled="${this.blockedMenuitem.includes('data')}">
-              <mwc-icon id="data-menu-icon" slot="graphic" class="fg orange">cloud_upload</mwc-icon>
+              <i class="fas fa-cloud-upload-alt" slot="graphic" id="data-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}" ?disabled="${this.blockedMenuitem.includes('statistics')}">
-              <mwc-icon id="statistics-menu-icon" slot="graphic" class="fg cyan" icon="icons:assessment">assessment</mwc-icon>
+              <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
             ${this.is_admin ?
       html`
             <h3 class="full-menu">${_t("console.menu.Administration")}</h3>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'credential'}" @click="${() => this._moveTo('/credential')}" ?disabled="${!this.is_admin}">
-              <mwc-icon id="user-menu-icon" slot="graphic" class="fg lime" icon="icons:face">face</mwc-icon>
+              <i class="fas fa-address-card" slot="graphic" id="user-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Users")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'environment'}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}">
-              <mwc-icon id="environments-menu-icon" slot="graphic" class="fg orange" icon="icons:extension">extension</mwc-icon>
+              <i class="fas fa-microchip" slot="graphic" id="environments-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Environments")}</span>
             </mwc-list-item>
     ` : html``}
             ${this.is_superadmin ?
       html`
             <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
-              <mwc-icon id="resources-menu-icon" slot="graphic" class="fg blue" icon="hardware:device-hub">device_hub</mwc-icon>
+              <i class="fas fa-server" slot="graphic" id="resources-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Resources")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
-              <mwc-icon id="configurations-menu-icon" slot="graphic" class="fg green" icon="icons:settings">settings_input_component</mwc-icon>
+              <i class="fas fa-cog" slot="graphic" id="configurations-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Configurations")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
-              <mwc-icon id="maintenance-menu-icon" slot="graphic" class="fg pink" icon="icons:build">build</mwc-icon>
+              <i class="fas fa-wrench" slot="graphic" id="maintenance-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Maintenance")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'information'}" @click="${() => this._moveTo('/information')}" ?disabled="${!this.is_superadmin}">
-              <mwc-icon id="information-menu-icon" slot="graphic" class="fg purple">info</mwc-icon>
+              <i class="fas fa-info-circle" slot="graphic" id="information-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Information")}</span>
             </mwc-list-item>
     ` : html``}
@@ -1030,17 +1030,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <div slot="appContent">
               <mwc-top-app-bar-fixed id="main-toolbar" class="draggable">
-                <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}" style="margin:auto;"></mwc-icon-button>
+              <div class="horizontal layout center" slot="navigationIcon" style="margin:auto 20px;" @click="${() => this.toggleDrawer()}">
+                <i class="fas fa-angle-left" style="display:block;color:#747474;margin-right:0.5em;"></i>
+                <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
+              </div>
                 <p slot="title" style="border-left: 1px solid #dbdbdb; margin:auto;">${_text("console.menu.WelcomeMessage") + this.full_name + "."}</p>
-                <mwc-icon-button slot="navigationIcon" style="margin_auto;"></mwc-icon-button>
                 <div slot="actionItems" style="margin:auto;">
                   <div class="horizontal flex layout" style="margin-right:2em;">
                     <div id="group-select-box" style="height:48px;"></div>
                     <div style="border-right: 1px solid #dbdbdb;"></div>
-                    <div class="horizontal center layout" id="dropdown-button" @click="${() => this._toggleDropdown()}">
+                    <div class="horizontal center layout" id="dropdown-button">
                       <div class="vertical layout center" style="position:relative;">
-                      <span class="email" style="color:#8c8484;font-size:11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;margin:auto 10px;">${_t("console.menu.UserName")}</span>
-                        <mwc-menu id="dropdown-menu" class="user-menu">
+                        <span class="email" style="color:#8c8484;font-size:11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;margin:auto 10px;">
+                          ${_t("console.menu.UserName")}
+                        </span>
+                        <mwc-menu id="dropdown-menu" class="user-menu" anchor="${this.shadowRoot.querySelector('#dropdown-button')}">
                           ${this.domain !== 'default' && this.domain !== '' ? html`
                           <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
                               ${this.domain}
@@ -1071,11 +1075,22 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                           </mwc-list-item>
                         </mwc-menu>
                       </div>
-                      <span class="full_name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 10px;">${this.full_name}</span>
+                      <span class="full_name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0px auto 10px;">
+                        ${this.full_name}
+                      </span>
+                      <mwc-icon-button @click="${() => this._toggleDropdown()}" style="font-size: 0.5rem;">
+                        <i class="fas fa-user-alt fa-xs" style="color:#747474;"></i>
+                      </mwc-icon-button>
                     </div>
-
                     <div style="border-right: 1px solid #dbdbdb;"></div>
-                    <span class="log_out" style="font-size:12px;margin:auto 10px;">${_text("console.menu.LogOut")}</span>
+                    <div class="horizontal layout center" style="margin:auto 10px;">
+                      <span class="log_out" style="font-size:12px;margin:auto 0px;color:#8c8484;">
+                        ${_text("console.menu.LogOut")}
+                      </span>
+                      <mwc-icon-button @click="${() => this.logout()}}">
+                        <i class="fas fa-sign-out-alt fa-xs" style="color:#747474;"></i>
+                      </mwc-icon-button>
+                    </div>
                   </div>
                 </div>
               </mwc-top-app-bar-fixed>
