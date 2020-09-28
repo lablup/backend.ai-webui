@@ -26,8 +26,7 @@ export const BackendAiStyles = [
       --general-panel-width: 280px;
       --general-big-panel-width: 560px;
       --general-content-container-width: 980px;
-      --general-background-color: rgba(255, 255, 255, 1);
-      --general-background-color-2: rgba(244, 245, 247, 1);
+      --general-background-color: rgba(247, 246, 246, 1);
       --general-sidebar-color: #dddddd;
       --general-sidebar-background-color: rgba(24, 24, 24, 1.0);
       --general-sidebar-h3-color: #cccccc;
@@ -154,11 +153,6 @@ export const BackendAiStyles = [
       background-color: #464646;
     }
 
-    .item paper-header-panel {
-      width: 280px;
-      height: 280px;
-    }
-
     .paper-header {
       height: 60px;
       font-size: 16px;
@@ -195,6 +189,10 @@ export const BackendAiStyles = [
       box-sizing: border-box;
       padding: 0;
       border-radius: 2px;
+    }
+
+    div.item {
+      color: #000000;
     }
 
     #content > wl-card {
@@ -265,7 +263,8 @@ export const BackendAiStyles = [
       left: 0;
     }
 
-    .panels wl-card {
+    .panels wl-card,
+    .panels div {
       width: var(--general-panel-width);
     }
 

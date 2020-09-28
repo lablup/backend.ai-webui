@@ -195,7 +195,6 @@ export default class BackendAISummary extends BackendAIPage {
         .system-health-indicator {
           width: 90px;
         }
-
       `
     ];
   }
@@ -359,8 +358,7 @@ export default class BackendAISummary extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <wl-card class="item" elevation="1" style="padding-bottom:20px;">
-        <h3 class="plastic-material-title">${_t('summary.Dashboard')}</h3>
+      <div class="item" elevation="1" style="padding-bottom:20px;">
         <div class="horizontal wrap layout">
           <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1">
             <div slot="message">
@@ -460,7 +458,7 @@ export default class BackendAISummary extends BackendAIPage {
           </lablup-activity-panel>`
       : html``}
         </div>
-      </wl-card>
+      </div>
       <backend-ai-release-check id="update-checker"></backend-ai-release-check>
 `;
   }
