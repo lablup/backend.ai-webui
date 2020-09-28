@@ -87,7 +87,6 @@ export default class LablupActivityPanel extends LitElement {
           margin: 20px;
           padding-bottom: 20px;
           font-size: 12px;
-          padding-left: 3px;
         }
 
         ul {
@@ -144,6 +143,8 @@ export default class LablupActivityPanel extends LitElement {
     }
     if (this.narrow === true) {
       this.shadowRoot.querySelector("div.card > div").style.margin = '0';
+      this.shadowRoot.querySelector("div.card > h4").style.marginBottom = '0';
+
     }
   }
 
