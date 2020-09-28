@@ -76,11 +76,12 @@ export const BackendAiConsoleStyles = [
       height: 12px;
       font-size: 12px;
       font-weight: 400;
-      padding: 5px 15px 10px 15px;
-      margin: 0;
+      line-height: 20px;
+      padding: 5px 15px 10px 0;
+      margin: 10px 15px 0 15px;
       display: block;
       color: var(--general-sidebar-h3-color);
-      border-top: var(--general-sidebar-h3-border-color);
+      border-bottom: var(--general-sidebar-h3-border-color);
     }
 
     .drawer-menu,

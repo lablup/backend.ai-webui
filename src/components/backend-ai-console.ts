@@ -367,7 +367,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   /**
-   * Set the toggle side pannel type.
+   * Set the toggle side panel type.
    */
   toggleSidePanelType() {
     if (this.contentBody.type === 'dismissible') {
