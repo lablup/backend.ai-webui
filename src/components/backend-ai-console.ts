@@ -458,17 +458,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (groupSelectionBox.hasChildNodes()) {
       groupSelectionBox.removeChild(groupSelectionBox.firstChild as ChildNode);
     }
-    let select = document.createElement('mwc-multi-select') as any;
-    select.label = _text("console.menu.Project");
+    let div = document.createElement('div') as any;
+    div.className = "horizontal center center-justified layout";
+    let p = document.createElement('p') as any;
+    p.setAttribute('style', "font-size:12px;color:#8c8484;");
+    p.innerHTML = _text("console.menu.Project");
+    let select = document.createElement('mwc-select') as any;
     select.id = 'group-select';
     select.value = this.current_group;
     //select.setAttribute('naturalMenuWidth', 'true');
-    //select.setAttribute('fullwidth', 'true');
     select.addEventListener('selected', (e) => this.changeGroup(e));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
-    opt.innerHTML = _text("console.menu.SelectProject");
-    opt.style.borderBottom = "1px solid #ccc";
+    console.dir(select)
+    // opt.innerHTML = _text("console.menu.SelectProject");
+    // opt.style.borderBottom = "1px solid #ccc";
     select.appendChild(opt);
     this.groups.map(group => {
       opt = document.createElement('mwc-list-item');
@@ -482,7 +486,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       select.appendChild(opt);
     });
     //select.updateOptions();
-    groupSelectionBox.appendChild(select);
+    div.appendChild(p);
+    div.appendChild(select);
+    groupSelectionBox.appendChild(div);
   }
 
   /**
@@ -581,69 +587,69 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       case 'summary':
       case 'verify-email':
         this.menuTitle = _text("console.menu.Summary");
-        this.updateTitleColor('var(--paper-green-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'change-password':
         this.menuTitle = _text("console.menu.Summary") + this.user_id;
-        this.updateTitleColor('var(--paper-green-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'job':
         this.menuTitle = _text("console.menu.Sessions");
-        this.updateTitleColor('var(--paper-red-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-red-800)', '#efefef');
         break;
       case 'experiment':
         this.menuTitle = _text("console.menu.Experiments");
-        this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'data':
         this.menuTitle = _text("console.menu.Data&Storage");
-        this.updateTitleColor('var(--paper-orange-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-orange-800)', '#efefef');
         break;
       case 'statistics':
         this.menuTitle = _text("console.menu.Statistics");
-        this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
         break;
       case 'usersettings':
         this.menuTitle = _text("console.menu.Settings&Logs");
-        this.updateTitleColor('var(--paper-teal-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-teal-800)', '#efefef');
         break;
       case 'credential':
         this.menuTitle = _text("console.menu.UserCredentials&Policies");
-        this.updateTitleColor('var(--paper-lime-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-lime-800)', '#efefef');
         break;
       case 'environment':
         this.menuTitle = _text("console.menu.Environments&Presets");
-        this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
         break;
       case 'agent':
         this.menuTitle = _text("console.menu.ComputationResources");
-        this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'settings':
         this.menuTitle = _text("console.menu.Configurations");
-        this.updateTitleColor('var(--paper-green-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'maintenance':
         this.menuTitle = _text("console.menu.Maintenance");
-        this.updateTitleColor('var(--paper-pink-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-pink-800)', '#efefef');
         break;
       case 'information':
         this.menuTitle = _text("console.menu.Information");
-        this.updateTitleColor('var(--paper-purple-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-purple-800)', '#efefef');
         break;
       case 'logs':
         this.menuTitle = _text("console.menu.Logs");
-        this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
       case 'github':
       case 'import':
         this.menuTitle = _text("console.menu.Import&Run");
-        this.updateTitleColor('var(--paper-blue-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-blue-800)', '#efefef');
         break;
       default:
         this._page = 'error';
         this.menuTitle = _text("console.NOTFOUND");
-        this.updateTitleColor('var(--paper-grey-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-grey-800)', '#efefef');
     }
   }
 
@@ -1023,53 +1029,55 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <backend-ai-sidepanel-task class="sidepanel" ?active="${this._sidepanel === 'task'}"></backend-ai-sidepanel-task>
             </div>
             <div slot="appContent">
-              <mwc-top-app-bar-fixed prominent id="main-toolbar" class="draggable">
-                <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}"></mwc-icon-button>
-                <h2 style="font-size:24px!important;" slot="title">${this.menuTitle}</h2>
-                <div slot="actionItems">
-                  <div id="group-select-box" style="height:48px;"></div>
-                </div>
-                <div slot="actionItems">
-                  <div class="vertical center-justified flex layout" style="height:48px;">
-                    <span class="email" style="font-size: 11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;">${_t("console.menu.UserName")}</span>
-                    <span class="full_name" style="font-size: 14px;text-align:right;-webkit-font-smoothing:antialiased;">${this.full_name}</span>
-                    <!--<div style="font-size: 12px;text-align:right">${this.domain !== 'default' && this.domain !== '' ? html`${this.domain}` : html``}</div>-->
+              <mwc-top-app-bar-fixed id="main-toolbar" class="draggable">
+                <mwc-icon-button id="drawer-toggle-button" icon="menu" slot="navigationIcon" @click="${() => this.toggleDrawer()}" style="margin:auto;"></mwc-icon-button>
+                <p slot="title" style="border-left: 1px solid #dbdbdb; margin:auto;">${_text("console.menu.WelcomeMessage") + this.full_name + "."}</p>
+                <mwc-icon-button slot="navigationIcon" style="margin_auto;"></mwc-icon-button>
+                <div slot="actionItems" style="margin:auto;">
+                  <div class="horizontal flex layout" style="margin-right:2em;">
+                    <div id="group-select-box" style="height:48px;"></div>
+                    <div style="border-right: 1px solid #dbdbdb;"></div>
+                    <div class="horizontal center layout" id="dropdown-button" @click="${() => this._toggleDropdown()}">
+                      <div class="vertical layout center" style="position:relative;">
+                      <span class="email" style="color:#8c8484;font-size:11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;margin:auto 10px;">${_t("console.menu.UserName")}</span>
+                        <mwc-menu id="dropdown-menu" class="user-menu">
+                          ${this.domain !== 'default' && this.domain !== '' ? html`
+                          <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+                              ${this.domain}
+                          </mwc-list-item>
+                          ` : html``}
+                          <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+                              ${this.user_id}
+                          </mwc-list-item>
+                          <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
+                              <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
+                              ${_t("console.menu.AboutBackendAI")}
+                          </mwc-list-item>
+                          <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
+                              <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
+                              ${_t("console.menu.ChangePassword")}
+                          </mwc-list-item>
+                          <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
+                              <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
+                              ${_t("console.menu.Preferences")}
+                          </mwc-list-item>
+                          <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
+                              <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
+                              ${_t("console.menu.LogsErrors")}
+                          </mwc-list-item>
+                          <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
+                              <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
+                              ${_t("console.menu.LogOut")}
+                          </mwc-list-item>
+                        </mwc-menu>
+                      </div>
+                      <span class="full_name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 10px;">${this.full_name}</span>
+                    </div>
+
+                    <div style="border-right: 1px solid #dbdbdb;"></div>
+                    <span class="log_out" style="font-size:12px;margin:auto 10px;">${_text("console.menu.LogOut")}</span>
                   </div>
                 </div>
-                <mwc-icon-button slot="actionItems" id="dropdown-button" style="margin-top:4px;"
-                                 icon="more_vert"
-                                 @click="${() => this._toggleDropdown()}">
-                </mwc-icon-button>
-                <mwc-menu id="dropdown-menu" class="user-menu" absolute x=-10 y=55>
-                  ${this.domain !== 'default' && this.domain !== '' ? html`
-                  <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                      ${this.domain}
-                  </mwc-list-item>
-                  ` : html``}
-                  <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                      ${this.user_id}
-                  </mwc-list-item>
-                  <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
-                      <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
-                      ${_t("console.menu.AboutBackendAI")}
-                  </mwc-list-item>
-                  <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
-                      <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
-                      ${_t("console.menu.ChangePassword")}
-                  </mwc-list-item>
-                  <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
-                      <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
-                      ${_t("console.menu.Preferences")}
-                  </mwc-list-item>
-                  <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
-                      <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
-                      ${_t("console.menu.LogsErrors")}
-                  </mwc-list-item>
-                  <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
-                      <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
-                      ${_t("console.menu.LogOut")}
-                  </mwc-list-item>
-                </mwc-menu>
               </mwc-top-app-bar-fixed>
 
               <div class="content">

@@ -9,7 +9,7 @@ export const BackendAiStyles = [
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
-      --general-menu-background-color: var(--paper-green-600);
+      --general-menu-background-color: transparent;
       --general-menu-background-color-less: rgba(255, 255, 255, 0.6);
       --general-menu-background-border: rgba(23, 23, 23, 1);
       --general-menu-background-opacity: 1;

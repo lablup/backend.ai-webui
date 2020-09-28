@@ -91,6 +91,7 @@ export const BackendAiConsoleStyles = [
       background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
     }
 
+
     mwc-list.sidebar {
       cursor: pointer;
       color: var(--general-sidebar-color, #eeeeee);
@@ -147,6 +148,12 @@ export const BackendAiConsoleStyles = [
 
     .drawer-menu footer a {
       color: var(--general-sidebar-footer-color, #aaaaaa) !important;
+    }
+
+    mwc-menu#dropdown-menu {
+      position: relative;
+      left: -40px;
+      top: 20px;
     }
 
     .page {
@@ -238,6 +245,30 @@ export const BackendAiConsoleStyles = [
 
     mwc-tab {
       color: #ffffff;
+    }
+
+    mwc-select#group-select {
+      font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-size: 14px;
+      --mdc-typography-subtitle1-font-color: black;
+      --mdc-typography-subtitle1-font-weight: 400;
+      --mdc-typography-subtitle1-line-height: 16px;
+      --mdc-theme-primary: transparent;
+      --mdc-select-idle-line-color: transparent;
+      --mdc-select-hover-line-color: transparent;
+      --mdc-select-outlined-idle-border-color: rgba(255, 255, 255, 0.42);
+      --mdc-select-outlined-hover-border-color: rgba(255, 255, 255, 0.87);
+      --mdc-select-outlined-disabled-border-color: rgba(255, 255, 255, 0.87);
+      --mdc-select-fill-color: transparent;
+      --mdc-select-disabled-fill-color: transparent;
+      --mdc-select-ink-color: black;
+      --mdc-select-label-ink-color: black;
+      --mdc-select-focused-label-color: rgba(24, 24, 24, 1.0);
+      --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
+      --mdc-select-dropdown-icon-color: #747474;
+      --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
+      --mdc-select-disabled-dropdown-icon-color: #747474;
     }
 
     mwc-multi-select {
@@ -383,11 +414,21 @@ export const BackendAiConsoleStyles = [
       color: var(--general-menu-color);
       z-index: 1;
       overflow: visible;
+      --mdc-theme-on-primary: black;
+      --mdc-theme-primary: rgba(247, 246, 246, 1);
+      border-bottom: 1px solid #dbdbdb;
     }
 
-    #main-toolbar h2 {
-      margin: 0 0 0 15px;
-      font-weight: 300;
+    #main-toolbar > p {
+      padding: 10px;
+      margin: auto;
+      font-size: 14px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: normal;
+      letter-spacing: normal;
+      color: #090909;
     }
 
     #content {
