@@ -429,14 +429,14 @@ export default class BackendAISummary extends BackendAIPage {
               </div>
             </div>
           </lablup-activity-panel>
-          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1">
+          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" narrow>
             <div slot="message">
-              <div class="horizontal justified layout wrap">
                 <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>
-              </div>
             </div>
           </lablup-activity-panel>
+
           <backend-ai-resource-panel ?active="${this.active === true}"></backend-ai-resource-panel>
+
           ${this.announcement != '' ? html`
           <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1">
             <div slot="message">

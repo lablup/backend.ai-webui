@@ -123,8 +123,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         }
 
         mwc-linear-progress {
-          width: 190px;
-          height: 5px;
+          width: 260px;
+          height: 15px;
           border-radius: 0;
           --mdc-theme-primary: #3677eb;
         }

@@ -96,16 +96,23 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --mdc-theme-primary: #98be5a;
         }
 
+        .vertical-card {
+          margin: 20px;
+        }
+
         .horizontal-panel mwc-linear-progress {
           width: 90px;
         }
 
         .vertical-panel mwc-linear-progress {
-          width: 180px;
+          width: 250px;
         }
 
         #scaling-group-select-box {
-          min-height: 61px;
+          min-height: 100px;
+          padding-top: 20px;
+          padding-left: 20px;
+          background-color: #F6F6F6;
         }
 
         .vertical-panel #resource-gauges {
@@ -242,16 +249,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           z-index: 100;
         }
 
-        #scaling-group-select-box mwc-multi-select {
-          width: 245px;
-          margin-left: -4px;
+        #scaling-group-select-box mwc-select {
+          width: 305px;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-size: 14px;
+          --mdc-typography-subtitle1-font-size: 16px;
           --mdc-typography-subtitle1-font-color: rgb(24, 24, 24);
           --mdc-typography-subtitle1-font-weight: 400;
           --mdc-typography-subtitle1-line-height: 16px;
-          --mdc-select-fill-color: transparent;
+          --mdc-select-fill-color: rgba(255, 255, 255, 1.0);
           --mdc-select-label-ink-color: rgba(24, 24, 24, 1.0);
           --mdc-select-disabled-ink-color: rgba(24, 24, 24, 1.0);
           --mdc-select-dropdown-icon-color: rgba(24, 24, 24, 1.0);
@@ -274,7 +280,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         #scaling-group-select {
-          width: 245px;
+          width: 305px;
         }
 
         wl-button.resource-button.iron-selected {
@@ -467,12 +473,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if (scaling_group_selection_box.hasChildNodes()) {
         scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
       }
-      const scaling_select = document.createElement('mwc-multi-select');
+      const scaling_select = document.createElement('mwc-select');
       scaling_select.label = _text('session.launcher.ResourceGroup');
       scaling_select.id = 'scaling-group-select';
       scaling_select.value = this.scaling_group;
       scaling_select.setAttribute('fullwidth', 'true');
       scaling_select.setAttribute('icon', 'storage');
+      scaling_select.setAttribute('outlined', 'true');
       scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
       let opt = document.createElement('mwc-list-item');
       opt.setAttribute('disabled', 'true');
@@ -677,7 +684,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       <div id="scaling-group-select-box" class="layout horizontal start-justified">
       </div>
       ` : html``}
-      <div class="layout horizontal">
+      <div class="layout ${this.direction}-card">
         <mwc-icon-button id="resource-gauge-toggle" icon="assessment" class="fg blue ${this.direction}"
           @click="${() => this._toggleResourceGauge()}">
         </mwc-icon-button>
@@ -788,13 +795,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         </div>
       </div>
       ${this.direction === 'vertical' ? html`
-      <div class="vertical start-justified layout">
+      <div class="vertical start-justified layout ${this.direction}-card">
         <div class="layout horizontal center start-justified">
-          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#4775E3;"></div>
+          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#4775E3;border-radius:4px;"></div>
           <span style="margin-right:5px;">${_t('session.launcher.CurrentResourceGroup')} (${this.scaling_group})</span>
         </div>
         <div class="layout horizontal center start-justified">
-          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#A0BD67"></div>
+          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#A0BD67;border-radius:4px;"></div>
           <span style="margin-right:5px;">${_t('session.launcher.UserResourceLimit')}</span>
         </div>
       </div>

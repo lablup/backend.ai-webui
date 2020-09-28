@@ -39,6 +39,7 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: Number}) maxwidth = 0;
   @property({type: Boolean}) pinned = false;
   @property({type: Boolean}) disabled = false;
+  @property({type: Boolean}) narrow = false;
 
   constructor() {
     super();
@@ -140,6 +141,9 @@ export default class LablupActivityPanel extends LitElement {
     (this.shadowRoot.querySelector('.card') as any).style.margin = this.marginWidth + "px";
     if (this.headerColor !== '') {
       this.shadowRoot.querySelector("#header").style.backgroundColor = this.headerColor;
+    }
+    if (this.narrow === true) {
+      this.shadowRoot.querySelector("div.card > div").style.margin = '0';
     }
   }
 
