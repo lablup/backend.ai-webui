@@ -1800,7 +1800,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     // language=HTML
     return html`
       <wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" @click="${() => this._launchSessionDialog()}">
-        <wl-icon>add</wl-icon>
         ${_t("session.launcher.Start")}
       </wl-button>
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>

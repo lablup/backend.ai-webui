@@ -164,11 +164,23 @@ export default class BackendAISummary extends BackendAIPage {
 
         #session-launcher {
           --component-width: 305px;
+          --component-height: 70px;
           --component-color: #ffffff;
           --component-bg: rgb(104, 185, 155);
           --component-bg: linear-gradient(180deg, rgba(104, 185, 155, 1) 0%, rgba(98, 180, 131, 1) 50%, rgba(93, 178, 113, 1) 100%);
           --component-bg-hover: linear-gradient(180deg, rgba(98, 180, 131, 1) 0%, rgba(104, 185, 155, 1) 50%, rgba(93, 178, 113, 1) 100%);
           --component-bg-active: rgb(104, 185, 155);
+        }
+
+        .start-menu-items {
+          margin-top: 20px;
+          width: 100px;
+        }
+
+        .start-menu-items span {
+          padding-left: 10px;
+          padding-right: 10px;
+          text-align: center;
         }
 
         wl-icon {
@@ -367,19 +379,27 @@ export default class BackendAISummary extends BackendAIPage {
         <div class="horizontal wrap layout">
           <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1">
             <div slot="message">
+              <img src="/resources/images/launcher-background.png" style="width:300px;"/>
               <div class="horizontal justified layout wrap">
                 <backend-ai-session-launcher location="summary" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
               </div>
-              <ul>
-                <li><a href="/data">${_t('summary.UploadFiles')}</a></li>
-              </ul>
+              <div class="horizontal justified layout wrap">
+                <a href="/data" class="vertical center center-justified layout start-menu-items">
+                  <img src="/resources/menu_icons/icon_upload_files.svg" style="width:24px;"/>
+                  <span>${_t('summary.UploadFiles')}</span>
+                </a>
               ${this.is_admin
       ? html`
-                <ul>
-                  <li><a href="/credential">${_t('summary.CreateANewKeypair')}</a></li>
-                  <li><a href="/credential">${_t('summary.MaintainKeypairs')}</a></li>
-                </ul>`
+                <a href="/credential" class="vertical center center-justified layout start-menu-items" style="border-left:1px solid #ccc;">
+                  <img src="/resources/menu_icons/icon_create_a_key_pair.svg" style="width:24px;"/>
+                  <span>${_t('summary.CreateANewKeypair')}</span>
+                </a>
+                <a href="/credential" class="vertical center center-justified layout start-menu-items" style="border-left:1px solid #ccc;">
+                  <img src="/resources/menu_icons/icon_keypair_management.svg" style="width:24px;"/>
+                  <span>${_t('summary.MaintainKeypairs')}</span>
+                </a>`
       : html``}
+              </div>
             </div>
           </lablup-activity-panel>
           <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1">
