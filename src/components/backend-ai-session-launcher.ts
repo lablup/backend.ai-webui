@@ -333,10 +333,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         #launch-session {
           height: var(--component-height, auto);
           width: var(--component-width, auto);
-          --button-color: var(--paper-red-600);
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
+          --button-color: var(--component-color, var(--paper-red-600));
+          --button-bg: var(--component-bg, var(--paper-red-50));
+          --button-bg-hover: var(--component-bg-hover, var(--paper-red-100));
+          --button-bg-active: var(--component-bg-active, var(--paper-red-600));
         }
 
         #launch-session[disabled] {
@@ -1799,7 +1799,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" outlined @click="${() => this._launchSessionDialog()}">
+      <wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" @click="${() => this._launchSessionDialog()}">
         <wl-icon>add</wl-icon>
         ${_t("session.launcher.Start")}
       </wl-button>

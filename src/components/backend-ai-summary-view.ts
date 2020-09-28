@@ -163,7 +163,12 @@ export default class BackendAISummary extends BackendAIPage {
         }
 
         #session-launcher {
-          --component-width: 235px;
+          --component-width: 305px;
+          --component-color: #ffffff;
+          --component-bg: rgb(104, 185, 155);
+          --component-bg: linear-gradient(180deg, rgba(104, 185, 155, 1) 0%, rgba(98, 180, 131, 1) 50%, rgba(93, 178, 113, 1) 100%);
+          --component-bg-hover: linear-gradient(180deg, rgba(98, 180, 131, 1) 0%, rgba(104, 185, 155, 1) 50%, rgba(93, 178, 113, 1) 100%);
+          --component-bg-active: rgb(104, 185, 155);
         }
 
         wl-icon {
