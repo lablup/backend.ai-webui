@@ -105,7 +105,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         .vertical-panel mwc-linear-progress {
-          width: 250px;
+          width: 186px;
         }
 
         #scaling-group-select-box {
@@ -224,7 +224,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         .gauge-name {
-          font-size: 10px;
+          float: right;
+          font-size: 14px;
+          font-weight: bold;
+          color: #2f2f2f;
         }
 
         .gauge-label {
@@ -281,6 +284,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         #scaling-group-select {
           width: 305px;
+          height: 55px;
+          --mdc-select-outlined-idle-border-color: #dddddd;
+          --mdc-select-outlined-hover-border-color: #dddddd;
+         background-color: white!important;
+         border-radius: 5px;
         }
 
         wl-button.resource-button.iron-selected {
@@ -311,16 +319,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           margin-bottom: 10px;
         }
 
-        .resources.vertical .monitor div:first-child {
-          width: 40px;
-        }
-
         mwc-select,
         mwc-multi-select {
           width: 100%;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-theme-primary: var(--paper-red-600);
+          --mdc-theme-primary: var(--general-sidebar-color);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
           --mdc-select-dropdown-icon-color: rgba(255, 0, 0, 0.87);
@@ -336,6 +340,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --mdc-list-item__primary-text: {
             height: 20px;
           };
+        }
+
+        div.mdc-select__anchor {
+          background-color: white !important;
         }
 
         mwc-textfield {
@@ -363,6 +371,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           margin-right: 10px;
           outline: none;
         }
+
+        .resource-name {
+          width: 60px;
+          text-align: right; 
+          display: inline-block !important;
+          margin: auto 20px auto 0px;
+        }
+
       `];
   }
 
@@ -478,12 +494,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       scaling_select.id = 'scaling-group-select';
       scaling_select.value = this.scaling_group;
       scaling_select.setAttribute('fullwidth', 'true');
-      scaling_select.setAttribute('icon', 'storage');
       scaling_select.setAttribute('outlined', 'true');
       scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
       let opt = document.createElement('mwc-list-item');
       opt.setAttribute('disabled', 'true');
-      opt.setAttribute('graphic', 'icon');
       opt.innerHTML = _text('session.launcher.SelectResourceGroup');
       opt.style.borderBottom = "1px solid #ccc";
       scaling_select.appendChild(opt);
@@ -696,9 +710,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <span class="gauge-label">${_t('session.launcher.MY')}</span>
           </div>
           ` : html``}
-          <div class="layout horizontal start-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <wl-icon class="fg blue">developer_board</wl-icon>
+          <div class="layout horizontal center-justified monitor">
+            <div class="layout vertical center center-justified resource-name">
               <div class="gauge-name">CPU</div>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
@@ -709,8 +722,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>
           <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <wl-icon class="fg blue">memory</wl-icon>
+            <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">RAM</span>
             </div>
             <div class="layout vertical start-justified wrap">
@@ -723,8 +735,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           ${this.total_slot.cuda_device ?
       html`
           <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <img class="resource-type-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+            <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">GPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
@@ -738,8 +749,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           ${this.total_slot.cuda_shares && this.total_slot.cuda_shares > 0 ?
       html`
           <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <img class="resource-type-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+            <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">FGPU</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
@@ -753,7 +763,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           ${this.total_slot.rocm_device_slot ?
       html`
           <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
+            <div class="layout vertical center center-justified resource-name">
               <img class="resource-type-icon fg green" src="/resources/icons/ROCm.png" />
               <span class="gauge-name">ROCm<br/>GPU</span>
             </div>
@@ -768,8 +778,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           ${this.total_slot.tpu_device_slot ?
       html`
           <div class="layout horizontal center-justified monitor">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <wl-icon class="fg blue">view_module</wl-icon>
+            <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">TPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
@@ -782,9 +791,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html``}
 
           <div class="layout horizontal center-justified monitor session">
-            <div class="layout vertical center center-justified" style="margin-right:5px;">
-              <wl-icon class="fg blue">assignment</wl-icon>
-              <span class="gauge-name">${_t('session.launcher.Session')}</span>
+            <div class="layout vertical center center-justified resource-name">
+              <span class="gauge-name">${_t('session.launcher.Sessions')}</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
               <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max === 1000000 ? html`∞` : this.concurrency_max}</span>
