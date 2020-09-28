@@ -400,12 +400,12 @@ export default class BackendAISummary extends BackendAIPage {
             <lablup-shields app="" color="red" description="Notice" ui="round"></lablup-shields>
             <span>${this._stripHTMLTags(this.announcement)}</span>
           </h3>
-        `:html``}
+        ` : html``}
 
         <div class="horizontal wrap layout">
-          <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1">
+          <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1" height="500">
             <div slot="message">
-              <img src="/resources/images/launcher-background.png" style="width:300px;"/>
+              <img src="/resources/images/launcher-background.png" style="width:300px;margin-bottom:30px;"/>
               <div class="horizontal justified layout wrap">
                 <backend-ai-session-launcher location="summary" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
               </div>
@@ -429,13 +429,13 @@ export default class BackendAISummary extends BackendAIPage {
               </div>
             </div>
           </lablup-activity-panel>
-          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" narrow>
+          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" narrow height="500">
             <div slot="message">
                 <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>
             </div>
           </lablup-activity-panel>
 
-          <backend-ai-resource-panel ?active="${this.active === true}"></backend-ai-resource-panel>
+          <backend-ai-resource-panel ?active="${this.active === true}" height="500"></backend-ai-resource-panel>
 
           ${this.announcement != '' ? html`
           <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1">
@@ -443,7 +443,7 @@ export default class BackendAISummary extends BackendAIPage {
               ${unsafeHTML(this.announcement)}
             </div>
           </lablup-activity-panel>
-          `:html``}
+          ` : html``}
       ${this.invitations ? this.invitations.map(invitation =>
       html`
             <lablup-activity-panel title="${_t('summary.Invitation')}">

@@ -34,6 +34,7 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: String}) headerColor = '';
   @property({type: Number}) elevation = 1;
   @property({type: Number}) width = 350;
+  @property({type: Number}) height = 0;
   @property({type: Number}) marginWidth = 16;
   @property({type: Number}) minwidth = 0;
   @property({type: Number}) maxwidth = 0;
@@ -144,7 +145,9 @@ export default class LablupActivityPanel extends LitElement {
     if (this.narrow === true) {
       this.shadowRoot.querySelector("div.card > div").style.margin = '0';
       this.shadowRoot.querySelector("div.card > h4").style.marginBottom = '0';
-
+    }
+    if (this.height > 0) {
+      this.shadowRoot.querySelector("div.card").style.height = this.height + 'px';
     }
   }
 

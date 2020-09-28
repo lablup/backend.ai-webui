@@ -71,6 +71,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
+  @property({type: Number}) height = 0;
 
   constructor() {
     super();
@@ -400,7 +401,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <lablup-activity-panel title="${_t('summary.SystemResources')}" elevation="1" narrow>
+      <lablup-activity-panel title="${_t('summary.SystemResources')}" elevation="1" narrow height="${this.height}">
         <div slot="message">
           <div class="horizontal justified layout wrap indicators">
             ${this.is_superadmin ? html`
