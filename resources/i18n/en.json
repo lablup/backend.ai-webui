@@ -404,11 +404,19 @@
     "Base": "Base",
     "Constraint": "Constraint",
     "ResourceLimit": "Resource Limit",
-    "DescDownloadImage": "You are about to install the image: ",
+    "DescDeleteImage": "You are about to delete the image(s): ",
+    "DescDownloadImage": "You are about to install the image(s): ",
     "DescSignificantDownloadTime": "This process requires significant download time.",
+    "Install":"Install",
+    "Delete":"Delete",
+    "Installed": "installed",
+    "Installing": "installing",
+    "Status": "Status",
     "Images": "Images",
     "ResourcePresets": "Resource Presets",
-    "Registries": "Registries"
+    "Registries": "Registries",
+    "SelectedImagesAlreadyInstalled": "Selected Image(s) are already installed or None. Please check again.",
+    "SelectedImagesNotInstalled": "Selected Images(s) are not installed. Please check again."
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",

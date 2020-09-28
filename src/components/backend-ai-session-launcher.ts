@@ -969,7 +969,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, config) {
-    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config);
+    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 10000);
     task.catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
