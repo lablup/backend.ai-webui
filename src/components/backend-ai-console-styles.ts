@@ -94,27 +94,38 @@ export const BackendAiConsoleStyles = [
 
     mwc-list.sidebar {
       cursor: pointer;
-      color: var(--general-sidebar-color, #eeeeee);
+      color: var(--general-sidebar-color, #949494);
       --mdc-list-side-padding: 32px;
     }
 
     mwc-list.sidebar mwc-list-item {
-      --mdc-theme-primary: var(--general-sidebar-selected-color, #eeeeee);
-      --mdc-theme-text-primary-on-background: var(--general-sidebar-color, #eeeeee);
+      --mdc-theme-primary: var(--general-sidebar-selected-color, #949494);
+      --mdc-theme-text-primary-on-background: var(--general-sidebar-color, #949494);
       --mdc-list-item-graphic-margin: 15px;
       height: 36px;
       margin-top: 10px;
       margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    mwc-list.sidebar > mwc-list-item > i {
+      color: #949494;
+      font-size: 17px;
+      padding-top: 5px;
     }
 
     mwc-list.sidebar mwc-list-item[selected] {
-      color: var(--general-sidebar-selected-color, #eeeeee);
+      color: var(--general-sidebar-selected-color, #949494);
       background: var(--general-sidebar-selected-background-color, #23252b);
       border-left: var(--general-sidebar-selected-border-left);
       padding-left: 27px; /* 32px - 5px */
       border-right: 0;
       padding-right: 11px;
       font-weight: 900;
+    }
+
+    mwc-list.sidebar mwc-list-item[selected] > i {
+      color: inherit;
     }
 
     mwc-list.sidebar mwc-list-item[disabled],
@@ -152,7 +163,7 @@ export const BackendAiConsoleStyles = [
 
     mwc-menu#dropdown-menu {
       position: relative;
-      left: -40px;
+      left: -30px;
       top: 20px;
     }
 
@@ -340,11 +351,7 @@ export const BackendAiConsoleStyles = [
     }
 
     mwc-menu.user-menu mwc-list-item {
-      font-size: 16px;
-    }
-
-    mwc-menu.user-menu mwc-list-item mwc-icon {
-      --mdc-icon-size: 16px;
+      font-size: 14px;
     }
 
     mwc-icon-button.side-menu {

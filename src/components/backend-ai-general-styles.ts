@@ -27,8 +27,8 @@ export const BackendAiStyles = [
       --general-big-panel-width: 560px;
       --general-content-container-width: 980px;
       --general-background-color: rgba(247, 246, 246, 1);
-      --general-sidebar-color: #dddddd;
-      --general-sidebar-background-color: rgba(24, 24, 24, 1.0);
+      --general-sidebar-color: #949494;
+      --general-sidebar-background-color: #2a2c30;
       --general-sidebar-h3-color: #cccccc;
       --general-sidebar-h3-border-color: 1px solid #444444;
       --general-sidebar-topbar-background-color-3: #383e48;
@@ -38,9 +38,9 @@ export const BackendAiStyles = [
       --general-sidebar-topbar-background-color: rgba(24, 24, 24, 1);
       --general-sidebar-topbar-color: #efefef;
       --general-sidebar-selected-color: #72EB51; /*var(--paper-green-400);*/
-      --general-sidebar-selected-background-color: rgba(24, 24, 24, 1); /* removed transparent */
+      --general-sidebar-selected-background-color: transparent;
       --general-sidebar-selected-background-gradient-color: transparent;
-      --general-sidebar-selected-border-left: 5px solid #72EB51;
+      --general-sidebar-selected-border-left: 3px solid #72EB51;
       --general-sidebar-footer-color: #777777;
       --general-sidebar-navbar-footer-color: #222222;
       --general-sidebar-item-even-background-color: transparent;
