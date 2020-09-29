@@ -1188,15 +1188,28 @@ class VFolder {
             'path': path,
             'size': fs.size
         };
-        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/create_upload_session`, body);
+        let rqstUrl;
+        if (this.client._apiVersionMajor < 6) {
+            rqstUrl = `${this.urlPrefix}/${name}/create_upload_session`;
+        }
+        else {
+            rqstUrl = `${this.urlPrefix}/${name}/request-upload`;
+        }
+        const rqst = this.client.newSignedRequest('POST', rqstUrl, body);
         const res = await this.client._wrapWithPromise(rqst);
         const token = res['token'];
-        let url = this.client._config.endpoint;
-        if (this.client._config.connectionMode === 'SESSION') {
-            url = url + '/func';
+        let tusUrl;
+        if (this.client._apiVersionMajor < 6) {
+            tusUrl = this.client._config.endpoint;
+            if (this.client._config.connectionMode === 'SESSION') {
+                tusUrl = tusUrl + '/func';
+            }
+            tusUrl = tusUrl + `${this.urlPrefix}/_/tus/upload/${token}`;
         }
-        url = url + `${this.urlPrefix}/_/tus/upload/${token}`;
-        return Promise.resolve(url);
+        else {
+            tusUrl = `${res.url}?token=${token}`;
+        }
+        return Promise.resolve(tusUrl);
     }
     /**
      * Create directory in specific Virtual folder.
@@ -1277,7 +1290,14 @@ class VFolder {
             file,
             archive
         };
-        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
+        let rqstUrl;
+        if (this.client._apiVersionMajor < 6) {
+            rqstUrl = `${this.urlPrefix}/${name}/request_download`;
+        }
+        else {
+            rqstUrl = `${this.urlPrefix}/${name}/request-download`;
+        }
+        const rqst = this.client.newSignedRequest('POST', rqstUrl, body);
         return this.client._wrapWithPromise(rqst);
     }
     /**
@@ -1299,9 +1319,7 @@ class VFolder {
      * @param {string} token - Temporary token to download specific file.
      */
     get_download_url_with_token(token = '') {
-        let params = {
-            'token': token
-        };
+        const params = { token };
         let q = querystring.stringify(params);
         if (this.client._config.connectionMode === 'SESSION') {
             return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
