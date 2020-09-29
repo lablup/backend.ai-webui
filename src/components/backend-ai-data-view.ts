@@ -16,6 +16,8 @@ import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@material/mwc-list/mwc-list-item';
 import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-textfield';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -144,6 +146,18 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-theme-primary: var(--paper-red-400) !important;
         }
 
+        h3.tab {
+          background-color: var(--general-tabbar-background-color);
+          border-radius: 5px 5px 0px 0px;
+          margin: 0px auto;
+        }
+        mwc-tab-bar {
+          --mdc-theme-primary: var(--general-sidebar-selected-color);
+          --mdc-text-transform: none;
+          --mdc-tab-color-default: var(--general-tabbar-background-color);
+          --mdc-tab-text-label-color-default: var(--general-sidebar-color);
+        }
+
         wl-tab-group {
           --tab-group-indicator-bg: var(--paper-orange-500);
         }
@@ -218,6 +232,16 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-icon-button-size: 24px;
         }
 
+        #automount-folder-lists > div {
+          background-color: white;
+          color: var(--general-textfield-selected-color);
+          border-bottom:0.5px solid var(--general-textfield-selected-color);
+        }
+
+        #automount-folder-lists > div > p {
+          margin-left: 10px;
+        }
+
       `];
   }
 
@@ -225,14 +249,22 @@ export default class BackendAIData extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <wl-card class="item" elevation="1" style="padding-bottom:20px;">
+      <!--<wl-card class="item" elevation="1" style="padding-bottom:20px;">-->
+      <div style="margin:20px;">
+      <lablup-activity-panel elevation="1" narrow noheader>
         <h3 class="horizontal center flex layout tab">
-          <wl-tab-group>
+          <mwc-tab-bar>
+            <mwc-tab aria-label="general-folder" label="${_t("data.Folders")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+            <mwc-tab aria-label="automount-folder" label="${_t("data.AutomountFolders")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+            <!--<mwc-tab aria-label="shared-folder" label="${_t("data.SharedData")}"></mwc-tab>-->
+            <!--<mwc-tab aria-label="model" label="${_t("data.Models")}"></mwc-tab>-->
+          </mwc-tab-bar>
+          <!--<wl-tab-group>
             <wl-tab value="general-folder" checked @click="${(e) => this._showTab(e.target)}">${_t("data.Folders")}</wl-tab>
             <wl-tab value="automount-folder" @click="${(e) => this._showTab(e.target)}">${_t("data.AutomountFolders")}</wl-tab>
             <wl-tab value="shared-folder" disabled>${_t("data.SharedData")}</wl-tab>
             <wl-tab value="model" disabled>${_t("data.Models")}</wl-tab>
-          </wl-tab-group>
+          </wl-tab-group>-->
           <span class="flex"></span>
           <wl-button class="fg red" id="add-folder" outlined @click="${() => this._addFolderDialog()}">
             <wl-icon>add</wl-icon>
@@ -243,10 +275,14 @@ export default class BackendAIData extends BackendAIPage {
           <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
         </div>
         <div id="automount-folder-lists" class="tab-content" style="display:none;">
+          <div class="horizontal layout">
           <p>${_t("data.DialogFolderStartingWithDotAutomount")}</p>
+          </div>
           <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
         </div>
-      </wl-card>
+      </lablup-activity-panel>
+      </div>
+      <!--</wl-card>-->
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
         <div slot="content">
@@ -397,11 +433,11 @@ export default class BackendAIData extends BackendAIPage {
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.value + '-lists').style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.ariaLabel + '-lists').style.display = 'block';
     for (let x = 0; x < this._lists.length; x++) {
       this._lists[x].removeAttribute('active');
     }
-    this.shadowRoot.querySelector('#' + tab.value + '-storage').setAttribute('active', true);
+    this.shadowRoot.querySelector('#' + tab.ariaLabel + '-storage').setAttribute('active', true);
   }
 
   /**
