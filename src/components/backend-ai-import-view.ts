@@ -62,8 +62,19 @@ export default class BackendAIImport extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
+        div.description {
+          font-size: 14px;
+          color: var(--general-textfield-selected-color);
+        }
+
         #session-launcher {
           --component-width: 235px;
+        }
+
+        mwc-textfield, mwc-textarea {
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          width: 100%;
+          margin: 10px auto;
         }
 
         mwc-button {
@@ -281,12 +292,12 @@ export default class BackendAIImport extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <wl-card class="item" elevation="1" style="padding-bottom:20px;">
-        <h3 class="plastic-material-title">${_t('import.ImportNotebook')}</h3>
-        <lablup-activity-panel title="${_t('import.ImportNotebook')}" elevation="1" horizontalsize="2x" headerColor="#3164BA">
+      <!--<wl-card class="item" elevation="1" style="padding-bottom:20px;"> -->
+        <!-- <h3 class="plastic-material-title">${_t('import.ImportNotebook')}</h3> -->
+        <lablup-activity-panel title="${_t('import.ImportNotebook')}" elevation="1" horizontalsize="2x">
           <div slot="message">
             <div class="horizontal wrap layout center">
-              <mwc-textfield style="width:75%;" id="notebook-url" label="${_t('import.NotebookURL')}"></mwc-textfield>
+              <mwc-textfield outlined style="width:75%;" id="notebook-url" label="${_t('import.NotebookURL')}"></mwc-textfield>
               <mwc-button icon="cloud_download" @click="${() => this.getNotebookFromURL()}">${_t('import.GetAndRunNotebook')}</mwc-button>
             </div>
             ${this.importMessage}
@@ -295,43 +306,42 @@ export default class BackendAIImport extends BackendAIPage {
         <backend-ai-session-launcher mode="import" location="import" hideLaunchButton
         id="session-launcher" ?active="${this.active === true}"
         .newSessionDialogTitle="${_t('session.launcher.StartImportedNotebook')}"></backend-ai-session-launcher>
-
         <div class="horizontal wrap layout">
-          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" headerColor="#3164BA">
+          <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" width="350" narrow>
             <div slot="message">
-              <div class="horizontal justified layout wrap">
                 <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>
-              </div>
             </div>
           </lablup-activity-panel>
-          <lablup-activity-panel title="${_t('import.CreateNotebookButton')}" elevation="1" headerColor="#3164BA">
+          <lablup-activity-panel title="${_t('import.CreateNotebookButton')}" elevation="1">
             <div slot="message">
-              <div class="vertical wrap layout center" style="font-size:14px;">
+              <div class="vertical wrap layout center description">
                 ${_t('import.YouCanCreateNotebookCode')}
                 <img src="/resources/badge.svg" style="margin-top:5px;margin-bottom:5px;"/>
-                <mwc-textfield style="width:100%;" id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"></mwc-textfield>
+                <mwc-textfield outlined id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"></mwc-textfield>
                 <mwc-button style="width:100%;" @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
-                <mwc-textarea style="width:100%;" id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}">></mwc-textarea>
-                <mwc-textarea style="width:100%;" id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}">></mwc-textarea>
+                <mwc-textarea outlined id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}">></mwc-textarea>
+                <mwc-textarea outlined id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}">></mwc-textarea>
               </div>
             </div>
           </lablup-activity-panel>
 
         </div>
-        <h3 class="plastic-material-title">${_t('import.ImportToStorage')}</h3>
+        <!-- <h3 class="plastic-material-title">${_t('import.ImportToStorage')}</h3> -->
         <div class="horizontal wrap layout">
-          <lablup-activity-panel title="${_t('import.ImportGithubRepo')}" elevation="1" horizontalsize="2x" headerColor="#3164BA">
+          <lablup-activity-panel title="${_t('import.ImportGithubRepo')}" elevation="1" horizontalsize="2x">
             <div slot="message">
-              <div style="font-size:14px;">${_t('import.RepoWillBeFolder')}</div>
+              <div class="description">
+                <p>${_t('import.RepoWillBeFolder')}</p>
+              </div>
               <div class="horizontal wrap layout center">
-                <mwc-textfield style="width:75%;" id="github-repo-url" label="${_t('import.GitHubURL')}"></mwc-textfield>
+                <mwc-textfield outlined style="width:75%;" id="github-repo-url" label="${_t('import.GitHubURL')}"></mwc-textfield>
                 <mwc-button icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">${_t('import.GetToFolder')}</mwc-button>
               </div>
               ${this.importMessage}
             </div>
           </lablup-activity-panel>
         </div>
-      </wl-card>
+      <!--</wl-card> -->
 `;
   }
 }
