@@ -41,6 +41,7 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: Boolean}) pinned = false;
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) narrow = false;
+  @property({type: Boolean}) noheader = false;
 
   constructor() {
     super();
@@ -137,6 +138,9 @@ export default class LablupActivityPanel extends LitElement {
       if (this.horizontalsize == '3x') {
         (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 3 + 32) + "px";
       }
+      if (this.horizontalsize == '4x') {
+        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 4 + 32) + "px";
+      }
     }
     (this.shadowRoot.querySelector('.card') as any).style.margin = this.marginWidth + "px";
     if (this.headerColor !== '') {
@@ -148,6 +152,9 @@ export default class LablupActivityPanel extends LitElement {
     }
     if (this.height > 0) {
       this.shadowRoot.querySelector("div.card").style.height = this.height + 'px';
+    }
+    if (this.noheader === true) {
+      this.shadowRoot.querySelector("#header").style.display = 'none';
     }
   }
 
