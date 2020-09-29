@@ -47,6 +47,8 @@ export const BackendAiStyles = [
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
       --general-sidepanel-color: #dddddd;
       --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
+      --general-tabbar-background-color: var(--general-sidebar-background-color);
+      --general-tabbar-tab-disabled-color: var(--general-sidebar-color);
       --general-dialog-background-color: #ffffff;
       --general-font-family: 'Ubuntu', 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
@@ -517,4 +519,14 @@ export const BackendAiStyles = [
     vaadin-grid {
       font-family: var(--general-font-family);
     }
+
+    backend-ai-session-launcher#session-launcher {
+      --component-color: #ffffff;
+      --component-bg: rgb(104, 185, 155);
+      --component-bg: linear-gradient(rgba(56,189,115, 0.5), rgba(56,189,115, 0.5)), linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
+      --component-bg-hover: linear-gradient(180deg, rgba(98, 180, 131, 1) 0%, rgba(104, 185, 155, 1) 50%, rgba(93, 178, 113, 1) 100%);
+      --component-bg-active: rgb(104, 185, 155);
+      --component-shadow-color: #37c995;
+    }
+
   `];
