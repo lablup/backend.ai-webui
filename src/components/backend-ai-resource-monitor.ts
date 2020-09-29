@@ -190,13 +190,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         #resource-gauges.horizontal {
-          position: absolute;
-          top: 48px;
-          z-index: 100;
           left: 160px;
           width: 420px;
-          height: 48px;
-          color: #ffffff;
+          height: auto;
           background-color: transparent;
         }
 
@@ -264,12 +260,27 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           left: 0.5em;
           top: 25%;
           z-index: 10;
+          color: #2f2f2f;
         }
 
         .gauge-label {
           width: inherit;
           font-weight: bold;
           font-size: 10px;
+          color: #2f2f2f;
+        }
+
+        span.percentage {
+          font-size: 10px;
+          color: #2f2f2f;
+        }
+
+        span.start-bar {
+          margin: auto auto 5px 5px;
+        }
+
+        span.end-bar {
+          margin: 5px auto auto 5px;
         }
 
         .indicator {
@@ -741,16 +752,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         <div id="resource-gauges" class="layout ${this.direction} ${this.direction}-panel resources flex" style="align-items: flex-start">
         ${this.direction === 'horizontal' ? html`
           <div class="layout vertical end-justified wrap short-indicator">
-            <span class="gauge-label">${_t('session.launcher.TOTAL')}</span>
-            <div style="font-size:8px;height:10px;">${_t('session.launcher.RESOURCE')}</div>
-            <span class="gauge-label">${_t('session.launcher.MY')}</span>
+            <span class="gauge-label">
+              <p>
+                ${_t('session.launcher.TOTAL')}<br />${_t('session.launcher.RESOURCE')}<br />${_t('session.launcher.MY')}
+              </p>
           </div>
           ` : html``}
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <div class="gauge-name">CPU</div>
             </div>
-            <div class="layout vertical start-justified wrap short-indicator">
+            <div class="layout vertical start-justified wrap">
               <div class="progress-bar">
                 <span class="gauge-label">${this.used_resource_group_slot.cpu}/${this.total_resource_group_slot.cpu}</span>
                 <!-- <mwc-linear-progress id="cpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cpu / 100.0}"></mwc-linear-progress> -->
@@ -767,8 +779,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </div>
             </div>
             <div class="layout vertical center center-justified">
-              <span style="margin:auto auto 5px 5px;">${parseInt(this.used_resource_group_slot_percent.cpu) + '%'}</span>
-              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.cpu) + '%'}</span>
+              <span class="percentage start-bar">${parseInt(this.used_resource_group_slot_percent.cpu) + '%'}</span>
+              <span class="percentage end-bar">${parseInt(this.used_slot_percent.cpu) + '%'}</span>
             </div>
           </div>
           <div class="layout horizontal center-justified monitor">
@@ -790,8 +802,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </div>
             </div>
             <div class="layout vertical center center-justified">
-              <span style="margin:auto auto 5px 5px;">${parseInt(this.used_resource_group_slot_percent.mem) + '%'}</span>
-              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.mem) + '%'}</span>
+              <span class="percentage start-bar">${parseInt(this.used_resource_group_slot_percent.mem) + '%'}</span>
+              <span class="percentage end-bar">${parseInt(this.used_slot_percent.mem) + '%'}</span>
             </div>
           </div>
           ${this.total_slot.cuda_device ?
@@ -815,8 +827,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </div>
             </div>
             <div class="layout vertical center center-justified">
-              <span style="margin:auto auto 5px 5px;">${parseInt(this.used_resource_group_slot_percent.cuda_device) + '%'}</span>
-              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.cuda_device) + '%'}</span>
+              <span class="percentage start-bar">${parseInt(this.used_resource_group_slot_percent.cuda_device) + '%'}</span>
+              <span class="percentage end-bar">${parseInt(this.used_slot_percent.cuda_device) + '%'}</span>
             </div>
           </div>` :
       html``}
@@ -841,8 +853,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </div>
             </div>
             <div class="layout vertical center center-justified">
-              <span style="margin:auto auto 5px 5px;">${parseInt(this.used_resource_group_slot_percent.cuda_shares) + '%'}</span>
-              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.cuda_shares) + '%'}</span>
+              <span class="percentage start-bar">${parseInt(this.used_resource_group_slot_percent.cuda_shares) + '%'}</span>
+              <span class="percentage end-bar">${parseInt(this.used_slot_percent.cuda_shares) + '%'}</span>
             </div>
           </div>` :
       html``}
@@ -867,8 +879,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </div>
             </div>
             <div class="layout vertical center center-justified">
-              <span style="margin:auto auto 5px 5px;">${parseInt(this.used_resource_group_slot_percent.rocm_device_slot) + '%'}</span>
-              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.rocm_device_slot) + '%'}</span>
+              <span class="percentage start-bar">${parseInt(this.used_resource_group_slot_percent.rocm_device_slot) + '%'}</span>
+              <span class="percentage end-bar">${parseInt(this.used_slot_percent.rocm_device_slot) + '%'}</span>
             </div>
           </div>` :
       html``}
@@ -893,8 +905,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </div>
             </div>
             <div class="layout vertical center center-justified">
-              <span style="margin:auto auto 5px 5px;">${parseInt(this.used_resource_group_slot_percent.tpu_device_slot) + '%'}</span>
-              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.tpu_device_slot) + '%'}</span>
+              <span class="percentage start-bar">${parseInt(this.used_resource_group_slot_percent.tpu_device_slot) + '%'}</span>
+              <span class="percentage end-bar">${parseInt(this.used_slot_percent.tpu_device_slot) + '%'}</span>
             </div>
           </div>` :
       html``}
@@ -912,7 +924,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               </div>
             </div>
             <div class="layout vertical center center-justified">
-              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.concurrency) + '%'}</span>
+              <span class="percentage end-bar">${parseInt(this.used_slot_percent.concurrency) + '%'}</span>
             </div>
           </div>
         </div>
@@ -948,8 +960,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <span class="gauge-label">${this.used_project_slot.cpu}/${this.total_project_slot.cpu === Infinity ? '∞' : this.total_project_slot.cpu}</span>
               </div>
               <div class="layout vertical center center-justified">
-                <span style="margin:auto auto 5px 5px;">${parseInt(this.used_project_slot_percent.cpu) + '%'}</span>
-                <span style="margin:5px auto auto 5px;">${parseInt(this.total_project_slot.cpu) + '%'}</span>
+                <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.cpu) + '%'}</span>
+                <span class="percentage end-bar">${parseInt(this.total_project_slot.cpu) + '%'}</span>
               </div>
             </div>
             <div class="layout horizontal">
@@ -960,8 +972,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <span class="gauge-label">${this.used_project_slot.mem}/${this.total_project_slot.mem === Infinity ? '∞' : this.total_project_slot.mem}</span>
               </div>
               <div class="layout vertical center center-justified">
-                <span style="margin:auto auto 5px 5px;">${parseInt(this.used_project_slot_percent.mem) + '%'}</span>
-                <span style="margin:5px auto auto 5px;">${parseInt(this.total_project_slot.mem) + '%'}</span>
+                <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.mem) + '%'}</span>
+                <span class="percentage end-bar">${parseInt(this.total_project_slot.mem) + '%'}</span>
               </div>
             </div>
             ${this.total_project_slot.cuda_device ? html`
@@ -973,8 +985,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <span class="gauge-label">${this.used_project_slot.cuda_device}/${this.total_project_slot.cuda_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}</span>
               </div>
               <div class="layout vertical center center-justified">
-                <span style="margin:auto auto 5px 5px;">${parseInt(this.used_project_slot_percent.cuda_device) + '%'}</span>
-                <span style="margin:5px auto auto 5px;">${parseInt(this.total_project_slot.cuda_device) + '%'}</span>
+                <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.cuda_device) + '%'}</span>
+                <span class="percentage end-bar">${parseInt(this.total_project_slot.cuda_device) + '%'}</span>
               </div>
             </div>` : html``}
             ${this.total_project_slot.cuda_shares ? html`
@@ -986,8 +998,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <span class="gauge-label">${this.used_project_slot.cuda_shares}/${this.total_project_slot.cuda_shares === 'Infinity' ? '∞' : this.total_project_slot.cuda_shares}</span>
               </div>
               <div class="layout vertical center center-justified">
-                <span style="margin:auto auto 5px 5px;">${parseInt(this.used_project_slot_percent.cuda_shares) + '%'}</span>
-                <span style="margin:5px auto auto 5px;">${parseInt(this.total_project_slot.cuda_shares) + '%'}</span>
+                <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.cuda_shares) + '%'}</span>
+                <span class="percentage end-bar">${parseInt(this.total_project_slot.cuda_shares) + '%'}</span>
               </div>
             </div>` : html``}
             ${this.total_project_slot.rocm_device ? html`
@@ -999,8 +1011,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <span class="gauge-label">${this.used_project_slot.rocm_device}/${this.total_project_slot.rocm_device === 'Infinity' ? '∞' : this.total_project_slot.rocm_device}</span>
               </div>
               <div class="layout vertical center center-justified">
-                <span style="margin:auto auto 5px 5px;">${parseInt(this.used_project_slot_percent.rocm_device) + '%'}</span>
-                <span style="margin:5px auto auto 5px;">${parseInt(this.total_project_slot.rocm_device) + '%'}</span>
+                <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.rocm_device) + '%'}</span>
+                <span class="percentage end-bar">${parseInt(this.total_project_slot.rocm_device) + '%'}</span>
               </div>
             </div>` : html``}
             ${this.total_project_slot.tpu_device ? html`
@@ -1012,8 +1024,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <span class="gauge-label">${this.used_project_slot.tpu_device}/${this.total_project_slot.tpu_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}</span>
               </div>
               <div class="layout vertical center center-justified">
-                <span style="margin:auto auto 5px 5px;">${parseInt(this.used_project_slot_percent.tpu_device) + '%'}</span>
-                <span style="margin:5px auto auto 5px;">${parseInt(this.total_project_slot.tpu_device) + '%'}</span>
+                <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.tpu_device) + '%'}</span>
+                <span class="percentage end-bar">${parseInt(this.total_project_slot.tpu_device) + '%'}</span>
               </div>
             </div>` : html``}
           </div>
