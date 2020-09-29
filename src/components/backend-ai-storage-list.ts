@@ -121,18 +121,19 @@ export default class BackendAiStorageList extends BackendAIPage {
       css`
         vaadin-grid {
           border: 0 !important;
+          height: calc(100vh - 370px);
         }
 
         vaadin-grid.folderlist {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 165px);
+          /* height: calc(100vh - 370px); */
         }
 
         vaadin-grid.explorer {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 370px);
+          /* height: calc(100vh - 370px); */
         }
 
         ul {
