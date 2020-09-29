@@ -20,6 +20,7 @@ import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/icon';
 import 'weightless/label';
+import 'weightless/progress-bar';
 
 import '@material/mwc-linear-progress';
 
@@ -96,6 +97,31 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --mdc-theme-primary: #98be5a;
         }
 
+        wl-progress-bar {
+          --progress-bar-height: 17px;
+          --progress-bar-bg: #e8e8e8;
+          border-radius: 3px;
+          margin: 3px auto;
+        }
+
+        .horizontal-panel wl-progress-bar {
+          width: 90px;
+        }
+
+        .vertical-panel wl-progress-bar {
+          width: 186px;
+        }
+
+        wl-progress-bar.start-bar,
+        .full-bar {
+          --progress-bar-color: linear-gradient(to left, #722cd7, #5c7cfa);
+        }
+
+        wl-progress-bar.end-bar {
+          --progress-bar-color: linear-gradient(to left, #18aa7c, #60bb43),
+                             linear-gradient(to left, #722cd7, #5c7cfa);
+        }
+
         .vertical-card {
           margin: 20px;
         }
@@ -148,10 +174,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 50px;
         }
 
-        .resources.horizontal .short-indicator .gauge-label {
+        .resources.horizontal .short-indicator {
           width: 50px;
         }
-
         span.caption {
           width: 30px;
           display: block;
@@ -230,10 +255,21 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           color: #2f2f2f;
         }
 
+        div.progress-bar {
+          position: relative;
+        }
+
+        div.progress-bar > span.gauge-label {
+          position: absolute;
+          left: 0.5em;
+          top: 25%;
+          z-index: 10;
+        }
+
         .gauge-label {
-          width: 100px;
-          font-weight: 300;
-          font-size: 12px;
+          width: inherit;
+          font-weight: bold;
+          font-size: 10px;
         }
 
         .indicator {
@@ -715,10 +751,24 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <div class="gauge-name">CPU</div>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_resource_group_slot.cpu}/${this.total_resource_group_slot.cpu}</span>
-              <mwc-linear-progress id="cpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cpu / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="cpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cpu / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.cpu}/${this.total_slot.cpu}</span>
+              <div class="progress-bar">
+                <span class="gauge-label">${this.used_resource_group_slot.cpu}/${this.total_resource_group_slot.cpu}</span>
+                <!-- <mwc-linear-progress id="cpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cpu / 100.0}"></mwc-linear-progress> -->
+                <wl-progress-bar id="cpu-usage-bar" class="start-bar" mode="determinate"
+                    value="${this.used_resource_group_slot_percent.cpu / 100.0}">
+                </wl-progress-bar>
+              </div>
+              <div class="progress-bar">
+                <span class="gauge-label">${this.used_slot.cpu}/${this.total_slot.cpu}</span>
+                <!-- <mwc-linear-progress id="cpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cpu / 100.0}"></mwc-linear-progress> -->
+                <wl-progress-bar id="cpu-usage-bar-2" class="end-bar" mode="determinate"
+                    value="${this.used_slot_percent.cpu / 100.0}">
+                </wl-progress-bar>
+              </div>
+            </div>
+            <div class="layout vertical center center-justified">
+              <span style="margin:auto auto 5px 5px;">${parseInt(this.used_resource_group_slot_percent.cpu) + '%'}</span>
+              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.cpu) + '%'}</span>
             </div>
           </div>
           <div class="layout horizontal center-justified monitor">
@@ -726,10 +776,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">RAM</span>
             </div>
             <div class="layout vertical start-justified wrap">
-              <span class="gauge-label">${this.used_resource_group_slot.mem}/${this.total_resource_group_slot.mem}GB</span>
-              <mwc-linear-progress id="mem-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.mem / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="mem-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.mem / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.mem}/${this.total_slot.mem}GB</span>
+              <div class="progress-bar">
+                <span class="gauge-label">${this.used_resource_group_slot.mem}/${this.total_resource_group_slot.mem}GB</span>
+                <wl-progress-bar id="mem-usage-bar" class="start-bar" mode="determinate"
+                    value="${this.used_resource_group_slot_percent.mem / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="mem-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.mem / 100.0}"></mwc-linear-progress> -->
+              </div>
+              <div class="progress-bar">
+                <span class="gauge-label">${this.used_slot.mem}/${this.total_slot.mem}GB</span>
+                <wl-progress-bar id="mem-usage-bar-2" class="end-bar" mode="determinate"
+                    value="${this.used_slot_percent.mem / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="mem-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.mem / 100.0}"></mwc-linear-progress> -->
+              </div>
+            </div>
+            <div class="layout vertical center center-justified">
+              <span style="margin:auto auto 5px 5px;">${parseInt(this.used_resource_group_slot_percent.mem) + '%'}</span>
+              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.mem) + '%'}</span>
             </div>
           </div>
           ${this.total_slot.cuda_device ?
@@ -739,10 +801,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">GPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_resource_group_slot.cuda_device}/${this.total_resource_group_slot.cuda_device}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.cuda_device}/${this.total_slot.cuda_device}</span>
+              <div class="progress-bar">
+                <span class="gauge-label">${this.used_resource_group_slot.cuda_device}/${this.total_resource_group_slot.cuda_device}</span>
+                <wl-progress-bar id="gpu-usage-bar" class="start-bar" mode="determinate"
+                    value="${this.used_resource_group_slot_percent.cuda_device / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cuda_device / 100.0}"></mwc-linear-progress> -->
+              </div>
+              <div class="progress-bar">
+                <span class="gauge-label">${this.used_slot.cuda_device}/${this.total_slot.cuda_device}</span>
+                <wl-progress-bar id="gpu-usage-bar-2" class="end-bar" mode="determinate"
+                    value="${this.used_slot_percent.cuda_device / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_device / 100.0}"></mwc-linear-progress> -->
+              </div>
+            </div>
+            <div class="layout vertical center center-justified">
+              <span style="margin:auto auto 5px 5px;">${parseInt(this.used_resource_group_slot_percent.cuda_device) + '%'}</span>
+              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.cuda_device) + '%'}</span>
             </div>
           </div>` :
       html``}
@@ -753,10 +827,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">FGPU</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_resource_group_slot.cuda_shares}/${this.total_resource_group_slot.cuda_shares}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.cuda_shares}/${this.total_slot.cuda_shares}</span>
+              <div class="progress-bar">
+                <span class="gauge-label">${this.used_resource_group_slot.cuda_shares}/${this.total_resource_group_slot.cuda_shares}</span>
+                <wl-progress-bar id="gpu-usage-bar" class="start-bar" mode="determinate"
+                    value="${this.used_resource_group_slot_percent.cuda_shares / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress> -->
+              </div>
+              <div class="progress-bar">
+                <span class="gauge-label">${this.used_slot.cuda_shares}/${this.total_slot.cuda_shares}</span>
+                <wl-progress-bar id="gpu-usage-bar-2" class="end-bar" mode="determinate"
+                    value="${this.used_slot_percent.cuda_shares / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress> -->
+              </div>
+            </div>
+            <div class="layout vertical center center-justified">
+              <span style="margin:auto auto 5px 5px;">${parseInt(this.used_resource_group_slot_percent.cuda_shares) + '%'}</span>
+              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.cuda_shares) + '%'}</span>
             </div>
           </div>` :
       html``}
@@ -768,10 +854,21 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">ROCm<br/>GPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_resource_group_slot.rocm_device_slot}/${this.total_resource_group_slot.rocm_device_slot}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.rocm_device_slot / 100.0}" buffer="${this.used_resource_group_slot_percent.rocm_device_slot / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.rocm_device_slot / 100.0}" buffer="${this.used_slot_percent.rocm_device_slot / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.rocm_device_slot}/${this.total_slot.rocm_device_slot}</span>
+              <div class="progress-bar">
+                <span class="gauge-label">${this.used_resource_group_slot.rocm_device_slot}/${this.total_resource_group_slot.rocm_device_slot}</span>
+                <wl-progress-bar id="gpu-usage-bar" class="start-bar" mode="determinate"
+                  value="${this.used_resource_group_slot_percent.rocm_device_slot / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.rocm_device_slot / 100.0}" buffer="${this.used_resource_group_slot_percent.rocm_device_slot / 100.0}"></mwc-linear-progress> -->
+              </div>
+              <div class="progress-bar">
+                <span class="gauge-label">${this.used_slot.rocm_device_slot}/${this.total_slot.rocm_device_slot}</span>
+                <wl-progress-bar id="gpu-usage-bar-2" class="end-bar" mode="determinate" value="${this.used_slot_percent.rocm_device_slot / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.rocm_device_slot / 100.0}" buffer="${this.used_slot_percent.rocm_device_slot / 100.0}"></mwc-linear-progress> -->
+              </div>
+            </div>
+            <div class="layout vertical center center-justified">
+              <span style="margin:auto auto 5px 5px;">${parseInt(this.used_resource_group_slot_percent.rocm_device_slot) + '%'}</span>
+              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.rocm_device_slot) + '%'}</span>
             </div>
           </div>` :
       html``}
@@ -782,10 +879,22 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">TPU</span>
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
-              <span class="gauge-label">${this.used_resource_group_slot.tpu_device_slot}/${this.total_resource_group_slot.tpu_device_slot}</span>
-              <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.tpu_device_slot / 100.0}" buffer="${this.used_resource_group_slot_percent.tpu_device_slot / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.tpu_device_slot / 100.0}" buffer="${this.used_slot_percent.tpu_device_slot / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">${this.used_slot.tpu_device_slot}/${this.total_slot.tpu_device_slot}</span>
+              <div class="progress-bar">
+                <span class="gauge-label">${this.used_resource_group_slot.tpu_device_slot}/${this.total_resource_group_slot.tpu_device_slot}</span>
+                <wl-progress-bar id="gpu-usage-bar" class="start-bar" mode="determinate"
+                    value="${this.used_resource_group_slot_percent.tpu_device_slot / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="gpu-usage-bar" class="start-bar" progress="${this.used_resource_group_slot_percent.tpu_device_slot / 100.0}" buffer="${this.used_resource_group_slot_percent.tpu_device_slot / 100.0}"></mwc-linear-progress> -->
+              </div>
+              <div class="progress-bar">
+                <span class="gauge-label">${this.used_slot.tpu_device_slot}/${this.total_slot.tpu_device_slot}</span>
+                <wl-progress-bar id="gpu-usage-bar-2" class="end-bar" mode="determinate"
+                    value="${this.used_slot_percent.tpu_device_slot / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="gpu-usage-bar-2" class="end-bar" progress="${this.used_slot_percent.tpu_device_slot / 100.0}" buffer="${this.used_slot_percent.tpu_device_slot / 100.0}"></mwc-linear-progress> -->
+              </div>
+            </div>
+            <div class="layout vertical center center-justified">
+              <span style="margin:auto auto 5px 5px;">${parseInt(this.used_resource_group_slot_percent.tpu_device_slot) + '%'}</span>
+              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.tpu_device_slot) + '%'}</span>
             </div>
           </div>` :
       html``}
@@ -795,9 +904,15 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="gauge-name">${_t('session.launcher.Sessions')}</span>
             </div>
             <div class="layout vertical start-justified wrap short-indicator">
-              <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max === 1000000 ? html`∞` : this.concurrency_max}</span>
-              <mwc-linear-progress class="short full-bar" id="concurrency-usage-bar" progress="${this.used_slot_percent.concurrency / 100.0}"></mwc-linear-progress>
-              <span class="gauge-label">&nbsp;</span>
+              <div class="progress-bar">
+                <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max === 1000000 ? html`∞` : this.concurrency_max}</span>
+                <span class="gauge-label">&nbsp;</span>
+                <wl-progress-bar id="concurrency-usage-bar" class="short full-bar" mode="determinate" value="${this.used_slot_percent.concurrency / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress class="short full-bar" id="concurrency-usage-bar" progress="${this.used_slot_percent.concurrency / 100.0}"></mwc-linear-progress> -->
+              </div>
+            </div>
+            <div class="layout vertical center center-justified">
+              <span style="margin:5px auto auto 5px;">${parseInt(this.used_slot_percent.concurrency) + '%'}</span>
             </div>
           </div>
         </div>
@@ -827,37 +942,79 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="layout vertical start-justified wrap short-indicator">
             <div class="layout horizontal">
               <span style="width:35px; margin-left:5px; margin-right:5px;">CPU</span>
-              <mwc-linear-progress id="cpu-project-usage-bar" class="start-bar project-bar" progress="${this.used_project_slot_percent.cpu / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_project_slot.cpu}/${this.total_project_slot.cpu === Infinity ? '∞' : this.total_project_slot.cpu}</span>
+              <div class="progress-bar">
+                <wl-progress-bar id="cpu-project-usage-bar" class="start-bar" mode="determinate" value="${this.used_project_slot_percent.cpu / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="cpu-project-usage-bar" class="start-bar project-bar" progress="${this.used_project_slot_percent.cpu / 100.0}"></mwc-linear-progress> -->
+                <span class="gauge-label">${this.used_project_slot.cpu}/${this.total_project_slot.cpu === Infinity ? '∞' : this.total_project_slot.cpu}</span>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span style="margin:auto auto 5px 5px;">${parseInt(this.used_project_slot_percent.cpu) + '%'}</span>
+                <span style="margin:5px auto auto 5px;">${parseInt(this.total_project_slot.cpu) + '%'}</span>
+              </div>
             </div>
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">RAM</span>
-              <mwc-linear-progress id="mem-project-usage-bar" class="middle-bar project-bar" progress="${this.used_project_slot_percent.mem / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_project_slot.mem}/${this.total_project_slot.mem === Infinity ? '∞' : this.total_project_slot.mem}</span>
+              <div class="progress-bar">
+                <wl-progress-bar id="mem-project-usage-bar" class="middle-bar project-bar" mode="determinate" value="${this.used_project_slot_percent.mem / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="mem-project-usage-bar" class="middle-bar project-bar" progress="${this.used_project_slot_percent.mem / 100.0}"></mwc-linear-progress> -->
+                <span class="gauge-label">${this.used_project_slot.mem}/${this.total_project_slot.mem === Infinity ? '∞' : this.total_project_slot.mem}</span>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span style="margin:auto auto 5px 5px;">${parseInt(this.used_project_slot_percent.mem) + '%'}</span>
+                <span style="margin:5px auto auto 5px;">${parseInt(this.total_project_slot.mem) + '%'}</span>
+              </div>
             </div>
             ${this.total_project_slot.cuda_device ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_project_slot.cuda_device}/${this.total_project_slot.cuda_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}</span>
+              <div class="progress-bar">
+                <wl-progress-bar id="gpu-project-usage-bar" class="end-bar project-bar" mode="determinate" value="${this.used_project_slot_percent.cuda_device / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.cuda_device / 100.0}"></mwc-linear-progress> -->
+                <span class="gauge-label">${this.used_project_slot.cuda_device}/${this.total_project_slot.cuda_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}</span>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span style="margin:auto auto 5px 5px;">${parseInt(this.used_project_slot_percent.cuda_device) + '%'}</span>
+                <span style="margin:5px auto auto 5px;">${parseInt(this.total_project_slot.cuda_device) + '%'}</span>
+              </div>
             </div>` : html``}
             ${this.total_project_slot.cuda_shares ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">fGPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_project_slot.cuda_shares}/${this.total_project_slot.cuda_shares === 'Infinity' ? '∞' : this.total_project_slot.cuda_shares}</span>
+              <div class="progress-bar">
+                <wl-progress-bar id="gpu-project-usage-bar" class="end-bar project-bar" mode="determinate" value="${this.used_project_slot_percent.cuda_shares / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress> -->
+                <span class="gauge-label">${this.used_project_slot.cuda_shares}/${this.total_project_slot.cuda_shares === 'Infinity' ? '∞' : this.total_project_slot.cuda_shares}</span>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span style="margin:auto auto 5px 5px;">${parseInt(this.used_project_slot_percent.cuda_shares) + '%'}</span>
+                <span style="margin:5px auto auto 5px;">${parseInt(this.total_project_slot.cuda_shares) + '%'}</span>
+              </div>
             </div>` : html``}
             ${this.total_project_slot.rocm_device ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.rocm_device / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_project_slot.rocm_device}/${this.total_project_slot.rocm_device === 'Infinity' ? '∞' : this.total_project_slot.rocm_device}</span>
+              <div class="progress-bar">
+                <wl-progress-bar id="gpu-project-usage-bar" class="end-bar project-bar" mode="determinate" value="${this.used_project_slot_percent.rocm_device / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.rocm_device / 100.0}"></mwc-linear-progress> -->
+                <span class="gauge-label">${this.used_project_slot.rocm_device}/${this.total_project_slot.rocm_device === 'Infinity' ? '∞' : this.total_project_slot.rocm_device}</span>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span style="margin:auto auto 5px 5px;">${parseInt(this.used_project_slot_percent.rocm_device) + '%'}</span>
+                <span style="margin:5px auto auto 5px;">${parseInt(this.total_project_slot.rocm_device) + '%'}</span>
+              </div>
             </div>` : html``}
             ${this.total_project_slot.tpu_device ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.tpu_device / 100.0}"></mwc-linear-progress>
-              <span style="margin-left:5px;">${this.used_project_slot.tpu_device}/${this.total_project_slot.tpu_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}</span>
+              <div class="progress-bar">
+                <wl-progress-bar id="gpu-project-usage-bar" class="end-bar project-bar" mode="determinate" value="${this.used_project_slot_percent.tpu_device / 100.0}"></wl-progress-bar>
+                <!-- <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.tpu_device / 100.0}"></mwc-linear-progress> -->
+                <span class="gauge-label">${this.used_project_slot.tpu_device}/${this.total_project_slot.tpu_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}</span>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span style="margin:auto auto 5px 5px;">${parseInt(this.used_project_slot_percent.tpu_device) + '%'}</span>
+                <span style="margin:5px auto auto 5px;">${parseInt(this.total_project_slot.tpu_device) + '%'}</span>
+              </div>
             </div>` : html``}
           </div>
           <div class="flex"></div>
