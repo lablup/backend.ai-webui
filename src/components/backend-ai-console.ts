@@ -1030,10 +1030,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <div slot="appContent">
               <mwc-top-app-bar-fixed id="main-toolbar" class="draggable">
-              <div class="horizontal layout center" slot="navigationIcon" style="margin:auto 20px;" @click="${() => this.toggleDrawer()}">
-                <i class="fas fa-angle-left" style="display:block;color:#747474;margin-right:0.5em;"></i>
-                <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
-              </div>
+                <div class="horizontal layout center" slot="navigationIcon" style="margin:auto 20px;" @click="${() => this.toggleDrawer()}">
+                  <i class="fas fa-angle-left" style="display:block;color:#747474;margin-right:0.5em;"></i>
+                  <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
+                </div>
                 <p slot="title" style="border-left: 1px solid #dbdbdb; margin:auto;">${_text("console.menu.WelcomeMessage") + this.full_name + "."}</p>
                 <div slot="actionItems" style="margin:auto;">
                   <div class="horizontal flex layout" style="margin-right:2em;">
