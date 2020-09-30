@@ -30,6 +30,7 @@ Backend.AI console focuses to
     * Experiments (with SACRED / MLFlow)
     * AutoML (with Microsoft NNI / MLFlow)
     * Manages container streams with pipeline vfolders
+    * Storage proxy for fast data I/O between backend.ai cluster and user
     * Checks queue and scheduled jobs
  * Storage management
     * Create / delete folders
