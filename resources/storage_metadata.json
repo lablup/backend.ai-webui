@@ -54,6 +54,14 @@
       "dialects": [
         "cephfs"
       ]
+    },
+    "xfs": {
+      "name": "XFS",
+      "description": "",
+      "icon": "local.png",
+      "dialects": [
+        "XFS"
+      ]
     }
   }
 }
