@@ -57,7 +57,7 @@
     },
     "xfs": {
       "name": "XFS",
-      "description": "",
+      "description": "XFS is a high-performance 64-bit journaling file system created by Silicon Graphics.",
       "icon": "local.png",
       "dialects": [
         "XFS"
