@@ -49,6 +49,7 @@ import 'weightless/tab-group';
 import 'weightless/list-item';
 import 'weightless/divider';
 import 'weightless/textfield';
+import tus from '../lib/tus';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -533,6 +534,41 @@ export default class BackendAIPipelineView extends BackendAIPage {
     }
   }
 
+  async _uploadFile(vfpath, blob, folder_name) {
+    return new Promise((resolve, reject) => {
+      globalThis.backendaiclient.vfolder.create_upload_session(vfpath, blob, folder_name)
+          .then((uploadUrl) => {
+            const uploader = new tus.Upload(blob, {
+              endpoint: uploadUrl,
+              retryDelays: [0, 3000, 5000, 10000, 20000],
+              uploadUrl: uploadUrl,
+              chunksize: 15728640,
+              metadata: {
+                filename: vfpath,
+                filetype: blob.type,
+              },
+              onError: (err) => {
+                console.error("upload failed:" + err);
+                this.notification.text = err;
+                this.notification.show(true);
+                reject(new Error(err));
+              },
+              onSuccess: () => {
+                console.log(`${vfpath} uploaded`)
+                resolve();
+              }
+            });
+            uploader.start();
+          })
+          .catch((err) => {
+            console.error(err)
+            this.notification.text = err;
+            this.notification.show(true);
+            reject(new Error(err));
+          });
+    });
+  }
+
   _selectPipeline(e) {
     let itemEl;
     if (typeof e === 'string') {
@@ -713,18 +749,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
     }
   }
 
-  async _uploadPipelineConfig(folder_name, configObj) {
+  async _uploadPipelineConfig(folderName, configObj) {
     const vfpath = 'config.json';
     const blob = new Blob([JSON.stringify(configObj, null, 2)], {type: 'application/json'});
-    window.backendaiclient.vfolder.upload(vfpath, blob, folder_name)
-      .then((resp) => {
-      })
-      .catch((err) => {
-        console.error(err)
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true);
-      });
+    await this._uploadFile(vfpath, blob, folderName);
   }
 
   async _downloadPipelineConfig(folder_name) {
@@ -843,12 +871,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
     dialog.querySelector('#component-gpu').value = info.gpu || '0';
   }
 
-  async _uploadPipelineComponents(folder_name, cinfo) {
+  async _uploadPipelineComponents(folderName, cinfo) {
     const vfpath = 'components.json';
     const blob = new Blob([JSON.stringify(cinfo, null, 2)], {type: 'application/json'});
     try {
       this.indicator.show();
-      await window.backendaiclient.vfolder.upload(vfpath, blob, folder_name);
+      await this._uploadFile(vfpath, blob, folderName);
       this.indicator.hide();
     } catch (err) {
       console.error(err)
@@ -931,7 +959,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       if (err.title && err.title.split(' ')[0] === '404') {
         // Code file not found. upload empty code.
         const blob = new Blob([''], {type: 'plain/text'});
-        await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
+        await this._uploadFile(filepath, blob, this.pipelineFolderName);
         return '';
       } else {
         this.notification.text = PainKiller.relieve(err.title);
@@ -971,7 +999,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     const editor = this.shadowRoot.querySelector('#codemirror-editor');
     const code = editor.getValue();
     const blob = new Blob([code], {type: 'plain/text'});
-    await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
+    await this._uploadFile(filepath, blob, this.pipelineFolderName);
     this.pipelineComponents[this.selectedComponentIndex].executed = false;
     this.pipelineComponents = this.pipelineComponents.slice();
     await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
@@ -1025,7 +1053,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       console.log(logs.substring(0, 500)); // for debugging
       const filepath = `${component.path}/execution_logs.txt`;
       const blob = new Blob([logs], {type: 'plain/text'});
-      await window.backendaiclient.vfolder.upload(filepath, blob, this.pipelineFolderName);
+      await this._uploadFile(filepath, blob, this.pipelineFolderName);
 
       // Final handling.
       sse.close();
