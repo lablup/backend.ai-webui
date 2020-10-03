@@ -730,9 +730,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
   async _downloadPipelineConfig(folder_name) {
     const vfpath = 'config.json';
     try {
-      const configBlob = await window.backendaiclient.vfolder.download(vfpath, folder_name);
-      const config = JSON.parse(await configBlob.text());
-      return config;
+      const res = await window.backendaiclient.vfolder.download(vfpath, folder_name, false, true);
+      return await res.json();
     } catch (err) {
       console.error(err)
       this.notification.text = PainKiller.relieve(err.title);
@@ -864,8 +863,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
     const vfpath = 'components.json';
     try {
       this.indicator.show();
-      const configBlob = await window.backendaiclient.vfolder.download(vfpath, folder_name);
-      const config = JSON.parse(await configBlob.text());
+      const res = await window.backendaiclient.vfolder.download(vfpath, folder_name, false, true);
+      const config = await res.json();
       this.indicator.hide();
       return config;
     } catch (err) {
@@ -908,7 +907,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   async _ensureComponentFolder(component) {
     const folder = `${component.path}`;
     try {
-      await window.backendaiclient.vfolder.mkdir(folder, this.pipelineFolderName);
+      await window.backendaiclient.vfolder.mkdir(folder, this.pipelineFolderName, null, true);
     } catch (err) {
       if (err && err.message && err.message.includes('already exists')) {
         // silently pass if the target folder alrady exists
@@ -925,8 +924,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
     await this._ensureComponentFolder(component);
     const filepath = `${component.path}/main.py`; // TODO: hard-coded file name
     try {
-      const blob = await window.backendaiclient.vfolder.download(filepath, this.pipelineFolderName);
-      return await blob.text();
+      const res = await window.backendaiclient.vfolder.download(filepath, this.pipelineFolderName, false, true);
+      return await res.text();
     } catch (err) {
       console.error(err)
       if (err.title && err.title.split(' ')[0] === '404') {

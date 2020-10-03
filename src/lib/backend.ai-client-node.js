@@ -1245,15 +1245,23 @@ class VFolder {
      *
      * @param {string} path - Directory path to create.
      * @param {string} name - Virtual folder name.
+     * @param {string} parents - create parent folders when not exists (>=APIv6).
+     * @param {string} exist_ok - Do not raise error when the folder already exists (>=APIv6).
      */
-    async mkdir(path, name = null) {
+    async mkdir(path, name = null, parents = null, exist_ok = null) {
         if (name == null) {
             name = this.name;
         }
-        let body = {
+        const body = {
             'path': path
         };
-        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
+        if (parents) {
+            body['parents'] = parents;
+        }
+        if (exist_ok) {
+            body['exist_ok'] = exist_ok;
+        }
+        const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
         return this.client._wrapWithPromise(rqst);
     }
     /**
@@ -1293,26 +1301,32 @@ class VFolder {
         return this.client._wrapWithPromise(rqst);
     }
     /**
-     * Download file in a Virtual folder.
+     * Download file from a Virtual folder.
      *
      * @param {string} file - File to download. Should contain full path.
      * @param {string} name - Virtual folder name that files are in.
+     * @param {boolean} archive - Download target directory as an archive.
+     * @param {boolean} noCache - If true, do not store the file response in any cache. New in API v6.
      */
-    async download(file, name = false, archive = false) {
-        let params = {
-            file,
-            archive
-        };
-        let q = querystring.stringify(params);
-        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
-        return this.client._wrapWithPromise(rqst, true);
+    async download(file, name = false, archive = false, noCache = false) {
+        const params = { file, archive };
+        const q = querystring.stringify(params);
+        if (this.client._apiVersionMajor < 6) {
+            const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
+            return this.client._wrapWithPromise(rqst, true);
+        }
+        else {
+            const res = await this.request_download_token(file, name);
+            const downloadUrl = `${res.url}?token=${res.token}&archive=${archive}&no_cache=${noCache}`;
+            return fetch(downloadUrl);
+        }
     }
     /**
      * Request a download and get the token for direct download.
      *
      * @param {string} file - File to download. Should contain full path.
      * @param {string} name - Virtual folder name that files are in.
-     * @param {string} archive - Download target directory as an archive.
+     * @param {boolean} archive - Download target directory as an archive.
      */
     async request_download_token(file, name = false, archive = false) {
         let body = {
