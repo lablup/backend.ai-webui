@@ -67,7 +67,6 @@ import './lablup-loading-spinner';
 export default class BackendAIPipelineView extends BackendAIPage {
   public shadowRoot: any;
   public notification: any;
-  public updateComplete: any;
   public $: any;
 
   public indicator: any;
@@ -1028,12 +1027,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.notification.text = `Pulling kernel image. This may take several minutes...`;
       this.notification.show();
     });
-    sse.addEventListener('kernel_started', (e) => {
+    sse.addEventListener('session_started', (e) => {
       const data = JSON.parse((<any>e).data);
-      this.notification.text = `Kernel started (${data.sessionName}). Running component...`;
+      this.notification.text = `Session started (${data.sessionName}). Running component...`;
       this.notification.show();
     });
-    sse.addEventListener('kernel_success', async (e) => {
+    sse.addEventListener('session_success', async (e) => {
       // Mark component executed.
       component.executed = true;
       this.pipelineComponents[idx] = component;
@@ -1042,10 +1041,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
       execSuccess = true;
     })
-    sse.addEventListener('kernel_failure', (e) => {
+    sse.addEventListener('session_failure', (e) => {
       execSuccess = false;
     })
-    sse.addEventListener('kernel_terminated', async (e) => {
+    sse.addEventListener('session_terminated', async (e) => {
       const data = JSON.parse((<any>e).data);
 
       // Store execution logs in the component folder for convenience.
