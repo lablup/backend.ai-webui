@@ -611,6 +611,20 @@
         }
       ]
     },
+    "kubuntu-linux": {
+      "name": "Kubuntu Linux",
+      "description": "Kubuntu is an official flavour of the Ubuntu operating system that uses the KDE Plasma Desktop instead of the GNOME desktop environment. As part of the Ubuntu project, Kubuntu uses the same underlying systems.",
+      "group": "Desktop Environment",
+      "tags": [],
+      "icon": "kubuntu.svg",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Kubuntu Linux",
+          "color": "yellow"
+        }
+      ]
+    },
     "sftp": {
       "name": "SFTP",
       "description": "",
