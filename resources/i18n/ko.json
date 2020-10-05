@@ -240,6 +240,7 @@
     "active": "활성",
     "concurrentsessions": "동시 세션수",
     "RateLimit": "Rate Limit",
+    "RateLimitFor15min": "15분 동안 Rate Limiting",
     "for900seconds": "(900초당)",
     "Users": "사용자",
     "exportCSV": "CSV 내보내기",
@@ -282,7 +283,9 @@
     },
     "ProjectAndGroup": "프로젝트 및 그룹",
     "ModifyKeypairResourcePolicy": "키페어 자원 정책 수정",
-    "SelectPolicy": "자원 정책 선택"
+    "SelectPolicy": "자원 정책 선택",
+    "AllowedHosts":"허용된 호스트",
+    "UserIDAsEmail": "E-mail을 사용자 ID로 사용 (선택)"
   },
   "data": {
     "Folders": "폴더",

@@ -243,6 +243,7 @@
     "active": "active",
     "concurrentsessions": "Concurrent sessions",
     "RateLimit": "Rate Limit",
+    "RateLimitFor15min": "Rate Limit (for 15 min.)",
     "for900seconds": "for 900 seconds",
     "Users": "Users",
     "exportCSV": "export CSV",
@@ -285,7 +286,9 @@
     },
     "ProjectAndGroup": "Projects & Groups",
     "ModifyKeypairResourcePolicy": "Modify keypair resource policy",
-    "SelectPolicy": "Select Policy"
+    "SelectPolicy": "Select Policy",
+    "AllowedHosts": "Allowed Hosts",
+    "UserIDAsEmail": "User ID as E-mail (optional)"
   },
   "data": {
     "Folders": "Folders",
