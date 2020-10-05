@@ -259,7 +259,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           position: absolute;
           left: 0.5em;
           top: 25%;
-          z-index: 10;
+          z-index: 1;
           color: #2f2f2f;
         }
 
