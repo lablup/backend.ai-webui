@@ -49,7 +49,11 @@ export const BackendAiStyles = [
       --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
       --general-tabbar-background-color: var(--general-sidebar-background-color);
       --general-tabbar-tab-disabled-color: var(--general-sidebar-color);
+      --general-tabbar-button-color: var(--general-sidebar-selected-color);
       --general-textfield-selected-color: var(--general-sidebar-color);
+      --general-dropdown-color: var(--general-sidebar-color);
+      --general-button-background-color: var(--general-sidebar-selected-color);
+      --general-button-color: #ffffff;
       --general-dialog-background-color: #ffffff;
       --general-font-family: 'Ubuntu', 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
@@ -239,6 +243,15 @@ export const BackendAiStyles = [
     mwc-multi-select {
       --mdc-select-min-width: 100px; /* Fallback to apply width */
     }
+
+    mwc-button,
+    mwc-button[raised],
+    mwc-button[unelevated] {
+      border-radius: 5px;
+      background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
+      --mdc-theme-primary: transparent; /* gradient-color doesn't work in mwc-button styling */
+      --mdc-theme-on-primary: var(--general-button-color);
+      }
 
     wl-card p {
       padding: 10px;

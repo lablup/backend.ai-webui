@@ -331,6 +331,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         #launch-session {
+          width: var(--component-width, auto);
+        }
+
+        #launch-session[disabled] {
+          background-image: var(--general-sidebar-color);
+          --mdc-theme-on-primary: var(--general-button-color);
+        }
+
+        /* #launch-session {
           height: var(--component-height, auto);
           width: var(--component-width, auto);
           --button-color: var(--component-color, var(--paper-red-600));
@@ -346,7 +355,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --button-bg: var(--paper-gray-50);
           --button-bg-hover: var(--paper-gray-100);
           --button-bg-active: var(--paper-gray-600);
-        }
+        } */
 
         wl-button.launch-button {
           width: 335px;
@@ -1800,16 +1809,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" @click="${() => this._launchSessionDialog()}">
+      <mwc-button raised id="launch-session" label="${_t("session.launcher.Start")}" ?disabled="${!this.enableLaunchButton}" @click="${() => this._launchSessionDialog()}">
+      </mwc-button>
+      <!--<wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" @click="${() => this._launchSessionDialog()}">
         ${_t("session.launcher.Start")}
-      </wl-button>
+      </wl-button>-->
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>
         <form slot="content" id="launch-session-form" class="centered">
           <div class="vertical center layout" style="padding-top:15px;">
             <mwc-select id="environment" label="${_t("session.launcher.Environments")}" fullwidth required
               value="${this.default_language}">
-              <mwc-list-item selected style="display:none!important;">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
+              <mwc-list-item selected style="dispxlay:none!important;">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
                 ${this.languages.map(item => html`
                   ${item.clickable === false ? html`
                     <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
