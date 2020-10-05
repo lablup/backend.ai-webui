@@ -30,6 +30,7 @@ import 'weightless/title';
 import 'weightless/tab-group';
 import 'weightless/textfield';
 import '@material/mwc-icon-button';
+import '@material/mwc-button';
 
 import '../plastics/lablup-shields/lablup-shields';
 import './backend-ai-dialog';
@@ -122,11 +123,6 @@ export default class BackendAIData extends BackendAIPage {
           width: 350px;
         }
 
-        mwc-icon-button.tiny {
-          width: 35px;
-          height: 35px;
-        }
-
         wl-card.item {
           height: calc(100vh - 145px) !important;
         }
@@ -151,11 +147,12 @@ export default class BackendAIData extends BackendAIPage {
           border-radius: 5px 5px 0px 0px;
           margin: 0px auto;
         }
+
         mwc-tab-bar {
           --mdc-theme-primary: var(--general-sidebar-selected-color);
           --mdc-text-transform: none;
           --mdc-tab-color-default: var(--general-tabbar-background-color);
-          --mdc-tab-text-label-color-default: var(--general-sidebar-color);
+          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
         }
 
         wl-tab-group {
@@ -251,42 +248,47 @@ export default class BackendAIData extends BackendAIPage {
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <!--<wl-card class="item" elevation="1" style="padding-bottom:20px;">-->
       <div style="margin:20px;">
-      <lablup-activity-panel elevation="1" narrow noheader>
-        <h3 class="horizontal center flex layout tab">
-          <mwc-tab-bar>
-            <mwc-tab aria-label="general-folder" label="${_t("data.Folders")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-            <mwc-tab aria-label="automount-folder" label="${_t("data.AutomountFolders")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-            <!--<mwc-tab aria-label="shared-folder" label="${_t("data.SharedData")}"></mwc-tab>-->
-            <!--<mwc-tab aria-label="model" label="${_t("data.Models")}"></mwc-tab>-->
-          </mwc-tab-bar>
-          <!--<wl-tab-group>
-            <wl-tab value="general-folder" checked @click="${(e) => this._showTab(e.target)}">${_t("data.Folders")}</wl-tab>
-            <wl-tab value="automount-folder" @click="${(e) => this._showTab(e.target)}">${_t("data.AutomountFolders")}</wl-tab>
-            <wl-tab value="shared-folder" disabled>${_t("data.SharedData")}</wl-tab>
-            <wl-tab value="model" disabled>${_t("data.Models")}</wl-tab>
-          </wl-tab-group>-->
-          <span class="flex"></span>
-          <wl-button class="fg red" id="add-folder" outlined @click="${() => this._addFolderDialog()}">
-            <wl-icon>add</wl-icon>
-            ${_t("data.NewFolder")}
-          </wl-button>
-        </h3>
-        <div id="general-folder-lists" class="tab-content">
-          <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
-        </div>
-        <div id="automount-folder-lists" class="tab-content" style="display:none;">
-          <div class="horizontal layout">
-          <p>${_t("data.DialogFolderStartingWithDotAutomount")}</p>
+        <lablup-activity-panel elevation="1" noheader narrow horizontalsize="3x">
+          <div slot="message">
+            <h3 class="horizontal center flex layout tab">
+              <mwc-tab-bar>
+                <mwc-tab aria-label="general-folder" label="${_t("data.Folders")}"
+                    @click="${(e) => this._showTab(e.target)}">
+                </mwc-tab>
+                <mwc-tab aria-label="automount-folder" label="${_t("data.AutomountFolders")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                <!--<mwc-tab aria-label="shared-folder" label="${_t("data.SharedData")}"></mwc-tab>-->
+                <!--<mwc-tab aria-label="model" label="${_t("data.Models")}"></mwc-tab>-->
+              </mwc-tab-bar>
+              <!--<wl-tab-group>
+                <wl-tab value="general-folder" checked @click="${(e) => this._showTab(e.target)}">${_t("data.Folders")}</wl-tab>
+                <wl-tab value="automount-folder" @click="${(e) => this._showTab(e.target)}">${_t("data.AutomountFolders")}</wl-tab>
+                <wl-tab value="shared-folder" disabled>${_t("data.SharedData")}</wl-tab>
+                <wl-tab value="model" disabled>${_t("data.Models")}</wl-tab>
+              </wl-tab-group>-->
+              <span class="flex"></span>
+              <mwc-button dense raised id="add-folder" icon="add" label="${_t("data.NewFolder")}" @click="${() => this._addFolderDialog()}" style="margin-right:15px;"></mwc-icon-button>
+              <!--<wl-button class="fg red" id="add-folder" outlined @click="${() => this._addFolderDialog()}">
+                <wl-icon>add</wl-icon>
+                ${_t("data.NewFolder")}
+              </wl-button>-->
+            </h3>
+            <div id="general-folder-lists" class="tab-content">
+              <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
+            </div>
+            <div id="automount-folder-lists" class="tab-content" style="display:none;">
+              <div class="horizontal layout">
+                <p>${_t("data.DialogFolderStartingWithDotAutomount")}</p>
+              </div>
+              <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
+            </div>
           </div>
-          <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
-        </div>
-      </lablup-activity-panel>
+        </lablup-activity-panel>
       </div>
       <!--</wl-card>-->
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
         <div slot="content">
-          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]+"
+          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9\_\-.]+"
               auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
           <div class="horizontal layout">
             <mwc-multi-select id="add-folder-host" label="${_t("data.Host")}">
@@ -294,9 +296,7 @@ export default class BackendAIData extends BackendAIPage {
                 <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
                   <span>${item}</span>
                   <mwc-icon-button slot="meta" icon="info" class="fg orange info"
-                      @click="${(e) => {
-      this._showStorageDescription(e, item);
-    }}">
+                      @click="${(e) => this._showStorageDescription(e, item)}">
                   </mwc-icon-button>
                 </mwc-list-item>
               `)}
