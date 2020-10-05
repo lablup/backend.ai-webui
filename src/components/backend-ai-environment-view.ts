@@ -15,6 +15,10 @@ import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
+import '@material/mwc-button';
+import './lablup-activity-panel';
 import './backend-ai-dialog';
 import './backend-ai-environment-list';
 import './backend-ai-resource-preset-list';
@@ -64,6 +68,19 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
               --tab-bg-active: var(--paper-yellow-200);
               --tab-bg-filled: var(--paper-yellow-200);
               --tab-bg-active-hover: var(--paper-yellow-200);
+          }
+
+          h3.tab {
+            background-color: var(--general-tabbar-background-color);
+            border-radius: 5px 5px 0px 0px;
+            margin: 0px auto;
+          }
+  
+          mwc-tab-bar {
+            --mdc-theme-primary: var(--general-sidebar-selected-color);
+            --mdc-text-transform: none;
+            --mdc-tab-color-default: var(--general-tabbar-background-color);
+            --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
           }
 
           div h4 {
@@ -127,31 +144,42 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     for (var x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this._activeTab = tab.value;
-    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+    this._activeTab = tab.ariaLabel;
+    this.shadowRoot.querySelector('#' + tab.ariaLabel).style.display = 'block';
   }
 
   render() {
     // language=HTML
     return html`
-      <wl-card class="item" elevation="1">
-        <h3 class="tab horizontal center layout">
-          <wl-tab-group>
-            <wl-tab value="image-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("environment.Images")}</wl-tab>
-            <wl-tab value="resource-template-lists" @click="${(e) => this._showTab(e.target)}">${_t("environment.ResourcePresets")}</wl-tab>
-            ${this.is_superadmin ? html`
-              <wl-tab value="registry-lists" @click="${(e) => this._showTab(e.target)}">${_t("environment.Registries")}</wl-tab>` : html``}
-          </wl-tab-group>
-          <div class="flex"></div>
-        </h3>
-        <div id="image-lists" class="tab-content">
-          <backend-ai-environment-list ?active="${this._activeTab === 'image-lists'}"></backend-ai-environment-list>
-        </div>
-        <backend-ai-resource-preset-list id="resource-template-lists" class="admin item tab-content" style="display: none" ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-preset-list>
-        <div id="registry-lists" class="tab-content">
-          <backend-ai-registry-list ?active="${this._activeTab === 'registry-lists'}"> </backend-ai-registry-list>
-        </div>
-      </wl-card>
+      <!--<wl-card class="item" elevation="1">-->
+        <lablup-activity-panel noheader narrow horizontalsize="3x">
+          <div slot="message">
+            <h3 class="tab horizontal center layout">
+              <mwc-tab-bar>
+                <mwc-tab aria-label="image-lists" label="${_t("environment.Images")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                <mwc-tab aria-label="resource-template-lists" label="${_t("environment.ResourcePresets")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                ${this.is_superadmin ? html`
+                  <mwc-tab aria-label="registry-lists" label="${_t("environment.Registries")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                `: html``}
+              </mwc-tab-bar>
+              <!--<wl-tab-group>
+                <wl-tab value="image-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("environment.Images")}</wl-tab>
+                <wl-tab value="resource-template-lists" @click="${(e) => this._showTab(e.target)}">${_t("environment.ResourcePresets")}</wl-tab>
+                ${this.is_superadmin ? html`
+                  <wl-tab value="registry-lists" @click="${(e) => this._showTab(e.target)}">${_t("environment.Registries")}</wl-tab>` : html``}
+              </wl-tab-group>-->
+              <div class="flex"></div>
+            </h3>
+            <div id="image-lists" class="tab-content">
+              <backend-ai-environment-list ?active="${this._activeTab === 'image-lists'}"></backend-ai-environment-list>
+            </div>
+            <backend-ai-resource-preset-list id="resource-template-lists" class="admin item tab-content" style="display: none" ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-preset-list>
+            <div id="registry-lists" class="tab-content">
+              <backend-ai-registry-list ?active="${this._activeTab === 'registry-lists'}"> </backend-ai-registry-list>
+            </div>
+          </div>
+        </lablup-activity-panel>
+      <!--</wl-card>-->
     `;
   }
 
