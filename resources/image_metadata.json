@@ -50,19 +50,6 @@
         }
       ]
     },
-    "ml-workspace": {
-      "name": "ML Workspace",
-      "description": "The ML workspace is an all-in-one web-based IDE specialized for machine learning and data science.",
-      "group": "Machine Learning / Deep Learning",
-      "tags": [],
-      "label": [
-        {
-          "category": "Env",
-          "tag": "ML Workspace",
-          "color": "blue"
-        }
-      ]
-    },
     "python-tensorflow": {
       "name": "TensorFlow",
       "description": "TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications.",
