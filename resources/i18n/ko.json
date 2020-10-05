@@ -526,7 +526,7 @@
     "DescURLStartString": "URL은 http:// 나 https:// 로 시작해야 합니다.",
     "UsernameOptional": "사용자명 (선택)",
     "PasswordOptional": "암호 (선택)",
-    "ForHarborOnly": "harbor 레지스트리를 등록할때만 지정하세요!",
+    "ForHarborOnly": "harbor 레지스트리를 등록할 경우에만 지정할 수 있습니다.",
     "Registries": "레지스트리",
     "RegistryType": "레지스트리 유형",
     "ProjectName": "프로젝트 이름",
