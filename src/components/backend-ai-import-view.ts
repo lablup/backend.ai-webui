@@ -78,7 +78,8 @@ export default class BackendAIImport extends BackendAIPage {
         }
 
         mwc-button {
-          --mdc-theme-primary: var(--paper-blue-600);
+          background-image: none;
+          --mdc-theme-primary: #38bd73 !important;
         }
       `
     ];
