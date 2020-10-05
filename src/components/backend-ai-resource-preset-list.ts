@@ -18,6 +18,7 @@ import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
 import '@material/mwc-textfield';
+import '@material/mwc-button';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -217,10 +218,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
         <h4 class="horizontal flex center center-justified layout">
           <span>${_t("resourcePreset.ResourcePresets")}</span>
           <span class="flex"></span>
-          <wl-button class="fg orange" id="add-resource-preset" outlined @click="${e => this._launchPresetAddDialog(e)}">
+          <mwc-button raised id="add-resource-preset" icon="add" label="${_t("resourcePreset.CreatePreset")}" @click="${e => this._launchPresetAddDialog(e)}"></mwc-button>
+          <!--<wl-button class="fg orange" id="add-resource-preset" outlined @click="${e => this._launchPresetAddDialog(e)}">
             <wl-icon>add</wl-icon>
             ${_t("resourcePreset.CreatePreset")}
-          </wl-button>
+          </wl-button>-->
         </h4>
         <div>
           <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"

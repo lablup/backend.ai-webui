@@ -19,6 +19,7 @@ import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@material/mwc-button';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
@@ -181,6 +182,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           grid-template-columns: 4fr 4fr 4fr 1fr;
           margin-bottom: 10px;
         }
+
+        mwc-button.operation {
+          margin: auto 10px;
+          padding: auto 10px;
+        }
+
+        mwc-button[disabled] {
+          background-image: var(--general-sidebar-color);
+        }
+
       `];
   }
 
@@ -630,14 +641,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="horizontal layout flex end-justified" style="margin:10px;">
-        <wl-button outlined class="operation" id="install-image" @click="${this.openInstallImageDialog}">
+        <mwc-button raised label="${_t('environment.Install')}" class="operation" id="install-image" icon="get_app" @click="${this.openInstallImageDialog}"></mwc-button>
+        <mwc-button disabled label="${_t('environment.Delete')}" class="operation" id="delete-image" icon="delete" @click="${this.openDeleteImageDialog}"></mwc-button>
+        <!--<wl-button outlined class="operation" id="install-image" @click="${this.openInstallImageDialog}">
           <wl-icon>get_app</wl-icon>
           ${_t('environment.Install')}
         </wl-button>
         <wl-button outlined class="operation" id="delete-image" @click="${this.openDeleteImageDialog}" disabled>
           <wl-icon>delete</wl-icon>
           ${_t('environment.Delete')}
-        </wl-button>
+        </wl-button>-->
       </div>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
         <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>

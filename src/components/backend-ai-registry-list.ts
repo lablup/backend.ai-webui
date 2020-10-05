@@ -18,6 +18,7 @@ import 'weightless/switch';
 import 'weightless/textfield';
 import 'weightless/title';
 
+import '@material/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
@@ -490,15 +491,16 @@ class BackendAIRegistryList extends BackendAIPage {
       <h4 class="horizontal flex center center-justified layout">
         <span>${_t("registry.Registries")}</span>
         <span class="flex"></span>
-        <wl-button
+        <mwc-button raised id="add-registry" label="${_t("registry.AddRegistry")}" icon="add"
+            @click=${() => this._launchDialogById("#add-registry-dialog")}></mwc-button>
+        <!--<wl-button
           class="fg orange"
           id="add-registry"
           outlined
-          @click=${() => this._launchDialogById("#add-registry-dialog")}
-        >
+          @click=${() => this._launchDialogById("#add-registry-dialog")}>
           <wl-icon>add</wl-icon>
           ${_t("registry.AddRegistry")}
-        </wl-button>
+        </wl-button>-->
       </h4>
 
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this.registryList}">
@@ -593,8 +595,10 @@ class BackendAIRegistryList extends BackendAIPage {
           </div>
          </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button raised icon="add" label="${_t("button.Add")}"
+            @click=${this._addRegistry} style="width:100%;"></mwc-button>
+          <!--<wl-button
             class="fg orange"
             outlined
             type="button"
@@ -603,7 +607,7 @@ class BackendAIRegistryList extends BackendAIPage {
           >
             <wl-icon>add</wl-icon>
             ${_t("button.Add")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
 
@@ -616,17 +620,18 @@ class BackendAIRegistryList extends BackendAIPage {
             label="${_t("registry.TypeRegistryNameToDelete")}"
           ></wl-textfield>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button raised icon="delete" label="${_t("button.Delete")}"
+              @click=${this._deleteRegistry} style="width:100%;"></mwc-button>
+          <!--<wl-button
             class="fg red delete"
             type="button"
             outlined
             style="width: 100%; box-sizing: border-box;"
-            @click=${this._deleteRegistry}
-          >
+            @click=${this._deleteRegistry}>
             <wl-icon>delete</wl-icon>
             ${_t("button.Delete")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
     `
