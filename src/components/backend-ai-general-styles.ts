@@ -54,6 +54,8 @@ export const BackendAiStyles = [
       --general-dropdown-color: var(--general-sidebar-color);
       --general-button-background-color: var(--general-sidebar-selected-color);
       --general-button-color: #ffffff;
+      --general-switch-off-color: var(--general-sidebar-background-color);
+      --general-switch-on-color: #27824f;
       --general-dialog-background-color: #ffffff;
       --general-font-family: 'Ubuntu', 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
@@ -251,7 +253,13 @@ export const BackendAiStyles = [
       background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
       --mdc-theme-primary: transparent; /* gradient-color doesn't work in mwc-button styling */
       --mdc-theme-on-primary: var(--general-button-color);
-      }
+    }
+
+    mwc-switch {
+      --mdc-theme-surface: var(--general-switch-off-color);
+      --mdc-theme-on-surface: var(--general-switch-off-color);
+      --mdc-theme-secondary: var(--general-switch-on-color);
+    }
 
     wl-card p {
       padding: 10px;
