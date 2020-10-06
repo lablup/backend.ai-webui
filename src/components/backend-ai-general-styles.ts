@@ -52,10 +52,10 @@ export const BackendAiStyles = [
       --general-tabbar-button-color: var(--general-sidebar-selected-color);
       --general-textfield-selected-color: var(--general-sidebar-color);
       --general-dropdown-color: var(--general-sidebar-color);
-      --general-button-background-color: var(--general-sidebar-selected-color);
+      --general-button-background-color: #27824F;
       --general-button-color: #ffffff;
-      --general-switch-off-color: var(--general-sidebar-background-color);
-      --general-switch-on-color: #27824f;
+      --general-switch-off-color: #AAA;
+      --general-switch-on-color: #27824F;
       --general-dialog-background-color: #ffffff;
       --general-font-family: 'Ubuntu', 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
