@@ -76,6 +76,10 @@ export default class BackendAiErrorLogList extends BackendAIPage {
           font-size: 10px;
         }
 
+        vaadin-grid#list-grid {
+          border-top: 1px solid #dbdbdb;
+        }
+
         [error-cell] {
           color: red;
         }
