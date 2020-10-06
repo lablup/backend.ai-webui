@@ -247,6 +247,7 @@ export const BackendAiStyles = [
     }
 
     mwc-button,
+    mwc-button[outlined],
     mwc-button[raised],
     mwc-button[unelevated] {
       border-radius: 5px;
