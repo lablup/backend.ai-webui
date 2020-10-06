@@ -21,6 +21,11 @@ import 'weightless/textarea';
 import 'weightless/textfield';
 import 'weightless/title';
 
+import '@material/mwc-switch/mwc-switch';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-select/mwc-select';
+import '@material/mwc-list/mwc-list-item';
+
 import './backend-ai-dialog';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -338,15 +343,21 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       <h4 class="horizontal flex center center-justified layout">
         <span>${_t("resourceGroup.ResourceGroups")}</span>
         <span class="flex"></span>
-        <wl-button
+          <mwc-button
+              raised
+              id="add-scaling-group"
+              icon="add"
+              label="${_t("button.Add")}"
+              @click=${() => this._launchDialogById("#create-scaling-group-dialog")}>
+          </mwc-button>
+        <!--<wl-button
           class="fg blue"
           id="add-scaling-group"
           outlined
-          @click=${() => this._launchDialogById("#create-scaling-group-dialog")}
-        >
+          @click=${() => this._launchDialogById("#create-scaling-group-dialog")}>
           <wl-icon>add</wl-icon>
           ${_t("button.Add")}
-        </wl-button>
+        </wl-button>-->
       </h4>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scalingGroups}">
         <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
@@ -413,12 +424,20 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     )}
           </wl-select>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button
+              raised
+              id="create-user-button"
+              class="create-button"
+              icon="add"
+              label="${_t("button.Create")}"
+              style="width:100%;"
+              @click="${this._createScalingGroup}"></mwc-button>
+          <!--<wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
             @click="${this._createScalingGroup}">
             <wl-icon>add</wl-icon>
             ${_t("button.Create")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling>
@@ -442,22 +461,30 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             ${_t("resourceGroup.ActiveStatus")}
           </wl-label>
           <div id="switch">
-            <wl-switch
+            <mwc-switch id="modify-scaling-group-active">
+            </mwc-switch>
+            <!--<wl-switch
               id="modify-scaling-group-active"
-            ></wl-switch>
+            ></wl-switch>-->
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button
+            raised
+            icon="save"
+            style="width: 100%; box-sizing: border-box;"
+            label="${_t("button.Save")}"
+            @click=${this._modifyScalingGroup}
+            ></mwc-button>
+          <!--<wl-button
             class="fg blue"
             type="button"
             outlined
             style="width: 100%; box-sizing: border-box;"
-            @click=${this._modifyScalingGroup}
-          >
+            @click=${this._modifyScalingGroup}>
             <wl-icon>check</wl-icon>
             ${_t("button.Save")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-scaling-group-dialog" fixed backdrop blockscrolling>
