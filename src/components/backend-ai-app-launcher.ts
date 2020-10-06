@@ -698,7 +698,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <wl-label class="keyboard invert">+</wl-label>
             <wl-label class="keyboard one-key">B</wl-label>
           </span>
-          <div class="flex layout center-justified vertic center">
+          <div class="flex layout center-justified vertical center">
             <p>${_text("webTerminalUsageGuide.CopyGuideFour")}</p>
             <a href="https://console.docs.backend.ai/${lang}/latest/session_use/session_use.html#advanced-web-terminal-usage"
                target="_blank" style="width:100%;text-align:right;">
