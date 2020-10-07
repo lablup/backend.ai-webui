@@ -151,7 +151,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
               <mwc-button
                   outlined
                   ?disabled="${this.scanning}"
-                  label="${_t("maintenance.RecalculateUsage")}"
+                  label="${_t("maintenance.RescanImages")}"
                   icon="refresh"
                   @click="${() => this.rescan_images()}">
               </mwc-button>

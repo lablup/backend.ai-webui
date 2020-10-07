@@ -422,14 +422,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (this.mini_ui) {
         this.appBody.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');
-        this.contentBody.style.width = 'calc(' + width + 'px - ' + this.minibarWidth + 'px)';
+        this.contentBody.style.width = "100%";
+        //this.contentBody.style.width = 'calc(' + width + 'px - ' + this.minibarWidth + 'px)';
         if (this.contentBody.open) {
           this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + this.sidebarWidth + 'px');// 54+250
         }
       } else {
         this.appBody.style.setProperty('--mdc-drawer-width', this.sidebarWidth + 'px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', this.sidebarWidth + 'px');
-        this.contentBody.style.width = 'calc(' + width + 'px - ' + this.sidebarWidth + 'px)';
+        this.contentBody.style.width = "100%";
+        // this.contentBody.style.width = 'calc(' + width + 'px - ' + this.sidebarWidth + 'px)';
         if (this.contentBody.open) {
           this.mainToolbar.style.setProperty('--mdc-drawer-width', this.sidebarWidth + this.sidepanelWidth + 'px'); // 250+250
         }
@@ -934,7 +936,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="flex"></span>
             </div>
           </div>
-          <div class="horizontal start-justified center layout flex" style="max-height:40px;margin-left:16px; display:none;">
+          <div class="horizontal center-justified center layout flex" style="max-height:40px;">
             <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;margin-left:4px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
             <mwc-icon-button disabled class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'yellow' : 'white'}" id="feedback-icon" icon="question_answer"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
@@ -942,7 +944,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}">
-              <i class="fas fa-th-large" slot="graphic" id="activities-icon"></i>
+              <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Summary")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}" ?disabled="${this.blockedMenuitem.includes('job')}">
@@ -955,7 +957,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="full-menu">${_t("console.menu.Experiments")}</span>
             </mwc-list-item>` : html``}
             <mwc-list-item graphic="icon" ?selected="${this._page === 'github' || this._page === 'import'}" @click="${() => this._moveTo('/import')}" ?disabled="${this.blockedMenuitem.includes('import')}">
-              <i class="fas fa-play" slot="graphic" id="mport-menu-icon"></i>
+              <i class="fas fa-play" slot="graphic" id="import-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Import&Run")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}" ?disabled="${this.blockedMenuitem.includes('data')}">
@@ -1030,7 +1032,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <div slot="appContent">
               <mwc-top-app-bar-fixed id="main-toolbar" class="draggable">
-                <div class="horizontal layout center" slot="navigationIcon" style="margin:auto 20px;" @click="${() => this.toggleDrawer()}">
+                <div class="horizontal layout center" id="drawer-toggle-button" slot="navigationIcon" style="margin:auto 20px;" @click="${() => this.toggleDrawer()}">
                   <i class="fas fa-angle-left" style="display:block;color:#747474;margin-right:0.5em;"></i>
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
                 </div>
