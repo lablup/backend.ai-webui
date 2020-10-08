@@ -80,7 +80,9 @@
     "FolderName": "Folder Name",
     "Permission": "Permission",
     "Announcement": "Announcement",
-    "SystemResources": "System Resources"
+    "SystemResources": "System Resources",
+    "CurrentVersion": "Current Version"
+
   },
   "session": {
     "launcher": {

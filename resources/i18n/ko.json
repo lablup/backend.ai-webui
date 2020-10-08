@@ -79,7 +79,8 @@
     "FolderName": "폴더 이름",
     "Permission": "권한",
     "Announcement": "공지",
-    "SystemResources": "시스템 자원"
+    "SystemResources": "시스템 자원",
+    "CurrentVersion": "현재 버전"
   },
   "session": {
     "launcher": {
