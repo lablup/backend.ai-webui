@@ -1,5 +1,14 @@
 # Changelog
 
+## v20.09.2 (28/09/2020)
+
+
+#### Bug Fixes:
+
+- [**bug**][**easy**][**minor**] Extend current request timeout in session creation [#722](https://github.com/lablup/backend.ai-console/issues/722)
+- [**UI / UX**][**bug**] Multiple clicks cause duplicated directory path [#717](https://github.com/lablup/backend.ai-console/issues/717)
+
+
 ## v20.09.1 (22/09/2020)
 
 #### Enhancements:
