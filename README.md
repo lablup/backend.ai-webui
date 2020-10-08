@@ -49,9 +49,6 @@ Backend.AI console focuses to
 
 ## Management Features
 
- * Keypair management
-    * Allocate resource limitation for keys
-    * Add / remove resource policies for keys
  * Kernel managements
     * List supported kernels
      * Add kernel
@@ -61,6 +58,9 @@ Backend.AI console focuses to
      * Add/remove docker registries
  * User management
     * User creation / deletion / key management / resource templates
+ * Keypair management
+    * Allocate resource limitation for keys
+    * Add / remove resource policies for keys
  * Manager settings
     * Add /setting repository
     * Plugin support
