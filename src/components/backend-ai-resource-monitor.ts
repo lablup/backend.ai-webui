@@ -425,7 +425,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         .resource-name {
-          width: 60px;
+          width: 80px;
           text-align: right; 
           display: inline-block !important;
           margin: auto 20px auto 0px;
@@ -574,7 +574,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return this.resourceBroker._refreshResourcePolicy().then(() => {
       this.concurrency_used = this.resourceBroker.concurrency_used;
       //this.userResourceLimit = this.resourceBroker.userResourceLimit;
-      this.concurrency_max = this.resourceBroker.concurrency_max;
+      this.concurrency_max = this.concurrency_used > this.resourceBroker.concurrency_max ? this.concurrency_used : this.resourceBroker.concurrency_max;
       //this.updateResourceAllocationPane('refresh resource policy');
     }).catch((err) => {
       console.log(err);
@@ -920,7 +920,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">${_t('session.launcher.Sessions')}</span>
             </div>
-            <div class="layout vertical start-justified wrap short-indicator">
+            <div class="layout vertical start-justified flex">
               <div class="progress-bar">
                 <span class="gauge-label">${this.concurrency_used}/${this.concurrency_max === 1000000 ? html`∞` : this.concurrency_max}</span>
                 <span class="gauge-label">&nbsp;</span>
