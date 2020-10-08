@@ -337,11 +337,18 @@ export default class BackendAIData extends BackendAIPage {
             ${_t("data.DialogFolderStartingWithDotAutomount")}
           </div>
         </div>
-        <div slot="footer">
-          <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
+        <div slot="footer" class="horizontal flex">
+          <mwc-button
+              raised
+              id="add-button"
+              icon="rowing"
+              label="${_t("data.Create")}"
+              style="width:100%;"
+              @click="${() => this._addFolder()}"></mwc-button>
+          <!--<wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
             <wl-icon>rowing</wl-icon>
              ${_t("data.Create")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="help-description" fixed backdrop>

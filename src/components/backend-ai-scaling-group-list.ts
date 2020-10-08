@@ -110,6 +110,15 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           --input-border-style-disabled: 1px solid #ccc;
         }
 
+        mwc-button[outlined] {
+          width: 100%;
+          margin: 10px auto;
+          background-image: none;
+          --mdc-button-outline-width: 2px;
+          --mdc-theme-primary: #38bd73;
+          --mdc-on-theme-primary: #38bd73;
+        }
+
         backend-ai-dialog {
           --component-min-width: 350px;
         }
@@ -497,7 +506,14 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           ></wl-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button
+          <mwc-button
+            outlined
+            icon="delete"
+            label="${_t("button.Delete")}"
+            style="width: 100%; box-sizing: border-box;"
+            @click="${this._deleteScalingGroup}">
+            </mwc-button>
+          <!--<wl-button
             class="fg red delete"
             type="button"
             outlined
@@ -506,7 +522,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           >
             <wl-icon>delete</wl-icon>
             ${_t("button.Delete")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
     `;
