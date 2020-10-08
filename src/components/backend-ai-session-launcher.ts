@@ -16,6 +16,7 @@ import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-list/mwc-check-list-item';
 import '@material/mwc-icon-button';
+import '@material/mwc-button';
 import '@material/mwc-textfield/mwc-textfield';
 
 import 'weightless/button';
@@ -458,6 +459,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding-left: 0;
           margin-left: 0;
           margin-bottom: 1px;
+        }
+
+        mwc-button, mwc-button[raised] {
+          width: 100%;
         }
 
         #environment {
@@ -1605,7 +1610,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let environment = this.shadowRoot.querySelector('#environment');
     //await environment.updateComplete; async way.
     let obj = environment.items.find(o => o.value === this.default_language);
-    if (typeof obj === 'undefined' && typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient.ready === true) { // Not ready yet.
+    if (typeof obj === 'undefined' && typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient.ready === false) { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
         return this.selectDefaultLanguage(forceUpdate, language);
@@ -1835,10 +1840,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                           <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}" description="${item.tag}"></lablup-shields>
                           <span style="display:none">(${item.tag})</span>
                         `) : ''}
-                          <mwc-icon-button icon="info" class="fg blue info"
+                          <mwc-icon-button icon="info"
+                                           class="fg blue info"
                                            @click="${(e) => {
-      this._showKernelDescription(e, item);
-    }}">
+                                             this._showKernelDescription(e, item);}}">
                           </mwc-icon-button>
                         </div>
                       </div>
@@ -2064,11 +2069,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
         </wl-expansion>
         <fieldset slot="footer" style="padding-top:0;">
-          <wl-button class="launch-button" type="button" id="launch-button"
+          <mwc-button
+              raised
+              class="launch-button"
+              id="launch-button"
+              icon="rowing"
+              @click="${() => this._newSessionWithConfirmation()}">
+            <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+          </mwc-button>
+          <!--<wl-button class="launch-button" type="button" id="launch-button"
                                        outlined @click="${() => this._newSessionWithConfirmation()}">
                                       <wl-icon>rowing</wl-icon>
             <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
-          </wl-button>
+          </wl-button>-->
         </fieldset>
       </form>
     </backend-ai-dialog>
@@ -2088,12 +2101,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <p>${_t('session.launcher.LaunchConfirmationDialog')}</p>
         <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
       </div>
-      <div slot="footer" style="padding-top:0;margin:0 5px;">
-        <wl-button class="launch-confirmation-button" type="button" id="launch-confirmation-button"
+      <div class="horizontal flex" slot="footer" style="padding-top:0;margin:0 5px;">
+        <mwc-button
+            raised
+            class="launch-confirmation-button"
+            id="launch-confirmation-button"
+            icon="rowing"
+            @click="${() => this._newSession()}">
+          <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+        </mwc-button>
+        <!--<wl-button class="launch-confirmation-button" type="button" id="launch-confirmation-button"
                                      outlined @click="${() => this._newSession()}">
                                     <wl-icon>rowing</wl-icon>
           <span>${_t('session.launcher.LaunchWithoutMount')}</span>
-        </wl-button>
+        </wl-button>-->
       </div>
     </backend-ai-dialog>
 `;
