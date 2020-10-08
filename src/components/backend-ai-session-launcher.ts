@@ -304,6 +304,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         #new-session-dialog {
+          --component-width: 400px;
+          --component-height: 830px;
           z-index: 100;
         }
 
@@ -461,8 +463,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           margin-bottom: 1px;
         }
 
-        mwc-button, mwc-button[raised] {
+        mwc-button, mwc-button[raised], mwc-button[disabled] {
           width: 100%;
+        }
+
+        mwc-button[disabled] {
+          background-image: none;
+          --mdc-theme-primary: #ddd;
+          --mdc-on-theme-primary: var(--general-sidebar-topbar-background-color);
         }
 
         #environment {
@@ -498,10 +506,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #help-description p {
           padding: 5px !important;
-        }
-
-        #new-session-dialog {
-          --component-width: 400px;
         }
 
         #launch-confirmation-dialog {
