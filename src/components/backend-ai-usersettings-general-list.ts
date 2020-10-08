@@ -791,7 +791,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <div class="description">${_tr("usersettings.DescDesktopNotification")}
               </div>
             </div>
-            <div class="vertical center-justified layout setting-button">
+            <div class="vertical center-justified layout setting-button flex end">
               <mwc-switch id="desktop-notification-switch" @change="${(e) => this.toggleDesktopNotification(e)}" ?checked="${globalThis.backendaioptions.get('desktop_notification')}"></mwc-switch>
             </div>
           </div>
@@ -800,7 +800,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <div class="title">${_t("usersettings.UseCompactSidebar")}</div>
               <div class="description">${_tr("usersettings.DescUseCompactSidebar")}</div>
             </div>
-            <div class="vertical center-justified layout setting-button">
+            <div class="vertical center-justified layout setting-button flex end">
               <mwc-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${globalThis.backendaioptions.get('compact_sidebar')}"></mwc-switch>
             </div>
           </div>
@@ -810,7 +810,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <div class="description">${_tr("usersettings.DescLanguage")}
               </div>
             </div>
-            <div class="vertical center-justified layout setting-select">
+            <div class="vertical center-justified layout setting-select flex end">
               <mwc-select id="ui-language"
                           required
                           outlined
@@ -828,7 +828,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <div class="title">${_t("usersettings.KeepLoginSessionInformation")}</div>
               <div class="description">${_tr("usersettings.DescKeepLoginSessionInformation")}</div>
             </div>
-            <div class="vertical center-justified layout setting-button">
+            <div class="vertical center-justified layout setting-button flex end">
               <mwc-switch id="preserve-login-switch" @change="${(e) => this.togglePreserveLogin(e)}" ?checked="${globalThis.backendaioptions.get('preserve_login')}"></mwc-switch>
             </div>
           </div>
@@ -848,11 +848,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <div class="title">${_t("usersettings.SSHKeypairManagement")}</div>
               <div class="description">${_tr("usersettings.DescSSHKeypairManagement")}</div>
             </div>
-            <mwc-icon-button
-                id="ssh-keypair-details"
-                icon="more"
-                @click="${this._openSSHKeypairRefreshDialog}">
-            </mwc-icon-button>
+            <div class="vertical center-justified layout flex end">
+              <mwc-icon-button
+                  id="ssh-keypair-details"
+                  icon="more"
+                  @click="${this._openSSHKeypairRefreshDialog}">
+              </mwc-icon-button>
+            </div>
             <!--<wl-button id="ssh-keypair-details" fab inverted flat @click="${this._openSSHKeypairRefreshDialog}">
               <wl-icon id="ssh-keypair-icon">more</wl-icon>
             </wl-button>-->
@@ -862,7 +864,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <div class="title">${_t("usersettings.AutomaticUpdateCheck")}</div>
               <div class="description">${_tr("usersettings.DescAutomaticUpdateCheck")}</div>
             </div>
-            <div class="vertical center-justified layout setting-button">
+            <div class="vertical center-justified layout setting-button flex end">
               <mwc-switch id="automatic-update-check-switch" @change="${(e) => this.toggleAutomaticUploadCheck(e)}" ?checked="${globalThis.backendaioptions.get('automatic_update_check')}"></mwc-switch>
             </div>
           </div>
@@ -871,7 +873,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <div class="title">${_t("usersettings.BetaFeatures")}</div>
               <div class="description">${_tr("usersettings.DescBetaFeatures")}</div>
             </div>
-            <div class="vertical center-justified layout setting-button">
+            <div class="vertical center-justified layout setting-button flex end">
               <mwc-switch id="beta-feature-switch" @change="${(e) => this.toggleBetaFeature(e)}" ?checked="${globalThis.backendaioptions.get('beta_feature')}"></mwc-switch>
             </div>
           </div>
@@ -922,7 +924,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <div class="description">This is description.
               </div>
             </div>
-            <div class="vertical center-justified layout setting-button">
+            <div class="vertical center-justified layout setting-button flex end">
               <mwc-switch id="register-new-image-switch" disabled></mwc-switch>
             </div>
           </div>

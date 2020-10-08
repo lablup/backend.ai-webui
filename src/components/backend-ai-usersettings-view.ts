@@ -173,7 +173,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <!--<wl-card class="item">-->
-        <lablup-activity-panel noheader narrow horizontalsize="3x">
+        <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
             <mwc-tab-bar>
