@@ -228,6 +228,34 @@ export default class BackendAISummary extends BackendAIPage {
         .system-health-indicator {
           width: 90px;
         }
+
+        .upper-space {
+          padding-top: 20px;
+        }
+
+        i.larger {
+          font-size: 1.2rem;
+        }
+
+        .left-end-icon {
+          margin-left: 11px;
+          margin-right: 12px;
+        }
+
+        .right-end-icon {
+          margin-left: 12px;
+          margin-right: 11px;
+        }
+
+        .line {
+          display: inline-block;
+          width: auto;
+          height: 1px;
+          border: 0;
+          border-top: 1px solid #ccc;
+          margin: 20px;
+          padding: 0;
+      }
       `
     ];
   }
@@ -403,7 +431,6 @@ export default class BackendAISummary extends BackendAIPage {
             <span>${this._stripHTMLTags(this.announcement)}</span>
           </h3>
         ` : html``}
-
         <div class="horizontal wrap layout">
           <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1" height="500">
             <div slot="message">
@@ -416,17 +443,16 @@ export default class BackendAISummary extends BackendAIPage {
                   <i class="fas fa-upload fa-2x"></i>
                   <span>${_t('summary.UploadFiles')}</span>
                 </a>
-              ${this.is_admin
-      ? html`
-                <a href="/credential" class="vertical center center-justified layout start-menu-items" style="border-left:1px solid #ccc;">
-                  <i class="fas fa-key fa-2x"></i>
-                  <span>${_t('summary.CreateANewKeypair')}</span>
-                </a>
-                <a href="/credential" class="vertical center center-justified layout start-menu-items" style="border-left:1px solid #ccc;">
-                  <i class="fas fa-cogs fa-2x"></i>
-                  <span>${_t('summary.MaintainKeypairs')}</span>
-                </a>`
-      : html``}
+                ${this.is_admin ? html`
+                  <a href="/credential" class="vertical center center-justified layout start-menu-items" style="border-left:1px solid #ccc;">
+                    <i class="fas fa-key fa-2x"></i>
+                    <span>${_t('summary.CreateANewKeypair')}</span>
+                  </a>
+                  <a href="/credential" class="vertical center center-justified layout start-menu-items" style="border-left:1px solid #ccc;">
+                    <i class="fas fa-cogs fa-2x"></i>
+                    <span>${_t('summary.MaintainKeypairs')}</span>
+                  </a>
+                ` : html``}
               </div>
             </div>
           </lablup-activity-panel>
@@ -435,85 +461,124 @@ export default class BackendAISummary extends BackendAIPage {
                 <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>
             </div>
           </lablup-activity-panel>
-
           <backend-ai-resource-panel ?active="${this.active === true}" height="500"></backend-ai-resource-panel>
-
           ${this.announcement != '' ? html`
-          <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1">
-            <div slot="message">
-              ${unsafeHTML(this.announcement)}
-            </div>
-          </lablup-activity-panel>
-          ` : html``}
-      ${this.invitations ? this.invitations.map(invitation =>
-      html`
+            <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1">
+              <div slot="message">
+                ${unsafeHTML(this.announcement)}
+              </div>
+            </lablup-activity-panel>
+            ` : html``}
+          ${this.invitations ? this.invitations.map(invitation => html`
             <lablup-activity-panel title="${_t('summary.Invitation')}">
               <div slot="message">
                 <h3>From ${invitation.inviter}</h3>
                 <span class="invitation_folder_name">${_t("summary.FolderName")}>: ${invitation.vfolder_name}</span>
                 <div class="horizontal center layout">
-                ${_t("summary.Permission")}>:
-                ${[...invitation.perm].map(c => {
-        return html`
-                  <lablup-shields app="" color="${['green', 'blue', 'red'][['r', 'w', 'd'].indexOf(c)]}"
-                            description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;
-      })}
+                  ${_t("summary.Permission")}>:
+                  ${[...invitation.perm].map(c => {
+                    return html`
+                      <lablup-shields app="" color="${['green', 'blue', 'red'][['r', 'w', 'd'].indexOf(c)]}"
+                              description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;})}
                 </div>
                 <div style="margin-top:25px;" class="horizontal layout justified">
                   <wl-button
                     class="fg green"
                     outlined
-                    @click=${e => this._acceptInvitation(e, invitation)}
-                  >
-                    <wl-icon>add</wl-icon>
+                    @click=${e => this._acceptInvitation(e, invitation)}>
+                      <wl-icon>add</wl-icon>
                     ${_t('summary.Accept')}
                   </wl-button>
                   <span class="flex"></span>
                   <wl-button
                     class="fg red"
                     outlined
-                    @click=${e => this._deleteInvitation(e, invitation)}
-                  >
-                    <wl-icon>remove</wl-icon>
+                    @click=${e => this._deleteInvitation(e, invitation)}>
+                      <wl-icon>remove</wl-icon>
                     ${_t('summary.Decline')}
                   </wl-button>
                 </div>
               </div>
             </lablup-activity-panel>
-            `
-    ) : ''}
-    ${this.is_admin
-      ? html`
-          <lablup-activity-panel title="${_t('summary.Administration')}" elevation="1">
-            <div slot="message">
-      ${this.is_superadmin ? html`
-              <div class="layout vertical center start flex" style="margin-bottom:5px;">
-                <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
-                <div class="layout horizontal center flex" style="margin-top:4px;">
-                  <lablup-shields app="Console version" color="${this.update_checker.updateNeeded ? 'red' : 'darkgreen'}" description="${this.console_version}" ui="flat"></lablup-shields>
-                  ${this.update_checker.updateNeeded ? html`
-                    <mwc-icon-button class="update-button" icon="new_releases" @click="${() => {
-        window.open(this.update_checker.updateURL, '_blank')
-      }}"></mwc-icon-button>
-                  ` : html`
-                    <mwc-icon class="update-icon">done</mwc-icon>
-                  `}
+            `) : html``}
+          </div>
+          <div class="vertical layout">
+            ${this.is_admin ? html`
+              <div class="horizontal layout wrap">
+                <div class="vertical layout">
+                  <div class="line"></div>
+                  <div class="horizontal layout flex wrap">
+                    <lablup-activity-panel noheader autowidth style="display: none;">
+                      <div slot="message" class="vertical layout center start-justified flex upper-space">
+                        <h3 style="margin-top:0px;">${_t("summary.CurrentVersion")}</h3>
+                        ${this.is_superadmin ? html`
+                          <div class="layout vertical center center-justified flex" style="margin-bottom:5px;">
+                            <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
+                            <div class="layout horizontal center flex" style="margin-top:4px;">
+                              <lablup-shields app="Console version" color="${this.update_checker.updateNeeded ? 'red' : 'darkgreen'}" description="${this.console_version}" ui="flat"></lablup-shields>
+                              ${this.update_checker.updateNeeded ? html`
+                                <mwc-icon-button class="update-button" icon="new_releases"
+                                  @click="${() => {window.open(this.update_checker.updateURL, '_blank')}}"></mwc-icon-button>`
+                                  : html`
+                                    <mwc-icon class="update-icon">done</mwc-icon>
+                                  `}
+                            </div>
+                          </div>
+                        ` : html``}
+                      </div>
+                    </lablup-activity-panel>
+                    <lablup-activity-panel noheader autowidth>
+                      <div slot="message" class="layout horizontal center center-justified flex upper-space">
+                          <a href="/environment">
+                            <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
+                              <i class="fas fa-sync-alt larger left-end-icon"></i>
+                              ${_t('summary.UpdateEnvironmentImages')}
+                              <i class="fas fa-chevron-right right-end-icon"></i>
+                            </div>
+                          </a>
+                      </div>
+                    </lablup-activity-panel>
+                    <lablup-activity-panel noheader autowidth>
+                      <div slot="message" class="layout horizontal center center-justified flex upper-space">
+                        <a href="/agent">
+                          <div class="layout horizontal center center-justified flex" style="font-size:14px;">
+                            <i class="fas fa-box larger left-end-icon"></i>
+                            ${_t('summary.CheckResources')}
+                            <i class="fas fa-chevron-right right-end-icon"></i>
+                          </div>
+                        </a>
+                      </div>
+                    </lablup-activity-panel>
+                    <lablup-activity-panel noheader autowidth>
+                      <div slot="message" class="layout horizontal center center-justified flex upper-space">
+                          <a href="/settings">
+                            <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
+                              <i class="fas fa-desktop larger left-end-icon"></i>
+                              ${_t('summary.ChangeSystemSetting')}
+                              <i class="fas fa-chevron-right right-end-icon"></i>
+                            </div>
+                          </a>
+                      </div>
+                    </lablup-activity-panel>
+                    <lablup-activity-panel noheader autowidth>
+                      <div slot="message" class="layout horizontal center center-justified flex upper-space">
+                          <a href="/environment">
+                            <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
+                              <i class="fas fa-tools larger left-end-icon"></i>
+                              ${_t('summary.SystemMaintenance')}
+                              <i class="fas fa-chevron-right right-end-icon"></i>
+                            </div>
+                          </a>
+                      </div>
+                    </lablup-activity-panel>
+                  </div>
                 </div>
-              </div>` : html``}
-              <ul>
-                <li><a href="/environment">${_t('summary.UpdateEnvironmentImages')}</a></li>
-                <li><a href="/agent">${_t('summary.CheckResources')}</a></li>
-      ${this.is_superadmin ? html`
-                <li><a href="/settings">${_t('summary.ChangeSystemSetting')}</a></li>
-                <li><a href="/environment">${_t('summary.SystemMaintenance')}</a></li>` : html``}
-              </ul>
-            </div>
-          </lablup-activity-panel>`
-      : html``}
+              </div>
+          </div>` : html``}
         </div>
       </div>
-      <backend-ai-release-check id="update-checker"></backend-ai-release-check>
-`;
+    <backend-ai-release-check id="update-checker"></backend-ai-release-check>
+  `; 
   }
 }
 
