@@ -893,7 +893,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     // language=HTML
     return html`
       <!--<wl-card class="admin item" elevation="1" >-->
-      <lablup-activity-panel noheader narrow horizontalsize="3x">
+      <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
            <mwc-tab-bar>

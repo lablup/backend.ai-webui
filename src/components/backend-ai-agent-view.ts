@@ -101,7 +101,7 @@ export default class BackendAIAgentView extends BackendAIPage {
     // language=HTML
     return html`
       <!--<wl-card class="item" elevation="1">-->
-        <lablup-activity-panel noheader narrow horizontalsize="3x">
+        <lablup-activity-panel noheader narrow autowidth>
           <div slot="message">
             <h3 class="tab horizontal center layout">
               <mwc-tab-bar>

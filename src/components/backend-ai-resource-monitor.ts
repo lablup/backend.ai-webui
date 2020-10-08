@@ -122,6 +122,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                              linear-gradient(to left, #722cd7, #5c7cfa);
         }
 
+        .horizontal-card {
+          width: auto;
+        }
+
         .vertical-card {
           margin: 20px;
         }
@@ -190,8 +194,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         #resource-gauges.horizontal {
-          left: 160px;
-          width: 420px;
+          /* left: 160px; */
+          /* width: 420px; */
+          width: auto;
           height: auto;
           background-color: transparent;
         }

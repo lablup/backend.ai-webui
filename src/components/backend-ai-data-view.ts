@@ -248,7 +248,7 @@ export default class BackendAIData extends BackendAIPage {
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <!--<wl-card class="item" elevation="1" style="padding-bottom:20px;">-->
       <div style="margin:20px;">
-        <lablup-activity-panel elevation="1" noheader narrow horizontalsize="3x">
+        <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
             <h3 class="horizontal center flex layout tab">
               <mwc-tab-bar>

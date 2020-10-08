@@ -135,7 +135,7 @@ export default class BackendAIStatisticsView extends BackendAIPage {
     // language=HTML
     return html`
         <div style="margin:20px;">
-          <lablup-activity-panel elevation="1" noheader narrow horizontalsize="3x">
+          <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <!--<wl-card class="item"> -->
             <div slot="message">
               <h3 class="tab horizontal center layout">
