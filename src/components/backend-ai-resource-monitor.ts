@@ -247,6 +247,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         .resources.horizontal .monitor.session {
           margin-left: 5px;
+          height: 46px;
         }
 
         .gauge-name {
@@ -424,8 +425,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           outline: none;
         }
 
-        .resource-name {
+        .horizontal-card > #resource-gauges > .monitor > .resource-name {
           width: 80px;
+        }
+
+        .resource-name {
+          width: 60px;
           text-align: right; 
           display: inline-block !important;
           margin: auto 20px auto 0px;
