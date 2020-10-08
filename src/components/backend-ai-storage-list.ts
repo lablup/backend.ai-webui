@@ -604,10 +604,16 @@ export default class BackendAiStorageList extends BackendAIPage {
           <br/>
         </div>
         <div slot="footer">
-          <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
+          <mwc-button
+              raised
+              type="submit"
+              id="mkdir-btn"
+              label="${_t("button.Create")}"
+              @click="${(e) => this._mkdir(e)}"></mwc-button>
+          <!--<wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
             <wl-icon>rowing</wl-icon>
             ${_t("button.Create")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="share-folder-dialog" fixed backdrop>
