@@ -422,16 +422,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (this.mini_ui) {
         this.appBody.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');
-        this.contentBody.style.width = "100%";
-        //this.contentBody.style.width = 'calc(' + width + 'px - ' + this.minibarWidth + 'px)';
+        this.contentBody.style.width = 'calc(' + width + 'px - ' + this.minibarWidth + 'px)';
         if (this.contentBody.open) {
           this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + this.sidebarWidth + 'px');// 54+250
         }
       } else {
         this.appBody.style.setProperty('--mdc-drawer-width', this.sidebarWidth + 'px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', this.sidebarWidth + 'px');
-        this.contentBody.style.width = "100%";
-        // this.contentBody.style.width = 'calc(' + width + 'px - ' + this.sidebarWidth + 'px)';
+        this.contentBody.style.width = 'calc(' + width + 'px - ' + this.sidebarWidth + 'px)';
         if (this.contentBody.open) {
           this.mainToolbar.style.setProperty('--mdc-drawer-width', this.sidebarWidth + this.sidepanelWidth + 'px'); // 250+250
         }
@@ -1031,14 +1029,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <backend-ai-sidepanel-task class="sidepanel" ?active="${this._sidepanel === 'task'}"></backend-ai-sidepanel-task>
             </div>
             <div slot="appContent">
-              <mwc-top-app-bar-fixed id="main-toolbar" class="draggable">
+              <mwc-top-app-bar-fixed id="main-toolbar" class="draggable" style="width:100vw;">
                 <div class="horizontal layout center" id="drawer-toggle-button" slot="navigationIcon" style="margin:auto 20px;" @click="${() => this.toggleDrawer()}">
                   <i class="fas fa-angle-left" style="display:block;color:#747474;margin-right:0.5em;"></i>
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
                 </div>
                 <p slot="title" style="border-left: 1px solid #dbdbdb; margin:auto;">${_text("console.menu.WelcomeMessage") + this.full_name + "."}</p>
-                <div slot="actionItems" style="margin:auto;">
-                  <div class="horizontal flex layout" style="margin-right:2em;">
+                <div slot="actionItems" style="margin:0px;">
+                  <div class="horizontal flex layout">
                     <div id="group-select-box" style="height:48px;"></div>
                     <div style="border-right: 1px solid #dbdbdb;"></div>
                     <div class="horizontal center layout" id="dropdown-button">
