@@ -33,7 +33,9 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: String}) horizontalsize = '';
   @property({type: String}) headerColor = '';
   @property({type: Number}) elevation = 1;
+  @property({type: Boolean}) autowidth = false;
   @property({type: Number}) width = 350;
+  @property({type: Number}) widthpct = 0;
   @property({type: Number}) height = 0;
   @property({type: Number}) marginWidth = 16;
   @property({type: Number}) minwidth = 0;
@@ -124,7 +126,13 @@ export default class LablupActivityPanel extends LitElement {
       const button = this.shadowRoot.getElementById('button');
       this.shadowRoot.querySelector('h4').removeChild(button);
     }
-    (this.shadowRoot.querySelector('.card') as any).style.width = this.width + "px";
+    if (this.autowidth) {
+      (this.shadowRoot.querySelector('.card') as any).style.width = "auto";
+    } else {
+      (this.shadowRoot.querySelector('.card') as any).style.width = this.widthpct !== 0 ? this.widthpct + "%" : this.width + "px";
+    }
+    
+
     if (this.minwidth) {
       (this.shadowRoot.querySelector('.card') as any).style.minWidth = this.minwidth + "px";
     }
