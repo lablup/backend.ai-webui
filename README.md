@@ -46,6 +46,8 @@ Backend.AI console focuses to
     * User-specific web / app configurations
     * Beta features
     * Console logs / errors
+ * License
+    * Check current license information
 
 ## Management Features
 
