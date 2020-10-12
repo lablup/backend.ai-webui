@@ -8,10 +8,7 @@ import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-item/paper-item';
 import './lablup-loading-spinner';
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@material/mwc-list/mwc-list-item';
 import '../plastics/mwc/mwc-multi-select';
