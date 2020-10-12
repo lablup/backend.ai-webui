@@ -290,7 +290,9 @@
     "ModifyKeypairResourcePolicy": "Modify keypair resource policy",
     "SelectPolicy": "Select Policy",
     "AllowedHosts": "Allowed Hosts",
-    "UserIDAsEmail": "User ID as E-mail (optional)"
+    "UserIDAsEmail": "User ID as E-mail (optional)",
+    "AccessKeyOptional": "Access Key (optional)",
+    "SecretKeyOptional": "Secret Key (optional)"
   },
   "data": {
     "Folders": "Folders",
@@ -421,7 +423,8 @@
     "ResourcePresets": "Resource Presets",
     "Registries": "Registries",
     "SelectedImagesAlreadyInstalled": "Selected Image(s) are already installed or None. Please check again.",
-    "SelectedImagesNotInstalled": "Selected Images(s) are not installed. Please check again."
+    "SelectedImagesNotInstalled": "Selected Images(s) are not installed. Please check again.",
+    "Disabled": "disabled"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",

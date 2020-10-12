@@ -286,7 +286,9 @@
     "ModifyKeypairResourcePolicy": "키페어 자원 정책 수정",
     "SelectPolicy": "자원 정책 선택",
     "AllowedHosts":"허용된 호스트",
-    "UserIDAsEmail": "E-mail을 사용자 ID로 사용 (선택)"
+    "UserIDAsEmail": "E-mail을 사용자 ID로 사용 (선택)",
+    "AccessKeyOptional": "접근 키 (선택)",
+    "SecretKeyOptional": "비밀 키 (선택)"
   },
   "data": {
     "Folders": "폴더",
@@ -417,7 +419,8 @@
     "ResourcePresets": "자원 프리셋",
     "Registries": "레지스트리",
     "SelectedImagesAlreadyInstalled": "선택된 이미지가 없거나 이미 설치 완료되었습니다. 다시 한 번 확인해주시기 바랍니다.",
-    "SelectedImagesNotInstalled": "선택된 이미지가 없거나 설치되지 않아 삭제할 수 없습니다. 다시 한 번 확인해주시기 바랍니다."
+    "SelectedImagesNotInstalled": "선택된 이미지가 없거나 설치되지 않아 삭제할 수 없습니다. 다시 한 번 확인해주시기 바랍니다.",
+    "Disabled": "사용 안함"
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
