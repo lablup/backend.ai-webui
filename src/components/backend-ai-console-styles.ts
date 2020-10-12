@@ -167,6 +167,18 @@ export const BackendAiConsoleStyles = [
       top: 20px;
     }
 
+    mwc-button {
+      margin: auto 10px;
+      background-image: none;
+      --mdc-theme-primary: var(--general-button-background-color);
+      --mdc-on-theme-primary: var(--general-button-background-color);
+    }
+
+    mwc-button[unelevate--mdc-theme-primaryd] {
+      : var(--general-button-background-color);
+      --mdc-on-theme-primary: var(--general-button-background-color);
+    }
+
     .page {
       display: none;
     }
@@ -322,6 +334,17 @@ export const BackendAiConsoleStyles = [
       background-color: #e1e1e1;
     }
 
+    mwc-list-item > mwc-icon {
+      font-size: 20px;
+      margin: 5px;
+    }
+
+    mwc-textfield {
+      width: 100%;
+      --mdc-text-field-fill-color: transparent;
+      --mdc-theme-primary: var(--general-textfield-selected-color);
+    }
+
     wl-popover-card {
       padding: 5px;
     }
@@ -353,6 +376,7 @@ export const BackendAiConsoleStyles = [
     mwc-menu.user-menu mwc-list-item {
       font-size: 14px;
     }
+
 
     mwc-icon-button.side-menu {
       --mdc-icon-button-size: 44px;

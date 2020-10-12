@@ -50,12 +50,14 @@ export const BackendAiStyles = [
       --general-tabbar-background-color: var(--general-sidebar-background-color);
       --general-tabbar-tab-disabled-color: var(--general-sidebar-color);
       --general-tabbar-button-color: var(--general-sidebar-selected-color);
-      --general-textfield-selected-color: var(--general-sidebar-color);
+      --general-textfield-selected-color: #27824F;
       --general-dropdown-color: var(--general-sidebar-color);
+      --general-checkbox-color: var(--general-textfield-selected-color);
       --general-button-background-color: #27824F;
       --general-button-color: #ffffff;
       --general-switch-off-color: #AAA;
       --general-switch-on-color: #27824F;
+      --general-slider-color: var(--general-textfield-selected-color);
       --general-dialog-background-color: #ffffff;
       --general-font-family: 'Ubuntu', 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
@@ -254,6 +256,23 @@ export const BackendAiStyles = [
       background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
       --mdc-theme-primary: transparent; /* gradient-color doesn't work in mwc-button styling */
       --mdc-theme-on-primary: var(--general-button-color);
+    }
+
+
+    mwc-button.operation {
+      margin: 0px 5px;
+    }
+    
+    mwc-icon-button.pagination {
+      --mdc-icon-button-size: 30px;
+      --mdc-theme-text-disabled-on-light: var(--paper-grey-400);
+      color: var(--general-button-background-color);
+      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+    }
+
+    mwc-icon-button[disabled].pagination {
+      background-color: var(--paper-grey-100);
     }
 
     mwc-switch {
