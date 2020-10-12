@@ -8,8 +8,6 @@ import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-listbox/paper-listbox';
 import '@material/mwc-textfield/mwc-textfield';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
@@ -70,11 +68,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           border: 0;
           font-size: 14px;
           height: calc(100vh - 300px);
-        }
-
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
         }
 
         wl-icon.indicator {
@@ -285,13 +278,15 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           <h4 style="margin-bottom:0px;">${_t("resourcePolicy.Folders")}</h4>
           <div class="horizontal center layout">
             <div class="vertical layout">
-            <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
-              <paper-listbox slot="dropdown-content" selected="0">
+              <mwc-select id="allowed_vfolder-hosts" label="${_t("resourcePolicy.AllowedHosts")}">
                 ${this.allowed_vfolder_hosts.map(item => html`
-                  <paper-item value="${item}" style="margin: 0px 0px 1px 0px;">${item}</paper-item>
+                  <mwc-list-item class="owner-group-dropdown"
+                                 id="${item}"
+                                 value="${item}">
+                    ${item}
+                  </mwc-list-item>
                 `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
+              </mwc-select>
             </div>
             <div class="vertical layout" style="margin: 21px 15px 0;">
               <wl-label class="folders">${_t("resourcePolicy.Capacity")}(GB)</wl-label>
@@ -448,6 +443,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.idle_timeout['value'] = resourcePolicy.idle_timeout;
     this.container_per_session_limit['value'] = resourcePolicy.max_containers_per_session;
     this.vfolder_capacity['value'] = resourcePolicy.max_vfolder_size;
+    this.allowed_vfolder_hosts = resourcePolicy.allowed_vfolder_hosts;
 
     this._updateInputStatus(this.cpu_resource);
     this._updateInputStatus(this.ram_resource);
@@ -460,7 +456,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
     this.shadowRoot.querySelector('#vfolder-count-limit').value = resourcePolicy.max_vfolder_count;
     this.shadowRoot.querySelector('#vfolder-capacity-limit').value = resourcePolicy.max_vfolder_size;
-    this.shadowRoot.querySelector('#allowed_vfolder-hosts').value = resourcePolicy.allowed_vfolder_hosts[0];
+    this.shadowRoot.querySelector('#allowed_vfolder-hosts').layout(true).then( ()=>{
+      this.shadowRoot.querySelector('#allowed_vfolder-hosts').select(0);
+      this.shadowRoot.querySelector('#allowed_vfolder-hosts').value = resourcePolicy.allowed_vfolder_hosts[0];
+    });
     /* TODO: multiple vfolder hosts */
   }
 

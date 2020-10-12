@@ -281,7 +281,8 @@
     },
     "ProjectAndGroup": "프로젝트 및 그룹",
     "ModifyKeypairResourcePolicy": "키페어 자원 정책 수정",
-    "SelectPolicy": "자원 정책 선택"
+    "SelectPolicy": "자원 정책 선택",
+    "AllowedHosts": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "폴더",
@@ -507,7 +508,8 @@
     "ConcurrentJobs": "동시 실행 세션수",
     "Capacity": "용량",
     "Folders": "폴더",
-    "Name": "이름"
+    "Name": "이름",
+    "AllowedHosts": "허용된 호스트"
   },
   "registry": {
     "Hostname": "호스트명",

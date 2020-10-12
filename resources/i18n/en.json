@@ -284,7 +284,8 @@
     },
     "ProjectAndGroup": "Projects & Groups",
     "ModifyKeypairResourcePolicy": "Modify keypair resource policy",
-    "SelectPolicy": "Select Policy"
+    "SelectPolicy": "Select Policy",
+    "AllowedHosts": "Allowed Hosts"
   },
   "data": {
     "Folders": "Folders",
@@ -406,8 +407,8 @@
     "DescDeleteImage": "You are about to delete the image(s): ",
     "DescDownloadImage": "You are about to install the image(s): ",
     "DescSignificantDownloadTime": "This process requires significant download time.",
-    "Install":"Install",
-    "Delete":"Delete",
+    "Install": "Install",
+    "Delete": "Delete",
     "Installed": "installed",
     "Installing": "installing",
     "Status": "Status",
@@ -510,7 +511,8 @@
     "ConcurrentJobs": "Concurrent Jobs",
     "Capacity": "Capacity",
     "Folders": "Folders",
-    "Name": "Name"
+    "Name": "Name",
+    "AllowedHosts": "Allowed hosts"
   },
   "registry": {
     "Hostname": "Hostname",

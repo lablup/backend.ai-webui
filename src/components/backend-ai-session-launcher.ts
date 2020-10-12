@@ -1655,16 +1655,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.ownerGroups = [];
       return;
     }
-    this.shadowRoot.querySelector('#owner-accesskey').select(-1);
-    this.shadowRoot.querySelector('#owner-accesskey').select(0);
+    this.shadowRoot.querySelector('#owner-accesskey').layout(true).then(()=>{
+      this.shadowRoot.querySelector('#owner-accesskey').select(0);
+    });
 
     /* Fetch domain / group information */
     const userInfo = await globalThis.backendaiclient.user.get(email, ['domain_name', 'groups {id name}']);
     this.ownerDomain = userInfo.user.domain_name;
     this.ownerGroups = userInfo.user.groups;
     if (this.ownerGroups) {
-      this.shadowRoot.querySelector('#owner-group').select(-1);
-      this.shadowRoot.querySelector('#owner-group').select(0);
+      this.shadowRoot.querySelector('#owner-group').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#owner-group').select(0);
+      });
     }
   }
 
@@ -1677,8 +1679,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const sgroupInfo = await globalThis.backendaiclient.scalingGroup.list(group);
     this.ownerScalingGroups = sgroupInfo.scaling_groups;
     if (this.ownerScalingGroups) {
-      this.shadowRoot.querySelector('#owner-scaling-group').select(-1);
-      this.shadowRoot.querySelector('#owner-scaling-group').select(0);
+      this.shadowRoot.querySelector('#owner-scaling-group').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#owner-scaling-group').select(0);
+      });
     }
   }
 

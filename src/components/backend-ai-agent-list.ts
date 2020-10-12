@@ -62,11 +62,6 @@ export default class BackendAIAgentList extends BackendAIPage {
           height: calc(100vh - 200px);
         }
 
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
-
         wl-button > wl-icon {
           --icon-size: 24px;
           padding: 0;
