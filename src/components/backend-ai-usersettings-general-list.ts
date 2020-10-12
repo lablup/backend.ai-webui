@@ -198,7 +198,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         mwc-textarea {
-          --mdc-theme-primary: var(--paper-indigo-400);
+          --mdc-theme-primary: var(--general-sidebar-color);
         }
 
         mwc-icon-button {
@@ -936,9 +936,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
         </div>
         <div slot="footer" class="end-justified layout flex horizontal">
-          <wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">${_t("button.Cancel")}</wl-button>
+          <mwc-button id="discard-code" label="${_t("button.Cancel")}" @click="${() => this._hideBootstrapScriptDialog()}"></mwc-button>
+          <mwc-button unelevated id="save-code" label="${_t("button.Save")}" @click="${() => this._saveBootstrapScript()}"></mwc-button>
+          <mwc-button unelevated id="save-code-and-close" label="${_t("button.SaveAndClose")}" @click="${() => this._saveBootstrapScriptAndCloseDialog()}"></mwc-button>
+          <!--<wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">${_t("button.Cancel")}</wl-button>
           <wl-button id="save-code" class="button" @click="${() => this._saveBootstrapScript()}">${_t("button.Save")}</wl-button>
-          <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
+          <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
@@ -980,7 +983,22 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           ${_t("usersettings.DialogNoSaveNoPreserve")}
         </div>
         <div slot="footer" style="border-top:none;" class="end-justified layout flex horizontal">
-          <wl-button inverted flat id="cancel-editor" class="button"
+          <mwc-button
+              unelevated
+              id="cancel-editor"
+              label="${_t("button.No")}"
+              @click="${() => this._cancelCurrentEditorChange()}"></mwc-button>
+          <mwc-button
+              unelevated
+              id="discard-editor-data"
+              label="${_t("button.No")}"
+              @click="${() => this._discardCurrentEditorChange()}"></mwc-button>
+          <mwc-button
+              unelevated
+              id="save-editor-data"
+              label="${_t("button.No")}"
+              @click="${() => this._saveCurrentEditorChange()}"></mwc-button>
+          <!--<wl-button inverted flat id="cancel-editor" class="button"
                      style="margin: 0 10px;"
                      @click="${() => this._cancelCurrentEditorChange()}">
                      ${_t("button.Cancel")}</wl-button>
@@ -991,21 +1009,31 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <wl-button id="save-editor-data"
                      style="margin: 0 10px;"
                      @click="${() => this._saveCurrentEditorChange()}">
-                     ${_t("button.Save")}</wl-button>
+                     ${_t("button.Save")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="ssh-keypair-management-dialog" fixed backdrop persistent>
         <span slot="title">${_t("usersettings.SSHKeypairManagement")}</span>
         <div slot="content" style="max-width:500px">
           <span slot="title"> ${_t("usersettings.CurrentSSHPublicKey")}</span>
-          <mwc-textarea class="ssh-keypair" style="width:450px; height:270px;" id="current-ssh-public-key" outlined readonly></mwc-textarea>
-          <wl-button class="copy" @click="${() => this._copySSHKey("#current-ssh-public-key")}">
+          <mwc-textarea class="ssh-keypair" style="width:435px; height:270px;" id="current-ssh-public-key" outlined readonly></mwc-textarea>
+          <mwc-icon-button
+              icon="content_copy"
+              @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+          <!--<wl-button class="copy" @click="${() => this._copySSHKey("#current-ssh-public-key")}">
             <wl-icon>content_copy</wl-icon>
-          </wl-button>
+          </wl-button>-->
         </div>
         <div slot="footer">
-          <wl-button class="cancel" inverted flat @click="${this._hideSSHKeypairDialog}">${_t("button.Close")}</wl-button>
-          <wl-button class="ok" @click="${this._refreshSSHKeypair}">${_t("button.Generate")}</wl-button>
+          <mwc-button
+              label="${_t("button.Close")}"
+              @click="${this._hideSSHKeypairDialog}"></mwc-button>
+          <mwc-button
+              unelevated
+              label="${_t("button.Generate")}"
+              @click="${this._refreshSSHKeypair}"></mwc-button>
+          <!--<wl-button class="cancel" inverted flat @click="${this._hideSSHKeypairDialog}">${_t("button.Close")}</wl-button>
+          <wl-button class="ok" @click="${this._refreshSSHKeypair}">${_t("button.Generate")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="generate-ssh-keypair-dialog" fixed persistent noclosebutton>
@@ -1015,29 +1043,47 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <span slot="title">${_t("usersettings.PublicKey")}</span>
             <div class="horizontal layout flex">
               <mwc-textarea class="ssh-keypair" id="ssh-public-key" outlined readonly></mwc-textarea>
-              <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-public-key")}">
+              <mwc-icon-button
+              icon="content_copy"
+              @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+              <!--<wl-button class="copy" @click="${() => this._copySSHKey("#ssh-public-key")}">
                 <wl-icon>content_copy</wl-icon>
-              </wl-button>
+              </wl-button>-->
             </div>
             <span slot="title">${_t("usersettings.PrivateKey")}</span>
             <div class="horizontal layout flex">
               <mwc-textarea class="ssh-keypair" id="ssh-private-key" outlined readonly></mwc-textarea>
-              <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-private-key")}">
+              <mwc-icon-button
+                  icon="content_copy"
+                  @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+              <!--<wl-button class="copy" @click="${() => this._copySSHKey("#ssh-private-key")}">
                 <wl-icon>content_copy</wl-icon>
-              </wl-button>
+              </wl-button>-->
             </div>
             <div style="color:crimson">${_t("usersettings.SSHKeypairGenerationWarning")}</div>
           </div>
         </div>
         <div slot="footer">
-          <wl-button class="ok" @click="${this._openSSHKeypairClearDialog}">${_t("button.Close")}</wl-button>
+          <mwc-button
+             unelevated
+             label="${_t("button.Close")}"
+             @click="${this._openSSHKeypairClearDialog}"></mwc-button>
+             <!--<wl-button class="ok" @click="${this._openSSHKeypairClearDialog}">${_t("button.Close")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="clear-ssh-keypair-dialog" fixed persistent>
         <span slot="title">${_t("usersettings.ClearSSHKeypairInput")}</span>
         <div slot="footer">
-          <wl-button class="cancel" inverted flat @click="${this._hideSSHKeypairClearDialog}">${_t("button.No")}</wl-button>
-          <wl-button class="ok" @click="${this._clearCurrentSSHKeypair}">${_t("button.Yes")}</wl-button>
+          <mwc-button
+              outlined
+              label="${_t("button.No")}"
+              @click="${this._hideSSHKeypairClearDialog}"></mwc-button>
+          <mwc-button
+              unelevated
+              label="${_t("button.Yes")}"
+              @click="${this._clearCurrentSSHKeypair}"></mwc-button>
+          <!--<wl-button class="cancel" inverted flat @click="${this._hideSSHKeypairClearDialog}">${_t("button.No")}</wl-button>-->
+          <!--<wl-button class="ok" @click="${this._clearCurrentSSHKeypair}">${_t("button.Yes")}</wl-button>-->
         </div>
       </backend-ai-dialog>
     `;

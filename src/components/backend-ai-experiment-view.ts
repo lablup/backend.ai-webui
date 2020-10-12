@@ -22,6 +22,8 @@ import 'weightless/tab-group';
 import 'weightless/list-item';
 import 'weightless/divider';
 
+import '@material/mwc-button';
+
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
@@ -467,10 +469,15 @@ export default class BackendAIExperimentView extends BackendAIPage {
                   <wl-title level="4" style="margin: 0">TensorFlow Serving</wl-title>
                   <div style="font-size: 11px;max-width:450px;">TensorFlow Serving is a flexible, high-performance serving system for machine learning models, designed for production environments.</div>
                 </wl-list-item>
-                <wl-button class="fg blue button" id="launch-session" outlined>
+                <mwc-button
+                    outliend
+                    id="launch-session"
+                    icon="add"
+                    label="Add component"></mwc-button>
+                <!--<wl-button class="fg blue button" id="launch-session" outlined>
                   <wl-icon>add</wl-icon>
                   Add component
-                </wl-button>
+                </wl-button>-->
             </div>
           </div>
         </div>

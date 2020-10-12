@@ -1556,22 +1556,34 @@ export default class BackendAiSessionList extends BackendAIPage {
             ` : html``}
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
-        <wl-button class="pagination" id="previous-page"
+      <mwc-icon-button
+      class="pagination"
+      id="previous-page"
+      icon="navigate_before"
+      ?disabled="${this.current_page === 1}"
+      @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
+        <!--<wl-button class="pagination" id="previous-page"
                    ?disabled="${this.current_page === 1}"
                    @click="${(e) => {
       this._updateSessionPage(e)
     }}">
           <wl-icon class="pagination">navigate_before</wl-icon>
-        </wl-button>
+        </wl-button>-->
         <wl-label style="padding-top: 5px; width:auto; text-align:center;">
         ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</wl-label>
-        <wl-button class="pagination" id="next-page"
+        <mwc-icon-button
+        class="pagination"
+        id="next-page"
+        icon="navigate_next"
+        ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
+        @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
+        <!--<wl-button class="pagination" id="next-page"
                    ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
                    @click="${(e) => {
       this._updateSessionPage(e)
     }}">
           <wl-icon class="pagination">navigate_next</wl-icon>
-        </wl-button>
+        </wl-button>-->
       </div>
       <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
         <span slot="title" id="work-title"></span>

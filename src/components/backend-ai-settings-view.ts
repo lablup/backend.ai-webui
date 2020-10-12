@@ -85,6 +85,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
           margin-right: 5px;
         }
 
+        div.title {
+          font-size: 12px;
+          font-weight: bold;
+        }
+
         div.description,
         span.description {
           font-size: 11px;
@@ -168,7 +173,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           <div slot="message" class="vertical wrap layout">
             <div class="horizontal layout flex setting-item">
               <div class="vertical center-justified layout setting-desc">
-                <div>${_t("settings.RegisterNewImagesFromRepo")}</div>
+                <div class="title">${_t("settings.RegisterNewImagesFromRepo")}</div>
                 <div class="description">${_t("settings.DescRegisterNewImagesFromRepo")}
                 </div>
               </div>
@@ -179,7 +184,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
             </div>
             <div class="vertical layout flex setting-item">
               <div class="vertical center-justified layout setting-desc">
-                <div>${_t("settings.ImagePullBehavior")}</div>
+                <div class="title">${_t("settings.ImagePullBehavior")}</div>
                 <div class="description">${_tr("settings.DescImagePullBehavior")}<br />
                     ${_t("settings.Require2003orAbove")}
                 </div>
@@ -203,7 +208,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           <div slot="message" class="vertical center layout">
             <div class="horizontal layout flex setting-item">
               <div class="vertical center-justified layout setting-desc">
-                <div>${_t("settings.UseCLIonGUI")}</div>
+                <div class="title">${_t("settings.UseCLIonGUI")}</div>
                 <div class="description">${_tr("settings.DescUseCLIonGUI")}
                 </div>
               </div>
@@ -214,7 +219,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
             </div>
             <div class="horizontal layout flex setting-item">
               <div class="vertical center-justified layout setting-desc">
-                <div>${_t("settings.UseGUIonWeb")}</div>
+                <div class="title">${_t("settings.UseGUIonWeb")}</div>
                 <div class="description">${_tr("settings.DescUseGUIonWeb")}
                 </div>
               </div>
@@ -240,7 +245,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
               <div class="horizontal wrap layout">
                 <div class="horizontal layout wrap setting-item">
                   <div class="vertical center-justified layout" style="width:275px;">
-                    <div>${_t("settings.AllowAgentSideRegistration")}</div>
+                    <div class="title">${_t("settings.AllowAgentSideRegistration")}</div>
                     <div class="description">${_tr("settings.DescAllowAgentSideRegistration")}
                     </div>
                   </div>
@@ -258,7 +263,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                 <div class="horizontal layout wrap">
                   <div class="horizontal layout flex setting-item">
                     <div class="vertical center-justified layout setting-desc-shrink">
-                      <div>${_t("settings.CUDAGPUsupport")}</div>
+                      <div class="title">${_t("settings.CUDAGPUsupport")}</div>
                       <div class="description">${_tr("settings.DescCUDAGPUsupport")}
                         ${this.options['cuda_fgpu'] ? html`<br />${_t("settings.CUDAGPUdisabledByFGPUsupport")}` : html``}
                       </div>
@@ -270,7 +275,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                   </div>
                   <div class="horizontal layout flex setting-item">
                     <div class="vertical center-justified layout setting-desc">
-                      <div>${_t("settings.ROCMGPUsupport")}</div>
+                      <div class="title">${_t("settings.ROCMGPUsupport")}</div>
                       <div class="description">${_tr("settings.DescROCMGPUsupport")}<br />${_t("settings.Require1912orAbove")}
                       </div>
                     </div>
@@ -282,7 +287,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                 </div>
                 <div class="horizontal layout flex setting-item">
                   <div class="vertical center-justified layout" style="width:275px;">
-                    <div>${_t("settings.Scheduler")}</div>
+                    <div class="title">${_t("settings.Scheduler")}</div>
                     <div class="description">${_t("settings.JobScheduler")}<br/>
                         ${_t("settings.Require1912orAbove")}
                     </div>
@@ -313,7 +318,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                 <div class="horizontal wrap layout">
                   <div class="horizontal layout flex setting-item">
                     <div class="vertical center-justified layout setting-desc-shrink">
-                      <div>${_t("settings.FractionalGPU")}</div>
+                      <div class="title">${_t("settings.FractionalGPU")}</div>
                       <div class="description">${_t("settings.DescFractionalGPU")} <br/> ${_t("settings.RequireFGPUPlugin")}
                       </div>
                     </div>
@@ -324,7 +329,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                   </div>
                   <div class="horizontal layout flex setting-item">
                     <div class="vertical center-justified layout setting-desc">
-                      <div>${_t("settings.TPU")}</div>
+                      <div class="title">${_t("settings.TPU")}</div>
                       <div class="description">${_t("settings.DescTPU")} <br/>${_t("settings.RequireTPUPlugin")}
                       </div>
                     </div>

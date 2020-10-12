@@ -13,6 +13,7 @@ import './lablup-loading-spinner';
 import 'weightless/card';
 import 'weightless/icon';
 
+import '@material/mwc-button';
 import '@material/mwc-linear-progress/mwc-linear-progress';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
@@ -148,6 +149,13 @@ export default class BackendAISummary extends BackendAIPage {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
           --mdc-theme-primary: #98be5a;
+        }
+
+        mwc-button, mwc-button[unelevated], mwc-button[outlined] {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-typography-font-family: var(--general-font-family);
         }
 
         wl-button[class*="green"] {
@@ -406,7 +414,7 @@ export default class BackendAISummary extends BackendAIPage {
     globalThis.backendaiclient.vfolder.delete_invitation(invitation.id)
       .then(res => {
         panel.setAttribute('disabled', 'true');
-        panel.querySelectorAll('wl-button').forEach((btn) => {
+        panel.querySelectorAll('mwc-button').forEach((btn) => {
           btn.setAttribute('disabled', 'true');
         });
         this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
@@ -482,21 +490,31 @@ export default class BackendAISummary extends BackendAIPage {
                               description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;})}
                 </div>
                 <div style="margin-top:25px;" class="horizontal layout justified">
-                  <wl-button
+                  <mwc-button
+                      unelevated
+                      icon="add"
+                      label="${_t('summary.Accept')}"
+                      @click="${e => this._acceptInvitation(e, invitation)}"></mwc-button>
+                  <!--<wl-button
                     class="fg green"
                     outlined
                     @click=${e => this._acceptInvitation(e, invitation)}>
                       <wl-icon>add</wl-icon>
                     ${_t('summary.Accept')}
-                  </wl-button>
+                  </wl-button>-->
                   <span class="flex"></span>
-                  <wl-button
+                  <mwc-button
+                      outlined
+                      icon="remove"
+                      label="${_t('summary.Decline')}"
+                      @click="${e => this._deleteInvitation(e, invitation)}"></mwc-button>
+                  <!--<wl-button
                     class="fg red"
                     outlined
                     @click=${e => this._deleteInvitation(e, invitation)}>
                       <wl-icon>remove</wl-icon>
                     ${_t('summary.Decline')}
-                  </wl-button>
+                  </wl-button>-->
                 </div>
               </div>
             </lablup-activity-panel>

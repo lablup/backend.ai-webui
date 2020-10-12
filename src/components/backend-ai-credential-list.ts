@@ -9,7 +9,6 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -20,6 +19,11 @@ import 'weightless/button';
 import 'weightless/label';
 import 'weightless/select';
 import 'weightless/textfield';
+
+import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-select/mwc-select';
+import '@material/mwc-list/mwc-list-item';
 
 import './backend-ai-dialog';
 import '../plastics/lablup-shields/lablup-shields';
@@ -150,6 +154,24 @@ export default class BackendAICredentialList extends BackendAIPage {
 
         backend-ai-dialog {
           --component-min-width: 400px;
+        }
+
+        mwc-button, mwc-button[unelevated], mwc-button[outlined] {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-typography-font-family: var(--general-font-family);
+        }
+
+        mwc-select {
+          --mdc-theme-primary: var(--general-sidebar-color);
+        }
+
+        mwc-textfield {
+          width: 100%;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
         }
       `];
   }
@@ -748,9 +770,19 @@ export default class BackendAICredentialList extends BackendAIPage {
 
         <div slot="content" class="vertical layout">
           <div class="vertical layout center-justified gutterBottom">
-            <wl-label>
-              Resource Policy
-              <wl-select id="policy-list" label="${_t('credential.SelectPolicy')}">
+            <!--<wl-label>-->
+              <h3>${_t("credential.ResourcePolicy")}</h3>
+              <mwc-select
+                  id="policy-list"
+                  label="${_t('credential.SelectPolicy')}">
+                  ${Object.keys(this.resourcePolicy).map(rp =>
+                    html`
+                      <mwc-list-item value=${this.resourcePolicy[rp].name}>
+                        ${this.resourcePolicy[rp].name}
+                      </mwc-list-item>`
+                  )}
+              </mwc-select>
+              <!--<wl-select id="policy-list" label="${_t('credential.SelectPolicy')}">
                 ${Object.keys(this.resourcePolicy).map(rp =>
       html`
                     <option value=${this.resourcePolicy[rp].name}>
@@ -758,24 +790,36 @@ export default class BackendAICredentialList extends BackendAIPage {
                     </option>
                   `
     )}
-              </wl-select>
-            </wl-label>
+              </wl-select>-->
+            <!--</wl-label>-->
           </div>
           <div class="vertical layout center-justified gutterBottom">
-            <wl-label>
-              Rate Limit
-              <wl-textfield
+            <!--<wl-label>->
+            <h3>${_t("credential.RateLimit")}</h3>
+            <mwc-textfield
+                type="number"
+                id="rate-limit"
+                min="1"
+                label="${_t('credential.RateLimit')}"
+                value="${this.keypairInfo.rate_limit}"></mwc-textfield>
+              <!--<wl-textfield
                 type="number"
                 id="rate-limit"
                 min="1"
                 label="${_t('credential.RateLimit')}"
                 value="${this.keypairInfo.rate_limit}"
-              ></wl-textfield>
-            </wl-label>
+              ></wl-textfield>-->
+            <!--</wl-label>-->
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button
+          <mwc-button
+              outlined
+              id="keypair-modify-save"
+              icon="check"
+              label="${_t('button.SaveChanges')}"
+              @click="${e => this._saveKeypairModification(e)}"></mwc-button>
+          <!--<wl-button
             id="keypair-modify-save"
             class="fg green"
             outlined
@@ -783,7 +827,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           >
             <wl-icon>check</wl-icon>
             ${_t('button.SaveChanges')}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
     `;

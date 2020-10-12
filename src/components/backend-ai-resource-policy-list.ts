@@ -11,6 +11,7 @@ import {render} from 'lit-html';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox/paper-listbox';
 import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-button/mwc-button';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -153,11 +154,20 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         mwc-textfield {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-green-600);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
+        }
+
+        mwc-button, mwc-button[unelevated] {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-typography-font-family: var(--general-font-family);
         }
 
         backend-ai-dialog {
-          --component-min-width: 400px;
+          --component-min-width: 350px;
+          --component-max-width: 390px;
         }
       `];
   }
@@ -308,11 +318,16 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="fg blue create-button" id="create-policy-button" type="button"
+          <mwc-button
+              unelevated
+              id="create-policy-button"
+              label="${_t("button.Update")}"
+              @click="${() => this._modifyResourcePolicy()}"></mwc-button>
+          <!--<wl-button class="fg blue create-button" id="create-policy-button" type="button"
             outlined @click="${() => this._modifyResourcePolicy()}">
             <wl-icon>add</wl-icon>
             ${_t("button.Update")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
     `;

@@ -158,10 +158,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           margin: 0px 10px;
         }
 
-        mwc-button.operation {
-          margin: 0px 5px;
-        }
-
         .outer-space {
           margin: 20px;
         }

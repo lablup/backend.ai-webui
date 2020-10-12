@@ -137,10 +137,14 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button outlined flat class="fg green mini flex" type="button"
+          <mwc-button
+              raised
+              label="${_t("login.Login")}"
+              @click="${() => this._redirectToLoginPage()}"></mwc-button>
+          <!--<wl-button outlined flat class="fg green mini flex" type="button"
               @click="${() => this._redirectToLoginPage()}">
             ${_t("login.Login")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
 
@@ -159,10 +163,14 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button outlined flat class="fg red mini flex" type="button"
+          <mwc-button
+              unelevated
+              label="${_t("signup.SendEmail")}"
+              @click="${() => this.sendVerificationCode()}"></mwc-button>
+          <!--<wl-button outlined flat class="fg red mini flex" type="button"
               @click="${() => this.sendVerificationCode()}">
             ${_t("signup.SendEmail")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
     `;

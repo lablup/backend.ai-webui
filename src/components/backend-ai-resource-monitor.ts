@@ -6,9 +6,9 @@ import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-item/paper-item';
+/* mport '@polymer/paper-listbox/paper-listbox'; */
+/* import '@polymer/paper-dropdown-menu/paper-dropdown-menu'; */
+/* import '@polymer/paper-item/paper-item'; */
 
 import '@material/mwc-select';
 import '../plastics/mwc/mwc-multi-select';
@@ -188,6 +188,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           padding-left: 10px;
         }
 
+        span.resource-legend {
+          color: var(--general-sidebar-color);
+          margin-right: 5px;
+        }
+
+        div.resource-legend-icon {
+          width:10px;
+          height: 10px;
+          margin-left: 10px;
+          margin-right: 3px;
+          border-radius: 4px;
+        }
         div.caption {
           font-size: 12px;
           width: 100px;
@@ -942,12 +954,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       ${this.direction === 'vertical' ? html`
       <div class="vertical start-justified layout ${this.direction}-card">
         <div class="layout horizontal center start-justified">
-          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#4775E3;border-radius:4px;"></div>
-          <span style="margin-right:5px;">${_t('session.launcher.CurrentResourceGroup')} (${this.scaling_group})</span>
+          <div class="resource-legend-icon" style="background-color:#4775E3;"></div>
+          <span class="resource-legend">${_t('session.launcher.CurrentResourceGroup')} (${this.scaling_group})</span>
         </div>
         <div class="layout horizontal center start-justified">
-          <div style="width:10px;height:10px;margin-left:10px;margin-right:3px;background-color:#A0BD67;border-radius:4px;"></div>
-          <span style="margin-right:5px;">${_t('session.launcher.UserResourceLimit')}</span>
+          <div class="resource-legend-icon" style="background-color:#A0BD67;"></div>
+          <span class="resource-legend">${_t('session.launcher.UserResourceLimit')}</span>
         </div>
       </div>
       ` : html``}

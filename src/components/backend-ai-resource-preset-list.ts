@@ -17,8 +17,8 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
-import '@material/mwc-textfield';
-import '@material/mwc-button';
+import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-button/mwc-button';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -126,8 +126,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
           margin-top: 15px;
         }
 
-        wl-card {
-          margin: 0;
+        h4 {
+          font-weight: 200;
+          font-size: 14px;
+          margin: 0px;
+          padding: 5px 15px 5px 20px;
         }
       `];
   }
@@ -214,7 +217,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-card>
+      <div style="margin:0px;">
         <h4 class="horizontal flex center center-justified layout">
           <span>${_t("resourcePreset.ResourcePresets")}</span>
           <span class="flex"></span>
@@ -247,7 +250,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
             </vaadin-grid-column>
           </vaadin-grid>
         </div>
-      </wl-card>
+      </div>
       <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("resourcePreset.ModifyResourcePreset")}</span>
         <div slot="content" class="login-panel intro centered">
@@ -278,11 +281,18 @@ class BackendAiResourcePresetList extends BackendAIPage {
                     validationMessage="${_t("resourcePreset.MinimumShmemUnit")}"></mwc-textfield>
               </div>
               <br/><br/>
-              <wl-button class="fg orange create-button full-size" outlined type="button"
+              <mwc-button
+                  unelevated
+                  icon="check"
+                  label="${_t("button.SaveChanges")}"
+                  style="width:100%;"
+                  @click="${() => this._modifyResourceTemplate()}">
+              </mwc-button>
+              <!--<wl-button class="fg orange create-button full-size" outlined type="button"
                 @click="${() => this._modifyResourceTemplate()}">
                 <wl-icon>check</wl-icon>
                 ${_t("button.SaveChanges")}
-              </wl-button>
+              </wl-button>-->
             </fieldset>
           </form>
         </div>
@@ -321,7 +331,14 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button
+          <mwc-button
+              unelevated
+              id="create-policy-button"
+              icon="add"
+              label="${_t("button.Add")}"
+              @click="${this._createPreset}">
+          </mwc-button>
+          <!--<wl-button
             class="fg orange create-button full-size"
             id="create-policy-button"
             outlined
@@ -330,7 +347,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           >
             <wl-icon>add</wl-icon>
             ${_t("button.Add")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
@@ -341,8 +358,17 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <p>${_t("dialog.warning.CannotBeUndone")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout">
-            <wl-button class="fg orange cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
-            <wl-button class="fg orange ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">${_t("button.Okay")}</wl-button>
+         <mwc-button
+              class="operation"
+              label="${_t("button.Cancel")}"
+              @click="${(e) => this._hideDialog(e)}"></mwc-button>
+          <mwc-button
+              unelevated
+              class="operation"
+              label="${_t("button.Okay")}"
+              @click="${(e) => this._deleteResourcePresetWithCheck(e)}"></mwc-button>
+            <!--<wl-button class="fg orange cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
+            <wl-button class="fg orange ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">${_t("button.Okay")}</wl-button>-->
          </div>
       </backend-ai-dialog>
     `;

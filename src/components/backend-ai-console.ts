@@ -12,6 +12,7 @@ import {store} from '../store';
 
 import {navigate, updateOffline} from '../backend-ai-app';
 
+import '@material/mwc-button/mwc-button';
 import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-icon';
@@ -1160,8 +1161,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
-          <wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>
-          <wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>
+            <mwc-button
+                label="${_t("console.menu.Cancel")}"
+                @click="${this._hideUserPrefDialog}"></mwc-button>
+            <mwc-button
+                unelevated
+                label="${_t("console.menu.Update")}"
+                @click="${this._updateUserPassword}"></mwc-button>
+          <!--<wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>-->
+          <!--<wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>

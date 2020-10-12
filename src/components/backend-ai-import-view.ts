@@ -64,7 +64,7 @@ export default class BackendAIImport extends BackendAIPage {
       css`
         div.description {
           font-size: 14px;
-          color: var(--general-textfield-selected-color);
+          color: var(--general-sidebar-color);
         }
 
         #session-launcher {

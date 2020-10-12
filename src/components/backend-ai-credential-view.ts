@@ -213,15 +213,16 @@ export default class BackendAICredentialView extends BackendAIPage {
         wl-checkbox {
           --checkbox-size: 10px;
           --checkbox-border-radius: 2px;
-          --checkbox-bg-checked: var(--paper-green-800);
-          --checkbox-checkmark-stroke-color: var(--paper-lime-100);
-          --checkbox-color-checked: var(--paper-green-800);
+          --checkbox-bg-checked: var(--general-checkbox-color);
+          --checkbox-checkmark-stroke-color: white;
+          --checkbox-color-checked: white;
         }
 
         mwc-textfield {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-green-600);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
         }
 
         mwc-textfield#export-file-name {
@@ -230,12 +231,6 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         #new-user-dialog wl-textfield {
           margin-bottom: 15px;
-        }
-
-        mwc-textfield {
-          width: 100%;
-          --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-green-600);
         }
 
         mwc-menu {
@@ -258,6 +253,7 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         backend-ai-dialog {
           --component-min-width: 350px;
+          --component-max-width: 390px;
         }
 
         #allowed_vfolder-hosts {
@@ -978,8 +974,9 @@ export default class BackendAICredentialView extends BackendAIPage {
         <span slot="title">${_t("credential.AddCredential")}</span>
         <div slot="content">
           <div class="vertical center-justified layout center">
-            <wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="${_t("credential.UserIDAsEmail")}"
-                        auto-validate></wl-textfield>
+            <mwc-textfield type="email" name="new_user_id" id="id_new_user_id" label="${_t("credential.UserIDAsEmail")}" autoValidate></mwc-textfield>
+            <!--<wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="${_t("credential.UserIDAsEmail")}"
+                        auto-validate></wl-textfield>-->
             <mwc-select outlined id="resource-policy" label="${_t("credential.ResourcePolicy")}" style="width:100%;">
               ${this.resource_policy_names.map(item => html`
                 <mwc-list-item value="${item}">${item}</mwc-list-item>
@@ -1009,11 +1006,26 @@ export default class BackendAICredentialView extends BackendAIPage {
             <wl-expansion name="advanced-keypair-info" style="width:100%;">
               <span slot="title">${_t("general.Advanced")}</span>
               <span slot="description"></span>
-              <wl-textfield type="text" name="new_access_key" id="id_new_access_key" label="Access Key (optional)"
+              <div class="vertical layout center">
+              <mwc-textfield
+                  type="text"
+                  name="new_access_key"
+                  id="id_new_access_key"
+                  label="${_t("credential.UserIDAsEmail")}"
+                  autoValidate></mwc-textfield>
+              <mwc-textfield
+                  type="text"
+                  name="new_access_key"
+                  id="id_new_access_key"
+                  label="${_t("credential.AccessKeyOptional")}"
+                  autoValidate
+                  .value="${this.new_access_key}"><mwc-textfield>
+              </div>
+              <!--<wl-textfield type="text" name="new_access_key" id="id_new_access_key" label="${_t("credential.AccessKeyOptional")}"
                             auto-validate .value="${this.new_access_key}">
               </wl-textfield>
-              <wl-textfield type="text" name="new_secret_key" id="id_new_secret_key" label="Secret Key (optional)"
-                            auto-validate .value="${this.new_secret_key}">
+              <wl-textfield type="text" name="new_secret_key" id="id_new_secret_key" label="${_t("credential.SecretKeyOptional")}"
+                            auto-validate .value="${this.new_secret_key}">-->
               </wl-textfield>
             </wl-expansion>
           </div>
@@ -1194,11 +1206,17 @@ export default class BackendAICredentialView extends BackendAIPage {
           ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
+          <mwc-button
+              unelevated
+              style="width:100%;"
+              icon="get_app"
+              label="${_t("credential.ExportCSVFile")}"
+              @click="${this._exportToCSV}"></mwc-button>
+          <!--<wl-button class="fg green" type="button" inverted outlined style="width:100%;"
           @click="${this._exportToCSV}">
             <wl-icon>get_app</wl-icon>
             ${_t("credential.ExportCSVFile")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
     `;

@@ -7,6 +7,7 @@ import {css, customElement, html, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
+import '@material/mwc-button';
 import '@material/mwc-textfield';
 import '@material/mwc-icon-button-toggle';
 import './lablup-terms-of-service';
@@ -113,6 +114,29 @@ export default class BackendAiSignup extends BackendAIPage {
             --mdc-text-field-fill-color: transparent;
           }
 
+          mwc-button.full {
+            width: 335px;
+          }
+
+          mwc-button {
+            background-image: none;
+            --mdc-theme-primary: var(--general-button-background-color);
+            --mdc-on-theme-primary: var(--general-button-background-color);
+          }
+  
+          mwc-button[unelevated] {
+            background-image: none;
+            --mdc-theme-primary: var(--general-button-background-color);
+          }
+  
+          mwc-button[outlined] {
+            background-image: none;
+            --mdc-button-outline-width: 2px;
+            --mdc-button-disabled-outline-color: var(--general-button-background-color);
+            --mdc-button-disabled-ink-color: var(--general-button-background-color);
+            --mdc-theme-primary: var(--general-button-background-color);
+            --mdc-on-theme-primary: var(--general-button-background-color);
+          }
       `];
   }
 
@@ -455,10 +479,17 @@ export default class BackendAiSignup extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <wl-button class="full" id="signup-button" outlined type="button"
+          <mwc-button
+              raised
+              class="full"
+              icon="check"
+              @click="${() => this._signup()}">
+                <span id="signup-button-message">${_t("signup.Signup")}</span>
+          </mwc-button>
+          <!--<wl-button class="full" id="signup-button" outlined type="button"
                       @click="${() => this._signup()}">
                       <wl-icon>check</wl-icon>
-                      <span id="signup-button-message">${_t("signup.Signup")}</span></wl-button>
+                      <span id="signup-button-message">${_t("signup.Signup")}</span></wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="block-panel" fixed type="error" backdrop blockscrolling persistent>
@@ -473,9 +504,13 @@ export default class BackendAiSignup extends BackendAIPage {
           <p style="max-width:350px">${_t("signup.VerificationMessage")}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="ok" @click="${(e) => {
+          <mwc-button
+              unelevated
+              label="${_t("button.Okay")}"
+              @click="${(e) => e.target.closest('backend-ai-dialog').hide()}"></mwc-button>
+          <!--<wl-button class="ok" @click="${(e) => {
       e.target.closest('backend-ai-dialog').hide()
-    }}">${_t("button.Okay")}</wl-button>
+    }}">${_t("button.Okay")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <lablup-terms-of-service id="terms-of-service"></lablup-terms-of-service>
