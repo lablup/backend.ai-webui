@@ -6,10 +6,6 @@ import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-/* mport '@polymer/paper-listbox/paper-listbox'; */
-/* import '@polymer/paper-dropdown-menu/paper-dropdown-menu'; */
-/* import '@polymer/paper-item/paper-item'; */
-
 import '@material/mwc-select';
 import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-list/mwc-list-item';

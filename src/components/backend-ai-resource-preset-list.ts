@@ -9,9 +9,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-listbox/paper-listbox';
-
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
@@ -58,14 +55,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
           border: 0;
           font-size: 14px;
           height: calc(100vh - 225px);
-        }
-
-        paper-dropdown-menu {
-        }
-
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
         }
 
         wl-button > wl-icon {

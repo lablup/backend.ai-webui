@@ -8,11 +8,8 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-item/paper-item';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@material/mwc-textfield';
 import '@material/mwc-list/mwc-list';
@@ -1340,7 +1337,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _enqueueFolder(e) {
     const button = e.target;
-    
+
     // disable button to avoid executing extra onclick event
     button.setAttribute('disabled', 'true');
     const fn = e.target.getAttribute('name');

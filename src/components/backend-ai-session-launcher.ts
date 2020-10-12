@@ -7,10 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-item/paper-item';
-
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
@@ -418,6 +414,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 40px;
         }
 
+        mwc-textfield {
+          font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
+        }
+
         mwc-select {
           width: 100%;
           font-family: var(--general-font-family);
@@ -441,6 +442,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         mwc-select#scaling-groups {
+          margin-right: 0;
+          padding-right: 0;
+          width: 50%;
+          --mdc-select-min-width: 190px;
+        }
+
+        mwc-select#owner-group {
+          margin-right: 0;
+          padding-right: 0;
+          width: 50%;
+          --mdc-select-min-width: 190px;
+        }
+        mwc-select#owner-scaling-group {
           margin-right: 0;
           padding-right: 0;
           width: 50%;
@@ -829,10 +843,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     config['maxWaitSeconds'] = 10;
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     if (ownerEnabled && ownerEnabled.checked) {
-      config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
+      config['group_name'] = this.shadowRoot.querySelector('#owner-group').value;
       config['domain'] = this.ownerDomain;
-      config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').selectedItemLabel;
-      config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').selectedItemLabel;
+      config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').value;
+      config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').value;
       if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
         this.notification.text = _text("session.launcher.NotEnoughOwnershipInfo");
         this.notification.show();
@@ -1637,7 +1651,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   async _fetchSessionOwnerGroups() {
     if (!this.ownerFeatureInitialized) {
-      this.shadowRoot.querySelector('#owner-group').addEventListener('selected-item-label-changed', this._fetchSessionOwnerScalingGroups.bind(this));
+      this.shadowRoot.querySelector('#owner-group').addEventListener('selected', this._fetchSessionOwnerScalingGroups.bind(this));
       this.ownerFeatureInitialized = true;
     }
     const ownerEmail = this.shadowRoot.querySelector('#owner-email');
@@ -1660,19 +1674,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.ownerGroups = [];
       return;
     }
-    this.shadowRoot.querySelector('#owner-accesskey paper-listbox').selected = this.ownerKeypairs[0].access_key;
+    this.shadowRoot.querySelector('#owner-accesskey').layout(true).then(()=>{
+      this.shadowRoot.querySelector('#owner-accesskey').select(0);
+    });
 
     /* Fetch domain / group information */
     const userInfo = await globalThis.backendaiclient.user.get(email, ['domain_name', 'groups {id name}']);
     this.ownerDomain = userInfo.user.domain_name;
     this.ownerGroups = userInfo.user.groups;
     if (this.ownerGroups) {
-      this.shadowRoot.querySelector('#owner-group paper-listbox').selected = this.ownerGroups[0].name;
+      this.shadowRoot.querySelector('#owner-group').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#owner-group').select(0);
+      });
     }
   }
 
   async _fetchSessionOwnerScalingGroups() {
-    const group = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
+    const group = this.shadowRoot.querySelector('#owner-group').value;
     if (!group) {
       this.ownerScalingGroups = [];
       return;
@@ -1680,7 +1698,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const sgroupInfo = await globalThis.backendaiclient.scalingGroup.list(group);
     this.ownerScalingGroups = sgroupInfo.scaling_groups;
     if (this.ownerScalingGroups) {
-      this.shadowRoot.querySelector('#owner-scaling-group paper-listbox').selected = 0;
+      this.shadowRoot.querySelector('#owner-scaling-group').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#owner-scaling-group').select(0);
+      });
     }
   }
 
@@ -2030,7 +2050,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
         </wl-expansion>
 
-        <wl-expansion name="ownership" style="--expansion-header-padding:16px;">
+        <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
           <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.SetSessionOwner")}</span>
           <span slot="description"></span>
           <div class="vertical layout">
@@ -2042,31 +2062,36 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 @click="${() => this._fetchSessionOwnerGroups()}">
               </mwc-icon-button>
             </div>
-            <paper-dropdown-menu id="owner-accesskey" label="${_t("session.launcher.OwnerAccessKey")}">
-              <paper-listbox slot="dropdown-content" attr-for-selected="id">
-                ${this.ownerKeypairs.map(item => html`
-                  <paper-item id="${item.access_key}" label="${item.access_key}">${item.access_key}</paper-item>
-                `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
+            <mwc-select id="owner-accesskey" label="${_t("session.launcher.OwnerAccessKey")}">
+              ${this.ownerKeypairs.map(item => html`
+                <mwc-list-item class="owner-group-dropdown"
+                               id="${item.access_key}"
+                               value="${item.access_key}">
+                  ${item.access_key}
+                </mwc-list-item>
+              `)}
+            </mwc-select>
             <div class="horizontal center layout">
-              <paper-dropdown-menu id="owner-group" label="${_t("session.launcher.OwnerGroup")}" horizontal-align="left">
-                <paper-listbox slot="dropdown-content" attr-for-selected="id"
-                               selected="${this.default_language}">
-                  ${this.ownerGroups.map(item => html`
-                    <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
-                  `)}
-                </paper-listbox>
-              </paper-dropdown-menu>
-              <paper-dropdown-menu id="owner-scaling-group" label="${_t("session.launcher.OwnerResourceGroup")}">
-                <paper-listbox slot="dropdown-content" selected="0">
-                  ${this.ownerScalingGroups.map(item => html`
-                    <paper-item id="${item.name}" label="${item.name}">${item.name}</paper-item>
-                  `)}
-                </paper-listbox>
-              </paper-dropdown-menu>
+              <mwc-select id="owner-group" label="${_t("session.launcher.OwnerGroup")}">
+                ${this.ownerGroups.map(item => html`
+                  <mwc-list-item class="owner-group-dropdown"
+                                 id="${item.name}"
+                                 value="${item.name}">
+                    ${item.name}
+                  </mwc-list-item>
+                `)}
+              </mwc-select>
+              <mwc-select id="owner-scaling-group" label="${_t("session.launcher.OwnerResourceGroup")}">
+                ${this.ownerScalingGroups.map(item => html`
+                  <mwc-list-item class="owner-group-dropdown"
+                                 id="${item.name}"
+                                 value="${item.name}">
+                    ${item.name}
+                  </mwc-list-item>
+                `)}
+              </mwc-select>
             </div>
-            <wl-label>
+            <wl-label style="padding:15px;">
               <wl-checkbox id="owner-enabled"></wl-checkbox>
               ${_t("session.launcher.LaunchSessionWithAccessKey")}
             </wl-label>

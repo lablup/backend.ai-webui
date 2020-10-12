@@ -515,7 +515,8 @@
     "ConcurrentJobs": "동시 실행 세션수",
     "Capacity": "용량",
     "Folders": "폴더",
-    "Name": "이름"
+    "Name": "이름",
+    "AllowedHosts": "허용된 호스트"
   },
   "registry": {
     "Hostname": "호스트명",

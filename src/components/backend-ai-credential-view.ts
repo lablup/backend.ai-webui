@@ -5,9 +5,6 @@
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-item/paper-item';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-list/mwc-list-item';
@@ -344,6 +341,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     globalThis.backendaiclient.vfolder.list_hosts().then(response => {
       this.allowed_vfolder_hosts = response.allowed;
       this.default_vfolder_host = response.default;
+      this.shadowRoot.querySelector('#allowed_vfolder-hosts').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#allowed_vfolder-hosts').select(0);
+      });
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -393,6 +393,12 @@ export default class BackendAICredentialView extends BackendAIPage {
       let policyNames = globalThis.backendaiclient.utils.gqlToList(response.keypair_resource_policies, 'name');
       this.resource_policies = policies;
       this.resource_policy_names = policyNames;
+      this.shadowRoot.querySelector('#resource-policy').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#resource-policy').select(0);
+      });
+      this.shadowRoot.querySelector('#rate-limit').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#rate-limit').select(0);
+      });
     });
   }
 
@@ -975,8 +981,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         <div slot="content">
           <div class="vertical center-justified layout center">
             <mwc-textfield type="email" name="new_user_id" id="id_new_user_id" label="${_t("credential.UserIDAsEmail")}" autoValidate></mwc-textfield>
-            <!--<wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="${_t("credential.UserIDAsEmail")}"
-                        auto-validate></wl-textfield>-->
+           
             <mwc-select outlined id="resource-policy" label="${_t("credential.ResourcePolicy")}" style="width:100%;">
               ${this.resource_policy_names.map(item => html`
                 <mwc-list-item value="${item}">${item}</mwc-list-item>
@@ -987,22 +992,6 @@ export default class BackendAICredentialView extends BackendAIPage {
                   <mwc-list-item value="${item}">${item}</mwc-list-item>
               `)}
             </mwc-select>
-            <!--<div class="horizontal center layout">
-              <paper-dropdown-menu id="resource-policy" label="Resource Policy">
-                <paper-listbox slot="dropdown-content" selected="0">
-                ${this.resource_policy_names.map(item => html`
-                  <paper-item label="${item}">${item}</paper-item>
-                `)}
-                </paper-listbox>
-              </paper-dropdown-menu>
-              <paper-dropdown-menu id="rate-limit" label="${_t("credential.RateLimit")}">
-                <paper-listbox slot="dropdown-content" selected="0">
-                ${this.rate_metric.map(item => html`
-                  <paper-item label="${item}">${item}</paper-item>
-                `)}
-                </paper-listbox>
-              </paper-dropdown-menu>
-            </div>-->
             <wl-expansion name="advanced-keypair-info" style="width:100%;">
               <span slot="title">${_t("general.Advanced")}</span>
               <span slot="description"></span>
@@ -1021,12 +1010,6 @@ export default class BackendAICredentialView extends BackendAIPage {
                   autoValidate
                   .value="${this.new_access_key}"><mwc-textfield>
               </div>
-              <!--<wl-textfield type="text" name="new_access_key" id="id_new_access_key" label="${_t("credential.AccessKeyOptional")}"
-                            auto-validate .value="${this.new_access_key}">
-              </wl-textfield>
-              <wl-textfield type="text" name="new_secret_key" id="id_new_secret_key" label="${_t("credential.SecretKeyOptional")}"
-                            auto-validate .value="${this.new_secret_key}">-->
-              </wl-textfield>
             </wl-expansion>
           </div>
         </div>
@@ -1116,18 +1099,15 @@ export default class BackendAICredentialView extends BackendAIPage {
           <h4 style="margin-bottom:0px;">${_t("credential.Folders")}</h4>
           <div class="horizontal center layout">
             <div class="vertical layout" style="width: 110px;">
-            <!--<mwc-select id="allowed_vfolder-hosts" label=${_t("credential.AllowedHosts")}naturalMenuWidth>
-              ${this.allowed_vfolder_hosts.map(item => html`
-              <mwc-list-item label="${item}" style="margin: 0px 0px 1px 0px;">${item}</mwc-list-item>
-              `)}
-            </mwc-select>-->
-            <paper-dropdown-menu id="allowed_vfolder-hosts" label=${_t("credential.AllowedHosts")}>
-              <paper-listbox slot="dropdown-content" selected="0">
+              <mwc-select id="allowed_vfolder-hosts" label="${_t("credential.AllowedHosts")}">
                 ${this.allowed_vfolder_hosts.map(item => html`
-                  <paper-item value="${item}" style="margin: 0px 0px 1px 0px;">${item}</paper-item>
+                  <mwc-list-item
+                                 id="${item}"
+                                 value="${item}">
+                    ${item}
+                  </mwc-list-item>
                 `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
+              </mwc-select>
             </div>
             <div class="vertical layout" style="width: 110px; margin: 21px 15px 0;">
               <wl-label class="folders">${_t("credential.Capacity(GB)")}</wl-label>
