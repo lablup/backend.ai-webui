@@ -423,14 +423,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (this.mini_ui) {
         this.appBody.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');
-        this.contentBody.style.width = 'calc(' + width + 'px - ' + this.minibarWidth + 'px)';
+        this.contentBody.style.width = (width - this.minibarWidth) + 'px';
         if (this.contentBody.open) {
           this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + this.sidebarWidth + 'px');// 54+250
         }
       } else {
         this.appBody.style.setProperty('--mdc-drawer-width', this.sidebarWidth + 'px');
         this.mainToolbar.style.setProperty('--mdc-drawer-width', this.sidebarWidth + 'px');
-        this.contentBody.style.width = 'calc(' + width + 'px - ' + this.sidebarWidth + 'px)';
+        this.contentBody.style.width = (width - this.sidebarWidth) + 'px';
         if (this.contentBody.open) {
           this.mainToolbar.style.setProperty('--mdc-drawer-width', this.sidebarWidth + this.sidepanelWidth + 'px'); // 250+250
         }
@@ -936,7 +936,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
           </div>
           <div class="horizontal center-justified center layout flex" style="max-height:40px;">
-            <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;margin-left:4px;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
+            <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
             <mwc-icon-button disabled class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'yellow' : 'white'}" id="feedback-icon" icon="question_answer"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
@@ -1030,7 +1030,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <backend-ai-sidepanel-task class="sidepanel" ?active="${this._sidepanel === 'task'}"></backend-ai-sidepanel-task>
             </div>
             <div slot="appContent">
-              <mwc-top-app-bar-fixed id="main-toolbar" class="draggable" style="width:100vw;">
+              <mwc-top-app-bar-fixed id="main-toolbar" class="draggable">
                 <div class="horizontal layout center" id="drawer-toggle-button" slot="navigationIcon" style="margin:auto 20px;" @click="${() => this.toggleDrawer()}">
                   <i class="fas fa-angle-left" style="display:block;color:#747474;margin-right:0.5em;"></i>
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
