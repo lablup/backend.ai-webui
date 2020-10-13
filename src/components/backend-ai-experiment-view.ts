@@ -8,9 +8,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-
 import './backend-ai-session-list';
 import 'weightless/button';
 import 'weightless/icon';
