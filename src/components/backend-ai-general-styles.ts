@@ -335,6 +335,24 @@ export const BackendAiStyles = [
       margin-left: 24px;
     }
 
+    .line {
+      display: inline-block;
+      width: auto;
+      height: 1px;
+      border: 0;
+      border-top: 1px solid #ccc;
+      margin: 20px;
+      padding: 0;
+    }
+
+    .resource-line {
+      border-bottom: 1px solid #ccc;
+      height: 1px;
+      width: 60%;
+      margin-left: 80px;
+      margin-bottom: 10px;
+    }
+
     wl-card > h3 {
       font-size: 20px;
       font-weight: 400;
@@ -556,6 +574,92 @@ export const BackendAiStyles = [
     wl-textfield {
       --font-family-serif: var(--general-font-family);
       --font-family-sans-serif: var(--general-font-family);
+    }
+
+    wl-progress-bar {
+      --progress-bar-height: 17px;
+      --progress-bar-bg: #e8e8e8;
+      border-radius: 3px;
+      margin: 3px auto;
+      width: 186px;
+    }
+
+    
+    wl-progress-bar.start-bar,
+    .full-bar {
+      --progress-bar-color: linear-gradient(to left, #722cd7, #5c7cfa);
+    }
+
+    wl-progress-bar.end-bar {
+      --progress-bar-color: linear-gradient(to left, #18aa7c, #60bb43),
+                         linear-gradient(to left, #722cd7, #5c7cfa);
+    }
+
+    div.progress-bar {
+      position: relative;
+    }
+
+    div.progress-bar > span.gauge-label {
+      position: absolute;
+      left: 0.5em;
+      top: 25%;
+      z-index: 1;
+      color: #2f2f2f;
+    }
+
+    .gauge-label {
+      width: inherit;
+      font-weight: bold;
+      font-size: 10px;
+      color: #2f2f2f;
+    }
+
+    .gauge-name {
+      float: right;
+      font-size: 14px;
+      font-weight: bold;
+      color: #2f2f2f;
+    }
+
+    span.percentage {
+      font-size: 10px;
+      color: #2f2f2f;
+    }
+
+    span.start-bar {
+      margin: auto auto 5px 5px;
+    }
+
+    span.end-bar {
+      margin: 5px auto auto 5px;
+    }
+
+    .resource-name {
+      width: 60px;
+      text-align: right; 
+      display: inline-block !important;
+      margin: auto 20px auto 0px;
+    }
+
+    .resource-legend-stack {
+      margin-bottom: 5px;
+    }
+
+    span.resource-legend {
+      color: var(--general-sidebar-color);
+      margin-right: 5px;
+    }
+
+    div.resource-legend-icon {
+      width:10px;
+      height: 10px;
+      margin-left: 10px;
+      margin-right: 3px;
+      border-radius: 4px;
+    }
+
+    .vertical-card {
+      margin: 20px;
     }
 
     vaadin-grid {

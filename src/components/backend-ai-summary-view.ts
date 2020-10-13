@@ -254,16 +254,6 @@ export default class BackendAISummary extends BackendAIPage {
           margin-left: 12px;
           margin-right: 11px;
         }
-
-        .line {
-          display: inline-block;
-          width: auto;
-          height: 1px;
-          border: 0;
-          border-top: 1px solid #ccc;
-          margin: 20px;
-          padding: 0;
-      }
       `
     ];
   }

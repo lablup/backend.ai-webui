@@ -93,13 +93,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --mdc-theme-primary: #98be5a;
         }
 
-        wl-progress-bar {
-          --progress-bar-height: 17px;
-          --progress-bar-bg: #e8e8e8;
-          border-radius: 3px;
-          margin: 3px auto;
-        }
-
         .horizontal-panel wl-progress-bar {
           width: 90px;
         }
@@ -108,22 +101,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 186px;
         }
 
-        wl-progress-bar.start-bar,
-        .full-bar {
-          --progress-bar-color: linear-gradient(to left, #722cd7, #5c7cfa);
-        }
-
-        wl-progress-bar.end-bar {
-          --progress-bar-color: linear-gradient(to left, #18aa7c, #60bb43),
-                             linear-gradient(to left, #722cd7, #5c7cfa);
-        }
-
         .horizontal-card {
           width: auto;
-        }
-
-        .vertical-card {
-          margin: 20px;
         }
 
         .horizontal-panel mwc-linear-progress {
@@ -184,18 +163,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           padding-left: 10px;
         }
 
-        span.resource-legend {
-          color: var(--general-sidebar-color);
-          margin-right: 5px;
-        }
-
-        div.resource-legend-icon {
-          width:10px;
-          height: 10px;
-          margin-left: 10px;
-          margin-right: 3px;
-          border-radius: 4px;
-        }
         div.caption {
           font-size: 12px;
           width: 100px;
@@ -207,6 +174,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: auto;
           height: auto;
           background-color: transparent;
+        }
+
+        .horizontal > .resource-line {
+          display: none;
         }
 
         wl-icon {
@@ -248,53 +219,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           }
         }
 
-        div.resource-type {
-          font-size: 14px;
-          width: 70px;
-        }
-
         .resources.horizontal .monitor.session {
           margin-left: 5px;
           height: 46px;
-        }
-
-        .gauge-name {
-          float: right;
-          font-size: 14px;
-          font-weight: bold;
-          color: #2f2f2f;
-        }
-
-        div.progress-bar {
-          position: relative;
-        }
-
-        div.progress-bar > span.gauge-label {
-          position: absolute;
-          left: 0.5em;
-          top: 25%;
-          z-index: 1;
-          color: #2f2f2f;
-        }
-
-        .gauge-label {
-          width: inherit;
-          font-weight: bold;
-          font-size: 10px;
-          color: #2f2f2f;
-        }
-
-        span.percentage {
-          font-size: 10px;
-          color: #2f2f2f;
-        }
-
-        span.start-bar {
-          margin: auto auto 5px 5px;
-        }
-
-        span.end-bar {
-          margin: 5px auto auto 5px;
         }
 
         .indicator {
@@ -433,17 +360,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           outline: none;
         }
 
-        .horizontal-card > #resource-gauges > .monitor > .resource-name {
-          width: 80px;
-        }
-
-        .resource-name {
+        .vertical-card > #resource-gauges > .monitor > .resource-name {
           width: 60px;
-          text-align: right; 
-          display: inline-block !important;
-          margin: auto 20px auto 0px;
         }
-
       `];
   }
 
@@ -801,6 +720,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="percentage end-bar">${parseInt(this.used_slot_percent.cpu) + '%'}</span>
             </div>
           </div>
+          <div class="resource-line"></div>
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">RAM</span>
@@ -826,7 +746,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </div>
           ${this.total_slot.cuda_device ?
       html`
+          <div class="resource-line"></div>
           <div class="layout horizontal center-justified monitor">
+          
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">GPU</span>
             </div>
@@ -852,6 +774,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html``}
           ${this.total_slot.cuda_shares && this.total_slot.cuda_shares > 0 ?
       html`
+          <div class="resource-line"></div>
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">FGPU</span>
@@ -878,6 +801,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html``}
           ${this.total_slot.rocm_device_slot ?
       html`
+          <div class="resource-line"></div>
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <img class="resource-type-icon fg green" src="/resources/icons/ROCm.png" />
@@ -904,6 +828,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html``}
           ${this.total_slot.tpu_device_slot ?
       html`
+          <div class="resource-line"></div>
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">TPU</span>
@@ -928,7 +853,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>` :
       html``}
-
+          <div class="resource-line"></div>
           <div class="layout horizontal center-justified monitor session">
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">${_t('session.launcher.Sessions')}</span>
@@ -949,7 +874,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       </div>
       ${this.direction === 'vertical' ? html`
       <div class="vertical start-justified layout ${this.direction}-card">
-        <div class="layout horizontal center start-justified">
+        <div class="layout horizontal center start-justified resource-legend-stack">
           <div class="resource-legend-icon" style="background-color:#4775E3;"></div>
           <span class="resource-legend">${_t('session.launcher.CurrentResourceGroup')} (${this.scaling_group})</span>
         </div>
