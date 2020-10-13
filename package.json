@@ -37,6 +37,7 @@
     "@material/mwc-select": "^0.19.1",
     "@material/mwc-slider": "^0.19.1",
     "@material/mwc-switch": "^0.19.1",
+    "@material/mwc-tab-bar": "^0.19.1",
     "@material/mwc-textarea": "^0.19.1",
     "@material/mwc-textfield": "^0.19.1",
     "@material/mwc-top-app-bar-fixed": "^0.19.1",
