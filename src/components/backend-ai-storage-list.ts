@@ -119,20 +119,18 @@ export default class BackendAiStorageList extends BackendAIPage {
       css`
         vaadin-grid {
           border: 0 !important;
-          height: calc(100vh - 370px);
         }
 
         vaadin-grid.folderlist {
-          border: 0px;
-          border-radius: 0px 0px 5px 5px;
+          border: 0;
           font-size: 14px;
-          /* height: calc(100vh - 370px); */
+          height: calc(100vh - 165px);
         }
 
         vaadin-grid.explorer {
           border: 0;
           font-size: 14px;
-          /* height: calc(100vh - 370px); */
+          height: calc(100vh - 370px);
         }
 
         ul {
@@ -427,16 +425,10 @@ export default class BackendAiStorageList extends BackendAIPage {
             validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
         </div>
         <div slot="footer">
-          <mwc-button
-              unelevated
-              id="rename-button"
-              icon="edit"
-              label="${_t('data.folders.Rename')}"
-              @click="${() => this._renameFolder()}"></mwc-button>
-          <!--<wl-button class="blue button" type="submit" id="rename-button" outlined @click="${() => this._renameFolder()}">
+          <wl-button class="blue button" type="submit" id="rename-button" outlined @click="${() => this._renameFolder()}">
             <wl-icon>edit</wl-icon>
             ${_t('data.folders.Rename')}
-          </wl-button>-->
+          </wl-button>
         </div>
       </backend-ai-dialog>
 
@@ -451,16 +443,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           </div>
         </div>
         <div slot="footer">
-          <mwc-button
-              unelevated
-              id="delete-button"
-              icon="edit"
-              label="${_t("data.folders.Delete")}"
-              @click="${() => this._deleteFolderWithCheck()}"></mwc-button>
-          <!--<wl-button class="blue button" type="submit" id="delete-button" outlined @click="${() => this._deleteFolderWithCheck()}">
+          <wl-button class="blue button" type="submit" id="delete-button" outlined @click="${() => this._deleteFolderWithCheck()}">
             <wl-icon>close</wl-icon>
             ${_t("data.folders.Delete")}
-          </wl-button>-->
+          </wl-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="info-folder-dialog" fixed backdrop>
@@ -509,26 +495,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${this.explorer.id}</span>
         <div slot="action" class="horizontal layout flex folder-action-buttons">
           <div class="flex"></div>
-          <mwc-button
-              outlined
-              class="multiple-action-buttons operation"
-              icon="delete"
-              label="${_t("data.explorer.Delete")}"
-              style="display:none;"
-              @click="${() => this._openDeleteMultipleFileDialog()}"></mwc-button>
-          <mwc-button
-              outlined operation
-              id="add-btn"
-              icon="cloud_upload"
-              label="${_t("data.explorer.UploadFiles")}"
-              @click="${(e) => this._uploadFileBtnClick(e)}></mwc-button>
-          <mwc-button
-              outlined operation
-              id="mkdir"
-              icon="create_new_folder"
-              label="${_t("data.explorer.NewFolder")}"
-              @click="${() => this._mkdirDialog()}"></mwc-button>
-          <!--<wl-button outlined class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
+          <wl-button outlined class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
             <div class="horizontal center layout">
             <wl-icon style="--icon-size: 20px;margin-right:5px;">delete</wl-icon><span>${_t("data.explorer.Delete")}</span></div>
           </wl-button>
@@ -539,7 +506,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <wl-button outlined id="mkdir" @click="${() => this._mkdirDialog()}">
             <wl-icon style="--icon-size: 20px;margin-right:5px;">create_new_folder</wl-icon>
             ${_t("data.explorer.NewFolder")}
-          </wl-button>-->
+          </wl-button>
         </div>
         <div slot="content">
           <div class="breadcrumb">
@@ -563,15 +530,9 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div id="dropzone"><p>drag</p></div>
           <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
           ${this.uploadFilesExist ? html`
-          <mwc-button
-              outlined
-              id="cancel_upload"
-              icon="cencel"
-              label=${_t("data.explorer.StopUploading")}
-              @click="${(e) => this._cancelUpload(e)}"></mwc-button>
-          <!--<wl-button outlined id="cancel_upload" @click="${(e) => this._cancelUpload(e)}">
-            <wl-icon>cancel</wl-icon>${_t("data.explorer.StopUploading")}
-          </wl-button>-->
+          <wl-button outlined id="cancel_upload" @click="${(e) => this._cancelUpload(e)}">
+            <wl-icon>cancel</wl-icon> ${_t("data.explorer.StopUploading")}
+          </wl-button>
           <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}"
                        height-by-rows>
             <vaadin-grid-column width="100px" flex-grow="0">
@@ -638,16 +599,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           <br/>
         </div>
         <div slot="footer">
-          <mwc-button
-              raised
-              type="submit"
-              id="mkdir-btn"
-              label="${_t("button.Create")}"
-              @click="${(e) => this._mkdir(e)}"></mwc-button>
-          <!--<wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
+          <wl-button class="blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
             <wl-icon>rowing</wl-icon>
             ${_t("button.Create")}
-          </wl-button>-->
+          </wl-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="share-folder-dialog" fixed backdrop>
@@ -680,15 +635,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal flex end layout">
-          <mwc-button
-              slot="footer"
-              outlined
-              id="share-button"
-              icon="share"
-              label="${_t("button.Share")}"
-              style="width: 100%; box-sizing: border-box;"
-              @click=${e => this._shareFolder(e)}></mwc-button>
-          <!--<wl-button slot="footer"
+          <wl-button slot="footer"
             type="button"
             outlined
             id="share-button"
@@ -697,7 +644,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           >
             <wl-icon>share</wl-icon>
             ${_t("button.Share")}
-          </wl-button>-->
+          </wl-button>
         </div>
       </backend-ai-dialog>
 
@@ -721,19 +668,15 @@ export default class BackendAiStorageList extends BackendAIPage {
           </vaadin-grid>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button
-              outlined
-              icon="check"
-              label="${_t("button.SaveChanges")}"
-              @click=${this._modifySharedFolderPermissions}></mwc-button>
-          <!--<wl-button
+          <wl-button
             type="button"
             outlined
             style="width: 100%; box-sizing: border-box;"
-            @click=${this._modifySharedFolderPermissions}>
+            @click=${this._modifySharedFolderPermissions}
+          >
             <wl-icon>check</wl-icon>
             ${_t("button.SaveChanges")}
-          </wl-button>-->
+          </wl-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="rename-file-dialog" fixed backdrop blockscrolling>
@@ -743,16 +686,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div id="old-file-name" style="height:2.5em"></div>
         </div>
         <div slot="footer">
-          <mwc-button
-              outlined
-              id="rename-file"
-              icon="edit"
-              label="${_t('data.explorer.RenameAFile')}"
-              @click="${(e) => this._renameFile(e)}"></mwc-button>
-          <!--<wl-button class="blue button" type="button" id="rename-file-button" outlined @click="${(e) => this._renameFile(e)}">
+          <wl-button class="blue button" type="button" id="rename-file-button" outlined @click="${(e) => this._renameFile(e)}">
             <wl-icon>edit</wl-icon>
             ${_t('data.explorer.RenameAFile')}
-          </wl-button>-->
+          </wl-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-file-dialog" fixed backdrop>
@@ -762,35 +699,19 @@ export default class BackendAiStorageList extends BackendAIPage {
             ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout">
-         <mwc-button
-              class="operation"
-              label="${_t("button.Cancel")}"
-              @click="${(e) => this._hideDialog(e)}"></mwc-button>
-          <mwc-button
-              unelevated
-              class="operation"
-              label="${_t("button.Okay")}"
-              @click="${(e) => this._deleteFileWithCheck(e)}"></mwc-button>
-            <!--<wl-button inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
-            <wl-button @click="${(e) => this._deleteFileWithCheck(e)}">${_t("button.Okay")}</wl-button>-->
+            <wl-button inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
+            <wl-button @click="${(e) => this._deleteFileWithCheck(e)}">${_t("button.Okay")}</wl-button>
          </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="download-file-dialog" fixed backdrop>
          <span slot="title">${_t("data.explorer.DownloadFile")}</span>
          <div slot="content">
             <a href="${this.downloadURL}">
-              <mwc-button
-                  outlined
-                  label="${_t("data.explorer.TouchToDownload")}"></mwc-button>
-              <!--<wl-button outlined>${_t("data.explorer.TouchToDownload")}</wl-button>-->
+              <wl-button outlined>${_t("data.explorer.TouchToDownload")}</wl-button>
             </a>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout">
-            <mwc-button
-                unelevated
-                label="${_t("button.Close")}"
-                @click="${(e) => this._hideDialog(e)}"></mwc-button>
-            <!--<wl-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</wl-button>-->
+            <wl-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</wl-button>
          </div>
       </backend-ai-dialog>
     `;
