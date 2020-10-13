@@ -283,6 +283,10 @@ export const BackendAiConsoleStyles = [
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
     }
 
+    span.full_name, mwc-select {
+      font-weight: bold;
+    }
+
     mwc-select#group-select {
       font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
