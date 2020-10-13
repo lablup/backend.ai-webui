@@ -917,7 +917,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   protected render() {
     // language=HTML
     return html`
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="resources/fonts/font-awesome-all.min.css">
       <div id="loading-curtain" class="loading-background"></div>
       <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="position:fixed;visibility:hidden;">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
