@@ -398,7 +398,7 @@
     "Language": "언어",
     "Version": "버전",
     "Digest": "Digest",
-    "ModifyImage": "이미지 수정",
+    "ModifyImageResourceLimit": "이미지 내 자원 제한 값 수정",
     "ManageApps": "앱 관리",
     "AppName": "앱 이름",
     "Protocol": "프로토콜",

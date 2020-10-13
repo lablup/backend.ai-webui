@@ -402,7 +402,7 @@
     "Language": "Language",
     "Version": "Version",
     "Digest": "Digest",
-    "ModifyImage": "Modify Image",
+    "ModifyImageResourceLimit": "Modify Image Resource Limit",
     "ManageApps": "Manage Apps",
     "AppName": "App Name",
     "Protocol": "Protocol",
