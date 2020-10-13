@@ -1035,13 +1035,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <i class="fas fa-angle-left" style="display:block;color:#747474;margin-right:0.5em;"></i>
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
                 </div>
-                <p slot="title" style="border-left: 1px solid #dbdbdb; margin:auto;">${_text("console.menu.WelcomeMessage") + this.full_name + "."}</p>
+                <div slot="navigationIcon" class="vertical-line" style="height:35px;"></div>
+                <p slot="title" style="padding-top:15px;margin:auto;">${_text("console.menu.WelcomeMessage") + this.full_name + "."}</p>
                 <div slot="actionItems" style="margin:0px;">
                   <div class="horizontal flex center layout">
                     <div id="group-select-box" style="height:48px;"></div>
-                    <div style="border-right: 1px solid #dbdbdb;"></div>
+                    <div class="vertical-line" style="height:35px;"></div>
                     <div class="horizontal center layout" id="dropdown-button">
-                      <div class="vertical layout center" style="position:relative;">
+                      <div class="vertical layout center" style="position:relative;padding-top:10px;">
                         <span class="email" style="color:#8c8484;font-size:12px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;margin:auto 10px;">
                           ${_t("console.menu.UserName")}
                         </span>
@@ -1076,20 +1077,20 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                           </mwc-list-item>
                         </mwc-menu>
                       </div>
-                      <span class="full_name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0px auto 10px;">
+                      <span class="full_name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0px auto 10px; padding-top:10px;">
                         ${this.full_name}
                       </span>
                       <mwc-icon-button @click="${() => this._toggleDropdown()}" style="font-size: 0.5rem;">
-                        <i class="fas fa-user-alt fa-xs" style="color:#747474;"></i>
+                        <i class="fas fa-user-alt fa-xs" style="color:#8c8484;"></i>
                       </mwc-icon-button>
                     </div>
-                    <div style="border-right: 1px solid #dbdbdb;"></div>
-                    <div class="horizontal layout center" style="margin:auto 10px;">
+                    <div class="vertical-line" style="height:35px;"></div>
+                    <div class="horizontal layout center" style="margin:auto 10px;padding-top:10px;">
                       <span class="log_out" style="font-size:12px;margin:auto 0px;color:#8c8484;">
                         ${_text("console.menu.LogOut")}
                       </span>
-                      <mwc-icon-button @click="${() => this.logout()}}">
-                        <i class="fas fa-sign-out-alt fa-xs" style="color:#747474;"></i>
+                      <mwc-icon-button @click="${() => this.logout()}}" style="padding-bottom:5px;">
+                        <i class="fas fa-sign-out-alt fa-xs" style="color:#8c8484;"></i>
                       </mwc-icon-button>
                     </div>
                   </div>

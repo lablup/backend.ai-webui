@@ -55,6 +55,14 @@ export const BackendAiConsoleStyles = [
       display: none;
     }
 
+    .vertical-line {
+      width: 1px; /* Line width */
+      background-color: #dbdbdb; /* Line color */
+      height: 100%;
+      float: left;
+      margin-top: 10px;
+    }
+
     .drawer-menu {
       overflow-y: auto;
       overflow-x: hidden;
