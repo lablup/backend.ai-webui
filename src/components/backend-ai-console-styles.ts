@@ -270,6 +270,11 @@ export const BackendAiConsoleStyles = [
       color: #ffffff;
     }
 
+    mwc-menu {
+      font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+    }
+
     mwc-select#group-select {
       font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);

@@ -1037,12 +1037,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 </div>
                 <p slot="title" style="border-left: 1px solid #dbdbdb; margin:auto;">${_text("console.menu.WelcomeMessage") + this.full_name + "."}</p>
                 <div slot="actionItems" style="margin:0px;">
-                  <div class="horizontal flex layout">
+                  <div class="horizontal flex center layout">
                     <div id="group-select-box" style="height:48px;"></div>
                     <div style="border-right: 1px solid #dbdbdb;"></div>
                     <div class="horizontal center layout" id="dropdown-button">
                       <div class="vertical layout center" style="position:relative;">
-                        <span class="email" style="color:#8c8484;font-size:11px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;margin:auto 10px;">
+                        <span class="email" style="color:#8c8484;font-size:12px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;margin:auto 10px;">
                           ${_t("console.menu.UserName")}
                         </span>
                         <mwc-menu id="dropdown-menu" class="user-menu" anchor="${this.shadowRoot.querySelector('#dropdown-button')}">
