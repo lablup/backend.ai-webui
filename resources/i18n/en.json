@@ -59,6 +59,8 @@
     "CoresReserved": "Cores reserved",
     "reserved": "reserved",
     "FractionalGPUScalingEnabled": "Fractional GPU scaling enabled",
+    "ROCMGPUEnabled": "ROCm GPU enabled",
+    "TPUEnabled": "TPU Enabled",
     "Reserved": "Reserved",
     "Used": "Used",
     "Total": "Total",

@@ -58,6 +58,8 @@
     "CoresReserved": "코어 예약",
     "reserved": "예약",
     "FractionalGPUScalingEnabled": "Fractional GPU 가상화 사용중",
+    "ROCMGPUEnabled": "ROCm GPU 사용중",
+    "TPUEnabled": "TPU 사용중",
     "Reserved": "예약중",
     "Used": "사용중",
     "Total": "전체",
