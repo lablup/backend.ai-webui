@@ -103,7 +103,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
         .setting-item {
           margin: 15px 10px;
-          width: 320px;
+          width: 340px;
         }
 
         .setting-desc {
