@@ -70,11 +70,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                                       "mem":["64MB", "128MB", "256MB", "512MB", 
                                            "1GB", "2GB", "4GB", "8GB",
                                            "16GB", "32GB", "256GB", "512GB"],
-                                      "cudaGPU":["0", "1", "2", "3", "4", "5", "6", "7"],
-                                      "cudaFGPU":["0", "0.1", "0.2", "0.5", "1.0", "2.0"],
-                                      "rocmGPU":["0", "1", "2", "3", "4", "5", "6", "7"],
+                                      "cuda-gpu":["0", "1", "2", "3", "4", "5", "6", "7"],
+                                      "cuda-fgpu":["0", "0.1", "0.2", "0.5", "1.0", "2.0"],
+                                      "rocm-gpu":["0", "1", "2", "3", "4", "5", "6", "7"],
                                       "tpu":["0", "1", "2"]};
-
+  @property({type: Number}) cpuValue = 0;
   constructor() {
     super();
   }
@@ -176,7 +176,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         }
 
         #modify-app-dialog {
-          --component-height: 500px;
           --component-max-height: 550px;
           --component-min-width: 600px;
         }
@@ -547,28 +546,28 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.shadowRoot.querySelector("#modify-image-cpu").label = resource_limits[0].min;
     if (!this._cuda_gpu_disabled) {
       this.shadowRoot.querySelector("#modify-image-cuda-gpu").label = resource_limits[1].min;
-      this.shadowRoot.querySelector("mwc-slider#cudaGPU").value = this._range['cudaGPU'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
+      this.shadowRoot.querySelector("mwc-slider#cuda-gpu").value = this._range['cuda-gpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
     } else {
       this.shadowRoot.querySelector("#modify-image-cuda-gpu").label = _t("environment.Disabled");
-      this.shadowRoot.querySelector("mwc-slider#cudaGPU").value = 0;
+      this.shadowRoot.querySelector("mwc-slider#cuda-gpu").value = 0;
     }
     if (!this._cuda_fgpu_disabled) {
       this.shadowRoot.querySelector("#modify-image-cuda-fgpu").label = resource_limits[2].min;
-      this.shadowRoot.querySelector("mwc-slider#cudaFGPU").value = this._range['cudaGPU'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
+      this.shadowRoot.querySelector("mwc-slider#cuda-fgpu").value = this._range['cuda-fgpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
     } else {
       this.shadowRoot.querySelector("#modify-image-cuda-fgpu").label = _t("environment.Disabled");
-      this.shadowRoot.querySelector("mwc-slider#cudaFGPU").value = 0;
+      this.shadowRoot.querySelector("mwc-slider#cuda-gpu").value = 0;
     }
     if (!this._rocm_gpu_disabled) {
       this.shadowRoot.querySelector("#modify-image-rocm-gpu").label = resource_limits[3].min;
-      this.shadowRoot.querySelector("mwc-slider#rocmGPU").value = this._range['cudaGPU'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
+      this.shadowRoot.querySelector("mwc-slider#rocm-gpu").value = this._range['rocm-gpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
     } else {
       this.shadowRoot.querySelector("#modify-image-rocm-gpu").label = _t("environment.Disabled");
-      this.shadowRoot.querySelector("mwc-slider#rocmGPU").value = 0;
+      this.shadowRoot.querySelector("mwc-slider#rocm-gpu").value = 0;
     }
     if (!this._tpu_disabled) {
       this.shadowRoot.querySelector("#modify-image-tpu").label = resource_limits[4].min;
-      this.shadowRoot.querySelector("mwc-slider#tpu").value = this._range['cudaGPU'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
+      this.shadowRoot.querySelector("mwc-slider#tpu").value = this._range['tpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
     } else {
       this.shadowRoot.querySelector("#modify-image-tpu").label = _t("environment.Disabled");
       this.shadowRoot.querySelector("mwc-slider#tpu").value = 0;
@@ -785,7 +784,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${_t("environment.ModifyImage")}</span>
+        <span slot="title">${_t("environment.ModifyImageResourceLimit")}</span>
         <div slot="content" style="margin: 10px;">
           <div class="vertical layout flex">
             <div class="horizontal layout flex center">
@@ -812,7 +811,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <span class="resource-limit-title">cuda GPU</span>
               <mwc-slider
                   ?disabled="${this._cuda_gpu_disabled}"
-                  id="cudaGPU"
+                  id="cuda-gpu"
                   markers
                   step="1"
                   max="7"
@@ -823,7 +822,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <span class="resource-limit-title">cuda FGPU</span>
               <mwc-slider
                   ?disabled="${this._cuda_fgpu_disabled}"
-                  id="cudaFGPU"
+                  id="cuda-fgpu"
                   markers
                   step="1"
                   max="5"
@@ -834,7 +833,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <span class="resource-limit-title">rocm GPU</span>
               <mwc-slider
                   ?disabled="${this._rocm_gpu_disabled}"
-                  id="rocmGPU"
+                  id="rocm-gpu"
                   markers
                   step="1"
                   max="2"
@@ -916,6 +915,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </div>
         </div>
         <mwc-button
+            unelevated
             slot="footer"
             icon="check"
             label="${_t("button.Finish")}"
