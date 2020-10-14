@@ -497,8 +497,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               <div class="layout vertical center center-justified resource-name">
                 <div class="gauge-name">GPU</div>
               </div>
-              <div class="layout vertical start-justified wrap">
               ${this.cuda_gpu_total ? html`
+              <div class="layout vertical start-justified wrap">
                 <div class="progress-bar">
                   <span class="gauge-label">
                     ${this.cuda_gpu_used} / ${this.cuda_gpu_total} CUDA GPUs ${_t('summary.reserved')}.
@@ -519,10 +519,12 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                 </div>
               </div>
               <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.mem_total_usage_ratio + '%'}</span>
-                <span class="percentage end-bar"></span>
-              </div>`: html``}
+                <span class="percentage start-bar">${this.cuda_gpu_used !== 0 ? (this.cuda_gpu_used / this.cuda_gpu_total * 100).toFixed(1) : 0}%</span>
+                <span class="percentage end-bar">&nbsp;</span>
+              </div>
+              `: html``}
               ${this.cuda_fgpu_total ? html`
+              <div class="layout vertical start-justified wrap">
                 <div class="progress-bar">
                   <span class="gauge-label">
                     ${this.cuda_fgpu_used} / ${this.cuda_fgpu_total} CUDA fGPUs ${_t('summary.reserved')}.
@@ -543,10 +545,12 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                 </div>
               </div>
               <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.cuda_fgpu_used + '%'}</span>
-                <span class="percentage end-bar"></span>
-              </div>`: html``}
+                <span class="percentage start-bar">${this.cuda_fgpu_used !== 0 ? (this.cuda_fgpu_used / this.cuda_fgpu_total * 100).toFixed(1) : 0}%</span>
+                <span class="percentage end-bar">&nbsp;</span>
+              </div>
+              `: html``}
               ${this.rocm_gpu_total ? html`
+              <div class="layout vertical start-justified wrap">
                 <div class="progress-bar">
                   <span class="gauge-label">
                     ${this.rocm_gpu_used} / ${this.rocm_gpu_total} ROCm GPUs ${_t('summary.reserved')}.
@@ -568,10 +572,11 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                 </div>
               </div>
               <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.rocm_gpu_used + '%'}</span>
-                <span class="percentage end-bar"></span>
+                <span class="percentage start-bar">${this.rocm_gpu_used.toFixed(1) + '%'}</span>
+                <span class="percentage end-bar">&nbsp;</span>
               </div>`: html``}
               ${this.tpu_total ? html`
+              <div class="layout vertical start-justified wrap">
                 <div class="progress-bar">
                   <span class="gauge-label">
                     ${this.tpu_used} / ${this.tpu_total} TPUs ${_t('summary.reserved')}.
@@ -592,7 +597,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                 </div>
               </div>
               <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.tpu_used + '%'}</span>
+                <span class="percentage start-bar">${this.tpu_used.toFixed(1) + '%'}</span>
                 <span class="percentage end-bar"></span>
               </div>`: html``}
             </div>`: html``}
