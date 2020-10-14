@@ -98,7 +98,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Array}) groups = Array();
   @property({type: String}) current_group = '';
   @property({type: Object}) plugins = Object();
-  @property({type: Object}) notification = Object();
   @property({type: Object}) splash = Object();
   @property({type: Object}) loginPanel = Object();
   @property({type: String}) _page = '';
@@ -108,6 +107,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) _offlineIndicatorOpened = false;
   @property({type: Boolean}) _offline = false;
   @property({type: Object}) config = Object();
+  @property({type: Object}) notification;
   @property({type: Object}) appBody;
   @property({type: Object}) appPage;
   @property({type: Object}) contentBody;
@@ -1015,7 +1015,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.10.0.201012</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.10.0.201014</small>
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">

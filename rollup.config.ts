@@ -1,7 +1,8 @@
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 //import babel from 'rollup-plugin-babel'; // To support legacy browsers
-import typescript from 'rollup-plugin-typescript';
+//import typescript from 'rollup-plugin-typescript';
+import typescript from '@rollup/plugin-typescript';
 import { generateSW } from 'rollup-plugin-workbox';
 import { terser } from "rollup-plugin-terser";
 
