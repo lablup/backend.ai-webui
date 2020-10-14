@@ -471,10 +471,6 @@ export default class BackendAIExperimentView extends BackendAIPage {
                     id="launch-session"
                     icon="add"
                     label="Add component"></mwc-button>
-                <!--<wl-button class="fg blue button" id="launch-session" outlined>
-                  <wl-icon>add</wl-icon>
-                  Add component
-                </wl-button>-->
             </div>
           </div>
         </div>

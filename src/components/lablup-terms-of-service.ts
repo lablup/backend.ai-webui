@@ -121,12 +121,7 @@ export default class LablupTermsOfService extends LitElement {
                 label="${item.text}"
                 @click="${() => {
                     this.changeLanguage(item.code)
-                }}"></mwc-button>
-            <!--<wl-button class="fg blue language" outlined type="button" ?active="${this.tosLanguage === item.code}" @click="${() => {
-      this.changeLanguage(item.code)
-    }}">
-                ${item.text}
-            </wl-button>-->`)}
+                }}"></mwc-button>`)}
           ` : html``}
         </div>
         <div slot="content">
@@ -140,11 +135,6 @@ export default class LablupTermsOfService extends LitElement {
                 @click="${() => {
                   this.close();
                 }}"></mwc-button>
-            <!--<wl-button class="fg green dismiss" id="dismiss-button" outlined type="button" @click="${() => {
-      this.close();
-    }}">
-                ${_t("button.Dismiss")}
-            </wl-button>-->
           </div>
         </div>
       </backend-ai-dialog>
