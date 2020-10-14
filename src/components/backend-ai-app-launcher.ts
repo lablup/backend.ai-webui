@@ -698,7 +698,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <wl-label class="keyboard invert">+</wl-label>
             <wl-label class="keyboard one-key">B</wl-label>
           </span>
-          <div class="flex layout center-justified vertic center">
+          <div class="flex layout center-justified vertical center">
             <p>${_text("webTerminalUsageGuide.CopyGuideFour")}</p>
             <a href="https://console.docs.backend.ai/${lang}/latest/session_use/session_use.html#advanced-web-terminal-usage"
                target="_blank" style="width:100%;text-align:right;">
@@ -774,11 +774,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
         <div slot="footer" style="padding-top:0;margin:0 5px;">
-          <wl-button class="app-launch-confirmation-button" type="button" id="app-launch-confirmation-button"
-                                       outlined @click="${() => this._runApp(this.appController)}">
-                                      <wl-icon>rowing</wl-icon>
-            <span>${_t('session.applauncher.ConfirmAndRun')}</span>
-          </wl-button>
+          <mwc-button
+          raised
+          id="app-launch-confirmation-button"
+          icon="rowing"
+          label="${_t('session.applauncher.ConfirmAndRun')}"
+          style="width:100%;"
+          @click="${() => this._runApp(this.appController)}">
+          </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminal-guide" fixed backdrop>
