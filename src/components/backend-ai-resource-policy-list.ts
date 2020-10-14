@@ -315,7 +315,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               unelevated
+              outlined
               id="create-policy-button"
+              icon="check"
               label="${_t("button.Update")}"
               @click="${() => this._modifyResourcePolicy()}"></mwc-button>
           <!--<wl-button class="fg blue create-button" id="create-policy-button" type="button"

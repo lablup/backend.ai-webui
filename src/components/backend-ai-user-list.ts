@@ -99,9 +99,6 @@ export default class BackendAIUserList extends BackendAIPage {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-        }
-
-        backend-ai-dialog h4 {
           border-bottom: 1px solid #DDD;
         }
 
@@ -569,7 +566,7 @@ export default class BackendAIUserList extends BackendAIPage {
                            ?disabled=${!this.editMode}>
               </wl-textarea>-->
               ${this.editMode ? html`
-                <div class="horizontal layout center" style="margin:10px auto;">
+                <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text("credential.DescActiveUser")}</p>
                   <mwc-switch
                       id="is_active"
@@ -583,7 +580,7 @@ export default class BackendAIUserList extends BackendAIPage {
                       ?checked=${this.userInfo.is_active}></wl-switch>
                   </wl-label>-->
                 </div>
-                <div class="horizontal layout center" style="margin:10px auto;">
+                <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text("credential.DescRequirePasswordChange")}</p>
                   <mwc-switch
                       id="need_password_change"
@@ -597,12 +594,6 @@ export default class BackendAIUserList extends BackendAIPage {
                         ?checked=${this.userInfo.need_password_change}></wl-switch>
                   </wl-label>-->
                 </div>
-                <mwc-button
-                    outlined
-                    label="${_t("button.SaveChanges")}"
-                    icon="check"
-                    @click=${e => this._saveChanges(e)}
-                    style="width: 305px; margin: 0 15px 10px 15px; box-sizing: border-box;"></mwc-button>
                 <!--<wl-button
                   class="fg green"
                   type="button"
@@ -654,6 +645,15 @@ export default class BackendAIUserList extends BackendAIPage {
             </div>
           </div>
         `}
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+        ${this.editMode ? html`
+          <mwc-button
+              unelevated
+              label="${_t("button.SaveChanges")}"
+              icon="check"
+              style="padding:0 15px 10px 0;"
+              @click=${e => this._saveChanges(e)}></mwc-button>`:html``}
         </div>
       </backend-ai-dialog>
     `;

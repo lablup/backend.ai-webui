@@ -70,9 +70,6 @@ export default class BackendAiDialog extends LitElement {
           color: red;
         }
 
-        wl-dialog h3 > wl-button {
-        }
-
         wl-dialog div.content {
           padding: var(--component-padding, 15px);
           font-size: var(--component-font-size, 14px);
@@ -102,6 +99,15 @@ export default class BackendAiDialog extends LitElement {
           overflow-y: scroll; /* Has to be scroll (not auto) to get smooth scrolling on iOS */
           -webkit-overflow-scrolling: touch;
           height: calc(var(--component-height) - 90px);
+        }
+
+        wl-dialog div.content h4 {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          height: 20px;
+          border-bottom: 1px solid #DDD;
         }
       `];
   }
