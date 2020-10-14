@@ -337,7 +337,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.cpu_used = this.resources.cpu.used;
     this.cuda_gpu_used = this.resources['cuda.device'].used;
     this.cuda_fgpu_used = this.resources['cuda.shares'].used;
-    
+
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
     this.cpu_total_percent = this.cpu_used !== 0 ? ((this.cpu_used / this.cpu_total) * 100).toFixed(2) : '0';
     // this.cpu_total_percent = ((parseFloat(this.cpu_percent) / (this.cpu_total * 100.0)) * 100.0).toFixed(2);
@@ -487,7 +487,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                 </div>
               </div>
               <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.mem_total_usage_ratio + '%'}</span>
+                <span class="percentage start-bar">${this.mem_total_usage_ratio.toFixed(1) + '%'}</span>
                 <span class="percentage end-bar">${(parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0' ) + '%'}</span>
               </div>
             </div>
