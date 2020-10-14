@@ -356,6 +356,11 @@ export const BackendAiConsoleStyles = [
       margin: 5px;
     }
 
+    mwc-icon.dropdown-menu {
+      color: #242424;
+      padding-right: 10px;
+    }
+
     mwc-textfield {
       width: 100%;
       --mdc-text-field-fill-color: transparent;

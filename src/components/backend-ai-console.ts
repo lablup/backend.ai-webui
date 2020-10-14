@@ -12,9 +12,9 @@ import {store} from '../store';
 
 import {navigate, updateOffline} from '../backend-ai-app';
 
-import '@material/mwc-button/mwc-button';
 import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
+import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-list';
@@ -106,6 +106,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Boolean}) _drawerOpened = false;
   @property({type: Boolean}) _offlineIndicatorOpened = false;
   @property({type: Boolean}) _offline = false;
+  @property({type: Object}) _dropdownMenuIcon = Object();
   @property({type: Object}) config = Object();
   @property({type: Object}) notification;
   @property({type: Object}) appBody;
@@ -156,6 +157,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.splash = this.shadowRoot.querySelector('#about-backendai-panel');
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
+    this._dropdownMenuIcon = this.shadowRoot.querySelector('#dropdown-button');
     if (globalThis.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
       (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
     }
@@ -421,9 +423,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }
     } else { // Open drawer
       if (this.mini_ui) {
-        this.appBody.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');
-        this.contentBody.style.width = (width - this.minibarWidth) + 'px';
+        this.appBody.style.setProperty('--mdc-drawer-width', '54px');
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', '54px');
+        this.contentBody.style.width = 'calc('+width+'px - 54px)';
         if (this.contentBody.open) {
           this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + this.sidebarWidth + 'px');// 54+250
         }
@@ -917,13 +919,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   protected render() {
     // language=HTML
     return html`
-    <link rel="stylesheet" type="text/css" href="resources/fonts/font-awesome-all.min.css">
+      <link rel="stylesheet" type="text/css" href="resources/fonts/font-awesome-all.min.css">
       <div id="loading-curtain" class="loading-background"></div>
       <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="position:fixed;visibility:hidden;">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
           <div id="portrait-bar" class="draggable">
             <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
               <div class="portrait-canvas">
+                <img style="width:43px; height:43px; display:none;" src="manifest/backend.ai-brand-white.svg"
+                  sizing="contain" />
               </div>
               <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
                 <div class="site-name"><span class="bold">Backend</span>.AI</div>
@@ -1036,7 +1040,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
                 </div>
                 <div slot="navigationIcon" class="vertical-line" style="height:35px;"></div>
-                <p slot="title" style="padding-top:15px;margin:auto;">${_text("console.menu.WelcomeMessage") + this.full_name + "."}</p>
+                <p slot="title" style="padding-top:15px;margin:auto;">
+                  ${_text("console.menu.WelcomeMessage") + this.full_name + "."}
+                </p>
                 <div slot="actionItems" style="margin:0px;">
                   <div class="horizontal flex center layout">
                     <div id="group-select-box" style="height:48px;"></div>
@@ -1046,7 +1052,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                         <span class="email" style="color:#8c8484;font-size:12px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;margin:auto 10px;">
                           ${_t("console.menu.UserName")}
                         </span>
-                        <mwc-menu id="dropdown-menu" class="user-menu" anchor="${this.shadowRoot.querySelector('#dropdown-button')}">
+                        <mwc-menu id="dropdown-menu" class="user-menu">
                           ${this.domain !== 'default' && this.domain !== '' ? html`
                           <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
                               ${this.domain}
@@ -1056,23 +1062,23 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                               ${this.user_id}
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
-                              <mwc-icon style="color:#242424;padding-right:10px;">info</mwc-icon>
+                              <mwc-icon class="dropdown-menu">info</mwc-icon>
                               ${_t("console.menu.AboutBackendAI")}
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
-                              <mwc-icon style="color:#242424;padding-right:10px;">lock</mwc-icon>
+                              <mwc-icon class="dropdown-menu">lock</mwc-icon>
                               ${_t("console.menu.ChangePassword")}
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
-                              <mwc-icon style="color:#242424;padding-right:10px;">drag_indicator</mwc-icon>
+                              <mwc-icon class="dropdown-menu">drag_indicator</mwc-icon>
                               ${_t("console.menu.Preferences")}
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
-                              <mwc-icon style="color:#242424;padding-right:10px;">assignment</mwc-icon>
+                              <mwc-icon class="dropdown-menu">assignment</mwc-icon>
                               ${_t("console.menu.LogsErrors")}
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
-                              <mwc-icon style="color:#242424;padding-right:10px;">logout</mwc-icon>
+                              <mwc-icon class="dropdown-menu">logout</mwc-icon>
                               ${_t("console.menu.LogOut")}
                           </mwc-list-item>
                         </mwc-menu>
@@ -1083,15 +1089,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                       <mwc-icon-button @click="${() => this._toggleDropdown()}" style="font-size: 0.5rem;">
                         <i class="fas fa-user-alt fa-xs" style="color:#8c8484;"></i>
                       </mwc-icon-button>
-                    </div>
-                    <div class="vertical-line" style="height:35px;"></div>
-                    <div class="horizontal layout center" style="margin:auto 10px;padding-top:10px;">
-                      <span class="log_out" style="font-size:12px;margin:auto 0px;color:#8c8484;">
-                        ${_text("console.menu.LogOut")}
-                      </span>
-                      <mwc-icon-button @click="${() => this.logout()}}" style="padding-bottom:5px;">
-                        <i class="fas fa-sign-out-alt fa-xs" style="color:#8c8484;"></i>
-                      </mwc-icon-button>
+                      <div class="vertical-line" style="height:35px;"></div>
+                      <div class="horizontal layout center" style="margin:auto 10px;padding-top:10px;">
+                        <span class="log_out" style="font-size:12px;margin:auto 0px;color:#8c8484;">
+                          ${_text("console.menu.LogOut")}
+                        </span>
+                        <mwc-icon-button @click="${() => this.logout()}" style="padding-bottom:5px;">
+                          <i class="fas fa-sign-out-alt fa-xs" style="color:#8c8484;"></i>
+                        </mwc-icon-button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1162,15 +1168,15 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
-            <mwc-button
-                label="${_t("console.menu.Cancel")}"
-                @click="${this._hideUserPrefDialog}"></mwc-button>
-            <mwc-button
-                unelevated
-                label="${_t("console.menu.Update")}"
-                @click="${this._updateUserPassword}"></mwc-button>
-          <!--<wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>-->
-          <!--<wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>-->
+          <mwc-button
+              label="${_t("console.menu.Cancel")}"
+              @click="${this._hideUserPrefDialog}"></mwc-button>
+          <mwc-button
+              unelevated
+              label="${_t("console.menu.Update")}"
+              @click="${this._updateUserPassword}"></mwc-button>
+        <!--<wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>-->
+        <!--<wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
