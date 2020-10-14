@@ -646,13 +646,12 @@ export default class BackendAIUserList extends BackendAIPage {
           </div>
         `}
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal end-justified flex layout distancing">
         ${this.editMode ? html`
           <mwc-button
               unelevated
               label="${_t("button.SaveChanges")}"
               icon="check"
-              style="padding:0 15px 10px 0;"
               @click=${e => this._saveChanges(e)}></mwc-button>`:html``}
         </div>
       </backend-ai-dialog>

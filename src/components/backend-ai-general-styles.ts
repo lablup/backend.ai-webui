@@ -537,6 +537,10 @@ export const BackendAiStyles = [
       margin-right: auto;
     }
 
+    .distancing {
+      margin:15px;
+    }
+
     wl-card > h4 {
       font-weight: 200;
     }

@@ -77,7 +77,7 @@ export default class BackendAiDialog extends LitElement {
         }
 
         wl-dialog div.footer {
-          padding: 5px 15px 10px 15px;
+          padding: 5px 15px 15px 15px;
         }
 
         wl-dialog wl-button.cancel {
