@@ -423,9 +423,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }
     } else { // Open drawer
       if (this.mini_ui) {
-        this.appBody.style.setProperty('--mdc-drawer-width', '54px');
-        this.mainToolbar.style.setProperty('--mdc-drawer-width', '54px');
-        this.contentBody.style.width = 'calc('+width+'px - 54px)';
+        this.appBody.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');
+        this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + 'px');
+        this.contentBody.style.width = (width - this.minibarWidth) + 'px';
         if (this.contentBody.open) {
           this.mainToolbar.style.setProperty('--mdc-drawer-width', this.minibarWidth + this.sidebarWidth + 'px');// 54+250
         }
@@ -652,7 +652,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       default:
         this._page = 'error';
         this.menuTitle = _text("console.NOTFOUND");
-        // this.updateTitleColor('var(--paper-grey-800)', '#efefef');
+      // this.updateTitleColor('var(--paper-grey-800)', '#efefef');
     }
   }
 
@@ -915,6 +915,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     popover.appendChild(card);
     let tooltipBox = this.shadowRoot.querySelector('#mini-tooltips');
     tooltipBox.appendChild(popover);
+  }
+
+  /**
+   * Change the state.
+   *
+   * @param {object} state
+   */
+  stateChanged(state) {
+    this._page = state.app.page;
+    this._pageParams = state.app.params;
+    this._offline = state.app.offline;
+    this._offlineIndicatorOpened = state.app.offlineIndicatorOpened;
+    this._drawerOpened = state.app.drawerOpened;
+    globalThis.currentPage = this._page;
+    globalThis.currentPageParams = this._pageParams;
   }
 
   protected render() {
@@ -1181,21 +1196,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
       <backend-ai-resource-broker id="resource-broker" ?active="${this.is_connected}"></backend-ai-resource-broker>
     `;
-  }
-
-  /**
-   * Change the state.
-   *
-   * @param {object} state
-   */
-  stateChanged(state) {
-    this._page = state.app.page;
-    this._pageParams = state.app.params;
-    this._offline = state.app.offline;
-    this._offlineIndicatorOpened = state.app.offlineIndicatorOpened;
-    this._drawerOpened = state.app.drawerOpened;
-    globalThis.currentPage = this._page;
-    globalThis.currentPageParams = this._pageParams;
   }
 }
 
