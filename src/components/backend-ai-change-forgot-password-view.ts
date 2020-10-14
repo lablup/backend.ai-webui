@@ -67,7 +67,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
 
   /**
    * Initialize the client.
-   * 
+   *
    * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   _initClient(apiEndpoint: string) {
@@ -93,7 +93,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
 
   /**
    * Open the upadate password dialog.
-   * 
+   *
    * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   open(apiEndpoint: string) {
@@ -170,10 +170,6 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
               unelevated
               label="${_t("console.menu.Update")}"
               @click="${() => this._updatePassword()}"></mwc-button>
-          <!--<wl-button outlined flat class="fg red mini flex" type="button"
-              @click="${() => this._updatePassword()}">
-            ${_t("console.menu.Update")}
-          </wl-button>-->
         </div>
       </backend-ai-dialog>
 
@@ -193,10 +189,6 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
               unelevated
               label="${_t("button.Close")}"
               @click="${() => this._redirectToLoginPage()}"></mwc-button>
-          <!--<wl-button outlined flat class="fg mini flex red" type="button"
-              @click="${() => this._redirectToLoginPage()}">
-            ${_t("button.Close")}
-          </wl-button>-->
         </div>
       </backend-ai-dialog>
     `;

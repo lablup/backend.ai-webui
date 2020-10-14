@@ -782,11 +782,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           style="width:100%;"
           @click="${() => this._runApp(this.appController)}">
           </mwc-button>
-          <!--<wl-button class="app-launch-confirmation-button" type="button" id="app-launch-confirmation-button"
-                                       outlined @click="${() => this._runApp(this.appController)}">
-                                      <wl-icon>rowing</wl-icon>
-            <span>${_t('session.applauncher.ConfirmAndRun')}</span>
-          </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminal-guide" fixed backdrop>

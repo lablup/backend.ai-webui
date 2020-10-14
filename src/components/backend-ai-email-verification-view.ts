@@ -6,7 +6,7 @@ import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import '@material/mwc-textfield/mwc-textfield';
-import 'weightless/button';
+import '@material/mwc-button/mwc-button';
 
 import './backend-ai-dialog';
 import {BackendAIPage} from './backend-ai-page';
@@ -141,10 +141,6 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
               raised
               label="${_t("login.Login")}"
               @click="${() => this._redirectToLoginPage()}"></mwc-button>
-          <!--<wl-button outlined flat class="fg green mini flex" type="button"
-              @click="${() => this._redirectToLoginPage()}">
-            ${_t("login.Login")}
-          </wl-button>-->
         </div>
       </backend-ai-dialog>
 
@@ -167,10 +163,6 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
               unelevated
               label="${_t("signup.SendEmail")}"
               @click="${() => this.sendVerificationCode()}"></mwc-button>
-          <!--<wl-button outlined flat class="fg red mini flex" type="button"
-              @click="${() => this.sendVerificationCode()}">
-            ${_t("signup.SendEmail")}
-          </wl-button>-->
         </div>
       </backend-ai-dialog>
     `;
