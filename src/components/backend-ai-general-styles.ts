@@ -100,7 +100,7 @@ export const BackendAiStyles = [
     }
 
     fieldset {
-      padding: 20px;
+      padding: 0;
       border: 0;
     }
 
@@ -262,7 +262,7 @@ export const BackendAiStyles = [
     mwc-button.operation {
       margin: 0px 5px;
     }
-    
+
     mwc-icon-button.pagination {
       --mdc-icon-button-size: 30px;
       --mdc-theme-text-disabled-on-light: var(--paper-grey-400);
@@ -584,7 +584,7 @@ export const BackendAiStyles = [
       width: 186px;
     }
 
-    
+
     wl-progress-bar.start-bar,
     .full-bar {
       --progress-bar-color: linear-gradient(to left, #722cd7, #5c7cfa);
@@ -636,7 +636,7 @@ export const BackendAiStyles = [
 
     .resource-name {
       width: 60px;
-      text-align: right; 
+      text-align: right;
       display: inline-block !important;
       margin: auto 20px auto 0px;
     }
