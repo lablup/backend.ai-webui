@@ -95,10 +95,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           height: 25px;
           font-size: 13px;
         }
+
         #app-launch-confirmation-dialog {
           --component-width: 400px;
           --component-font-size: 14px;
         }
+
         wl-button.app-launch-confirmation-button {
           width: 335px;
           --button-bg: var(--paper-red-50);
@@ -177,7 +179,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
 
         p code {
-          font: 12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+          font: 12px Monaco, "Courier New", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", monospace;
           color: #52595d;
           -webkit-border-radius: 3px;
           -moz-border-radius: 3px;
@@ -707,7 +709,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </div>
         </article>
       </macro-carousel>`;
-      content.appendChild(div);
+    content.appendChild(div);
   }
 
   render() {
@@ -728,7 +730,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               </div>
             `)}
           </div>
-          ${globalThis.isElectron ? ``: html`
+          ${globalThis.isElectron ? `` : html`
             <div class="horizontal layout center">
               <wl-checkbox id="chk-open-to-public" style="margin-right:0.5em"></wl-checkbox>
               ${_t("session.OpenToPublic")}
