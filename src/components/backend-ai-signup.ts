@@ -13,7 +13,6 @@ import './lablup-terms-of-service';
 import './backend-ai-dialog';
 
 import '../lib/backend.ai-client-es6';
-import './backend-ai-dialog';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
   IronFlex,
