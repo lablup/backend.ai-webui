@@ -514,7 +514,7 @@ export default class BackendAIUserList extends BackendAIPage {
           <span style="margin-right:15px;">${_t("credential.UserDetail")}</span>
           <lablup-shields app="" description="user" ui="flat"></lablup-shields>
         </div>
-        <div slot="content" class="horizontal layout">
+        <div slot="content" class="horizontal layout" style="overflow-x:hidden;">
           <div>
             <h4>${_text("credential.Information")}</h4>
             <div role="listbox" class="center vertical layout">
