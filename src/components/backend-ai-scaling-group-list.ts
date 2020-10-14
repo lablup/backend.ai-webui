@@ -96,8 +96,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         backend-ai-dialog mwc-textfield,
         backend-ai-dialog mwc-textarea {
           width: 100%;
-          margin-bottom: 20px;
-          font-family: var(--general-font-family);
+          margin: 10px auto 20px auto;
+          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 
         backend-ai-dialog wl-label {
@@ -128,8 +129,23 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           --mdc-on-theme-primary: #38bd73;
         }
 
+        mwc-textarea {
+          height: 150px;
+        }
+
+        mwc-select {
+          width:100%;
+          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-select-fill-color: transparent;
+        }
+
         backend-ai-dialog {
           --component-min-width: 350px;
+        }
+
+        backend-ai-dialog#modify {
+          --component-min-width
         }
       `
     ];
@@ -419,6 +435,26 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         <span slot="title">${_t("resourceGroup.CreateResourceGroup")}</span>
 
         <div slot="content" class="login-panel intro centered">
+          <mwc-select
+            id="scaling-group-domain"
+            label="${_t("resourceGroup.SelectDomain")}">
+            ${this.domains.map( e => html`
+              <mwc-list-item style="height:auto;" value="${e.name}">
+                ${e.name}
+              </mwc-list-item>
+            `)}
+          </mwc-select>
+          <!--<wl-select
+            id="scaling-group-domain"
+            label="${_t("resourceGroup.SelectDomain")}"
+          >
+            <option disabled>${_t("resourceGroup.SelectDomain")}</option>
+            ${this.domains.map(e => html`
+                <option value="${e.name}">
+                  ${e.name}
+                </option>
+              `)}
+          </wl-select>-->
           <mwc-textfield
             type="text"
             id="scaling-group-name"
@@ -429,18 +465,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             id="scaling-group-description"
             label="${_t("resourceGroup.Description")}"
           ></mwc-textarea>
-          <wl-select
-            id="scaling-group-domain"
-            label="${_t("resourceGroup.SelectDomain")}"
-          >
-            <option disabled>${_t("resourceGroup.SelectDomain")}</option>
-            ${this.domains.map(e => html`
-                <option value="${e.name}">
-                  ${e.name}
-                </option>
-              `
-    )}
-          </wl-select>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
@@ -456,26 +480,37 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         <span slot="title">${_t("resourceGroup.ModifyResourceGroup")}</span>
 
         <div slot="content">
-          <mwc-textarea
-            id="modify-scaling-group-description"
-            type="text"
-            label="Description"
-            value=${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].description}
-          ></mwc-textarea>
-          <wl-select id="modify-scaling-group-scheduler" label="Select scheduler"
+          <div class="horizontal layout flex wrap center justified">
+            <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
+              ${_t("resourceGroup.Active")}
+            </p>
+            <!--<wl-label for="switch">
+              ${_t("resourceGroup.Active")}
+            </wl-label>-->
+            <mwc-switch id="modify-scaling-group-active" style="margin-right:10px;">
+            </mwc-switch>
+          </div>
+          <mwc-select
+            id="modify-scaling-group-scheduler"
+            label="${_t('resourceGroup.SelectScheduler')}"
+            value="${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].scheduler}">
+            ${this.schedulerTypes.map(sched => html`
+            <mwc-list-item value="${sched}">${sched}</mwc-list-item>
+            `)}
+          </mwc-select>
+          <!--<wl-select id="modify-scaling-group-scheduler" label="Select scheduler"
               value="${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].scheduler}">
             <option disabled>Select Scheduler</option>
             ${this.schedulerTypes.map(sched => html`
               <option value="${sched}">${sched}</option>
             `)}
-          </wl-select>
-          <div class="horizontal layout flex wrap center justified">
-            <wl-label for="switch">
-              ${_t("resourceGroup.Active")}
-            </wl-label>
-            <mwc-switch id="modify-scaling-group-active">
-            </mwc-switch>
-          </div>
+          </wl-select>-->
+          <mwc-textarea
+            id="modify-scaling-group-description"
+            type="text"
+            label="${_t('resourceGroup.Description')}"
+            value=${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].description}
+          ></mwc-textarea>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button

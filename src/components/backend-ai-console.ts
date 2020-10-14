@@ -469,6 +469,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     let select = document.createElement('mwc-select') as any;
     select.id = 'group-select';
     select.value = this.current_group;
+    select.style.width = '130px';
     //select.setAttribute('naturalMenuWidth', 'true');
     select.addEventListener('selected', (e) => this.changeGroup(e));
     let opt = document.createElement('mwc-list-item');

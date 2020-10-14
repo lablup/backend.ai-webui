@@ -12,6 +12,7 @@ import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
 import '@material/mwc-textfield';
+import '@material/mwc-select';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 
@@ -339,6 +340,13 @@ export default class BackendAiStorageList extends BackendAIPage {
           --input-label-color-disabled: #222222;
           --input-label-font-size: 12px;
           --input-border-style-disabled: 1px solid #cccccc;
+        }
+
+        backend-ai-dialog mwc-textfield,
+        backend-ai-dialog mwc-select {
+          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-label-font-size: 12px;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 
         #textfields wl-textfield,
@@ -741,7 +749,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _modifySharedFolderPermissions() {
-    const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog wl-select');
+    const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog mwc-select');
     const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as any)[idx].perm)
       .map((pulldown, idx) => ({
         'perm': pulldown.value === 'kickout' ? null : pulldown.value,
@@ -764,7 +772,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Render permission options - View, Edit, EditDelete, KickOut.
    *
    * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Element} colxumn - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   permissionRenderer(root, column?, rowData?) {
@@ -772,12 +780,18 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div>
-          <wl-select outlined label="${_t('data.folders.SelectPermission')}">
+          <mwc-select outlined label="${_t('data.folders.SelectPermission')}">
+            <mwc-list-item ?selected=${rowData.item.perm === 'ro'} value="ro">
+            <mwc-list-item ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</mwc-list-item>
+            <mwc-list-item ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</mwc-list-item>
+            <mwc-list-item value="kickout">${_t('data.folders.KickOut')}</mwc-list-item>
+          </mwc-select>
+          <!--<wl-select outlined label="${_t('data.folders.SelectPermission')}">
             <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
             <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
             <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
             <option value="kickout">${_t('data.folders.KickOut')}</option>
-          </wl-select>
+          </wl-select>-->
         </div>
       `, root
     )

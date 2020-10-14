@@ -117,12 +117,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
           width: 35px;
         }
 
-        .setting-select-desc {
-          width: 200px;
-        }
-
         .setting-select {
-          width: 135px;
+
         }
 
         .setting-desc-pulldown {
@@ -142,7 +138,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
         }
 
         mwc-select {
-          min-width: 100%;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
           --mdc-theme-primary: var(--general-sidebar-color);
@@ -182,17 +177,18 @@ export default class BackendAiSettingsView extends BackendAIPage {
                 <!--<wl-switch id="register-new-image-switch" disabled></wl-switch>-->
               </div>
             </div>
-            <div class="vertical layout flex setting-item">
+            <div class="horizontal layout flex setting-item">
               <div class="vertical center-justified layout setting-desc">
                 <div class="title">${_t("settings.ImagePullBehavior")}</div>
                 <div class="description">${_tr("settings.DescImagePullBehavior")}<br />
                     ${_t("settings.Require2003orAbove")}
                 </div>
               </div>
-              <div class="vertical center-justified layout setting-desc" style="margin-top:10px;">
+              <div class="vertical center-justified layout">
                 <mwc-select id="ui-image-pulling-behavior"
                             required
                             outlined
+                            style="width:120px;"
                             @selected="${(e) => this.setImagePullingBehavior(e)}">
                 ${this.imagePullingBehavior.map(item => html`
                   <mwc-list-item value="${item.behavior}"
@@ -285,8 +281,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     </div>
                   </div>
                 </div>
-                <div class="horizontal layout flex setting-item">
-                  <div class="vertical center-justified layout" style="width:275px;">
+                <div class="horizontal layout flex setting-item-desc">
+                  <div class="vertical center-justified layout" style="width:170px;margin-right:10px;">
                     <div class="title">${_t("settings.Scheduler")}</div>
                     <div class="description">${_t("settings.JobScheduler")}<br/>
                         ${_t("settings.Require1912orAbove")}
@@ -297,7 +293,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
                                 required
                                 outlined
                                 @selected="${(e) => this.changeScheduler(e)}"
-                                label="">
+                                label=""
+                                style="width:130px;">
                       ${this.jobschedulerType.map(item => html`
                         <mwc-list-item value="${item}"
                                       ?selected=${this.options['scheduler'] === item}>
