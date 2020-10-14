@@ -206,11 +206,11 @@ export default class BackendAIData extends BackendAIPage {
           width: 180px;
           --mdc-select-min-width: 180px;
           margin-bottom: 10px;
-          --mdc-theme-primary: var(--paper-orange-600);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: var(--paper-orange-400);
-          --mdc-select-hover-line-color: var(--paper-orange-600);
+          --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
+          --mdc-select-hover-line-color: var(--general-textfield-selected-color);
           --mdc-list-vertical-padding: 5px;
         }
 
@@ -224,6 +224,7 @@ export default class BackendAIData extends BackendAIPage {
 
         mwc-multi-select mwc-icon-button {
           --mdc-icon-button-size: 24px;
+          color: var(--general-textfield-selected-color);
         }
 
         #automount-folder-lists > div {
@@ -233,6 +234,7 @@ export default class BackendAIData extends BackendAIPage {
         }
 
         #automount-folder-lists > div > p {
+          color: var(--general-sidebar-color);
           margin-left: 10px;
         }
 
@@ -292,7 +294,7 @@ export default class BackendAIData extends BackendAIPage {
               ${this.vhosts.map((item, idx) => html`
                 <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
                   <span>${item}</span>
-                  <mwc-icon-button slot="meta" icon="info" class="fg orange info"
+                  <mwc-icon-button slot="meta" icon="info"
                       @click="${(e) => this._showStorageDescription(e, item)}">
                   </mwc-icon-button>
                 </mwc-list-item>
