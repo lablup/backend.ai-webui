@@ -129,19 +129,21 @@ export default class BackendAICredentialView extends BackendAIPage {
         }
 
         wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-green-600);
+          border-radius: 5px 5px 0px 0px;
+          --tab-group-indicator-bg: var(--general-tabbar-button-color);
         }
 
         wl-tab {
-          --tab-color: #666;
-          --tab-color-hover: #222;
-          --tab-color-hover-filled: #222;
-          --tab-color-active: var(--paper-green-600);
-          --tab-color-active-hover: var(--paper-green-600);
-          --tab-color-active-filled: #ccc;
-          --tab-bg-active: var(--paper-lime-200);
-          --tab-bg-filled: var(--paper-lime-200);
-          --tab-bg-active-hover: var(--paper-lime-200);
+          border-radius: 5px 5px 0px 0px;
+          --tab-color: var(--general-sidepanel-color);
+          --tab-color-hover: #26272a;
+          --tab-color-hover-filled: var(--general-tabbar-button-color);
+          --tab-color-active:var(--general-tabbar-button-color);
+          --tab-color-active-hover: var(--general-tabbar-button-color);
+          --tab-color-active-filled: var(--general-tabbar-button-color);
+          --tab-bg-active: #535457;
+          --tab-bg-filled: #26272a;
+          --tab-bg-active-hover: #535457;
         }
 
         h3.tab {
