@@ -58,6 +58,7 @@ class BackendAIRegistryList extends BackendAIPage {
       BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
+      // language=CSS
       css`
         vaadin-grid {
           border: 0;
@@ -126,6 +127,12 @@ class BackendAIRegistryList extends BackendAIPage {
           pointer-events: none;
         }
 
+        mwc-button, mwc-button[unelevated] {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-typography-font-family: var(--general-font-family);
+        }
       `];
   }
 
@@ -598,19 +605,9 @@ class BackendAIRegistryList extends BackendAIPage {
               <wl-label class="helper-text" id="project-name-validation" style="display:block;">${_t("registry.ForHarborOnly")}</wl-label>
          </div>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button raised icon="add" label="${_t("button.Add")}"
-            @click=${this._addRegistry} style="width:100%;"></mwc-button>
-          <!--<wl-button
-            class="fg orange"
-            outlined
-            type="button"
-            style="box-sizing: border-box; width: 100%"
-            @click=${this._addRegistry}
-          >
-            <wl-icon>add</wl-icon>
-            ${_t("button.Add")}
-          </wl-button>-->
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button unelevated icon="add" label="${_t("button.Add")}"
+            @click=${this._addRegistry}></mwc-button>
         </div>
       </backend-ai-dialog>
 

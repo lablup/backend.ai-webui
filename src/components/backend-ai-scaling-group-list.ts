@@ -25,6 +25,8 @@ import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-textarea/mwc-textarea';
 
 import './backend-ai-dialog';
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -63,6 +65,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
+      // language=CSS
       css`
         h4 {
           font-weight: 200;
@@ -84,15 +87,21 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           margin-top: 20px;
         }
 
-        backend-ai-dialog wl-textfield,
         backend-ai-dialog wl-textarea,
         backend-ai-dialog wl-select {
           margin-bottom: 20px;
           --input-font-family: Roboto, Noto, sans-serif;
         }
 
+        backend-ai-dialog mwc-textfield,
+        backend-ai-dialog mwc-textarea {
+          width: 100%;
+          margin-bottom: 20px;
+          font-family: var(--general-font-family);
+        }
+
         backend-ai-dialog wl-label {
-          --label-font-family: Roboto, Noto, sans-serif;
+          --label-font-family: var(--general-font-family);
           --label-color: #282828;
           margin-bottom: 5px;
         }
@@ -410,16 +419,16 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         <span slot="title">${_t("resourceGroup.CreateResourceGroup")}</span>
 
         <div slot="content" class="login-panel intro centered">
-          <wl-textfield
+          <mwc-textfield
             type="text"
             id="scaling-group-name"
             label="${_t("resourceGroup.ResourceGroupName")}"
-          ></wl-textfield>
-          <wl-textarea
+          ></mwc-textfield>
+          <mwc-textarea
             name="description"
             id="scaling-group-description"
             label="${_t("resourceGroup.Description")}"
-          ></wl-textarea>
+          ></mwc-textarea>
           <wl-select
             id="scaling-group-domain"
             label="${_t("resourceGroup.SelectDomain")}"
@@ -433,32 +442,26 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     )}
           </wl-select>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout">
+        <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-              raised
+              unelevated
               id="create-user-button"
               class="create-button"
               icon="add"
               label="${_t("button.Create")}"
-              style="width:100%;"
               @click="${this._createScalingGroup}"></mwc-button>
-          <!--<wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
-            @click="${this._createScalingGroup}">
-            <wl-icon>add</wl-icon>
-            ${_t("button.Create")}
-          </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("resourceGroup.ModifyResourceGroup")}</span>
 
-        <div slot="content" class="login-panel intro centered">
-          <wl-textarea
+        <div slot="content">
+          <mwc-textarea
             id="modify-scaling-group-description"
             type="text"
             label="Description"
             value=${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].description}
-          ></wl-textarea>
+          ></mwc-textarea>
           <wl-select id="modify-scaling-group-scheduler" label="Select scheduler"
               value="${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].scheduler}">
             <option disabled>Select Scheduler</option>
@@ -466,44 +469,31 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               <option value="${sched}">${sched}</option>
             `)}
           </wl-select>
-          <wl-label for="switch">
-            ${_t("resourceGroup.ActiveStatus")}
-          </wl-label>
-          <div id="switch">
+          <div class="horizontal layout flex wrap center justified">
+            <wl-label for="switch">
+              ${_t("resourceGroup.Active")}
+            </wl-label>
             <mwc-switch id="modify-scaling-group-active">
             </mwc-switch>
-            <!--<wl-switch
-              id="modify-scaling-group-active"
-            ></wl-switch>-->
           </div>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout">
+        <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-            raised
+            unelevated
             icon="save"
-            style="width: 100%; box-sizing: border-box;"
             label="${_t("button.Save")}"
             @click=${this._modifyScalingGroup}
             ></mwc-button>
-          <!--<wl-button
-            class="fg blue"
-            type="button"
-            outlined
-            style="width: 100%; box-sizing: border-box;"
-            @click=${this._modifyScalingGroup}>
-            <wl-icon>check</wl-icon>
-            ${_t("button.Save")}
-          </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-scaling-group-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("dialog.warning.CannotBeUndone")}</span>
         <div slot="content">
-          <wl-textfield
+          <mwc-textfield
             id="delete-scaling-group"
             type="text"
             label="${_t("resourceGroup.TypeResourceGroupNameToDelete")}"
-          ></wl-textfield>
+          ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
@@ -513,17 +503,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             style="width: 100%; box-sizing: border-box;"
             @click="${this._deleteScalingGroup}">
             </mwc-button>
-          <!--<wl-button
-            class="fg red delete"
-            type="button"
-            outlined
-            style="width: 100%; box-sizing: border-box;"
-            @click=${this._deleteScalingGroup}
-          >
-            <wl-icon>delete</wl-icon>
-            ${_t("button.Delete")}
-          </wl-button>-->
-        </div>
+       </div>
       </backend-ai-dialog>
     `;
   }

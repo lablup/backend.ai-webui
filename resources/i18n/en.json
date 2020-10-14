@@ -84,7 +84,6 @@
     "Announcement": "Announcement",
     "SystemResources": "System Resources",
     "CurrentVersion": "Current Version"
-
   },
   "session": {
     "launcher": {
@@ -559,7 +558,8 @@
     "SelectDomain": "Select Domain",
     "ModifyResourceGroup": "Modify Resource Group",
     "TypeResourceGroupNameToDelete": "Type resource group name to delete",
-    "ResourceGroupName": "ResourceGroupName"
+    "ResourceGroupName": "ResourceGroupName",
+    "Active": "Active"
   },
   "maintenance": {
     "General": "General",

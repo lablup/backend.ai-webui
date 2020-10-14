@@ -66,8 +66,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) installImageResource = Object();
   @property({type: Object}) selectedCheckbox = Object();
   @property({type: Object}) _grid = Object();
-  @property({type: Object}) _range = {"cpu":["1", "2", "3", "4", "5", "6", "7", "8"], 
-                                      "mem":["64MB", "128MB", "256MB", "512MB", 
+  @property({type: Object}) _range = {"cpu":["1", "2", "3", "4", "5", "6", "7", "8"],
+                                      "mem":["64MB", "128MB", "256MB", "512MB",
                                            "1GB", "2GB", "4GB", "8GB",
                                            "16GB", "32GB", "256GB", "512GB"],
                                       "cuda-gpu":["0", "1", "2", "3", "4", "5", "6", "7"],
@@ -204,7 +204,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           margin: auto 10px;
           padding: auto 10px;
         }
-        
+
         mwc-button[outlined] {
           width: 100%;
           margin: 10px auto;
@@ -348,7 +348,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Open the selected image.
-   * 
+   *
    */
   openInstallImageDialog() {
     // select only uninstalled images
@@ -385,7 +385,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       } else if ('cuda.device' in imageResource) {
         imageResource['gpu'] = imageResource['cuda.device'];
       }
-      
+
       // Add 256m to run the image.
       if (imageResource['mem'].endsWith('g')) {
         imageResource['mem'] = imageResource['mem'].replace('g', '.5g');
@@ -437,10 +437,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       });
     });
   }
-  
+
   /**
    * Open images to delete.
-   * 
+   *
    */
   openDeleteImageDialog() {
     // select only installed images
@@ -578,7 +578,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
     this.shadowRoot.querySelector("mwc-slider#cpu").value = this._range['cpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
     this.shadowRoot.querySelector("mwc-slider#mem").value = this._range['mem'].indexOf(this._range['mem'].filter(value => {return value === this._addUnit(resource_limits[mem_idx].min) })[0]);
-    
+
     this._updateSliderLayout();
   }
 
@@ -688,10 +688,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
 /**
  * Render an installed tag for each image.
- * 
- * @param {DOM element} root 
- * @param {<vaadin-grid-column> element} column 
- * @param {object} rowData 
+ *
+ * @param {DOM element} root
+ * @param {<vaadin-grid-column> element} column
+ * @param {object} rowData
  */
   installRenderer(root, column, rowData) {
     render(
@@ -700,16 +700,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         <div class="layout horizontal center center-justified">
           ${rowData.item.installed ? html`
           <wl-label class="installed"
-              id="${rowData.item.registry.replace(/\./gi, '-') + '-' + 
-                    rowData.item.name.replace('/','-') + '-' + 
+              id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
+                    rowData.item.name.replace('/','-') + '-' +
                     rowData.item.tag.replace(/\./gi, '-')}">
             ${_t('environment.Installed')}
           </wl-label>
-          ` : 
+          ` :
           html`
           <wl-label class="installing"
-            id="${rowData.item.registry.replace(/\./gi, '-') + '-' + 
-                  rowData.item.name.replace('/','-') + '-' + 
+            id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
+                  rowData.item.name.replace('/','-') + '-' +
                   rowData.item.tag.replace(/\./gi, '-')}"
             style="display:none">
             ${_t('environment.Installing')}
@@ -785,7 +785,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       </vaadin-grid>
       <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("environment.ModifyImageResourceLimit")}</span>
-        <div slot="content" style="margin: 10px;">
+        <div slot="content">
           <div class="vertical layout flex">
             <div class="horizontal layout flex center">
               <span class="resource-limit-title">CPU</span>
@@ -852,26 +852,18 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <mwc-button class="range-value" id="modify-image-tpu" disabled></mwc-button>
             </div>
           </div>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               unelevated
-              style="box-sizing: border-box; width: 100%;"
               icon="check"
               label="${_t("button.SaveChanges")}"
               @click="${() => this.modifyImage()}"></mwc-button>
-              <!--<wl-button
-                class="fg orange create-button"
-                outlined
-                type="button"
-                style="box-sizing: border-box; width: 100%"
-                @click=${() => this.modifyImage()}>
-                <wl-icon>check</wl-icon>
-                ${_t("button.SaveChanges")}
-              </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="modify-app-dialog" fixed backdrop>
         <span slot="title">${_t("environment.ManageApps")}</span>
-        <div slot="content" id="modify-app-container" class="container">
+        <div slot="content" id="modify-app-container">
           <div class="row header">
             <div> ${_t("environment.AppName")} </div>
             <div> ${_t("environment.Protocol")} </div>
@@ -914,21 +906,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             </wl-button>
           </div>
         </div>
-        <mwc-button
-            unelevated
-            slot="footer"
-            icon="check"
-            label="${_t("button.Finish")}"
-            @click="${this.modifyServicePort}"></mwc-button>
-        <!--<wl-button slot="footer"
-          class="fg orange"
-          outlined
-          type="button"
-          style="box-sizing: border-box; width: 100%;"
-          @click=${this.modifyServicePort}>
-          <wl-icon>check</wl-icon>
-          ${_t("button.Finish")}
-        </wl-button>-->
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              unelevated
+              slot="footer"
+              icon="check"
+              label="${_t("button.Finish")}"
+              @click="${this.modifyServicePort}"></mwc-button>
+        </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="install-image-dialog" fixed backdrop persistent>
         <span slot="title">Let's double-check</span>

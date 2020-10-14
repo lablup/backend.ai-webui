@@ -287,7 +287,7 @@
     "ProjectAndGroup": "프로젝트 및 그룹",
     "ModifyKeypairResourcePolicy": "키페어 자원 정책 수정",
     "SelectPolicy": "자원 정책 선택",
-    "AllowedHosts":"허용된 호스트",
+    "AllowedHosts": "허용된 호스트",
     "UserIDAsEmail": "E-mail을 사용자 ID로 사용 (선택)",
     "AccessKeyOptional": "접근 키 (선택)",
     "SecretKeyOptional": "비밀 키 (선택)"
@@ -555,7 +555,8 @@
     "SelectDomain": "도메인 선택",
     "ModifyResourceGroup": "자원 그룹 수정",
     "TypeResourceGroupNameToDelete": "_삭제 확인을 위해 자원 그룹 이름을 입력하세요.",
-    "ResourceGroupName": "자원 그룹 이름"
+    "ResourceGroupName": "자원 그룹 이름",
+    "Active": "활성"
   },
   "maintenance": {
     "General": "일반",

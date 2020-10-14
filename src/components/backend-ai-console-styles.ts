@@ -365,6 +365,14 @@ export const BackendAiConsoleStyles = [
       width: 100%;
       --mdc-text-field-fill-color: transparent;
       --mdc-theme-primary: var(--general-textfield-selected-color);
+      font-family: var(--general-font-family);
+    }
+
+    mwc-textarea {
+      width: 100%;
+      --mdc-text-field-fill-color: transparent;
+      --mdc-theme-primary: var(--general-textfield-selected-color);
+      font-family: var(--general-font-family);
     }
 
     wl-popover-card {

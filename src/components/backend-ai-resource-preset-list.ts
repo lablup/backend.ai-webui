@@ -96,23 +96,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
           --mdc-theme-primary: var(--paper-yellow-600) !important;
         }
 
-        wl-button.create-button {
-          --button-bg: white;
-          --button-bg-hover: var(--paper-yellow-100);
-          --button-bg-active: var(--paper-yellow-600);
-        }
-
-        wl-button {
-          color: var(--paper-yellow-600);
-          --button-bg: var(--paper-yellow-50);
-          --button-bg-hover: var(--paper-yellow-100);
-          --button-bg-active: var(--paper-yellow-600);
-        }
-
-        wl-button#create-policy-button {
-          width: 100%;
-          box-sizing: border-box;
-          margin-top: 15px;
+        mwc-button, mwc-button[unelevated] {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-typography-font-family: var(--general-font-family);
         }
 
         h4 {
@@ -121,6 +109,16 @@ class BackendAiResourcePresetList extends BackendAIPage {
           margin: 0px;
           padding: 5px 15px 5px 20px;
         }
+
+        backend-ai-dialog h4 {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          height: 20px;
+          border-bottom: 1px solid #DDD;
+        }
+
       `];
   }
 
@@ -240,9 +238,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </vaadin-grid>
         </div>
       </div>
-      <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling narrowLayout>
         <span slot="title">${_t("resourcePreset.ModifyResourcePreset")}</span>
-        <div slot="content" class="login-panel intro centered">
+        <div slot="content">
           <form id="login-form">
             <fieldset>
               <mwc-textfield type="text" name="preset_name" class="modify" id="id-preset-name"
@@ -269,24 +267,19 @@ class BackendAiResourcePresetList extends BackendAIPage {
                     label="Shared Memory (GB)" min="0" step="0.01"
                     validationMessage="${_t("resourcePreset.MinimumShmemUnit")}"></mwc-textfield>
               </div>
-              <br/><br/>
-              <mwc-button
-                  unelevated
-                  icon="check"
-                  label="${_t("button.SaveChanges")}"
-                  style="width:100%;"
-                  @click="${() => this._modifyResourceTemplate()}">
-              </mwc-button>
-              <!--<wl-button class="fg orange create-button full-size" outlined type="button"
-                @click="${() => this._modifyResourceTemplate()}">
-                <wl-icon>check</wl-icon>
-                ${_t("button.SaveChanges")}
-              </wl-button>-->
             </fieldset>
           </form>
         </div>
+        <div slot="footer" class="horizontal end-justified flex layout distancing">
+          <mwc-button
+              unelevated
+              icon="check"
+              label="${_t("button.SaveChanges")}"
+              @click="${() => this._modifyResourceTemplate()}">
+          </mwc-button>
+        </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="create-preset-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="create-preset-dialog" fixed backdrop blockscrolling narrowLayout>
         <span slot="title">${_t("resourcePreset.CreateResourcePreset")}</span>
         <div slot="content">
           <mwc-textfield
@@ -319,7 +312,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 validationMessage="${_t("resourcePreset.MinimumShmemUnit")}"></mwc-textfield>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal end-justified flex layout distancing">
           <mwc-button
               unelevated
               id="create-policy-button"

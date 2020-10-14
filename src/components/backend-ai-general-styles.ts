@@ -433,6 +433,12 @@ export const BackendAiStyles = [
     paper-toolbar {
       --paper-toolbar-sm-height: 45px;
     }
+    mwc-button, mwc-button[unelevated] {
+      background-image: none;
+      --mdc-theme-primary: var(--general-button-background-color);
+      --mdc-on-theme-primary: var(--general-button-background-color);
+      --mdc-typography-font-family: var(--general-font-family);
+    }
 
     .bg-blue {
       background-color: var(--paper-light-blue-400);

@@ -74,6 +74,7 @@ export default class BackendAiDialog extends LitElement {
           padding: var(--component-padding, 15px);
           font-size: var(--component-font-size, 14px);
           word-break: keep-all;
+          overflow-x: hidden;
         }
 
         wl-dialog div.footer {
