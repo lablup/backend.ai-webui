@@ -625,7 +625,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
       //this.requestUpdate();
       return Promise.resolve(true);
-      return this.available_slot;
+      //return this.available_slot;
     }).catch(err => {
       if (err && err.message) {
         console.log(err);
@@ -748,7 +748,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html`
           <div class="resource-line"></div>
           <div class="layout horizontal center-justified monitor">
-          
+
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">GPU</span>
             </div>
