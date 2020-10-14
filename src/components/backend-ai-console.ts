@@ -1176,8 +1176,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               unelevated
               label="${_t("console.menu.Update")}"
               @click="${this._updateUserPassword}"></mwc-button>
-        <!--<wl-button class="cancel" inverted flat @click="${this._hideUserPrefDialog}">${_t("console.menu.Cancel")}</wl-button>-->
-        <!--<wl-button class="ok" @click="${this._updateUserPassword}">${_t("console.menu.Update")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>

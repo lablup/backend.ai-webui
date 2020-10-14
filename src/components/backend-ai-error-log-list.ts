@@ -274,19 +274,9 @@ export default class BackendAiErrorLogList extends BackendAIPage {
             icon="navigate_before"
             ?disabled="${this._currentPage === 1}"
             @click="${(e) => {this._updateItemsFromPage(e)}}"></mwc-icon-button>
-        <!--<wl-button class="pagination" id="previous-page"
-                   ?disabled="${this._currentPage === 1}"
-                   @click="${(e) => {this._updateItemsFromPage(e)}}">
-          <wl-icon class="pagination">navigate_before</wl-icon>
-        </wl-button>-->
         <wl-label style="padding: 5px 15px 0px 15px;">
           ${this._currentPage} / ${Math.ceil( this._totalLogCount / this._pageSize)}
         </wl-label>
-        <!--<wl-button class="pagination" id="next-page"
-                   ?disabled="${this._totalLogCount <= this._pageSize * this._currentPage}"
-                   @click="${(e) => {this._updateItemsFromPage(e)}}">
-          <wl-icon class="pagination">navigate_next</wl-icon>
-        </wl-button>-->
         <mwc-icon-button
             class="pagination"
             id="next-page"

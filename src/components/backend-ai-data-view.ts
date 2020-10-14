@@ -245,7 +245,6 @@ export default class BackendAIData extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <!--<wl-card class="item" elevation="1" style="padding-bottom:20px;">-->
       <div style="margin:20px;">
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
@@ -255,21 +254,9 @@ export default class BackendAIData extends BackendAIPage {
                     @click="${(e) => this._showTab(e.target)}">
                 </mwc-tab>
                 <mwc-tab aria-label="automount-folder" label="${_t("data.AutomountFolders")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-                <!--<mwc-tab aria-label="shared-folder" label="${_t("data.SharedData")}"></mwc-tab>-->
-                <!--<mwc-tab aria-label="model" label="${_t("data.Models")}"></mwc-tab>-->
               </mwc-tab-bar>
-              <!--<wl-tab-group>
-                <wl-tab value="general-folder" checked @click="${(e) => this._showTab(e.target)}">${_t("data.Folders")}</wl-tab>
-                <wl-tab value="automount-folder" @click="${(e) => this._showTab(e.target)}">${_t("data.AutomountFolders")}</wl-tab>
-                <wl-tab value="shared-folder" disabled>${_t("data.SharedData")}</wl-tab>
-                <wl-tab value="model" disabled>${_t("data.Models")}</wl-tab>
-              </wl-tab-group>-->
               <span class="flex"></span>
               <mwc-button dense raised id="add-folder" icon="add" label="${_t("data.NewFolder")}" @click="${() => this._addFolderDialog()}" style="margin-right:15px;"></mwc-icon-button>
-              <!--<wl-button class="fg red" id="add-folder" outlined @click="${() => this._addFolderDialog()}">
-                <wl-icon>add</wl-icon>
-                ${_t("data.NewFolder")}
-              </wl-button>-->
             </h3>
             <div id="general-folder-lists" class="tab-content">
               <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
@@ -283,7 +270,6 @@ export default class BackendAIData extends BackendAIPage {
           </div>
         </lablup-activity-panel>
       </div>
-      <!--</wl-card>-->
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
         <div slot="content">
@@ -344,10 +330,6 @@ export default class BackendAIData extends BackendAIPage {
               label="${_t("data.Create")}"
               style="width:100%;"
               @click="${() => this._addFolder()}"></mwc-button>
-          <!--<wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
-            <wl-icon>rowing</wl-icon>
-             ${_t("data.Create")}
-          </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="help-description" fixed backdrop>

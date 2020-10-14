@@ -118,7 +118,6 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <!--<wl-card elevation="1">-->
       <div class="horizontal wrap layout">
         <lablup-activity-panel title="${_t("maintenance.Fix")}">
           <div slot="message" class="vertical flex layout wrap setting-item">
@@ -134,10 +133,6 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
                   icon="refresh"
                   @click="${() => this.recalculate_usage()}">
             </mwc-button>
-            <!--<wl-button class="fg red" ?disabled="${this.recalculating}" outlined label="Recalculate usage" icon="refresh" @click="${() => this.recalculate_usage()}">
-              <wl-icon>refresh</wl-icon>
-              <span id="recalculate_usage-button-desc">${_t("maintenance.RecalculateUsage")}</span>
-            </wl-button>-->
           </div>
         </lablup-activity-panel>
         <lablup-activity-panel title="${_t("maintenance.ImagesEnvironment")}">
@@ -155,10 +150,6 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
                   icon="refresh"
                   @click="${() => this.rescan_images()}">
               </mwc-button>
-                <!--<wl-button class="fg red" ?disabled="${this.scanning}" outlined label="Rescan images" icon="refresh" @click="${() => this.rescan_images()}">
-                  <wl-icon>refresh</wl-icon>
-                  <span id="rescan-image-button-desc">${_t("maintenance.RescanImages")}</span>
-                </wl-button>-->
             </div>
             <div class="horizontal flex layout wrap setting-item">
               <div class="vertical center-justified layout setting-desc">
@@ -172,15 +163,10 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
                   label="${_t("maintenance.CleanupImages")}"
                   icon="delete"
               </mwc-button>
-                <!--<wl-button class="fg red" disabled outlined label="Clean up images" icon="delete">
-                  <wl-icon>delete</wl-icon>
-                  ${_t("maintenance.CleanupImages")}
-                </wl-button>-->
             </div>
           </div>
         </lablup-activity-panel>
       </div>
-      <!--</wl-card>-->
     `;
   }
 

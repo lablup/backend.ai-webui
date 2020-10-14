@@ -822,9 +822,6 @@ export default class BackendAILogin extends BackendAIPage {
                       label="${this.connection_mode == 'SESSION' ? _t("login.ClickToUseIAM") : _t("login.ClickToUseID")}"
                       @click="${() => this._changeSigninMode()}">
                   </mwc-button>
-                  <!--<wl-button class="change-login-mode-button fg blue mini" outlined type="button" @click="${() => this._changeSigninMode()}">
-                    ${this.connection_mode == 'SESSION' ? _t("login.ClickToUseIAM") : _t("login.ClickToUseID")}
-                  </wl-button>-->
                 </div>
             ` : html``}
           </h3>
@@ -882,10 +879,6 @@ export default class BackendAILogin extends BackendAIPage {
                     style="width:100%;"
                     label="${_t("login.Login")}"
                     @click="${() => this._login()}"></mwc-button>
-              <!--<wl-button class="fg red full login-button" id="login-button" outlined type="button"
-                          @click="${() => this._login()}">
-                          <wl-icon>check</wl-icon>
-                          ${_t("login.Login")}</wl-button>-->
               <div class="layout horizontal" style="margin-top:2em;">
                 ${this.signup_support ? html`
                   <div class="vertical center-justified layout" style="width:100%;">
@@ -894,10 +887,6 @@ export default class BackendAILogin extends BackendAIPage {
                         unelevated
                         label="${_t("login.SignUp")}"
                         @click="${() => this._showSignupDialog()}"></mwc-button>
-                    <!--<wl-button style="font-weight:500;" class="signup-button fg green signup"
-                        outlined type="button" @click="${() => this._showSignupDialog()}">
-                        ${_t("login.SignUp")}
-                    </wl-button>-->
                   </div>
                 `: html``}
                 ${this.signup_support && this.allowAnonymousChangePassword ? html`
@@ -910,10 +899,6 @@ export default class BackendAILogin extends BackendAIPage {
                         unelevated
                         label="${_t("login.ChangePassword")}"
                         @click="${() => this._showChangePasswordEmailDialog()}"></mwc-button>
-                    <!--<wl-button style="font-weight:500;" class="signup-button fg green mini signup"
-                        outlined type="button" @click="${() => this._showChangePasswordEmailDialog()}">
-                      ${_t("login.ChangePassword")}
-                    </wl-button>-->
                   </div>
                 ` : html``}
               </div>
@@ -939,10 +924,6 @@ export default class BackendAILogin extends BackendAIPage {
               icon="check"
               label="${_t("login.LeaveService")}"
               @click="${() => this._signout()}"></mwc-button>
-          <!--<wl-button class="fg red full login-button" id="signout-button" outlined type="button"
-                      @click="${() => this._signout()}">
-                      <wl-icon>check</wl-icon>
-                      ${_t("login.LeaveService")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="change-password-confirm-dialog" fixed backdrop blockscrolling persistent disablefocustrap>
@@ -962,11 +943,6 @@ export default class BackendAILogin extends BackendAIPage {
               icon="check"
               label="${_t("login.EmailSendButton")}"
               @click="${() => this._sendChangePasswordEmail()}"></mwc-button>
-          <!--<wl-button class="fg red full" outlined type="button"
-              @click="${() => this._sendChangePasswordEmail()}">
-            <wl-icon>check</wl-icon>
-            ${_t("login.EmailSendButton")}
-          </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="block-panel" fixed blockscrolling persistent>
@@ -982,7 +958,6 @@ export default class BackendAILogin extends BackendAIPage {
               outlined
               label="${_t("login.CancelLogin")}"
               @click="${(e) => this._cancelLogin(e)}"></mwc-button>
-            <!--<wl-button outlined class="fg red mini login-cancel-button" type="button" @click="${(e) => this._cancelLogin(e)}">${_t("login.CancelLogin")}</wl-button>-->
           </div>
         ` : html``}
       </backend-ai-dialog>

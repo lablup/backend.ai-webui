@@ -209,10 +209,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
           <span>${_t("resourcePreset.ResourcePresets")}</span>
           <span class="flex"></span>
           <mwc-button raised id="add-resource-preset" icon="add" label="${_t("resourcePreset.CreatePreset")}" @click="${e => this._launchPresetAddDialog(e)}"></mwc-button>
-          <!--<wl-button class="fg orange" id="add-resource-preset" outlined @click="${e => this._launchPresetAddDialog(e)}">
-            <wl-icon>add</wl-icon>
-            ${_t("resourcePreset.CreatePreset")}
-          </wl-button>-->
         </h4>
         <div>
           <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
@@ -320,16 +316,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
               label="${_t("button.Add")}"
               @click="${this._createPreset}">
           </mwc-button>
-          <!--<wl-button
-            class="fg orange create-button full-size"
-            id="create-policy-button"
-            outlined
-            type="button"
-            @click="${this._createPreset}"
-          >
-            <wl-icon>add</wl-icon>
-            ${_t("button.Add")}
-          </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
@@ -349,8 +335,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
               class="operation"
               label="${_t("button.Okay")}"
               @click="${(e) => this._deleteResourcePresetWithCheck(e)}"></mwc-button>
-            <!--<wl-button class="fg orange cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
-            <wl-button class="fg orange ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">${_t("button.Okay")}</wl-button>-->
          </div>
       </backend-ai-dialog>
     `;

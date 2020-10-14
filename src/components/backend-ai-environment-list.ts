@@ -940,13 +940,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               class="operation"
               label="${_t("button.Okay")}"
               @click="${() => this._installImage()}"></mwc-button>
-          <!--<wl-button class="cancel" inverted flat @click="${(e) => {
-                  this._hideDialog(e);
-                  this._uncheckSelectedRow();
-          }}">
-            ${_t("button.Cancel")}
-          </wl-button>
-          <wl-button class="ok" @click="${() => this._installImage()}">${_t("button.Okay")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-image-dialog" fixed backdrop persistent>
@@ -974,13 +967,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               class="operation"
               label="${_t("button.Okay")}"
               @click="${() => this._deleteImage()}"></mwc-button>
-          <!--<wl-button class="cancel" inverted flat @click="${(e) => {
-                  this._hideDialog(e);
-                  this._uncheckSelectedRow();
-          }}">
-            ${_t("button.Cancel")}
-          </wl-button>
-          <wl-button class="ok" @click="${() => this._deleteImage()}">${_t("button.Okay")}</wl-button>-->
         </div>
       </backend-ai-dialog>
     `;

@@ -451,7 +451,6 @@ class BackendAIRegistryList extends BackendAIPage {
           <mwc-switch
               @change="${(e) => this.toggleRegistry(e, rowData.item["hostname"])}"
               ?checked="${this.allowed_registries.includes(rowData.item["hostname"])}"></mwc-switch>
-           <!--<wl-switch @change="${(e) => this.toggleRegistry(e, rowData.item["hostname"])}" ?checked="${this.allowed_registries.includes(rowData.item["hostname"])}"></wl-switch>-->
         </div>
       `,
       root
@@ -505,14 +504,6 @@ class BackendAIRegistryList extends BackendAIPage {
         <span class="flex"></span>
         <mwc-button raised id="add-registry" label="${_t("registry.AddRegistry")}" icon="add"
             @click=${() => this._launchDialogById("#add-registry-dialog")}></mwc-button>
-        <!--<wl-button
-          class="fg orange"
-          id="add-registry"
-          outlined
-          @click=${() => this._launchDialogById("#add-registry-dialog")}>
-          <wl-icon>add</wl-icon>
-          ${_t("registry.AddRegistry")}
-        </wl-button>-->
       </h4>
 
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this.registryList}">
@@ -623,15 +614,6 @@ class BackendAIRegistryList extends BackendAIPage {
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button raised icon="delete" label="${_t("button.Delete")}"
               @click=${this._deleteRegistry} style="width:100%;"></mwc-button>
-          <!--<wl-button
-            class="fg red delete"
-            type="button"
-            outlined
-            style="width: 100%; box-sizing: border-box;"
-            @click=${this._deleteRegistry}>
-            <wl-icon>delete</wl-icon>
-            ${_t("button.Delete")}
-          </wl-button>-->
         </div>
       </backend-ai-dialog>
     `

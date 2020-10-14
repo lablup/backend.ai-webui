@@ -384,14 +384,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               label="${_t("button.Add")}"
               @click=${() => this._launchDialogById("#create-scaling-group-dialog")}>
           </mwc-button>
-        <!--<wl-button
-          class="fg blue"
-          id="add-scaling-group"
-          outlined
-          @click=${() => this._launchDialogById("#create-scaling-group-dialog")}>
-          <wl-icon>add</wl-icon>
-          ${_t("button.Add")}
-        </wl-button>-->
       </h4>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scalingGroups}">
         <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
@@ -444,17 +436,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               </mwc-list-item>
             `)}
           </mwc-select>
-          <!--<wl-select
-            id="scaling-group-domain"
-            label="${_t("resourceGroup.SelectDomain")}"
-          >
-            <option disabled>${_t("resourceGroup.SelectDomain")}</option>
-            ${this.domains.map(e => html`
-                <option value="${e.name}">
-                  ${e.name}
-                </option>
-              `)}
-          </wl-select>-->
           <mwc-textfield
             type="text"
             id="scaling-group-name"
@@ -484,9 +465,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
               ${_t("resourceGroup.Active")}
             </p>
-            <!--<wl-label for="switch">
-              ${_t("resourceGroup.Active")}
-            </wl-label>-->
             <mwc-switch id="modify-scaling-group-active" style="margin-right:10px;">
             </mwc-switch>
           </div>
@@ -498,13 +476,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             <mwc-list-item value="${sched}">${sched}</mwc-list-item>
             `)}
           </mwc-select>
-          <!--<wl-select id="modify-scaling-group-scheduler" label="Select scheduler"
-              value="${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].scheduler}">
-            <option disabled>Select Scheduler</option>
-            ${this.schedulerTypes.map(sched => html`
-              <option value="${sched}">${sched}</option>
-            `)}
-          </wl-select>-->
           <mwc-textarea
             id="modify-scaling-group-description"
             type="text"

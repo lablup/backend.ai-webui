@@ -75,7 +75,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
             border-radius: 5px 5px 0px 0px;
             margin: 0px auto;
           }
-  
+
           mwc-tab-bar {
             --mdc-theme-primary: var(--general-sidebar-selected-color);
             --mdc-text-transform: none;
@@ -115,8 +115,8 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
 
   /**
    * Set backend.ai client to super admin.
-   * 
-   * @param {Boolean} active 
+   *
+   * @param {Boolean} active
    */
   async _viewStateChanged(active) {
     await this.updateComplete;
@@ -136,8 +136,8 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
 
   /**
    * Display the tab.
-   * 
-   * @param tab 
+   *
+   * @param tab
    */
   _showTab(tab) {
     var els = this.shadowRoot.querySelectorAll(".tab-content");
@@ -151,35 +151,27 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <!--<wl-card class="item" elevation="1">-->
-        <lablup-activity-panel noheader narrow autowidth>
-          <div slot="message">
-            <h3 class="tab horizontal center layout">
-              <mwc-tab-bar>
-                <mwc-tab aria-label="image-lists" label="${_t("environment.Images")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-                <mwc-tab aria-label="resource-template-lists" label="${_t("environment.ResourcePresets")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-                ${this.is_superadmin ? html`
-                  <mwc-tab aria-label="registry-lists" label="${_t("environment.Registries")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-                `: html``}
-              </mwc-tab-bar>
-              <!--<wl-tab-group>
-                <wl-tab value="image-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("environment.Images")}</wl-tab>
-                <wl-tab value="resource-template-lists" @click="${(e) => this._showTab(e.target)}">${_t("environment.ResourcePresets")}</wl-tab>
-                ${this.is_superadmin ? html`
-                  <wl-tab value="registry-lists" @click="${(e) => this._showTab(e.target)}">${_t("environment.Registries")}</wl-tab>` : html``}
-              </wl-tab-group>-->
-              <div class="flex"></div>
-            </h3>
-            <div id="image-lists" class="tab-content">
-              <backend-ai-environment-list ?active="${this._activeTab === 'image-lists'}"></backend-ai-environment-list>
-            </div>
-            <backend-ai-resource-preset-list id="resource-template-lists" class="admin item tab-content" style="display: none" ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-preset-list>
-            <div id="registry-lists" class="tab-content">
-              <backend-ai-registry-list ?active="${this._activeTab === 'registry-lists'}"> </backend-ai-registry-list>
-            </div>
+      <lablup-activity-panel noheader narrow autowidth>
+        <div slot="message">
+          <h3 class="tab horizontal center layout">
+            <mwc-tab-bar>
+              <mwc-tab aria-label="image-lists" label="${_t("environment.Images")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab aria-label="resource-template-lists" label="${_t("environment.ResourcePresets")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              ${this.is_superadmin ? html`
+                <mwc-tab aria-label="registry-lists" label="${_t("environment.Registries")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              `: html``}
+            </mwc-tab-bar>
+            <div class="flex"></div>
+          </h3>
+          <div id="image-lists" class="tab-content">
+            <backend-ai-environment-list ?active="${this._activeTab === 'image-lists'}"></backend-ai-environment-list>
           </div>
-        </lablup-activity-panel>
-      <!--</wl-card>-->
+          <backend-ai-resource-preset-list id="resource-template-lists" class="admin item tab-content" style="display: none" ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-preset-list>
+          <div id="registry-lists" class="tab-content">
+            <backend-ai-registry-list ?active="${this._activeTab === 'registry-lists'}"> </backend-ai-registry-list>
+          </div>
+        </div>
+      </lablup-activity-panel>
     `;
   }
 
