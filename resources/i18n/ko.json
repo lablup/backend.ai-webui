@@ -556,7 +556,8 @@
     "ModifyResourceGroup": "자원 그룹 수정",
     "TypeResourceGroupNameToDelete": "_삭제 확인을 위해 자원 그룹 이름을 입력하세요.",
     "ResourceGroupName": "자원 그룹 이름",
-    "Active": "활성"
+    "Active": "활성",
+    "SelectScheduler": "스케쥴러 선택"
   },
   "maintenance": {
     "General": "일반",

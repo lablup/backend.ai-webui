@@ -559,7 +559,8 @@
     "ModifyResourceGroup": "Modify Resource Group",
     "TypeResourceGroupNameToDelete": "Type resource group name to delete",
     "ResourceGroupName": "ResourceGroupName",
-    "Active": "Active"
+    "Active": "Active",
+    "SelectScheduler": "Select Scheduler"
   },
   "maintenance": {
     "General": "General",
