@@ -136,15 +136,11 @@ export default class BackendAIStatisticsView extends BackendAIPage {
     return html`
         <div style="margin:20px;">
           <lablup-activity-panel elevation="1" noheader narrow autowidth>
-          <!--<wl-card class="item"> -->
             <div slot="message">
               <h3 class="tab horizontal center layout">
                 <mwc-tab-bar>
                   <mwc-tab aria-label="usage" label="${_t("statistics.Usage")}"></mwc-tab>
                 </mwc-tab-bar>
-                <!-- <wl-tab-group>
-                  <wl-tab value="usage" checked @click="${e => this._showTab(e.target)}">${_t("statistics.Usage")}</wl-tab>
-                </wl-tab-group> -->
               </h3>
               <div class="horizontal wrap layout">
                 <div id="usage-stat" class="tab-content">
@@ -152,7 +148,6 @@ export default class BackendAIStatisticsView extends BackendAIPage {
                 </div>
               </div>
             </div>
-          <!--</wl-card>-->
           </lablup-activity-panel>
         </div>
       `;

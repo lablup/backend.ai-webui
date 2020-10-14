@@ -22,9 +22,6 @@ import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
-import 'weightless/card';
-import 'weightless/switch';
-import 'weightless/select';
 import './lablup-activity-panel';
 import {default as PainKiller} from "./backend-ai-painkiller";
 
@@ -129,10 +126,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
           width: 70px;
         }
 
-        wl-card > div {
-          padding: 15px;
-        }
-
         lablup-activity-panel {
           color: #000;
         }
@@ -164,7 +157,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
     return html`
       <div class="horizontal layout wrap">
         <lablup-activity-panel title="${_t("settings.Image")}" horizontalsize="1x">
-        <!--<wl-card elevation="1">-->
           <div slot="message" class="vertical wrap layout">
             <div class="horizontal layout flex setting-item">
               <div class="vertical center-justified layout setting-desc">
@@ -174,7 +166,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
               </div>
               <div class="vertical center-justified layout setting-button">
                 <mwc-switch id="register-new-image-switch" disabled></mwc-switch>
-                <!--<wl-switch id="register-new-image-switch" disabled></wl-switch>-->
               </div>
             </div>
             <div class="horizontal layout flex setting-item">
@@ -210,7 +201,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
               </div>
               <div class="vertical center-justified layout setting-button">
                 <mwc-switch id="use-cli-on-gui-switch" disabled></mwc-switch>
-                <!--<wl-switch id="use-cli-on-gui-switch" disabled></wl-switchdisabled>-->
               </div>
             </div>
             <div class="horizontal layout flex setting-item">
@@ -221,7 +211,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
               </div>
               <div class="vertical center-justified layout setting-button">
                 <mwc-switch id="use-gui-on-web-switch" disabled></mwc-switch>
-                <!--wl-switch id="use-gui-on-web-switch" disabled></wl-switch>-->
               </div>
             </div>
           </div>
@@ -247,7 +236,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
                   </div>
                   <div class="vertical center-justified layout setting-button">
                     <mwc-switch id="allow-agent-registration-switch" checked disabled></mwc-switch>
-                    <!--<wl-switch id="allow-agent-registration-switch" checked disabled></wl-switch>-->
                   </div>
                 </div>
               </div>
@@ -266,7 +254,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     </div>
                     <div class="vertical center-justified layout setting-button">
                       <mwc-switch id="cuda-gpu-support-switch" ?checked="${this.options['cuda_gpu']}" disabled></mwc-switch>
-                      <!--<wl-switch id="cuda-gpu-support-switch" ?checked="${this.options['cuda_gpu']}" disabled></wl-switch>-->
                     </div>
                   </div>
                   <div class="horizontal layout flex setting-item">
@@ -277,7 +264,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     </div>
                     <div class="vertical center-justified layout setting-button">
                       <mwc-switch id="rocm-gpu-support-switch" ?checked="${this.options['rocm_gpu']}" disabled></mwc-switch>
-                      <!--<wl-switch id="rocm-gpu-support-switch" ?checked="${this.options['rocm_gpu']}" disabled></wl-switch>-->
                     </div>
                   </div>
                 </div>
@@ -298,14 +284,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       ${this.jobschedulerType.map(item => html`
                         <mwc-list-item value="${item}"
                                       ?selected=${this.options['scheduler'] === item}>
-                          ${item}               
+                          ${item}
                         </mwc-list-item>`)}
                     </mwc-select>
-                    <!--<wl-select name="scheduler-switch" id="scheduler-switch" required @change="${(e) => this.changeScheduler(e)}">
-                      <option value="fifo" ?selected="${this.options['scheduler'] === "fifo"}">FIFO</option>
-                      <option value="lifo" ?selected="${this.options['scheduler'] === "lifo"}">LIFO</option>
-                      <option value="drf" ?selected="${this.options['scheduler'] === "drf"}">DRF</option>
-                    </wl-select>-->
                   </div>
                 </div>
                 <h3 class="horizontal center layout">
@@ -321,7 +302,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     </div>
                     <div class="vertical center-justified layout setting-button">
                       <mwc-switch id="fractional-gpu-switch" ?checked="${this.options['cuda_fgpu']}" disabled></mwc-switch>
-                      <!--<wl-switch id="fractional-gpu-switch" ?checked="${this.options['cuda_fgpu']}" disabled></wl-switch>-->
                     </div>
                   </div>
                   <div class="horizontal layout flex setting-item">
@@ -332,7 +312,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     </div>
                     <div class="vertical center-justified layout setting-button">
                       <mwc-switch id="tpu-switch" ?checked="${this.options['tpu']}" disabled></mwc-switch>
-                      <!--<wl-switch id="tpu-switch" ?checked="${this.options['tpu']}" disabled></wl-switch>-->
                     </div>
                   </div>
                 </div>
@@ -341,7 +320,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
         </lablup-activity-panel>
       </div>
-      <!--</wl-card>-->
     `;
   }
 

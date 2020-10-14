@@ -33,9 +33,7 @@ import 'weightless/divider';
 import 'weightless/icon';
 import 'weightless/label';
 import 'weightless/select';
-import 'weightless/tab';
 import 'weightless/title';
-import 'weightless/tab-group';
 import 'weightless/textfield';
 import '@material/mwc-icon-button';
 import '../plastics/lablup-shields/lablup-shields';
@@ -125,7 +123,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         vaadin-grid.folderlist {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 165px);
+          height: calc(100vh - 210px);
         }
 
         vaadin-grid.explorer {
@@ -308,22 +306,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         .progress-item {
           padding: 10px 30px;
-        }
-
-        wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-orange-500);
-        }
-
-        wl-tab {
-          --tab-color: #666666;
-          --tab-color-hover: #222222;
-          --tab-color-hover-filled: #222222;
-          --tab-color-active: #222222;
-          --tab-color-active-hover: #222222;
-          --tab-color-active-filled: #cccccc;
-          --tab-bg-active: var(--paper-orange-50);
-          --tab-bg-filled: var(--paper-orange-50);
-          --tab-bg-active-hover: var(--paper-orange-100);
         }
 
         wl-button {
@@ -742,6 +724,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     for (const textfield of textfields) {
       this._addInputValidator(textfield);
     }
+    if (this.storageType === 'automount') {
+      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 210px)';
+    } else {
+      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 165px)';
+    }
+
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({"detail": {"mini-ui": globalThis.mini_ui}});
@@ -786,12 +774,6 @@ export default class BackendAiStorageList extends BackendAIPage {
             <mwc-list-item ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</mwc-list-item>
             <mwc-list-item value="kickout">${_t('data.folders.KickOut')}</mwc-list-item>
           </mwc-select>
-          <!--<wl-select outlined label="${_t('data.folders.SelectPermission')}">
-            <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
-            <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
-            <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
-            <option value="kickout">${_t('data.folders.KickOut')}</option>
-          </wl-select>-->
         </div>
       `, root
     )

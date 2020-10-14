@@ -15,14 +15,9 @@ import '@material/mwc-icon-button';
 import '@material/mwc-button';
 import '@material/mwc-textfield/mwc-textfield';
 
-import 'weightless/button';
-import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/expansion';
-import 'weightless/icon';
 import 'weightless/label';
-import 'weightless/radio';
-import 'weightless/slider';
 
 import '@material/mwc-linear-progress';
 
@@ -179,12 +174,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        wl-card h4 {
-          padding: 5px 20px;
-          border-bottom: 1px solid #dddddd;
-          font-weight: 100;
-        }
-
         lablup-slider {
           width: 210px !important;
           --textfield-width: 50px;
@@ -257,10 +246,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         div.caption {
           font-size: 12px;
           width: 100px;
-        }
-
-        wl-icon {
-          --icon-size: 24px;
         }
 
         img.resource-type-icon {
@@ -355,38 +340,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --button-bg-hover: var(--paper-gray-100);
           --button-bg-active: var(--paper-gray-600);
         } */
-
-        wl-button.launch-button {
-          width: 335px;
-          --button-bg: var(--paper-red-50);
-          --button-bg-active: var(--paper-red-300);
-          --button-bg-hover: var(--paper-red-300);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: var(--paper-red-600);
-          --button-color-active: red;
-          --button-color-hover: red;
-        }
-
-        wl-button.launch-confirmation-button {
-          width: 335px;
-          --button-bg: var(--paper-red-50);
-          --button-bg-active: var(--paper-red-300);
-          --button-bg-hover: var(--paper-red-300);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: var(--paper-red-600);
-          --button-color-active: red;
-          --button-color-hover: red;
-        }
-
-        wl-button.resource-button {
-          --button-bg: white;
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-hover: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: #8899aa;
-          --button-color-active: red;
-          --button-color-hover: red;
-        }
 
         wl-expansion {
           --font-family-serif: var(--general-font-family);
@@ -502,11 +455,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #vfolder mwc-list-item[disabled] {
           background-color: rgba(255, 0, 0, 0.04) !important;
-        }
-
-        wl-button[fab] {
-          --button-fab-size: 70px;
-          border-radius: 6px;
         }
 
         wl-label {
@@ -1840,9 +1788,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return html`
       <mwc-button raised id="launch-session" label="${_t("session.launcher.Start")}" ?disabled="${!this.enableLaunchButton}" @click="${() => this._launchSessionDialog()}">
       </mwc-button>
-      <!--<wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" @click="${() => this._launchSessionDialog()}">
-        ${_t("session.launcher.Start")}
-      </wl-button>-->
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>
         <form slot="content" id="launch-session-form" class="centered">
@@ -2106,11 +2051,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               @click="${() => this._newSessionWithConfirmation()}">
             <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
           </mwc-button>
-          <!--<wl-button class="launch-button" type="button" id="launch-button"
-                                       outlined @click="${() => this._newSessionWithConfirmation()}">
-                                      <wl-icon>rowing</wl-icon>
-            <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
-          </wl-button>-->
         </fieldset>
       </form>
     </backend-ai-dialog>
@@ -2139,11 +2079,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             @click="${() => this._newSession()}">
           <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
         </mwc-button>
-        <!--<wl-button class="launch-confirmation-button" type="button" id="launch-confirmation-button"
-                                     outlined @click="${() => this._newSession()}">
-                                    <wl-icon>rowing</wl-icon>
-          <span>${_t('session.launcher.LaunchWithoutMount')}</span>
-        </wl-button>-->
       </div>
     </backend-ai-dialog>
 `;

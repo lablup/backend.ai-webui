@@ -9,8 +9,6 @@ import {css, customElement, html, property} from "lit-element";
 import './backend-ai-resource-monitor';
 import './backend-ai-session-list';
 import 'weightless/card';
-import 'weightless/tab';
-import 'weightless/tab-group';
 
 import '@material/mwc-textfield/mwc-textfield';
 import "@material/mwc-list/mwc-list-item";
@@ -74,26 +72,6 @@ export default class BackendAiSessionView extends BackendAIPage {
           --mdc-text-transform: none;
           --mdc-tab-color-default: var(--general-tabbar-background-color);
           --mdc-tab-text-label-color-default: var(--general-sidebar-color);
-        }
-
-        wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-red-500);
-        }
-
-        wl-tab-group wl-divider {
-          display: none;
-        }
-
-        wl-tab {
-          --tab-color: #666666;
-          --tab-color-hover: #222222;
-          --tab-color-hover-filled: #222222;
-          --tab-color-active: #222222;
-          --tab-color-active-hover: #222222;
-          --tab-color-active-filled: #cccccc;
-          --tab-bg-active: var(--paper-red-50);
-          --tab-bg-filled: var(--paper-red-50);
-          --tab-bg-active-hover: var(--paper-red-100);
         }
 
         wl-button {
@@ -206,11 +184,6 @@ export default class BackendAiSessionView extends BackendAIPage {
               <mwc-tab aria-label="finished" label="${_t("session.Finished")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               <mwc-tab aria-label="others" label="${_t("session.Others")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
-            <!-- <wl-tab-group>
-              <wl-tab value="running" checked @click="${(e) => this._showTab(e.target)}">${_t("session.Running")}</wl-tab>
-              <wl-tab value="finished" @click="${(e) => this._showTab(e.target)}">${_t("session.Finished")}</wl-tab>
-              <wl-tab value="others" @click="${(e) => this._showTab(e.target)}">${_t("session.Others")}</wl-tab>
-            </wl-tab-group> -->
             ${this.is_admin ? html`
               <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
                                 @click="${this._toggleDropdown}">
