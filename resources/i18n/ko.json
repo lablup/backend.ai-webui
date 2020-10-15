@@ -1,6 +1,7 @@
 {
   "console": {
     "menu": {
+      "WelcomeMessage": "환영합니다. ",
       "Summary": "요약",
       "Sessions": "세션",
       "Data&Storage": "데이터 & 폴더",
@@ -59,6 +60,8 @@
     "CoresReserved": "코어 예약",
     "reserved": "예약",
     "FractionalGPUScalingEnabled": "Fractional GPU 가상화 사용중",
+    "ROCMGPUEnabled": "ROCm GPU 사용중",
+    "TPUEnabled": "TPU 사용중",
     "Reserved": "예약중",
     "Used": "사용중",
     "Total": "전체",
@@ -80,14 +83,15 @@
     "FolderName": "폴더 이름",
     "Permission": "권한",
     "Announcement": "공지",
-    "SystemResources": "시스템 자원"
+    "SystemResources": "시스템 자원",
+    "CurrentVersion": "현재 버전"
   },
   "session": {
     "launcher": {
       "TOTAL": "전체",
       "RESOURCE": "자원",
       "MY": "나의",
-      "Session": "세션",
+      "Sessions": "세션",
       "Project": "프로젝트",
       "UserResourceLimit": "사용자 리소스 제한",
       "ResourceGroup": "리소스 그룹",
@@ -241,6 +245,7 @@
     "active": "활성",
     "concurrentsessions": "동시 세션수",
     "RateLimit": "Rate Limit",
+    "RateLimitFor15min": "15분 동안 Rate Limiting",
     "for900seconds": "(900초당)",
     "Users": "사용자",
     "exportCSV": "CSV 내보내기",
@@ -283,7 +288,11 @@
     },
     "ProjectAndGroup": "프로젝트 및 그룹",
     "ModifyKeypairResourcePolicy": "키페어 자원 정책 수정",
-    "SelectPolicy": "자원 정책 선택"
+    "SelectPolicy": "자원 정책 선택",
+    "AllowedHosts": "허용된 호스트",
+    "UserIDAsEmail": "E-mail을 사용자 ID로 사용 (선택)",
+    "AccessKeyOptional": "접근 키 (선택)",
+    "SecretKeyOptional": "비밀 키 (선택)"
   },
   "data": {
     "Folders": "폴더",
@@ -393,7 +402,7 @@
     "Language": "언어",
     "Version": "버전",
     "Digest": "Digest",
-    "ModifyImage": "이미지 수정",
+    "ModifyImageResourceLimit": "이미지 내 자원 제한 값 수정",
     "ManageApps": "앱 관리",
     "AppName": "앱 이름",
     "Protocol": "프로토콜",
@@ -414,7 +423,8 @@
     "ResourcePresets": "자원 프리셋",
     "Registries": "레지스트리",
     "SelectedImagesAlreadyInstalled": "선택된 이미지가 없거나 이미 설치 완료되었습니다. 다시 한 번 확인해주시기 바랍니다.",
-    "SelectedImagesNotInstalled": "선택된 이미지가 없거나 설치되지 않아 삭제할 수 없습니다. 다시 한 번 확인해주시기 바랍니다."
+    "SelectedImagesNotInstalled": "선택된 이미지가 없거나 설치되지 않아 삭제할 수 없습니다. 다시 한 번 확인해주시기 바랍니다.",
+    "Disabled": "사용 안함"
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
@@ -509,7 +519,8 @@
     "ConcurrentJobs": "동시 실행 세션수",
     "Capacity": "용량",
     "Folders": "폴더",
-    "Name": "이름"
+    "Name": "이름",
+    "AllowedHosts": "허용된 호스트"
   },
   "registry": {
     "Hostname": "호스트명",
@@ -524,7 +535,7 @@
     "DescURLStartString": "URL은 http:// 나 https:// 로 시작해야 합니다.",
     "UsernameOptional": "사용자명 (선택)",
     "PasswordOptional": "암호 (선택)",
-    "ForHarborOnly": "harbor 레지스트리를 등록할때만 지정하세요!",
+    "ForHarborOnly": "harbor 레지스트리를 등록할 경우에만 지정할 수 있습니다.",
     "Registries": "레지스트리",
     "RegistryType": "레지스트리 유형",
     "ProjectName": "프로젝트 이름",
@@ -546,7 +557,9 @@
     "SelectDomain": "도메인 선택",
     "ModifyResourceGroup": "자원 그룹 수정",
     "TypeResourceGroupNameToDelete": "_삭제 확인을 위해 자원 그룹 이름을 입력하세요.",
-    "ResourceGroupName": "자원 그룹 이름"
+    "ResourceGroupName": "자원 그룹 이름",
+    "Active": "활성",
+    "SelectScheduler": "스케쥴러 선택"
   },
   "maintenance": {
     "General": "일반",

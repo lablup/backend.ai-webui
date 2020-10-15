@@ -21,13 +21,15 @@ import 'weightless/icon';
 import 'weightless/button';
 import 'weightless/label';
 
-import './backend-ai-dialog';
-import '@material/mwc-select';
+import '@material/mwc-icon-button';
+import '@material/mwc-switch/mwc-switch';
+import '@material/mwc-select/mwc-select';
 import '@material/mwc-textarea/mwc-textarea';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
 import './lablup-codemirror';
+import './backend-ai-dialog';
 
 /**
  Backend AI Usersettings General List
@@ -88,6 +90,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           display: inline-block;
         }
 
+        div.title {
+          font-weight: bold;
+        }
+
         div.description,
         span.description {
           font-size: 11px;
@@ -97,10 +103,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
         .setting-item {
           margin: 15px 10px;
+          width: 340px;
         }
 
         .setting-desc {
-          width: 300px;
+          width: 250px;
         }
 
         .setting-button {
@@ -108,7 +115,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         .setting-select-desc {
-          width: 200px;
+          width: auto;
+          margin-right: 5px;
         }
 
         .setting-select {
@@ -168,17 +176,54 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
         mwc-select {
           --mdc-select-min-width: 140px;
+          font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
+          --mdc-theme-primary: var(--general-sidebar-color);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-focused-dropdown-icon-color: var(--general-sidebar-color);
+          --mdc-select-disabled-dropdown-icon-color: var(--general-sidebar-color);
+          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
+          --mdc-select-hover-line-color: var(--general-sidebar-color);
+          --mdc-select-outlined-idle-border-color: var(--general-sidebar-color);
+          --mdc-select-outlined-hover-border-color: var(--general-sidebar-color);
+          --mdc-theme-surface: white;
+          --mdc-list-vertical-padding: 5px;
+          --mdc-list-side-padding: 25px;
         }
 
         mwc-select#select-rcfile-type {
           width: 300px;
           padding-right: 10px;
-          --mdc-select-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-teal-400);
         }
 
         mwc-textarea {
-          --mdc-theme-primary: var(--paper-indigo-400);
+          --mdc-theme-primary: var(--general-sidebar-color);
+        }
+
+        mwc-icon-button {
+          color: #27824F;
+        }
+
+        mwc-button[outlined] {
+          background-image: none;
+          --mdc-button-outline-width: 2px;
+          --mdc-button-disabled-outline-color: var(--general-button-background-color);
+          --mdc-button-disabled-ink-color: var(--general-button-background-color);
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+        }
+
+        mwc-button {
+          margin: auto 10px;
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+        }
+
+        mwc-button[unelevated] {
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
         }
 
         wl-icon.warning {
@@ -734,40 +779,41 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     //languate=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <wl-card elevation="1">
+      <!--<wl-card elevation="1">-->
         <h3 class="horizontal center layout">
           <span>${_t("usersettings.Preferences")}</span>
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout">
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical start center-justified layout setting-desc">
-              <div>${_t("usersettings.DesktopNotification")}</div>
+            <div class="vertical start start-justified layout setting-desc">
+              <div class="title">${_t("usersettings.DesktopNotification")}</div>
               <div class="description">${_tr("usersettings.DescDesktopNotification")}
               </div>
             </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="desktop-notification-switch" @change="${(e) => this.toggleDesktopNotification(e)}" ?checked="${globalThis.backendaioptions.get('desktop_notification')}"></wl-switch>
+            <div class="vertical center-justified layout setting-button flex end">
+              <mwc-switch id="desktop-notification-switch" @change="${(e) => this.toggleDesktopNotification(e)}" ?checked="${globalThis.backendaioptions.get('desktop_notification')}"></mwc-switch>
             </div>
           </div>
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical start center-justified layout setting-desc">
-              <div>${_t("usersettings.UseCompactSidebar")}</div>
+            <div class="vertical start start-justified layout setting-desc">
+              <div class="title">${_t("usersettings.UseCompactSidebar")}</div>
               <div class="description">${_tr("usersettings.DescUseCompactSidebar")}</div>
             </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${globalThis.backendaioptions.get('compact_sidebar')}"></wl-switch>
+            <div class="vertical center-justified layout setting-button flex end">
+              <mwc-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${globalThis.backendaioptions.get('compact_sidebar')}"></mwc-switch>
             </div>
           </div>
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical start center-justified layout setting-select-desc">
-              <div>${_t("usersettings.Language")}</div>
+            <div class="vertical start start-justified layout setting-select-desc">
+              <div class="title">${_t("usersettings.Language")}</div>
               <div class="description">${_tr("usersettings.DescLanguage")}
               </div>
             </div>
-            <div class="vertical center-justified layout setting-select">
+            <div class="vertical center-justified layout setting-select flex end">
               <mwc-select id="ui-language"
                           required
+                          outlined
                           @selected="${(e) => this.setUserLanguage(e)}">
               ${this.supportLanguages.map(item => html`
                 <mwc-list-item value="${item.code}" ?selected=${globalThis.backendaioptions.get('language') === item.code}>
@@ -778,17 +824,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
           ${globalThis.isElectron ? html`
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical start center-justified layout setting-desc">
-              <div>${_t("usersettings.KeepLoginSessionInformation")}</div>
+            <div class="vertical start start-justified layout setting-desc">
+              <div class="title">${_t("usersettings.KeepLoginSessionInformation")}</div>
               <div class="description">${_tr("usersettings.DescKeepLoginSessionInformation")}</div>
             </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="preserve-login-switch" @change="${(e) => this.togglePreserveLogin(e)}" ?checked="${globalThis.backendaioptions.get('preserve_login')}"></wl-switch>
+            <div class="vertical center-justified layout setting-button flex end">
+              <mwc-switch id="preserve-login-switch" @change="${(e) => this.togglePreserveLogin(e)}" ?checked="${globalThis.backendaioptions.get('preserve_login')}"></mwc-switch>
             </div>
           </div>
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical start center-justified layout setting-text-desc">
-              <div>${_t("usersettings.PreferredSSHPort")}</div>
+            <div class="vertical start start-justified layout setting-text-desc">
+              <div class="title">${_t("usersettings.PreferredSSHPort")}</div>
               <div class="description">${_tr("usersettings.DescPreferredSSHPort")}</div>
             </div>
             <div class="vertical center-justified layout setting-text">
@@ -798,38 +844,45 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
           ` : html``}
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical start center-justified layout setting-desc">
-              <div>${_t("usersettings.SSHKeypairManagement")}</div>
+            <div class="vertical start start-justified layout setting-desc">
+              <div class="title">${_t("usersettings.SSHKeypairManagement")}</div>
               <div class="description">${_tr("usersettings.DescSSHKeypairManagement")}</div>
             </div>
-            <wl-button id="ssh-keypair-details" fab inverted flat @click="${this._openSSHKeypairRefreshDialog}">
+            <div class="vertical center-justified layout flex end">
+              <mwc-icon-button
+                  id="ssh-keypair-details"
+                  icon="more"
+                  @click="${this._openSSHKeypairRefreshDialog}">
+              </mwc-icon-button>
+            </div>
+            <!--<wl-button id="ssh-keypair-details" fab inverted flat @click="${this._openSSHKeypairRefreshDialog}">
               <wl-icon id="ssh-keypair-icon">more</wl-icon>
-            </wl-button>
+            </wl-button>-->
           </div>
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical start center-justified layout setting-desc">
-              <div>${_t("usersettings.AutomaticUpdateCheck")}</div>
+            <div class="vertical start start-justified layout setting-desc">
+              <div class="title">${_t("usersettings.AutomaticUpdateCheck")}</div>
               <div class="description">${_tr("usersettings.DescAutomaticUpdateCheck")}</div>
             </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="automatic-update-check-switch" @change="${(e) => this.toggleAutomaticUploadCheck(e)}" ?checked="${globalThis.backendaioptions.get('automatic_update_check')}"></wl-switch>
+            <div class="vertical center-justified layout setting-button flex end">
+              <mwc-switch id="automatic-update-check-switch" @change="${(e) => this.toggleAutomaticUploadCheck(e)}" ?checked="${globalThis.backendaioptions.get('automatic_update_check')}"></mwc-switch>
             </div>
           </div>
           <div class="horizontal layout wrap setting-item">
-            <div class="vertical start center-justified layout setting-desc">
-              <div>${_t("usersettings.BetaFeatures")}</div>
+            <div class="vertical start start-justified layout setting-desc">
+              <div class="title">${_t("usersettings.BetaFeatures")}</div>
               <div class="description">${_tr("usersettings.DescBetaFeatures")}</div>
             </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="beta-feature-switch" @change="${(e) => this.toggleBetaFeature(e)}" ?checked="${globalThis.backendaioptions.get('beta_feature')}"></wl-switch>
+            <div class="vertical center-justified layout setting-button flex end">
+              <mwc-switch id="beta-feature-switch" @change="${(e) => this.toggleBetaFeature(e)}" ?checked="${globalThis.backendaioptions.get('beta_feature')}"></mwc-switch>
             </div>
           </div>
         </div>
         ${this.beta_feature_panel ? html`
-        <h4 class="horizontal center layout">
+        <h3 class="horizontal center layout">
           <span>${_t("usersettings.BetaFeatures")}</span>
           <span class="flex"></span>
-        </h4>
+        </h3>
         <div>
           ${_t("usersettings.DescNoBetaFeatures")}
         </div>
@@ -840,14 +893,25 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <span class="flex"></span>
         </h3>
         <div class="horizontal wrap layout setting-item">
-            <wl-button class="fg teal" outlined @click="${() => this._editBootstrapScript()}" style="margin-right:20px; background: none; display: none;">
-              <wl-icon>edit</wl-icon>
-              ${_t("usersettings.EditBootstrapScript")}
-            </wl-button>
-            <wl-button class="fg green" outlined @click="${() => this._launchUserConfigDialog()}" style="background: none;">
-              <wl-icon>edit</wl-icon>
-              ${_t("usersettings.EditUserConfigScript")}
-            </wl-button>
+          <mwc-button
+              icon="edit"
+              outlined
+              label="${_t("usersettings.EditBootstrapScript")}"
+              style="margin-right:20px; background: none; display: none;"
+              @click="${() => this._editBootstrapScript()}"></mwc-button>
+          <mwc-button
+              icon="edit"
+              outlined
+              label="${_t("usersettings.EditUserConfigScript")}"
+              @click="${() => this._launchUserConfigDialog()}"></mwc-button>
+          <!--<wl-button class="fg teal" outlined @click="${() => this._editBootstrapScript()}" style="margin-right:20px; background: none; display: none;">
+            <wl-icon>edit</wl-icon>
+            ${_t("usersettings.EditBootstrapScript")}
+          </wl-button>
+          <wl-button class="fg green" outlined @click="${() => this._launchUserConfigDialog()}" style="background: none;">
+            <wl-icon>edit</wl-icon>
+            ${_t("usersettings.EditUserConfigScript")}
+          </wl-button>-->
         </div>
         <h3 class="horizontal center layout" style="display:none;">
           <span>${_t("usersettings.PackageInstallation")}</span>
@@ -860,21 +924,24 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <div class="description">This is description.
               </div>
             </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="register-new-image-switch" disabled></wl-switch>
+            <div class="vertical center-justified layout setting-button flex end">
+              <mwc-switch id="register-new-image-switch" disabled></mwc-switch>
             </div>
           </div>
         </div>` : html``}
-      </wl-card>
+      <!--</wl-card>-->
       <backend-ai-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
         <span slot="title">${_t("usersettings.BootstrapScript")}</span>
         <div slot="content">
           <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
         </div>
         <div slot="footer" class="end-justified layout flex horizontal">
-          <wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">${_t("button.Cancel")}</wl-button>
+          <mwc-button id="discard-code" label="${_t("button.Cancel")}" @click="${() => this._hideBootstrapScriptDialog()}"></mwc-button>
+          <mwc-button unelevated id="save-code" label="${_t("button.Save")}" @click="${() => this._saveBootstrapScript()}"></mwc-button>
+          <mwc-button unelevated id="save-code-and-close" label="${_t("button.SaveAndClose")}" @click="${() => this._saveBootstrapScriptAndCloseDialog()}"></mwc-button>
+          <!--<wl-button inverted flat id="discard-code" @click="${() => this._hideBootstrapScriptDialog()}">${_t("button.Cancel")}</wl-button>
           <wl-button id="save-code" class="button" @click="${() => this._saveBootstrapScript()}">${_t("button.Save")}</wl-button>
-          <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
+          <wl-button id="save-code-and-close" @click="${() => this._saveBootstrapScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
@@ -883,28 +950,29 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <mwc-select id="select-rcfile-type"
                       label="config file name"
                       required
+                      outlined
                       validationMessage="Please select one option."
-                      @selected="${() => this._toggleRcFileName()}">
+                      @selected="${() => this._toggleRcFileName()}"
+                      helper=${_t("dialog.warning.WillBeAppliedToNewSessions")}>
             ${this.rcfiles.map(item => html`
               <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
                 ${item.path}
               </mwc-list-item>`)}
           </mwc-select>
-          <div class="horizontal layout">
-            <wl-icon class="warning">warning</wl-icon>
-            <wl-label class="warning" for="warning">
-             ${_t("dialog.warning.WillBeAppliedToNewSessions")}
-            </wl-label>
-          </div>
         </div>
         <div slot="content" style="height:calc(100vh - 300px);background-color:#272823;">
           <lablup-codemirror id="usersetting-editor" mode="shell"></lablup-codemirror>
         </div>
         <div slot="footer" class="end-justified layout flex horizontal">
-          <wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">${_t("button.Cancel")}</wl-button>
+          <mwc-button id="discard-code" label="${_t("button.Cancel")}" @click="${() => this._hideUserConfigScriptDialog()}"></mwc-button>
+          <mwc-button unelevated id="save-code" label="${_t("button.Save")}" @click="${() => this._saveUserConfigScript()}"></mwc-button>
+          <mwc-button unelevated id="save-code-and-close" label="${_t("button.SaveAndClose")}" @click="${() => this._saveUserConfigScriptAndCloseDialog()}"></mwc-button>
+          <mwc-button unelevated id="delete-rcfile" label="${_t("button.Delete")}" @click="${() => this._deleteRcFile()}"></mwc-button>
+
+          <!--<wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">${_t("button.Cancel")}</wl-button>
           <wl-button style="margin-left:10px;" id="save-code" class="button" @click="${() => this._saveUserConfigScript()}">${_t("button.Save")}</wl-button>
           <wl-button style="margin-left:10px;" id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
-          <wl-button style="margin-left:10px;" id="delete-rcfile" @click="${() => this._deleteRcFile()}" style="display:none;">${_t("button.Delete")}</wl-button>
+          <wl-button style="margin-left:10px;" id="delete-rcfile" @click="${() => this._deleteRcFile()}" style="display:none;">${_t("button.Delete")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
@@ -915,7 +983,22 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           ${_t("usersettings.DialogNoSaveNoPreserve")}
         </div>
         <div slot="footer" style="border-top:none;" class="end-justified layout flex horizontal">
-          <wl-button inverted flat id="cancel-editor" class="button"
+          <mwc-button
+              unelevated
+              id="cancel-editor"
+              label="${_t("button.No")}"
+              @click="${() => this._cancelCurrentEditorChange()}"></mwc-button>
+          <mwc-button
+              unelevated
+              id="discard-editor-data"
+              label="${_t("button.No")}"
+              @click="${() => this._discardCurrentEditorChange()}"></mwc-button>
+          <mwc-button
+              unelevated
+              id="save-editor-data"
+              label="${_t("button.No")}"
+              @click="${() => this._saveCurrentEditorChange()}"></mwc-button>
+          <!--<wl-button inverted flat id="cancel-editor" class="button"
                      style="margin: 0 10px;"
                      @click="${() => this._cancelCurrentEditorChange()}">
                      ${_t("button.Cancel")}</wl-button>
@@ -926,21 +1009,31 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <wl-button id="save-editor-data"
                      style="margin: 0 10px;"
                      @click="${() => this._saveCurrentEditorChange()}">
-                     ${_t("button.Save")}</wl-button>
+                     ${_t("button.Save")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="ssh-keypair-management-dialog" fixed backdrop persistent>
         <span slot="title">${_t("usersettings.SSHKeypairManagement")}</span>
         <div slot="content" style="max-width:500px">
           <span slot="title"> ${_t("usersettings.CurrentSSHPublicKey")}</span>
-          <mwc-textarea class="ssh-keypair" style="width:450px; height:270px;" id="current-ssh-public-key" outlined readonly></mwc-textarea>
-          <wl-button class="copy" @click="${() => this._copySSHKey("#current-ssh-public-key")}">
+          <mwc-textarea class="ssh-keypair" style="width:435px; height:270px;" id="current-ssh-public-key" outlined readonly></mwc-textarea>
+          <mwc-icon-button
+              icon="content_copy"
+              @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+          <!--<wl-button class="copy" @click="${() => this._copySSHKey("#current-ssh-public-key")}">
             <wl-icon>content_copy</wl-icon>
-          </wl-button>
+          </wl-button>-->
         </div>
         <div slot="footer">
-          <wl-button class="cancel" inverted flat @click="${this._hideSSHKeypairDialog}">${_t("button.Close")}</wl-button>
-          <wl-button class="ok" @click="${this._refreshSSHKeypair}">${_t("button.Generate")}</wl-button>
+          <mwc-button
+              label="${_t("button.Close")}"
+              @click="${this._hideSSHKeypairDialog}"></mwc-button>
+          <mwc-button
+              unelevated
+              label="${_t("button.Generate")}"
+              @click="${this._refreshSSHKeypair}"></mwc-button>
+          <!--<wl-button class="cancel" inverted flat @click="${this._hideSSHKeypairDialog}">${_t("button.Close")}</wl-button>
+          <wl-button class="ok" @click="${this._refreshSSHKeypair}">${_t("button.Generate")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="generate-ssh-keypair-dialog" fixed persistent noclosebutton>
@@ -950,29 +1043,47 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <span slot="title">${_t("usersettings.PublicKey")}</span>
             <div class="horizontal layout flex">
               <mwc-textarea class="ssh-keypair" id="ssh-public-key" outlined readonly></mwc-textarea>
-              <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-public-key")}">
+              <mwc-icon-button
+              icon="content_copy"
+              @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+              <!--<wl-button class="copy" @click="${() => this._copySSHKey("#ssh-public-key")}">
                 <wl-icon>content_copy</wl-icon>
-              </wl-button>
+              </wl-button>-->
             </div>
             <span slot="title">${_t("usersettings.PrivateKey")}</span>
             <div class="horizontal layout flex">
               <mwc-textarea class="ssh-keypair" id="ssh-private-key" outlined readonly></mwc-textarea>
-              <wl-button class="copy" @click="${() => this._copySSHKey("#ssh-private-key")}">
+              <mwc-icon-button
+                  icon="content_copy"
+                  @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+              <!--<wl-button class="copy" @click="${() => this._copySSHKey("#ssh-private-key")}">
                 <wl-icon>content_copy</wl-icon>
-              </wl-button>
+              </wl-button>-->
             </div>
             <div style="color:crimson">${_t("usersettings.SSHKeypairGenerationWarning")}</div>
           </div>
         </div>
         <div slot="footer">
-          <wl-button class="ok" @click="${this._openSSHKeypairClearDialog}">${_t("button.Close")}</wl-button>
+          <mwc-button
+             unelevated
+             label="${_t("button.Close")}"
+             @click="${this._openSSHKeypairClearDialog}"></mwc-button>
+             <!--<wl-button class="ok" @click="${this._openSSHKeypairClearDialog}">${_t("button.Close")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="clear-ssh-keypair-dialog" fixed persistent>
         <span slot="title">${_t("usersettings.ClearSSHKeypairInput")}</span>
         <div slot="footer">
-          <wl-button class="cancel" inverted flat @click="${this._hideSSHKeypairClearDialog}">${_t("button.No")}</wl-button>
-          <wl-button class="ok" @click="${this._clearCurrentSSHKeypair}">${_t("button.Yes")}</wl-button>
+          <mwc-button
+              outlined
+              label="${_t("button.No")}"
+              @click="${this._hideSSHKeypairClearDialog}"></mwc-button>
+          <mwc-button
+              unelevated
+              label="${_t("button.Yes")}"
+              @click="${this._clearCurrentSSHKeypair}"></mwc-button>
+          <!--<wl-button class="cancel" inverted flat @click="${this._hideSSHKeypairClearDialog}">${_t("button.No")}</wl-button>-->
+          <!--<wl-button class="ok" @click="${this._clearCurrentSSHKeypair}">${_t("button.Yes")}</wl-button>-->
         </div>
       </backend-ai-dialog>
     `;

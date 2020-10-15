@@ -9,7 +9,7 @@ export const BackendAiStyles = [
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
-      --general-menu-background-color: var(--paper-green-600);
+      --general-menu-background-color: transparent;
       --general-menu-background-color-less: rgba(255, 255, 255, 0.6);
       --general-menu-background-border: rgba(23, 23, 23, 1);
       --general-menu-background-opacity: 1;
@@ -26,10 +26,9 @@ export const BackendAiStyles = [
       --general-panel-width: 280px;
       --general-big-panel-width: 560px;
       --general-content-container-width: 980px;
-      --general-background-color: rgba(255, 255, 255, 1);
-      --general-background-color-2: rgba(244, 245, 247, 1);
-      --general-sidebar-color: #dddddd;
-      --general-sidebar-background-color: rgba(24, 24, 24, 1.0);
+      --general-background-color: rgba(247, 246, 246, 1);
+      --general-sidebar-color: #949494;
+      --general-sidebar-background-color: #2a2c30;
       --general-sidebar-h3-color: #cccccc;
       --general-sidebar-h3-border-color: 1px solid #444444;
       --general-sidebar-topbar-background-color-3: #383e48;
@@ -38,18 +37,28 @@ export const BackendAiStyles = [
       --general-sidebar-topbar-color-4: #222222;
       --general-sidebar-topbar-background-color: rgba(24, 24, 24, 1);
       --general-sidebar-topbar-color: #efefef;
-      --general-sidebar-selected-color: var(--paper-green-400);
-      --general-sidebar-selected-background-color: rgba(255, 255, 255, 1); /* removed transparent */
+      --general-sidebar-selected-color: #72EB51; /*var(--paper-green-400);*/
+      --general-sidebar-selected-background-color: transparent;
       --general-sidebar-selected-background-gradient-color: transparent;
-      --general-sidebar-selected-border-left: 5px solid #2ab6f6;
+      --general-sidebar-selected-border-left: 3px solid var(--general-sidebar-selected-color);
       --general-sidebar-footer-color: #777777;
       --general-sidebar-navbar-footer-color: #222222;
       --general-sidebar-item-even-background-color: transparent;
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
       --general-sidepanel-color: #dddddd;
       --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
+      --general-tabbar-background-color: var(--general-sidebar-background-color);
+      --general-tabbar-tab-disabled-color: var(--general-sidebar-color);
+      --general-tabbar-button-color: var(--general-sidebar-selected-color);
+      --general-textfield-selected-color: #27824F;
+      --general-dropdown-color: var(--general-sidebar-color);
+      --general-checkbox-color: var(--general-textfield-selected-color);
+      --general-button-background-color: #27824F;
+      --general-button-color: #ffffff;
+      --general-switch-off-color: #AAA;
+      --general-switch-on-color: #27824F;
+      --general-slider-color: var(--general-textfield-selected-color);
       --general-dialog-background-color: #ffffff;
-      --app-drawer-width: 190px;
       --general-font-family: 'Ubuntu', 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
     }
@@ -91,7 +100,7 @@ export const BackendAiStyles = [
     }
 
     fieldset {
-      padding: 20px;
+      padding: 0;
       border: 0;
     }
 
@@ -155,11 +164,6 @@ export const BackendAiStyles = [
       background-color: #464646;
     }
 
-    .item paper-header-panel {
-      width: 280px;
-      height: 280px;
-    }
-
     .paper-header {
       height: 60px;
       font-size: 16px;
@@ -196,6 +200,10 @@ export const BackendAiStyles = [
       box-sizing: border-box;
       padding: 0;
       border-radius: 2px;
+    }
+
+    div.item {
+      color: #000000;
     }
 
     #content > wl-card {
@@ -240,6 +248,39 @@ export const BackendAiStyles = [
       --mdc-select-min-width: 100px; /* Fallback to apply width */
     }
 
+    mwc-button,
+    mwc-button[outlined],
+    mwc-button[raised],
+    mwc-button[unelevated] {
+      border-radius: 5px;
+      background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
+      --mdc-theme-primary: transparent; /* gradient-color doesn't work in mwc-button styling */
+      --mdc-theme-on-primary: var(--general-button-color);
+    }
+
+
+    mwc-button.operation {
+      margin: 0px 5px;
+    }
+
+    mwc-icon-button.pagination {
+      --mdc-icon-button-size: 30px;
+      --mdc-theme-text-disabled-on-light: var(--paper-grey-400);
+      color: var(--general-button-background-color);
+      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+    }
+
+    mwc-icon-button[disabled].pagination {
+      background-color: var(--paper-grey-100);
+    }
+
+    mwc-switch {
+      --mdc-theme-surface: var(--general-switch-off-color);
+      --mdc-theme-on-surface: var(--general-switch-off-color);
+      --mdc-theme-secondary: var(--general-switch-on-color);
+    }
+
     wl-card p {
       padding: 10px;
     }
@@ -266,7 +307,8 @@ export const BackendAiStyles = [
       left: 0;
     }
 
-    .panels wl-card {
+    .panels wl-card,
+    .panels div {
       width: var(--general-panel-width);
     }
 
@@ -291,6 +333,24 @@ export const BackendAiStyles = [
 
     .line span {
       margin-left: 24px;
+    }
+
+    .line {
+      display: inline-block;
+      width: auto;
+      height: 1px;
+      border: 0;
+      border-top: 1px solid #ccc;
+      margin: 20px;
+      padding: 0;
+    }
+
+    .resource-line {
+      border-bottom: 1px solid #ccc;
+      height: 1px;
+      width: 60%;
+      margin-left: 80px;
+      margin-bottom: 10px;
     }
 
     wl-card > h3 {
@@ -372,6 +432,12 @@ export const BackendAiStyles = [
 
     paper-toolbar {
       --paper-toolbar-sm-height: 45px;
+    }
+    mwc-button, mwc-button[unelevated] {
+      background-image: none;
+      --mdc-theme-primary: var(--general-button-background-color);
+      --mdc-on-theme-primary: var(--general-button-background-color);
+      --mdc-typography-font-family: var(--general-font-family);
     }
 
     .bg-blue {
@@ -477,6 +543,10 @@ export const BackendAiStyles = [
       margin-right: auto;
     }
 
+    .distancing {
+      margin:15px;
+    }
+
     wl-card > h4 {
       font-weight: 200;
     }
@@ -516,7 +586,103 @@ export const BackendAiStyles = [
       --font-family-sans-serif: var(--general-font-family);
     }
 
+    wl-progress-bar {
+      --progress-bar-height: 17px;
+      --progress-bar-bg: #e8e8e8;
+      border-radius: 3px;
+      margin: 3px auto;
+      width: 186px;
+    }
+
+
+    wl-progress-bar.start-bar,
+    .full-bar {
+      --progress-bar-color: linear-gradient(to left, #722cd7, #5c7cfa);
+    }
+
+    wl-progress-bar.end-bar {
+      --progress-bar-color: linear-gradient(to left, #18aa7c, #60bb43),
+                         linear-gradient(to left, #722cd7, #5c7cfa);
+    }
+
+    div.progress-bar {
+      position: relative;
+    }
+
+    div.progress-bar > span.gauge-label {
+      position: absolute;
+      left: 0.5em;
+      top: 25%;
+      z-index: 1;
+      color: #2f2f2f;
+    }
+
+    .gauge-label {
+      width: inherit;
+      font-weight: bold;
+      font-size: 10px;
+      color: #2f2f2f;
+    }
+
+    .gauge-name {
+      float: right;
+      font-size: 14px;
+      font-weight: bold;
+      color: #2f2f2f;
+    }
+
+    span.percentage {
+      font-size: 10px;
+      color: #2f2f2f;
+    }
+
+    span.start-bar {
+      margin: auto auto 5px 5px;
+    }
+
+    span.end-bar {
+      margin: 5px auto auto 5px;
+    }
+
+    .resource-name {
+      width: 60px;
+      text-align: right;
+      display: inline-block !important;
+      margin: auto 20px auto 0px;
+    }
+
+    .resource-legend-stack {
+      margin-bottom: 5px;
+    }
+
+    span.resource-legend {
+      color: var(--general-sidebar-color);
+      margin-right: 5px;
+    }
+
+    div.resource-legend-icon {
+      width:10px;
+      height: 10px;
+      margin-left: 10px;
+      margin-right: 3px;
+      border-radius: 4px;
+    }
+
+    .vertical-card {
+      margin: 20px;
+    }
+
     vaadin-grid {
       font-family: var(--general-font-family);
     }
+
+    backend-ai-session-launcher#session-launcher {
+      --component-color: #ffffff;
+      --component-bg: rgb(104, 185, 155);
+      --component-bg: linear-gradient(rgba(56,189,115, 0.5), rgba(56,189,115, 0.5)), linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
+      --component-bg-hover: linear-gradient(180deg, rgba(98, 180, 131, 1) 0%, rgba(104, 185, 155, 1) 50%, rgba(93, 178, 113, 1) 100%);
+      --component-bg-active: rgb(104, 185, 155);
+      --component-shadow-color: #37c995;
+    }
+
   `];

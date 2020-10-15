@@ -5,14 +5,15 @@
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-item/paper-item';
 
 import '@material/mwc-textfield/mwc-textfield';
-import "@material/mwc-list/mwc-list-item";
-import "@material/mwc-icon-button/mwc-icon-button";
-import "@material/mwc-menu/mwc-menu";
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-icon-button/mwc-icon-button';
+import '@material/mwc-menu/mwc-menu';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-select/mwc-select';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -24,6 +25,7 @@ import 'weightless/expansion';
 import 'weightless/checkbox';
 import 'weightless/label';
 
+import './lablup-activity-panel';
 import './backend-ai-credential-list';
 import './backend-ai-dialog';
 import './backend-ai-resource-policy-list';
@@ -91,6 +93,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       css`
         #new-keypair-dialog {
           min-width: 350px;
+          height: 100%;
         }
 
         wl-button {
@@ -109,6 +112,10 @@ export default class BackendAICredentialView extends BackendAIPage {
           color: black;
         }
 
+        wl-card > h4 {
+          margin-bottom: 0px;
+        }
+
         wl-card h3 {
           padding-top: 0;
           padding-right: 15px;
@@ -122,19 +129,45 @@ export default class BackendAICredentialView extends BackendAIPage {
         }
 
         wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-green-600);
+          border-radius: 5px 5px 0px 0px;
+          --tab-group-indicator-bg: var(--general-tabbar-button-color);
         }
 
         wl-tab {
-          --tab-color: #666;
-          --tab-color-hover: #222;
-          --tab-color-hover-filled: #222;
-          --tab-color-active: var(--paper-green-600);
-          --tab-color-active-hover: var(--paper-green-600);
-          --tab-color-active-filled: #ccc;
-          --tab-bg-active: var(--paper-lime-200);
-          --tab-bg-filled: var(--paper-lime-200);
-          --tab-bg-active-hover: var(--paper-lime-200);
+          border-radius: 5px 5px 0px 0px;
+          --tab-color: var(--general-sidepanel-color);
+          --tab-color-hover: #26272a;
+          --tab-color-hover-filled: var(--general-tabbar-button-color);
+          --tab-color-active:var(--general-tabbar-button-color);
+          --tab-color-active-hover: var(--general-tabbar-button-color);
+          --tab-color-active-filled: var(--general-tabbar-button-color);
+          --tab-bg-active: #535457;
+          --tab-bg-filled: #26272a;
+          --tab-bg-active-hover: #535457;
+        }
+
+        h3.tab {
+          background-color: var(--general-tabbar-background-color);
+          border-radius: 5px 5px 0px 0px;
+          margin: 0px auto;
+        }
+
+        mwc-tab-bar {
+          --mdc-theme-primary: var(--general-sidebar-selected-color);
+          --mdc-text-transform: none;
+          --mdc-tab-color-default: var(--general-tabbar-background-color);
+          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
+        }
+
+        mwc-select {
+          margin: 10px;
+          --mdc-theme-primary: var(--general-sidebar-color);
+        }
+
+        mwc-list-item {
+          height: auto;
+          font-size: 12px;
+          --mdc-theme-primary: var(--general-sidebar-color);
         }
 
         wl-expansion {
@@ -179,15 +212,16 @@ export default class BackendAICredentialView extends BackendAIPage {
         wl-checkbox {
           --checkbox-size: 10px;
           --checkbox-border-radius: 2px;
-          --checkbox-bg-checked: var(--paper-green-800);
-          --checkbox-checkmark-stroke-color: var(--paper-lime-100);
-          --checkbox-color-checked: var(--paper-green-800);
+          --checkbox-bg-checked: var(--general-checkbox-color);
+          --checkbox-checkmark-stroke-color: white;
+          --checkbox-color-checked: white;
         }
 
         mwc-textfield {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-green-600);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
         }
 
         mwc-textfield#export-file-name {
@@ -196,12 +230,6 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         #new-user-dialog wl-textfield {
           margin-bottom: 15px;
-        }
-
-        mwc-textfield {
-          width: 100%;
-          --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-green-600);
         }
 
         mwc-menu {
@@ -224,7 +252,13 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         backend-ai-dialog {
           --component-min-width: 350px;
+          --component-max-width: 390px;
         }
+
+        #allowed_vfolder-hosts {
+          width: auto;
+        }
+
       `];
   }
 
@@ -309,6 +343,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     globalThis.backendaiclient.vfolder.list_hosts().then(response => {
       this.allowed_vfolder_hosts = response.allowed;
       this.default_vfolder_host = response.default;
+      this.shadowRoot.querySelector('#allowed_vfolder-hosts').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#allowed_vfolder-hosts').select(0);
+      });
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -358,6 +395,12 @@ export default class BackendAICredentialView extends BackendAIPage {
       let policyNames = globalThis.backendaiclient.utils.gqlToList(response.keypair_resource_policies, 'name');
       this.resource_policies = policies;
       this.resource_policy_names = policyNames;
+      this.shadowRoot.querySelector('#resource-policy').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#resource-policy').select(0);
+      });
+      this.shadowRoot.querySelector('#rate-limit').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#rate-limit').select(0);
+      });
     });
   }
 
@@ -620,8 +663,8 @@ export default class BackendAICredentialView extends BackendAIPage {
     for (var x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this._activeTab = tab.value;
-    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+    this._activeTab = tab.ariaLabel;
+    this.shadowRoot.querySelector('#' + tab.ariaLabel).style.display = 'block';
   }
 
   /**
@@ -853,108 +896,133 @@ export default class BackendAICredentialView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-card class="admin item" elevation="1">
-        <h3 class="tab horizontal wrap layout">
-          <wl-tab-group>
-            <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("credential.Users")}</wl-tab>
-            <wl-tab value="credential-lists" @click="${(e) => this._showTab(e.target)}">${_t("credential.Credentials")}</wl-tab>
-            <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">${_t("credential.ResourcePolicies")}</wl-tab>
-          </wl-tab-group>
-          ${this.isAdmin ? html`
+      <!--<wl-card class="admin item" elevation="1" >-->
+      <lablup-activity-panel noheader narrow autowidth>
+        <div slot="message">
+          <h3 class="tab horizontal wrap layout">
+           <mwc-tab-bar>
+            <mwc-tab aria-label="user-lists" label="${_t("credential.Users")}"
+                @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+            <mwc-tab aria-label="credential-lists" label="${_t("credential.Credentials")}"
+                @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+            <mwc-tab aria-label="resource-policy-lists" label="${_t("credential.ResourcePolicies")}"
+                @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+           </mwc-tab-bar>
+            <!--<wl-tab-group>
+              <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("credential.Users")}</wl-tab>
+              <wl-tab value="credential-lists" @click="${(e) => this._showTab(e.target)}">${_t("credential.Credentials")}</wl-tab>
+              <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">${_t("credential.ResourcePolicies")}</wl-tab>
+            </wl-tab-group>-->
+            ${this.isAdmin ? html`
+                <span class="flex"></span>
+                <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
+                                @click="${this._toggleDropdown}">
+                  <mwc-menu id="dropdown-menu" absolute x="-50" y="25">
+                    <mwc-list-item>
+                      <a class="horizontal layout start center" @click="${this._openExportToCsvDialog}">
+                        <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
+                        ${_t("credential.exportCSV")}
+                      </a>
+                    </mwc-list-item>
+                  </mwc-menu>
+                </mwc-icon-button>
+              ` : html``}
+          </h3>
+          <wl-card id="user-lists" class="admin item tab-content">
+            <h4 class="horizontal flex center center-justified layout">
+              <span>${_t("credential.Users")}</span>
               <span class="flex"></span>
-              <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
-                               @click="${this._toggleDropdown}">
-                <mwc-menu id="dropdown-menu" absolute x="-50" y="25">
-                  <mwc-list-item>
-                    <a class="horizontal layout start center" @click="${this._openExportToCsvDialog}">
-                      <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
-                      ${_t("credential.exportCSV")}
-                    </a>
-                  </mwc-list-item>
-                </mwc-menu>
-              </mwc-icon-button>
-            ` : html``}
-        </h3>
-        <wl-card id="user-lists" class="admin item tab-content">
-          <h4 class="horizontal flex center center-justified layout">
-            <span>${_t("credential.Users")}</span>
-            <span class="flex"></span>
-            <wl-button class="fg green" id="add-user" outlined @click="${this._launchUserAddDialog}">
-              <wl-icon>add</wl-icon>
-              ${_t("credential.CreateUser")}
-            </wl-button>
-          </h4>
-          <div>
-            <backend-ai-user-list id="user-list" ?active="${this._status === 'active'}"></backend-ai-user-list>
-          </div>
-        </wl-card>
-        <wl-card id="credential-lists" class="item tab-content" style="display:none;">
-          <h4 class="horizontal flex center center-justified layout">
-            <wl-tab-group style="margin-bottom:-8px;">
-              <wl-tab value="active-credential-list" checked @click="${(e) => this._showList(e.target)}">${_t("credential.Active")}</wl-tab>
-              <wl-tab value="inactive-credential-list" @click="${(e) => this._showList(e.target)}">${_t("credential.Inactive")}</wl-tab>
-            </wl-tab-group>
-            <div class="flex"></div>
-            <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
-              <wl-icon>add</wl-icon>
-              ${_t("credential.AddCredential")}
-            </wl-button>
-          </h4>
-          <backend-ai-credential-list class="list-content" id="active-credential-list" condition="active" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
-          <backend-ai-credential-list class="list-content" style="display:none;" id="inactive-credential-list" condition="inactive" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
-        </wl-card>
-        <wl-card id="resource-policy-lists" class="admin item tab-content" style="display:none;">
-          <h4 class="horizontal flex center center-justified layout">
-            <span>${_t("credential.PolicyGroup")}</span>
-            <span class="flex"></span>
-            <wl-button class="fg green" id="add-policy" outlined @click="${this._launchResourcePolicyDialog}">
-              <wl-icon>add</wl-icon>
-              ${_t("credential.CreatePolicy")}
-            </wl-button>
-          </h4>
-          <div>
-            <backend-ai-resource-policy-list id="resource-policy-list" ?active="${this._activeTab === 'resource-policy-lists'}"></backend-ai-resource-policy-list>
-          </div>
-        </wl-card>
-      </wl-card>
+              <mwc-button raised id="add-user" icon="add" label="${_t("credential.CreateUser")}"
+                  @click="${this._launchUserAddDialog}"></mwc-button>
+              <!--<wl-button class="fg green" id="add-user" outlined @click="${this._launchUserAddDialog}">
+                <wl-icon>add</wl-icon>
+                ${_t("credential.CreateUser")}
+              </wl-button>-->
+            </h4>
+            <div>
+              <backend-ai-user-list id="user-list" ?active="${this._status === 'active'}"></backend-ai-user-list>
+            </div>
+          </wl-card>
+          <wl-card id="credential-lists" class="item tab-content" style="display:none;">
+            <h4 class="horizontal flex center center-justified layout">
+              <wl-tab-group style="margin-bottom:-8px;">
+                <wl-tab value="active-credential-list" checked @click="${(e) => this._showList(e.target)}">${_t("credential.Active")}</wl-tab>
+                <wl-tab value="inactive-credential-list" @click="${(e) => this._showList(e.target)}">${_t("credential.Inactive")}</wl-tab>
+              </wl-tab-group>
+              <div class="flex"></div>
+              <mwc-button raised id="add-user" icon="add" label="${_t("credential.AddCredential")}"
+                  @click="${this._launchKeyPairDialog}"></mwc-button>
+              <!--<wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
+                <wl-icon>add</wl-icon>
+                ${_t("credential.AddCredential")}
+              </wl-button>-->
+            </h4>
+            <backend-ai-credential-list class="list-content" id="active-credential-list" condition="active" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
+            <backend-ai-credential-list class="list-content" style="display:none;" id="inactive-credential-list" condition="inactive" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
+          </wl-card>
+          <wl-card id="resource-policy-lists" class="admin item tab-content" style="display:none;">
+            <h4 class="horizontal flex center center-justified layout">
+              <span>${_t("credential.PolicyGroup")}</span>
+              <span class="flex"></span>
+              <mwc-button raised id="add-user" icon="add" label="${_t("credential.CreatePolicy")}"
+              @click="${this._launchResourcePolicyDialog}"></mwc-button>
+              <!--<wl-button class="fg green" id="add-policy" outlined @click="${this._launchResourcePolicyDialog}">
+                <wl-icon>add</wl-icon>
+                ${_t("credential.CreatePolicy")}
+              </wl-button>-->
+            </h4>
+            <div>
+              <backend-ai-resource-policy-list id="resource-policy-list" ?active="${this._activeTab === 'resource-policy-lists'}"></backend-ai-resource-policy-list>
+            </div>
+          </wl-card>
+        </div>
+      </lablup-activity-panel>
+      <!--</wl-card>-->
       <backend-ai-dialog id="new-keypair-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("credential.AddCredential")}</span>
         <div slot="content">
-          <wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
-                       auto-validate></wl-textfield>
-          <div class="horizontal center layout">
-            <paper-dropdown-menu id="resource-policy" label="Resource Policy">
-              <paper-listbox slot="dropdown-content" selected="0">
+          <div class="vertical center-justified layout center">
+            <mwc-textfield type="email" name="new_user_id" id="id_new_user_id" label="${_t("credential.UserIDAsEmail")}" autoValidate></mwc-textfield>
+           
+            <mwc-select outlined id="resource-policy" label="${_t("credential.ResourcePolicy")}" style="width:100%;">
               ${this.resource_policy_names.map(item => html`
-                <paper-item label="${item}">${item}</paper-item>
+                <mwc-list-item value="${item}">${item}</mwc-list-item>
               `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
-            <paper-dropdown-menu id="rate-limit" label="Rate Limit (for 15 min.)">
-              <paper-listbox slot="dropdown-content" selected="0">
+            </mwc-select>
+            <mwc-select outlined id="rate-limit" label="${_t("credential.RateLimitFor15min")}" style="width:100%;">
               ${this.rate_metric.map(item => html`
-                <paper-item label="${item}">${item}</paper-item>
+                  <mwc-list-item value="${item}">${item}</mwc-list-item>
               `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
+            </mwc-select>
+            <wl-expansion name="advanced-keypair-info" style="width:100%;">
+              <span slot="title">${_t("general.Advanced")}</span>
+              <span slot="description"></span>
+              <div class="vertical layout center">
+              <mwc-textfield
+                  type="text"
+                  name="new_access_key"
+                  id="id_new_access_key"
+                  label="${_t("credential.UserIDAsEmail")}"
+                  autoValidate></mwc-textfield>
+              <mwc-textfield
+                  type="text"
+                  name="new_access_key"
+                  id="id_new_access_key"
+                  label="${_t("credential.AccessKeyOptional")}"
+                  autoValidate
+                  .value="${this.new_access_key}"><mwc-textfield>
+              </div>
+            </wl-expansion>
           </div>
-          <wl-expansion name="advanced-keypair-info">
-            <span slot="title">${_t("general.Advanced")}</span>
-            <span slot="description"></span>
-            <wl-textfield type="text" name="new_access_key" id="id_new_access_key" label="Access Key (optional)"
-                          auto-validate .value="${this.new_access_key}">
-            </wl-textfield>
-            <wl-textfield type="text" name="new_secret_key" id="id_new_secret_key" label="Secret Key (optional)"
-                          auto-validate .value="${this.new_secret_key}">
-            </wl-textfield>
-          </wl-expansion>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-            <wl-button class="fg blue full-size" id="create-keypair-button" outlined type="button"
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button raised id="create-keypair-button" icon="add" label="${_t("general.Add")}" style="width:100%;"
+          @click="${this._addKeyPair}"></mwc-button>
+            <!--<wl-button class="fg blue full-size" id="create-keypair-button" outlined type="button"
             @click="${this._addKeyPair}">
                        <wl-icon>add</wl-icon>
                        ${_t("general.Add")}
-                       </wl-button>
+                       </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="new-policy-dialog" fixed backdrop blockscrolling>
@@ -1033,13 +1101,15 @@ export default class BackendAICredentialView extends BackendAIPage {
           <h4 style="margin-bottom:0px;">${_t("credential.Folders")}</h4>
           <div class="horizontal center layout">
             <div class="vertical layout" style="width: 110px;">
-            <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
-              <paper-listbox slot="dropdown-content" selected="0">
+              <mwc-select id="allowed_vfolder-hosts" label="${_t("credential.AllowedHosts")}">
                 ${this.allowed_vfolder_hosts.map(item => html`
-                  <paper-item value="${item}" style="margin: 0px 0px 1px 0px;">${item}</paper-item>
+                  <mwc-list-item
+                                 id="${item}"
+                                 value="${item}">
+                    ${item}
+                  </mwc-list-item>
                 `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
+              </mwc-select>
             </div>
             <div class="vertical layout" style="width: 110px; margin: 21px 15px 0;">
               <wl-label class="folders">${_t("credential.Capacity(GB)")}</wl-label>
@@ -1056,11 +1126,13 @@ export default class BackendAICredentialView extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-            <wl-button class="fg blue full-size" id="create-policy-button" type="button" outlined
+          <mwc-button raised id="create-policy-button" icon="add" label="${_t("credential.Create")}" style="width:100%;"
+          @click="${() => this._addResourcePolicy()}"></mwc-button>
+            <!--<wl-button class="fg blue full-size" id="create-policy-button" type="button" outlined
              @click="${() => this._addResourcePolicy()}">
                        <wl-icon>add</wl-icon>
                        ${_t("credential.Create")}
-            </wl-button>
+            </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="new-user-dialog" fixed backdrop blockscrolling>
@@ -1096,12 +1168,14 @@ export default class BackendAICredentialView extends BackendAIPage {
           >
           </wl-textfield>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="fg blue full-size" id="create-user-button" outlined type="button"
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button raised id="create-user-button" icon="add" label="${_t("credential.CreateUser")}" style="width:100%;"
+          @click="${this._addUser}"></mwc-button>
+          <!--<wl-button class="fg blue full-size" id="create-user-button" outlined type="button"
           @click="${this._addUser}">
             <wl-icon>add</wl-icon>
             ${_t("credential.CreateUser")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="export-to-csv" fixed backdrop blockscrolling>
@@ -1114,11 +1188,17 @@ export default class BackendAICredentialView extends BackendAIPage {
           ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
+          <mwc-button
+              unelevated
+              style="width:100%;"
+              icon="get_app"
+              label="${_t("credential.ExportCSVFile")}"
+              @click="${this._exportToCSV}"></mwc-button>
+          <!--<wl-button class="fg green" type="button" inverted outlined style="width:100%;"
           @click="${this._exportToCSV}">
             <wl-icon>get_app</wl-icon>
             ${_t("credential.ExportCSVFile")}
-          </wl-button>
+          </wl-button>-->
         </div>
       </backend-ai-dialog>
     `;

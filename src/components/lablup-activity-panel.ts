@@ -33,12 +33,17 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: String}) horizontalsize = '';
   @property({type: String}) headerColor = '';
   @property({type: Number}) elevation = 1;
-  @property({type: Number}) width = 280;
+  @property({type: Boolean}) autowidth = false;
+  @property({type: Number}) width = 350;
+  @property({type: Number}) widthpct = 0;
+  @property({type: Number}) height = 0;
   @property({type: Number}) marginWidth = 16;
   @property({type: Number}) minwidth = 0;
   @property({type: Number}) maxwidth = 0;
   @property({type: Boolean}) pinned = false;
   @property({type: Boolean}) disabled = false;
+  @property({type: Boolean}) narrow = false;
+  @property({type: Boolean}) noheader = false;
 
   constructor() {
     super();
@@ -50,26 +55,26 @@ export default class LablupActivityPanel extends LitElement {
       IronFlexAlignment,
       // language=CSS
       css`
-        wl-card {
+        div.card {
           display: block;
           background: white;
           box-sizing: border-box;
           margin: 16px;
           padding: 0;
-          border-radius: 10px;
-          --card-elevation: rgba(4, 7, 22, 0.15) 0px 5px 10px -2px;
+          border-radius: 5px;
+          box-shadow: rgba(4, 7, 22, 0.7) 0px 0px 4px -2px;
+          width: 280px;
         }
 
-        wl-card > h4 {
-          border-left: 3px solid var(--paper-green-900);
-          background-color: var(--paper-green-500);
-          color: #eee;
+        div.card > h4 {
+          background-color: #FFFFFF;
+          color: #000000;
           font-size: 14px;
           font-weight: 400;
-          height: 32px;
+          height: 48px;
           padding: 5px 15px 5px 20px;
           margin: 0 0 10px 0;
-          border-radius: 10px 10px 0 0;
+          border-radius: 5px 5px 0 0;
           border-bottom: 1px solid #DDD;
           @apply --layout-justified;
           display: flex;
@@ -78,15 +83,14 @@ export default class LablupActivityPanel extends LitElement {
           overflow: hidden;
         }
 
-        wl-card[disabled] {
+        div.card[disabled] {
           background-color: rgba(0, 0, 0, 0.1);
         }
 
-        wl-card > div {
+        div.card > div {
           margin: 20px;
           padding-bottom: 20px;
           font-size: 12px;
-          padding-left: 3px;
         }
 
         ul {
@@ -102,7 +106,7 @@ export default class LablupActivityPanel extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-card id="activity" elevation="${this.elevation}" ?disabled="${this.disabled}">
+      <div class="card" id="activity" elevation="${this.elevation}" ?disabled="${this.disabled}">
         <h4 id="header" class="horizontal center layout" style="font-weight:bold">
           <span>${this.title}</span>
           <div class="flex"></div>
@@ -113,7 +117,7 @@ export default class LablupActivityPanel extends LitElement {
         <div class="${this.disabled ? `disabled` : `enabled`}">
           <slot name="message"></slot>
         </div>
-      </wl-card>
+      </div>
     `;
   }
 
@@ -122,24 +126,43 @@ export default class LablupActivityPanel extends LitElement {
       const button = this.shadowRoot.getElementById('button');
       this.shadowRoot.querySelector('h4').removeChild(button);
     }
-    (this.shadowRoot.querySelector('wl-card') as any).style.width = this.width + "px";
+    if (this.autowidth) {
+      (this.shadowRoot.querySelector('.card') as any).style.width = "auto";
+    } else {
+      (this.shadowRoot.querySelector('.card') as any).style.width = this.widthpct !== 0 ? this.widthpct + "%" : this.width + "px";
+    }
+    
+
     if (this.minwidth) {
-      (this.shadowRoot.querySelector('wl-card') as any).style.minWidth = this.minwidth + "px";
+      (this.shadowRoot.querySelector('.card') as any).style.minWidth = this.minwidth + "px";
     }
     if (this.maxwidth) {
-      (this.shadowRoot.querySelector('wl-card') as any).style.minWidth = this.maxwidth + "px";
+      (this.shadowRoot.querySelector('.card') as any).style.minWidth = this.maxwidth + "px";
     }
     if (this.horizontalsize) {
       if (this.horizontalsize == '2x') {
-        (this.shadowRoot.querySelector('wl-card') as any).style.width = (this.width * 2 + 32) + "px";
+        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 2 + 32) + "px";
       }
       if (this.horizontalsize == '3x') {
-        (this.shadowRoot.querySelector('wl-card') as any).style.width = (this.width * 3 + 32) + "px";
+        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 3 + 32) + "px";
+      }
+      if (this.horizontalsize == '4x') {
+        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 4 + 32) + "px";
       }
     }
-    (this.shadowRoot.querySelector('wl-card') as any).style.margin = this.marginWidth + "px";
+    (this.shadowRoot.querySelector('.card') as any).style.margin = this.marginWidth + "px";
     if (this.headerColor !== '') {
       this.shadowRoot.querySelector("#header").style.backgroundColor = this.headerColor;
+    }
+    if (this.narrow === true) {
+      this.shadowRoot.querySelector("div.card > div").style.margin = '0';
+      this.shadowRoot.querySelector("div.card > h4").style.marginBottom = '0';
+    }
+    if (this.height > 0) {
+      this.shadowRoot.querySelector("div.card").style.height = this.height + 'px';
+    }
+    if (this.noheader === true) {
+      this.shadowRoot.querySelector("#header").style.display = 'none';
     }
   }
 

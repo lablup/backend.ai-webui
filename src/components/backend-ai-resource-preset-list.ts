@@ -9,15 +9,13 @@ import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-listbox/paper-listbox';
-
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
-import '@material/mwc-textfield';
+import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-button/mwc-button';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -59,14 +57,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
           height: calc(100vh - 225px);
         }
 
-        paper-dropdown-menu {
-        }
-
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
-
         wl-button > wl-icon {
           --icon-size: 24px;
           padding: 0;
@@ -106,28 +96,29 @@ class BackendAiResourcePresetList extends BackendAIPage {
           --mdc-theme-primary: var(--paper-yellow-600) !important;
         }
 
-        wl-button.create-button {
-          --button-bg: white;
-          --button-bg-hover: var(--paper-yellow-100);
-          --button-bg-active: var(--paper-yellow-600);
+        mwc-button, mwc-button[unelevated] {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-typography-font-family: var(--general-font-family);
         }
 
-        wl-button {
-          color: var(--paper-yellow-600);
-          --button-bg: var(--paper-yellow-50);
-          --button-bg-hover: var(--paper-yellow-100);
-          --button-bg-active: var(--paper-yellow-600);
+        h4 {
+          font-weight: 200;
+          font-size: 14px;
+          margin: 0px;
+          padding: 5px 15px 5px 20px;
         }
 
-        wl-button#create-policy-button {
-          width: 100%;
-          box-sizing: border-box;
-          margin-top: 15px;
+        backend-ai-dialog h4 {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          height: 20px;
+          border-bottom: 1px solid #DDD;
         }
 
-        wl-card {
-          margin: 0;
-        }
       `];
   }
 
@@ -213,14 +204,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-card>
+      <div style="margin:0px;">
         <h4 class="horizontal flex center center-justified layout">
           <span>${_t("resourcePreset.ResourcePresets")}</span>
           <span class="flex"></span>
-          <wl-button class="fg orange" id="add-resource-preset" outlined @click="${e => this._launchPresetAddDialog(e)}">
-            <wl-icon>add</wl-icon>
-            ${_t("resourcePreset.CreatePreset")}
-          </wl-button>
+          <mwc-button raised id="add-resource-preset" icon="add" label="${_t("resourcePreset.CreatePreset")}" @click="${e => this._launchPresetAddDialog(e)}"></mwc-button>
         </h4>
         <div>
           <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
@@ -245,10 +233,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
             </vaadin-grid-column>
           </vaadin-grid>
         </div>
-      </wl-card>
-      <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
+      </div>
+      <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling narrowLayout>
         <span slot="title">${_t("resourcePreset.ModifyResourcePreset")}</span>
-        <div slot="content" class="login-panel intro centered">
+        <div slot="content">
           <form id="login-form">
             <fieldset>
               <mwc-textfield type="text" name="preset_name" class="modify" id="id-preset-name"
@@ -275,17 +263,19 @@ class BackendAiResourcePresetList extends BackendAIPage {
                     label="Shared Memory (GB)" min="0" step="0.01"
                     validationMessage="${_t("resourcePreset.MinimumShmemUnit")}"></mwc-textfield>
               </div>
-              <br/><br/>
-              <wl-button class="fg orange create-button full-size" outlined type="button"
-                @click="${() => this._modifyResourceTemplate()}">
-                <wl-icon>check</wl-icon>
-                ${_t("button.SaveChanges")}
-              </wl-button>
             </fieldset>
           </form>
         </div>
+        <div slot="footer" class="horizontal end-justified flex layout distancing">
+          <mwc-button
+              unelevated
+              icon="check"
+              label="${_t("button.SaveChanges")}"
+              @click="${() => this._modifyResourceTemplate()}">
+          </mwc-button>
+        </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="create-preset-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="create-preset-dialog" fixed backdrop blockscrolling narrowLayout>
         <span slot="title">${_t("resourcePreset.CreateResourcePreset")}</span>
         <div slot="content">
           <mwc-textfield
@@ -318,17 +308,14 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 validationMessage="${_t("resourcePreset.MinimumShmemUnit")}"></mwc-textfield>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button
-            class="fg orange create-button full-size"
-            id="create-policy-button"
-            outlined
-            type="button"
-            @click="${this._createPreset}"
-          >
-            <wl-icon>add</wl-icon>
-            ${_t("button.Add")}
-          </wl-button>
+        <div slot="footer" class="horizontal end-justified flex layout distancing">
+          <mwc-button
+              unelevated
+              id="create-policy-button"
+              icon="add"
+              label="${_t("button.Add")}"
+              @click="${this._createPreset}">
+          </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
@@ -339,8 +326,15 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <p>${_t("dialog.warning.CannotBeUndone")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout">
-            <wl-button class="fg orange cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
-            <wl-button class="fg orange ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">${_t("button.Okay")}</wl-button>
+         <mwc-button
+              class="operation"
+              label="${_t("button.Cancel")}"
+              @click="${(e) => this._hideDialog(e)}"></mwc-button>
+          <mwc-button
+              unelevated
+              class="operation"
+              label="${_t("button.Okay")}"
+              @click="${(e) => this._deleteResourcePresetWithCheck(e)}"></mwc-button>
          </div>
       </backend-ai-dialog>
     `;
