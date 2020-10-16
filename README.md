@@ -163,6 +163,11 @@ $ npm run build:d # To watch source changes
 $ npm run wsproxy # To run websocket proxy
 ```
 
+### Lint Checking
+```
+$ npm run lint # To check lints
+```
+
 ### Unit Testing
 
 The project uses `testcafe` as testing framework.
