@@ -1,6 +1,7 @@
 {
   "console": {
     "menu": {
+      "WelcomeMessage": "Welcome, ",
       "Summary": "Summary",
       "Sessions": "Sessions",
       "Data&Storage": "Data & Storage",
@@ -58,6 +59,8 @@
     "CoresReserved": "Cores reserved",
     "reserved": "reserved",
     "FractionalGPUScalingEnabled": "Fractional GPU scaling enabled",
+    "ROCMGPUEnabled": "ROCm GPU enabled",
+    "TPUEnabled": "TPU Enabled",
     "Reserved": "Reserved",
     "Used": "Used",
     "Total": "Total",
@@ -79,14 +82,15 @@
     "FolderName": "Folder Name",
     "Permission": "Permission",
     "Announcement": "Announcement",
-    "SystemResources": "System Resources"
+    "SystemResources": "System Resources",
+    "CurrentVersion": "Current Version"
   },
   "session": {
     "launcher": {
       "TOTAL": "TOTAL",
       "RESOURCE": "RESOURCE",
       "MY": "MY",
-      "Session": "Session",
+      "Sessions": "Sessions",
       "Project": "Project",
       "UserResourceLimit": "User Resource Limit",
       "ResourceGroup": "Resource Group",
@@ -242,6 +246,7 @@
     "active": "active",
     "concurrentsessions": "Concurrent sessions",
     "RateLimit": "Rate Limit",
+    "RateLimitFor15min": "Rate Limit (for 15 min.)",
     "for900seconds": "for 900 seconds",
     "Users": "Users",
     "exportCSV": "export CSV",
@@ -285,7 +290,10 @@
     "ProjectAndGroup": "Projects & Groups",
     "ModifyKeypairResourcePolicy": "Modify keypair resource policy",
     "SelectPolicy": "Select Policy",
-    "AllowedHosts": "Allowed Hosts"
+    "AllowedHosts": "Allowed Hosts",
+    "UserIDAsEmail": "User ID as E-mail (optional)",
+    "AccessKeyOptional": "Access Key (optional)",
+    "SecretKeyOptional": "Secret Key (optional)"
   },
   "data": {
     "Folders": "Folders",
@@ -395,7 +403,7 @@
     "Language": "Language",
     "Version": "Version",
     "Digest": "Digest",
-    "ModifyImage": "Modify Image",
+    "ModifyImageResourceLimit": "Modify Image Resource Limit",
     "ManageApps": "Manage Apps",
     "AppName": "App Name",
     "Protocol": "Protocol",
@@ -416,7 +424,8 @@
     "ResourcePresets": "Resource Presets",
     "Registries": "Registries",
     "SelectedImagesAlreadyInstalled": "Selected Image(s) are already installed or None. Please check again.",
-    "SelectedImagesNotInstalled": "Selected Images(s) are not installed. Please check again."
+    "SelectedImagesNotInstalled": "Selected Images(s) are not installed. Please check again.",
+    "Disabled": "disabled"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",
@@ -549,7 +558,9 @@
     "SelectDomain": "Select Domain",
     "ModifyResourceGroup": "Modify Resource Group",
     "TypeResourceGroupNameToDelete": "Type resource group name to delete",
-    "ResourceGroupName": "ResourceGroupName"
+    "ResourceGroupName": "ResourceGroupName",
+    "Active": "Active",
+    "SelectScheduler": "Select Scheduler"
   },
   "maintenance": {
     "General": "General",

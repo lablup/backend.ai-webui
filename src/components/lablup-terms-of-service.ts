@@ -115,22 +115,26 @@ export default class LablupTermsOfService extends LitElement {
           ${this.tosLanguages ? html`
             <span style="font-size:14px;">${_t("language.Language")}</span>
             ${this.tosLanguages.map(item => html`
-            <wl-button class="fg blue language" outlined type="button" ?active="${this.tosLanguage === item.code}" @click="${() => {
-      this.changeLanguage(item.code)
-    }}">
-                ${item.text}
-            </wl-button>`)}
+            <mwc-button
+                outlined
+                ?active="${this.tosLanguage === item.code}"
+                label="${item.text}"
+                @click="${() => {
+                    this.changeLanguage(item.code)
+                }}"></mwc-button>`)}
           ` : html``}
         </div>
         <div slot="content">
           <div id="terms-of-service-dialog-content"></div>
           <div class="horizontal end-justified flex layout">
             <div class="flex"></div>
-            <wl-button class="fg green dismiss" id="dismiss-button" outlined type="button" @click="${() => {
-      this.close();
-    }}">
-                ${_t("button.Dismiss")}
-            </wl-button>
+            <mwc-button
+                outlined
+                id="dismis-button"
+                label=${_t("button.Dismiss")}
+                @click="${() => {
+                  this.close();
+                }}"></mwc-button>
           </div>
         </div>
       </backend-ai-dialog>

@@ -18,6 +18,9 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
 
+import '@material/mwc-icon/mwc-icon';
+
+import './lablup-activity-panel';
 import './lablup-loading-spinner';
 
 /**
@@ -72,6 +75,10 @@ export default class BackendAiInformationView extends BackendAIPage {
           margin-right: 5px;
         }
 
+        div.title {
+          font-weight: bold;
+        }
+
         div.description,
         span.description {
           font-size: 11px;
@@ -79,12 +86,37 @@ export default class BackendAiInformationView extends BackendAIPage {
           margin-right: 5px;
         }
 
+        p.label {
+          display: inline-block;
+          width: auto;
+          margin: 0px;
+          padding: 0px 3px;
+          background-clip: padding-box;
+          background-color: #f9f9f9;
+          border: 1px solid #ccc;
+          border-radius: 3px;
+        }
+
         .setting-item {
           margin: 15px auto;
         }
 
+        .setting-item-bottom-expand {
+          margin: 15px auto 45px auto;
+        }
+
         .setting-desc {
-          width: 300px;
+          width: 65%;
+          margin: 5px;
+        }
+
+        .setting-desc-shrink {
+          width: 100px;
+          margin-right: 35px;
+        }
+
+        .setting-label {
+          width: 30%;
         }
 
         wl-card > div {
@@ -100,160 +132,168 @@ export default class BackendAiInformationView extends BackendAIPage {
           --button-color-hover: var(--paper-red-100);
           --button-color-disabled: #ccc;
         }
+
+        lablup-activity-panel {
+          color: #000;
+        }
       `];
   }
 
   render() {
     // language=HTML
     return html`
-      <wl-card elevation="1">
-        <h3 class="horizontal center layout">
-          <span>${_t("information.System")}</span>
-          <span class="flex"></span>
-        </h3>
-
-        <h4>${_t("information.Core")}</h4>
-        <div>
-          <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("information.ManagerVersion")}</div>
+      <!--<wl-card elevation="1">-->
+      <div class="horizontal layout flex wrap">
+        <div class="vertical layout">
+          <lablup-activity-panel title="${_t("information.Core")}" horizontalsize="1x">
+            <div slot="message">
+              <div class="horizontal flex layout wrap setting-item">
+                <div class="vertical center-justified layout setting-desc-shrink">
+                  <div class="title">${_t("information.ManagerVersion")}</div>
+                </div>
+                <div class="vertical center-justified layout">
+                  Backend.AI ${this.manager_version}
+                  <lablup-shields app="${_t("information.Installation")}" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
+                  <lablup-shields app="${_t("information.LatestRelease")}" color="darkgreen" description="${this.manager_version_latest}" ui="flat"></lablup-shields>
+                </div>
+              </div>
+              <div class="horizontal flex layout wrap setting-item">
+                <div class="vertical center-justified layout setting-desc">
+                  <div class="title">${_t("information.APIVersion")}</div>
+                </div>
+                <div class="horizontal center end-justified layout setting-label">
+                  ${this.api_version}
+                </div>
+              </div>
             </div>
-            <div class="vertical center-justified layout">
-              Backend.AI ${this.manager_version}
-              <lablup-shields app="${_t("information.Installation")}" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
-              <lablup-shields app="${_t("information.LatestRelease")}" color="darkgreen" description="${this.manager_version_latest}" ui="flat"></lablup-shields>
+          </lablup-activity-panel>
+          <lablup-activity-panel title="${_t("information.Security")}">
+            <div slot="message">
+              <div class="horizontal flex layout wrap setting-item">
+                <div class="vertical center-justified layout setting-desc">
+                  <div class="title">${_t("information.DefaultAdministratorAccountChanged")}</div>
+                  <div class="description">${_t("information.DescDefaultAdministratorAccountChanged")}
+                  </div>
+                </div>
+                <div class="horizontal center end-justified layout" style="width:30%;">
+                ${this.account_changed ? html`<mwc-icon>done</mwc-icon>` : html`<mwc-icon>warning</mwc-icon>`}
+                </div>
+              </div>
+              <div class="horizontal flex layout wrap setting-item">
+                <div class="vertical center-justified layout setting-desc">
+                  <div class="title">${_t("information.UsesSSL")}</div>
+                  <div class="description">${_t("information.DescUsesSSL")}
+                  </div>
+                </div>
+                <div class="horizontal center end-justified layout" style="width:30%;">
+                ${this.use_ssl ? html`<mwc-icon>done</mwc-icon>` : html`<mwc-icon class="fg red">warning</mwc-icon>`}
+                </div>
+              </div>
+            </div>
+          </lablup-activity-panel>
+        </div>
+        <lablup-activity-panel title="${_t("information.Component")}" height="485">
+          <div slot="message">
+            <div class="horizontal flex layout wrap setting-item-bottom-expand">
+              <div class="vertical center-justified layout setting-desc">
+                <div class="title">${_t("information.DockerVersion")}</div>
+                <div class="description">${_tr("information.DescDockerVersion")}
+                </div>
+              </div>
+              <div class="horizontal center end-justified layout setting-label">
+                <p class="label">${this.docker_version}</p>
+              </div>
+            </div>
+            <div class="horizontal flex layout wrap setting-item-bottom-expand">
+              <div class="vertical center-justified layout setting-desc">
+                <div class="title">${_t("information.PostgreSQLVersion")}</div>
+                <div class="description">${_tr("information.DescPostgreSQLVersion")}
+                </div>
+              </div>
+              <div class="horizontal center end-justified layout setting-label">
+                <p class="label">${this.pgsql_version}</p>
+              </div>
+            </div>
+            <div class="horizontal flex layout wrap setting-item-bottom-expand">
+              <div class="vertical center-justified layout setting-desc">
+                <div class="title">${_t("information.ETCDVersion")}</div>
+                <div class="description">${_tr("information.DescETCDVersion")}
+                </div>
+              </div>
+              <div class="horizontal center end-justified layout setting-label">
+                <p class="label">${this.etcd_version}</p>
+              </div>
+            </div>
+            <div class="horizontal flex layout wrap setting-item-bottom-expand">
+              <div class="vertical center-justified layout setting-desc">
+                <div class="title">${_t("information.RedisVersion")}</div>
+                <div class="description">${_tr("information.DescRedisVersion")}
+                </div>
+              </div>
+              <div class="horizontal center end-justified layout setting-label">
+                <p class="label">${this.redis_version}</p>
+              </div>
             </div>
           </div>
-          <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("information.APIVersion")}</div>
+        </lablup-activity-panel>
+        <lablup-activity-panel title="${_t("information.License")}" horizontalsize="2x">
+          <div slot="message">
+            <div class="horizontal flex layout wrap setting-item">
+              <div class="vertical center-justified layout setting-desc">
+                <div class="title">${_t("information.IsLicenseValid")}</div>
+                <div class="description">${_t("information.DescIsLicenseValid")}
+                </div>
+              </div>
+              <div class="horizontal center end-justified layout" style="width:30%;">
+              ${this.license_valid ? html`<mwc-icon>done</mwc-icon>` : html`<mwc-icon class="fg red">warning</mwc-icon>`}
+              </div>
             </div>
-            <div class="vertical center-justified layout">
-              ${this.api_version}
+            <div class="horizontal flex layout wrap setting-item">
+              <div class="vertical center-justified layout setting-desc">
+                <div class="title">${_t("information.LicenseType")}</div>
+                <div class="description">${_tr("information.DescLicenseType")}
+                </div>
+              </div>
+              <div class="horizontal center end-justified layout setting-label">
+                <p class="label">
+                  ${this.license_type === 'fixed' ? _t('information.FixedLicense') : _t('information.DynamicLicense')}
+                </p>
+              </div>
+            </div>
+            <div class="horizontal flex layout wrap setting-item">
+              <div class="vertical center-justified layout setting-desc">
+                <div class="title">${_t("information.Licensee")}</div>
+                <div class="description">${_t("information.DescLicensee")}
+                </div>
+              </div>
+              <div class="horizontal center end-justified layout setting-label">
+                <p class="label">${this.license_licensee}</p>
+              </div>
+            </div>
+            <div class="horizontal flex layout wrap setting-item">
+              <div class="vertical center-justified layout setting-desc">
+                <div class="title">${_t("information.LicenseKey")}</div>
+                <div class="description">${_t("information.DescLicenseKey")}
+                </div>
+              </div>
+              <div class="horizontal center end-justified layout setting-label monospace indicator">
+                <p class="label">${this.license_key}</p>
+              </div>
+            </div>
+            <div class="horizontal flex layout wrap setting-item">
+              <div class="vertical center-justified layout setting-desc">
+                <div class="title">${_t("information.Expiration")}</div>
+                <div class="description">${_t("information.DescExpiration")}
+                </div>
+              </div>
+              <div class="horizontal center end-justified layout setting-label">
+                <p class="label">${this.license_expiration}</p>
+              </div>
             </div>
           </div>
         </div>
-        <h4>${_t("information.Component")}</h4>
-        <div>
-          <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("information.DockerVersion")}</div>
-              <div class="description">${_tr("information.DescDockerVersion")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout">
-              ${this.docker_version}
-            </div>
-          </div>
-          <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("information.PostgreSQLVersion")}</div>
-              <div class="description">${_tr("information.DescPostgreSQLVersion")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout">
-              ${this.pgsql_version}
-            </div>
-          </div>
-          <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("information.ETCDVersion")}</div>
-              <div class="description">${_tr("information.DescETCDVersion")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout">
-              ${this.etcd_version}
-            </div>
-          </div>
-          <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("information.RedisVersion")}</div>
-              <div class="description">${_tr("information.DescRedisVersion")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout">
-              ${this.redis_version}
-            </div>
-          </div>
-        </div>
-        <h4>${_t("information.Security")}</h4>
-        <div>
-          <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("information.DefaultAdministratorAccountChanged")}</div>
-              <div class="description">${_t("information.DescDefaultAdministratorAccountChanged")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout">
-            ${this.account_changed ? html`<wl-icon>done</wl-icon>` : html`<wl-icon>warning</wl-icon>`}
-            </div>
-          </div>
-          <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("information.UsesSSL")}</div>
-              <div class="description">${_t("information.DescUsesSSL")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout">
-            ${this.use_ssl ? html`<wl-icon>done</wl-icon>` : html`<wl-icon class="fg red">warning</wl-icon>`}
-            </div>
-          </div>
-        </div>
-        <h4>${_t("information.License")}</h4>
-        <div>
-          <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("information.IsLicenseValid")}</div>
-              <div class="description">${_t("information.DescIsLicenseValid")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout">
-            ${this.license_valid ? html`<wl-icon>done</wl-icon>` : html`<wl-icon class="fg red">warning</wl-icon>`}
-            </div>
-          </div>
-          <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("information.LicenseType")}</div>
-              <div class="description">${_tr("information.DescLicenseType")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout">
-            ${this.license_type === 'fixed' ? _t('information.FixedLicense') : _t('information.DynamicLicense')}
-            </div>
-          </div>
-          <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("information.Licensee")}</div>
-              <div class="description">${_t("information.DescLicensee")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout">
-            ${this.license_licensee}
-            </div>
-          </div>
-          <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("information.LicenseKey")}</div>
-              <div class="description">${_t("information.DescLicenseKey")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout monospace indicator">
-            ${this.license_key}
-            </div>
-          </div>
-          <div class="horizontal flex layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("information.Expiration")}</div>
-              <div class="description">${_t("information.DescExpiration")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout">
-            ${this.license_expiration}
-            </div>
-          </div>
-        </div>
-
-      </wl-card>
+      </lablup-activity-panel>
+      <!--</wl-card>-->
     `;
   }
 
