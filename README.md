@@ -2,7 +2,7 @@
 
 [![GitHub version](https://badge.fury.io/gh/lablup%2Fbackend.ai-console.svg)](https://badge.fury.io/gh/lablup%2Fbackend.ai-console)
 
-Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin / DevOps.
+Make AI Accessible: Backend.AI GUI console (web/app) for End-user / DevOps / SysAdmin.
 
 For more information, see [manual](https://console.docs.backend.ai/en/latest/).
 
@@ -30,6 +30,7 @@ Backend.AI console focuses to
     * Experiments (with SACRED / MLFlow)
     * AutoML (with Microsoft NNI / MLFlow)
     * Manages container streams with pipeline vfolders
+    * Storage proxy for fast data I/O between backend.ai cluster and user
     * Checks queue and scheduled jobs
  * Storage management
     * Create / delete folders
@@ -45,12 +46,11 @@ Backend.AI console focuses to
     * User-specific web / app configurations
     * Beta features
     * Console logs / errors
+ * License
+    * Check current license information
 
 ## Management Features
 
- * Keypair management
-    * Allocate resource limitation for keys
-    * Add / remove resource policies for keys
  * Kernel managements
     * List supported kernels
      * Add kernel
@@ -60,6 +60,9 @@ Backend.AI console focuses to
      * Add/remove docker registries
  * User management
     * User creation / deletion / key management / resource templates
+ * Keypair management
+    * Allocate resource limitation for keys
+    * Add / remove resource policies for keys
  * Manager settings
     * Add /setting repository
     * Plugin support

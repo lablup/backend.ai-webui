@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {translate as _t, translateUnsafeHTML as _tr, get as _text} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import 'weightless/button';
@@ -95,10 +95,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           height: 25px;
           font-size: 13px;
         }
+
         #app-launch-confirmation-dialog {
           --component-width: 400px;
           --component-font-size: 14px;
         }
+
         wl-button.app-launch-confirmation-button {
           width: 335px;
           --button-bg: var(--paper-red-50);
@@ -177,7 +179,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
 
         p code {
-          font: 12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;
+          font: 12px Monaco, "Courier New", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", monospace;
           color: #52595d;
           -webkit-border-radius: 3px;
           -moz-border-radius: 3px;
@@ -367,8 +369,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
-    const openToPublic = this.shadowRoot.querySelector('#chk-open-to-public').checked;
-    this.shadowRoot.querySelector('#chk-open-to-public').checked = false;
+    let openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
+    let openToPublic = false;
+    if (openToPublicCheckBox == null) { // Null or undefined
+    } else {
+      openToPublic = openToPublicCheckBox.checked;
+      openToPublicCheckBox.checked = false;
+    }
     let param = {
       endpoint: globalThis.backendaiclient._config.endpoint
     };
@@ -693,7 +700,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <wl-label class="keyboard invert">+</wl-label>
             <wl-label class="keyboard one-key">B</wl-label>
           </span>
-          <div class="flex layout center-justified vertic center">
+          <div class="flex layout center-justified vertical center">
             <p>${_text("webTerminalUsageGuide.CopyGuideFour")}</p>
             <a href="https://console.docs.backend.ai/${lang}/latest/session_use/session_use.html#advanced-web-terminal-usage"
                target="_blank" style="width:100%;text-align:right;">
@@ -702,7 +709,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </div>
         </article>
       </macro-carousel>`;
-      content.appendChild(div);
+    content.appendChild(div);
   }
 
   render() {
@@ -723,7 +730,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               </div>
             `)}
           </div>
-          ${globalThis.isElectron ? ``: html`
+          ${globalThis.isElectron ? `` : html`
             <div class="horizontal layout center">
               <wl-checkbox id="chk-open-to-public" style="margin-right:0.5em"></wl-checkbox>
               ${_t("session.OpenToPublic")}
@@ -769,11 +776,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
         <div slot="footer" style="padding-top:0;margin:0 5px;">
-          <wl-button class="app-launch-confirmation-button" type="button" id="app-launch-confirmation-button"
-                                       outlined @click="${() => this._runApp(this.appController)}">
-                                      <wl-icon>rowing</wl-icon>
-            <span>${_t('session.applauncher.ConfirmAndRun')}</span>
-          </wl-button>
+          <mwc-button
+          raised
+          id="app-launch-confirmation-button"
+          icon="rowing"
+          label="${_t('session.applauncher.ConfirmAndRun')}"
+          style="width:100%;"
+          @click="${() => this._runApp(this.appController)}">
+          </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminal-guide" fixed backdrop>

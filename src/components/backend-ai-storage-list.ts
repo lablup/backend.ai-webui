@@ -8,13 +8,11 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-item/paper-item';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@material/mwc-textfield';
+import '@material/mwc-select';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 
@@ -35,9 +33,7 @@ import 'weightless/divider';
 import 'weightless/icon';
 import 'weightless/label';
 import 'weightless/select';
-import 'weightless/tab';
 import 'weightless/title';
-import 'weightless/tab-group';
 import 'weightless/textfield';
 import '@material/mwc-icon-button';
 import '../plastics/lablup-shields/lablup-shields';
@@ -62,6 +58,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-storage-list")
 export default class BackendAiStorageList extends BackendAIPage {
+  @property({type: Number}) _APIMajorVersion = 5;
   @property({type: String}) storageType = 'general';
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
@@ -126,7 +123,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         vaadin-grid.folderlist {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 165px);
+          height: calc(100vh - 210px);
         }
 
         vaadin-grid.explorer {
@@ -311,22 +308,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           padding: 10px 30px;
         }
 
-        wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-orange-500);
-        }
-
-        wl-tab {
-          --tab-color: #666666;
-          --tab-color-hover: #222222;
-          --tab-color-hover-filled: #222222;
-          --tab-color-active: #222222;
-          --tab-color-active-hover: #222222;
-          --tab-color-active-filled: #cccccc;
-          --tab-bg-active: var(--paper-orange-50);
-          --tab-bg-filled: var(--paper-orange-50);
-          --tab-bg-active-hover: var(--paper-orange-100);
-        }
-
         wl-button {
           --button-bg: var(--paper-orange-50);
           --button-bg-hover: var(--paper-orange-100);
@@ -341,6 +322,13 @@ export default class BackendAiStorageList extends BackendAIPage {
           --input-label-color-disabled: #222222;
           --input-label-font-size: 12px;
           --input-border-style-disabled: 1px solid #cccccc;
+        }
+
+        backend-ai-dialog mwc-textfield,
+        backend-ai-dialog mwc-select {
+          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-label-font-size: 12px;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 
         #textfields wl-textfield,
@@ -736,6 +724,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     for (const textfield of textfields) {
       this._addInputValidator(textfield);
     }
+    if (this.storageType === 'automount') {
+      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 210px)';
+    } else {
+      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 165px)';
+    }
+
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({"detail": {"mini-ui": globalThis.mini_ui}});
@@ -743,7 +737,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _modifySharedFolderPermissions() {
-    const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog wl-select');
+    const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog mwc-select');
     const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as any)[idx].perm)
       .map((pulldown, idx) => ({
         'perm': pulldown.value === 'kickout' ? null : pulldown.value,
@@ -766,7 +760,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Render permission options - View, Edit, EditDelete, KickOut.
    *
    * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Element} colxumn - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   permissionRenderer(root, column?, rowData?) {
@@ -774,12 +768,12 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div>
-          <wl-select outlined label="${_t('data.folders.SelectPermission')}">
-            <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
-            <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
-            <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
-            <option value="kickout">${_t('data.folders.KickOut')}</option>
-          </wl-select>
+          <mwc-select outlined label="${_t('data.folders.SelectPermission')}">
+            <mwc-list-item ?selected=${rowData.item.perm === 'ro'} value="ro">
+            <mwc-list-item ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</mwc-list-item>
+            <mwc-list-item ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</mwc-list-item>
+            <mwc-list-item value="kickout">${_t('data.folders.KickOut')}</mwc-list-item>
+          </mwc-select>
         </div>
       `, root
     )
@@ -1047,11 +1041,13 @@ export default class BackendAiStorageList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
+        this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._refreshFolderList();
       }, true);
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
+      this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._refreshFolderList();
     }
   }
@@ -1258,7 +1254,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _enqueueFolder(e) {
     const button = e.target;
-    
+
     // disable button to avoid executing extra onclick event
     button.setAttribute('disabled', 'true');
     const fn = e.target.getAttribute('name');
@@ -1518,7 +1514,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     let job = globalThis.backendaiclient.vfolder.request_download_token(path, this.explorer.id, archive);
     job.then(res => {
       const token = res.token;
-      const url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token, archive);
+      let url;
+      if (this._APIMajorVersion < 6) {
+        url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
+      } else {
+        url = `${res.url}?token=${res.token}&archive=${archive}`;
+      }
       if (globalThis.iOSSafari) {
         this.downloadURL = url;
         this.downloadFileDialog.show();

@@ -1,5 +1,21 @@
 # Changelog
 
+## v20.09.2 (28/09/2020)
+
+
+#### Bug Fixes:
+
+- [**bug**][**easy**][**minor**] Extend current request timeout in session creation [#722](https://github.com/lablup/backend.ai-console/issues/722)
+- [**UI / UX**][**bug**] Multiple clicks cause duplicated directory path [#717](https://github.com/lablup/backend.ai-console/issues/717)
+
+
+## v20.09.1 (22/09/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**blocker**][**bug**] Local proxy is not working on the app mode with Backend.AI 20.09 alpha [#720](https://github.com/lablup/backend.ai-console/issues/720)
+- [**UI / UX**][**bug**][**easy**][**good first issue**] Usage shows [Object Object] on finished tab of session list [#685](https://github.com/lablup/backend.ai-console/issues/685)
+
 
 ## v20.09.0 (18/09/2020)
 

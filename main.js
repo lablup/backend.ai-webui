@@ -33,7 +33,7 @@ if (process.env.serveMode == 'dev') {
   versions = require('./app/version');
   es6Path = npjoin(__dirname, 'app');  // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname);
-  mainIndex = 'app/index.html'; 
+  mainIndex = 'app/index.html';
 }
 let windowWidth = 1280;
 let windowHeight = 970;

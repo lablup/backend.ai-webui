@@ -16,16 +16,22 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
 import 'weightless/button';
-import 'weightless/checkbox';
 import 'weightless/icon';
 import 'weightless/select';
 import 'weightless/textfield';
+import 'weightless/label';
+
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-slider/mwc-slider';
+import '@material/mwc-select';
+import '@material/mwc-list/mwc-list-item';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 
@@ -45,6 +51,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
   @property({type: Array}) servicePorts = Array();
   @property({type: Number}) selectedIndex = 0;
+  @property({type: Array}) selectedImages = Array();
   @property({type: Boolean}) _cuda_gpu_disabled = false;
   @property({type: Boolean}) _cuda_fgpu_disabled = false;
   @property({type: Boolean}) _rocm_gpu_disabled = false;
@@ -53,11 +60,21 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) spinner = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) installImageDialog = Object();
-  @property({type: String}) installImageName = '';
+  @property({type: Object}) deleteImageDialog = Object();
+  @property({type: Array}) installImageNameList = Array();
+  @property({type: Array}) deleteImageNameList = Array();
   @property({type: Object}) installImageResource = Object();
   @property({type: Object}) selectedCheckbox = Object();
   @property({type: Object}) _grid = Object();
-
+  @property({type: Object}) _range = {"cpu":["1", "2", "3", "4", "5", "6", "7", "8"],
+                                      "mem":["64MB", "128MB", "256MB", "512MB",
+                                           "1GB", "2GB", "4GB", "8GB",
+                                           "16GB", "32GB", "256GB", "512GB"],
+                                      "cuda-gpu":["0", "1", "2", "3", "4", "5", "6", "7"],
+                                      "cuda-fgpu":["0", "0.1", "0.2", "0.5", "1.0", "2.0"],
+                                      "rocm-gpu":["0", "1", "2", "3", "4", "5", "6", "7"],
+                                      "tpu":["0", "1", "2"]};
+  @property({type: Number}) cpuValue = 0;
   constructor() {
     super();
   }
@@ -72,7 +89,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // language=CSS
       css`
         vaadin-grid {
-          border: 0;
           font-size: 14px;
           height: calc(100vh - 150px);
         }
@@ -87,6 +103,30 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           padding: 0;
         }
 
+        wl-label {
+          --label-font-size: 13px;
+          --label-font-family: 'Ubuntu', 'Quicksand', Roboto;
+          -webkit-border-radius: 3px;
+          -moz-border-radius: 3px;
+          border-radius: 3px;
+          -moz-background-clip: padding;
+          -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+          border: 1px solid #ccc;
+          background-color: #f9f9f9;
+          padding: 0px 3px;
+          display: inline-block;
+          margin: 0px;
+        }
+
+        wl-label.installed {
+          --label-color: #52595d;
+        }
+
+        wl-label.installing {
+          --label-color: var(--paper-orange-700);
+        }
+
         img.indicator-icon {
           width: 16px;
           height: 16px;
@@ -98,12 +138,24 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           margin-right: 5px;
         }
 
+        span.resource-limit-title {
+          font-size: 14px;
+          font-family: var(--general-font-family);
+          font-align: left;
+          width: 70px;
+        }
+
         wl-button {
           --button-bg: var(--paper-orange-50);
           --button-bg-hover: var(--paper-orange-100);
           --button-bg-active: var(--paper-orange-600);
           --button-color: #242424;
           color: var(--paper-orange-900);
+        }
+
+        wl-button.operation {
+          margin: auto 10px;
+          padding: auto 10px;
         }
 
         backend-ai-dialog {
@@ -124,7 +176,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         }
 
         #modify-app-dialog {
-          --component-height: 500px;
           --component-max-height: 550px;
           --component-min-width: 600px;
         }
@@ -148,6 +199,56 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           grid-template-columns: 4fr 4fr 4fr 1fr;
           margin-bottom: 10px;
         }
+
+        mwc-button.operation {
+          margin: auto 10px;
+          padding: auto 10px;
+        }
+
+        mwc-button[outlined] {
+          width: 100%;
+          margin: 10px auto;
+          background-image: none;
+          --mdc-button-outline-width: 2px;
+          --mdc-button-disabled-outline-color: var(--general-sidebar-color);
+          --mdc-button-disabled-ink-color: var(--general-sidebar-color);
+          --mdc-theme-primary: #38bd73;
+          --mdc-on-theme-primary: #38bd73;
+        }
+
+        mwc-button, mwc-button[unelevated] {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+        }
+
+        mwc-button[disabled] {
+          background-image: var(--general-sidebar-color);
+        }
+
+        mwc-button[disabled].range-value {
+          --mdc-button-disabled-ink-color: var(--general-sidebar-color);
+        }
+
+        mwc-select {
+          --mdc-theme-primary: var(--general-sidebar-color);
+          --mdc-menu-item-height: auto;
+        }
+
+        mwc-textfield {
+          width: 100%;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
+        }
+
+        mwc-slider {
+          width: 100%;
+          margin: auto 10px;
+          --mdc-theme-secondary: var(--general-slider-color);
+          --mdc-theme-text-primary-on-dark: #ffffff;
+        }
+
       `];
   }
 
@@ -197,11 +298,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Modify images of cpu, memory, cuda-gpu, cuda-fgpu, rocm-gpu and tpu.
    */
   modifyImage() {
-    const cpu = this.shadowRoot.querySelector("#modify-image-cpu").value,
-      mem = this.shadowRoot.querySelector("#modify-image-mem").value,
-      gpu = this.shadowRoot.querySelector("#modify-image-cuda-gpu").value,
-      fgpu = this.shadowRoot.querySelector("#modify-image-cuda-fgpu").value,
-      rocm_gpu = this.shadowRoot.querySelector("#modify-image-rocm-gpu").value,
+    const cpu = this.shadowRoot.querySelector("#modify-image-cpu").label,
+      mem = this.shadowRoot.querySelector("#modify-image-mem").label,
+      gpu = this.shadowRoot.querySelector("#modify-image-cuda-gpu").label,
+      fgpu = this.shadowRoot.querySelector("#modify-image-cuda-fgpu").label,
+      rocm_gpu = this.shadowRoot.querySelector("#modify-image-rocm-gpu").label,
       tpu = this.shadowRoot.querySelector("#modify-image-tpu").value;
 
     const {resource_limits} = this.images[this.selectedIndex];
@@ -248,67 +349,117 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   /**
    * Open the selected image.
    *
-   * @param {object} index - Selected image's digest.
    */
-  openInstallImageDialog(digest) {
-    this.selectedIndex = this.images.findIndex(image => image.digest === digest);
-    let chosenImage = this.images[this.selectedIndex];
-    this.installImageName = chosenImage['registry'] + '/' + chosenImage['name'] + ':' + chosenImage['tag'];
-    this.installImageResource = {};
-    chosenImage['resource_limits'].forEach(elm => {
-      this.installImageResource[elm['key'].replace("_", ".")] = elm.min;
-    });
-    this.installImageDialog.show();
+  openInstallImageDialog() {
+    // select only uninstalled images
+    this.selectedImages = this._grid.selectedItems.filter(images => {return !images.installed});
+    this.installImageNameList = this.selectedImages.map( image => {
+      return image['registry'] + '/' + image['name'] + ':' + image['tag'];
+    })
+
+    // show dialog only if selected image exists and uninstalled
+    if (this.selectedImages.length > 0) {
+      this.installImageDialog.show();
+    } else {
+      this.notification.text = _text('environment.SelectedImagesAlreadyInstalled');
+      this.notification.show();
+    }
   }
 
-  async _installImage() {
+  _installImage() {
     this.installImageDialog.hide();
-    if ('cuda.device' in this.installImageResource && 'cuda.shares' in this.installImageResource) {
-      this.installImageResource['gpu'] = 0;
-      this.installImageResource['fgpu'] = this.installImageResource['cuda.shares'];
-    } else if ('cuda.device' in this.installImageResource) {
-      this.installImageResource['gpu'] = this.installImageResource['cuda.device'];
-    }
-    // Add 256m to run the image.
-    if (this.installImageResource['mem'].endsWith('g')) {
-      this.installImageResource['mem'] = this.installImageResource['mem'].replace('g', '.5g');
-    } else if (this.installImageResource['mem'].endsWith('m')) {
-      this.installImageResource['mem'] = Number(this.installImageResource['mem'].slice(0, -1)) + 256 + 'm';
-    }
-    this.installImageResource['domain'] = globalThis.backendaiclient._config.domainName;
-    this.installImageResource['group_name'] = globalThis.backendaiclient.current_group;
+    this.selectedImages.forEach( async image => {
+      // make image installing status visible
+      let selectedImageLabel = '#' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-');
+      this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:block;');
 
-    this.notification.text = "Installing " + this.installImageName + ". It takes time so have a cup of coffee!";
-    this.notification.show();
-    let indicator = await this.indicator.start('indeterminate');
-    indicator.set(10, 'Downloading...');
-    globalThis.backendaiclient.getResourceSlots().then((response) => {
-      let results = response;
-      if ('cuda.device' in results && 'cuda.shares' in results) { // Can be possible after 20.03
-        if ('fgpu' in this.installImageResource && 'gpu' in this.installImageResource) { // Keep fgpu only.
-          delete this.installImageResource['gpu'];
-          delete this.installImageResource['cuda.device'];
-        }
-      } else if ('cuda.device' in results) { // GPU mode
-        delete this.installImageResource['fgpu'];
-        delete this.installImageResource['cuda.shares'];
-      } else if ('cuda.shares' in results) { // Fractional GPU mode
-        delete this.installImageResource['gpu'];
-        delete this.installImageResource['cuda.device'];
+      let imageName = image['registry'] + '/' + image['name'] + ':' + image['tag'];
+      let imageResource = Object();
+      image['resource_limits'].forEach( el => {
+        imageResource[ el['key'].replace("_", ".")] = el.min;
+      });
+
+      if ('cuda.device' in imageResource && 'cuda.shares' in imageResource) {
+        imageResource['gpu'] = 0;
+        imageResource['fgpu'] = imageResource['cuda.shares'];
+      } else if ('cuda.device' in imageResource) {
+        imageResource['gpu'] = imageResource['cuda.device'];
       }
-      return globalThis.backendaiclient.image.install(this.installImageName, this.installImageResource);
-    }).then((response) => {
-      indicator.set(100, 'Install finished.');
-      indicator.end(1000);
-      this._getImages();
-    }).catch(err => {
-      this._uncheckSelectedRow();
-      this.notification.text = PainKiller.relieve(err.title);
-      this.notification.detail = err.message;
-      this.notification.show(true, err);
-      indicator.set(100, _t('environment.DescProblemOccurred'));
-      indicator.end(1000);
+
+      // Add 256m to run the image.
+      if (imageResource['mem'].endsWith('g')) {
+        imageResource['mem'] = imageResource['mem'].replace('g', '.5g');
+      } else if (imageResource['mem'].endsWith('m')) {
+        imageResource['mem'] = Number(imageResource['mem'].slice(0, -1)) + 256 + 'm';
+      }
+
+      imageResource['domain'] = globalThis.backendaiclient._config.domainName;
+      imageResource['group_name'] = globalThis.backendaiclient.current_group;
+
+      this.notification.text = "Installing " + imageName + ". It takes time so have a cup of coffee!";
+      this.notification.show();
+      let indicator = await this.indicator.start('indeterminate');
+      indicator.set(10, 'Downloading...');
+      globalThis.backendaiclient.get_resource_slots().then((response) => {
+        let results = response;
+        if ('cuda.device' in results && 'cuda.shares' in results) { // Can be possible after 20.03
+          if ('fgpu' in imageResource && 'gpu' in imageResource) { // Keep fgpu only.
+            delete imageResource['gpu'];
+            delete imageResource['cuda.device'];
+          }
+        } else if ('cuda.device' in results) { // GPU mode
+          delete imageResource['fgpu'];
+          delete imageResource['cuda.shares'];
+        } else if ('cuda.shares' in results) { // Fractional GPU mode
+          delete imageResource['gpu'];
+          delete imageResource['cuda.device'];
+        }
+        return globalThis.backendaiclient.image.install(imageName, imageResource);
+      }).then((response) => {
+        indicator.set(100, 'Install finished.');
+        indicator.end(1000);
+
+        // change installing -> installed
+        this._grid.querySelector(selectedImageLabel).className = 'installed';
+        this._grid.querySelector(selectedImageLabel).innerHTML = _text('environment.Installed');
+
+      }).catch(err => {
+        // if something goes wrong during installation
+        this._grid.querySelector(selectedImageLabel).className = _text('environment.Installing');
+        this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:none;');
+
+        this._uncheckSelectedRow();
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+        indicator.set(100, _t('environment.DescProblemOccurred'));
+        indicator.end(1000);
+      });
     });
+  }
+
+  /**
+   * Open images to delete.
+   *
+   */
+  openDeleteImageDialog() {
+    // select only installed images
+    this.selectedImages = this._grid.selectedItems.filter(images => {return images.installed});
+    this.deleteImageNameList = this.selectedImages.map( image => {
+      return image['registry'] + '/' + image['name'] + ':' + image['tag'];
+    });
+    // show dialog only if selected image exists and installed
+    if (this.selectedImages.length > 0) {
+      this.deleteImageDialog.show();
+    } else {
+      this.notification.text = _text('environment.SelectedImagesNotInstalled');
+      this.notification.show();
+    }
+  }
+
+
+  _deleteImage() {
+    /** TO DO: API function call to delete selected images */
   }
 
   /**
@@ -392,22 +543,49 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this._cuda_fgpu_disabled = resource_limits.filter(e => e.key === "cuda_shares").length === 0;
     this._rocm_gpu_disabled = resource_limits.filter(e => e.key === "rocm_device").length === 0;
     this._tpu_disabled = resource_limits.filter(e => e.key === "tpu_device").length === 0;
-    this.shadowRoot.querySelector("#modify-image-cpu").value = resource_limits[0].min;
+    this.shadowRoot.querySelector("#modify-image-cpu").label = resource_limits[0].min;
     if (!this._cuda_gpu_disabled) {
-      this.shadowRoot.querySelector("#modify-image-cuda-gpu").value = resource_limits[1].min;
+      this.shadowRoot.querySelector("#modify-image-cuda-gpu").label = resource_limits[1].min;
+      this.shadowRoot.querySelector("mwc-slider#cuda-gpu").value = this._range['cuda-gpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
+    } else {
+      this.shadowRoot.querySelector("#modify-image-cuda-gpu").label = _t("environment.Disabled");
+      this.shadowRoot.querySelector("mwc-slider#cuda-gpu").value = 0;
     }
     if (!this._cuda_fgpu_disabled) {
-      this.shadowRoot.querySelector("#modify-image-cuda-fgpu").value = resource_limits[2].min;
+      this.shadowRoot.querySelector("#modify-image-cuda-fgpu").label = resource_limits[2].min;
+      this.shadowRoot.querySelector("mwc-slider#cuda-fgpu").value = this._range['cuda-fgpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
+    } else {
+      this.shadowRoot.querySelector("#modify-image-cuda-fgpu").label = _t("environment.Disabled");
+      this.shadowRoot.querySelector("mwc-slider#cuda-gpu").value = 0;
     }
     if (!this._rocm_gpu_disabled) {
-      this.shadowRoot.querySelector("#modify-image-rocm-gpu").value = resource_limits[3].min;
+      this.shadowRoot.querySelector("#modify-image-rocm-gpu").label = resource_limits[3].min;
+      this.shadowRoot.querySelector("mwc-slider#rocm-gpu").value = this._range['rocm-gpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
+    } else {
+      this.shadowRoot.querySelector("#modify-image-rocm-gpu").label = _t("environment.Disabled");
+      this.shadowRoot.querySelector("mwc-slider#rocm-gpu").value = 0;
     }
     if (!this._tpu_disabled) {
-      this.shadowRoot.querySelector("#modify-image-tpu").value = resource_limits[4].min;
+      this.shadowRoot.querySelector("#modify-image-tpu").label = resource_limits[4].min;
+      this.shadowRoot.querySelector("mwc-slider#tpu").value = this._range['tpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
+    } else {
+      this.shadowRoot.querySelector("#modify-image-tpu").label = _t("environment.Disabled");
+      this.shadowRoot.querySelector("mwc-slider#tpu").value = 0;
     }
 
     const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
-    this.shadowRoot.querySelector("#modify-image-mem").value = this._addUnit(resource_limits[mem_idx].min);
+    this.shadowRoot.querySelector("#modify-image-mem").label = this._addUnit(resource_limits[mem_idx].min);
+
+    this.shadowRoot.querySelector("mwc-slider#cpu").value = this._range['cpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
+    this.shadowRoot.querySelector("mwc-slider#mem").value = this._range['mem'].indexOf(this._range['mem'].filter(value => {return value === this._addUnit(resource_limits[mem_idx].min) })[0]);
+
+    this._updateSliderLayout();
+  }
+
+  _updateSliderLayout() {
+    this.shadowRoot.querySelectorAll('mwc-slider').forEach( el => {
+      el.layout();
+    });
   }
 
   /**
@@ -478,29 +656,28 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   controlsRenderer(root, column, rowData) {
     render(
       html`
-        <div
-          id="controls"
-          class="layout horizontal flex center"
-        >
+        <div id="controls" class="layout horizontal flex center">
           <wl-button fab flat inverted
             class="fg blue controls-running"
             @click=${() => {
-        this.selectedIndex = rowData.index;
-        this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
-        this._launchDialogById("#modify-image-dialog");
-        this.requestUpdate();
-      }}>
+              this.selectedIndex = rowData.index;
+              this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
+              this._launchDialogById("#modify-image-dialog");
+              this.requestUpdate();
+           }}>
             <wl-icon>settings</wl-icon>
           </wl-button>
           <wl-button fab flat inverted
             class="fg pink controls-running"
             @click=${() => {
-        if (this.selectedIndex !== rowData.index) this._clearRows();
-        this.selectedIndex = rowData.index;
-        this._decodeServicePort();
-        this._launchDialogById("#modify-app-dialog");
-        this.requestUpdate();
-      }}>
+              if (this.selectedIndex !== rowData.index) {
+                this._clearRows();
+              }
+              this.selectedIndex = rowData.index;
+              this._decodeServicePort();
+              this._launchDialogById("#modify-app-dialog");
+              this.requestUpdate();
+          }}>
             <wl-icon>apps</wl-icon>
           </wl-button>
         </div>
@@ -509,41 +686,64 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     )
   }
 
-  /**
-   * Render an install dialog.
-   *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
-   * @param {object} rowData
-   */
+/**
+ * Render an installed tag for each image.
+ *
+ * @param {DOM element} root
+ * @param {<vaadin-grid-column> element} column
+ * @param {object} rowData
+ */
   installRenderer(root, column, rowData) {
     render(
       // language=HTML
       html`
-        <div class="layout horizontal center center-justified" style="margin:0; padding:0;">
-          <wl-checkbox id="${rowData.item.name}" style="--checkbox-size:12px;"
-              ?checked="${rowData.item.installed}"
-              ?disabled="${rowData.item.installed}"
-              @click="${(e) => {
-                this.openInstallImageDialog(rowData.item.digest);
-                this.selectedCheckbox = e.target;
-              }}">
-          </wl-checkbox>
+        <div class="layout horizontal center center-justified">
+          ${rowData.item.installed ? html`
+          <wl-label class="installed"
+              id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
+                    rowData.item.name.replace('/','-') + '-' +
+                    rowData.item.tag.replace(/\./gi, '-')}">
+            ${_t('environment.Installed')}
+          </wl-label>
+          ` :
+          html`
+          <wl-label class="installing"
+            id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
+                  rowData.item.name.replace('/','-') + '-' +
+                  rowData.item.tag.replace(/\./gi, '-')}"
+            style="display:none">
+            ${_t('environment.Installing')}
+            </wl-label>
+          `}
         </div>
-      `, root);
+      `
+    , root);
   }
 
   render() {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+      <div class="horizontal layout flex end-justified" style="margin:10px;">
+        <mwc-button raised label="${_t('environment.Install')}" class="operation" id="install-image" icon="get_app" @click="${this.openInstallImageDialog}"></mwc-button>
+        <mwc-button disabled label="${_t('environment.Delete')}" class="operation" id="delete-image" icon="delete" @click="${this.openDeleteImageDialog}"></mwc-button>
+        <!--<wl-button outlined class="operation" id="install-image" @click="${this.openInstallImageDialog}">
+          <wl-icon>get_app</wl-icon>
+          ${_t('environment.Install')}
+        </wl-button>
+        <wl-button outlined class="operation" id="delete-image" @click="${this.openDeleteImageDialog}" disabled>
+          <wl-icon>delete</wl-icon>
+          ${_t('environment.Delete')}
+        </wl-button>-->
+      </div>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
-        <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundInstallRenderer}">
-          <template class="header">
-            <vaadin-grid-sorter path="installed"></vaadin-grid-sorter>
-          </template>
-        </vaadin-grid-column>
-
+        <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
+        </vaadin-grid-selection-column>
+        <vaadin-grid-column path="installed" flex-grow="0" .renderer="${this._boundInstallRenderer}">
+            <template class="header">
+              <vaadin-grid-sorter path="installed">${_t('environment.Status')}</vaadin-grid-sorter>
+            </template>
+          </vaadin-grid-column>
         <vaadin-grid-filter-column path="registry" width="80px" resizable
             header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
         <vaadin-grid-filter-column path="namespace" width="60px" resizable
@@ -584,101 +784,86 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${_t("environment.ModifyImage")}</span>
-        <div slot="content" style="margin: 0;">
-              <div style="display: flex; flex-direction: column;">
-                <div style="display: flex;">
-                  <wl-select
-                    label="CPU Core"
-                    id="modify-image-cpu"
-                    style="flex: 1"
-                  >
-                    ${[1, 2, 3, 4, 5, 6, 7, 8].map(item => html`
-                      <option
-                        value=${item}
-                      >${item}</option>
-                    `)}
-                  </wl-select>
-                  <wl-select
-                    label="RAM"
-                    id="modify-image-mem"
-                    style="flex: 1"
-                  >
-                    ${["64MB", "128MB", "256MB", "512MB", "1GB", "2GB", "4GB", "8GB", "16GB", "32GB", "256GB", "512GB"].map(item => html`
-                      <option
-                        value=${item}
-                      >${item}</option>
-                    `)}
-                  </wl-select>
-                </div>
-                <div style="display: flex;">
-                  <wl-select
-                    label="CUDA GPU"
-                    id="modify-image-cuda-gpu"
-                    style="flex: 1"
-                    ?disabled=${this._cuda_gpu_disabled}
-                  >
-                    ${[0, 1, 2, 3, 4, 5, 6, 7].map(item => html`
-                      <option
-                        value=${item}
-                      >${item}</option>
-                    `)}
-                  </wl-select>
-                  <wl-select
-                    label="CUDA fractional GPU"
-                    id="modify-image-cuda-fgpu"
-                    ?disabled=${this._cuda_fgpu_disabled}
-                    style="flex: 1"
-                  >
-                    ${[0, 0.1, 0.2, 0.5, 1.0, 2.0].map(item => html`
-                      <option
-                        value=${item}
-                      >${item}</option>
-                    `)}
-                  </wl-select>
-                </div>
-                <div style="display: flex;">
-                  <wl-select
-                    label="ROCm GPU"
-                    id="modify-image-rocm-gpu"
-                    style="flex: 1"
-                    ?disabled=${this._rocm_gpu_disabled}
-                  >
-                    ${[0, 1, 2, 3, 4, 5, 6, 7].map(item => html`
-                      <option
-                        value=${item}
-                      >${item}</option>
-                    `)}
-                  </wl-select>
-                  <wl-select
-                    label="TPU"
-                    id="modify-image-tpu"
-                    ?disabled=${this._tpu_disabled}
-                    style="flex: 1"
-                  >
-                    ${[0, 1, 2].map(item => html`
-                      <option
-                        value=${item}
-                      >${item}</option>
-                    `)}
-                  </wl-select>
-                </div>
-              </div>
-              <wl-button
-                class="fg orange create-button"
-                outlined
-                type="button"
-                style="box-sizing: border-box; width: 100%"
-                @click=${() => this.modifyImage()}
-              >
-                <wl-icon>check</wl-icon>
-                ${_t("button.SaveChanges")}
-              </wl-button>
+        <span slot="title">${_t("environment.ModifyImageResourceLimit")}</span>
+        <div slot="content">
+          <div class="vertical layout flex">
+            <div class="horizontal layout flex center">
+              <span class="resource-limit-title">CPU</span>
+              <mwc-slider
+                  id="cpu"
+                  step="1"
+                  markers
+                  max="7"
+                  @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
+              <mwc-button class="range-value" id="modify-image-cpu" disabled></mwc-button>
+            </div>
+            <div class="horizontal layout flex center">
+              <span class="resource-limit-title">MEM</span>
+              <mwc-slider
+                  id="mem"
+                  markers
+                  step="1"
+                  max="11"
+                  @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
+              <mwc-button class="range-value" id="modify-image-mem" disabled></mwc-button>
+            </div>
+            <div class="horizontal layout flex center">
+              <span class="resource-limit-title">cuda GPU</span>
+              <mwc-slider
+                  ?disabled="${this._cuda_gpu_disabled}"
+                  id="cuda-gpu"
+                  markers
+                  step="1"
+                  max="7"
+                  @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
+              <mwc-button class="range-value" id="modify-image-cuda-gpu" disabled></mwc-button>
+            </div>
+            <div class="horizontal layout flex center">
+              <span class="resource-limit-title">cuda FGPU</span>
+              <mwc-slider
+                  ?disabled="${this._cuda_fgpu_disabled}"
+                  id="cuda-fgpu"
+                  markers
+                  step="1"
+                  max="5"
+                  @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
+              <mwc-button class="range-value" id="modify-image-cuda-fgpu" disabled></mwc-button>
+            </div>
+            <div class="horizontal layout flex center">
+              <span class="resource-limit-title">rocm GPU</span>
+              <mwc-slider
+                  ?disabled="${this._rocm_gpu_disabled}"
+                  id="rocm-gpu"
+                  markers
+                  step="1"
+                  max="2"
+                  @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
+              <mwc-button class="range-value" id="modify-image-rocm-gpu" disabled></mwc-button>
+            </div>
+            <div class="horizontal layout flex center">
+              <span class="resource-limit-title">TPU</span>
+              <mwc-slider
+                  ?disabled="${this._tpu_disabled}"
+                  id="tpu"
+                  markers
+                  step="1"
+                  max="11"
+                  @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
+              <mwc-button class="range-value" id="modify-image-tpu" disabled></mwc-button>
+            </div>
+          </div>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              unelevated
+              icon="check"
+              label="${_t("button.SaveChanges")}"
+              @click="${() => this.modifyImage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="modify-app-dialog" fixed backdrop>
         <span slot="title">${_t("environment.ManageApps")}</span>
-        <div slot="content" id="modify-app-container" class="container">
+        <div slot="content" id="modify-app-container">
           <div class="row header">
             <div> ${_t("environment.AppName")} </div>
             <div> ${_t("environment.Protocol")} </div>
@@ -721,33 +906,67 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             </wl-button>
           </div>
         </div>
-        <wl-button slot="footer"
-          class="fg orange"
-          outlined
-          type="button"
-          style="box-sizing: border-box; width: 100%;"
-          @click=${this.modifyServicePort}
-        >
-          <wl-icon>check</wl-icon>
-          ${_t("button.Finish")}
-        </wl-button>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              unelevated
+              slot="footer"
+              icon="check"
+              label="${_t("button.Finish")}"
+              @click="${this.modifyServicePort}"></mwc-button>
+        </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="install-image-dialog" fixed backdrop persistent>
         <span slot="title">Let's double-check</span>
         <div slot="content">
-          <p>${_t("environment.DescDownloadImage")} <span style="color:blue;">${this.installImageName}</span></p>
+          <p>${_t("environment.DescDownloadImage")}</p>
+          <p style="margin:auto; "><span style="color:blue;">
+          ${this.installImageNameList.map(el => {
+            return html`${el}<br />`
+          })}
+          </span></p>
           <p>${_t("environment.DescSignificantDownloadTime")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
         </div>
         <div slot="footer" class="horizontal flex layout">
           <div class="flex"></div>
-          <wl-button class="cancel" inverted flat
+          <mwc-button
+              class="operation"
+              label="${_t("button.Cancel")}"
               @click="${(e) => {
-      this._hideDialog(e)
-      this._uncheckSelectedRow();
-    }}">
-            ${_t("button.Cancel")}
-          </wl-button>
-          <wl-button class="ok" @click="${() => this._installImage()}">${_t("button.Okay")}</wl-button>
+                this._hideDialog(e);
+                this._uncheckSelectedRow();
+              }}"></mwc-button>
+          <mwc-button
+              unelevated
+              class="operation"
+              label="${_t("button.Okay")}"
+              @click="${() => this._installImage()}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="delete-image-dialog" fixed backdrop persistent>
+        <span slot="title">Let's double-check</span>
+        <div slot="content">
+          <p>${_t("environment.DescDeleteImage")}</p>
+          <p style="margin:auto; "><span style="color:blue;">
+          ${this.deleteImageNameList.map(el => {
+            return html`${el}<br />`
+          })}
+          </span></p>
+          <p>${_t("dialog.ask.DoYouWantToProceed")}</p>
+        </div>
+        <div slot="footer" class="horizontal flex layout">
+          <div class="flex"></div>
+          <mwc-button
+              class="operation"
+              label="${_t("button.Cancel")}"
+              @click="${(e) => {
+                this._hideDialog(e);
+                this._uncheckSelectedRow();
+              }}"></mwc-button>
+          <mwc-button
+              unelevated
+              class="operation"
+              label="${_t("button.Okay")}"
+              @click="${() => this._deleteImage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;
@@ -829,7 +1048,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Deselect the selected row from the environment list.
    */
   _uncheckSelectedRow() {
-    this.selectedCheckbox.checked = false;
+    // empty out selectedItem
+    this._grid.selectedItems = [];
   }
 
   firstUpdated() {
@@ -837,6 +1057,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
+    this.deleteImageDialog = this.shadowRoot.querySelector('#delete-image-dialog');
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -848,8 +1069,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
     this._grid = this.shadowRoot.querySelector('#testgrid');
     this._grid.addEventListener('sorter-changed', (e) => {
-      this._refreshSorter(e)
+      this._refreshSorter(e);
     });
+
+    // uncheck every checked rows when dialog is closed
+    this.shadowRoot.querySelector('#install-image-dialog').addEventListener("didHide", () => {
+      this._uncheckSelectedRow();
+    });
+    this.shadowRoot.querySelector('#delete-image-dialog').addEventListener('didHide', () => {
+      this._uncheckSelectedRow();
+    })
   }
 
   /**
@@ -1084,6 +1313,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     } else {
       return value;
     }
+  }
+
+  _changeSliderValue(el) {
+    let currentVal= this._range[el.id].filter( (value, index) => { return index === el._value });
+    this.shadowRoot.querySelector('#modify-image-'+el.id).label = currentVal[0];
+    this.shadowRoot.querySelector('#modify-image-'+el.id).value = currentVal[0];
+
   }
 }
 
