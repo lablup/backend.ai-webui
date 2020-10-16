@@ -47,7 +47,8 @@
       "Experiments": "Experiments",
       "Menu": "Menu",
       "Run": "Run",
-      "Import&Run": "Import & Run"
+      "Import&Run": "Import & Run",
+      "UserName": "User Name"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
