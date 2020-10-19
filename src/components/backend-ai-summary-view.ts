@@ -420,7 +420,6 @@ export default class BackendAISummary extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-    <link rel="stylesheet" type="text/css" href="resources/fonts/font-awesome-all.min.css">
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="item" elevation="1" style="padding-bottom:20px;">
         ${this.announcement != '' ? html`
