@@ -533,49 +533,18 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Add an user with user information.
    */
   _addUser() {
-    const email = this.shadowRoot.querySelector('#id_user_email').value,
-      name = this.shadowRoot.querySelector('#id_user_name').value,
-      password = this.shadowRoot.querySelector('#id_user_password').value,
-      confirm = this.shadowRoot.querySelector('#id_user_confirm').value;
+    const emailEl = this.shadowRoot.querySelector('#id_user_email'),
+      nameEl = this.shadowRoot.querySelector('#id_user_name'),
+      passwordEl = this.shadowRoot.querySelector('#id_user_password'),
+      confirmEl = this.shadowRoot.querySelector('#id_user_confirm');
+    
+    const email = emailEl.value,
+      // if name value is empty, it will be covered by the username of email address.
+      name = nameEl.value !== '' ? nameEl.value : email.split('@')[0],
+      password = passwordEl.value;
 
-    // email verification
-    if (email !== '') {
-      // invalid email
-      if (this.shadowRoot.querySelector('#id_user_email').hasAttribute('invalid')) {
-        this.notification.text = "Email Is Invalid!";
-        this.notification.show();
-        return;
-      }
-    } else {
-      // empty email
-      this.notification.text = "Please Input User Id(Email)!";
-      this.notification.show();
-      return;
-    }
-
-    // username verification
-    if (name === '') {
-      this.notification.text = "Username Is Empty!";
-      this.notification.show();
-      return;
-    }
-
-    if (this.shadowRoot.querySelector("#id_user_password").getAttribute("invalid") !== null) {
-      this.notification.text = "Password must contain at least one alphabet, one digit, and one special character";
-      this.notification.show();
-      return;
-    }
-
-    // password - confirm verification
-    if (password === '') {
-      this.notification.text = "Password Is Empty!";
-      this.notification.show();
-      return;
-    }
-
-    if (password !== confirm) {
-      this.notification.text = "Confirmation Does Not Match With Original Password!";
-      this.notification.show();
+    // if any input value is invalid, it returns.
+    if (!emailEl.checkValidity() && !passwordEl.checkValidity() && !confirmEl.checkValidity()) {
       return;
     }
 
@@ -594,17 +563,17 @@ export default class BackendAICredentialView extends BackendAIPage {
     globalThis.backendaiclient.group.list()
       .then(res => {
         const default_id = res.groups.find(x => x.name === 'default').id;
-        return Promise.resolve(globalThis.backendaiclient.user.add(email, {...input, 'group_ids': [default_id]}));
+        return Promise.resolve(globalThis.backendaiclient.user.create(email, {...input, 'group_ids': [default_id]}));
       })
       .then(res => {
         this.shadowRoot.querySelector('#new-user-dialog').hide();
         if (res['create_user'].ok) {
-          this.notification.text = "User successfully created";
+          this.notification.text = _text('credential.UserAccountCreated');
 
           this.shadowRoot.querySelector('#user-list').refresh();
         } else {
-          console.error(res['create_user'].msg);
-          this.notification.text = "Error on user creation";
+          // console.error(res['create_user'].msg);
+          this.notification.text = _text('credential.UserAccountCreatedError');
         }
         this.notification.show();
 
@@ -612,7 +581,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         this.shadowRoot.querySelector('#id_user_name').value = '';
         this.shadowRoot.querySelector('#id_user_password').value = '';
         this.shadowRoot.querySelector('#id_user_confirm').value = '';
-      })
+      });
   }
 
   /**
@@ -893,6 +862,77 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
+  _validatePassword1() {
+    const passwordInput = this.shadowRoot.querySelector('#id_user_password');
+    const password2Input = this.shadowRoot.querySelector('#id_user_confirm');
+    password2Input.reportValidity();
+    passwordInput.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          passwordInput.validationMessage = _text('signup.PasswordInputRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        } else {
+          passwordInput.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        }
+      } else {
+        return {
+          valid: nativeValidity.valid,
+          customError: !nativeValidity.valid
+        }
+      }
+    }
+  }
+
+  _validatePassword2() {
+    const password2Input = this.shadowRoot.querySelector('#id_user_confirm');
+    password2Input.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          password2Input.validationMessage = _text('signup.PasswordInputRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        } else {
+          password2Input.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        }
+      } else {
+        // custom validation for password input match
+        const passwordInput = this.shadowRoot.querySelector('#id_user_password');
+        let isMatched = (passwordInput.value === password2Input.value);
+        if (!isMatched) {
+          password2Input.validationMessage = _text('signup.PasswordNotMatched');
+        }
+        return {
+          valid: isMatched,
+          customError: !isMatched
+        }
+      }
+    }
+  }
+
+  _validatePassword() {
+    this._validatePassword1();
+    this._validatePassword2();
+  }
+
+  _togglePasswordVisibility(element) {
+    const isVisible = element.__on;
+    const password = element.closest('div').querySelector('mwc-textfield');
+    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+  }
+
   render() {
     // language=HTML
     return html`
@@ -1128,54 +1168,62 @@ export default class BackendAICredentialView extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button raised id="create-policy-button" icon="add" label="${_t("credential.Create")}" style="width:100%;"
           @click="${() => this._addResourcePolicy()}"></mwc-button>
-            <!--<wl-button class="fg blue full-size" id="create-policy-button" type="button" outlined
-             @click="${() => this._addResourcePolicy()}">
-                       <wl-icon>add</wl-icon>
-                       ${_t("credential.Create")}
-            </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="new-user-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("credential.CreateUser")}</span>
         <div slot="content">
-          <wl-textfield
-            type="email"
-            name="user_email"
-            id="id_user_email"
-            label="${_t("general.E-Mail")}"
-          >
-          </wl-textfield>
-          <wl-textfield
-            type="text"
-            name="user_name"
-            id="id_user_name"
-            label="${_t("general.Username")}"
-          >
-          </wl-textfield>
-          <wl-textfield
-            type="password"
-            name="user_password"
-            id="id_user_password"
-            label="${_t("general.Password")}"
-            pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
-          >
-          </wl-textfield>
-          <wl-textfield
-            type="password"
-            name="user_confirm"
-            id="id_user_confirm"
-            label="${_t("general.ConfirmPassword")}"
-          >
-          </wl-textfield>
+          <mwc-textfield
+              type="email"
+              name="user_email"
+              id="id_user_email"
+              label="${_t("general.E-Mail")}"
+              autoValidate
+              required
+              validationMessage="${_text('credential.validation.InvalidEmailAddress')}">
+          </mwc-textfield>
+          <mwc-textfield
+              type="text"
+              name="user_name"
+              id="id_user_name"
+              label="${_t("general.Username")}">
+          </mwc-textfield>
+          <div class="horizontal flex layout">
+            <mwc-textfield
+                type="password"
+                name="user_password"
+                id="id_user_password"
+                label="${_t("general.Password")}"
+                autoValidate
+                required
+                pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+                validationMessage="${_text('signup.PasswordInvalid')}"
+                @change="${() => this._validatePassword()}">
+            </mwc-textfield>
+            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                @click="${(e) => this._togglePasswordVisibility(e.target)}">
+            </mwc-icon-button-toggle>
+          </div>
+          <div class="horizontal flex layout">
+            <mwc-textfield
+                type="password"
+                name="user_confirm"
+                id="id_user_confirm"
+                label="${_t("general.ConfirmPassword")}"
+                autoValidate
+                required
+                pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+                validationMessage="${_text('signup.PasswordNotMatched')}"
+                @change="${() => this._validatePassword()}">
+            </mwc-textfield>
+            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                @click="${(e) => this._togglePasswordVisibility(e.target)}">
+            </mwc-icon-button-toggle>
+          </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button raised id="create-user-button" icon="add" label="${_t("credential.CreateUser")}" style="width:100%;"
           @click="${this._addUser}"></mwc-button>
-          <!--<wl-button class="fg blue full-size" id="create-user-button" outlined type="button"
-          @click="${this._addUser}">
-            <wl-icon>add</wl-icon>
-            ${_t("credential.CreateUser")}
-          </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="export-to-csv" fixed backdrop blockscrolling>
@@ -1183,7 +1231,7 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         <div slot="content" class="intro centered login-panel">
           <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
-                          validationMessage="Allows letters, numbers and -_."
+                          validationMessage="${_text('credential.validation.LetterNumber-_dot')}"
                           value="${this._activeTab + '_' + this._defaultFileName}" required
           ></mwc-textfield>
         </div>
