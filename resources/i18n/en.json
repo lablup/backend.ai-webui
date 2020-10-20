@@ -425,7 +425,10 @@
     "Registries": "Registries",
     "SelectedImagesAlreadyInstalled": "Selected Image(s) are already installed or None. Please check again.",
     "SelectedImagesNotInstalled": "Selected Images(s) are not installed. Please check again.",
-    "Disabled": "disabled"
+    "Disabled": "disabled",
+    "NoResourcesForImage": "Not Enough resources for pulling the image. Image name: ",
+    "InstallingImage": "Installing: ",
+    "TakesTime": ". It takes time so have a cup of coffee!"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",
