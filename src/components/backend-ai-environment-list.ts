@@ -371,19 +371,25 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.selectedImages.forEach( async image => {
       // make image installing status visible
       let selectedImageLabel = '#' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-');
+      console.log(selectedImageLabel)
       this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:block;');
 
       let imageName = image['registry'] + '/' + image['name'] + ':' + image['tag'];
+      let isGPURequired: Boolean = false;
       let imageResource = Object();
       image['resource_limits'].forEach( el => {
         imageResource[ el['key'].replace("_", ".")] = el.min;
       });
 
       if ('cuda.device' in imageResource && 'cuda.shares' in imageResource) {
+        isGPURequired = true;
         imageResource['gpu'] = 0;
         imageResource['fgpu'] = imageResource['cuda.shares'];
       } else if ('cuda.device' in imageResource) {
         imageResource['gpu'] = imageResource['cuda.device'];
+        isGPURequired = true;
+      } else {
+        isGPURequired = false;
       }
 
       // Add 256m to run the image.
@@ -396,26 +402,36 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       imageResource['domain'] = globalThis.backendaiclient._config.domainName;
       imageResource['group_name'] = globalThis.backendaiclient.current_group;
 
-      this.notification.text = "Installing " + imageName + ". It takes time so have a cup of coffee!";
-      this.notification.show();
-      let indicator = await this.indicator.start('indeterminate');
-      indicator.set(10, 'Downloading...');
-      globalThis.backendaiclient.get_resource_slots().then((response) => {
-        let results = response;
-        if ('cuda.device' in results && 'cuda.shares' in results) { // Can be possible after 20.03
-          if ('fgpu' in imageResource && 'gpu' in imageResource) { // Keep fgpu only.
-            delete imageResource['gpu'];
-            delete imageResource['cuda.device'];
-          }
-        } else if ('cuda.device' in results) { // GPU mode
-          delete imageResource['fgpu'];
-          delete imageResource['cuda.shares'];
-        } else if ('cuda.shares' in results) { // Fractional GPU mode
+      const resourceSlots = await globalThis.backendaiclient.get_resource_slots();
+
+      if(isGPURequired) {
+        if (!('cuda.device' in resourceSlots) && !('cuda.shares' in resourceSlots)) {
+          this.notification.text = _text('environment.NoResourcesForImage') + imageName;
+          this.notification.show();
+          this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:none;');
+          return ;
+        } 
+      }
+
+      if ('cuda.device' in resourceSlots && 'cuda.shares' in resourceSlots) { // Can be possible after 20.03
+        if ('fgpu' in imageResource && 'gpu' in imageResource) { // Keep fgpu only.
           delete imageResource['gpu'];
           delete imageResource['cuda.device'];
         }
-        return globalThis.backendaiclient.image.install(imageName, imageResource);
-      }).then((response) => {
+      } else if ('cuda.device' in resourceSlots) { // GPU mode
+        delete imageResource['fgpu'];
+        delete imageResource['cuda.shares'];
+      } else if ('cuda.shares' in resourceSlots) { // Fractional GPU mode
+        delete imageResource['gpu'];
+        delete imageResource['cuda.device'];
+      }
+
+      this.notification.text = _text('environment.InstallingImage') + imageName + _text('environment.TakesTime');
+      this.notification.show();
+      let indicator = await this.indicator.start('indeterminate');
+      indicator.set(10, 'Downloading...');
+
+      globalThis.backendaiclient.image.install(imageName, imageResource).then((response) => {
         indicator.set(100, 'Install finished.');
         indicator.end(1000);
 
