@@ -231,6 +231,7 @@
   font-style: normal;
   font-weight: 900;
   font-display: block;
-  src: url('./fa-solid-900.woff2') format('woff2'),
+  src: local('Font Awesome 5 Free'),
+       url('./fa-solid-900.woff2') format('woff2'),
        url('./fa-solid-900.woff') format('woff');
 }

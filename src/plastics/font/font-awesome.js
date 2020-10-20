@@ -1,12 +1,8 @@
 import {css} from 'lit-element';
 
-export const FontAwesomeFont =
+export const FontAwesomeCSS =
   // language=CSS
   css`
-/*!
- * Font Awesome Free 5.15.1 by @fontawesome - https://fontawesome.com
- * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
- */
 .fa, .fab, .fad, .fal, .far, .fas {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;

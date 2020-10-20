@@ -40,7 +40,6 @@ import './backend-ai-sidepanel-notification';
 import './backend-ai-app-launcher';
 import './backend-ai-resource-broker';
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
-import {FontAwesomeFont} from '../plastics/font/font-awesome';
 
 import '../lib/backend.ai-client-es6';
 
@@ -134,7 +133,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   static get styles() {
     return [
       BackendAiConsoleStyles,
-      FontAwesomeFont,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
@@ -144,7 +142,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   }
 
   firstUpdated() {
-    console.log(FontAwesomeFont);
     globalThis.lablupNotification = this.shadowRoot.querySelector('#notification');
     globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
     globalThis.appLauncher = this.shadowRoot.querySelector('#app-launcher');
@@ -941,6 +938,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   protected render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
       <div id="loading-curtain" class="loading-background"></div>
       <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="position:fixed;visibility:hidden;">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
@@ -965,12 +963,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button disabled class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'yellow' : 'white'}" id="feedback-icon" icon="question_answer"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
-            <i class="fas fa-th-large"></i>
-
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}">
-              <i class="fas fa-th-large" id="summary-menu-icon"></i>
+              <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Summary")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}" ?disabled="${this.blockedMenuitem.includes('job')}">
