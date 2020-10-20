@@ -283,6 +283,7 @@
     "Description": "Description",
     "Days": "Days",
     "validation": {
+      "InvalidEmailAddress": "Invalid Email Address.",
       "PolicyName": "Policy name Required.",
       "LetterNumber-_dot": "Allows letters, numbers and -_.",
       "NameAlreadyExists": "Policy Name Already Exists!"
@@ -293,7 +294,9 @@
     "AllowedHosts": "Allowed Hosts",
     "UserIDAsEmail": "User ID as E-mail (optional)",
     "AccessKeyOptional": "Access Key (optional)",
-    "SecretKeyOptional": "Secret Key (optional)"
+    "SecretKeyOptional": "Secret Key (optional)",
+    "UserAccountCreated": "User account is successfully created",
+    "UserAccountCreatedError": "This account has already been registered."
   },
   "data": {
     "Folders": "Folders",

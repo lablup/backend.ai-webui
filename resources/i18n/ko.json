@@ -280,6 +280,7 @@
     "Description": "소개",
     "Days": "일",
     "validation": {
+      "InvalidEmailAddress": "잘못된 이메일 주소 형식입니다.",
       "PolicyName": "정책 이름이 필요합니다.",
       "LetterNumber-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
       "NameAlreadyExists": "그 이름은 이미 사용중입니다."
@@ -290,7 +291,9 @@
     "AllowedHosts": "허용된 호스트",
     "UserIDAsEmail": "E-mail을 사용자 ID로 사용 (선택)",
     "AccessKeyOptional": "접근 키 (선택)",
-    "SecretKeyOptional": "비밀 키 (선택)"
+    "SecretKeyOptional": "비밀 키 (선택)",
+    "UserAccountCreated":"사용자 계정이 성공적으로 생성되었습니다.",
+    "UserAccountCreatedError": "이미 가입한 이력이 있는 사용자 입니다."
   },
   "data": {
     "Folders": "폴더",
