@@ -36,6 +36,7 @@ import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu';
+import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-textfield';
 
 import Sortable from 'sortablejs';
@@ -205,6 +206,34 @@ export default class BackendAIPipelineView extends BackendAIPage {
           --mdc-theme-primary: var(--paper-blue-600);
         }
 
+        h3.tab {
+          background-color: var(--general-tabbar-background-color);
+          border-radius: 5px 5px 0px 0px;
+          margin: 0px auto;
+        }
+
+        mwc-tab-bar {
+          --mdc-theme-primary: var(--general-sidebar-selected-color);
+          --mdc-text-transform: none;
+          --mdc-tab-color-default: var(--general-tabbar-background-color);
+          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
+        }
+
+        mwc-button[outlined] {
+          margin: 10px 5px;
+          background-image: none;
+          --mdc-button-outline-width: 2px;
+          --mdc-button-disabled-outline-color: var(--general-sidebar-color);
+          --mdc-button-disabled-ink-color: var(--general-sidebar-color);
+          --mdc-theme-primary: var(--paper-light-blue-800, #efefef);
+          --mdc-on-theme-primary: var(--paper-light-blue-800, #efefef);
+        }
+
+        h3 mwc-button[outlined] {
+          --mdc-theme-primary: #38bd73;
+          --mdc-on-theme-primary: #38bd73;
+        }
+
         #pipeline-environment {
           --mdc-menu-item-height: 40px;
           z-index: 10000;
@@ -299,11 +328,11 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   _showTab(tab) {
-    var els = this.shadowRoot.querySelectorAll(".tab-content");
-    for (var x = 0; x < els.length; x++) {
+    const els = this.shadowRoot.querySelectorAll(".tab-content");
+    for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.ariaLabel).style.display = 'block';
   }
 
   _initPipelinePage() {
@@ -1211,143 +1240,147 @@ export default class BackendAIPipelineView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-card class="item" elevation="1">
-        <h3 class="tab horizontal center layout">
-          <wl-tab-group>
-            <wl-tab value="exp-lists" checked @click="${(e) => this._showTab(e.target)}">List</wl-tab>
-            <wl-tab style="display:none" value="running-lists" @click="${(e) => this._showTab(e.target)}">Running</wl-tab>
-            <wl-tab style="display:none" value="finished-lists" @click="${(e) => this._showTab(e.target)}">Finished</wl-tab>
-          </wl-tab-group>
-          <span class="flex"></span>
-          <wl-button class="fg blue button" id="edit-pipeline" outlined
-              @click="${this._openPipelineUpdateDialog}">
-            <wl-icon>edit</wl-icon>
-            Edit
-          </wl-button>
-          <span style="width:5px;"></span>
-          <wl-button class="fg blue button" id="add-experiment" outlined
-              @click="${this._openPipelineCreateDialog}">
-            <wl-icon>add</wl-icon>
-            Add
-          </wl-button>
-        </h3>
-        <div id="exp-lists" class="tab-content" style="margin:0;padding:0;height:calc(100vh - 235px);">
-          <div class="horizontal wrap layout" style="margin:0;padding:0;">
-            <div id="exp-sidebar">
-              <h4>Pipeline</h4>
-              ${this.pipelineFolderList.map((item) => html`
-                <wl-list-item class="pipeline-item" @click=${this._selectPipeline}
-                    ?active="${item.name === this.pipelineFolderName}"
-                    folder-id="${item.id}" folder-name="${item.name}" folder-host="${item.host}">
-                  <mwc-icon icon="tune" slot="before"></mwc-icon>
-                  <wl-title level="4" style="margin: 0">${item.config.title}</wl-title>
-                  <span style="font-size: 11px;">${item.config.description}</span>
-                </wl-list-item>
-              `)}
-              ${this.pipelineFolderList.length < 1 ? html`<wl-list-item>No pipeline.</wl-list-item>` : ''}
-              <h4>Templates</h4>
-              <wl-list-item class="sidebar-item" disabled>
-                <mwc-icon icon="tune" slot="before"></mwc-icon>
-                  <span slot="after">5<br/><span style="font-size:9px">components</span></span>
-                  <wl-title level="4" style="margin: 0">MNIST (PyTorch)</wl-title>
-                  <span style="font-size: 11px;">Basic experiment example using PyTorch</span>
-              </wl-list-item>
-              <wl-list-item class="sidebar-item" disabled>
-                <mwc-icon icon="tune" slot="before"></mwc-icon>
-                  <span slot="after">4<br/><span style="font-size:9px">components</span></span>
-                  <wl-title level="4" style="margin: 0">Fashion MNIST (TensorFlow)</wl-title>
-                  <span style="font-size: 11px;">Basic experiment example using TensorFlow</span>
-              </wl-list-item>
-              <wl-list-item class="sidebar-item" disabled>
-                <mwc-icon icon="tune" slot="before"></mwc-icon>
-                  <span slot="after">4<br/><span style="font-size:9px">components</span></span>
-                  <wl-title level="4" style="margin: 0">Chicago Taxi (TensorFlow)</wl-title>
-                  <span style="font-size: 11px;">Basic example for Pipeline</span>
-              </wl-list-item>
-            </div>
-            <div class="layout vertical flex">
-              <div class="layout vertical" style="padding:5px 20px">
-                <div class="layout vertical flex" style="margin-bottom:0.5em;">
-                  ${this.pipelineConfig.environment && this.pipelineConfig.version ? html`
-                    <span>Environment: ${this.pipelineConfig.environment}:${this.pipelineConfig.version}</span>
-                  ` : ''}
-                  ${this.pipelineConfig.scaling_group ? html`
-                    <span>Scaling group: ${this.pipelineConfig.scaling_group}</span>
-                  ` : ''}
-                  ${this.pipelineConfig.folder_host ? html`
-                    <span>Folder: ${this.pipelineFolderName} (${this.pipelineConfig.folder_host})</span>
-                  ` : ''}
-                </div>
-                <div class="layout horizontal center">
-                  <wl-button class="fg blue button" id="add-component" outlined
-                      @click="${this._openComponentAddDialog}">
-                    <wl-icon>add</wl-icon>
-                    Add component
-                  </wl-button>
-                </div>
-              </div>
-              <div id="pipeline-component-list">
-                ${this.pipelineComponents.map((item, idx) => html`
-                  <wl-list-item data-id="${idx}">
-                    <mwc-icon icon="extension" slot="before"></mwc-icon>
-                    <div slot="after">
-                      <div class="horizontal layout">
-                        <div class="layout horizontal center" style="margin-right:1em;">
-                            <mwc-icon-button class="fg black" icon="code" @click="${() => this._editCode(idx)}"></mwc-icon-button>
-                            <mwc-icon-button class="fg ${item.executed ? 'green' : 'black'}" icon="play_arrow" @click="${() => this._runComponent(idx)}"></mwc-icon-button>
-                            <mwc-icon-button class="fg black" icon="assignment" @click="${() => this._showComponentLogs(idx)}"></mwc-icon-button>
-                            <mwc-icon-button class="fg black" icon="edit" @click="${() => this._openComponentUpdateDialog(item, idx)}"></mwc-icon-button>
-                            <mwc-icon-button class="fg black" icon="delete" @click="${() => this._openComponentDeleteDialog(idx)}"></mwc-icon-button>
-                        </div>
-                        <div class="layout vertical start flex" style="width:80px!important;">
-                          <div class="layout horizontal configuration">
-                            <mwc-icon class="fg blue" icon="developer-board"></mwc-icon>
-                            <span>${item.cpu}</span>
-                            <span class="indicator">core</span>
-                          </div>
-                          <div class="layout horizontal configuration">
-                            <mwc-icon class="fg blue" icon="memory"></mwc-icon>
-                            <span>${item.mem}</span>
-                            <span class="indicator">GB</span>
-                          </div>
-                          <div class="layout horizontal configuration">
-                            <mwc-icon class="fg blue" icon="view-module"></mwc-icon>
-                            <span>${item.gpu}</span>
-                            <span class="indicator">GPU</span>
-                          </div>
-                        </div>
+      <div style="margin:20px">
+        <lablup-activity-panel elevation="1" noheader narrow autowidth>
+          <div slot="message">
+            <h3 class="tab horizontal center layout">
+              <mwc-tab-bar>
+                <mwc-tab aria-label="exp-lists" label="List"
+                    @click="${(e) => this._showTab(e.target)}">
+                </mwc-tab>
+                <mwc-tab style="display:none" aria-label="running-lists" label="Running" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                <mwc-tab style="display:none" aria-label="finished-lists" label="Finished" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              </mwc-tab-bar>
+              <span class="flex"></span>
+              <mwc-button outlined id="edit-pipeline" icon="edit"
+                    label="Edit"
+                    @click="${() => this._openPipelineUpdateDialog()}">
+              </mwc-button>
+              <mwc-button dense raised id="add-experiment" icon="add"
+                    label="Add" style="margin-right:15px"
+                    @click="${() => this._openPipelineCreateDialog()}">
+              </mwc-button>
+            </h3>
+            <div class="horizontal wrap layout">
+              <div id="exp-lists" class="tab-content" style="margin:0;padding:0;height:calc(100vh - 235px);">
+                <div class="horizontal wrap layout" style="margin:0;padding:0;">
+                  <div id="exp-sidebar">
+                    <h4>Pipeline</h4>
+                    ${this.pipelineFolderList.map((item) => html`
+                      <wl-list-item class="pipeline-item" @click=${this._selectPipeline}
+                          ?active="${item.name === this.pipelineFolderName}"
+                          folder-id="${item.id}" folder-name="${item.name}" folder-host="${item.host}">
+                        <mwc-icon icon="tune" slot="before"></mwc-icon>
+                        <wl-title level="4" style="margin: 0">${item.config.title}</wl-title>
+                        <span style="font-size: 11px;">${item.config.description}</span>
+                      </wl-list-item>
+                    `)}
+                    ${this.pipelineFolderList.length < 1 ? html`<wl-list-item>No pipeline.</wl-list-item>` : ''}
+                    <h4>Templates</h4>
+                    <wl-list-item class="sidebar-item" disabled>
+                      <mwc-icon icon="tune" slot="before"></mwc-icon>
+                        <span slot="after">5<br/><span style="font-size:9px">components</span></span>
+                        <wl-title level="4" style="margin: 0">MNIST (PyTorch)</wl-title>
+                        <span style="font-size: 11px;">Basic experiment example using PyTorch</span>
+                    </wl-list-item>
+                    <wl-list-item class="sidebar-item" disabled>
+                      <mwc-icon icon="tune" slot="before"></mwc-icon>
+                        <span slot="after">4<br/><span style="font-size:9px">components</span></span>
+                        <wl-title level="4" style="margin: 0">Fashion MNIST (TensorFlow)</wl-title>
+                        <span style="font-size: 11px;">Basic experiment example using TensorFlow</span>
+                    </wl-list-item>
+                    <wl-list-item class="sidebar-item" disabled>
+                      <mwc-icon icon="tune" slot="before"></mwc-icon>
+                        <span slot="after">4<br/><span style="font-size:9px">components</span></span>
+                        <wl-title level="4" style="margin: 0">Chicago Taxi (TensorFlow)</wl-title>
+                        <span style="font-size: 11px;">Basic example for Pipeline</span>
+                    </wl-list-item>
+                  </div>
+                  <div class="layout vertical flex">
+                    <div class="layout vertical" style="padding:5px 20px">
+                      <div class="layout vertical flex" style="margin-bottom:0.5em;">
+                        ${this.pipelineConfig.environment && this.pipelineConfig.version ? html`
+                          <span>Environment: ${this.pipelineConfig.environment}:${this.pipelineConfig.version}</span>
+                        ` : ''}
+                        ${this.pipelineConfig.scaling_group ? html`
+                          <span>Scaling group: ${this.pipelineConfig.scaling_group}</span>
+                        ` : ''}
+                        ${this.pipelineConfig.folder_host ? html`
+                          <span>Folder: ${this.pipelineFolderName} (${this.pipelineConfig.folder_host})</span>
+                        ` : ''}
+                      </div>
+                      <div class="layout horizontal center">
+                        <mwc-button outlined id="add-component" icon="add"
+                              label="Add component"
+                              @click="${() => this._openComponentAddDialog()}">
+                        </mwc-button>
                       </div>
                     </div>
-                    <wl-title level="4" style="margin: 0">${item.title}</wl-title>
-                    <div style="font-size:11px;max-width:400px;">${item.description}</div>
-                    <div style="font-size:11px;max-width:400px;">${item.path}</div>
-                  </wl-list-item>
-                `)}
+                    <div id="pipeline-component-list">
+                      ${this.pipelineComponents.map((item, idx) => html`
+                        <wl-list-item data-id="${idx}">
+                          <mwc-icon icon="extension" slot="before"></mwc-icon>
+                          <div slot="after">
+                            <div class="horizontal layout">
+                              <div class="layout horizontal center" style="margin-right:1em;">
+                                  <mwc-icon-button class="fg black" icon="code" @click="${() => this._editCode(idx)}"></mwc-icon-button>
+                                  <mwc-icon-button class="fg ${item.executed ? 'green' : 'black'}" icon="play_arrow" @click="${() => this._runComponent(idx)}"></mwc-icon-button>
+                                  <mwc-icon-button class="fg black" icon="assignment" @click="${() => this._showComponentLogs(idx)}"></mwc-icon-button>
+                                  <mwc-icon-button class="fg black" icon="edit" @click="${() => this._openComponentUpdateDialog(item, idx)}"></mwc-icon-button>
+                                  <mwc-icon-button class="fg black" icon="delete" @click="${() => this._openComponentDeleteDialog(idx)}"></mwc-icon-button>
+                              </div>
+                              <div class="layout vertical start flex" style="width:80px!important;">
+                                <div class="layout horizontal configuration">
+                                  <mwc-icon class="fg blue" icon="developer-board"></mwc-icon>
+                                  <span>${item.cpu}</span>
+                                  <span class="indicator">core</span>
+                                </div>
+                                <div class="layout horizontal configuration">
+                                  <mwc-icon class="fg blue" icon="memory"></mwc-icon>
+                                  <span>${item.mem}</span>
+                                  <span class="indicator">GB</span>
+                                </div>
+                                <div class="layout horizontal configuration">
+                                  <mwc-icon class="fg blue" icon="view-module"></mwc-icon>
+                                  <span>${item.gpu}</span>
+                                  <span class="indicator">GPU</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <wl-title level="4" style="margin: 0">${item.title}</wl-title>
+                          <div style="font-size:11px;max-width:400px;">${item.description}</div>
+                          <div style="font-size:11px;max-width:400px;">${item.path}</div>
+                        </wl-list-item>
+                      `)}
+                    </div>
+                    <div class="layout horizontal end-justified">
+                      ${this.pipelineComponents.length < 1 ? html`
+                        <wl-list-item>No components.</wl-list-item>
+                      ` : html`
+                        <wl-button class="fg blue button" id="save-pipeline-button" outlined
+                            @click="${this._savePipeline}" style="margin: 0 1em">
+                          Save pipeline components
+                        </wl-button>
+                        <wl-button class="fg blue button" id="run-pipeline-button" outlined
+                            @click="${this._runPipeline}" style="margin: 0 1em">
+                          Run pipeline
+                        </wl-button>
+                      `}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="layout horizontal end-justified">
-                ${this.pipelineComponents.length < 1 ? html`
-                  <wl-list-item>No components.</wl-list-item>
-                ` : html`
-                  <wl-button class="fg blue button" id="save-pipeline-button" outlined
-                      @click="${this._savePipeline}" style="margin: 0 1em">
-                    Save pipeline components
-                  </wl-button>
-                  <wl-button class="fg blue button" id="run-pipeline-button" outlined
-                      @click="${this._runPipeline}" style="margin: 0 1em">
-                    Run pipeline
-                  </wl-button>
-                `}
+              <div id="running-lists" class="tab-content" style="display:none;">
+                <backend-ai-session-list id="running-jobs" condition="running" ?active="${this._status === 'active'}"></backend-ai-session-list>
+              </div>
+              <div id="finished-lists" class="tab-content" style="display:none;">
+                <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
               </div>
             </div>
           </div>
-        </div>
-        <div id="running-lists" class="tab-content" style="display:none;">
-          <backend-ai-session-list id="running-jobs" condition="running" ?active="${this._status === 'active'}"></backend-ai-session-list>
-        </div>
-        <div id="finished-lists" class="tab-content" style="display:none;">
-          <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
-        </div>
-      </wl-card>
+        </lablup-activity-panel>
+      </div>
 
       <wl-dialog id="pipeline-create-dialog" fixed blockscrolling backdrop>
         <div slot="header">${this.pipelineCreateMode === 'create' ? 'Create' : 'Update'} pipeline config</div>

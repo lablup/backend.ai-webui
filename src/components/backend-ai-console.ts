@@ -610,7 +610,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         break;
       case 'pipeline':
         this.menuTitle = _text("console.menu.Pipeline");
-        this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
+        // this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'statistics':
         this.menuTitle = _text("console.menu.Statistics");
@@ -987,7 +987,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}" ?disabled="${this.blockedMenuitem.includes('pipeline')}">
-              <mwc-icon slot="graphic" class="fg blue">pageview</mwc-icon>
+              <i class="fas fa-stream" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Pipeline")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}" ?disabled="${this.blockedMenuitem.includes('statistics')}">
