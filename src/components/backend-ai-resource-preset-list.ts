@@ -119,6 +119,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
           border-bottom: 1px solid #DDD;
         }
 
+        #create-preset-dialog {
+          --content-width: 
+        }
+
       `];
   }
 
@@ -248,9 +252,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
               <h4>${_t("resourcePreset.ResourcePreset")}</h4>
               <div class="horizontal center layout">
                 <mwc-textfield id="cpu-resource" class="modify" type="number" label="CPU"
-                    min="1" value="1"></mwc-textfield>
+                    min="1" value="1" required validationMessage="${_t("resourcePreset.MinimumCPUUnit")}"></mwc-textfield>
                 <mwc-textfield id="ram-resource" class="modify" type="number" label="RAM (GB)"
-                    min="1" value="1"></mwc-textfield>
+                    min="1" value="1" required validationMessage="${_t("resourcePreset.MinimumMemUnit")}"></mwc-textfield>
               </div>
               <div class="horizontal center layout">
                 <mwc-textfield id="gpu-resource" class="modify" type="number" label="GPU"
@@ -292,9 +296,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
           <h4>${_t("resourcePreset.ResourcePreset")}</h4>
           <div class="horizontal center layout">
             <mwc-textfield id="create-cpu-resource" class="create" type="number" label="CPU"
-                min="1" value="1"></mwc-textfield>
+                min="1" value="1" required validationMessage="${_t("resourcePreset.MinimumCPUUnit")}"></mwc-textfield>
             <mwc-textfield id="create-ram-resource" class="create" type="number" label="RAM (GB)"
-                min="1" value="1"></mwc-textfield>
+                min="1" value="1" required validationMessage="${_t("resourcePreset.MinimumMemUnit")}"></mwc-textfield>
           </div>
           <div class="horizontal center layout">
             <mwc-textfield id="create-gpu-resource" class="create" type="number" label="GPU"
