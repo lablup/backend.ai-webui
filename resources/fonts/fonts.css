@@ -227,13 +227,10 @@
 
 /* FontAwesome */
 @font-face {
-  font-family: 'FontAwesome';
+  font-family: "Font Awesome 5 Free";
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
   src: url('./fa-solid-900.woff2') format('woff2'),
        url('./fa-solid-900.woff') format('woff');
-       /* FontAwesome v4.7.0 */
-       /* url('./fontawesome-webfont.woff2') format('woff2'),
-       url('./fontawesome-webfont.woff') format('woff'), */
-
-  font-weight: normal;
-  font-style: normal;
 }
