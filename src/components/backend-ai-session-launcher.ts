@@ -286,7 +286,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #new-session-dialog {
           --component-width: 400px;
-          --component-height: 830px;
           z-index: 100;
         }
 
@@ -430,7 +429,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           margin-bottom: 1px;
         }
 
-        mwc-button, mwc-button[raised], mwc-button[disabled] {
+        mwc-button, mwc-button[raised], mwc-button[unelevated], mwc-button[disabled] {
           width: 100%;
         }
 
@@ -2042,17 +2041,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </wl-label>
           </div>
         </wl-expansion>
-        <fieldset slot="footer" style="padding-top:0;">
-          <mwc-button
-              raised
-              class="launch-button"
-              id="launch-button"
-              icon="rowing"
-              @click="${() => this._newSessionWithConfirmation()}">
-            <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
-          </mwc-button>
-        </fieldset>
       </form>
+      <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <mwc-button
+            unelevated
+            class="launch-button"
+            id="launch-button"
+            icon="rowing"
+            @click="${() => this._newSessionWithConfirmation()}">
+          <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+        </mwc-button>
+      </div>
     </backend-ai-dialog>
     <backend-ai-dialog id="help-description" fixed backdrop>
       <span slot="title">${this._helpDescriptionTitle}</span>
@@ -2070,9 +2069,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <p>${_t('session.launcher.LaunchConfirmationDialog')}</p>
         <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
       </div>
-      <div class="horizontal flex" slot="footer" style="padding-top:0;margin:0 5px;">
+      <div slot="footer" class="horizontal end-justified flex layout">
         <mwc-button
-            raised
+            unelevated
             class="launch-confirmation-button"
             id="launch-confirmation-button"
             icon="rowing"
