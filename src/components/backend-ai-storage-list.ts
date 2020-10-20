@@ -188,10 +188,10 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         #folder-explorer-dialog {
-          --component-height: calc(100vh - 170px);
+          --component-height: calc(100vh - 200px); /* calc(100vh - 170px); */
           right: 0;
           top: 0;
-          position: fixed;
+          position: fixed∫;
           margin: 170px 0 0 0;
         }
 
@@ -215,12 +215,12 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         @media screen and (min-width: 900px) {
           #folder-explorer-dialog {
-            left: 190px;
-            --component-width: calc(100% - 30px);
+            left: 250px; /* 190px; */
+            --component-width: calc(100% - 45px); /* calc(100% - 30px); */
           }
 
           #folder-explorer-dialog.mini_ui {
-            left: 65px;
+            left: 85px; /* 65px; */
             --component-width: calc(100% - 45px);
           }
         }
@@ -1339,8 +1339,12 @@ export default class BackendAiStorageList extends BackendAIPage {
       let temp: any = [];
       for (let i = 0; i < e.dataTransfer.files.length; i++) {
         const file = e.dataTransfer.files[i];
+        /* Drag & Drop file upload size limits to 1MiB */
         if (file.size > 2 ** 20) {
-          console.log('File size limit (< 1 MiB)');
+          this.notification.text = _text('data.explorer.DragDropFileUploadSizeLimit');
+          this.notification.show();
+          return;
+          // console.log('File size limit (< 1 MiB)');
         } else {
           file.progress = 0;
           file.caption = '';
@@ -1350,7 +1354,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           (this.uploadFiles as any).push(file);
         }
       }
-      return;
+      // return;
 
       for (let i = 0; i < temp.length; i++) {
         this.fileUpload(temp[i]);
@@ -1462,9 +1466,9 @@ export default class BackendAiStorageList extends BackendAIPage {
           const now = new Date().getTime();
           const speed: string = (bytesUploaded / (1024 * 1024) / ((now - start_date) / 1000)).toFixed(1) + "MB/s";
           const estimated_seconds = Math.floor((bytesTotal - bytesUploaded) / (bytesUploaded / (now - start_date) * 1000));
-          let estimated_time_left = "Less than 10 seconds";
+          let estimated_time_left = _text('data.explorer.LessThan10Sec');
           if (estimated_seconds >= 86400) {
-            estimated_time_left = "More than a day";
+            estimated_time_left = _text('data.explorer.MoreThanADay');
           } else if (estimated_seconds > 10) {
             const hour = Math.floor(estimated_seconds / 3600);
             const min = Math.floor((estimated_seconds % 3600) / 60);
@@ -1565,7 +1569,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     if (!newName) return;
     const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id);
     job.then((res) => {
-      this.notification.text = 'File renamed.';
+      this.notification.text = _text('data.folders.FileRenamed');
       this.notification.show();
       this._clearExplorer();
       this.renameFileDialog.hide();
@@ -1617,7 +1621,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       });
       let job = globalThis.backendaiclient.vfolder.delete_files(filenames, true, this.explorer.id);
       job.then(res => {
-        this.notification.text = 'Files deleted.';
+        this.notification.text = _text('data.folders.MultipleFilesDeleted');
         this.notification.show();
         this._clearExplorer();
         this.deleteFileDialog.hide();
@@ -1627,7 +1631,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         let path = this.explorer.breadcrumb.concat(this.deleteFileDialog.filename).join("/");
         let job = globalThis.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
         job.then(res => {
-          this.notification.text = 'File deleted.';
+          this.notification.text = _text('data.folders.FileDeleted');
           this.notification.show();
           this._clearExplorer();
           this.deleteFileDialog.hide();
@@ -1644,7 +1648,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     let path = this.explorer.breadcrumb.concat(fn).join("/");
     let job = globalThis.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
     job.then(res => {
-      this.notification.text = 'File deleted.';
+      this.notification.text = _text('data.folders.FileDeleted');
       this.notification.show();
       this._clearExplorer();
     });
