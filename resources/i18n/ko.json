@@ -441,6 +441,8 @@
     "MemoryShouldBeLargerThanSHMEM": "메모리는 공유메모리보다 커야 합니다",
     "Created": "자원 프리셋이 생성되었습니다",
     "Updated": "자원 프리셋에 수정되었습니다",
+    "MinimumCPUUnit":"CPU 최소 단위: 1 코어",
+    "MinimumMemUnit":"메모리 최소 단위: 1 GB",
     "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다."
   },
   "usersettings": {

@@ -444,7 +444,10 @@
     "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
     "Created": "Resource preset created",
     "Updated": "Resource preset updated",
+    "MinimumCPUUnit":"CPU starts with 1 core",
+    "MinimumMemUnit":"Memory starts with 1 GB",
     "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB."
+    
   },
   "usersettings": {
     "General": "General",
