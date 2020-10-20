@@ -411,7 +411,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.folders.RenameAFolder')}</span>
         <div slot="content">
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
-            pattern="[a-zA-Z0-9_-.]*"
+            pattern="^[a-zA-Z0-9_-]+$"
             validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
         </div>
         <div slot="footer">
@@ -428,7 +428,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
           <div>
             <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
-                         pattern="[a-zA-Z0-9_-.]*"
+                         pattern="^[a-zA-Z0-9_-]+$"
                          validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
           </div>
         </div>
