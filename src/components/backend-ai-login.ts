@@ -79,6 +79,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
+  @property({type: Boolean}) openPortToPublic = false;
   @property({type: Array}) endpoints;
 
   constructor() {
@@ -315,6 +316,11 @@ export default class BackendAILogin extends BackendAIPage {
       this.allow_project_resource_monitor = false;
     } else {
       this.allow_project_resource_monitor = true;
+    }
+    if (typeof config.general === "undefined" || typeof config.general.openPortToPublic === "undefined" || config.general.allowProjectResourceMonitor === '' || config.general.openPortToPublic == false) {
+      this.openPortToPublic = false;
+    } else {
+      this.openPortToPublic = true;
     }
 
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
@@ -736,6 +742,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.domainName = this.domain_name;
       globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
       globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
+      globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
