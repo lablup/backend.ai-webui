@@ -549,7 +549,15 @@
     "ProjectNameIsRequired": "Project name is required",
     "TypeRegistryNameToDelete": "Type registry hostname to delete",
     "RegistryTurnedOn": "Registry enabled",
-    "RegistryTurnedOff": "Registry disabled"
+    "RegistryTurnedOff": "Registry disabled",
+    "RegistryHostnameAlreadyExists": "Hostname Already Exists. Please change the hostname to add",
+    "RegistrySuccessfullyAdded": "Registry successfully added.",
+    "RegistrySuccessfullyDeleted": "Registry successfully deleted.",
+    "HostnameDoesNotMatch": "Hostname does not match!",
+    "UpdatingRegistryInfo": "Updating registry information...",
+    "RegistryUpdateFinished": "Registry update finished.",
+    "RegistryUpdateFailed": "Registry update failed.",
+    "RescanFailed": "Rescan Failed."
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",
