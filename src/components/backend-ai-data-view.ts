@@ -273,7 +273,7 @@ export default class BackendAIData extends BackendAIPage {
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
         <div slot="content">
-          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9\_\-.]+"
+          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="^[\.a-zA-Z0-9_-]+$"
               auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
           <div class="horizontal layout">
             <mwc-multi-select id="add-folder-host" label="${_t("data.Host")}">
