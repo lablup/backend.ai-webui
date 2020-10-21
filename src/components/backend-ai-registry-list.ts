@@ -113,7 +113,7 @@ class BackendAIRegistryList extends BackendAIPage {
           width: 100%;
           padding-right: 10px;
           --mdc-select-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-orange-400);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 
         mwc-list-item {
@@ -251,16 +251,24 @@ class BackendAIRegistryList extends BackendAIPage {
       }
     }
 
+    // if hostname already exists
+    if (this.allowed_registries.includes(hostname)) {
+      this.notification.text = _text('registry.RegistryHostnameAlreadyExists');
+      this.notification.show();
+      return;
+    }
+
     globalThis.backendaiclient.registry.add(hostname, input)
       .then(({result}) => {
         if (result === "ok") {
-          this.notification.text = "Registry successfully added";
+          this.notification.text = _text('registry.RegistrySuccessfullyAdded');
           this._refreshRegistryList();
         } else {
-          this.notification.text = "Error occurred";
+          this.notification.text = _text('dialog.ErrorOccurred');
         }
         this._hideDialogById("#add-registry-dialog");
         this.notification.show();
+        this.notification.hide
       })
   }
 
@@ -271,19 +279,23 @@ class BackendAIRegistryList extends BackendAIPage {
     const name = (<HTMLInputElement>this.shadowRoot.querySelector("#delete-registry")).value;
 
     if (this.registryList[this.selectedIndex].hostname === encodeURIComponent(name)) {
+      // remove the hostname from allowed registries if it contains deleting registry.
+      if (this.allowed_registries.includes(name)) {
+        this.allowed_registries.splice(this.allowed_registries.indexOf(name));
+      }
       globalThis.backendaiclient.registry.delete(name)
         .then(({result}) => {
           if (result === "ok") {
-            this.notification.text = "Registry successfully deleted";
+            this.notification.text = _text('registry.RegistrySuccessfullyDeleted');
             this._refreshRegistryList();
           } else {
-            this.notification.text = "Error Occurred";
+            this.notification.text = _text('dialog.ErrorOccurred');
           }
           this._hideDialogById("#delete-registry-dialog");
           this.notification.show();
         })
     } else {
-      this.notification.text = "Hostname does not match!";
+      this.notification.text = _text('registry.HostnameDoesNotMatch');
       this.notification.show();
     }
   }
@@ -293,13 +305,13 @@ class BackendAIRegistryList extends BackendAIPage {
    * */
   async _rescanImage() {
     let indicator = await this.indicator.start('indeterminate');
-    indicator.set(10, 'Updating registry information...');
+    indicator.set(10, _text('registry.UpdatingRegistryInfo'));
     globalThis.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
       .then(({rescan_images}) => {
         if (rescan_images.ok) {
-          indicator.set(100, 'Registry update finished.');
+          indicator.set(100, _text('registry.RegistryUpdateFinished'));
         } else {
-          indicator.set(50, 'Registry update failed.');
+          indicator.set(50, _text('registry.RegistryUpdateFailed'));
           indicator.end(1000);
           this.notification.text = PainKiller.relieve(rescan_images.msg);
           this.notification.detail = rescan_images.msg;
@@ -307,7 +319,7 @@ class BackendAIRegistryList extends BackendAIPage {
         }
       }).catch(err => {
       console.log(err);
-      indicator.set(50, 'Rescan failed.');
+      indicator.set(50, _text('registry.RescanFailed'));
       indicator.end(1000);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -400,9 +412,12 @@ class BackendAIRegistryList extends BackendAIPage {
       this.notification.text = _text("registry.RegistryTurnedOff");
     }
     //input.allowed_docker_registries = this.allowed_registries;
-    globalThis.backendaiclient.domain.modify(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this.allowed_registries}).then((response) => {
+    globalThis.backendaiclient.domain.update(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this.allowed_registries}).then((response) => {
       this.notification.show();
     });
+    /* globalThis.backendaiclient.domain.modify(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this.allowed_registries}).then((response) => {
+      this.notification.show();
+    }); */
   }
 
   _indexRenderer(root, column, rowData) {
