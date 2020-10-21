@@ -371,7 +371,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.selectedImages.forEach( async image => {
       // make image installing status visible
       let selectedImageLabel = '#' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-');
-      console.log(selectedImageLabel)
       this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:block;');
 
       let imageName = image['registry'] + '/' + image['name'] + ':' + image['tag'];
