@@ -276,9 +276,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         if (res.ok) {
           return globalThis.backendaiclient.scalingGroup.associate_domain(domain, scalingGroup);
         } else {
-          this.notification.text = PainKiller.relieve(res.title);
-          this.notification.detail = res.msg;
-          this.notification.show();
+          /* error message will be handled in catch statement */
+          // this.notification.text = PainKiller.relieve(res.title);
+          // this.notification.detail = res.msg;
+          // this.notification.show();
           return Promise.reject(res.msg);
         }
       })
@@ -360,12 +361,15 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         this._hideDialogById("#delete-scaling-group-dialog");
         this.notification.show();
       })
+      /* update selectedIndex to initial value */
+      this.selectedIndex = 0;
   }
 
   _refreshList() {
     globalThis.backendaiclient.scalingGroup.list_available()
       .then(({scaling_groups}) => {
         this.scalingGroups = scaling_groups;
+        console.log(this.scalingGroups);
         this.requestUpdate(); // without this render is called beforehands, so update is required
       })
   }
