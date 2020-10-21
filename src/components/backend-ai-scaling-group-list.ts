@@ -369,7 +369,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     globalThis.backendaiclient.scalingGroup.list_available()
       .then(({scaling_groups}) => {
         this.scalingGroups = scaling_groups;
-        console.log(this.scalingGroups);
         this.requestUpdate(); // without this render is called beforehands, so update is required
       })
   }
