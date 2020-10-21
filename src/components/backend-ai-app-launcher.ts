@@ -55,6 +55,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Number}) vncPort = 0;
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard'];
   @property({type: Object}) appController = Object();
+  @property({type: Object}) openPortToPublic = false;
 
   constructor() {
     super();
