@@ -361,7 +361,7 @@
       "TouchToDownload": "터치하여 다운로드하세요",
       "ValueRequired": "값을 입력해주세요",
       "ValueShouldBeStarted": "경로는 .(점), 문자 또는 숫자만 포함해야 합니다",
-      "DragDropFileUploadSizeLimit": "드래그 & 드롭시 업로드 가능한 파일 사이즈는 1 MiB 이하로 제한됩니다.",
+      "DragDropFileUploadSizeLimit": "드래그 & 드롭시 업로드 가능한 파일 사이즈는 1 GiB 이하로 제한됩니다.",
       "LessThan10Sec": "10초 이하의 시간 소요",
       "MoreThanADay": "최소 1일 이상 소요"
     },

@@ -364,7 +364,7 @@
       "TouchToDownload": "Touch to Download file",
       "ValueRequired": "Value is required",
       "ValueShouldBeStarted": "Path should start with .(dot) or letters, numbers only.",
-      "DragDropFileUploadSizeLimit": "File size limit (< 1 MiB)",
+      "DragDropFileUploadSizeLimit": "File size limit (< 1 GiB)",
       "LessThan10Sec": "Less than 10 seconds",
       "MoreThanADay": "More than a day"
     },

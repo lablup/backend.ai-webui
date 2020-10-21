@@ -1339,8 +1339,8 @@ export default class BackendAiStorageList extends BackendAIPage {
       let temp: any = [];
       for (let i = 0; i < e.dataTransfer.files.length; i++) {
         const file = e.dataTransfer.files[i];
-        /* Drag & Drop file upload size limits to 1MiB */
-        if (file.size > 2 ** 20) {
+        /* Drag & Drop file upload size limits to 1 GiB */
+        if (file.size > 2 ** 30) {
           this.notification.text = _text('data.explorer.DragDropFileUploadSizeLimit');
           this.notification.show();
           return;
