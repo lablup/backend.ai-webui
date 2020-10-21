@@ -1214,7 +1214,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                               <mwc-icon class="dropdown-menu">lock</mwc-icon>
-                              ${_t("console.menu.ChangePassword")}
+                              ${_t("console.menu.ChangeUserInfo")}
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
                               <mwc-icon class="dropdown-menu">drag_indicator</mwc-icon>
@@ -1339,7 +1339,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <mwc-button
               unelevated
               label="${_t("console.menu.Update")}"
-              @click="${this._updateUserPassword}"></mwc-button>
+              @click="${this._updateUserInformation}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
