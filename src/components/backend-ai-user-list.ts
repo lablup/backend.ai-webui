@@ -493,8 +493,7 @@ export default class BackendAIUserList extends BackendAIPage {
           <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>.</p>
           <p>${_t("dialog.ask.DoYouWantToProceed")}</p>
         </div>
-        <div slot="footer" class="horizontal flex layout">
-          <div class="flex"></div>
+        <div slot="footer" class="horizontal end-justified flex layout distancing">
           <mwc-button
               label="${_t("button.Cancel")}"
               @click="${(e) => this._hideDialog(e)}"></mwc-button>
@@ -502,8 +501,6 @@ export default class BackendAIUserList extends BackendAIPage {
               unelevated
               label="${_t("button.Okay")}"
               @click="${() => this._signoutUser()}"></mwc-button>
-          <!--<wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
-          <wl-button class="ok" outlined @click="${() => this._signoutUser()}">${_t("button.Okay")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="user-info-dialog" fixed backdrop narrowLayout>
@@ -532,26 +529,7 @@ export default class BackendAIUserList extends BackendAIPage {
                   pattern="^[a-zA-Z0-9_ ]*$"
                   value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}"
                   ></mwc-textfield>
-              <!--<wl-textfield
-                label="${_t("credential.UserID")}"
-                disabled
-                value="${this.userInfo.email}">
-              </wl-textfield>
-              <wl-textfield
-                label="${_t("credential.UserName")}"
-                id="username"
-                ?disabled=${!this.editMode}
-                value="${this.userInfo.username}">
-              </wl-textfield>
-              <wl-textfield
-                label="${_t("credential.FullName")}"
-                id="full_name"
-                ?disabled=${!this.editMode}
-                value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}">
-              </wl-textfield>-->
               ${this.editMode ? html`
-                <!--<wl-textfield type="password" label="${_text("general.NewPassword")}" id="password"></wl-textfield>
-                <wl-textfield type="password" label="${_text("general.ConfirmPassword")}" id="confirm"></wl-textfield>-->
                 <mwc-textfield
                     type="password"
                     id="password"
@@ -561,48 +539,20 @@ export default class BackendAIUserList extends BackendAIPage {
                     id="description"
                     label="${_text("credential.Description")}"
                     id="password"></mwc-textfield>`: html``}
-              <!--<wl-textarea label="${_t("credential.Description")}" id="description"
-                           value="${this.userInfo.description ? this.userInfo.description : ' '}"
-                           ?disabled=${!this.editMode}>
-              </wl-textarea>-->
               ${this.editMode ? html`
                 <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text("credential.DescActiveUser")}</p>
                   <mwc-switch
                       id="is_active"
                       ?checked="${this.userInfo.is_active}"></mwc-switch>
-                  <!--<wl-label label for="is_active_label" style="margin-bottom: auto">
                   ${_text("credential.DescActiveUser")}
-                  </wl-label>
-                  <wl-label label id="is_active_label">
-                    <wl-switch
-                      id="is_active"
-                      ?checked=${this.userInfo.is_active}></wl-switch>
-                  </wl-label>-->
                 </div>
                 <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text("credential.DescRequirePasswordChange")}</p>
                   <mwc-switch
                       id="need_password_change"
                       ?checked=${this.userInfo.need_password_change}></mwc-switch>
-                  <!--<wl-label label for="need_password_change_label" style="margin-bottom: auto">
-                    ${_t("credential.DescRequirePasswordChange")}
-                  </wl-label>
-                  <wl-label label id="need_password_change_label">
-                    <wl-switch
-                        id="need_password_change"
-                        ?checked=${this.userInfo.need_password_change}></wl-switch>
-                  </wl-label>-->
-                </div>
-                <!--<wl-button
-                  class="fg green"
-                  type="button"
-                  outlined
-                  @click=${e => this._saveChanges(e)}
-                  style="width: 305px; margin: 0 15px 10px 15px; box-sizing: border-box;">
-                  <wl-icon>check</wl-icon>
-                  ${_t("button.SaveChanges")}
-                </wl-button>-->` : html`
+                </div>` : html`
                     <mwc-textfield
                         disabled
                         label="${_text("credential.DescActiveUser")}"
@@ -611,12 +561,6 @@ export default class BackendAIUserList extends BackendAIPage {
                         disabled
                         label="${_text("credential.DescRequirePasswordChange")}"
                         value="${this.userInfo.need_password_change ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
-                    <!--<wl-textfield label="${_t("credential.DescActiveUser")}" disabled
-                                  value="${this.userInfo.is_active ? `Yes` : `No`}">
-                    </wl-textfield>
-                    <wl-textfield label="${_t("credential.DescRequirePasswordChange")}" disabled
-                                  value="${this.userInfo.need_password_change ? `Yes` : `No`}">
-                    </wl-textfield>-->
             `}
           </div>
         </div>

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {customElement, html, css, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
 import {installOfflineWatcher} from 'pwa-helpers/network';
@@ -41,6 +41,7 @@ import './backend-ai-sidepanel-notification';
 import './backend-ai-app-launcher';
 import './backend-ai-resource-broker';
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
+
 import '../lib/backend.ai-client-es6';
 
 import {
@@ -137,14 +138,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       IronFlexAlignment,
       IronFlexFactors,
       IronPositioning,
-      // language=CSS
-      css`
-        mwc-textfield {
-          width: 100%;
-          --mdc-text-field-fill-color: transparent;
-        }
-      `
-    ];
+    css`
+    `];
   }
 
   firstUpdated() {
@@ -1071,7 +1066,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   protected render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" type="text/css" href="resources/fonts/font-awesome-all.min.css">
+      <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
       <div id="loading-curtain" class="loading-background"></div>
       <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="position:fixed;visibility:hidden;">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
