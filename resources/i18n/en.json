@@ -560,7 +560,12 @@
     "TypeResourceGroupNameToDelete": "Type resource group name to delete",
     "ResourceGroupName": "ResourceGroupName",
     "Active": "Active",
-    "SelectScheduler": "Select Scheduler"
+    "SelectScheduler": "Select Scheduler",
+    "NochangesMade": "No changes made",
+    "ResourceGroupNameNotMatch": "Resource group name does not match!",
+    "ResourceGroupCreated": "Resource group succesfully created",
+    "ResourceGroupModified": "Resource group successfully modified",
+    "ResourceGroupDeleted": "Resource group successfully deleted"
   },
   "maintenance": {
     "General": "General",

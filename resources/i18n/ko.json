@@ -557,7 +557,11 @@
     "TypeResourceGroupNameToDelete": "_삭제 확인을 위해 자원 그룹 이름을 입력하세요.",
     "ResourceGroupName": "자원 그룹 이름",
     "Active": "활성",
-    "SelectScheduler": "스케쥴러 선택"
+    "SelectScheduler": "스케쥴러 선택",
+    "ResourceGroupNameNotMatch": "자원 그룹명이 일치하지 않습니다.",
+    "ResourceGroupCreated": "자원 그룹이 성공적으로 수정되었습니다.",
+    "ResourceGroupModified": "자원 그룹이 성공적으로 수정되었습니다.",
+    "ResourceGroupDeleted": "자원 그룹이 성공적으로 삭제되었습니다."
   },
   "maintenance": {
     "General": "일반",
