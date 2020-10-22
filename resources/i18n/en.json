@@ -178,7 +178,10 @@
       "AppMustBeRun": "Start only when the app is already running",
       "AppMustBeRunDialog": "This app can only be accessed and used if it is already running through the terminal. If not, you will be directed to an error page that occurs when the app is not running.",
       "ConfirmAndRun": "I checked and I'll start"
-    }
+    },
+    "TensorboardPath": "Log directory for TensorBoard",
+    "InputTensorboardPath": "Please input log directory that TensorBoard will refer to.",
+    "DefaultTensorboardPath": "/home/work/logs"
   },
   "button": {
     "Cancel": "Cancel",
@@ -461,10 +464,9 @@
     "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
     "Created": "Resource preset created",
     "Updated": "Resource preset updated",
-    "MinimumCPUUnit":"CPU starts with 1 core",
-    "MinimumMemUnit":"Memory starts with 1 GB",
+    "MinimumCPUUnit": "CPU starts with 1 core",
+    "MinimumMemUnit": "Memory starts with 1 GB",
     "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB."
-
   },
   "usersettings": {
     "General": "General",

@@ -481,19 +481,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       document.addEventListener('tensorboard-path-completed', async () => {
         this.indicator = await globalThis.lablupIndicator.start();
         if (this.isPathConfigured) {
-          await globalThis.backendaiclient.shutdown_service(sessionName, 'tensorboard');
+          await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
         }
         this.isPathConfigured = false;
         this.indicator.set(100, 'Prepared.');
         // if tensorboard path is empty, --logdir will be '/home/work/logs'
         this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
         const path: Object  = {'--logdir': this.tensorboardPath};
-        this._open_wsproxy(sessionName, appName, port, path).then((response) => {
+        this._open_wsproxy(sessionUuid, appName, port, path).then((response) => {
           this._hideAppLauncher();
               setTimeout(() => {
                 globalThis.open(response.url + urlPostfix, '_blank');
                 console.log(appName + " proxy loaded: ");
-                console.log(sessionName);
+                console.log(sessionUuid);
           }, 1000);
         });
       })
