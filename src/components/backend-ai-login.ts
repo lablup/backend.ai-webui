@@ -317,7 +317,7 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       this.allow_project_resource_monitor = true;
     }
-    if (typeof config.general === "undefined" || typeof config.general.openPortToPublic === "undefined" || config.general.allowProjectResourceMonitor === '' || config.general.openPortToPublic == false) {
+    if (typeof config.general === "undefined" || typeof config.general.openPortToPublic === "undefined" || config.general.openPortToPublic === '' || config.general.openPortToPublic == false) {
       this.openPortToPublic = false;
     } else {
       this.openPortToPublic = true;
