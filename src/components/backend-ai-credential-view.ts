@@ -431,7 +431,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     */
 
     // Read resources
-      globalThis.backendaicllient.keypair.add(user_id, is_active, is_admin,
+      globalThis.backendaiclient.keypair.add(user_id, is_active, is_admin,
         resource_policy, rate_limit).then(response => {
       this.shadowRoot.querySelector('#new-keypair-dialog').hide();
       this.notification.text = "Keypair successfully created.";
