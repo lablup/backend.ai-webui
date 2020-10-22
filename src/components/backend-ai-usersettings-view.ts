@@ -173,9 +173,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
             <mwc-tab-bar>
-              <mwc-tab aria-label="general" label="${_t("usersettings.General")}"
+              <mwc-tab title="general" label="${_t("usersettings.General")}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab aria-label="logs" label="${_t("usersettings.Logs")}"
+              <mwc-tab title="logs" label="${_t("usersettings.Logs")}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
             <!--<wl-tab-group>
@@ -273,12 +273,12 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     const tab = params.tab;
     if (tab && tab === 'logs') {
       globalThis.setTimeout(() => {
-        const tabEl = this.shadowRoot.querySelector('mwc-tab[aria-label="logs"]');
+        const tabEl = this.shadowRoot.querySelector('mwc-tab[title="logs"]');
         tabEl.click();
       }, 0);
     } else {
       globalThis.setTimeout(() => {
-        const tabEl = this.shadowRoot.querySelector('mwc-tab[aria-label="general"]');
+        const tabEl = this.shadowRoot.querySelector('mwc-tab[title="general"]');
         tabEl.click();
       }, 0);
     }
@@ -337,11 +337,11 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this._activeTab = tab.ariaLabel;
+    this._activeTab = tab.title;
     if (this._activeTab === 'logs') {
       this._refreshLogs();
     }
-    this.shadowRoot.querySelector('#' + tab.ariaLabel).style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 }
 

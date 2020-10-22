@@ -151,11 +151,11 @@ export default class BackendAiSessionView extends BackendAIPage {
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.ariaLabel + '-lists').style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.title + '-lists').style.display = 'block';
     for (let x = 0; x < this._lists.length; x++) {
       this._lists[x].removeAttribute('active');
     }
-    this.shadowRoot.querySelector('#' + tab.ariaLabel + '-jobs').setAttribute('active', true);
+    this.shadowRoot.querySelector('#' + tab.title + '-jobs').setAttribute('active', true);
   }
 
   _toggleDropdown() {
@@ -180,9 +180,9 @@ export default class BackendAiSessionView extends BackendAIPage {
           <h3 class="tab horizontal center layout">
             <div class="horizontal layout flex start-justified">
             <mwc-tab-bar>
-              <mwc-tab aria-label="running" label="${_t("session.Running")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab aria-label="finished" label="${_t("session.Finished")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab aria-label="others" label="${_t("session.Others")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="running" label="${_t("session.Running")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="finished" label="${_t("session.Finished")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="others" label="${_t("session.Others")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
             ${this.is_admin ? html`
               <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
