@@ -119,10 +119,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
           border-bottom: 1px solid #DDD;
         }
 
-        #create-preset-dialog {
-          --content-width: 
-        }
-
       `];
   }
 
