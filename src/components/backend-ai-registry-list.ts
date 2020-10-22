@@ -358,14 +358,14 @@ class BackendAIRegistryList extends BackendAIPage {
     let url = this.shadowRoot.querySelector('#add-registry-url').value;
     let validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
     // regular expression for DNS check
-    let dnsExpression = "^(https?)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$";
+    let dnsExpression = "^(https?):\/\/([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$";
     let dnsRegex = new RegExp(dnsExpression);
     if (url !== '' && url.match(dnsRegex)) {
       this.shadowRoot.querySelector('#add-registry-url').invalid = false;
       validationMessage.style.display = 'none';
     } else {
-      // regular expression for IP check
-      let ipExpression = "(https?):\/\/(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}?:((6553[0-5])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))";
+      // regular expression for IP check (optional port number)
+      let ipExpression = "^(https?):\/\/(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$";
       let ipRegex = new RegExp(ipExpression);
       if (!url.match(ipRegex)) {
         this.shadowRoot.querySelector('#add-registry-url').invalid = true;
