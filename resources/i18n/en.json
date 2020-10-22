@@ -284,6 +284,7 @@
     "Description": "Description",
     "Days": "Days",
     "validation": {
+      "InvalidEmailAddress": "Invalid Email Address.",
       "PolicyName": "Policy name Required.",
       "LetterNumber-_dot": "Allows letters, numbers and -_.",
       "NameAlreadyExists": "Policy Name Already Exists!"
@@ -292,9 +293,13 @@
     "ModifyKeypairResourcePolicy": "Modify keypair resource policy",
     "SelectPolicy": "Select Policy",
     "AllowedHosts": "Allowed Hosts",
-    "UserIDAsEmail": "User ID as E-mail (optional)",
+    "UserIDAsEmail": "User ID as E-mail",
     "AccessKeyOptional": "Access Key (optional)",
-    "SecretKeyOptional": "Secret Key (optional)"
+    "SecretKeyOptional": "Secret Key (optional)",
+    "UserAccountCreated": "User account is successfully created",
+    "UserAccountCreatedError": "This account has already been registered.",
+    "KeypairCreated": "Keypair successfully created.",
+    "UserIDRequired": "User ID is required."
   },
   "data": {
     "Folders": "Folders",

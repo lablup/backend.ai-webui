@@ -1705,12 +1705,9 @@ class Keypair {
    * @param {boolean} isAdmin - is_admin state. Default is False.
    * @param {string} resourcePolicy - resource policy name to assign. Default is `default`.
    * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
-   * @param {string} accessKey - Manual access key (optional)
-   * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional)
-
    */
   async add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
-            rateLimit = 1000, accessKey = null, secretKey = null) {
+            rateLimit = 1000) {
     let fields = [
       'is_active',
       'is_admin',
@@ -1718,16 +1715,27 @@ class Keypair {
       'concurrency_limit',
       'rate_limit'
     ];
+    let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
+    `  create_keypair(user_id: $user_id, props: $input) {` +
+    `    ok msg keypair { ${fields.join(" ")} }` +
+    `  }` +
+    `}`;
+  let v = {
+    'user_id': userId,
+    'input': {
+      'is_active': isActive,
+      'is_admin': isAdmin,
+      'resource_policy': resourcePolicy,
+      'rate_limit': rateLimit,
+    },
+  };
+  return this.client.query(q, v);
+    /** accessKey is no longer used */
+    /*
     if (accessKey !== null && accessKey !== '') {
       fields = fields.concat(['access_key', 'secret_key']);
-    }
-    let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
-      `  create_keypair(user_id: $user_id, props: $input) {` +
-      `    ok msg keypair { ${fields.join(" ")} }` +
-      `  }` +
-      `}`;
-    let v;
-    if (accessKey !== null && accessKey !== '') {
+    } */
+     /* if (accessKey !== null && accessKey !== '') {
       v = {
         'user_id': userId,
         'input': {
@@ -1735,8 +1743,6 @@ class Keypair {
           'is_admin': isAdmin,
           'resource_policy': resourcePolicy,
           'rate_limit': rateLimit,
-          'access_key': accessKey,
-          'secret_key': secretKey
         },
       };
     } else {
@@ -1749,8 +1755,7 @@ class Keypair {
           'rate_limit': rateLimit
         },
       };
-    }
-    return this.client.query(q, v);
+    } */
   }
 
   /**
