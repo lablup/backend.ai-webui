@@ -442,7 +442,10 @@
     "PortReservedForInternalUse": "Ports 2000 to 2003, 2200, and 7681 are reserved for internal use",
     "SelectedImagesAlreadyInstalled": "Selected Image(s) are already installed or None. Please check again.",
     "SelectedImagesNotInstalled": "Selected Images(s) are not installed. Please check again.",
-    "Disabled": "disabled"
+    "Disabled": "disabled",
+    "NoResourcesForImage": "Not Enough resources for pulling the image. Image name: ",
+    "InstallingImage": "Installing: ",
+    "TakesTime": ". It takes time so have a cup of coffee!"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",
@@ -458,7 +461,10 @@
     "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
     "Created": "Resource preset created",
     "Updated": "Resource preset updated",
+    "MinimumCPUUnit":"CPU starts with 1 core",
+    "MinimumMemUnit":"Memory starts with 1 GB",
     "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB."
+    
   },
   "usersettings": {
     "General": "General",
@@ -560,7 +566,15 @@
     "ProjectNameIsRequired": "Project name is required",
     "TypeRegistryNameToDelete": "Type registry hostname to delete",
     "RegistryTurnedOn": "Registry enabled",
-    "RegistryTurnedOff": "Registry disabled"
+    "RegistryTurnedOff": "Registry disabled",
+    "RegistryHostnameAlreadyExists": "Hostname Already Exists. Please change the hostname to add",
+    "RegistrySuccessfullyAdded": "Registry successfully added.",
+    "RegistrySuccessfullyDeleted": "Registry successfully deleted.",
+    "HostnameDoesNotMatch": "Hostname does not match!",
+    "UpdatingRegistryInfo": "Updating registry information...",
+    "RegistryUpdateFinished": "Registry update finished.",
+    "RegistryUpdateFailed": "Registry update failed.",
+    "RescanFailed": "Rescan Failed."
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",

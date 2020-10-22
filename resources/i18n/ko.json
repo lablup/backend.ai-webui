@@ -439,7 +439,10 @@
     "PortReservedForInternalUse": "포트 2000부터 2003, 2200, 7681은 시스템 내부에서 사용 중입니다",
     "SelectedImagesAlreadyInstalled": "선택된 이미지가 없거나 이미 설치 완료되었습니다. 다시 한 번 확인해주시기 바랍니다.",
     "SelectedImagesNotInstalled": "선택된 이미지가 없거나 설치되지 않아 삭제할 수 없습니다. 다시 한 번 확인해주시기 바랍니다.",
-    "Disabled": "사용 안함"
+    "Disabled": "사용 안함",
+    "NoResourcesForImage": "이미지를 가져오기 위해 필요한 최소한의 자원이 없거나 지원되지 않습니다. 이미지명: ",
+    "InstallingImage": "다운로드 중인 이미지: ",
+    "TakesTime": ". 시간이 다소 소요되오니 커피 한 잔의 여유를 즐기시며 잠시 기다려 주세요."
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
@@ -455,6 +458,8 @@
     "MemoryShouldBeLargerThanSHMEM": "메모리는 공유메모리보다 커야 합니다",
     "Created": "자원 프리셋이 생성되었습니다",
     "Updated": "자원 프리셋에 수정되었습니다",
+    "MinimumCPUUnit":"CPU 최소 단위: 1 코어",
+    "MinimumMemUnit":"메모리 최소 단위: 1 GB",
     "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다."
   },
   "usersettings": {
@@ -557,7 +562,15 @@
     "ProjectNameIsRequired": "프로젝트 이름이 필요합니다.",
     "TypeRegistryNameToDelete": "삭제 확인을 위해 레지스트리 이름을 입력하세요.",
     "RegistryTurnedOn": "레지스트리가 활성화 되었습니다",
-    "RegistryTurnedOff": "레지스트리가 비활성화 되었습니다"
+    "RegistryTurnedOff": "레지스트리가 비활성화 되었습니다",
+    "RegistryHostnameAlreadyExists": "호스트이름이 이미 존재합니다. 다른 이름으로 변경 후 등록해주세요.",
+    "RegistrySuccessfullyAdded": "레지스트리가 성공적으로 등록되었습니다.",
+    "RegistrySuccessfullyDeleted": "레지스트리가 성공적으로 삭제되었습니다.",
+    "HostnameDoesNotMatch": "호스트명이 일치하지 않습니다.",
+    "UpdatingRegistryInfo": "레지스트리 정보를 갱신하는 중입니다...",
+    "RegistryUpdateFinished": "레지스트리 업데이트가 완료되었습니다.",
+    "RegistryUpdateFailed": "레지스트리 업데이트가 실패하였습니다.",
+    "RescanFailed": "리스캔 작업이 실패하였습니다."
   },
   "resourceGroup": {
     "ResourceGroups": "자원 그룹",
