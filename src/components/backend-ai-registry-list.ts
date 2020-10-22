@@ -352,15 +352,23 @@ class BackendAIRegistryList extends BackendAIPage {
   _validateUrl() {
     let url = this.shadowRoot.querySelector('#add-registry-url').value;
     let validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
-    // regular expression for URL check
-    let expression = "^(http|https|ftp)\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$";
-    let regex = new RegExp(expression);
-    if (url && url.match(regex)) {
+    // regular expression for DNS check
+    let dnsExpression = "^(https?)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$";
+    let dnsRegex = new RegExp(dnsExpression);
+    if (url !== '' && url.match(dnsRegex)) {
       this.shadowRoot.querySelector('#add-registry-url').invalid = false;
       validationMessage.style.display = 'none';
     } else {
-      this.shadowRoot.querySelector('#add-registry-url').invalid = true;
-      validationMessage.style.display = 'block';
+      // regular expression for IP check
+      let ipExpression = "(https?):\/\/(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}?:((6553[0-5])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))";
+      let ipRegex = new RegExp(ipExpression);
+      if (!url.match(ipRegex)) {
+        this.shadowRoot.querySelector('#add-registry-url').invalid = true;
+        validationMessage.style.display = 'block';
+      } else {
+        this.shadowRoot.querySelector('#add-registry-url').invalid = false;
+        validationMessage.style.display = 'none';
+      }
     }
   }
 
@@ -573,9 +581,8 @@ class BackendAIRegistryList extends BackendAIPage {
             class="helper-text"
             label="${_t("registry.RegistryURL")}"
             required
-            pattern="^(http|https)\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$"
-            @click=${this._validateUrl}
-            @change=${this._validateUrl}
+            @click=${() => this._validateUrl()}
+            @change=${() => this._validateUrl()}
           ></wl-textfield>
           <wl-label class="helper-text" id="registry-url-validation" style="display:none;">${_t("registry.DescURLStartString")}</wl-label>
          <div class="horizontal layout flex">
