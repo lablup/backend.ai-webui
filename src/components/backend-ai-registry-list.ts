@@ -164,9 +164,9 @@ class BackendAIRegistryList extends BackendAIPage {
   _refreshRegistryList() {
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
-      return globalThis.backendaiclient.registry.list()
+      return globalThis.backendaiclient.registry.list();
     }).then(({result}) => {
-      this.registryList = this._parseRegistryList(result)
+      this.registryList = this._parseRegistryList(result);
       this.hostnames = this.registryList.map( value => {
         return value.hostname;
       });
@@ -428,9 +428,6 @@ class BackendAIRegistryList extends BackendAIPage {
     globalThis.backendaiclient.domain.update(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this.allowed_registries}).then((response) => {
       this.notification.show();
     });
-    /* globalThis.backendaiclient.domain.modify(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this.allowed_registries}).then((response) => {
-      this.notification.show();
-    }); */
   }
 
   _indexRenderer(root, column, rowData) {
