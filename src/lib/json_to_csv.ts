@@ -86,7 +86,7 @@ export default class JsonToCsv {
           // Browsers that support HTML5 download attribute
           const url = URL.createObjectURL(blob);
           link.setAttribute('href', url);
-          link.setAttribute('download', filename);
+          link.setAttribute('download', filename + ".csv");
           link.style.visibility = 'hidden';
           document.body.appendChild(link);
           link.click();

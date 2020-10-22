@@ -1,4 +1,39 @@
 # Changelog
+## v20.10.0 (23/10/2020)
+
+
+#### Enhancements:
+
+- [**UI / UX**][**easy**][**enhancement**][**minor**] Implicitly let user know when no folder exists on session launcher [#753](https://github.com/lablup/backend.ai-console/issues/753)
+- [**UI / UX**][**enhancement**][**library / SDK**][**minor**] Change ownership delegation component on session launcher to mwc-select [#731](https://github.com/lablup/backend.ai-console/issues/731)
+- [**UI / UX**][**enhancement**][**enterprise**][**library / SDK**][**major**] UI update (20.10) [#729](https://github.com/lablup/backend.ai-console/issues/729)
+- [**UI / UX**][**enhancement**][**minor**] Validate app labels of images before saving [#715](https://github.com/lablup/backend.ai-console/issues/715)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**library / SDK**][**major**] Resource group deletion doesn't get reflected to the table of resource groups tab in the Resources page. [#743](https://github.com/lablup/backend.ai-console/issues/743)
+- [**blocker**][**bug**] Minor errors occur in Environments page. [#742](https://github.com/lablup/backend.ai-console/issues/742)
+- [**blocker**][**bug**] Cannot create user in the users page. [#741](https://github.com/lablup/backend.ai-console/issues/741)
+- [**blocker**][**bug**] Minor errors occur in the creating folder dialog from Data & Storage page. [#740](https://github.com/lablup/backend.ai-console/issues/740)
+- [**UI / UX**][**bug**][**library / SDK**][**major**] exporting CSV in Sessions page doesn't work. [#739](https://github.com/lablup/backend.ai-console/issues/739)
+- [**UI / UX**][**bug**][**easy**] When clicking Backend.AI Logo in the drawer, nothing happens. [#738](https://github.com/lablup/backend.ai-console/issues/738)
+- [**bug**] icons in drawer and some panel don't show up in the new UI. [#736](https://github.com/lablup/backend.ai-console/issues/736)
+- [**UI / UX**][**bug**][**easy**] Image rescan/Recalculate usage button throws an error. [#734](https://github.com/lablup/backend.ai-console/issues/734)
+- [**UI / UX**][**bug**] Image download dialog appears every time the checkbox is clicked [#725](https://github.com/lablup/backend.ai-console/issues/725)
+
+#### UI / UX:
+
+- [**UI / UX**][**easy**][**good first issue**] Language Setting dropdown overlaps SSH Keypair text [#719](https://github.com/lablup/backend.ai-console/issues/719)
+
+
+## v20.09.2 (28/09/2020)
+
+
+#### Bug Fixes:
+
+- [**bug**][**easy**][**minor**] Extend current request timeout in session creation [#722](https://github.com/lablup/backend.ai-console/issues/722)
+- [**UI / UX**][**bug**] Multiple clicks cause duplicated directory path [#717](https://github.com/lablup/backend.ai-console/issues/717)
+
 
 ## v20.09.1 (22/09/2020)
 
