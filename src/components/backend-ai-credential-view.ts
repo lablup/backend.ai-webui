@@ -639,7 +639,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     for (var x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this._activeTab = tab.ariaLabel;
+    this._activeTab = tab.title;
     this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 

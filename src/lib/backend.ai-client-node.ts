@@ -1705,12 +1705,9 @@ class Keypair {
    * @param {boolean} isAdmin - is_admin state. Default is False.
    * @param {string} resourcePolicy - resource policy name to assign. Default is `default`.
    * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
-   * @param {string} accessKey - Manual access key (optional) - deprecated
-   * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional) - deprecated
-
    */
   async add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
-            rateLimit = 1000, accessKey = null, secretKey = null) {
+            rateLimit = 1000) {
     let fields = [
       'is_active',
       'is_admin',
