@@ -628,7 +628,7 @@ class BackendAIRegistryList extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button unelevated icon="delete" label="${_t("button.Delete")}"
-              @click=${this._deleteRegistry}></mwc-button>
+              @click=${this._deleteRegistry} style="width:100%;"></mwc-button>
         </div>
       </backend-ai-dialog>
     `
