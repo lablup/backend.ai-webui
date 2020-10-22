@@ -123,12 +123,12 @@ export default class BackendAIStatisticsView extends BackendAIPage {
       el.style.display = 'none';
     }
 
-    this.shadowRoot.querySelector('#' + tab.value + '-stat').style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.title + '-stat').style.display = 'block';
 
     els.forEach(e => {
       e.children[0].removeAttribute("active");
     });
-    this.shadowRoot.querySelector(`#${tab.value}-list`).setAttribute("active", true);
+    this.shadowRoot.querySelector(`#${tab.title}-list`).setAttribute("active", true);
   }
 
   render() {
@@ -139,7 +139,7 @@ export default class BackendAIStatisticsView extends BackendAIPage {
             <div slot="message">
               <h3 class="tab horizontal center layout">
                 <mwc-tab-bar>
-                  <mwc-tab aria-label="usage" label="${_t("statistics.Usage")}"></mwc-tab>
+                  <mwc-tab title="usage" label="${_t("statistics.Usage")}"></mwc-tab>
                 </mwc-tab-bar>
               </h3>
               <div class="horizontal wrap layout">

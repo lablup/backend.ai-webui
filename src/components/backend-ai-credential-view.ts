@@ -640,7 +640,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       els[x].style.display = 'none';
     }
     this._activeTab = tab.ariaLabel;
-    this.shadowRoot.querySelector('#' + tab.ariaLabel).style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 
   /**
@@ -948,11 +948,11 @@ export default class BackendAICredentialView extends BackendAIPage {
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
            <mwc-tab-bar>
-            <mwc-tab aria-label="user-lists" label="${_t("credential.Users")}"
+            <mwc-tab title="user-lists" label="${_t("credential.Users")}"
                 @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-            <mwc-tab aria-label="credential-lists" label="${_t("credential.Credentials")}"
+            <mwc-tab title="credential-lists" label="${_t("credential.Credentials")}"
                 @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-            <mwc-tab aria-label="resource-policy-lists" label="${_t("credential.ResourcePolicies")}"
+            <mwc-tab title="resource-policy-lists" label="${_t("credential.ResourcePolicies")}"
                 @click="${(e) => this._showTab(e.target)}"></mwc-tab>
            </mwc-tab-bar>
             <!--<wl-tab-group>

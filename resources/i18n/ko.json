@@ -142,7 +142,8 @@
       "CustomResourceApplied": "사용자 설정 자원이 할당됨",
       "PleaseChooseFoldersToMount": "마운트할 폴더들을 선택하세요",
       "StartImportedNotebook": "가져온 노트북 열기",
-      "SessionNameAllowCondition": "세션 이름은 공백없이 4글자 이상 영문/숫자만 입력 가능합니다."
+      "SessionNameAllowCondition": "세션 이름은 공백없이 4글자 이상 영문/숫자만 입력 가능합니다.",
+      "NoFolderExists": "폴더가 없습니다"
     },
     "Running": "실행중",
     "Finished": "종료",
@@ -570,7 +571,8 @@
     "ResourceGroupNameNotMatch": "자원 그룹명이 일치하지 않습니다.",
     "ResourceGroupCreated": "자원 그룹이 성공적으로 수정되었습니다.",
     "ResourceGroupModified": "자원 그룹이 성공적으로 수정되었습니다.",
-    "ResourceGroupDeleted": "자원 그룹이 성공적으로 삭제되었습니다."
+    "ResourceGroupDeleted": "자원 그룹이 성공적으로 삭제되었습니다.",
+    "NochangesMade": "변경사항이 없습니다"
   },
   "maintenance": {
     "General": "일반",

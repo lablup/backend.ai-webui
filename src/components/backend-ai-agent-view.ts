@@ -94,7 +94,7 @@ export default class BackendAIAgentView extends BackendAIPage {
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.ariaLabel).style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 
   render() {
@@ -104,13 +104,13 @@ export default class BackendAIAgentView extends BackendAIPage {
         <div slot="message">
           <h3 class="tab horizontal center layout">
             <mwc-tab-bar>
-              <mwc-tab aria-label="running-lists" label="${_t("agent.Connected")}"
+              <mwc-tab title="running-lists" label="${_t("agent.Connected")}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab aria-label="terminated-lists" label="${_t("agent.Terminated")}"
+              <mwc-tab title="terminated-lists" label="${_t("agent.Terminated")}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <!--<mwc-tab aria-label="maintenance-lists" label="${_t("agent.Maintaining")}"
+              <!--<mwc-tab title="maintenance-lists" label="${_t("agent.Maintaining")}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>-->
-              <mwc-tab aria-label="scaling-group-lists" label="${_t("general.ResourceGroup")}"
+              <mwc-tab title="scaling-group-lists" label="${_t("general.ResourceGroup")}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
             <div class="flex"></div>
