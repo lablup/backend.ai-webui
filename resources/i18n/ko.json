@@ -27,7 +27,7 @@
       "OriginalPassword": "기존 비밀번호",
       "NewPassword": "새 비밀번호",
       "NewPasswordAgain": "새 비밀번호 (재입력)",
-      "InputOriginalPassword":"기존 비밀번호를 입력해주세요.",
+      "InputOriginalPassword": "기존 비밀번호를 입력해주세요.",
       "InvalidPasswordMessage": "영문자, 숫자, 특수 문자를 하나 이상 포함해서 8자 이상 입력하세요",
       "NewPasswordMismatch": "새로 입력한 두 비밀번호가 일치하지 않습니다.",
       "PasswordMismatch": "비밀번호가 일치하지 않습니다",
@@ -49,7 +49,6 @@
       "Run": "실행",
       "Import&Run": "가져오기 & 실행",
       "UserName": "사용자"
-
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",
@@ -555,7 +554,8 @@
     "ProjectNameIsRequired": "프로젝트 이름이 필요합니다.",
     "TypeRegistryNameToDelete": "삭제 확인을 위해 레지스트리 이름을 입력하세요.",
     "RegistryTurnedOn": "레지스트리가 활성화 되었습니다",
-    "RegistryTurnedOff": "레지스트리가 비활성화 되었습니다"
+    "RegistryTurnedOff": "레지스트리가 비활성화 되었습니다",
+    "Username": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "자원 그룹",
@@ -803,5 +803,8 @@
     "Perpetual": "영구 라이선스",
     "Subscription": "구독 라이선스",
     "OpenSource": "오픈소스"
+  },
+  "error": {
+    "APINotSupported": "지원하지 않는 API입니다. 최신 버전의 Backend.AI 매니저가 필요합니다."
   }
 }

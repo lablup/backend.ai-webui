@@ -803,5 +803,8 @@
     "Perpetual": "Perpetual",
     "Subscription": "Subscription",
     "OpenSource": "Open Source"
+  },
+  "error": {
+    "APINotSupported": "API not supported. Requires latest version of Backend.AI manager."
   }
 }

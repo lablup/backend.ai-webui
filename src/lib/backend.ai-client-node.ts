@@ -185,7 +185,7 @@ class Client {
     this.code = null;
     this.sessionId = null;
     this.kernelType = null;
-    this.clientVersion = '20.8.1';
+    this.clientVersion = '20.10.0';
     this.agentSignature = agentSignature;
     if (config === undefined) {
       this._config = ClientConfig.createFromEnv();
@@ -499,6 +499,9 @@ class Client {
       this._features['group-folder'] = true;
       this._features['system-images'] = true;
       this._features['detailed-session-states'] = true;
+    }
+    if (this.isAPIVersionCompatibleWith('v6.20200815')) {
+      this._features['change-user-name'] = true;
     }
   }
 
