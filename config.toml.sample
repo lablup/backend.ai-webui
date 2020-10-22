@@ -11,7 +11,7 @@ allowAnonymousChangePassword = false
 debug = false
 allowProjectResourceMonitor = false
 AllowBetaFeatures = false
-
+openPortToPublic = false
 
 [menu]
 blocklist = "summary,statistics" # Separated by comma.

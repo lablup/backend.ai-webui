@@ -4,7 +4,7 @@
  */
 
 import {translate as _t} from "lit-translate";
-import {customElement, html, property} from "lit-element";
+import {css, customElement, html, property} from "lit-element";
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -12,6 +12,10 @@ import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 
+import '@material/mwc-tab-bar';
+import '@material/mwc-tab';
+
+import './lablup-activity-panel';
 import './backend-ai-agent-list';
 import './backend-ai-scaling-group-list';
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -39,7 +43,22 @@ export default class BackendAIAgentView extends BackendAIPage {
 
   static get styles() {
     return [
-      BackendAiStyles];
+      BackendAiStyles,
+      // language=CSS
+      css`
+        h3.tab {
+          background-color: var(--general-tabbar-background-color);
+          border-radius: 5px 5px 0px 0px;
+          margin: 0px auto;
+        }
+
+        mwc-tab-bar {
+          --mdc-theme-primary: var(--general-sidebar-selected-color);
+          --mdc-text-transform: none;
+          --mdc-tab-color-default: var(--general-tabbar-background-color);
+          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
+        }
+      `];
   }
 
   firstUpdated() {
@@ -75,33 +94,38 @@ export default class BackendAIAgentView extends BackendAIPage {
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 
   render() {
     // language=HTML
     return html`
-      <wl-card class="item" elevation="1">
-        <h3 class="tab horizontal center layout">
-          <wl-tab-group>
-            <wl-tab value="running-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("agent.Connected")}</wl-tab>
-            <wl-tab value="terminated-lists" @click="${(e) => this._showTab(e.target)}">${_t("agent.Terminated")}</wl-tab>
-            <wl-tab value="maintenance-lists" disabled>${_t("agent.Maintaining")}</wl-tab>
-            <wl-tab value="scaling-group-lists" @click=${e => this._showTab(e.target)}>${_t("general.ResourceGroup")}</wl-tab>
-          </wl-tab-group>
-          <div class="flex"></div>
-        </h3>
-
-        <div id="running-lists" class="tab-content">
-          <backend-ai-agent-list id="running-agents" condition="running" ?active="${this._status === 'active'}"></backend-ai-agent-list>
+      <lablup-activity-panel noheader narrow autowidth>
+        <div slot="message">
+          <h3 class="tab horizontal center layout">
+            <mwc-tab-bar>
+              <mwc-tab title="running-lists" label="${_t("agent.Connected")}"
+                  @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="terminated-lists" label="${_t("agent.Terminated")}"
+                  @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <!--<mwc-tab title="maintenance-lists" label="${_t("agent.Maintaining")}"
+                  @click="${(e) => this._showTab(e.target)}"></mwc-tab>-->
+              <mwc-tab title="scaling-group-lists" label="${_t("general.ResourceGroup")}"
+                  @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+            </mwc-tab-bar>
+            <div class="flex"></div>
+          </h3>
+          <div id="running-lists" class="tab-content">
+            <backend-ai-agent-list id="running-agents" condition="running" ?active="${this._status === 'active'}"></backend-ai-agent-list>
+          </div>
+          <div id="terminated-lists" class="tab-content" style="display:none;">
+            <backend-ai-agent-list id="terminated-agents" condition="terminated" ?active="${this._status === 'active'}"></backend-ai-agent-list>
+          </div>
+          <div id="scaling-group-lists" class="tab-content" style="display:none;">
+            <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active'}"> </backend-ai-scaling-group-list>
+          </div>
         </div>
-        <div id="terminated-lists" class="tab-content" style="display:none;">
-          <backend-ai-agent-list id="terminated-agents" condition="terminated" ?active="${this._status === 'active'}"></backend-ai-agent-list>
-        </div>
-        <div id="scaling-group-lists" class="tab-content" style="display:none;">
-          <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active'}"> </backend-ai-scaling-group-list>
-        </div>
-      </wl-card>
+      </lablup-activity-panel>
     `;
   }
 }

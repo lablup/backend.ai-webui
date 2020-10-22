@@ -6,7 +6,7 @@ import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import '@material/mwc-textfield/mwc-textfield';
-import 'weightless/card';
+import '@material/mwc-button/mwc-button';
 
 import './backend-ai-dialog';
 import {BackendAIPage} from './backend-ai-page';
@@ -58,7 +58,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
 
   /**
    * Initialize the client.
-   * 
+   *
    * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   _initClient(apiEndpoint: string) {
@@ -84,7 +84,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
 
   /**
    * Verify the client.
-   * 
+   *
    * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   async verify(apiEndpoint: string) {
@@ -137,10 +137,10 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button outlined flat class="fg green mini flex" type="button"
-              @click="${() => this._redirectToLoginPage()}">
-            ${_t("login.Login")}
-          </wl-button>
+          <mwc-button
+              raised
+              label="${_t("login.Login")}"
+              @click="${() => this._redirectToLoginPage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
 
@@ -159,10 +159,10 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button outlined flat class="fg red mini flex" type="button"
-              @click="${() => this.sendVerificationCode()}">
-            ${_t("signup.SendEmail")}
-          </wl-button>
+          <mwc-button
+              unelevated
+              label="${_t("signup.SendEmail")}"
+              @click="${() => this.sendVerificationCode()}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

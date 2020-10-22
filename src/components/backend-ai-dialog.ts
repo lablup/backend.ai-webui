@@ -55,7 +55,7 @@ export default class BackendAiDialog extends LitElement {
           --dialog-max-width: var(--component-max-width);
           --dialog-max-height: var(--component-max-height);
           --dialog-width: var(--component-width);
-          --dialog-height: var(--component-height);
+          --dialog-height: var(--component-height, auto);
         }
 
         wl-dialog > wl-card {
@@ -70,17 +70,15 @@ export default class BackendAiDialog extends LitElement {
           color: red;
         }
 
-        wl-dialog h3 > wl-button {
-        }
-
         wl-dialog div.content {
           padding: var(--component-padding, 15px);
           font-size: var(--component-font-size, 14px);
           word-break: keep-all;
+          overflow-x: hidden;
         }
 
         wl-dialog div.footer {
-          padding: 5px 15px 10px 15px;
+          padding: 5px 15px 15px 15px;
         }
 
         wl-dialog wl-button.cancel {
@@ -103,11 +101,24 @@ export default class BackendAiDialog extends LitElement {
           -webkit-overflow-scrolling: touch;
           height: calc(var(--component-height) - 90px);
         }
+
+        wl-dialog div.content h4 {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          height: 20px;
+          border-bottom: 1px solid #DDD;
+        }
       `];
   }
 
   firstUpdated() {
     this.dialog = this.shadowRoot.querySelector('#dialog');
+    let height = this.dialog.style.getPropertyValue('--dialog-height');
+    if (height === '') {
+      this.dialog.style.setProperty('--dialog-height', 'auto');
+    }
     this.open = this.dialog.open;
     this.dialog.addEventListener('didShow', () => {
       this._syncOpenState()
@@ -170,7 +181,7 @@ export default class BackendAiDialog extends LitElement {
                     ?scrollable="${this.scrollable}"
                     blockscrolling="${this.blockscrolling}"
                     style="padding:0;" class="${this.type}">
-        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
+        <wl-card elevation="1" class="intro" style="margin: 0;">
           <h3 class="horizontal center layout" style="font-weight:bold">
             <span><slot name="title"></slot></span>
             <div class="flex"></div>

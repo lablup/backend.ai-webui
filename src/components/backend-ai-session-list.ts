@@ -15,11 +15,9 @@ import '@material/mwc-textfield/mwc-textfield';
 
 import {default as AnsiUp} from '../lib/ansiup';
 import 'weightless/button';
-import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/icon';
 import 'weightless/textfield';
-import 'weightless/title';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
@@ -306,6 +304,10 @@ export default class BackendAiSessionList extends BackendAIPage {
     return true;
   }
 
+  _isError(status) {
+    return status === 'ERROR';
+  }
+
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this._grid = this.shadowRoot.querySelector('#list-grid');
@@ -490,12 +492,12 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].cpu_used_time = this._automaticScaledTime(0);
             }
             if (liveStat && liveStat.io_read) {
-              sessions[objectKey].io_read_bytes_mb = this._automaticScaledTime(liveStat.io_read.capacity);
+              sessions[objectKey].io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
             } else {
               sessions[objectKey].io_read_bytes_mb = 0;
             }
             if (liveStat && liveStat.io_write) {
-              sessions[objectKey].io_write_bytes_mb = this._automaticScaledTime(liveStat.io_write.capacity);
+              sessions[objectKey].io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
             } else {
               sessions[objectKey].io_write_bytes_mb = 0;
             }
@@ -678,7 +680,9 @@ export default class BackendAiSessionList extends BackendAIPage {
   _msecToSec(value) {
     return Number(value / 1000).toFixed(0);
   }
-
+  _bytesToMB(value) {
+    return Number(value / (1024 * 1024)).toFixed(1);
+  }
   /**
    * Return elapsed time
    *
@@ -839,8 +843,8 @@ export default class BackendAiSessionList extends BackendAIPage {
   async _runTerminal(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
-    const sessionName = controls['session-name'];
-    return globalThis.appLauncher.runTerminal(sessionName);
+    const sessionUuid = controls['session-uuid'];
+    return globalThis.appLauncher.runTerminal(sessionUuid);
   }
 
   // Single session closing
@@ -1077,7 +1081,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           item.tag = rowData.item.baseversion;
         }
         return html`
-                <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
+                <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}" ui="round"></lablup-shields>
               `;
       })}
           `) : html``}
@@ -1085,7 +1089,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div class="layout horizontal center wrap">
               ${rowData.item.additional_reqs.map((tag) => {
         return html`
-                  <lablup-shields app="" color="green" description="${tag}"></lablup-shields>
+                  <lablup-shields app="" color="green" description="${tag}" ui="round"></lablup-shields>
                 `;
       })}
             </div>
@@ -1118,7 +1122,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <wl-button fab flat inverted class="fg controls-running"
                                @click="${(e) => this._runTerminal(e)}"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
           ` : html``}
-          ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._isError(rowData.item.status) ? html`
             <wl-button fab flat inverted class="fg red controls-running"
                                @click="${(e) => this._openTerminateSessionDialog(e)}"><wl-icon>power_settings_new</wl-icon></wl-button>
           ` : html``}
@@ -1339,7 +1343,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <span style="font-size: 12px;">${rowData.item.status}</span>
         ${rowData.item.status_info ? html`
         <br />
-        <lablup-shields app="" color="${this.statusColorTable[rowData.item.status_info]}" description="${rowData.item.status_info}"></lablup-shields>
+        <lablup-shields app="" color="${this.statusColorTable[rowData.item.status_info]}" description="${rowData.item.status_info}" ui="round"></lablup-shields>
         ` : html``}
       `, root
     );
@@ -1445,12 +1449,12 @@ export default class BackendAiSessionList extends BackendAIPage {
               exportListItem.cpu_used_time = 0;
             }
             if (liveStat.io_read) {
-              exportListItem.io_read_bytes_mb = this._automaticScaledTime(liveStat.io_read.capacity);
+              exportListItem.io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
             } else {
               exportListItem.io_read_bytes_mb = 0;
             }
             if (liveStat.io_write) {
-              exportListItem.io_write_bytes_mb = this._automaticScaledTime(liveStat.io_write.capacity);
+              exportListItem.io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
             } else {
               exportListItem.io_write_bytes_mb = 0;
             }
@@ -1550,22 +1554,20 @@ export default class BackendAiSessionList extends BackendAIPage {
             ` : html``}
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
-        <wl-button class="pagination" id="previous-page"
-                   ?disabled="${this.current_page === 1}"
-                   @click="${(e) => {
-      this._updateSessionPage(e)
-    }}">
-          <wl-icon class="pagination">navigate_before</wl-icon>
-        </wl-button>
+      <mwc-icon-button
+      class="pagination"
+      id="previous-page"
+      icon="navigate_before"
+      ?disabled="${this.current_page === 1}"
+      @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
         <wl-label style="padding-top: 5px; width:auto; text-align:center;">
         ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</wl-label>
-        <wl-button class="pagination" id="next-page"
-                   ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
-                   @click="${(e) => {
-      this._updateSessionPage(e)
-    }}">
-          <wl-icon class="pagination">navigate_next</wl-icon>
-        </wl-button>
+        <mwc-icon-button
+        class="pagination"
+        id="next-page"
+        icon="navigate_next"
+        ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
+        @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
       </div>
       <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
         <span slot="title" id="work-title"></span>

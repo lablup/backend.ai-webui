@@ -66,6 +66,14 @@
         "src": "./resources/icons/nni.png"
       }
     ],
+    "mlflow-ui": [
+      {
+        "name": "mlflow-ui",
+        "title": "MLFlow UI",
+        "redirect": "",
+        "src": "./resources/icons/mlflow.png"
+      }
+    ],
     "vnc": [
       {
         "name": "vnc",

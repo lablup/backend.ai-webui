@@ -8,14 +8,13 @@ import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-item/paper-item';
 import './lablup-loading-spinner';
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@material/mwc-list/mwc-list-item';
 import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-textfield';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -28,6 +27,7 @@ import 'weightless/title';
 import 'weightless/tab-group';
 import 'weightless/textfield';
 import '@material/mwc-icon-button';
+import '@material/mwc-button';
 
 import '../plastics/lablup-shields/lablup-shields';
 import './backend-ai-dialog';
@@ -120,11 +120,6 @@ export default class BackendAIData extends BackendAIPage {
           width: 350px;
         }
 
-        mwc-icon-button.tiny {
-          width: 35px;
-          height: 35px;
-        }
-
         wl-card.item {
           height: calc(100vh - 145px) !important;
         }
@@ -142,6 +137,19 @@ export default class BackendAIData extends BackendAIPage {
 
         mwc-textfield.red {
           --mdc-theme-primary: var(--paper-red-400) !important;
+        }
+
+        h3.tab {
+          background-color: var(--general-tabbar-background-color);
+          border-radius: 5px 5px 0px 0px;
+          margin: 0px auto;
+        }
+
+        mwc-tab-bar {
+          --mdc-theme-primary: var(--general-sidebar-selected-color);
+          --mdc-text-transform: none;
+          --mdc-tab-color-default: var(--general-tabbar-background-color);
+          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
         }
 
         wl-tab-group {
@@ -198,11 +206,11 @@ export default class BackendAIData extends BackendAIPage {
           width: 180px;
           --mdc-select-min-width: 180px;
           margin-bottom: 10px;
-          --mdc-theme-primary: var(--paper-orange-600);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: var(--paper-orange-400);
-          --mdc-select-hover-line-color: var(--paper-orange-600);
+          --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
+          --mdc-select-hover-line-color: var(--general-textfield-selected-color);
           --mdc-list-vertical-padding: 5px;
         }
 
@@ -216,6 +224,18 @@ export default class BackendAIData extends BackendAIPage {
 
         mwc-multi-select mwc-icon-button {
           --mdc-icon-button-size: 24px;
+          color: var(--general-textfield-selected-color);
+        }
+
+        #automount-folder-lists > div {
+          background-color: white;
+          color: var(--general-textfield-selected-color);
+          border-bottom:0.5px solid var(--general-textfield-selected-color);
+        }
+
+        #automount-folder-lists > div > p {
+          color: var(--general-sidebar-color);
+          margin-left: 10px;
         }
 
       `];
@@ -225,42 +245,43 @@ export default class BackendAIData extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <wl-card class="item" elevation="1" style="padding-bottom:20px;">
-        <h3 class="horizontal center flex layout tab">
-          <wl-tab-group>
-            <wl-tab value="general-folder" checked @click="${(e) => this._showTab(e.target)}">${_t("data.Folders")}</wl-tab>
-            <wl-tab value="automount-folder" @click="${(e) => this._showTab(e.target)}">${_t("data.AutomountFolders")}</wl-tab>
-            <wl-tab value="shared-folder" disabled>${_t("data.SharedData")}</wl-tab>
-            <wl-tab value="model" disabled>${_t("data.Models")}</wl-tab>
-          </wl-tab-group>
-          <span class="flex"></span>
-          <wl-button class="fg red" id="add-folder" outlined @click="${() => this._addFolderDialog()}">
-            <wl-icon>add</wl-icon>
-            ${_t("data.NewFolder")}
-          </wl-button>
-        </h3>
-        <div id="general-folder-lists" class="tab-content">
-          <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
-        </div>
-        <div id="automount-folder-lists" class="tab-content" style="display:none;">
-          <p>${_t("data.DialogFolderStartingWithDotAutomount")}</p>
-          <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
-        </div>
-      </wl-card>
+      <div style="margin:20px;">
+        <lablup-activity-panel elevation="1" noheader narrow autowidth>
+          <div slot="message">
+            <h3 class="horizontal center flex layout tab">
+              <mwc-tab-bar>
+                <mwc-tab title="general-folder" label="${_t("data.Folders")}"
+                    @click="${(e) => this._showTab(e.target)}">
+                </mwc-tab>
+                <mwc-tab title="automount-folder" label="${_t("data.AutomountFolders")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              </mwc-tab-bar>
+              <span class="flex"></span>
+              <mwc-button dense raised id="add-folder" icon="add" label="${_t("data.NewFolder")}" @click="${() => this._addFolderDialog()}" style="margin-right:15px;"></mwc-icon-button>
+            </h3>
+            <div id="general-folder-lists" class="tab-content">
+              <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
+            </div>
+            <div id="automount-folder-lists" class="tab-content" style="display:none;">
+              <div class="horizontal layout">
+                <p>${_t("data.DialogFolderStartingWithDotAutomount")}</p>
+              </div>
+              <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
+            </div>
+          </div>
+        </lablup-activity-panel>
+      </div>
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
         <div slot="content">
-          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]+"
+          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="^[\.a-zA-Z0-9_-]+$"
               auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
           <div class="horizontal layout">
             <mwc-multi-select id="add-folder-host" label="${_t("data.Host")}">
               ${this.vhosts.map((item, idx) => html`
                 <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
                   <span>${item}</span>
-                  <mwc-icon-button slot="meta" icon="info" class="fg orange info"
-                      @click="${(e) => {
-      this._showStorageDescription(e, item);
-    }}">
+                  <mwc-icon-button slot="meta" icon="info"
+                      @click="${(e) => this._showStorageDescription(e, item)}">
                   </mwc-icon-button>
                 </mwc-list-item>
               `)}
@@ -301,11 +322,14 @@ export default class BackendAIData extends BackendAIPage {
             ${_t("data.DialogFolderStartingWithDotAutomount")}
           </div>
         </div>
-        <div slot="footer">
-          <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
-            <wl-icon>rowing</wl-icon>
-             ${_t("data.Create")}
-          </wl-button>
+        <div slot="footer" class="horizontal flex">
+          <mwc-button
+              raised
+              id="add-button"
+              icon="rowing"
+              label="${_t("data.Create")}"
+              style="width:100%;"
+              @click="${() => this._addFolder()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="help-description" fixed backdrop>
@@ -397,11 +421,11 @@ export default class BackendAIData extends BackendAIPage {
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.value + '-lists').style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.title + '-lists').style.display = 'block';
     for (let x = 0; x < this._lists.length; x++) {
       this._lists[x].removeAttribute('active');
     }
-    this.shadowRoot.querySelector('#' + tab.value + '-storage').setAttribute('active', true);
+    this.shadowRoot.querySelector('#' + tab.title + '-storage').setAttribute('active', true);
   }
 
   /**

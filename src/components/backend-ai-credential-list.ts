@@ -9,7 +9,6 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -17,10 +16,14 @@ import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
 import 'weightless/button';
-import 'weightless/card';
 import 'weightless/label';
 import 'weightless/select';
 import 'weightless/textfield';
+
+import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-select/mwc-select';
+import '@material/mwc-list/mwc-list-item';
 
 import './backend-ai-dialog';
 import '../plastics/lablup-shields/lablup-shields';
@@ -129,13 +132,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           color: var(--paper-green-900);
         }
 
-        .gutterBottom {
-          margin-bottom: 20px;
-        }
-
         #keypair-modify-save {
-          width: 100%;
-          box-sizing: border-box;
           --button-bg: var(--paper-light-green-50);
           --button-bg-hover: var(--paper-green-100);
           --button-bg-active: var(--paper-green-600);
@@ -151,6 +148,32 @@ export default class BackendAICredentialList extends BackendAIPage {
 
         backend-ai-dialog {
           --component-min-width: 400px;
+        }
+        backend-ai-dialog h4 {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          height: 20px;
+          border-bottom: 1px solid #DDD;
+        }
+
+        mwc-button, mwc-button[unelevated], mwc-button[outlined] {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-typography-font-family: var(--general-font-family);
+        }
+
+        mwc-select {
+          --mdc-theme-primary: var(--general-sidebar-color);
+        }
+
+        mwc-textfield {
+          width: 100%;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
         }
       `];
   }
@@ -748,43 +771,34 @@ export default class BackendAICredentialList extends BackendAIPage {
         <span slot="title">${_t('credential.ModifyKeypairResourcePolicy')}</span>
 
         <div slot="content" class="vertical layout">
-          <div class="vertical layout center-justified gutterBottom">
-            <wl-label>
-              Resource Policy
-              <wl-select id="policy-list" label="${_t('credential.SelectPolicy')}">
-                ${Object.keys(this.resourcePolicy).map(rp =>
-      html`
-                    <option value=${this.resourcePolicy[rp].name}>
-                      ${this.resourcePolicy[rp].name}
-                    </option>
-                  `
-    )}
-              </wl-select>
-            </wl-label>
+          <div class="vertical layout center-justified">
+              <mwc-select
+                  id="policy-list"
+                  label="${_t('credential.SelectPolicy')}">
+                  ${Object.keys(this.resourcePolicy).map(rp =>
+                    html`
+                      <mwc-list-item value=${this.resourcePolicy[rp].name}>
+                        ${this.resourcePolicy[rp].name}
+                      </mwc-list-item>`
+                  )}
+              </mwc-select>
           </div>
-          <div class="vertical layout center-justified gutterBottom">
-            <wl-label>
-              Rate Limit
-              <wl-textfield
+          <div class="vertical layout center-justified">
+            <mwc-textfield
                 type="number"
                 id="rate-limit"
                 min="1"
                 label="${_t('credential.RateLimit')}"
-                value="${this.keypairInfo.rate_limit}"
-              ></wl-textfield>
-            </wl-label>
+                value="${this.keypairInfo.rate_limit}"></mwc-textfield>
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button
-            id="keypair-modify-save"
-            class="fg green"
-            outlined
-            @click=${e => this._saveKeypairModification(e)}
-          >
-            <wl-icon>check</wl-icon>
-            ${_t('button.SaveChanges')}
-          </wl-button>
+          <mwc-button
+              unelevated
+              id="keypair-modify-save"
+              icon="check"
+              label="${_t('button.SaveChanges')}"
+              @click="${e => this._saveKeypairModification(e)}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

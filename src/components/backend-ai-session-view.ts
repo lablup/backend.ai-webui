@@ -9,14 +9,15 @@ import {css, customElement, html, property} from "lit-element";
 import './backend-ai-resource-monitor';
 import './backend-ai-session-list';
 import 'weightless/card';
-import 'weightless/tab';
-import 'weightless/tab-group';
 
 import '@material/mwc-textfield/mwc-textfield';
 import "@material/mwc-list/mwc-list-item";
 import "@material/mwc-icon-button/mwc-icon-button";
 import "@material/mwc-menu/mwc-menu";
+import "@material/mwc-tab-bar/mwc-tab-bar";
+import "@material/mwc-tab/mwc-tab";
 
+import './lablup-activity-panel';
 import './backend-ai-session-launcher';
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -62,30 +63,15 @@ export default class BackendAiSessionView extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        wl-card h3.tab {
-          padding-top: 0;
-          padding-bottom: 0;
-          padding-left: 0;
+        h3.tab {
+          background-color: var(--general-tabbar-background-color);
+          border-radius: 5px 5px 0px 0px;
         }
-
-        wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-red-500);
-        }
-
-        wl-tab-group wl-divider {
-          display: none;
-        }
-
-        wl-tab {
-          --tab-color: #666666;
-          --tab-color-hover: #222222;
-          --tab-color-hover-filled: #222222;
-          --tab-color-active: #222222;
-          --tab-color-active-hover: #222222;
-          --tab-color-active-filled: #cccccc;
-          --tab-bg-active: var(--paper-red-50);
-          --tab-bg-filled: var(--paper-red-50);
-          --tab-bg-active-hover: var(--paper-red-100);
+        mwc-tab-bar {
+          --mdc-theme-primary: var(--general-sidebar-selected-color);
+          --mdc-text-transform: none;
+          --mdc-tab-color-default: var(--general-tabbar-background-color);
+          --mdc-tab-text-label-color-default: var(--general-sidebar-color);
         }
 
         wl-button {
@@ -111,6 +97,16 @@ export default class BackendAiSessionView extends BackendAIPage {
         mwc-icon-button#dropdown-menu-button {
           margin-left: 10px;
         }
+
+        backend-ai-resource-monitor {
+          margin: 10px 50px;
+        }
+
+        backend-ai-session-launcher#session-launcher {
+          --component-width: 100px;
+          --component-shadow-color: transparent;
+        }
+
       `];
   }
 
@@ -155,11 +151,11 @@ export default class BackendAiSessionView extends BackendAIPage {
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.value + '-lists').style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.title + '-lists').style.display = 'block';
     for (let x = 0; x < this._lists.length; x++) {
       this._lists[x].removeAttribute('active');
     }
-    this.shadowRoot.querySelector('#' + tab.value + '-jobs').setAttribute('active', true);
+    this.shadowRoot.querySelector('#' + tab.title + '-jobs').setAttribute('active', true);
   }
 
   _toggleDropdown() {
@@ -170,19 +166,27 @@ export default class BackendAiSessionView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-card class="item">
-        <h3 class="tab horizontal center layout">
-          <wl-tab-group>
-            <wl-tab value="running" checked @click="${(e) => this._showTab(e.target)}">${_t("session.Running")}</wl-tab>
-            <wl-tab value="finished" @click="${(e) => this._showTab(e.target)}">${_t("session.Finished")}</wl-tab>
-            <wl-tab value="others" @click="${(e) => this._showTab(e.target)}">${_t("session.Others")}</wl-tab>
-          </wl-tab-group>
-          <div class="flex"></div>
-          <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
-          <backend-ai-session-launcher location="session" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
-          ${this.is_admin ? html`
+      <div class="horizontal layout wrap">
+        <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" autowidth>
+          <div slot="message">
+            <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
+          </div>
+        </lablup-activity-panel>
+        <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" style="display:none;">
+        </lablup-activity-panel>
+      </div>
+      <lablup-activity-panel elevation="1" autowidth narrow noheader>
+        <div slot="message">
+          <h3 class="tab horizontal center layout">
+            <div class="horizontal layout flex start-justified">
+            <mwc-tab-bar>
+              <mwc-tab title="running" label="${_t("session.Running")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="finished" label="${_t("session.Finished")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="others" label="${_t("session.Others")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+            </mwc-tab-bar>
+            ${this.is_admin ? html`
               <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
-                               @click="${this._toggleDropdown}">
+                                @click="${this._toggleDropdown}">
                 <mwc-menu id="dropdown-menu" absolute x="-50" y="25">
                   <mwc-list-item>
                     <a class="horizontal layout start center" @click="${this._exportToCSV}">
@@ -192,19 +196,23 @@ export default class BackendAiSessionView extends BackendAIPage {
                   </mwc-list-item>
                 </mwc-menu>
               </mwc-icon-button>
-            ` : html``}
-        </h3>
-        <div id="running-lists" class="tab-content">
-          <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
+              ` : html``}
+            </div>
+            <div class="horizontal layout flex end-justified" style="margin-right:20px;">
+            <backend-ai-session-launcher location="session" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
+            </div>
+          </h3>
+          <div id="running-lists" class="tab-content">
+            <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
+          </div>
+          <div id="finished-lists" class="tab-content" style="display:none;">
+            <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>
+          </div>
+          <div id="others-lists" class="tab-content" style="display:none;">
+            <backend-ai-session-list id="others-jobs" condition="others"></backend-ai-session-list>
+          </div>
         </div>
-        <div id="finished-lists" class="tab-content" style="display:none;">
-          <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>
-        </div>
-        <div id="others-lists" class="tab-content" style="display:none;">
-          <backend-ai-session-list id="others-jobs" condition="others"></backend-ai-session-list>
-        </div>
-
-      </wl-card>
+      </lablup-activity-panel>
 `;
   }
 }

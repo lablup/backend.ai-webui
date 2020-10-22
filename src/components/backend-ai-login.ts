@@ -10,6 +10,7 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
 
+import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
@@ -78,6 +79,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
+  @property({type: Boolean}) openPortToPublic = false;
   @property({type: Array}) endpoints;
 
   constructor() {
@@ -145,6 +147,26 @@ export default class BackendAILogin extends BackendAIPage {
         mwc-list-item[disabled] {
           --mdc-menu-item-height: 30px;
           border-bottom: 1px solid #ccc;
+        }
+
+        mwc-button {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+        }
+
+        mwc-button[unelevated] {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+        }
+
+        mwc-button[outlined] {
+          background-image: none;
+          --mdc-button-outline-width: 2px;
+          --mdc-button-disabled-outline-color: var(--general-button-background-color);
+          --mdc-button-disabled-ink-color: var(--general-button-background-color);
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
         }
 
         #login-panel {
@@ -294,6 +316,11 @@ export default class BackendAILogin extends BackendAIPage {
       this.allow_project_resource_monitor = false;
     } else {
       this.allow_project_resource_monitor = true;
+    }
+    if (typeof config.general === "undefined" || typeof config.general.openPortToPublic === "undefined" || config.general.openPortToPublic === '' || config.general.openPortToPublic == false) {
+      this.openPortToPublic = false;
+    } else {
+      this.openPortToPublic = true;
     }
 
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
@@ -715,6 +742,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.domainName = this.domain_name;
       globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
       globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
+      globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
@@ -794,10 +822,13 @@ export default class BackendAILogin extends BackendAIPage {
             <div class="flex"></div>
             ${this.change_signin_support ? html`
                 <div class="vertical center-justified layout">
-                  <div style="font-size:12px;margin:0 10px;text-align:center;font-weight:400;">${_t("login.LoginAnotherway")}</div>
-                  <wl-button class="change-login-mode-button fg blue mini" outlined type="button" @click="${() => this._changeSigninMode()}">
-                    ${this.connection_mode == 'SESSION' ? _t("login.ClickToUseIAM") : _t("login.ClickToUseID")}
-                  </wl-button>
+                  <div style="font-size:12px;margin:5px 10px;text-align:center;font-weight:400;">${_t("login.LoginAnotherway")}</div>
+                  <mwc-button
+                      class="change-login-mode-button"
+                      outlined
+                      label="${this.connection_mode == 'SESSION' ? _t("login.ClickToUseIAM") : _t("login.ClickToUseID")}"
+                      @click="${() => this._changeSigninMode()}">
+                  </mwc-button>
                 </div>
             ` : html``}
           </h3>
@@ -848,18 +879,21 @@ export default class BackendAILogin extends BackendAIPage {
               <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized"
                            style="display:none;--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
                            label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
-              <wl-button class="fg red full login-button" id="login-button" outlined type="button"
-                          @click="${() => this._login()}">
-                          <wl-icon>check</wl-icon>
-                          ${_t("login.Login")}</wl-button>
+              <mwc-button
+                    raised
+                    id="login-button"
+                    icon="check"
+                    style="width:100%;"
+                    label="${_t("login.Login")}"
+                    @click="${() => this._login()}"></mwc-button>
               <div class="layout horizontal" style="margin-top:2em;">
                 ${this.signup_support ? html`
                   <div class="vertical center-justified layout" style="width:100%;">
                     <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.NotAUser")}</div>
-                    <wl-button style="font-weight:500;" class="signup-button fg green signup"
-                        outlined type="button" @click="${() => this._showSignupDialog()}">
-                        ${_t("login.SignUp")}
-                    </wl-button>
+                    <mwc-button
+                        unelevated
+                        label="${_t("login.SignUp")}"
+                        @click="${() => this._showSignupDialog()}"></mwc-button>
                   </div>
                 `: html``}
                 ${this.signup_support && this.allowAnonymousChangePassword ? html`
@@ -868,10 +902,10 @@ export default class BackendAILogin extends BackendAIPage {
                 ${this.allowAnonymousChangePassword ? html`
                   <div class="vertical center-justified layout" style="width:100%;">
                     <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.ForgotPassword")}</div>
-                    <wl-button style="font-weight:500;" class="signup-button fg green mini signup"
-                        outlined type="button" @click="${() => this._showChangePasswordEmailDialog()}">
-                      ${_t("login.ChangePassword")}
-                    </wl-button>
+                    <mwc-button
+                        unelevated
+                        label="${_t("login.ChangePassword")}"
+                        @click="${() => this._showChangePasswordEmailDialog()}"></mwc-button>
                   </div>
                 ` : html``}
               </div>
@@ -891,10 +925,12 @@ export default class BackendAILogin extends BackendAIPage {
                        label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="fg red full login-button" id="signout-button" outlined type="button"
-                      @click="${() => this._signout()}">
-                      <wl-icon>check</wl-icon>
-                      ${_t("login.LeaveService")}</wl-button>
+          <mwc-button
+              outlined
+              id="signout-button"
+              icon="check"
+              label="${_t("login.LeaveService")}"
+              @click="${() => this._signout()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="change-password-confirm-dialog" fixed backdrop blockscrolling persistent disablefocustrap>
@@ -909,11 +945,11 @@ export default class BackendAILogin extends BackendAIPage {
               pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="fg red full" outlined type="button"
-              @click="${() => this._sendChangePasswordEmail()}">
-            <wl-icon>check</wl-icon>
-            ${_t("login.EmailSendButton")}
-          </wl-button>
+          <mwc-button
+              outlined
+              icon="check"
+              label="${_t("login.EmailSendButton")}"
+              @click="${() => this._sendChangePasswordEmail()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="block-panel" fixed blockscrolling persistent>
@@ -925,7 +961,10 @@ export default class BackendAILogin extends BackendAIPage {
           ${this.blockMessage}
           </div>
           <div slot="footer" class="horizontal end-justified flex layout">
-            <wl-button outlined class="fg red mini login-cancel-button" type="button" @click="${(e) => this._cancelLogin(e)}">${_t("login.CancelLogin")}</wl-button>
+          <mwc-button
+              outlined
+              label="${_t("login.CancelLogin")}"
+              @click="${(e) => this._cancelLogin(e)}"></mwc-button>
           </div>
         ` : html``}
       </backend-ai-dialog>

@@ -8,13 +8,11 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-item/paper-item';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import '@material/mwc-textfield';
+import '@material/mwc-select';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 
@@ -35,9 +33,7 @@ import 'weightless/divider';
 import 'weightless/icon';
 import 'weightless/label';
 import 'weightless/select';
-import 'weightless/tab';
 import 'weightless/title';
-import 'weightless/tab-group';
 import 'weightless/textfield';
 import '@material/mwc-icon-button';
 import '../plastics/lablup-shields/lablup-shields';
@@ -62,6 +58,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
 @customElement("backend-ai-storage-list")
 export default class BackendAiStorageList extends BackendAIPage {
+  @property({type: Number}) _APIMajorVersion = 5;
   @property({type: String}) storageType = 'general';
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
@@ -126,7 +123,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         vaadin-grid.folderlist {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 165px);
+          height: calc(100vh - 210px);
         }
 
         vaadin-grid.explorer {
@@ -191,7 +188,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         #folder-explorer-dialog {
-          --component-height: calc(100vh - 170px);
+          --component-height: calc(100vh - 200px); /* calc(100vh - 170px); */
           right: 0;
           top: 0;
           position: fixed;
@@ -218,12 +215,12 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         @media screen and (min-width: 900px) {
           #folder-explorer-dialog {
-            left: 190px;
-            --component-width: calc(100% - 30px);
+            left: 250px; /* 190px; */
+            --component-width: calc(100% - 45px); /* calc(100% - 30px); */
           }
 
           #folder-explorer-dialog.mini_ui {
-            left: 65px;
+            left: 85px; /* 65px; */
             --component-width: calc(100% - 45px);
           }
         }
@@ -311,22 +308,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           padding: 10px 30px;
         }
 
-        wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-orange-500);
-        }
-
-        wl-tab {
-          --tab-color: #666666;
-          --tab-color-hover: #222222;
-          --tab-color-hover-filled: #222222;
-          --tab-color-active: #222222;
-          --tab-color-active-hover: #222222;
-          --tab-color-active-filled: #cccccc;
-          --tab-bg-active: var(--paper-orange-50);
-          --tab-bg-filled: var(--paper-orange-50);
-          --tab-bg-active-hover: var(--paper-orange-100);
-        }
-
         wl-button {
           --button-bg: var(--paper-orange-50);
           --button-bg-hover: var(--paper-orange-100);
@@ -341,6 +322,13 @@ export default class BackendAiStorageList extends BackendAIPage {
           --input-label-color-disabled: #222222;
           --input-label-font-size: 12px;
           --input-border-style-disabled: 1px solid #cccccc;
+        }
+
+        backend-ai-dialog mwc-textfield,
+        backend-ai-dialog mwc-select {
+          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-label-font-size: 12px;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 
         #textfields wl-textfield,
@@ -423,7 +411,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.folders.RenameAFolder')}</span>
         <div slot="content">
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
-            pattern="[a-zA-Z0-9_-.]*"
+            pattern="^[a-zA-Z0-9_-]+$"
             validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
         </div>
         <div slot="footer">
@@ -440,7 +428,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
           <div>
             <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
-                         pattern="[a-zA-Z0-9_-.]*"
+                         pattern="^[a-zA-Z0-9_-]+$"
                          validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
           </div>
         </div>
@@ -736,6 +724,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     for (const textfield of textfields) {
       this._addInputValidator(textfield);
     }
+    if (this.storageType === 'automount') {
+      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 210px)';
+    } else {
+      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 165px)';
+    }
+
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({"detail": {"mini-ui": globalThis.mini_ui}});
@@ -743,7 +737,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _modifySharedFolderPermissions() {
-    const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog wl-select');
+    const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog mwc-select');
     const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as any)[idx].perm)
       .map((pulldown, idx) => ({
         'perm': pulldown.value === 'kickout' ? null : pulldown.value,
@@ -766,7 +760,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Render permission options - View, Edit, EditDelete, KickOut.
    *
    * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Element} colxumn - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   permissionRenderer(root, column?, rowData?) {
@@ -774,12 +768,12 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div>
-          <wl-select outlined label="${_t('data.folders.SelectPermission')}">
-            <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
-            <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
-            <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
-            <option value="kickout">${_t('data.folders.KickOut')}</option>
-          </wl-select>
+          <mwc-select outlined label="${_t('data.folders.SelectPermission')}">
+            <mwc-list-item ?selected=${rowData.item.perm === 'ro'} value="ro">
+            <mwc-list-item ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</mwc-list-item>
+            <mwc-list-item ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</mwc-list-item>
+            <mwc-list-item value="kickout">${_t('data.folders.KickOut')}</mwc-list-item>
+          </mwc-select>
         </div>
       `, root
     )
@@ -926,9 +920,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         ${this._isDir(rowData.item) ?
         html`
-          <div class="indicator horizontal center layout" @click="${(e) => this._enqueueFolder(e)}" name="${rowData.item.filename}">
-            <mwc-icon-button class="fg controls-running" icon="folder_open"
-                               name="${rowData.item.filename}"></mwc-icon-button>
+          <div class="indicator horizontal center layout" name="${rowData.item.filename}">
+            <mwc-icon-button class="fg controls-running" icon="folder_open" name="${rowData.item.filename}"
+                               @click="${(e) => this._enqueueFolder(e)}"></mwc-icon-button>
             ${rowData.item.filename}
           </div>
        ` : html`
@@ -1047,11 +1041,13 @@ export default class BackendAiStorageList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
+        this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._refreshFolderList();
       }, true);
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
+      this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._refreshFolderList();
     }
   }
@@ -1225,7 +1221,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                  id = this.explorer.id,
                  dialog = false) {
     let job = globalThis.backendaiclient.vfolder.list_files(path, id);
-    job.then(value => {
+    return job.then(value => {
       this.shadowRoot.querySelector('#fileList-grid').selectedItems = [];
       this.explorer.files = JSON.parse(value.files);
       this.explorerFiles = this.explorer.files;
@@ -1257,9 +1253,17 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the folder_open icon button
    * */
   _enqueueFolder(e) {
+    const button = e.target;
+
+    // disable button to avoid executing extra onclick event
+    button.setAttribute('disabled', 'true');
     const fn = e.target.getAttribute('name');
     this.explorer.breadcrumb.push(fn);
-    this._clearExplorer();
+
+    // enable button only if the operation is done.
+    this._clearExplorer().then(res => {
+      button.removeAttribute('disabled');
+    });
   }
 
   _gotoFolder(e) {
@@ -1335,8 +1339,12 @@ export default class BackendAiStorageList extends BackendAIPage {
       let temp: any = [];
       for (let i = 0; i < e.dataTransfer.files.length; i++) {
         const file = e.dataTransfer.files[i];
-        if (file.size > 2 ** 20) {
-          console.log('File size limit (< 1 MiB)');
+        /* Drag & Drop file upload size limits to 1 GiB */
+        if (file.size > 2 ** 30) {
+          this.notification.text = _text('data.explorer.DragDropFileUploadSizeLimit');
+          this.notification.show();
+          return;
+          // console.log('File size limit (< 1 MiB)');
         } else {
           file.progress = 0;
           file.caption = '';
@@ -1346,7 +1354,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           (this.uploadFiles as any).push(file);
         }
       }
-      return;
+      // return;
 
       for (let i = 0; i < temp.length; i++) {
         this.fileUpload(temp[i]);
@@ -1458,9 +1466,9 @@ export default class BackendAiStorageList extends BackendAIPage {
           const now = new Date().getTime();
           const speed: string = (bytesUploaded / (1024 * 1024) / ((now - start_date) / 1000)).toFixed(1) + "MB/s";
           const estimated_seconds = Math.floor((bytesTotal - bytesUploaded) / (bytesUploaded / (now - start_date) * 1000));
-          let estimated_time_left = "Less than 10 seconds";
+          let estimated_time_left = _text('data.explorer.LessThan10Sec');
           if (estimated_seconds >= 86400) {
-            estimated_time_left = "More than a day";
+            estimated_time_left = _text('data.explorer.MoreThanADay');
           } else if (estimated_seconds > 10) {
             const hour = Math.floor(estimated_seconds / 3600);
             const min = Math.floor((estimated_seconds % 3600) / 60);
@@ -1510,7 +1518,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     let job = globalThis.backendaiclient.vfolder.request_download_token(path, this.explorer.id, archive);
     job.then(res => {
       const token = res.token;
-      const url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token, archive);
+      let url;
+      if (this._APIMajorVersion < 6) {
+        url = globalThis.backendaiclient.vfolder.get_download_url_with_token(token);
+      } else {
+        url = `${res.url}?token=${res.token}&archive=${archive}`;
+      }
       if (globalThis.iOSSafari) {
         this.downloadURL = url;
         this.downloadFileDialog.show();
@@ -1556,7 +1569,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     if (!newName) return;
     const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id);
     job.then((res) => {
-      this.notification.text = 'File renamed.';
+      this.notification.text = _text('data.folders.FileRenamed');
       this.notification.show();
       this._clearExplorer();
       this.renameFileDialog.hide();
@@ -1608,7 +1621,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       });
       let job = globalThis.backendaiclient.vfolder.delete_files(filenames, true, this.explorer.id);
       job.then(res => {
-        this.notification.text = 'Files deleted.';
+        this.notification.text = _text('data.folders.MultipleFilesDeleted');
         this.notification.show();
         this._clearExplorer();
         this.deleteFileDialog.hide();
@@ -1618,7 +1631,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         let path = this.explorer.breadcrumb.concat(this.deleteFileDialog.filename).join("/");
         let job = globalThis.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
         job.then(res => {
-          this.notification.text = 'File deleted.';
+          this.notification.text = _text('data.folders.FileDeleted');
           this.notification.show();
           this._clearExplorer();
           this.deleteFileDialog.hide();
@@ -1635,7 +1648,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     let path = this.explorer.breadcrumb.concat(fn).join("/");
     let job = globalThis.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
     job.then(res => {
-      this.notification.text = 'File deleted.';
+      this.notification.text = _text('data.folders.FileDeleted');
       this.notification.show();
       this._clearExplorer();
     });
