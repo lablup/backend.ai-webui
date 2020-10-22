@@ -169,12 +169,14 @@ export default class BackendAISummary extends BackendAIPage {
           --button-bg-hover: var(--paper-red-100);
           --button-bg-active: var(--paper-red-600);
         }
+
         .notice-ticker {
           margin-left: 15px;
-          font-size:13px;
+          margin-top: 10px;
+          font-size: 13px;
           font-weight: 400;
-          max-height: 20px;
-          overflow: scroll;
+          height: 35px;
+          overflow-y: scroll;
         }
 
         .notice-ticker lablup-shields {
@@ -424,10 +426,10 @@ export default class BackendAISummary extends BackendAIPage {
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="item" elevation="1" style="padding-bottom:20px;">
         ${this.announcement != '' ? html`
-          <h3 class="notice-ticker plastic-material-title horizontal center layout">
+          <div class="notice-ticker horizontal center layout wrap flex">
             <lablup-shields app="" color="red" description="Notice" ui="round"></lablup-shields>
             <span>${this._stripHTMLTags(this.announcement)}</span>
-          </h3>
+          </div>
         ` : html``}
         <div class="horizontal wrap layout">
           <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1" height="500">
@@ -572,7 +574,7 @@ export default class BackendAISummary extends BackendAIPage {
         </div>
       </div>
     <backend-ai-release-check id="update-checker"></backend-ai-release-check>
-  `; 
+  `;
   }
 }
 
