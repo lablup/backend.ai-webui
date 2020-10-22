@@ -170,7 +170,6 @@ class BackendAIRegistryList extends BackendAIPage {
       this.hostnames = this.registryList.map( value => {
         return value.hostname;
       });
-      console.log(this.hostnames)
       this.requestUpdate();
     })
   }
@@ -274,7 +273,6 @@ class BackendAIRegistryList extends BackendAIPage {
         }
         this._hideDialogById("#add-registry-dialog");
         this.notification.show();
-        this.notification.hide
       })
   }
 
