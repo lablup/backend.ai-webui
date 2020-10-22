@@ -1081,7 +1081,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           item.tag = rowData.item.baseversion;
         }
         return html`
-                <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
+                <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}" ui="round"></lablup-shields>
               `;
       })}
           `) : html``}
@@ -1089,7 +1089,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div class="layout horizontal center wrap">
               ${rowData.item.additional_reqs.map((tag) => {
         return html`
-                  <lablup-shields app="" color="green" description="${tag}"></lablup-shields>
+                  <lablup-shields app="" color="green" description="${tag}" ui="round"></lablup-shields>
                 `;
       })}
             </div>
@@ -1343,7 +1343,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <span style="font-size: 12px;">${rowData.item.status}</span>
         ${rowData.item.status_info ? html`
         <br />
-        <lablup-shields app="" color="${this.statusColorTable[rowData.item.status_info]}" description="${rowData.item.status_info}"></lablup-shields>
+        <lablup-shields app="" color="${this.statusColorTable[rowData.item.status_info]}" description="${rowData.item.status_info}" ui="round"></lablup-shields>
         ` : html``}
       `, root
     );

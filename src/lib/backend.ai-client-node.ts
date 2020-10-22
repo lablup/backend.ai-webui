@@ -2130,12 +2130,12 @@ class ComputeSession {
     for (let offset = 0; offset < 10 * limit; offset+=limit) {
       v = {limit, offset, status};
       if (accessKey != '') {
-        v.ak = accessKey;
+        v.access_key = accessKey;
       }
       if (group != '') {
         v.group_id = group;
       }
-      const session = await this.client.gql(q, v);
+      const session = await this.client.query(q, v);
       console.log(session.compute_session_list.total_count)
       sessions.push(...session.compute_session_list.items);
       if (offset >= session.compute_session_list.total_count) {

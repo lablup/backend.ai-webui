@@ -1868,6 +1868,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <span slot="description" style="font-size:12px;color:#646464;">${this.selectedVfolders.toString()}</span>
             <mwc-list fullwidth multi id="vfolder"
               @selected="${this._updateSelectedFolder}">
+            ${this.vfolders.length === 0 ? html`
+              <mwc-list-item value="" disabled="true">${_t("session.launcher.NoFolderExists")}</mwc-list-item>
+            `:html``}
             ${this.vfolders.map(item => html`
               <mwc-check-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}</mwc-check-list-item>
             `)}

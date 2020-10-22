@@ -3,7 +3,7 @@
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {translate as _t, get as _text, } from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -276,15 +276,16 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         if (res.ok) {
           return globalThis.backendaiclient.scalingGroup.associate_domain(domain, scalingGroup);
         } else {
-          this.notification.text = PainKiller.relieve(res.title);
-          this.notification.detail = res.msg;
-          this.notification.show();
+          /* error message will be handled in catch statement */
+          // this.notification.text = PainKiller.relieve(res.title);
+          // this.notification.detail = res.msg;
+          // this.notification.show();
           return Promise.reject(res.msg);
         }
       })
       .then(({associate_scaling_group_with_domain: res}) => {
         if (res.ok) {
-          this.notification.text = "Resource group succesfully created";
+          this.notification.text = _text('resourceGroup.ResourceGroupCreated');
           this._refreshList();
           this.shadowRoot.querySelector("#scaling-group-name").value = "";
           this.shadowRoot.querySelector("#scaling-group-description").value = "";
@@ -318,7 +319,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input["is_active"] = is_active;
 
     if (Object.keys(input).length === 0) {
-      this.notification.text = "No changes made";
+      this.notification.text = _text('resourceGroup.NochangesMade');
       this.notification.show();
       return;
     }
@@ -326,7 +327,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     globalThis.backendaiclient.scalingGroup.update(name, input)
       .then(({modify_scaling_group}) => {
         if (modify_scaling_group.ok) {
-          this.notification.text = "Resource group successfully modified";
+          this.notification.text = _text('resourceGroup.ResourceGroupCreated');
           this._refreshList();
         } else {
           this.notification.text = PainKiller.relieve(modify_scaling_group.msg);
@@ -339,9 +340,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
   _deleteScalingGroup() {
     const name = this.scalingGroups[this.selectedIndex].name;
-
     if (this.shadowRoot.querySelector("#delete-scaling-group").value !== name) {
-      this.notification.text = "Resource group name does not match!";
+      this.notification.text = _text('resourceGroup.ResourceGroupNameNotMatch');
       this._hideDialogById("#delete-scaling-group-dialog");
       this.notification.show();
       return;
@@ -350,7 +350,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     globalThis.backendaiclient.scalingGroup.delete(name)
       .then(({delete_scaling_group}) => {
         if (delete_scaling_group.ok) {
-          this.notification.text = "Resource group successfully deleted";
+          this.notification.text = _text('resourceGroup.ResourceGroupDeleted');
           this._refreshList();
           this.shadowRoot.querySelector("#delete-scaling-group").value = "";
         } else {
@@ -361,6 +361,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         this._hideDialogById("#delete-scaling-group-dialog");
         this.notification.show();
       })
+      /* update selectedIndex to initial value */
+      this.selectedIndex = 0;
   }
 
   _refreshList() {
@@ -459,7 +461,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("resourceGroup.ModifyResourceGroup")}</span>
-
         <div slot="content">
           <div class="horizontal layout flex wrap center justified">
             <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
@@ -471,7 +472,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           <mwc-select
             id="modify-scaling-group-scheduler"
             label="${_t('resourceGroup.SelectScheduler')}"
-            value="${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].scheduler}">
+            value="${this.scalingGroups.length === 0 ? "" 
+                : this.scalingGroups[this.selectedIndex].scheduler}">
             ${this.schedulerTypes.map(sched => html`
             <mwc-list-item value="${sched}">${sched}</mwc-list-item>
             `)}

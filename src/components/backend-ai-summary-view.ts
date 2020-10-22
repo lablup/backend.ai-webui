@@ -485,26 +485,12 @@ export default class BackendAISummary extends BackendAIPage {
                       icon="add"
                       label="${_t('summary.Accept')}"
                       @click="${e => this._acceptInvitation(e, invitation)}"></mwc-button>
-                  <!--<wl-button
-                    class="fg green"
-                    outlined
-                    @click=${e => this._acceptInvitation(e, invitation)}>
-                      <wl-icon>add</wl-icon>
-                    ${_t('summary.Accept')}
-                  </wl-button>-->
                   <span class="flex"></span>
                   <mwc-button
                       outlined
                       icon="remove"
                       label="${_t('summary.Decline')}"
                       @click="${e => this._deleteInvitation(e, invitation)}"></mwc-button>
-                  <!--<wl-button
-                    class="fg red"
-                    outlined
-                    @click=${e => this._deleteInvitation(e, invitation)}>
-                      <wl-icon>remove</wl-icon>
-                    ${_t('summary.Decline')}
-                  </wl-button>-->
                 </div>
               </div>
             </lablup-activity-panel>
