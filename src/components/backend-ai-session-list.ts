@@ -15,11 +15,9 @@ import '@material/mwc-textfield/mwc-textfield';
 
 import {default as AnsiUp} from '../lib/ansiup';
 import 'weightless/button';
-import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/icon';
 import 'weightless/textfield';
-import 'weightless/title';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
@@ -1083,7 +1081,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           item.tag = rowData.item.baseversion;
         }
         return html`
-                <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
+                <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}" ui="round"></lablup-shields>
               `;
       })}
           `) : html``}
@@ -1091,7 +1089,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div class="layout horizontal center wrap">
               ${rowData.item.additional_reqs.map((tag) => {
         return html`
-                  <lablup-shields app="" color="green" description="${tag}"></lablup-shields>
+                  <lablup-shields app="" color="green" description="${tag}" ui="round"></lablup-shields>
                 `;
       })}
             </div>
@@ -1345,7 +1343,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <span style="font-size: 12px;">${rowData.item.status}</span>
         ${rowData.item.status_info ? html`
         <br />
-        <lablup-shields app="" color="${this.statusColorTable[rowData.item.status_info]}" description="${rowData.item.status_info}"></lablup-shields>
+        <lablup-shields app="" color="${this.statusColorTable[rowData.item.status_info]}" description="${rowData.item.status_info}" ui="round"></lablup-shields>
         ` : html``}
       `, root
     );
@@ -1556,22 +1554,20 @@ export default class BackendAiSessionList extends BackendAIPage {
             ` : html``}
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
-        <wl-button class="pagination" id="previous-page"
-                   ?disabled="${this.current_page === 1}"
-                   @click="${(e) => {
-      this._updateSessionPage(e)
-    }}">
-          <wl-icon class="pagination">navigate_before</wl-icon>
-        </wl-button>
+      <mwc-icon-button
+      class="pagination"
+      id="previous-page"
+      icon="navigate_before"
+      ?disabled="${this.current_page === 1}"
+      @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
         <wl-label style="padding-top: 5px; width:auto; text-align:center;">
         ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</wl-label>
-        <wl-button class="pagination" id="next-page"
-                   ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
-                   @click="${(e) => {
-      this._updateSessionPage(e)
-    }}">
-          <wl-icon class="pagination">navigate_next</wl-icon>
-        </wl-button>
+        <mwc-icon-button
+        class="pagination"
+        id="next-page"
+        icon="navigate_next"
+        ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
+        @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
       </div>
       <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
         <span slot="title" id="work-title"></span>

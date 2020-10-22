@@ -10,10 +10,10 @@ import 'weightless/card';
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
-    IronFlex,
-    IronFlexAlignment,
-    IronFlexFactors,
-    IronPositioning
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
 /**

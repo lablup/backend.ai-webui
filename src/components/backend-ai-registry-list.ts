@@ -18,8 +18,11 @@ import 'weightless/switch';
 import 'weightless/textfield';
 import 'weightless/title';
 
+import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-switch/mwc-switch';
+import '@material/mwc-textfield/mwc-textfield';
 
 import './backend-ai-dialog';
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -55,6 +58,7 @@ class BackendAIRegistryList extends BackendAIPage {
       BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
+      // language=CSS
       css`
         vaadin-grid {
           border: 0;
@@ -106,7 +110,7 @@ class BackendAIRegistryList extends BackendAIPage {
         }
 
         mwc-select#select-registry-type {
-          width: 167px;
+          width: 100%;
           padding-right: 10px;
           --mdc-select-fill-color: transparent;
           --mdc-theme-primary: var(--paper-orange-400);
@@ -123,6 +127,12 @@ class BackendAIRegistryList extends BackendAIPage {
           pointer-events: none;
         }
 
+        mwc-button, mwc-button[unelevated] {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-typography-font-family: var(--general-font-family);
+        }
       `];
   }
 
@@ -438,7 +448,9 @@ class BackendAIRegistryList extends BackendAIPage {
     render(
       html`
         <div>
-           <wl-switch @change="${(e) => this.toggleRegistry(e, rowData.item["hostname"])}" ?checked="${this.allowed_registries.includes(rowData.item["hostname"])}"></wl-switch>
+          <mwc-switch
+              @change="${(e) => this.toggleRegistry(e, rowData.item["hostname"])}"
+              ?checked="${this.allowed_registries.includes(rowData.item["hostname"])}"></mwc-switch>
         </div>
       `,
       root
@@ -490,15 +502,8 @@ class BackendAIRegistryList extends BackendAIPage {
       <h4 class="horizontal flex center center-justified layout">
         <span>${_t("registry.Registries")}</span>
         <span class="flex"></span>
-        <wl-button
-          class="fg orange"
-          id="add-registry"
-          outlined
-          @click=${() => this._launchDialogById("#add-registry-dialog")}
-        >
-          <wl-icon>add</wl-icon>
-          ${_t("registry.AddRegistry")}
-        </wl-button>
+        <mwc-button raised id="add-registry" label="${_t("registry.AddRegistry")}" icon="add"
+            @click=${() => this._launchDialogById("#add-registry-dialog")}></mwc-button>
       </h4>
 
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this.registryList}">
@@ -572,15 +577,14 @@ class BackendAIRegistryList extends BackendAIPage {
             style="padding-left:10px;"
           ></wl-textfield>
          </div>
-         <div class="horizontal layout" style="padding-bottom:10px;">
-          <mwc-select id="select-registry-type" label="${_t("registry.RegistryType")}"
+         <mwc-select id="select-registry-type" label="${_t("registry.RegistryType")}"
                       @change=${this._toggleProjectNameInput} required
                       validationMessage="Please select one option.">
             ${this._registryType.map(item => html`
               <mwc-list-item value="${item}" ?selected="${item === 'docker'}">${item}</mwc-list-item>
             `)}
           </mwc-select>
-           <div class="vertical layout" style="padding-left:10px;">
+          <div class="vertical layout end-justified">
               <wl-textfield
               id="add-project-name"
               class="helper-text"
@@ -590,20 +594,11 @@ class BackendAIRegistryList extends BackendAIPage {
               @change=${this._validateProjectName}
               ></wl-textfield>
               <wl-label class="helper-text" id="project-name-validation" style="display:block;">${_t("registry.ForHarborOnly")}</wl-label>
-          </div>
          </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button
-            class="fg orange"
-            outlined
-            type="button"
-            style="box-sizing: border-box; width: 100%"
-            @click=${this._addRegistry}
-          >
-            <wl-icon>add</wl-icon>
-            ${_t("button.Add")}
-          </wl-button>
+          <mwc-button unelevated icon="add" label="${_t("button.Add")}"
+            @click=${this._addRegistry}></mwc-button>
         </div>
       </backend-ai-dialog>
 
@@ -617,16 +612,8 @@ class BackendAIRegistryList extends BackendAIPage {
           ></wl-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button
-            class="fg red delete"
-            type="button"
-            outlined
-            style="width: 100%; box-sizing: border-box;"
-            @click=${this._deleteRegistry}
-          >
-            <wl-icon>delete</wl-icon>
-            ${_t("button.Delete")}
-          </wl-button>
+          <mwc-button unelevated icon="delete" label="${_t("button.Delete")}"
+              @click=${this._deleteRegistry} style="width:100%;"></mwc-button>
         </div>
       </backend-ai-dialog>
     `

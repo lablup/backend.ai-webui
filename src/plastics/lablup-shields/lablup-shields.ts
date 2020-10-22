@@ -47,6 +47,14 @@ export default class LablupShields extends LitElement {
         .round {
           border-radius: 4px;
         }
+        .round-left {
+          border-top-left-radius: 4px;
+          border-bottom-left-radius: 4px;
+        }
+        .round-right {
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+        }
       `];
   }
 
@@ -164,6 +172,19 @@ export default class LablupShields extends LitElement {
   _formatItem() {
     if (['round'].indexOf(this.ui) >= 0) {
       this.shadowRoot.querySelector('.shields').classList.add(this.ui);
+      if (typeof this.description == 'undefined' || this.description == 'undefined' || this.description === '') {
+        if (typeof this.app == 'undefined' || this.app == 'undefined' || this.app === '') {
+        } else { // App exists/ description does not
+          this.shadowRoot.querySelector('#app').classList.add(this.ui);
+        }
+      } else {
+        if (typeof this.app == 'undefined' || this.app == 'undefined' || this.app === '') { // desc exist but app does not.
+          this.shadowRoot.querySelector('#description').classList.add(this.ui);
+        } else { // app and description both exist.
+          this.shadowRoot.querySelector('#app').classList.add(this.ui + '-left');
+          this.shadowRoot.querySelector('#description').classList.add(this.ui + '-right');
+        }
+      }
     }
   }
 }
