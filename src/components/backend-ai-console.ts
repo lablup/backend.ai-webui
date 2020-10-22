@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
-import {customElement, html, LitElement, property} from "lit-element";
+import {customElement, html, css, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
 import {installOfflineWatcher} from 'pwa-helpers/network';
@@ -40,6 +40,7 @@ import './backend-ai-sidepanel-notification';
 import './backend-ai-app-launcher';
 import './backend-ai-resource-broker';
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
+
 import '../lib/backend.ai-client-es6';
 
 import {
@@ -135,7 +136,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
-      IronPositioning];
+      IronPositioning,
+    css`
+    `];
   }
 
   firstUpdated() {
@@ -935,15 +938,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   protected render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
       <div id="loading-curtain" class="loading-background"></div>
       <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="position:fixed;visibility:hidden;">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
           <div id="portrait-bar" class="draggable">
-            <div class="horizontal center layout flex bar draggable" style="cursor:pointer;">
-              <div class="portrait-canvas">
-                <img style="width:43px; height:43px; display:none;" src="manifest/backend.ai-brand-white.svg"
-                  sizing="contain" />
-              </div>
+            <div class="horizontal center layout flex bar draggable" style="cursor:pointer;" @click="${() => this._moveTo('/summary')}">
+              <div class="portrait-canvas"></div>
               <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
                 <div class="site-name"><span class="bold">Backend</span>.AI</div>
                 ${this.siteDescription ?
@@ -1034,7 +1035,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.10.0.201014</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.10.0.201022</small>
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">

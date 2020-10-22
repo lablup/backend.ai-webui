@@ -331,6 +331,9 @@
       "FolderRenamed": "Folder renamed",
       "FolderNameMismatched": "Folder name mismmatched",
       "FolderDeleted": "Folder deleted",
+      "FileRenamed": "File Renamed",
+      "FileDeleted": "File Deleted",
+      "MultipleFilesDeleted": "Multiple Files deleted",
       "NumberOfFiles": "Number of files",
       "Ownership": "Ownership",
       "DescYouAreFolderOwner": "You are the owner of this folder.",
@@ -363,7 +366,10 @@
       "DownloadFile": "Download File",
       "TouchToDownload": "Touch to Download file",
       "ValueRequired": "Value is required",
-      "ValueShouldBeStarted": "Path should start with .(dot) or letters, numbers only."
+      "ValueShouldBeStarted": "Path should start with .(dot) or letters, numbers only.",
+      "DragDropFileUploadSizeLimit": "File size limit (< 1 GiB)",
+      "LessThan10Sec": "Less than 10 seconds",
+      "MoreThanADay": "More than a day"
     },
     "invitation": {
       "EnterEmail": "Enter email address",
@@ -563,7 +569,12 @@
     "TypeResourceGroupNameToDelete": "Type resource group name to delete",
     "ResourceGroupName": "ResourceGroupName",
     "Active": "Active",
-    "SelectScheduler": "Select Scheduler"
+    "SelectScheduler": "Select Scheduler",
+    "NochangesMade": "No changes made",
+    "ResourceGroupNameNotMatch": "Resource group name does not match!",
+    "ResourceGroupCreated": "Resource group succesfully created",
+    "ResourceGroupModified": "Resource group successfully modified",
+    "ResourceGroupDeleted": "Resource group successfully deleted"
   },
   "maintenance": {
     "General": "General",
