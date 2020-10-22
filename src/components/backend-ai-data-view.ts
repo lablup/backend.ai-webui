@@ -250,10 +250,10 @@ export default class BackendAIData extends BackendAIPage {
           <div slot="message">
             <h3 class="horizontal center flex layout tab">
               <mwc-tab-bar>
-                <mwc-tab aria-label="general-folder" label="${_t("data.Folders")}"
+                <mwc-tab title="general-folder" label="${_t("data.Folders")}"
                     @click="${(e) => this._showTab(e.target)}">
                 </mwc-tab>
-                <mwc-tab aria-label="automount-folder" label="${_t("data.AutomountFolders")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                <mwc-tab title="automount-folder" label="${_t("data.AutomountFolders")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               </mwc-tab-bar>
               <span class="flex"></span>
               <mwc-button dense raised id="add-folder" icon="add" label="${_t("data.NewFolder")}" @click="${() => this._addFolderDialog()}" style="margin-right:15px;"></mwc-icon-button>
@@ -273,7 +273,7 @@ export default class BackendAIData extends BackendAIPage {
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
         <div slot="content">
-          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9\_\-.]+"
+          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="^[\.a-zA-Z0-9_-]+$"
               auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
           <div class="horizontal layout">
             <mwc-multi-select id="add-folder-host" label="${_t("data.Host")}">
@@ -421,11 +421,11 @@ export default class BackendAIData extends BackendAIPage {
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.ariaLabel + '-lists').style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.title + '-lists').style.display = 'block';
     for (let x = 0; x < this._lists.length; x++) {
       this._lists[x].removeAttribute('active');
     }
-    this.shadowRoot.querySelector('#' + tab.ariaLabel + '-storage').setAttribute('active', true);
+    this.shadowRoot.querySelector('#' + tab.title + '-storage').setAttribute('active', true);
   }
 
   /**

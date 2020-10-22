@@ -144,8 +144,8 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     for (var x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this._activeTab = tab.ariaLabel;
-    this.shadowRoot.querySelector('#' + tab.ariaLabel).style.display = 'block';
+    this._activeTab = tab.title;
+    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 
   render() {
@@ -155,10 +155,10 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
         <div slot="message">
           <h3 class="tab horizontal center layout">
             <mwc-tab-bar>
-              <mwc-tab aria-label="image-lists" label="${_t("environment.Images")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab aria-label="resource-template-lists" label="${_t("environment.ResourcePresets")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="image-lists" label="${_t("environment.Images")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="resource-template-lists" label="${_t("environment.ResourcePresets")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               ${this.is_superadmin ? html`
-                <mwc-tab aria-label="registry-lists" label="${_t("environment.Registries")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                <mwc-tab title="registry-lists" label="${_t("environment.Registries")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               `: html``}
             </mwc-tab-bar>
             <div class="flex"></div>
