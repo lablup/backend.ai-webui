@@ -47,6 +47,7 @@ class BackendAIRegistryList extends BackendAIPage {
   @property({type: String}) boundControlsRenderer = this._controlsRenderer.bind(this);
   @property({type: Array}) _registryType = Array();
   @property({type: Array}) allowed_registries = Array();
+  @property({type: Array}) hostnames = Array();
 
   constructor() {
     super();
@@ -163,10 +164,13 @@ class BackendAIRegistryList extends BackendAIPage {
   _refreshRegistryList() {
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
-      console.log(this.allowed_registries);
       return globalThis.backendaiclient.registry.list()
     }).then(({result}) => {
-      this.registryList = this._parseRegistryList(result);
+      this.registryList = this._parseRegistryList(result)
+      this.hostnames = this.registryList.map( value => {
+        return value.hostname;
+      });
+      console.log(this.hostnames)
       this.requestUpdate();
     })
   }
@@ -252,7 +256,7 @@ class BackendAIRegistryList extends BackendAIPage {
     }
 
     // if hostname already exists
-    if (this.allowed_registries.includes(hostname)) {
+    if (this.hostnames.includes(hostname)) {
       this.notification.text = _text('registry.RegistryHostnameAlreadyExists');
       this.notification.show();
       return;
@@ -262,6 +266,8 @@ class BackendAIRegistryList extends BackendAIPage {
       .then(({result}) => {
         if (result === "ok") {
           this.notification.text = _text('registry.RegistrySuccessfullyAdded');
+          // add 
+          this.hostnames.push(hostname);
           this._refreshRegistryList();
         } else {
           this.notification.text = _text('dialog.ErrorOccurred');
@@ -277,16 +283,15 @@ class BackendAIRegistryList extends BackendAIPage {
    * */
   _deleteRegistry() {
     const name = (<HTMLInputElement>this.shadowRoot.querySelector("#delete-registry")).value;
-
-    if (this.registryList[this.selectedIndex].hostname === encodeURIComponent(name)) {
-      // remove the hostname from allowed registries if it contains deleting registry.
-      if (this.allowed_registries.includes(name)) {
-        this.allowed_registries.splice(this.allowed_registries.indexOf(name));
-      }
+    if (this.registryList[this.selectedIndex].hostname === name) {
       globalThis.backendaiclient.registry.delete(name)
         .then(({result}) => {
           if (result === "ok") {
             this.notification.text = _text('registry.RegistrySuccessfullyDeleted');
+            // remove the hostname from allowed registries if it contains deleting registry.
+            if (this.hostnames.includes(name)) {
+              this.hostnames.splice(this.hostnames.indexOf(name));
+            }
             this._refreshRegistryList();
           } else {
             this.notification.text = _text('dialog.ErrorOccurred');
@@ -298,6 +303,8 @@ class BackendAIRegistryList extends BackendAIPage {
       this.notification.text = _text('registry.HostnameDoesNotMatch');
       this.notification.show();
     }
+    // remove written hostname
+    this.shadowRoot.querySelector("#delete-registry").value = '';
   }
 
   /**
@@ -532,7 +539,7 @@ class BackendAIRegistryList extends BackendAIPage {
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this.registryList}">
         <vaadin-grid-column flex-grow="0" width="40px" header="#" text-align="center" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t("registry.Hostname")}" .renderer=${this._hostRenderer}>
+        <vaadin-grid-column flex-grow="1" auto-width header="${_t("registry.Hostname")}" .renderer=${this._hostRenderer}>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="2" auto-width header="${_t("registry.RegistryURL")}" resizable .renderer=${this._registryRenderer}>
         </vaadin-grid-column>
