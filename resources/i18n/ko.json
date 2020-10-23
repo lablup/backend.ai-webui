@@ -502,7 +502,8 @@
     "PublicKey": "공개 키",
     "PrivateKey": "비밀 키",
     "InvalidPortNumber": "포트 번호는 1025~65534 사이의 양수여야 합니다.",
-    "SSHKeyClipboardCopy": "SSH 키가 클립보드에 복사되었습니다."
+    "SSHKeyClipboardCopy": "SSH 키가 클립보드에 복사되었습니다.",
+    "ShellEnvironments": "쉘 스크립트 환경"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",

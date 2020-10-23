@@ -506,7 +506,8 @@
     "PublicKey": "Public Key",
     "PrivateKey": "Private Key",
     "InvalidPortNumber": "Port number should be positive number between 1025~65534",
-    "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard."
+    "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard.",
+    "ShellEnvironments":"Shell Environments"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
