@@ -381,7 +381,6 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   toggleRegistry(e, hostname) {
-    console.log(e, hostname);
     if (!e.target.checked) {
       this._changeRegistryState(hostname, false);
     } else {
