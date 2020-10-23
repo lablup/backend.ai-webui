@@ -439,6 +439,12 @@ export const BackendAiStyles = [
       --mdc-on-theme-primary: var(--general-button-background-color);
       --mdc-typography-font-family: var(--general-font-family);
     }
+    mwc-textfield, mwc-textarea {
+      --mdc-text-field-hover-line-color: transparent;
+      --mdc-text-field-idle-line-color: transparent;
+      --mdc-text-field-fill-color: var(--general-background-color, #fafafa);
+      --mdc-typography-subtitle1-font-size: 14px;
+    }
 
     .bg-blue {
       background-color: var(--paper-light-blue-400);

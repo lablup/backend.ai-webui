@@ -296,7 +296,7 @@ export default class BackendAIImport extends BackendAIPage {
       <lablup-activity-panel title="${_t('import.ImportNotebook')}" elevation="1" horizontalsize="2x">
         <div slot="message">
           <div class="horizontal wrap layout center">
-            <mwc-textfield outlined style="width:75%;" id="notebook-url" label="${_t('import.NotebookURL')}"></mwc-textfield>
+            <mwc-textfield style="width:75%;" id="notebook-url" label="${_t('import.NotebookURL')}"></mwc-textfield>
             <mwc-button icon="cloud_download" @click="${() => this.getNotebookFromURL()}">${_t('import.GetAndRunNotebook')}</mwc-button>
           </div>
           ${this.importMessage}
@@ -316,10 +316,10 @@ export default class BackendAIImport extends BackendAIPage {
             <div class="vertical wrap layout center description">
               ${_t('import.YouCanCreateNotebookCode')}
               <img src="/resources/badge.svg" style="margin-top:5px;margin-bottom:5px;"/>
-              <mwc-textfield outlined id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"></mwc-textfield>
+              <mwc-textfield id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"></mwc-textfield>
               <mwc-button style="width:100%;" @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
-              <mwc-textarea outlined id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}">></mwc-textarea>
-              <mwc-textarea outlined id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}">></mwc-textarea>
+              <mwc-textarea id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}">></mwc-textarea>
+              <mwc-textarea id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}">></mwc-textarea>
             </div>
           </div>
         </lablup-activity-panel>
@@ -331,7 +331,7 @@ export default class BackendAIImport extends BackendAIPage {
               <p>${_t('import.RepoWillBeFolder')}</p>
             </div>
             <div class="horizontal wrap layout center">
-              <mwc-textfield outlined style="width:75%;" id="github-repo-url" label="${_t('import.GitHubURL')}"></mwc-textfield>
+              <mwc-textfield style="width:75%;" id="github-repo-url" label="${_t('import.GitHubURL')}"></mwc-textfield>
               <mwc-button icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">${_t('import.GetToFolder')}</mwc-button>
             </div>
             ${this.importMessage}
