@@ -55,6 +55,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Number}) vncPort = 0;
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard'];
   @property({type: Object}) appController = Object();
+  @property({type: Object}) openPortToPublic = false;
 
   constructor() {
     super();
@@ -343,6 +344,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
     });
+    this.openPortToPublic = globalThis.backendaiclient._config.openPortToPublic;
     const dialog = this.shadowRoot.querySelector('#app-dialog');
     dialog.setAttribute('session-uuid', sessionUuid);
     dialog.setAttribute('access-key', accessKey);
@@ -730,17 +732,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               </div>
             `)}
           </div>
-          ${globalThis.isElectron ? `` : html`
+          <div style="padding:10px 20px 0 20px">
+            ${globalThis.isElectron || !this.openPortToPublic ? `` : html`
+              <div class="horizontal layout center">
+                <wl-checkbox id="chk-open-to-public" style="margin-right:0.5em"></wl-checkbox>
+                ${_t("session.OpenToPublic")}
+              </div>
+            `}
             <div class="horizontal layout center">
-              <wl-checkbox id="chk-open-to-public" style="margin-right:0.5em"></wl-checkbox>
-              ${_t("session.OpenToPublic")}
+              <wl-checkbox id="chk-preferred-port" style="margin-right:0.5em"></wl-checkbox>
+              ${_t("session.TryPreferredPort")}
+              <wl-textfield id="app-port" type="number" no-label-float value="10250"
+                  min="1025" max="65534" style="margin-left:1em; width:70px"></wl-textfield>
             </div>
-          `}
-          <div class="horizontal layout center">
-            <wl-checkbox id="chk-preferred-port" style="margin-right:0.5em"></wl-checkbox>
-            ${_t("session.TryPreferredPort")}
-            <wl-textfield id="app-port" type="number" no-label-float value="10250"
-                min="1025" max="65534" style="margin-left:1em; width:70px"></wl-textfield>
           </div>
         </div>
       </backend-ai-dialog>

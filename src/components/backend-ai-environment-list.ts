@@ -66,6 +66,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) installImageResource = Object();
   @property({type: Object}) selectedCheckbox = Object();
   @property({type: Object}) _grid = Object();
+  @property({type: String}) servicePortsMsg = '';
   @property({type: Object}) _range = {"cpu":["1", "2", "3", "4", "5", "6", "7", "8"],
                                       "mem":["64MB", "128MB", "256MB", "512MB",
                                            "1GB", "2GB", "4GB", "8GB",
@@ -75,6 +76,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                                       "rocm-gpu":["0", "1", "2", "3", "4", "5", "6", "7"],
                                       "tpu":["0", "1", "2"]};
   @property({type: Number}) cpuValue = 0;
+
   constructor() {
     super();
   }
@@ -374,16 +376,21 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:block;');
 
       let imageName = image['registry'] + '/' + image['name'] + ':' + image['tag'];
+      let isGPURequired: Boolean = false;
       let imageResource = Object();
       image['resource_limits'].forEach( el => {
         imageResource[ el['key'].replace("_", ".")] = el.min;
       });
 
       if ('cuda.device' in imageResource && 'cuda.shares' in imageResource) {
+        isGPURequired = true;
         imageResource['gpu'] = 0;
         imageResource['fgpu'] = imageResource['cuda.shares'];
       } else if ('cuda.device' in imageResource) {
         imageResource['gpu'] = imageResource['cuda.device'];
+        isGPURequired = true;
+      } else {
+        isGPURequired = false;
       }
 
       // Add 256m to run the image.
@@ -396,26 +403,36 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       imageResource['domain'] = globalThis.backendaiclient._config.domainName;
       imageResource['group_name'] = globalThis.backendaiclient.current_group;
 
-      this.notification.text = "Installing " + imageName + ". It takes time so have a cup of coffee!";
-      this.notification.show();
-      let indicator = await this.indicator.start('indeterminate');
-      indicator.set(10, 'Downloading...');
-      globalThis.backendaiclient.get_resource_slots().then((response) => {
-        let results = response;
-        if ('cuda.device' in results && 'cuda.shares' in results) { // Can be possible after 20.03
-          if ('fgpu' in imageResource && 'gpu' in imageResource) { // Keep fgpu only.
-            delete imageResource['gpu'];
-            delete imageResource['cuda.device'];
-          }
-        } else if ('cuda.device' in results) { // GPU mode
-          delete imageResource['fgpu'];
-          delete imageResource['cuda.shares'];
-        } else if ('cuda.shares' in results) { // Fractional GPU mode
+      const resourceSlots = await globalThis.backendaiclient.get_resource_slots();
+
+      if(isGPURequired) {
+        if (!('cuda.device' in resourceSlots) && !('cuda.shares' in resourceSlots)) {
+          this.notification.text = _text('environment.NoResourcesForImage') + imageName;
+          this.notification.show();
+          this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:none;');
+          return ;
+        } 
+      }
+
+      if ('cuda.device' in resourceSlots && 'cuda.shares' in resourceSlots) { // Can be possible after 20.03
+        if ('fgpu' in imageResource && 'gpu' in imageResource) { // Keep fgpu only.
           delete imageResource['gpu'];
           delete imageResource['cuda.device'];
         }
-        return globalThis.backendaiclient.image.install(imageName, imageResource);
-      }).then((response) => {
+      } else if ('cuda.device' in resourceSlots) { // GPU mode
+        delete imageResource['fgpu'];
+        delete imageResource['cuda.shares'];
+      } else if ('cuda.shares' in resourceSlots) { // Fractional GPU mode
+        delete imageResource['gpu'];
+        delete imageResource['cuda.device'];
+      }
+
+      this.notification.text = _text('environment.InstallingImage') + imageName + _text('environment.TakesTime');
+      this.notification.show();
+      let indicator = await this.indicator.start('indeterminate');
+      indicator.set(10, 'Downloading...');
+
+      globalThis.backendaiclient.image.install(imageName, imageResource).then((response) => {
         indicator.set(100, 'Install finished.');
         indicator.end(1000);
 
@@ -610,40 +627,80 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
+   * Validate backend.ai service ports.
+   */
+  _isServicePortValid() {
+    const container = this.shadowRoot.querySelector("#modify-app-container");
+    const rows = container.querySelectorAll(".row:not(.header)");
+    const ports = new Set();
+    for (const row of rows) {
+      const textFields = row.querySelectorAll("wl-textfield");
+      if (Array.prototype.every.call(textFields, field => field.value === "")) {
+        continue;
+      }
+
+      const appName = textFields[0].value, protocol = textFields[1].value, port = parseInt(textFields[2].value);
+      if (appName === "") {
+        this.servicePortsMsg = _text('environment.AppNameMustNotBeEmpty');
+        return false;
+      }
+      if (!["http", "tcp", "pty"].includes(protocol)) {
+        this.servicePortsMsg = _text('environment.ProtocolMustBeOneOfHttpTcpPty');
+        return false;
+      }
+      if (ports.has(port)) {
+        this.servicePortsMsg = _text('environment.PortMustBeUnique');
+        return false;
+      }
+      if (port >= 66535 || port < 0) {
+        this.servicePortsMsg = _text('environment.PortMustBeInRange');
+        return false;
+      }
+      if ([2000, 2001, 2002, 2003, 2200, 7681].includes(port)) {
+        this.servicePortsMsg = _text('environment.PortReservedForInternalUse');
+        return false;
+      }
+      ports.add(port);
+    }
+    return true;
+  }
+
+  /**
    * Parse backend.ai service ports.
    */
   _parseServicePort() {
     const container = this.shadowRoot.querySelector("#modify-app-container");
     const rows = container.querySelectorAll(".row:not(.header)");
-
-    const valid = row => Array.prototype.filter.call(
-      row.querySelectorAll("wl-textfield"),
-      (tf, idx) => tf.value === "" || (idx === 1 && !["http", "tcp", "pty"].includes(tf.value))
+    const nonempty = row => Array.prototype.filter.call(
+      row.querySelectorAll("wl-textfield"), (tf, idx) => tf.value === ""
     ).length === 0;
     const encodeRow = row => Array.prototype.map.call(row.querySelectorAll("wl-textfield"), tf => tf.value).join(":");
 
-    return Array.prototype.filter.call(rows, row => valid(row)).map(row => encodeRow(row)).join(",");
+    return Array.prototype.filter.call(rows, row => nonempty(row)).map(row => encodeRow(row)).join(",");
   }
 
   /**
    * Modify backend.ai service ports.
    */
   modifyServicePort() {
-    const value = this._parseServicePort();
-    const image = this.images[this.selectedIndex];
-    globalThis.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
-      .then(({result}) => {
-        if (result === "ok") {
-          this.notification.text = _text("environment.DescServicePortModified");
-        } else {
-          this.notification.text = _text("dialog.ErrorOccurred");
-        }
-        this._getImages();
-        this.requestUpdate();
-        this._clearRows();
-        this.notification.show();
-        this._hideDialogById("#modify-app-dialog");
-      })
+    if (this._isServicePortValid()) {
+      const value = this._parseServicePort();
+      const image = this.images[this.selectedIndex];
+      this.servicePortsMsg = '';
+      globalThis.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
+        .then(({result}) => {
+          if (result === "ok") {
+            this.notification.text = _text("environment.DescServicePortModified");
+          } else {
+            this.notification.text = _text("dialog.ErrorOccurred");
+          }
+          this._getImages();
+          this.requestUpdate();
+          this._clearRows();
+          this.notification.show();
+          this._hideDialogById("#modify-app-dialog");
+        })
+    }
   }
 
   /**
@@ -905,6 +962,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <wl-icon>add</wl-icon>
             </wl-button>
           </div>
+          <span style="color:red;">${this.servicePortsMsg}</span>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
