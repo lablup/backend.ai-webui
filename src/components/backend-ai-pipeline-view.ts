@@ -60,6 +60,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import {default as PainKiller} from './backend-ai-painkiller';
+import './backend-ai-dialog';
 import './backend-ai-session-list';
 import './lablup-codemirror';
 import './lablup-loading-spinner';
@@ -138,33 +139,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        wl-card h4 {
-          padding: 5px 20px;
-          border-bottom: 1px solid #dddddd;
-          font-weight: 100;
-        }
-
-        wl-card h3.tab {
-          padding-top: 0;
-          padding-bottom: 0;
-          padding-left: 0;
-        }
-
         .indicator {
           font-family: monospace;
-        }
-
-        wl-button.button {
-          --button-bg: var(--paper-blue-50);
-          --button-bg-hover: var(--paper-blue-100);
-          --button-bg-active: var(--paper-blue-600);
-        }
-
-        wl-button.launch-button {
-          width: 335px;
-          --button-bg: var(--paper-blue-50);
-          --button-bg-hover: var(--paper-blue-100);
-          --button-bg-active: var(--paper-blue-600);
         }
 
         #exp-sidebar {
@@ -175,7 +151,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
         .pipeline-item,
         .sidebar-item {
-          max-width: 350px;
+          max-width: 300px;
         }
 
         mwc-select {
@@ -244,19 +220,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
           --mdc-menu-item-height: 35px;
         }
 
-        #pipeline-create-dialog {
-          --dialog-max-width: 500px;
-          --dialog-max-height: 800px;
-        }
-
-        #component-add-dialog {
-          --dialog-max-width: 500px;
-        }
-
-        #pipeline-component-list wl-list-item {
-          height: 80px;
-        }
-
         .pipeline-item,
         .sidebar-item {
           cursor: pointer;
@@ -267,10 +230,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
           --dialog-max-width: calc(100vw - 200px);
           --dialog-min-height: calc(100vh - 100px);
           --dialog-max-height: calc(100vh - 100px);
-        }
-
-        #codemirror-dialog wl-button {
-          margin-left: 5px;
         }
       `];
   }
@@ -1010,7 +969,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     const dialog = this.shadowRoot.querySelector('#codemirror-dialog');
     const editor = this.shadowRoot.querySelector('#codemirror-editor');
     editor.setValue(code);
-    dialog.querySelector('div[slot="header"]').textContent = component.title;
+    dialog.querySelector('span[slot="title"]').textContent = component.title;
     dialog.show();
     this.indicator.hide();
   }
@@ -1240,6 +1199,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
       <div style="margin:20px">
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
@@ -1267,34 +1227,27 @@ export default class BackendAIPipelineView extends BackendAIPage {
                   <div id="exp-sidebar">
                     <h4>Pipeline</h4>
                     ${this.pipelineFolderList.map((item) => html`
-                      <wl-list-item class="pipeline-item" @click=${this._selectPipeline}
-                          ?active="${item.name === this.pipelineFolderName}"
+                      <mwc-list-item class="pipeline-item" twoline graphic="icon"
+                          @click="${this._selectPipeline}"
+                          ?selected="${item.name === this.pipelineFolderName}"
                           folder-id="${item.id}" folder-name="${item.name}" folder-host="${item.host}">
-                        <mwc-icon icon="tune" slot="before"></mwc-icon>
-                        <wl-title level="4" style="margin: 0">${item.config.title}</wl-title>
-                        <span style="font-size: 11px;">${item.config.description}</span>
-                      </wl-list-item>
+                        <i class="fas fa-stream" slot="graphic"></i>
+                        <span>${item.config.title}</span>
+                        <span slot="secondary">${item.config.description}</span>
+                      </mwc-list-item>
                     `)}
-                    ${this.pipelineFolderList.length < 1 ? html`<wl-list-item>No pipeline.</wl-list-item>` : ''}
+                    ${this.pipelineFolderList.length < 1 ? html`<mwc-list-item>No pipeline.</mwc-list-item>` : ''}
                     <h4>Templates</h4>
-                    <wl-list-item class="sidebar-item" disabled>
-                      <mwc-icon icon="tune" slot="before"></mwc-icon>
-                        <span slot="after">5<br/><span style="font-size:9px">components</span></span>
-                        <wl-title level="4" style="margin: 0">MNIST (PyTorch)</wl-title>
-                        <span style="font-size: 11px;">Basic experiment example using PyTorch</span>
-                    </wl-list-item>
-                    <wl-list-item class="sidebar-item" disabled>
-                      <mwc-icon icon="tune" slot="before"></mwc-icon>
-                        <span slot="after">4<br/><span style="font-size:9px">components</span></span>
-                        <wl-title level="4" style="margin: 0">Fashion MNIST (TensorFlow)</wl-title>
-                        <span style="font-size: 11px;">Basic experiment example using TensorFlow</span>
-                    </wl-list-item>
-                    <wl-list-item class="sidebar-item" disabled>
-                      <mwc-icon icon="tune" slot="before"></mwc-icon>
-                        <span slot="after">4<br/><span style="font-size:9px">components</span></span>
-                        <wl-title level="4" style="margin: 0">Chicago Taxi (TensorFlow)</wl-title>
-                        <span style="font-size: 11px;">Basic example for Pipeline</span>
-                    </wl-list-item>
+                    <mwc-list-item class="sidebar-item" twoline graphic="icon" disabled>
+                      <i class="fas fa-stream" slot="graphic"></i>
+                      <span>MNIST (PyTorch)</span>
+                      <span slot="secondary">Basic experiment example using PyTorch</span>
+                    </mwc-list-item>
+                    <mwc-list-item class="sidebar-item" twoline graphic="icon" disabled>
+                      <i class="fas fa-stream" slot="graphic"></i>
+                      <span>Chicago Taxi (TensorFlow)</span>
+                      <span slot="secondary">Basic example for pipeline</span>
+                    </mwc-list-item>
                   </div>
                   <div class="layout vertical flex">
                     <div class="layout vertical" style="padding:5px 20px">
@@ -1354,18 +1307,16 @@ export default class BackendAIPipelineView extends BackendAIPage {
                         </wl-list-item>
                       `)}
                     </div>
-                    <div class="layout horizontal end-justified">
+                    <div class="layout horizontal end-justified" style="margin-bottom:1em">
                       ${this.pipelineComponents.length < 1 ? html`
-                        <wl-list-item>No components.</wl-list-item>
+                        <mwc-list-item>No components.</mwc-list-item>
                       ` : html`
-                        <wl-button class="fg blue button" id="save-pipeline-button" outlined
-                            @click="${this._savePipeline}" style="margin: 0 1em">
-                          Save pipeline components
-                        </wl-button>
-                        <wl-button class="fg blue button" id="run-pipeline-button" outlined
-                            @click="${this._runPipeline}" style="margin: 0 1em">
-                          Run pipeline
-                        </wl-button>
+                        <mwc-button id="save-pipeline-button"
+                            label="Save pipeline components"
+                            @click="${this._savePipeline}"></mwc-button>
+                        <mwc-button unelevated id="run-pipeline-button"
+                            label="Run pipeline"
+                            @click="${this._runPipeline}"></mwc-button>
                       `}
                     </div>
                   </div>
@@ -1382,16 +1333,16 @@ export default class BackendAIPipelineView extends BackendAIPage {
         </lablup-activity-panel>
       </div>
 
-      <wl-dialog id="pipeline-create-dialog" fixed blockscrolling backdrop>
-        <div slot="header">${this.pipelineCreateMode === 'create' ? 'Create' : 'Update'} pipeline config</div>
-        <div slot="content">
+      <backend-ai-dialog id="pipeline-create-dialog" fixed backdrop>
+        <span slot="title">${this.pipelineCreateMode === 'create' ? 'Create' : 'Update'} pipeline config</span>
+        <div slot="content" class="layout vertical" style="width:450px">
           <mwc-textfield id="pipeline-title" type="text" autofocus
               label="Pipeline title" maxLength="30">
           </mwc-textfield>
           <mwc-textfield id="pipeline-description" type="text"
               label="Pipeline description" maxLength="200">
           </mwc-textfield>
-          <mwc-select id="pipeline-environment" label="Environments" fullwidth>
+          <mwc-select id="pipeline-environment" label="Environments">
             <mwc-list-item style="display:none;" value="None">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
             ${this.languages.map((item) => html`
               <mwc-list-item id="${item.name}" value="${item.name}"
@@ -1405,36 +1356,40 @@ export default class BackendAIPipelineView extends BackendAIPage {
               </mwc-list-item>
             `)}
           </mwc-select>
-          <mwc-select id="pipeline-environment-tag" label="Version" fullwidth>
+          <mwc-select id="pipeline-environment-tag" label="Version">
             <mwc-list-item style="display:none"></mwc-list-item>
             ${this.versions.map((item, idx) => html`
               <mwc-list-item id="${item}" value="${item}"
                   ?selected="${idx === 0}">${item}</mwc-list-item>
             `)}
           </mwc-select>
-          <mwc-select id="pipeline-scaling-group" label="Resource Group" fullwidth>
+          <mwc-select id="pipeline-scaling-group" label="${_t('session.launcher.OwnerResourceGroup')}">
             ${this.scalingGroups.map((item) => html`
               <mwc-list-item id="${item.name}" value="${item.name}"
-                ?selected="${item.name === this.scalingGroup}">${item.name}</mwc-list-item>
+                  ?selected="${item.name === this.scalingGroup}">
+                ${item.name}
+              </mwc-list-item>
             `)}
           </mwc-select>
-          <mwc-select id="pipeline-folder-host" label="Folder host" fullwidth>
+          <mwc-select id="pipeline-folder-host" label="Folder host">
             ${this.vhosts.map((item, idx) => html`
               <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
             `)}
           </mwc-select>
         </div>
-        <div slot="footer">
-          <wl-button inverted flat id="" @click="${this._hidePipelineCreateDialog}">Cancel</wl-button>
-          <wl-button type="submit" id="create-pipeline-button" @click="${this._createPipeline}">
-            ${this.pipelineCreateMode === 'create' ? 'Create' : 'Update'}
-          </wl-button>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <div class="flex"></div>
+          <mwc-button label="${_t("button.Cancel")}"
+              @click="${this._hidePipelineCreateDialog}"></mwc-button>
+          <mwc-button unelevated
+              label="${this.pipelineCreateMode === 'create' ? _t('button.Create') : _t('button.Update')}"
+              @click="${this._createPipeline}"></mwc-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
 
-      <wl-dialog id="component-add-dialog" fixed blockscrolling backdrop>
-        <div slot="header">${this.componentCreateMode === 'create' ? 'Add' : 'Update'} component</div>
-        <div slot="content">
+      <backend-ai-dialog id="component-add-dialog" fixed backdrop>
+        <span slot="title">${this.componentCreateMode === 'create' ? 'Add' : 'Update'} component</span>
+        <div slot="content" class="layout verticlal" style="width:450px">
           <mwc-textfield id="component-title" type="text" autofocus
               label="Component title" maxLength="30"></mwc-textfield>
           <mwc-textfield id="component-description" type="text"
@@ -1447,37 +1402,47 @@ export default class BackendAIPipelineView extends BackendAIPage {
             <mwc-textfield id="component-gpu" label="GPU" type="number" value="0" min="0"></mwc-textfield>
           </div>
         </div>
-        <div slot="footer">
-          <wl-button inverted flat id="" @click="${this._hideComponentAddDialog}">Cancel</wl-button>
-          <wl-button type="submit" id="add-component-button" @click="${this._addComponent}">
-            ${this.componentCreateMode === 'create' ? 'Add' : 'Update'}
-          </wl-button>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <div class="flex"></div>
+          <mwc-button label="${_t('button.Cancel')}"
+              @click="${this._hideComponentAddDialog}"></mwc-button>
+          <mwc-button unelevated
+              label="${this.componentCreateMode === 'create' ? _t('button.Add') : _t('button.Update')}"
+              @click="${this._addComponent}"></mwc-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
 
-      <wl-dialog id="codemirror-dialog" fixed backdrop scrollable blockScrolling persistent>
-        <div slot="header"></div>
-        <div slot="content">
+      <backend-ai-dialog id="codemirror-dialog" fixed backdrop scrollable blockScrolling persistent>
+        <span slot="title"></span>
+        <div slot="content" class="layout vertical">
           <lablup-codemirror id="codemirror-editor" mode="python"></lablup-codemirror>
         </div>
-        <div slot="footer">
-          <wl-button inverted flat id="discard-code" @click="${this._hideCodeDialog}">Close without save</wl-button>
-          <wl-button id="save-code-and-close" @click="${this._saveCodeAndCloseDialog}">Save and close</wl-button>
-          <wl-button id="save-code" @click="${this._saveCode}">Save</wl-button>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <div class="flex"></div>
+          <mwc-button label="Close without save"
+              @click="${this._hideCodeDialog}"></mwc-button>
+          <mwc-button label="Save and close"
+              @click="${this._saveCodeAndCloseDialog}"></mwc-button>
+          <mwc-button unelevated
+              label="${_t('button.Save')}"
+              @click="${this._saveCode}"></mwc-button>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
 
-      <wl-dialog id="component-delete-dialog" fixed backdrop blockscrolling>
-         <wl-title level="3" slot="header">Delete component?</wl-title>
-         <div slot="content">
-            <p>This action cannot be undone. Do you want to proceed?</p>
-         </div>
-         <div slot="footer">
-            <wl-button class="cancel" inverted flat @click="${this._hideComponentDeleteDialog}">
-              Cancel</wl-button>
-            <wl-button class="ok" @click="${this._deleteComponent}">Delete</wl-button>
-         </div>
-      </wl-dialog>
+      <backend-ai-dialog id="component-delete-dialog" fixed backdrop blockscrolling>
+        <span slot="title">Delete component?</span>
+        <div slot="content" class="layout vertical">
+          <p>This action cannot be undone. Do you want to proceed?</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <div class="flex"></div>
+          <mwc-button label="${_t('button.Cancel')}"
+              @click="${this._hideComponentDeleteDialog}"></mwc-button>
+          <mwc-button unelevated
+              label="${_t('button.Delete')}"
+              @click="${this._deleteComponent}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
 
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
     `;
