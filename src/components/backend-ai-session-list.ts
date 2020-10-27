@@ -1583,7 +1583,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       <backend-ai-dialog id="terminate-session-dialog" fixed backdrop>
          <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
-            <p>${_t("session.CheckAgainDialog")}</p>
+            <p>${_t("usersettings.SessionTerminationDialog")}</p>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout">
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
@@ -1593,7 +1593,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
          <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
-            <p>${_t("session.TerminatingSessionDialog")} ${_t("session.CheckAgainDialog")}</p>
+            <p>${_t("usersettings.TerminatingSessionDialog")} ${_t("session.SessionTerminationDialog")}</p>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout">
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>

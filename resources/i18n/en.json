@@ -498,6 +498,7 @@
     "SSHKeypairManagement": "SSH Keypair Management",
     "DescSSHKeypairManagement": "Refresh SSH Keypair already exists or generate SSH Keypair by random.",
     "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
+    "SessionTerminationDialog": "Session termination cannot be undone. Do you want to proceed to terminate the session?",
     "CurrentSSHPublicKey": "Current public key: ",
     "SSHKeypairGeneration": "SSH Keypair Generation",
     "SSHKeypairGenerationWarning": "You cannot get private key again. Store on your local disk if needed.",
