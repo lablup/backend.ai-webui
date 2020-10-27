@@ -1641,10 +1641,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _updateSessionPage(e) {
     let page_action = e.target;
-    if (page_action['role'] !== 'button') {
-      page_action = e.target.closest('wl-button');
-    }
-
+    
     if (page_action.id === 'previous-page') {
       this.current_page -= 1;
     } else {
