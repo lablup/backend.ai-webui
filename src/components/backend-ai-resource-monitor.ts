@@ -364,6 +364,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         .vertical-card > #resource-gauges > .monitor > .resource-name {
           width: 60px;
         }
+
+        .horizontal-card > #resource-gauges > .monitor {
+          width: 180px;
+        }
       `];
   }
 
@@ -669,18 +673,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   _changeProgressbar() {
     const currentCPU = this.used_resource_group_slot.cpu + '/' + this.total_resource_group_slot.cpu;
     const currentMem = this.used_resource_group_slot.mem + '/' + this.total_resource_group_slot.mem + 'GB';
-    let currentGPU;
-    let currentFGPU;
-    let currentROCM;
-    let currentTPU;
     const sessionLimit = this.concurrency_max === 1000000 ? '∞' : this.concurrency_max;
     const currentSession = this.concurrency_used + '/' + sessionLimit;
     const userCPU = this.used_slot.cpu + '/' + this.total_slot.cpu;
     const userMem = this.used_slot.mem + '/' + this.total_slot.mem + 'GB';
-    let userGPU;
-    let userFGPU;
-    let userROCM;
-    let userTPU;
 
     this.shadowRoot.querySelector('#cpu-usage-bar').change(this.used_resource_group_slot_percent.cpu, currentCPU);
     this.shadowRoot.querySelector('#cpu-usage-bar-2').change(this.used_slot_percent.cpu, userCPU);
@@ -688,28 +684,28 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.shadowRoot.querySelector('#mem-usage-bar-2').change(this.used_slot_percent.mem, userMem);
     this.shadowRoot.querySelector('#concurrency-usage-bar').change(this.used_slot_percent.concurrency, currentSession);
     if (this.total_slot.cuda_device) {
-      currentGPU = this.used_resource_group_slot.cuda_device + '/' + this.total_resource_group_slot.cuda_device;
-      userGPU = this.used_slot.cuda_device + '/' + this.total_resource_group_slot.cuda_device;
+      let currentGPU = this.used_resource_group_slot.cuda_device + '/' + this.total_resource_group_slot.cuda_device;
+      let userGPU = this.used_slot.cuda_device + '/' + this.total_resource_group_slot.cuda_device;
       this.shadowRoot.querySelector('#gpu-usage-bar').change(this.used_resource_group_slot_percent.cuda_device, currentGPU);
       this.shadowRoot.querySelector('#gpu-usage-bar-2').change(this.used_slot_percent.cuda_device, userGPU);
     }
     if ((this.total_slot.cuda_shares) && (this.total_slot.cuda_shares > 0)) {
-      currentFGPU = this.used_resource_group_slot.cuda_shares + '/' + this.total_resource_group_slot.cuda_shares;
-      userFGPU = this.used_slot.cuda_shares + '/' + this.total_resource_group_slot.cuda_shares;
+      let currentFGPU = this.used_resource_group_slot.cuda_shares + '/' + this.total_resource_group_slot.cuda_shares;
+      let userFGPU = this.used_slot.cuda_shares + '/' + this.total_resource_group_slot.cuda_shares;
       this.shadowRoot.querySelector('#fgpu-usage-bar').change(this.used_resource_group_slot_percent.cuda_shares, currentFGPU);
       this.shadowRoot.querySelector('#fgpu-usage-bar-2').change(this.used_slot_percent.cuda_shares, userFGPU);
     }
     if (this.total_slot.rocm_device_slot) {
-      currentROCM = this.used_resource_group_slot.rocm_device_slot + '/' + this.total_resource_group_slot.rocm_device_slot;
-      userROCM = this.used_slot.rocm_device_slot + '/' + this.total_resource_group_slot.rocm_device_slot;
-      this.shadowRoot.querySelector('#rocm-gpu-usage-bar').change(this.used_resource_group_slot_percent.rocm_device_slot, currentGPU);
-      this.shadowRoot.querySelector('#rocm-gpu-usage-bar-2').change(this.used_slot_percent.rocm_device_slot, userGPU);
+      let currentROCM = this.used_resource_group_slot.rocm_device_slot + '/' + this.total_resource_group_slot.rocm_device_slot;
+      let userROCM = this.used_slot.rocm_device_slot + '/' + this.total_resource_group_slot.rocm_device_slot;
+      this.shadowRoot.querySelector('#rocm-gpu-usage-bar').change(this.used_resource_group_slot_percent.rocm_device_slot, currentROCM);
+      this.shadowRoot.querySelector('#rocm-gpu-usage-bar-2').change(this.used_slot_percent.rocm_device_slot, userROCM);
     }
     if (this.total_slot.tpu_device_slot) {
-      currentTPU = this.used_resource_group_slot.tpu_device_slot + '/' + this.total_resource_group_slot.tpu_device_slot;
-      userTPU = this.used_slot.tpu_device_slot + '/' + this.total_resource_group_slot.tpu_device_slot;
-      this.shadowRoot.querySelector('#tpu-usage-bar').change(this.used_resource_group_slot_percent.tpu_device_slot, currentGPU);
-      this.shadowRoot.querySelector('#tpu-usage-bar-2').change(this.used_slot_percent.tpu_device_slot, userGPU);
+      let currentTPU = this.used_resource_group_slot.tpu_device_slot + '/' + this.total_resource_group_slot.tpu_device_slot;
+      let userTPU = this.used_slot.tpu_device_slot + '/' + this.total_resource_group_slot.tpu_device_slot;
+      this.shadowRoot.querySelector('#tpu-usage-bar').change(this.used_resource_group_slot_percent.tpu_device_slot, currentTPU);
+      this.shadowRoot.querySelector('#tpu-usage-bar-2').change(this.used_slot_percent.tpu_device_slot, userTPU);
     }
   }
 
@@ -794,7 +790,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">GPU</span>
             </div>
-            <div class="layout vertical center-justified wrap short-indicator">
+            <div class="layout vertical center-justified wrap">
               <lablup-progress-bar id="gpu-usage-bar" class="start"></lablup-progress-bar>
               <lablup-progress-bar id="gpu-usage-bar-2" class="end"></lablup-progress-bar>
               <!--<div class="progress-bar">
@@ -812,14 +808,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>` :
       html``}
-          ${this.total_slot.cuda_shares && this.total_slot.cuda_shares > 0 ?
+          ${ ((this.resourceBroker.total_slot.cuda_shares) && (this.resourceBroker.total_slot.cuda_shares > 0)) ?
       html`
           <div class="resource-line"></div>
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">FGPU</span>
             </div>
-            <div class="layout vertical start-justified wrap short-indicator">
+            <div class="layout vertical start-justified wrap">
               <lablup-progress-bar id="fgpu-usage-bar" class="start"></lablup-progress-bar>
               <lablup-progress-bar id="fgpu-usage-bar-2" class="end"></lablup-progress-bar>
               <!--<div class="progress-bar">
@@ -845,7 +841,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <img class="resource-type-icon fg green" src="/resources/icons/ROCm.png" />
               <span class="gauge-name">ROCm<br/>GPU</span>
             </div>
-            <div class="layout vertical center-justified wrap short-indicator">
+            <div class="layout vertical center-justified wrap">
             <lablup-progress-bar id="rocm-gpu-usage-bar" class="start"></lablup-progress-bar>
             <lablup-progress-bar id="rocm-gpu-usage-bar-2" class="end"></lablup-progress-bar>
               <!--<div class="progress-bar">
@@ -890,7 +886,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html``}
           <div class="resource-line"></div>
           <div class="layout horizontal center-justified monitor session">
-            <div class="layout vertical center center-justified resource-name">
+            <div class="layout vertical start start-justified resource-name">
               <span class="gauge-name">${_t('session.launcher.Sessions')}</span>
             </div>
             <div class="layout vertical start-justified flex">
@@ -901,7 +897,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 <mwc-linear-progress class="short full-bar" id="concurrency-usage-bar" progress="${this.used_slot_percent.concurrency / 100.0}"></mwc-linear-progress>
               </div>-->
             </div>
-            <div class="layout vertical center center-justified">
+            <div class="layout vertical start start-justified">
               <span class="percentage end-bar">${parseInt(this.used_slot_percent.concurrency) + '%'}</span>
             </div>
           </div>
