@@ -629,9 +629,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.used_slot_percent = this.resourceBroker.used_slot_percent;
       this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
       //this.requestUpdate();
-      this._changeProgressbar();
       return Promise.resolve(true);
       //return this.available_slot;
+    }).then(() => {
+      this._changeProgressbar();
     }).catch(err => {
       if (err && err.message) {
         console.log(err);
