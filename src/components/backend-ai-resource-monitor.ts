@@ -680,6 +680,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
     });
   }
+  _numberWithPostfix(str, postfix) {
+    if (isNaN(parseInt(str))) {
+      return '';
+    } else {
+      return parseInt(str) + postfix;
+    }
+  }
 
   render() {
     // language=HTML
@@ -714,8 +721,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 description="${this.used_slot.cpu}/${this.total_slot.cpu}"></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">
-              <span class="percentage start-bar">${parseInt(this.used_resource_group_slot_percent.cpu) + '%'}</span>
-              <span class="percentage end-bar">${parseInt(this.used_slot_percent.cpu) + '%'}</span>
+              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.cpu,'%')}</span>
+              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.cpu,'%')}</span>
             </div>
           </div>
           <div class="resource-line"></div>
@@ -733,8 +740,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               ></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">
-              <span class="percentage start-bar">${parseInt(this.used_resource_group_slot_percent.mem) + '%'}</span>
-              <span class="percentage end-bar">${parseInt(this.used_slot_percent.mem) + '%'}</span>
+              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.mem, '%')}</span>
+              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.mem, '%')}</span>
             </div>
           </div>
           ${this.total_slot.cuda_device ?
@@ -755,8 +762,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               ></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">
-              <span class="percentage start-bar">${parseInt(this.used_resource_group_slot_percent.cuda_device) + '%'}</span>
-              <span class="percentage end-bar">${parseInt(this.used_slot_percent.cuda_device) + '%'}</span>
+              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.cuda_device, '%')}</span>
+              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.cuda_device, '%')}</span>
             </div>
           </div>` :
       html``}
@@ -778,8 +785,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               ></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">
-              <span class="percentage start-bar">${parseInt(this.used_resource_group_slot_percent.cuda_shares) + '%'}</span>
-              <span class="percentage end-bar">${parseInt(this.used_slot_percent.cuda_shares) + '%'}</span>
+              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.cuda_shares,  '%')}</span>
+              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.cuda_shares, '%')}</span>
             </div>
           </div>` :
       html``}
@@ -802,8 +809,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             ></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">
-              <span class="percentage start-bar">${parseInt(this.used_resource_group_slot_percent.rocm_device_slot) + '%'}</span>
-              <span class="percentage end-bar">${parseInt(this.used_slot_percent.rocm_device_slot) + '%'}</span>
+              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.rocm_device_slot,'%')}</span>
+              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.rocm_device_slot, '%')}</span>
             </div>
           </div>` :
       html``}
@@ -825,8 +832,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               ></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">
-              <span class="percentage start-bar">${parseInt(this.used_resource_group_slot_percent.tpu_device_slot) + '%'}</span>
-              <span class="percentage end-bar">${parseInt(this.used_slot_percent.tpu_device_slot) + '%'}</span>
+              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.tpu_device_slot, '%')}</span>
+              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.tpu_device_slot, '%')}</span>
             </div>
           </div>` :
       html``}
@@ -842,7 +849,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 ></lablup-progress-bar>
             </div>
             <div class="layout vertical start start-justified">
-              <span class="percentage end-bar">${parseInt(this.used_slot_percent.concurrency) + '%'}</span>
+              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.concurrency, '%')}</span>
             </div>
           </div>
         </div>
@@ -876,8 +883,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 progress="${this.used_project_slot_percent.cpu / 100.0}"
                 description="${this.used_project_slot.cpu}/${this.total_project_slot.cpu === Infinity ? '∞' : this.total_project_slot.cpu}"></lablup-progress-bar>
               <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.cpu) + '%'}</span>
-                <span class="percentage end-bar">${parseInt(this.total_project_slot.cpu) + '%'}</span>
+                <span class="percentage start-bar">${this._numberWithPostfix(this.used_project_slot_percent.cpu, '%')}</span>
+                <span class="percentage end-bar">${this._numberWithPostfix(this.total_project_slot.cpu, '%')}</span>
               </div>
             </div>
             <div class="layout horizontal">
@@ -887,8 +894,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 description=">${this.used_project_slot.mem}/${this.total_project_slot.mem === Infinity ? '∞' : this.total_project_slot.mem}"
               ></lablup-progress-bar>
               <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.mem) + '%'}</span>
-                <span class="percentage end-bar">${parseInt(this.total_project_slot.mem) + '%'}</span>
+                <span class="percentage start-bar">${this._numberWithPostfix(this.used_project_slot_percent.mem, '%')}</span>
+                <span class="percentage end-bar">${this._numberWithPostfix(this.total_project_slot.mem, '%')}</span>
               </div>
             </div>
             ${this.total_project_slot.cuda_device ? html`
@@ -899,8 +906,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 description="${this.used_project_slot.cuda_device}/${this.total_project_slot.cuda_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}"
               ></lablup-progress-bar>
               <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.cuda_device) + '%'}</span>
-                <span class="percentage end-bar">${parseInt(this.total_project_slot.cuda_device) + '%'}</span>
+                <span class="percentage start-bar">${this._numberWithPostfix(this.used_project_slot_percent.cuda_device, '%')}</span>
+                <span class="percentage end-bar">${this._numberWithPostfix(this.total_project_slot.cuda_device, '%')}</span>
               </div>
             </div>` : html``}
             ${this.total_project_slot.cuda_shares ? html`
@@ -911,8 +918,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 description="${this.used_project_slot.cuda_shares}/${this.total_project_slot.cuda_shares === 'Infinity' ? '∞' : this.total_project_slot.cuda_shares}"
               ></lablup-progress-bar>
               <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.cuda_shares) + '%'}</span>
-                <span class="percentage end-bar">${parseInt(this.total_project_slot.cuda_shares) + '%'}</span>
+                <span class="percentage start-bar">${this._numberWithPostfix(this.used_project_slot_percent.cuda_shares, '%')}</span>
+                <span class="percentage end-bar">${this._numberWithPostfix(this.total_project_slot.cuda_shares, '%')}</span>
               </div>
             </div>` : html``}
             ${this.total_project_slot.rocm_device ? html`
@@ -923,8 +930,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 description="${this.used_project_slot.rocm_device}/${this.total_project_slot.rocm_device === 'Infinity' ? '∞' : this.total_project_slot.rocm_device}"
               ></lablup-progress-bar>
               <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.rocm_device) + '%'}</span>
-                <span class="percentage end-bar">${parseInt(this.total_project_slot.rocm_device) + '%'}</span>
+                <span class="percentage start-bar">${this._numberWithPostfix(this.used_project_slot_percent.rocm_device, '%')}</span>
+                <span class="percentage end-bar">${this._numberWithPostfix(this.total_project_slot.rocm_device, '%')}</span>
               </div>
             </div>` : html``}
             ${this.total_project_slot.tpu_device ? html`
@@ -935,8 +942,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 description="${this.used_project_slot.tpu_device}/${this.total_project_slot.tpu_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}"
               ></lablup-progress-bar>
               <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.tpu_device) + '%'}</span>
-                <span class="percentage end-bar">${parseInt(this.total_project_slot.tpu_device) + '%'}</span>
+                <span class="percentage start-bar">${this._numberWithPostfix(this.used_project_slot_percent.tpu_device, '%')}</span>
+                <span class="percentage end-bar">${this._numberWithPostfix(this.total_project_slot.tpu_device, '%')}</span>
               </div>
             </div>` : html``}
           </div>
