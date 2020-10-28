@@ -1855,7 +1855,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <wl-checkbox id="use-gpu-checkbox">${_t("session.launcher.UseGPU")}</wl-checkbox>
           </div>
           <div class="horizontal center layout">
-            <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required naturalMenuWidth
+            <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required
                         @selected="${(e) => this.updateScalingGroup(false, e)}">
               ${this.scaling_groups.map(item => html`
                 <mwc-list-item class="scaling-group-dropdown"
