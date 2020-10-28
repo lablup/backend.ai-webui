@@ -169,6 +169,11 @@ export default class BackendAIImport extends BackendAIPage {
     let url = this.shadowRoot.querySelector("#github-repo-url").value;
     let tree = 'master';
     let name = '';
+    // if contains .git extension, then remove it.
+    if (url.substring(url.length - 4, url.length) === '.git') {
+      url = url.split('.git')[0];
+    }
+
     if (url.includes('/tree')) { // Branch.
       let version = (/\/tree\/[.a-zA-Z.0-9_-]+/.exec(url) || [''])[0];
       let nameWithVersion = (/\/[.a-zA-Z0-9_-]+\/tree\//.exec(url) || [''])[0];
@@ -200,6 +205,7 @@ export default class BackendAIImport extends BackendAIPage {
     imageResource['group_name'] = globalThis.backendaiclient.current_group;
     let indicator = await this.indicator.start('indeterminate');
     indicator.set(10, _text('import.Preparing'));
+    folderName = await this._checkFolderNameAlreadyExists(folderName);
     await this._addFolderWithName(folderName);
     indicator.set(20, _text('import.FolderCreated'));
     imageResource['mounts'] = [folderName];
@@ -227,7 +233,20 @@ export default class BackendAIImport extends BackendAIPage {
     let group = ''; // user ownership
     let vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
     let host = vhost_info.default;
+    name = await this._checkFolderNameAlreadyExists(name);
+    return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
+      this.importMessage = _text('import.FolderName') + name;
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+  }
 
+  async _checkFolderNameAlreadyExists(name) {
     let vfolderObj = await globalThis.backendaiclient.vfolder.list();
     let vfolders = vfolderObj.map(function (value) {
       return value.name;
@@ -244,16 +263,7 @@ export default class BackendAIImport extends BackendAIPage {
       }
       name = newName;
     }
-    return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
-      this.importMessage = _text('import.FolderName') + name;
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+    return name;
   }
 
   guessEnvironment(url) {
