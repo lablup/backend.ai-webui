@@ -332,8 +332,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
     this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
-    this._defaultFileName = new Date().toISOString().substring(0, 10) + '_'
-      + new Date().toTimeString().slice(0, 8).replace(/:/gi, '-');
 
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshWorkDialogUI(e));
@@ -1011,6 +1009,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _openExportToCsvDialog() {
+    this._defaultFileName = this._getDefaultCSVFileName();
     this.exportToCsvDialog.show();
   }
 
@@ -1641,7 +1640,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _updateSessionPage(e) {
     let page_action = e.target;
-    
+
     if (page_action.id === 'previous-page') {
       this.current_page -= 1;
     } else {
