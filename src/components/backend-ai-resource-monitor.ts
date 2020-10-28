@@ -894,11 +894,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             ${this.total_project_slot.cuda_device ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <lablup-progress-bar id="gpu-project-usage-bar" class="end"></lablup-progress-bar>
-              <!--<div class="progress-bar">
-                <mwc-linear-progress id="gpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.cuda_device / 100.0}"></mwc-linear-progress>
-                <span class="gauge-label">${this.used_project_slot.cuda_device}/${this.total_project_slot.cuda_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}</span>
-              </div>-->
+              <lablup-progress-bar id="gpu-project-usage-bar" class="end"
+                progress="${this.used_project_slot_percent.cuda_device / 100.0}"
+                description="${this.used_project_slot.cuda_device}/${this.total_project_slot.cuda_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}"
+              ></lablup-progress-bar>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.cuda_device) + '%'}</span>
                 <span class="percentage end-bar">${parseInt(this.total_project_slot.cuda_device) + '%'}</span>
@@ -906,12 +905,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>` : html``}
             ${this.total_project_slot.cuda_shares ? html`
             <div class="layout horizontal">
-              <span style="width:35px;margin-left:5px; margin-right:5px;">fGPU</span>
-              <lablup-progress-bar id="fgpu-project-usage-bar" class="end"></lablup-progress-bar>
-              <!--<div class="progress-bar">
-                <mwc-linear-progress id="fgpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.cuda_shares / 100.0}"></mwc-linear-progress>
-                <span class="gauge-label">${this.used_project_slot.cuda_shares}/${this.total_project_slot.cuda_shares === 'Infinity' ? '∞' : this.total_project_slot.cuda_shares}</span>
-              </div>-->
+              <span style="width:35px;margin-left:5px; margin-right:5px;">FGPU</span>
+              <lablup-progress-bar id="fgpu-project-usage-bar" class="end"
+                progress="${this.used_project_slot_percent.cuda_shares / 100.0}"
+                description="${this.used_project_slot.cuda_shares}/${this.total_project_slot.cuda_shares === 'Infinity' ? '∞' : this.total_project_slot.cuda_shares}"
+              ></lablup-progress-bar>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.cuda_shares) + '%'}</span>
                 <span class="percentage end-bar">${parseInt(this.total_project_slot.cuda_shares) + '%'}</span>
@@ -920,11 +918,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             ${this.total_project_slot.rocm_device ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <lablup-progress-bar id="rocm-project-usage-bar" class="end"></lablup-progress-bar>
-              <!--<div class="progress-bar">
-                <mwc-linear-progress id="rocm-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.rocm_device / 100.0}"></mwc-linear-progress>
-                <span class="gauge-label">${this.used_project_slot.rocm_device}/${this.total_project_slot.rocm_device === 'Infinity' ? '∞' : this.total_project_slot.rocm_device}</span>
-              </div>-->
+              <lablup-progress-bar id="rocm-project-usage-bar" class="end"
+                progress="${this.used_project_slot_percent.rocm_device / 100.0}"
+                description="${this.used_project_slot.rocm_device}/${this.total_project_slot.rocm_device === 'Infinity' ? '∞' : this.total_project_slot.rocm_device}"
+              ></lablup-progress-bar>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.rocm_device) + '%'}</span>
                 <span class="percentage end-bar">${parseInt(this.total_project_slot.rocm_device) + '%'}</span>
@@ -933,11 +930,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             ${this.total_project_slot.tpu_device ? html`
             <div class="layout horizontal">
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
-              <lablup-progress-bar id="tpu-project-usage-bar" class="end"></lablup-progress-bar>
-              <!--<div class="progress-bar">
-                <mwc-linear-progress id="tpu-project-usage-bar" class="end-bar project-bar" progress="${this.used_project_slot_percent.tpu_device / 100.0}"></mwc-linear-progress>
-                <span class="gauge-label">${this.used_project_slot.tpu_device}/${this.total_project_slot.tpu_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}</span>
-              </div>-->
+              <lablup-progress-bar id="tpu-project-usage-bar" class="end"
+                progress="${this.used_project_slot_percent.tpu_device / 100.0}"
+                description="${this.used_project_slot.tpu_device}/${this.total_project_slot.tpu_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}"
+              ></lablup-progress-bar>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${parseInt(this.used_project_slot_percent.tpu_device) + '%'}</span>
                 <span class="percentage end-bar">${parseInt(this.total_project_slot.tpu_device) + '%'}</span>
