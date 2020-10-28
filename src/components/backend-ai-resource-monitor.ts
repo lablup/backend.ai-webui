@@ -678,12 +678,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     const currentSession = this.concurrency_used + '/' + sessionLimit;
     const userCPU = this.used_slot.cpu + '/' + this.total_slot.cpu;
     const userMem = this.used_slot.mem + '/' + this.total_slot.mem + 'GB';
-
-    this.shadowRoot.querySelector('#cpu-usage-bar').change(this.used_resource_group_slot_percent.cpu, currentCPU);
-    this.shadowRoot.querySelector('#cpu-usage-bar-2').change(this.used_slot_percent.cpu, userCPU);
-    this.shadowRoot.querySelector('#mem-usage-bar').change(this.used_resource_group_slot_percent.mem, currentMem);
-    this.shadowRoot.querySelector('#mem-usage-bar-2').change(this.used_slot_percent.mem, userMem);
-    this.shadowRoot.querySelector('#concurrency-usage-bar').change(this.used_slot_percent.concurrency, currentSession);
+    if (typeof this.used_resource_group_slot_percent !== 'undefined') {
+      if ('cpu' in this.used_resource_group_slot_percent) {
+        this.shadowRoot.querySelector('#cpu-usage-bar').change(this.used_resource_group_slot_percent.cpu, currentCPU);
+        this.shadowRoot.querySelector('#cpu-usage-bar-2').change(this.used_slot_percent.cpu, userCPU);
+      }
+      if ('mem' in this.used_resource_group_slot_percent) {
+        this.shadowRoot.querySelector('#mem-usage-bar').change(this.used_resource_group_slot_percent.mem, currentMem);
+        this.shadowRoot.querySelector('#mem-usage-bar-2').change(this.used_slot_percent.mem, userMem);
+      }
+      this.shadowRoot.querySelector('#concurrency-usage-bar').change(this.used_slot_percent.concurrency, currentSession);
+    }
     if (this.total_slot.cuda_device) {
       let currentGPU = this.used_resource_group_slot.cuda_device + '/' + this.total_resource_group_slot.cuda_device;
       let userGPU = this.used_slot.cuda_device + '/' + this.total_resource_group_slot.cuda_device;
