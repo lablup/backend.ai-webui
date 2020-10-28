@@ -32,7 +32,7 @@ export default class LablupProgressBar extends LitElement {
   @property({type: Object}) progressBar;
   @property({type: Object}) frontDesc;
   @property({type: Object}) backDesc;
-  @property({type: Number}) progress = 1;
+  @property({type: Number}) progress = 0;
   @property({type: String}) description = ''
 
   static get styles() {
@@ -106,14 +106,9 @@ export default class LablupProgressBar extends LitElement {
     this.progressBar = this.shadowRoot.querySelector('#front');
     this.frontDesc = this.shadowRoot.querySelector('#front');
     this.backDesc = this.shadowRoot.querySelector('#back');
+    this.progressBar.style.clipPath = 'inset(0 0 0 0%)';
   }
 
-  async change(pct, description='') {
-    await this.updateComplete;
-    this.progressBar.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
-    this.frontDesc.innerHTML = '&nbsp;' + description;
-    this.backDesc.innerHTML = '&nbsp;' + description;
-  }
 
   async changePct(pct) {
     await this.updateComplete;
@@ -142,7 +137,7 @@ export default class LablupProgressBar extends LitElement {
     if (name == 'progress' && newval !== null && !isNaN(newval)) {
       this.changePct(newval);
     }
-    if (name == 'description' && newval !== null) {
+    if (name == 'description' && newval !== null && !newval.startsWith('undefined')) {
       this.changeDesc(newval);
     }
     super.attributeChangedCallback(name, oldval, newval);
