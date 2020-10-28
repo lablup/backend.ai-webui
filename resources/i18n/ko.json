@@ -797,7 +797,7 @@
     "YouCanCreateNotebookCode": "노트북의 주소를 입력하면 어디에서나 Backend.AI로 바로 연결되어 실행할 수 있는 아래와 같은 배지 코드를 만들어 줍니다.",
     "NotebookBadgeURL": "노트북 주소",
     "NotebookBadgeCode": "노트북 배지 코드",
-    "GetAndRunNotebook": "가져와 실행",
+    "GetAndRunNotebook": "가져와서 실행",
     "ImportGithubRepo": "GitHub 저장소 가져오기",
     "GitHubURL": "GitHub 주소",
     "GetToFolder": "가져오기",
