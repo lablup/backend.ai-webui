@@ -282,7 +282,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
           this._refreshAgentInformation(status)
         }, 15000);
       }
-      this._changeProgressbar();
     }).catch(err => {
       this.spinner.hide();
       if (err && err.message) {
@@ -291,46 +290,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
-  }
-
-  _changeProgressbar() {
-    const reservedCPU = this._addComma(this.cpu_used) + '/' + this._addComma(this.cpu_total) + ' ' + _text('summary.CoresReserved') + '.';
-    const reservedMem = this._addComma(this.mem_allocated) + '/' + this._addComma(this.mem_total) + 'GB ' + _text('summary.reserved') + '.';
-    let reservedGPU;
-    let reservedFGPU;
-    let reservedROCM;
-    let reservedTPU;
-    const usingCPU = _text('summary.Using') + this.cpu_total_percent +  '% (util. ' + this.cpu_percent + ' %)';
-    let memUsedPct = parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0';
-    const usingMem = _text('summary.Using') + this._addComma(this.mem_used) + 'GB' + ' (' +  memUsedPct +' %)';
-    this.shadowRoot.querySelector('#cpu-usage-bar').change(this.cpu_total_usage_ratio, reservedCPU);
-    this.shadowRoot.querySelector('#cpu-usage-bar-2').change(this.cpu_current_usage_ratio, usingCPU);
-    this.shadowRoot.querySelector('#mem-usage-bar').change(this.mem_total_usage_ratio, reservedMem);
-    this.shadowRoot.querySelector('#mem-usage-bar-2').change(this.mem_current_usage_ratio, usingMem);
-    if (this.cuda_gpu_total) {
-      reservedGPU = this.cuda_gpu_used + '/' + this.cuda_gpu_total + ' CUDA GPUs ' + _text('summary.reserved') + '.';
-      let gpuPct = this.cuda_gpu_used !== 0 ? this.cuda_gpu_used / this.cuda_gpu_total : 0;
-      this.shadowRoot.querySelector('#gpu-usage-bar').change(gpuPct, reservedGPU);
-      this.shadowRoot.querySelector('#gpu-usage-bar-2').change(gpuPct, _text('summary.FractionalGPUScalingEnabled'));
-    }
-    if (this.cuda_fgpu_total) {
-      reservedFGPU = this.cuda_fgpu_used + '/' + this.cuda_fgpu_total + ' CUDA fGPUs ' + _text('summary.reserved') + '.';
-      let fgpuPct = this.cuda_fgpu_used !== 0 ? this.cuda_fgpu_used / this.cuda_fgpu_total : 0;
-      this.shadowRoot.querySelector('#fgpu-usage-bar').change(fgpuPct, reservedFGPU);
-      this.shadowRoot.querySelector('#fgpu-usage-bar-2').change(fgpuPct, _text('summary.FractionalGPUScalingEnabled'));
-    }
-    if (this.rocm_gpu_total) {
-      reservedROCM = this.rocm_gpu_used + '/' + this.rocm_gpu_total + ' ROCm GPUs ' + _text('summary.reserved') + '.';
-      let rocmPct = this.rocm_gpu_used !== 0 ? this.rocm_gpu_used / 100 : 0
-      this.shadowRoot.querySelector('#rocm-gpu-usage-bar').change(rocmPct, reservedROCM);
-      this.shadowRoot.querySelector('#rocm-gpu-usage-bar-2').change(rocmPct, _text('summary.ROCMGPUEnabled'));
-    }
-    if (this.tpu_total) {
-      reservedTPU = this.tpu_used + '/' + this.tpu_total+ ' TPUs ' + _text('summary.reserved') + '.';
-      let tpuPct = this.tpu_used !== 0 ? this.tpu_used / this.tpu_total : 0;
-      this.shadowRoot.querySelector('#tpu-usage-bar').change(tpuPct, reservedTPU);
-      this.shadowRoot.querySelector('#tpu-usage-bar-2').change(tpuPct, _text('summary.TPUEnabled'));
-    }
   }
 
   _init_resource_values() {
@@ -475,23 +434,14 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                 <div class="gauge-name">CPU</div>
               </div>
               <div class="layout vertical start-justified wrap">
-                <lablup-progress-bar id="cpu-usage-bar" class="start"></lablup-progress-bar>
-                <lablup-progress-bar id="cpu-usage-bar-2" class="end"></lablup-progress-bar>
-                <!--<div class="progress-bar">
-                  <span class="gauge-label">
-                    ${this._addComma(this.cpu_used)}/${this._addComma(this.cpu_total)} ${_t('summary.CoresReserved')}.
-                  </span>
-                  <mwc-linear-progress class="mem-usage-bar start-bar"
-                      progress="${this.cpu_total_usage_ratio / 100.0}"></mwc-linear-progress>
-                </div>-->
-                <!--<div class="progress-bar">
-                  <span class="gauge-label">
-                    ${_t('summary.Using')} ${this.cpu_total_percent} % (util. ${this.cpu_percent} %)
-                  </span>
-                  <mwc-linear-progress class="mem-usage-bar end-bar" id="cpu-usage-bar"
+                <lablup-progress-bar id="cpu-usage-bar" class="start"
+                  progress="${this.cpu_total_usage_ratio / 100.0}"
+                  description="${this._addComma(this.cpu_used)}/${this._addComma(this.cpu_total)} ${_t('summary.CoresReserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="cpu-usage-bar-2" class="end"
                   progress="${this.cpu_current_usage_ratio / 100.0}"
-                  buffer="${this.cpu_current_usage_ratio / 100.0}"></mwc-linear-progress>
-                </div>-->
+                  description="${_t('summary.Using')} ${this.cpu_total_percent} % (util. ${this.cpu_percent} %)"
+                ></lablup-progress-bar>
               </div>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${parseInt(this.cpu_total_percent)+ '%'}</span>
@@ -504,25 +454,15 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                 <div class="gauge-name">RAM</div>
               </div>
               <div class="layout vertical start-justified wrap">
-                <lablup-progress-bar id="mem-usage-bar" class="start"></lablup-progress-bar>
-                <lablup-progress-bar id="mem-usage-bar-2" class="end"></lablup-progress-bar>
-                <!--<div class="progress-bar">
-                  <span class="gauge-label">
-                    ${this._addComma(this.mem_allocated)} / ${this._addComma(this.mem_total)} GB ${_t('summary.reserved')}.
-                  </span>
-
-                  <mwc-linear-progress class="mem-usage-bar start-bar" id="mem-usage-bar"
-                        progress="${this.mem_total_usage_ratio / 100.0}"></mwc-linear-progress>
-                </div>-->
-                <!--<div class="progress-bar">
-                  <span class="gauge-label">
-                    ${_t('summary.Using')} ${this._addComma(this.mem_used)} GB
-                    (${parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0' } %)
-                  </span>
-                  <mwc-linear-progress class="mem-usage-bar end-bar"
+                <lablup-progress-bar id="mem-usage-bar" class="start"
+                  progress="${this.mem_total_usage_ratio / 100.0}"
+                  description="${this._addComma(this.mem_allocated)} / ${this._addComma(this.mem_total)} GB ${_t('summary.reserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="mem-usage-bar-2" class="end"
                   progress="${this.mem_current_usage_ratio / 100.0}"
-                  buffer="${this.mem_current_usage_ratio / 100.0}"></mwc-linear-progress>
-                </div>-->
+                  description="${_t('summary.Using')} ${this._addComma(this.mem_used)} GB
+                    (${parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0' } %)"
+                ></lablup-progress-bar>
               </div>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${this.mem_total_usage_ratio.toFixed(1) + '%'}</span>
@@ -537,22 +477,14 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               </div>
               ${this.cuda_gpu_total ? html`
               <div class="layout vertical start-justified wrap">
-              <lablup-progress-bar id="gpu-usage-bar" class="start"></lablup-progress-bar>
-              <lablup-progress-bar id="gpu-usage-bar-2" class="end"></lablup-progress-bar>
-                <!--<div class="progress-bar">
-                  <span class="gauge-label">
-                    ${this.cuda_gpu_used} / ${this.cuda_gpu_total} CUDA GPUs ${_t('summary.reserved')}.
-                  </span>
-                  <mwc-linear-progress id="gpu-bar"
-                  progress="${this.cuda_gpu_used / this.cuda_gpu_total}"></mwc-linear-progress>
-                </div>-->
-                <!--<div class="progress-bar">
-                  <span class="gauge-label">
-                    ${_t('summary.FractionalGPUScalingEnabled')}.
-                  </span>
-                  <mwc-linear-progress class="mem-usage-bar end-bar"
-                  progress="" buffer=""></mwc-linear-progress>
-                </div>-->
+                <lablup-progress-bar id="gpu-usage-bar" class="start"
+                  progress="${this.cuda_gpu_used / this.cuda_gpu_total}"
+                  description="${this.cuda_gpu_used} / ${this.cuda_gpu_total} CUDA GPUs ${_t('summary.reserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="gpu-usage-bar-2" class="end"
+                  progress="0"
+                  description="${_t('summary.FractionalGPUScalingEnabled')}."
+                ></lablup-progress-bar>
               </div>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${this.cuda_gpu_used !== 0 ? (this.cuda_gpu_used / this.cuda_gpu_total * 100).toFixed(1) : 0}%</span>
@@ -561,22 +493,15 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               `: html``}
               ${this.cuda_fgpu_total ? html`
               <div class="layout vertical start-justified wrap">
-              <lablup-progress-bar id="fgpu-usage-bar" class="start"></lablup-progress-bar>
-              <lablup-progress-bar id="fgpu-usage-bar-2" class="end"></lablup-progress-bar>
-                <!--<div class="progress-bar">
-                  <span class="gauge-label">
-                    ${this.cuda_fgpu_used} / ${this.cuda_fgpu_total} CUDA fGPUs ${_t('summary.reserved')}.
-                  </span>
-                  <mwc-linear-progress id="gpu-bar"
-                  progress="${this.cuda_fgpu_used / this.cuda_fgpu_total}"></mwc-linear-progress>
-                </div>
-                <div class="progress-bar">
-                  <span class="gauge-label">
-                    ${_t('summary.FractionalGPUScalingEnabled')}.
-                  </span>
-                  <mwc-linear-progress class="mem-usage-bar end-bar"
-                  progress="" buffer=""></mwc-linear-progress>
-                </div>-->
+              <lablup-progress-bar id="fgpu-usage-bar" class="start"
+                progress="${this.cuda_fgpu_used / this.cuda_fgpu_total}"
+                description="${this.cuda_fgpu_used} / ${this.cuda_fgpu_total} CUDA fGPUs ${_t('summary.reserved')}."
+              ></lablup-progress-bar>
+              <lablup-progress-bar id="fgpu-usage-bar-2" class="end"
+                progress="0"
+                description="${_t('summary.FractionalGPUScalingEnabled')}."
+              ></lablup-progress-bar>
+
               </div>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${this.cuda_fgpu_used !== 0 ? (this.cuda_fgpu_used / this.cuda_fgpu_total * 100).toFixed(1) : 0}%</span>
@@ -585,25 +510,14 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               `: html``}
               ${this.rocm_gpu_total ? html`
               <div class="layout vertical start-justified wrap">
-              <lablup-progress-bar id="rocm-gpu-usage-bar" class="start"></lablup-progress-bar>
-              <lablup-progress-bar id="rocm-gpu-usage-bar-2" class="end"></lablup-progress-bar>
-                <!--<div class="progress-bar">
-                  <span class="gauge-label">
-                    ${this.rocm_gpu_used} / ${this.rocm_gpu_total} ROCm GPUs ${_t('summary.reserved')}.
-                  </span>
-                  <mwc-linear-progress id="rocm-gpu-bar"
+                <lablup-progress-bar id="rocm-gpu-usage-bar" class="start"
                   progress="${this.rocm_gpu_used / 100.0}"
-                  buffer="${this.rocm_gpu_used / 100.0}"></mwc-linear-progress>
-                </div>-->
-                <!--<div class="progress-bar">
-                  <span class="gauge-label">
-                    ${_t('summary.ROCMGPUEnabled')}.
-                  </span>
-                  <wl-progress-bar class="end-bar" mode="determinate"
-                      value="0"></wl-progress-bar>
-                  <mwc-linear-progress class="mem-usage-bar end-bar"
-                  progress="" buffer=""></mwc-linear-progress>
-                </div>-->
+                  description="${this.rocm_gpu_used} / ${this.rocm_gpu_total} ROCm GPUs ${_t('summary.reserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="rocm-gpu-usage-bar-2" class="end"
+                  progress="0"
+                  description="${_t('summary.ROCMGPUEnabled')}."
+                ></lablup-progress-bar>
               </div>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${this.rocm_gpu_used.toFixed(1) + '%'}</span>
@@ -611,22 +525,14 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               </div>`: html``}
               ${this.tpu_total ? html`
               <div class="layout vertical start-justified wrap">
-              <lablup-progress-bar id="tpu-usage-bar" class="start"></lablup-progress-bar>
-              <lablup-progress-bar id="tpu-usage-bar-2" class="end"></lablup-progress-bar>
-                <!--<div class="progress-bar">
-                  <span class="gauge-label">
-                    ${this.tpu_used} / ${this.tpu_total} TPUs ${_t('summary.reserved')}.
-                  </span>
-                  <mwc-linear-progress id="tpu-bar" progress="${this.tpu_used / 100.0}"
-                  buffer="${this.tpu_used / 100.0}"></mwc-linear-progress>
-                </div>-->
-                <!--<div class="progress-bar">
-                  <span class="gauge-label">
-                    ${_t('summary.TPUEnabled')}.
-                  </span>
-                  <mwc-linear-progress class="mem-usage-bar end-bar"
-                  progress="" buffer=""></mwc-linear-progress>
-                </div>-->
+                <lablup-progress-bar id="tpu-usage-bar" class="start"
+                  progress="${this.tpu_used / 100.0}"
+                  description="${this.tpu_used} / ${this.tpu_total} TPUs ${_t('summary.reserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="tpu-usage-bar-2" class="end"
+                  progress="0"
+                  description="${_t('summary.TPUEnabled')}."
+                ></lablup-progress-bar>
               </div>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${this.tpu_used.toFixed(1) + '%'}</span>
