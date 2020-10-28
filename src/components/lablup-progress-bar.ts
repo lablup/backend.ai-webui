@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, LitElement} from "lit-element";
+import {css, customElement, html, LitElement, property} from "lit-element";
 
 import {
   IronFlex,
@@ -29,6 +29,11 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
 @customElement("lablup-progress-bar")
 export default class LablupProgressBar extends LitElement {
   public shadowRoot: any; // ShadowRoot
+  @property({type: Object}) progressBar;
+  @property({type: Object}) frontDesc;
+  @property({type: Object}) backDesc;
+  @property({type: Number}) progress = 0;
+  @property({type: String}) description = ''
 
   static get styles() {
     return [
@@ -89,8 +94,8 @@ export default class LablupProgressBar extends LitElement {
     <div class="horizontal layout flex">
       <slot name="left-desc"></slot>
       <div class="progress">
-          <div class="back"></div>
-          <div class="front"></div>
+          <div id="back" class="back"></div>
+          <div id="front" class="front"></div>
       </div>
       <slot name="right-desc"></slot>
     </div>
@@ -98,14 +103,29 @@ export default class LablupProgressBar extends LitElement {
   }
 
   firstUpdated() {
+    this.progressBar = this.shadowRoot.querySelector('#front');
+    this.frontDesc = this.shadowRoot.querySelector('#front');
+    this.backDesc = this.shadowRoot.querySelector('#back');
   }
 
-  change(pct, description='') {
-    let progressBar = this.shadowRoot.querySelector('.front');
-    progressBar.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
-    this.shadowRoot.querySelector('.front').innerHTML = '&nbsp;' + description;
-    this.shadowRoot.querySelector('.back').innerHTML = '&nbsp;' + description;
+  async change(pct, description='') {
+    await this.updateComplete;
+    this.progressBar.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
+    this.frontDesc.innerHTML = '&nbsp;' + description;
+    this.backDesc.innerHTML = '&nbsp;' + description;
   }
+
+  async changePct(pct) {
+    await this.updateComplete;
+    this.progressBar.style.clipPath = 'inset(0 0 0 ' + (pct * 100) + '%)';
+  }
+
+  async changeDesc(description) {
+    await this.updateComplete;
+    this.frontDesc.innerHTML = '&nbsp;' + description;
+    this.backDesc.innerHTML = '&nbsp;' + description;
+  }
+
 
   connectedCallback() {
     super.connectedCallback();
@@ -113,6 +133,19 @@ export default class LablupProgressBar extends LitElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
+  }
+
+  updated(changedProperties) {
+  }
+
+  attributeChangedCallback(name, oldval, newval) {
+    if (name == 'progress' && newval !== null && !isNaN(newval)) {
+      this.changePct(newval);
+    }
+    if (name == 'description' && newval !== null) {
+      this.changeDesc(newval);
+    }
+    super.attributeChangedCallback(name, oldval, newval);
   }
 }
 
