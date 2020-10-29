@@ -332,8 +332,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
     this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
-    this._defaultFileName = new Date().toISOString().substring(0, 10) + '_'
-      + new Date().toTimeString().slice(0, 8).replace(/:/gi, '-');
 
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshWorkDialogUI(e));
@@ -1011,6 +1009,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _openExportToCsvDialog() {
+    this._defaultFileName = this._getDefaultCSVFileName();
     this.exportToCsvDialog.show();
   }
 
@@ -1583,7 +1582,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       <backend-ai-dialog id="terminate-session-dialog" fixed backdrop>
          <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
-            <p>${_t("session.CheckAgainDialog")}</p>
+            <p>${_t("usersettings.SessionTerminationDialog")}</p>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout">
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
@@ -1593,7 +1592,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
          <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
          <div slot="content">
-            <p>${_t("session.TerminatingSessionDialog")} ${_t("session.CheckAgainDialog")}</p>
+            <p>${_t("usersettings.SessionTerminationDialog")}</p>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout">
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
@@ -1641,9 +1640,6 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _updateSessionPage(e) {
     let page_action = e.target;
-    if (page_action['role'] !== 'button') {
-      page_action = e.target.closest('wl-button');
-    }
 
     if (page_action.id === 'previous-page') {
       this.current_page -= 1;

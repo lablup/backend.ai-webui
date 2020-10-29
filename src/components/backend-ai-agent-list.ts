@@ -392,6 +392,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     }
     switch (platform) {
       case "aws":
+      case "amazon":
         color = 'orange';
         icon = 'aws';
         break;
@@ -400,10 +401,12 @@ export default class BackendAIAgentList extends BackendAIPage {
         icon = 'azure';
         break;
       case "gcp":
+      case "google":
         color = 'lightblue';
         icon = 'gcp';
         break;
       case "nbp":
+      case "naver":
         color = 'green';
         icon = 'nbp';
         break;

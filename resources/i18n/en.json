@@ -500,6 +500,7 @@
     "SSHKeypairManagement": "SSH Keypair Management",
     "DescSSHKeypairManagement": "Refresh SSH Keypair already exists or generate SSH Keypair by random.",
     "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
+    "SessionTerminationDialog": "Session termination cannot be undone. Do you want to proceed to terminate the session?",
     "CurrentSSHPublicKey": "Current public key: ",
     "SSHKeypairGeneration": "SSH Keypair Generation",
     "SSHKeypairGenerationWarning": "You cannot get private key again. Store on your local disk if needed.",
@@ -508,7 +509,8 @@
     "PublicKey": "Public Key",
     "PrivateKey": "Private Key",
     "InvalidPortNumber": "Port number should be positive number between 1025~65534",
-    "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard."
+    "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard.",
+    "ShellEnvironments":"Shell Environments"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
@@ -636,9 +638,9 @@
     "AutomaticImageUpdateFromRepo": "Automatic image update from repository",
     "DescAutomaticImageUpdateFromRepo": "When new image comes out, update current image automatically. Please turn off when you preserve the current environment without updating.",
     "UseCLIonGUI": "Use Backend.AI CLI on GUI",
-    "DescUseCLIonGUI": "Provide Backend.AI CLI on GUI app/web.<br/>Requires Backend.AI CLI image.",
+    "DescUseCLIonGUI": "Provide Backend.AI CLI on GUI app/web. Requires Backend.AI CLI image.",
     "UseGUIonWeb": "Use Backend.AI GUI on Web",
-    "DescUseGUIonWeb": "Provide Backend.AI GUI as a web service.<br/>Requires Backend.AI Console image.",
+    "DescUseGUIonWeb": "Provide Backend.AI GUI as a web service. Requires Backend.AI Console image.",
     "NoteAboutFixedSetup": "Note: The settings below are automatically applied depending on the installation environment and status.",
     "Scaling": "Scaling",
     "AllowAgentSideRegistration": "Allow agent-side registration",
@@ -662,7 +664,7 @@
     "RequireTPUPlugin": "Requires resource nodes on Google Cloud with Cloud TPU enabled / binded.",
     "Image": "Image",
     "ImagePullBehavior": "Image auto install / update rule",
-    "DescImagePullBehavior": "Determines the conditions for automatically downloading new images when a new version is registered in the registry.<br />For none, new images will not be automatically downloaded.",
+    "DescImagePullBehavior": "Determines the conditions for automatically downloading new images when a new version is registered in the registry. For none, new images will not be automatically downloaded.",
     "GUI": "GUI",
     "image": {
       "digest": "Digest",

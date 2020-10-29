@@ -66,12 +66,13 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
         }
 
         div.title {
+          font-size: 14px;
           font-weight: bold;
         }
 
         div.description,
         span.description {
-          font-size: 11px;
+          font-size: 13px;
           margin-top: 5px;
           margin-right: 5px;
         }
