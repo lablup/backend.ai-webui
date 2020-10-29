@@ -76,10 +76,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           padding: 3px;
         }
 
-        mwc-textfield#tensorboard-path {
-          width: 75%;
-        }
-
         mwc-icon-button#tensorboard-button {
           background-color: #e9852e;
           color: white;
@@ -91,7 +87,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
 
         mwc-textfield#tensorboard-path {
+          width: 80%;
           --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
         }
 
         #app-dialog {
