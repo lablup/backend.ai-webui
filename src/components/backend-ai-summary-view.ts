@@ -534,28 +534,30 @@ export default class BackendAISummary extends BackendAIPage {
                           </a>
                       </div>
                     </lablup-activity-panel>
+                    ${this.is_superadmin ? html`
                     <lablup-activity-panel noheader autowidth>
-                      <div slot="message" class="layout horizontal center center-justified flex upper-space">
-                        <a href="/agent">
-                          <div class="layout horizontal center center-justified flex" style="font-size:14px;">
-                            <i class="fas fa-box larger left-end-icon"></i>
-                            ${_t('summary.CheckResources')}
+                    <div slot="message" class="layout horizontal center center-justified flex upper-space">
+                      <a href="/agent">
+                        <div class="layout horizontal center center-justified flex" style="font-size:14px;">
+                          <i class="fas fa-box larger left-end-icon"></i>
+                          ${_t('summary.CheckResources')}
+                          <i class="fas fa-chevron-right right-end-icon"></i>
+                        </div>
+                      </a>
+                    </div>
+                  </lablup-activity-panel>
+                  <lablup-activity-panel noheader autowidth>
+                    <div slot="message" class="layout horizontal center center-justified flex upper-space">
+                        <a href="/settings">
+                          <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
+                            <i class="fas fa-desktop larger left-end-icon"></i>
+                            ${_t('summary.ChangeSystemSetting')}
                             <i class="fas fa-chevron-right right-end-icon"></i>
                           </div>
                         </a>
-                      </div>
-                    </lablup-activity-panel>
-                    <lablup-activity-panel noheader autowidth>
-                      <div slot="message" class="layout horizontal center center-justified flex upper-space">
-                          <a href="/settings">
-                            <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
-                              <i class="fas fa-desktop larger left-end-icon"></i>
-                              ${_t('summary.ChangeSystemSetting')}
-                              <i class="fas fa-chevron-right right-end-icon"></i>
-                            </div>
-                          </a>
-                      </div>
-                    </lablup-activity-panel>
+                    </div>
+                  </lablup-activity-panel>` : html``}
+                    
                     <lablup-activity-panel noheader autowidth>
                       <div slot="message" class="layout horizontal center center-justified flex upper-space">
                           <a href="/environment">

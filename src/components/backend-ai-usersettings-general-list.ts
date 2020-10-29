@@ -91,23 +91,24 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         div.title {
+          font-size: 14px;
           font-weight: bold;
         }
 
         div.description,
         span.description {
-          font-size: 11px;
+          font-size: 13px;
           margin-top: 5px;
           margin-right: 5px;
         }
 
         .setting-item {
           margin: 15px 10px;
-          width: 340px;
+          width: 360px;
         }
 
         .setting-desc {
-          width: 250px;
+          width: 300px;
         }
 
         .setting-button {
@@ -175,7 +176,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         mwc-select {
-          --mdc-select-min-width: 140px;
+          width: 140px;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
           --mdc-theme-primary: var(--general-sidebar-color);
@@ -287,6 +288,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         this.rcfile = '.bashrc';
       }
     }
+    this.beta_feature_panel = !this.shadowRoot.querySelector('#beta-feature-switch').disabled;
   }
 
   /**
@@ -882,13 +884,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <span>${_t("usersettings.BetaFeatures")}</span>
         <span class="flex"></span>
       </h3>
-      <div>
+      <div class="description">
         ${_t("usersettings.DescNoBetaFeatures")}
       </div>
       ` : html``}
       ${this.shell_script_edit ? html`
       <h3 class="horizontal center layout">
-        <span>Shell Environments</span>
+        <span>${_text('usersettings.ShellEnvironments')}</span>
         <span class="flex"></span>
       </h3>
       <div class="horizontal wrap layout setting-item">
