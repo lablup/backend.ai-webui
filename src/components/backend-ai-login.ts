@@ -817,7 +817,7 @@ export default class BackendAILogin extends BackendAIPage {
           <div class="flex"></div>
         </div>
         <div slot="content" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;">
+          <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;min-height:40px;">
             <div>${this.connection_mode == 'SESSION' ? _t("login.LoginWithE-mail") : _t("login.LoginWithIAM")}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
