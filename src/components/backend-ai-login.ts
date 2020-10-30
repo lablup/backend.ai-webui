@@ -891,7 +891,7 @@ export default class BackendAILogin extends BackendAIPage {
                   <div class="vertical center-justified layout" style="width:100%;">
                     <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.NotAUser")}</div>
                     <mwc-button
-                        unelevated
+                        outlined
                         label="${_t("login.SignUp")}"
                         @click="${() => this._showSignupDialog()}"></mwc-button>
                   </div>
@@ -903,7 +903,7 @@ export default class BackendAILogin extends BackendAIPage {
                   <div class="vertical center-justified layout" style="width:100%;">
                     <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.ForgotPassword")}</div>
                     <mwc-button
-                        unelevated
+                        outlined
                         label="${_t("login.ChangePassword")}"
                         @click="${() => this._showChangePasswordEmailDialog()}"></mwc-button>
                   </div>
