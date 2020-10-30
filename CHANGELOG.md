@@ -1,6 +1,17 @@
 # Changelog
-## v20.10.0 (23/10/2020)
 
+## v20.10.1 (30/10/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**library / SDK**][**minor**] Prevent console from automatic login to unreachable manager [#762](https://github.com/lablup/backend.ai-console/issues/762)
+
+#### UI / UX:
+
+- [**UI / UX**][**need confirmation**] requested UI updates [#750](https://github.com/lablup/backend.ai-console/issues/750)
+
+
+## v20.10.0 (23/10/2020)
 
 #### Enhancements:
 
