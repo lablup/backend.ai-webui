@@ -190,7 +190,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             changePasswordView.open(this.loginPanel.api_endpoint);
           }, 1000);
         } else {
-          this.loginPanel.login();
+          this.loginPanel.login(false);  // Set showError flag to false for initial login
         }
       }
     }).catch(err => {

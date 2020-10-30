@@ -179,46 +179,6 @@ export default class BackendAILogin extends BackendAIPage {
           --button-font-size: 12px;
         }
 
-        wl-button {
-          --button-bg: transparent;
-        }
-
-        wl-button.red {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-          color: var(--paper-red-900);
-        }
-
-        wl-button.mini {
-          font-size: 12px;
-        }
-
-        wl-button.full {
-          width: 335px;
-        }
-
-        wl-button.login-button,
-        wl-button.login-cancel-button {
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-        }
-
-        wl-button.signup-button {
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
-        }
-
-        wl-button.change-login-mode-button {
-          --button-bg-hover: var(--paper-blue-100);
-          --button-bg-active: var(--paper-blue-600);
-        }
-
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
-        }
-
         wl-icon {
           --icon-size: 16px;
           padding: 0;
@@ -431,7 +391,7 @@ export default class BackendAILogin extends BackendAIPage {
   /**
    * Login according to connection_mode and api_endpoint.
    * */
-  login() {
+  login(showError: boolean = true) {
     if (this.api_endpoint === '') {
       let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
       if (api_endpoint != null) {
@@ -441,10 +401,10 @@ export default class BackendAILogin extends BackendAIPage {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION') {
       //this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
-      this._connectUsingSession();
+      this._connectUsingSession(showError);
     } else if (this.connection_mode === 'API') {
       //this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
-      this._connectUsingAPI();
+      this._connectUsingAPI(showError);
     } else {
       this.open();
     }
@@ -558,18 +518,23 @@ export default class BackendAILogin extends BackendAIPage {
     if (this.connection_mode === 'SESSION') {
       this.user_id = (this.shadowRoot.querySelector('#id_user_id') as any).value;
       this.password = (this.shadowRoot.querySelector('#id_password') as any).value;
-      this._connectUsingSession();
+      this._connectUsingSession(true);
     } else {
       this.api_key = (this.shadowRoot.querySelector('#id_api_key') as any).value;
       this.secret_key = (this.shadowRoot.querySelector('#id_secret_key') as any).value;
-      this._connectUsingAPI();
+      this._connectUsingAPI(true);
     }
   }
 
   /**
    * Connect GQL when SESSION mode.
    * */
-  async _connectUsingSession() {
+  async _connectUsingSession(showError: boolean = true) {
+    if (this.api_endpoint === '') {
+      this.free();
+      this.open();
+      return Promise.resolve(false);
+    }
     this.clientConfig = new ai.backend.ClientConfig(
       this.user_id,
       this.password,
@@ -580,6 +545,12 @@ export default class BackendAILogin extends BackendAIPage {
       this.clientConfig,
       `Backend.AI Console.`,
     );
+    await this.client.get_manager_version().then(()=>{
+    }).catch((err)=>{ // Server is unreachable
+      this.notification.text = PainKiller.relieve('Endpoint is unreachable. Please check the connection or endpoint');
+      this.notification.show();
+      return Promise.resolve(false);
+    });
     let isLogon = await this.client.check_login();
     if (isLogon === false) { // Not authenticated yet.
       this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
@@ -602,23 +573,25 @@ export default class BackendAILogin extends BackendAIPage {
         }
       }).catch((err) => {   // Connection failed
         this.free();
-        if (this.loginPanel.open !== true) {
-          if (typeof err.message !== "undefined") {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
+        if (showError) {
+          if (this.loginPanel.open !== true) {
+            if (typeof err.message !== "undefined") {
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+            } else {
+              this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
+            }
           } else {
-            this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
+            if (typeof err.message !== "undefined") {
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+            } else {
+              this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+            }
+            console.log(err);
           }
-        } else {
-          if (typeof err.message !== "undefined") {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-          } else {
-            this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-          }
-          console.log(err);
+          this.notification.show();
         }
-        this.notification.show();
         this.open();
       });
     } else { // Login already succeeded.
@@ -630,7 +603,7 @@ export default class BackendAILogin extends BackendAIPage {
   /**
    * Connect GQL when API mode.
    * */
-  _connectUsingAPI() {
+  _connectUsingAPI(showError: boolean = true) {
     this.clientConfig = new ai.backend.ClientConfig(
       this.api_key,
       this.secret_key,
@@ -641,13 +614,13 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     this.client.ready = false;
-    this._connectGQL();
+    this._connectGQL(showError);
   }
 
   /**
    * Call _connectViaGQL() to connect to GQL.
    * */
-  _connectGQL() {
+  _connectGQL(showError: boolean = true) {
     // Test connection
     if (this.loginPanel.open !== true) {
       this.block();
@@ -655,25 +628,27 @@ export default class BackendAILogin extends BackendAIPage {
     this.client.get_manager_version().then(response => {
       this._connectViaGQL();
     }).catch((err) => {   // Connection failed
-      if (this.loginPanel.open !== true) {
-        if (typeof err.message !== "undefined") {
-          if (err.status === 408) { // Failed while loading getManagerVersion
-            this.notification.text = "Login succeed but manager is not responding.";
-            this.notification.detail = err.message;
-          } else {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-          }
-        } else {
-          this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
-        }
-        this.notification.show(false, err);
-        this.open();
-      } else {
-        this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-        this.notification.show();
-      }
       this.free();
+      if (showError) {
+        if (this.loginPanel.open !== true) {
+          if (typeof err.message !== "undefined") {
+            if (err.status === 408) { // Failed while loading getManagerVersion
+              this.notification.text = "Login succeed but manager is not responding.";
+              this.notification.detail = err.message;
+            } else {
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+            }
+          } else {
+            this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
+          }
+          this.notification.show(false, err);
+          this.open();
+        } else {
+          this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+          this.notification.show();
+        }
+      }
       this.open();
     });
   }
