@@ -547,8 +547,10 @@ export default class BackendAILogin extends BackendAIPage {
     );
     await this.client.get_manager_version().then(()=>{
     }).catch((err)=>{ // Server is unreachable
-      this.notification.text = PainKiller.relieve('Endpoint is unreachable. Please check the connection or endpoint');
-      this.notification.show();
+      if (showError) {
+        this.notification.text = PainKiller.relieve('Endpoint is unreachable. Please check the connection or endpoint');
+        this.notification.show();
+      }
       return Promise.resolve(false);
     });
     let isLogon = await this.client.check_login();
