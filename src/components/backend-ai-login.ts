@@ -545,61 +545,63 @@ export default class BackendAILogin extends BackendAIPage {
       this.clientConfig,
       `Backend.AI Console.`,
     );
-    await this.client.get_manager_version().then(()=>{
+    return this.client.get_manager_version().then(async ()=>{
+      let isLogon = await this.client.check_login();
+      if (isLogon === false) { // Not authenticated yet.
+        this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
+        this.client.login().then(response => {
+          if (response === false) {
+            this.open();
+            if (this.user_id != '' && this.password != '') {
+              this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
+              this.notification.show();
+            }
+          } else if (response.fail_reason) {
+            this.open();
+            if (this.user_id != '' && this.password != '') {
+              this.notification.text = PainKiller.relieve(response.fail_reason);
+              this.notification.show();
+            }
+          } else {
+            this.is_connected = true;
+            return this._connectGQL();
+          }
+        }).catch((err) => {   // Connection failed
+          this.free();
+          if (showError) {
+            if (this.loginPanel.open !== true) {
+              if (typeof err.message !== "undefined") {
+                this.notification.text = PainKiller.relieve(err.title);
+                this.notification.detail = err.message;
+              } else {
+                this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
+              }
+            } else {
+              if (typeof err.message !== "undefined") {
+                this.notification.text = PainKiller.relieve(err.title);
+                this.notification.detail = err.message;
+              } else {
+                this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+              }
+              console.log(err);
+            }
+            this.notification.show();
+          }
+          this.open();
+        });
+      } else { // Login already succeeded.
+        this.is_connected = true;
+        return this._connectGQL();
+      }
     }).catch((err)=>{ // Server is unreachable
+      this.free();
+      this.open();
       if (showError) {
         this.notification.text = PainKiller.relieve('Endpoint is unreachable. Please check the connection or endpoint');
         this.notification.show();
       }
       return Promise.resolve(false);
     });
-    let isLogon = await this.client.check_login();
-    if (isLogon === false) { // Not authenticated yet.
-      this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
-      this.client.login().then(response => {
-        if (response === false) {
-          this.open();
-          if (this.user_id != '' && this.password != '') {
-            this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
-            this.notification.show();
-          }
-        } else if (response.fail_reason) {
-          this.open();
-          if (this.user_id != '' && this.password != '') {
-            this.notification.text = PainKiller.relieve(response.fail_reason);
-            this.notification.show();
-          }
-        } else {
-          this.is_connected = true;
-          return this._connectGQL();
-        }
-      }).catch((err) => {   // Connection failed
-        this.free();
-        if (showError) {
-          if (this.loginPanel.open !== true) {
-            if (typeof err.message !== "undefined") {
-              this.notification.text = PainKiller.relieve(err.title);
-              this.notification.detail = err.message;
-            } else {
-              this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
-            }
-          } else {
-            if (typeof err.message !== "undefined") {
-              this.notification.text = PainKiller.relieve(err.title);
-              this.notification.detail = err.message;
-            } else {
-              this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-            }
-            console.log(err);
-          }
-          this.notification.show();
-        }
-        this.open();
-      });
-    } else { // Login already succeeded.
-      this.is_connected = true;
-      return this._connectGQL();
-    }
   }
 
   /**
@@ -863,6 +865,7 @@ export default class BackendAILogin extends BackendAIPage {
                     style="width:100%;"
                     label="${_t("login.Login")}"
                     @click="${() => this._login()}"></mwc-button>
+              ${this.signup_support && this.allowAnonymousChangePassword ? html`
               <div class="layout horizontal" style="margin-top:2em;">
                 ${this.signup_support ? html`
                   <div class="vertical center-justified layout" style="width:100%;">
@@ -885,7 +888,7 @@ export default class BackendAILogin extends BackendAIPage {
                         @click="${() => this._showChangePasswordEmailDialog()}"></mwc-button>
                   </div>
                 ` : html``}
-              </div>
+              </div>`:html``}
             </fieldset>
           </form>
         </div>
