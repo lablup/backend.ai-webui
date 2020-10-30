@@ -880,7 +880,7 @@ export default class BackendAILogin extends BackendAIPage {
                            style="display:none;--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
                            label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
               <mwc-button
-                    raised
+                    unelevated
                     id="login-button"
                     icon="check"
                     style="width:100%;"
