@@ -190,7 +190,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             changePasswordView.open(this.loginPanel.api_endpoint);
           }, 1000);
         } else {
-          this.loginPanel.login();
+          this.loginPanel.login(false);  // Set showError flag to false for initial login
         }
       }
     }).catch(err => {
@@ -1035,7 +1035,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.10.0.201023</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.10.1.201030</small>
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">

@@ -946,7 +946,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <!--<wl-card class="admin item" elevation="1" >-->
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
@@ -958,11 +957,6 @@ export default class BackendAICredentialView extends BackendAIPage {
             <mwc-tab title="resource-policy-lists" label="${_t("credential.ResourcePolicies")}"
                 @click="${(e) => this._showTab(e.target)}"></mwc-tab>
            </mwc-tab-bar>
-            <!--<wl-tab-group>
-              <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("credential.Users")}</wl-tab>
-              <wl-tab value="credential-lists" @click="${(e) => this._showTab(e.target)}">${_t("credential.Credentials")}</wl-tab>
-              <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">${_t("credential.ResourcePolicies")}</wl-tab>
-            </wl-tab-group>-->
             ${this.isAdmin ? html`
                 <span class="flex"></span>
                 <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
@@ -984,10 +978,6 @@ export default class BackendAICredentialView extends BackendAIPage {
               <span class="flex"></span>
               <mwc-button raised id="add-user" icon="add" label="${_t("credential.CreateUser")}"
                   @click="${this._launchUserAddDialog}"></mwc-button>
-              <!--<wl-button class="fg green" id="add-user" outlined @click="${this._launchUserAddDialog}">
-                <wl-icon>add</wl-icon>
-                ${_t("credential.CreateUser")}
-              </wl-button>-->
             </h4>
             <div>
               <backend-ai-user-list id="user-list" ?active="${this._status === 'active'}"></backend-ai-user-list>

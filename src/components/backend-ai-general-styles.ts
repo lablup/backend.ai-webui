@@ -61,6 +61,10 @@ export const BackendAiStyles = [
       --general-dialog-background-color: #ffffff;
       --general-font-family: 'Ubuntu', 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
+      --general-progress-bar-bg: #e8e8e8;
+      --general-progress-bar-reserved: linear-gradient(to left, #722cd7, #5c7cfa);
+      --general-progress-bar-using: linear-gradient(to left, #18aa7c, #60bb43),
+                                       linear-gradient(to left, #722cd7, #5c7cfa);
     }
 
     body {
@@ -440,6 +444,14 @@ export const BackendAiStyles = [
       --mdc-typography-font-family: var(--general-font-family);
     }
 
+    mwc-textfield, mwc-textarea {
+      --mdc-text-field-hover-line-color: transparent;
+      --mdc-text-field-idle-line-color: transparent;
+      --mdc-text-field-fill-color: var(--general-background-color, #fafafa);
+      --mdc-typography-subtitle1-font-size: 14px;
+      --mdc-typography-font-family: var(--general-font-family);
+    }
+
     .bg-blue {
       background-color: var(--paper-light-blue-400);
     }
@@ -586,23 +598,22 @@ export const BackendAiStyles = [
       --font-family-sans-serif: var(--general-font-family);
     }
 
-    wl-progress-bar {
+    lablup-progress-bar {
+      --progress-bar-width: 186px;
       --progress-bar-height: 17px;
-      --progress-bar-bg: #e8e8e8;
-      border-radius: 3px;
-      margin: 3px auto;
-      width: 186px;
+      --progres-bar-font-family: var(--general-font-family);
+      --progress-bar-border-radius: 3px;
+      --progress-bar-font-color-inverse: white;
+      --progress-bar-font-color: black;
+      margin-bottom: 5px;
     }
 
-
-    wl-progress-bar.start-bar,
-    .full-bar {
-      --progress-bar-color: linear-gradient(to left, #722cd7, #5c7cfa);
+    lablup-progress-bar.start {
+      --progress-bar-background: var(--general-progress-bar-reserved);
     }
 
-    wl-progress-bar.end-bar {
-      --progress-bar-color: linear-gradient(to left, #18aa7c, #60bb43),
-                         linear-gradient(to left, #722cd7, #5c7cfa);
+    lablup-progress-bar.end {
+      --progress-bar-background: var(--general-progress-bar-using);
     }
 
     div.progress-bar {
@@ -637,11 +648,15 @@ export const BackendAiStyles = [
     }
 
     span.start-bar {
-      margin: auto auto 5px 5px;
+      margin-bottom: 5px;
+      margin-left: 5px;
+      padding-bottom: 5px;
     }
 
     span.end-bar {
-      margin: 5px auto auto 5px;
+      margin-top: 5px;
+      margin-left: 5px;
+      padding-bottom: 5px;
     }
 
     .resource-name {
@@ -660,12 +675,25 @@ export const BackendAiStyles = [
       margin-right: 5px;
     }
 
-    div.resource-legend-icon {
+    .resource-legend-icon {
       width:10px;
       height: 10px;
+      margin-top: 2px;
       margin-left: 10px;
       margin-right: 3px;
       border-radius: 4px;
+    }
+
+    .resource-legend-icon.start {
+      background-color: rgba(103, 82, 232, 1);
+    }
+
+    .resource-legend-icon.end {
+      background-color: rgba(58, 178, 97, 1);
+    }
+
+    .resource-legend-icon.total {
+      background-color: #E0E0E0;
     }
 
     .vertical-card {

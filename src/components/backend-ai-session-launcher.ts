@@ -477,6 +477,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         mwc-icon-button.info {
           --mdc-icon-button-size: 30px;
         }
+
+        mwc-icon {
+          --mdc-icon-size: 14px;
+        }
+
+        ul {
+          list-style-type: none;
+        }
+
       `];
   }
 
@@ -1846,7 +1855,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <wl-checkbox id="use-gpu-checkbox">${_t("session.launcher.UseGPU")}</wl-checkbox>
           </div>
           <div class="horizontal center layout">
-            <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required naturalMenuWidth
+            <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required
                         @selected="${(e) => this.updateScalingGroup(false, e)}">
               ${this.scaling_groups.map(item => html`
                 <mwc-list-item class="scaling-group-dropdown"
@@ -1865,7 +1874,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
           <wl-expansion name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
-            <span slot="description" style="font-size:12px;color:#646464;">${this.selectedVfolders.toString()}</span>
+            <!--<span slot="description" style="font-size:12px;color:#646464;"></span>-->
             <mwc-list fullwidth multi id="vfolder"
               @selected="${this._updateSelectedFolder}">
             ${this.vfolders.length === 0 ? html`
@@ -1876,6 +1885,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             `)}
             </mwc-list>
           </wl-expansion>
+          <ul style="color:#646464;font-size:12px;">
+          ${this.selectedVfolders.map(item => html`
+                <li><mwc-icon>folder_open</mwc-icon>${item}</li>
+              `)}
+          </ul>
           <div class="vertical center layout" style="padding-top:15px;">
             <mwc-select id="resource-templates" label="${_t("session.launcher.ResourceAllocation")}" fullwidth required>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
