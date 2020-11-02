@@ -116,7 +116,7 @@ export default class LablupTermsOfService extends LitElement {
             <span style="font-size:14px;">${_t("language.Language")}</span>
             ${this.tosLanguages.map(item => html`
             <mwc-button
-                outlined
+                unelevated
                 ?active="${this.tosLanguage === item.code}"
                 label="${item.text}"
                 @click="${() => {
@@ -129,7 +129,7 @@ export default class LablupTermsOfService extends LitElement {
           <div class="horizontal end-justified flex layout">
             <div class="flex"></div>
             <mwc-button
-                outlined
+                unelevated
                 id="dismis-button"
                 label=${_t("button.Dismiss")}
                 @click="${() => {
