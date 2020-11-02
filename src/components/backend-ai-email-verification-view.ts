@@ -138,7 +138,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-              raised
+              unelevated
               label="${_t("login.Login")}"
               @click="${() => this._redirectToLoginPage()}"></mwc-button>
         </div>
