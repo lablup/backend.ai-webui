@@ -864,7 +864,6 @@ export default class BackendAIAgentList extends BackendAIPage {
               </div>`)}
 
             </div>` : html``}
-씨
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
