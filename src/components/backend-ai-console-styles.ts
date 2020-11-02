@@ -92,14 +92,6 @@ export const BackendAiConsoleStyles = [
       border-bottom: var(--general-sidebar-h3-border-color);
     }
 
-    .drawer-menu,
-    mwc-list.sidebar,
-    .drawer-menu footer,
-    #sidebar-navbar-footer {
-      background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
-    }
-
-
     mwc-list.sidebar {
       cursor: pointer;
       color: var(--general-sidebar-color, #949494);
@@ -497,7 +489,6 @@ export const BackendAiConsoleStyles = [
     }
 
     #sidebar-navbar-footer {
-      position: absolute;
       right: 0;
       left: 0;
       bottom: 0 !important; /* Workaround to prevent miscalculated height */
