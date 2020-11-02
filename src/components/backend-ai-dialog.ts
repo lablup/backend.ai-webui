@@ -99,7 +99,7 @@ export default class BackendAiDialog extends LitElement {
         wl-dialog[scrollable] div.content-area {
           overflow-y: scroll; /* Has to be scroll (not auto) to get smooth scrolling on iOS */
           -webkit-overflow-scrolling: touch;
-          height: calc(var(--component-height) - 90px);
+          max-height: calc(100vh - 190px);
         }
 
         wl-dialog div.content h4 {
