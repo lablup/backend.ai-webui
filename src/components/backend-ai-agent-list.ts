@@ -175,7 +175,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       default:
         status = 'ALIVE';
     }
-    let fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
+    let fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     globalThis.backendaiclient.agent.list(status, fields).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
@@ -184,6 +184,8 @@ export default class BackendAIAgentList extends BackendAIPage {
           let occupied_slots = JSON.parse(agent.occupied_slots);
           let available_slots = JSON.parse(agent.available_slots);
           let compute_plugins = JSON.parse(agent.compute_plugins);
+          let live_stat = JSON.parse(agent.live_stat);
+          //console.log(live_stat);
           ['cpu', 'mem'].forEach((slot) => { // Fallback routine when occupied slots are not present
             if (slot in occupied_slots === false) {
               occupied_slots[slot] = "0";
@@ -315,8 +317,8 @@ export default class BackendAIAgentList extends BackendAIPage {
    * @param {Date} start
    */
   _humanReadableDate(start) {
-    var startDate = new Date(start);
-    return startDate.toLocaleString('ko-KR');
+    let d = new Date(start);
+    return d.toLocaleString();
   }
 
   /**
@@ -433,6 +435,16 @@ export default class BackendAIAgentList extends BackendAIPage {
     `, root
     );
   }
+  
+  /**
+   * Return elapsed time
+   *
+   * @param {any} start - start time
+   * @param {any} end - end time
+   * */
+  _elapsed(start, end) {
+    return globalThis.backendaiclient.utils.elapsedTime(start, end);
+  }
 
   /**
    * Render a first contact date.
@@ -442,11 +454,13 @@ export default class BackendAIAgentList extends BackendAIPage {
    * @param {object} rowData
    */
   contactDateRenderer(root, column?, rowData?) {
+    let elapsed = this._elapsed(rowData.item.first_contact, Date.now());
     render(
       // language=HTML
       html`
         <div class="layout vertical">
             <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
+            <span>(${elapsed})</span>
         </div>`, root
     );
   }
