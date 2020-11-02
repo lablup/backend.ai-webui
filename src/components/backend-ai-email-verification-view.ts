@@ -76,6 +76,12 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
       this.clientConfig,
       'Backend.AI Console.',
     );
+    this.successDialog.addEventListener('didHide', () => {
+      this._redirectToLoginPage();
+      });
+    this.failDialog.addEventListener('didHide', () => {
+      this._redirectToLoginPage();
+      });
   }
 
   /**
