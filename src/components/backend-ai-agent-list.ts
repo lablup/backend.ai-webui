@@ -46,6 +46,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) agentsObject = Object();
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
+  @property({type: Object}) agentDetailDialog = Object();
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
@@ -147,6 +148,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
+    this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
   }
 
   connectedCallback() {
@@ -334,6 +336,11 @@ export default class BackendAIAgentList extends BackendAIPage {
         });
       }
       this.agents = agents;
+      if (this.agentDetailDialog.open) { // refresh the data
+        this.agentDetail = this.agentsObject[this.agentDetail['id']];
+        this.agentDetailDialog.updateComplete;
+      }
+
       if (this.active === true) {
         setTimeout(() => {
           this._loadAgentList(status)
@@ -693,10 +700,8 @@ export default class BackendAIAgentList extends BackendAIPage {
    * @param {object} rowData
    */
   showAgentDetailDialog(agentId) {
-    console.log(agentId);
-    console.log(this.agentsObject[agentId]);
     this.agentDetail = this.agentsObject[agentId];
-    this.shadowRoot.querySelector('#agent-detail').show();
+    this.agentDetailDialog.show();
     return;
   }
 
