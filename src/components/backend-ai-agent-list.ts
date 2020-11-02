@@ -113,13 +113,13 @@ export default class BackendAIAgentList extends BackendAIPage {
           --mdc-linear-progress-buffer-color: #98be5a;
         }
 
-        .maintaining mwc-linear-progress,
-        .terminated mwc-linear-progress {
-          --mdc-linear-progress-buffering-dots-image: url("data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 1 1'%3E%3Cpath d='M0,0h1v1H0' fill='#fff'/%3E%3C/svg%3E");
+        lablup-progress-bar.cpu {
+          --progress-bar-height: 5px;
+          margin-bottom: 0;
         }
 
         .resource-indicator {
-          width:100px!important;
+          width: 100px !important;
         }
 
         .date-indicator {
@@ -173,20 +173,24 @@ export default class BackendAIAgentList extends BackendAIPage {
     if (this.active !== true) {
       return;
     }
-
+    let fields: Array<String>;
     switch (this.condition) {
       case 'running':
         status = 'ALIVE';
+        fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+          'lost_at', 'status_changed', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
         break;
       case 'terminated':
         status = 'TERMINATED';
+        fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+          'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
         break;
       case 'archived':
       default:
         status = 'ALIVE';
+        fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+          'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     }
-    let fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
-      'lost_at', 'status_changed', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     globalThis.backendaiclient.agent.list(status, fields).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
@@ -257,6 +261,14 @@ export default class BackendAIAgentList extends BackendAIPage {
             agents[objectKey].cuda_plugin = cuda_plugin;
           }
           //console.log(agents[objectKey]);
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cpu_util' in agents[objectKey].live_stat.devices) {
+            let cpu_util: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.cpu_util).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              cpu_util.push(agentInfo);
+            });
+            agents[objectKey].cpu_util_live = cpu_util;
+          }
           this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
         });
       }
@@ -538,7 +550,6 @@ export default class BackendAIAgentList extends BackendAIPage {
               </div>
               <span class="flex"></span>
               <lablup-progress-bar id="gpu-bar" progress="${rowData.item.used_cuda_gpu_slots_ratio}"
-                              buffer="${rowData.item.used_cuda_gpu_slots_ratio}"
                               description="${rowData.item.used_cuda_gpu_slots}"></lablup-progress-bar>
             </div>
             ` : html``}
@@ -551,7 +562,6 @@ export default class BackendAIAgentList extends BackendAIPage {
               </div>
               <span class="flex"></span>
               <lablup-progress-bar id="vgpu-bar" progress="${rowData.item.used_cuda_fgpu_slots_ratio}"
-                              buffer="${rowData.item.used_cuda_fgpu_slots_ratio}"
                               description="${rowData.item.used_cuda_fgpu_slots}"></lablup-progress-bar>
 \            </div>
             ` : html``}
@@ -564,12 +574,11 @@ export default class BackendAIAgentList extends BackendAIPage {
               </div>
               <span class="flex"></span>
               <lablup-progress-bar id="rocm-gpu-bar" progress="${rowData.item.used_rocm_gpu_slots_ratio}"
-                                buffer="${rowData.item.used_rocm_gpu_slots_ratio}"
                                 description="${rowData.item.used_rocm_gpu_slots}"></lablup-progress-bar>
             </div>
             ` : html``}
           ${rowData.item.tpu_slots ? html`
-            <div class="layout horizontal center flex asic-indicator">
+            <div class="layout horizontal center flex">
               <div class="layout horizontal start resource-indicator">
                 <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
                 <span style="padding-left:5px;">${rowData.item.tpu_slots}</span>
@@ -577,7 +586,6 @@ export default class BackendAIAgentList extends BackendAIPage {
               </div>
               <span class="flex"></span>
               <lablup-progress-bar id="tpu-bar" progress="${rowData.item.used_tpu_slots_ratio}"
-                                buffer="${rowData.item.used_tpu_slots_ratio}"
                                 description="${rowData.item.used_tpu_slots}"></lablup-progress-bar>
             </div>
             ` : html``}
@@ -680,14 +688,18 @@ export default class BackendAIAgentList extends BackendAIPage {
         <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
-      <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent>
+      <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t("agent.DetailedInformation")}</span>
         <div slot="content">
-              <lablup-progress-bar class="end"
-                progress="0.5"
-                description=""
-              ></lablup-progress-bar>
-
+          ${'cpu_util_live' in this.agentDetail ?
+      this.agentDetail.cpu_util_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">CPU${item.num}</div>
+                <lablup-progress-bar class="cpu"
+                  progress="${item.pct / 100.0}"
+                  description=""
+                ></lablup-progress-bar>
+              </div>`) : html``}
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
