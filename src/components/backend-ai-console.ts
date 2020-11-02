@@ -150,11 +150,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
-    this.appPage = this.shadowRoot.querySelector('#app-page');
     this.contentBody = this.shadowRoot.querySelector('#content-body');
     this.contentBody.type = 'dismissible';
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
-    //this.mainToolbar.scrollTarget = this.appPage;
     this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
     this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
     this.splash = this.shadowRoot.querySelector('#about-backendai-panel');
@@ -940,7 +938,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
       <div id="loading-curtain" class="loading-background"></div>
-      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="position:fixed;visibility:hidden;">
+      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="visibility:hidden;">
         <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
           <div id="portrait-bar" class="draggable">
             <div class="horizontal center layout flex bar draggable" style="cursor:pointer;" @click="${() => this._moveTo('/summary')}">
