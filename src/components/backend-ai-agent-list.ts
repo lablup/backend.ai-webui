@@ -115,6 +115,9 @@ export default class BackendAIAgentList extends BackendAIPage {
         .terminated mwc-linear-progress {
           --mdc-linear-progress-buffering-dots-image: url("data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 1 1'%3E%3Cpath d='M0,0h1v1H0' fill='#fff'/%3E%3C/svg%3E");
         }
+        .date-indicator {
+          font-size: 12px;
+        }
 
         .asic-indicator {
           border-top: 1px solid #ccc;
@@ -175,7 +178,8 @@ export default class BackendAIAgentList extends BackendAIPage {
       default:
         status = 'ALIVE';
     }
-    let fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
+    let fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      'lost_at', 'status_changed', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     globalThis.backendaiclient.agent.list(status, fields).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
@@ -435,14 +439,14 @@ export default class BackendAIAgentList extends BackendAIPage {
     `, root
     );
   }
-  
+
   /**
    * Return elapsed time
    *
    * @param {any} start - start time
    * @param {any} end - end time
    * */
-  _elapsed(start, end) {
+  _elapsed2(start, end) {
     return globalThis.backendaiclient.utils.elapsedTime(start, end);
   }
 
@@ -454,15 +458,32 @@ export default class BackendAIAgentList extends BackendAIPage {
    * @param {object} rowData
    */
   contactDateRenderer(root, column?, rowData?) {
-    let elapsed = this._elapsed(rowData.item.first_contact, Date.now());
-    render(
-      // language=HTML
-      html`
-        <div class="layout vertical">
+    let elapsed: Date;
+    if (rowData.item.status === 'TERMINATED' && 'lost_at' in rowData.item) {
+      elapsed = this._elapsed2(rowData.item.lost_at, Date.now());
+      render(
+        // language=HTML
+        html`
+          <div class="layout vertical">
             <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
-            <span>(${elapsed})</span>
-        </div>`, root
-    );
+            <lablup-shields app="Terminated" color="yellow"
+                            description="${elapsed}" ui="flat"></lablup-shields>
+
+          </div>`, root
+      );
+    } else {
+      elapsed = this._elapsed2(rowData.item.first_contact, Date.now());
+      render(
+        // language=HTML
+        html`
+          <div class="layout vertical">
+            <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
+            <lablup-shields app="Running" color="darkgreen"
+                            description="${elapsed}" ui="flat"></lablup-shields>
+
+          </div>`, root
+      );
+    }
   }
 
   /**
