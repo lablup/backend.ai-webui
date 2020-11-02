@@ -678,6 +678,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   _msecToSec(value) {
     return Number(value / 1000).toFixed(0);
   }
+
   _bytesToMB(value) {
     return Number(value / (1024 * 1024)).toFixed(1);
   }

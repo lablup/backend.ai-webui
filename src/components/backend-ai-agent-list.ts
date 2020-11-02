@@ -118,6 +118,17 @@ export default class BackendAIAgentList extends BackendAIPage {
           margin-bottom: 0;
         }
 
+        lablup-progress-bar.cuda {
+          --progress-bar-height: 15px;
+          margin-bottom: 5px;
+        }
+
+        lablup-progress-bar.mem {
+          --progress-bar-height: 15px;
+          width: 100px;
+          margin-bottom: 0;
+        }
+
         .resource-indicator {
           width: 100px !important;
         }
@@ -260,7 +271,6 @@ export default class BackendAIAgentList extends BackendAIPage {
             let cuda_plugin = compute_plugins['cuda'];
             agents[objectKey].cuda_plugin = cuda_plugin;
           }
-          //console.log(agents[objectKey]);
           if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cpu_util' in agents[objectKey].live_stat.devices) {
             let cpu_util: Array<any> = [];
             Object.entries(agents[objectKey].live_stat.devices.cpu_util).forEach(([k, v]) => {
@@ -268,6 +278,22 @@ export default class BackendAIAgentList extends BackendAIPage {
               cpu_util.push(agentInfo);
             });
             agents[objectKey].cpu_util_live = cpu_util;
+          }
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_util' in agents[objectKey].live_stat.devices) {
+            let cuda_util: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.cuda_util).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              cuda_util.push(agentInfo);
+            });
+            agents[objectKey].cuda_util_live = cuda_util;
+          }
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_mem' in agents[objectKey].live_stat.devices) {
+            let cuda_mem: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.cuda_mem).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              cuda_mem.push(agentInfo);
+            });
+            agents[objectKey].cuda_mem_live = cuda_mem;
           }
           this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
         });
@@ -662,6 +688,10 @@ export default class BackendAIAgentList extends BackendAIPage {
     );
   }
 
+  _bytesToMB(value) {
+    return Number(value / (1024 * 1024)).toFixed(1);
+  }
+
   render() {
     // language=HTML
     return html`
@@ -691,15 +721,53 @@ export default class BackendAIAgentList extends BackendAIPage {
       <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t("agent.DetailedInformation")}</span>
         <div slot="content">
+          <div class="horizontal start start-justified layout">
           ${'cpu_util_live' in this.agentDetail ?
-      this.agentDetail.cpu_util_live.map(item => html`
+      html`<div>
+              <h3>CPU</h3>
+            ${this.agentDetail.cpu_util_live.map(item => html`
               <div class="horizontal start-justified center layout">
                 <div style="font-size:8px;width:35px;">CPU${item.num}</div>
                 <lablup-progress-bar class="cpu"
                   progress="${item.pct / 100.0}"
                   description=""
                 ></lablup-progress-bar>
-              </div>`) : html``}
+              </div>`)}
+            </div>` : html``}
+            <div style="margin-left:10px;">
+              <h3>Memory</h3>
+              <div>
+                <lablup-progress-bar class="mem"
+                  progress="${this.agentDetail.mem_current_usage_ratio}"
+                  description="${this.agentDetail.current_mem}GB/${this.agentDetail.mem_slots}GB"
+                ></lablup-progress-bar>
+              </div>
+              <h3>Network</h3>
+              ${'live_stat' in this.agentDetail && 'node' in this.agentDetail.live_stat ? html`
+              <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
+              <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
+              ` : html``}
+            </div>
+          ${'cuda_util_live' in this.agentDetail ?
+      html`<div style="margin-left:10px;">
+              <h3>CUDA Devices</h3>
+            ${this.agentDetail.cuda_util_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">CUDA${item.num}</div>
+                <div class="horizontal start-justified center layout">
+                  <lablup-progress-bar class="cuda"
+                    progress="${item.pct / 100.0}"
+                    description=""
+                  ></lablup-progress-bar>
+                  <lablup-progress-bar class="cuda"
+                    progress="${item.pct / 100.0}"
+                    description=""
+                  ></lablup-progress-bar>
+                </div>
+              </div>`)}
+            </div>` : html``}
+
+          </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
