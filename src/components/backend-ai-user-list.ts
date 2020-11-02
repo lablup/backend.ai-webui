@@ -399,12 +399,6 @@ export default class BackendAIUserList extends BackendAIPage {
     );
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
-  }
-
   /**
    * Save any changes. - username, full_name, password, etc.
    *

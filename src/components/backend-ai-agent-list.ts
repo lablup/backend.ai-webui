@@ -12,14 +12,19 @@ import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid-sort-column';
 import '../plastics/lablup-shields/lablup-shields';
 
-import 'weightless/icon';
 import 'weightless/button';
 
 import '@material/mwc-linear-progress';
+import '@material/mwc-icon-button';
+import '@material/mwc-list';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-icon';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+import './backend-ai-dialog';
+import './lablup-progress-bar';
 
 /**
  Backend.AI Agent List
@@ -38,7 +43,10 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 export default class BackendAIAgentList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Array}) agents = Array();
+  @property({type: Object}) agentsObject = Object();
+  @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
+  @property({type: Object}) agentDetailDialog = Object();
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
@@ -62,11 +70,6 @@ export default class BackendAIAgentList extends BackendAIPage {
           height: calc(100vh - 200px);
         }
 
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
-        }
-
         wl-icon {
           --icon-size: 16px;
           padding: 0;
@@ -82,8 +85,8 @@ export default class BackendAIAgentList extends BackendAIPage {
         }
 
         img.indicator-icon {
-          width: 16px;
-          height: 16px;
+          width: 16px !important;
+          height: 16px !important;
         }
 
         paper-icon-button {
@@ -103,7 +106,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           margin-right: 5px;
         }
 
-        mwc-linear-progress {
+        lablup-progress-bar {
           width: 100px;
           border-radius: 3px;
           height: 10px;
@@ -111,13 +114,32 @@ export default class BackendAIAgentList extends BackendAIPage {
           --mdc-linear-progress-buffer-color: #98be5a;
         }
 
-        .maintaining mwc-linear-progress,
-        .terminated mwc-linear-progress {
-          --mdc-linear-progress-buffering-dots-image: url("data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 1 1'%3E%3Cpath d='M0,0h1v1H0' fill='#fff'/%3E%3C/svg%3E");
+        lablup-progress-bar.cpu {
+          --progress-bar-height: 5px;
+          margin-bottom: 0;
+        }
+
+        lablup-progress-bar.cuda {
+          --progress-bar-height: 15px;
+          margin-bottom: 5px;
+        }
+
+        lablup-progress-bar.mem {
+          --progress-bar-height: 15px;
+          width: 100px;
+          margin-bottom: 0;
+        }
+
+        .resource-indicator {
+          width: 100px !important;
+        }
+
+        .date-indicator {
+          font-size: 12px;
         }
 
         .asic-indicator {
-          border-top: 1px solid #ccc;
+          border-top: 1px solid #cccccc;
           margin-top: 3px;
           padding-top: 3px;
         }
@@ -126,6 +148,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
+    this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
   }
 
   connectedCallback() {
@@ -163,19 +186,24 @@ export default class BackendAIAgentList extends BackendAIPage {
     if (this.active !== true) {
       return;
     }
-
+    let fields: Array<String>;
     switch (this.condition) {
       case 'running':
         status = 'ALIVE';
+        fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+          'lost_at', 'status_changed', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
         break;
       case 'terminated':
         status = 'TERMINATED';
+        fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+          'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
         break;
       case 'archived':
       default:
         status = 'ALIVE';
+        fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+          'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     }
-    let fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     globalThis.backendaiclient.agent.list(status, fields).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
@@ -189,9 +217,12 @@ export default class BackendAIAgentList extends BackendAIPage {
               occupied_slots[slot] = "0";
             }
           });
-
+          if ('live_stat' in agent) {
+            agents[objectKey].live_stat = JSON.parse(agent.live_stat);
+          }
           agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
           agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
+
           if (agent.cpu_cur_pct !== null) {
             agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
             agents[objectKey].cpu_total_usage_ratio = agents[objectKey].used_cpu_slots / agents[objectKey].cpu_slots;
@@ -244,9 +275,72 @@ export default class BackendAIAgentList extends BackendAIPage {
             let cuda_plugin = compute_plugins['cuda'];
             agents[objectKey].cuda_plugin = cuda_plugin;
           }
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cpu_util' in agents[objectKey].live_stat.devices) {
+            let cpu_util: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.cpu_util).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              cpu_util.push(agentInfo);
+            });
+            agents[objectKey].cpu_util_live = cpu_util;
+          }
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_util' in agents[objectKey].live_stat.devices) {
+            let cuda_util: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.cuda_util).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              cuda_util.push(agentInfo);
+            });
+            agents[objectKey].cuda_util_live = cuda_util;
+          }
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_mem' in agents[objectKey].live_stat.devices) {
+            let cuda_mem: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.cuda_mem).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              cuda_mem.push(agentInfo);
+            });
+            agents[objectKey].cuda_mem_live = cuda_mem;
+          }
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_util' in agents[objectKey].live_stat.devices) {
+            let rocm_util: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.rocm_util).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              rocm_util.push(agentInfo);
+            });
+            agents[objectKey].rocm_util_live = rocm_util;
+          }
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_mem' in agents[objectKey].live_stat.devices) {
+            let rocm_mem: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.rocm_mem).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              rocm_mem.push(agentInfo);
+            });
+            agents[objectKey].rocm_mem_live = rocm_mem;
+          }
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_util' in agents[objectKey].live_stat.devices) {
+            let tpu_util: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.tpu_util).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              tpu_util.push(agentInfo);
+            });
+            agents[objectKey].tpu_util_live = tpu_util;
+          }
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_mem' in agents[objectKey].live_stat.devices) {
+            let tpu_mem: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.tpu_mem).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              tpu_mem.push(agentInfo);
+            });
+            agents[objectKey].tpu_mem_live = tpu_mem;
+          }
+
+          this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
         });
       }
       this.agents = agents;
+      if (this.agentDetailDialog.open) { // refresh the data
+        this.agentDetail = this.agentsObject[this.agentDetail['id']];
+        this.agentDetailDialog.updateComplete;
+      }
+
       if (this.active === true) {
         setTimeout(() => {
           this._loadAgentList(status)
@@ -315,8 +409,8 @@ export default class BackendAIAgentList extends BackendAIPage {
    * @param {Date} start
    */
   _humanReadableDate(start) {
-    var startDate = new Date(start);
-    return startDate.toLocaleString('ko-KR');
+    let d = new Date(start);
+    return d.toLocaleString();
   }
 
   /**
@@ -435,6 +529,16 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
+   * Return elapsed time
+   *
+   * @param {any} start - start time
+   * @param {any} end - end time
+   * */
+  _elapsed2(start, end) {
+    return globalThis.backendaiclient.utils.elapsedTime(start, end);
+  }
+
+  /**
    * Render a first contact date.
    *
    * @param {DOM element} root
@@ -442,13 +546,32 @@ export default class BackendAIAgentList extends BackendAIPage {
    * @param {object} rowData
    */
   contactDateRenderer(root, column?, rowData?) {
-    render(
-      // language=HTML
-      html`
-        <div class="layout vertical">
+    let elapsed: Date;
+    if (rowData.item.status === 'TERMINATED' && 'lost_at' in rowData.item) {
+      elapsed = this._elapsed2(rowData.item.lost_at, Date.now());
+      render(
+        // language=HTML
+        html`
+          <div class="layout vertical">
             <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
-        </div>`, root
-    );
+            <lablup-shields app="${_t('agent.Terminated')}" color="yellow"
+                            description="${elapsed}" ui="flat"></lablup-shields>
+
+          </div>`, root
+      );
+    } else {
+      elapsed = this._elapsed2(rowData.item.first_contact, Date.now());
+      render(
+        // language=HTML
+        html`
+          <div class="layout vertical">
+            <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
+            <lablup-shields app="${_t('agent.Running')}" color="darkgreen"
+                            description="${elapsed}" ui="flat"></lablup-shields>
+
+          </div>`, root
+      );
+    }
   }
 
   /**
@@ -464,72 +587,74 @@ export default class BackendAIAgentList extends BackendAIPage {
       html`
         <div class="layout flex">
           <div class="layout horizontal center flex">
-            <wl-icon class="fg green">developer_board</wl-icon>
-            <div class="layout vertical start" style="padding-left:5px;">
-              <div class="layout horizontal start">
-                <span>${rowData.item.cpu_slots}</span>
-                <span class="indicator">${_t("general.cores")}</span>
-              </div>
-              <div class="layout horizontal start">
-                <span>${rowData.item.current_cpu_percent}</span>
-                <span class="indicator">%</span>
-              </div>
+            <div class="layout horizontal start resource-indicator">
+              <wl-icon class="fg green">developer_board</wl-icon>
+              <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
+              <span class="indicator">${_t("general.cores")}</span>
             </div>
             <span class="flex"></span>
-            <mwc-linear-progress id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
-                            buffer="${rowData.item.cpu_total_usage_ratio}"></mwc-linear-progress>
+            <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
+                            buffer="${rowData.item.cpu_total_usage_ratio}"
+                            description="${rowData.item.current_cpu_percent}%"></lablup-progress-bar>
           </div>
           <div class="layout horizontal center flex">
-            <wl-icon class="fg green">memory</wl-icon>
-            <div class="layout vertical start" style="padding-left:5px;">
-              <div class="layout horizontal start">
-                <span>${rowData.item.mem_slots}</span>
-                <span class="indicator">GB</span>
-              </div>
-              <div class="layout horizontal start">
-                <span>${rowData.item.current_mem}</span>
-                <span class="indicator">GB</span>
-              </div>
+            <div class="layout horizontal start resource-indicator">
+              <wl-icon class="fg green">memory</wl-icon>
+              <span style="padding-left:5px;">${rowData.item.mem_slots}</span>
+              <span class="indicator">GB</span>
             </div>
             <span class="flex"></span>
-            <mwc-linear-progress id="mem-usage-bar" progress="${rowData.item.mem_current_usage_ratio}"
-                            buffer="${rowData.item.mem_total_usage_ratio}"></mwc-linear-progress>
+            <lablup-progress-bar id="mem-usage-bar" progress="${rowData.item.mem_current_usage_ratio}"
+                            buffer="${rowData.item.mem_total_usage_ratio}"
+                            description="${rowData.item.current_mem}GB"></lablup-progress-bar>
 
           </div>
           ${rowData.item.cuda_gpu_slots ? html`
-            <div class="layout horizontal center flex asic-indicator">
-              <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-              <span style="padding-left:5px;">${rowData.item.cuda_gpu_slots}</span>
-              <span class="indicator">GPU</span>
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal start resource-indicator">
+                <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                <span style="padding-left:5px;">${rowData.item.cuda_gpu_slots}</span>
+                <span class="indicator">GPU</span>
+              </div>
               <span class="flex"></span>
-              <mwc-linear-progress id="gpu-bar" value="${rowData.item.used_cuda_gpu_slots_ratio}" buffer="${rowData.item.used_cuda_gpu_slots_ratio}"></mwc-linear-progress>
+              <lablup-progress-bar id="gpu-bar" progress="${rowData.item.used_cuda_gpu_slots_ratio}"
+                              description="${rowData.item.used_cuda_gpu_slots}"></lablup-progress-bar>
             </div>
             ` : html``}
           ${rowData.item.cuda_fgpu_slots ? html`
-            <div class="layout horizontal center flex asic-indicator">
-              <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-              <span style="padding-left:5px;">${rowData.item.cuda_fgpu_slots}</span>
-              <span class="indicator">fGPU</span>
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal start resource-indicator">
+                <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                <span style="padding-left:5px;">${rowData.item.cuda_fgpu_slots}</span>
+                <span class="indicator">fGPU</span>
+              </div>
               <span class="flex"></span>
-              <mwc-linear-progress id="vgpu-bar" value="${rowData.item.used_cuda_fgpu_slots_ratio}" buffer="${rowData.item.used_cuda_fgpu_slots_ratio}"></mwc-linear-progress>
-            </div>
+              <lablup-progress-bar id="vgpu-bar" progress="${rowData.item.used_cuda_fgpu_slots_ratio}"
+                              description="${rowData.item.used_cuda_fgpu_slots}"></lablup-progress-bar>
+\            </div>
             ` : html``}
           ${rowData.item.rocm_gpu_slots ? html`
-            <div class="layout horizontal center flex asic-indicator">
-              <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
-              <span style="padding-left:5px;">${rowData.item.rocm_gpu_slots}</span>
-              <span class="indicator">ROCm</span>
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal start resource-indicator">
+                <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
+                <span style="padding-left:5px;">${rowData.item.rocm_gpu_slots}</span>
+                <span class="indicator">ROCm</span>
+              </div>
               <span class="flex"></span>
-              <mwc-linear-progress id="rocm-gpu-bar" value="${rowData.item.used_rocm_gpu_slots_ratio}" buffer="${rowData.item.used_rocm_gpu_slots_ratio}"></mwc-linear-progress>
+              <lablup-progress-bar id="rocm-gpu-bar" progress="${rowData.item.used_rocm_gpu_slots_ratio}"
+                                description="${rowData.item.used_rocm_gpu_slots}"></lablup-progress-bar>
             </div>
             ` : html``}
           ${rowData.item.tpu_slots ? html`
-            <div class="layout horizontal center flex asic-indicator">
-              <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
-              <span style="padding-left:5px;">${rowData.item.tpu_slots}</span>
-              <span class="indicator">TPU</span>
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal start resource-indicator">
+                <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
+                <span style="padding-left:5px;">${rowData.item.tpu_slots}</span>
+                <span class="indicator">TPU</span>
+              </div>
               <span class="flex"></span>
-              <mwc-linear-progress id="tpu-bar" value="${rowData.item.used_tpu_slots_ratio}" buffer="${rowData.item.used_tpu_slots_ratio}"></mwc-linear-progress>
+              <lablup-progress-bar id="tpu-bar" progress="${rowData.item.used_tpu_slots_ratio}"
+                                description="${rowData.item.used_tpu_slots}"></lablup-progress-bar>
             </div>
             ` : html``}
         </div>`, root
@@ -568,26 +693,43 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
+   * Show detailed agent information as dialog form.
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+   */
+  showAgentDetailDialog(agentId) {
+    this.agentDetail = this.agentsObject[agentId];
+    this.agentDetailDialog.show();
+    return;
+  }
+
+  /**
    * Render control buttons such as assignment, build, add an alarm, pause and delete.
    *
    * @param {DOM element} root
    * @param {<vaadin-grid-column> element} column
    * @param {object} rowData
-  */
+   */
   controlRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
-          <wl-button fab flat inverted disabled class="fg" icon="assignment"><wl-icon>assignment</wl-icon></wl-button>
+          <mwc-icon-button class="fg blue controls-running" icon="assignment" @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
-            <wl-button fab flat inverted disabled class="fg controls-running" icon="build"><wl-icon>build</wl-icon></wl-button>
-            <wl-button fab flat inverted disabled class="fg controls-running" icon="alarm-add"><wl-icon>alarm_add</wl-icon></wl-button>
-            <wl-button fab flat inverted disabled class="fg controls-running" icon="av:pause"><wl-icon>pause</wl-icon></wl-button>
-            <wl-button fab flat inverted disabled class="fg controls-running" icon="delete"><wl-icon>delete</wl-icon></wl-button>
+            <mwc-icon-button disabled class="fg controls-running" icon="build"></mwc-icon-button>
+            <mwc-icon-button disabled class="fg controls-running" icon="alarm"></mwc-icon-button>
+            <mwc-icon-button disabled class="fg controls-running" icon="pause"></mwc-icon-button>
+            <mwc-icon-button disabled class="fg controls-running" icon="delete"></mwc-icon-button>
           ` : html``}
     </div>`, root
     );
+  }
+
+  _bytesToMB(value) {
+    return Number(value / (1024 * 1024)).toFixed(1);
   }
 
   render() {
@@ -610,12 +752,134 @@ export default class BackendAIAgentList extends BackendAIPage {
           <template class="header">${_t("agent.Starts")}</template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable header="${_t("agent.Resources")}" .renderer="${this._boundResourceRenderer}">
+        <vaadin-grid-column resizable width="140px" header="${_t("agent.Resources")}" .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-sort-column width="100px" resizable path="scaling_group" header="${_t("general.ResourceGroup")}"></vaadin-grid-sort-column>
         <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
+      <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
+        <span slot="title">${_t("agent.DetailedInformation")}</span>
+        <div slot="content">
+          <div class="horizontal start start-justified layout">
+          ${'cpu_util_live' in this.agentDetail ?
+      html`<div>
+              <h3>CPU</h3>
+            ${this.agentDetail.cpu_util_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">CPU${item.num}</div>
+                <lablup-progress-bar class="cpu"
+                  progress="${item.pct / 100.0}"
+                  description=""
+                ></lablup-progress-bar>
+              </div>`)}
+            </div>` : html``}
+            <div style="margin-left:10px;">
+              <h3>Memory</h3>
+              <div>
+                <lablup-progress-bar class="mem"
+                  progress="${this.agentDetail.mem_current_usage_ratio}"
+                  description="${this.agentDetail.current_mem}GB/${this.agentDetail.mem_slots}GB"
+                ></lablup-progress-bar>
+              </div>
+              <h3>Network</h3>
+              ${'live_stat' in this.agentDetail && 'node' in this.agentDetail.live_stat ? html`
+              <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
+              <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
+              ` : html``}
+            </div>
+          ${'cuda_util_live' in this.agentDetail ?
+      html`<div style="margin-left:10px;">
+              <h3>CUDA Devices</h3>
+              <h4>Utilization</h4>
+            ${this.agentDetail.cuda_util_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">CUDA${item.num}</div>
+                <div class="horizontal start-justified center layout">
+                  <lablup-progress-bar class="cuda"
+                    progress="${item.pct / 100.0}"
+                    description=""
+                  ></lablup-progress-bar>
+                </div>
+              </div>`)}
+              <h4>Memory</h4>
+            ${this.agentDetail.cuda_mem_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">CUDA${item.num}</div>
+                <div class="horizontal start-justified center layout">
+                  <lablup-progress-bar class="cuda"
+                    progress="${item.pct / 100.0}"
+                    description=""
+                  ></lablup-progress-bar>
+                </div>
+              </div>`)}
+
+            </div>` : html``}
+          ${'rocm_util_live' in this.agentDetail ?
+      html`<div style="margin-left:10px;">
+              <h3>ROCm Devices</h3>
+              <h4>Utilization</h4>
+            ${this.agentDetail.rocm_util_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
+                <div class="horizontal start-justified center layout">
+                  <lablup-progress-bar class="cuda"
+                    progress="${item.pct / 100.0}"
+                    description=""
+                  ></lablup-progress-bar>
+                </div>
+              </div>`)}
+              <h4>Memory</h4>
+            ${this.agentDetail.rocm_mem_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
+                <div class="horizontal start-justified center layout">
+                  <lablup-progress-bar class="cuda"
+                    progress="${item.pct / 100.0}"
+                    description=""
+                  ></lablup-progress-bar>
+                </div>
+              </div>`)}
+
+            </div>` : html``}
+          ${'tpu_util_live' in this.agentDetail ?
+      html`<div style="margin-left:10px;">
+              <h3>TPU Devices</h3>
+              <h4>Utilization</h4>
+            ${this.agentDetail.tpu_util_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">TPU${item.num}</div>
+                <div class="horizontal start-justified center layout">
+                  <lablup-progress-bar class="cuda"
+                    progress="${item.pct / 100.0}"
+                    description=""
+                  ></lablup-progress-bar>
+                </div>
+              </div>`)}
+              <h4>Memory</h4>
+            ${this.agentDetail.tpu_mem_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">TPU${item.num}</div>
+                <div class="horizontal start-justified center layout">
+                  <lablup-progress-bar class="cuda"
+                    progress="${item.pct / 100.0}"
+                    description=""
+                  ></lablup-progress-bar>
+                </div>
+              </div>`)}
+
+            </div>` : html``}
+          </div>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              unelevated
+              id="close-button"
+              icon="check"
+              label="${_t("button.Close")}"
+              @click="${(e) => this._hideDialog(e)}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 }
