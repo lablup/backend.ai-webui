@@ -177,8 +177,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
       if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-        // this.appBody.style = 'position:static';
-
         if (this._page === 'verify-email') {
           const emailVerifyView = this.shadowRoot.querySelector('backend-ai-email-verification-view');
           window.setTimeout(() => {
