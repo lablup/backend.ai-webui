@@ -453,6 +453,7 @@ export default class BackendAiSignup extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
+              id="signup-button"
               raised
               class="full"
               icon="check"
