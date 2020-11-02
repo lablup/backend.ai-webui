@@ -215,7 +215,9 @@ export default class BackendAIAgentList extends BackendAIPage {
               occupied_slots[slot] = "0";
             }
           });
-          agents[objectKey].live_stat = JSON.parse(agent.live_stat);
+          if ('live_stat' in agent) {
+            agents[objectKey].live_stat = JSON.parse(agent.live_stat);
+          }
           agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
           agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
 
