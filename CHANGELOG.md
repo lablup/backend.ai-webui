@@ -1,5 +1,22 @@
 # Changelog
 
+## v20.11.1 (02/11/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**enterprise**][**library / SDK**][**major**] GPU/ASIC usage gauge per node [#766](https://github.com/lablup/backend.ai-console/issues/766)
+
+#### Bug Fixes:
+
+- [**bug**] verifying email and changing password page doesn't show anything on the page. [#767](https://github.com/lablup/backend.ai-console/issues/767)
+
+## v20.11.0 (01/11/2020)
+
+#### Bug Fixes:
+
+- [**blocker**][**bug**][**library / SDK**][**major**] Invitation token page is not showing [#764](https://github.com/lablup/backend.ai-console/issues/764)
+
+
 ## v20.10.1 (30/10/2020)
 
 #### Enhancements:
