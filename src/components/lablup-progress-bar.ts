@@ -135,6 +135,7 @@ export default class LablupProgressBar extends LitElement {
 
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'progress' && newval !== null && !isNaN(newval)) {
+      console.log(newval);
       this.changePct(newval);
     }
     if (name == 'description' && newval !== null && !newval.startsWith('undefined')) {
