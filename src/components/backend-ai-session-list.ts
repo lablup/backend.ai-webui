@@ -352,7 +352,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         if (!globalThis.backendaiclient.is_admin) {
-          this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
+          // this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
+          this.shadowRoot.querySelector('#access-key-filter').style.display = 'none';
           this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
         } else {
           this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
@@ -369,7 +370,8 @@ export default class BackendAiSessionList extends BackendAIPage {
       }, true);
     } else { // already connected
       if (!globalThis.backendaiclient.is_admin) {
-        this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
+        this.shadowRoot.querySelector('#access-key-filter').style.display = 'none';
+        // this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
         this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
       } else {
         this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
@@ -1505,7 +1507,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <wl-textfield id="access-key-filter" type="search" size=30
                      label="${_t("general.AccessKey")}" no-label-float .value="${this.filterAccessKey}"
                      style="display:none"
-                     on-change="_updateFilterAccessKey">
+                     @change="${(e) => this._updateFilterAccessKey(e)}">
         </wl-textfield>
       </div>
 
