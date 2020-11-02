@@ -16,10 +16,12 @@ import 'weightless/icon';
 import 'weightless/button';
 
 import '@material/mwc-linear-progress';
+import '@material/mwc-icon-button';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+import './backend-ai-dialog';
 
 /**
  Backend.AI Agent List
@@ -188,16 +190,15 @@ export default class BackendAIAgentList extends BackendAIPage {
           let occupied_slots = JSON.parse(agent.occupied_slots);
           let available_slots = JSON.parse(agent.available_slots);
           let compute_plugins = JSON.parse(agent.compute_plugins);
-          let live_stat = JSON.parse(agent.live_stat);
-          //console.log(live_stat);
           ['cpu', 'mem'].forEach((slot) => { // Fallback routine when occupied slots are not present
             if (slot in occupied_slots === false) {
               occupied_slots[slot] = "0";
             }
           });
-
+          agents[objectKey].live_stat = JSON.parse(agent.live_stat);
           agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
           agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
+
           if (agent.cpu_cur_pct !== null) {
             agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
             agents[objectKey].cpu_total_usage_ratio = agents[objectKey].used_cpu_slots / agents[objectKey].cpu_slots;
@@ -601,7 +602,18 @@ export default class BackendAIAgentList extends BackendAIPage {
         </div>`, root
     );
   }
-
+  /**
+   * Show detailed agent information as dialog form.
+   *
+   * @param {DOM element} root
+   * @param {<vaadin-grid-column> element} column
+   * @param {object} rowData
+  */
+  showAgentDetailDialog(agentId) {
+    console.log(agentId);
+    this.shadowRoot.querySelector('#agent-detail').show();
+    return;
+  }
   /**
    * Render control buttons such as assignment, build, add an alarm, pause and delete.
    *
@@ -614,12 +626,12 @@ export default class BackendAIAgentList extends BackendAIPage {
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
-          <wl-button fab flat inverted disabled class="fg" icon="assignment"><wl-icon>assignment</wl-icon></wl-button>
+          <mwc-icon-button class="fg blue controls-running" icon="assignment" @click="${(e)=>this.showAgentDetailDialog(rowData.item.addr)}"></mwc-icon-button>
           ${this._isRunning() ? html`
-            <wl-button fab flat inverted disabled class="fg controls-running" icon="build"><wl-icon>build</wl-icon></wl-button>
-            <wl-button fab flat inverted disabled class="fg controls-running" icon="alarm-add"><wl-icon>alarm_add</wl-icon></wl-button>
-            <wl-button fab flat inverted disabled class="fg controls-running" icon="av:pause"><wl-icon>pause</wl-icon></wl-button>
-            <wl-button fab flat inverted disabled class="fg controls-running" icon="delete"><wl-icon>delete</wl-icon></wl-button>
+            <mwc-icon-button disabled class="fg controls-running" icon="build"></mwc-icon-button>
+            <mwc-icon-button disabled class="fg controls-running" icon="alarm"></mwc-icon-button>
+            <mwc-icon-button disabled class="fg controls-running" icon="pause"></mwc-icon-button>
+            <mwc-icon-button disabled class="fg controls-running" icon="delete"></mwc-icon-button>
           ` : html``}
     </div>`, root
     );
@@ -651,6 +663,20 @@ export default class BackendAIAgentList extends BackendAIPage {
         <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
+      <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent>
+        <span slot="title">${_t("agent.DetailedInformation")}</span>
+        <div slot="content">
+        TEST
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              unelevated
+              id="close-button"
+              icon="check"
+              label="${_t("button.Close")}"
+              @click="${(e)=>this._hideDialog(e)}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 }

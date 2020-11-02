@@ -373,12 +373,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
-  }
-
   _launchResourcePresetDialog(e) {
     this.updateCurrentPresetToDialog(e);
     this.shadowRoot.querySelector('#modify-template-dialog').show();
