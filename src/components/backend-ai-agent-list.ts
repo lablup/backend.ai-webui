@@ -25,6 +25,7 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 import './backend-ai-dialog';
 import './lablup-progress-bar';
+
 /**
  Backend.AI Agent List
 
@@ -83,8 +84,8 @@ export default class BackendAIAgentList extends BackendAIPage {
         }
 
         img.indicator-icon {
-          width: 16px;
-          height: 16px;
+          width: 16px !important;
+          height: 16px !important;
         }
 
         paper-icon-button {
@@ -104,7 +105,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           margin-right: 5px;
         }
 
-        mwc-linear-progress {
+        lablup-progress-bar {
           width: 100px;
           border-radius: 3px;
           height: 10px;
@@ -115,6 +116,10 @@ export default class BackendAIAgentList extends BackendAIPage {
         .maintaining mwc-linear-progress,
         .terminated mwc-linear-progress {
           --mdc-linear-progress-buffering-dots-image: url("data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 1 1'%3E%3Cpath d='M0,0h1v1H0' fill='#fff'/%3E%3C/svg%3E");
+        }
+
+        .resource-indicator {
+          width:100px!important;
         }
 
         .date-indicator {
@@ -502,72 +507,78 @@ export default class BackendAIAgentList extends BackendAIPage {
       html`
         <div class="layout flex">
           <div class="layout horizontal center flex">
-            <wl-icon class="fg green">developer_board</wl-icon>
-            <div class="layout vertical start" style="padding-left:5px;">
-              <div class="layout horizontal start">
-                <span>${rowData.item.cpu_slots}</span>
-                <span class="indicator">${_t("general.cores")}</span>
-              </div>
-              <div class="layout horizontal start">
-                <span>${rowData.item.current_cpu_percent}</span>
-                <span class="indicator">%</span>
-              </div>
+            <div class="layout horizontal start resource-indicator" style="width:150px!important;">
+              <wl-icon class="fg green">developer_board</wl-icon>
+              <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
+              <span class="indicator">${_t("general.cores")}</span>
             </div>
             <span class="flex"></span>
-            <mwc-linear-progress id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
-                            buffer="${rowData.item.cpu_total_usage_ratio}"></mwc-linear-progress>
+            <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
+                            buffer="${rowData.item.cpu_total_usage_ratio}"
+                            description="${rowData.item.current_cpu_percent}%"></lablup-progress-bar>
           </div>
           <div class="layout horizontal center flex">
-            <wl-icon class="fg green">memory</wl-icon>
-            <div class="layout vertical start" style="padding-left:5px;">
-              <div class="layout horizontal start">
-                <span>${rowData.item.mem_slots}</span>
-                <span class="indicator">GB</span>
-              </div>
-              <div class="layout horizontal start">
-                <span>${rowData.item.current_mem}</span>
-                <span class="indicator">GB</span>
-              </div>
+            <div class="layout horizontal start resource-indicator">
+              <wl-icon class="fg green">memory</wl-icon>
+              <span style="padding-left:5px;">${rowData.item.mem_slots}</span>
+              <span class="indicator">GB</span>
             </div>
             <span class="flex"></span>
-            <mwc-linear-progress id="mem-usage-bar" progress="${rowData.item.mem_current_usage_ratio}"
-                            buffer="${rowData.item.mem_total_usage_ratio}"></mwc-linear-progress>
+            <lablup-progress-bar id="mem-usage-bar" progress="${rowData.item.mem_current_usage_ratio}"
+                            buffer="${rowData.item.mem_total_usage_ratio}"
+                            description="${rowData.item.current_mem}GB"></lablup-progress-bar>
 
           </div>
           ${rowData.item.cuda_gpu_slots ? html`
-            <div class="layout horizontal center flex asic-indicator">
-              <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-              <span style="padding-left:5px;">${rowData.item.cuda_gpu_slots}</span>
-              <span class="indicator">GPU</span>
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal start resource-indicator">
+                <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                <span style="padding-left:5px;">${rowData.item.cuda_gpu_slots}</span>
+                <span class="indicator">GPU</span>
+              </div>
               <span class="flex"></span>
-              <mwc-linear-progress id="gpu-bar" value="${rowData.item.used_cuda_gpu_slots_ratio}" buffer="${rowData.item.used_cuda_gpu_slots_ratio}"></mwc-linear-progress>
+              <lablup-progress-bar id="gpu-bar" value="${rowData.item.used_cuda_gpu_slots_ratio}"
+                              buffer="${rowData.item.used_cuda_gpu_slots_ratio}"
+                              description="${rowData.item.used_cuda_gpu_slots}"></lablup-progress-bar>
             </div>
             ` : html``}
           ${rowData.item.cuda_fgpu_slots ? html`
-            <div class="layout horizontal center flex asic-indicator">
-              <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-              <span style="padding-left:5px;">${rowData.item.cuda_fgpu_slots}</span>
-              <span class="indicator">fGPU</span>
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal start resource-indicator">
+                <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                <span style="padding-left:5px;">${rowData.item.cuda_fgpu_slots}</span>
+                <span class="indicator">fGPU</span>
+              </div>
               <span class="flex"></span>
-              <mwc-linear-progress id="vgpu-bar" value="${rowData.item.used_cuda_fgpu_slots_ratio}" buffer="${rowData.item.used_cuda_fgpu_slots_ratio}"></mwc-linear-progress>
-            </div>
+              <lablup-progress-bar id="vgpu-bar" value="${rowData.item.used_cuda_fgpu_slots_ratio}"
+                              buffer="${rowData.item.used_cuda_fgpu_slots_ratio}"
+                              description="${rowData.item.used_cuda_fgpu_slots}"></lablup-progress-bar>
+\            </div>
             ` : html``}
           ${rowData.item.rocm_gpu_slots ? html`
-            <div class="layout horizontal center flex asic-indicator">
-              <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
-              <span style="padding-left:5px;">${rowData.item.rocm_gpu_slots}</span>
-              <span class="indicator">ROCm</span>
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal start resource-indicator">
+                <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
+                <span style="padding-left:5px;">${rowData.item.rocm_gpu_slots}</span>
+                <span class="indicator">ROCm</span>
+              </div>
               <span class="flex"></span>
-              <mwc-linear-progress id="rocm-gpu-bar" value="${rowData.item.used_rocm_gpu_slots_ratio}" buffer="${rowData.item.used_rocm_gpu_slots_ratio}"></mwc-linear-progress>
+              <lablup-progress-bar id="rocm-gpu-bar" value="${rowData.item.used_rocm_gpu_slots_ratio}"
+                                buffer="${rowData.item.used_rocm_gpu_slots_ratio}"
+                                description="${rowData.item.used_rocm_gpu_slots}"></lablup-progress-bar>
             </div>
             ` : html``}
           ${rowData.item.tpu_slots ? html`
             <div class="layout horizontal center flex asic-indicator">
-              <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
-              <span style="padding-left:5px;">${rowData.item.tpu_slots}</span>
-              <span class="indicator">TPU</span>
+              <div class="layout horizontal start resource-indicator">
+                <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
+                <span style="padding-left:5px;">${rowData.item.tpu_slots}</span>
+                <span class="indicator">TPU</span>
+              </div>
               <span class="flex"></span>
-              <mwc-linear-progress id="tpu-bar" value="${rowData.item.used_tpu_slots_ratio}" buffer="${rowData.item.used_tpu_slots_ratio}"></mwc-linear-progress>
+              <lablup-progress-bar id="tpu-bar" value="${rowData.item.used_tpu_slots_ratio}"
+                                buffer="${rowData.item.used_tpu_slots_ratio}"
+                                description="${rowData.item.used_tpu_slots}"></lablup-progress-bar>
             </div>
             ` : html``}
         </div>`, root
