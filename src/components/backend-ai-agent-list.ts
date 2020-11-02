@@ -545,7 +545,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       html`
         <div class="layout flex">
           <div class="layout horizontal center flex">
-            <div class="layout horizontal start resource-indicator" style="width:150px!important;">
+            <div class="layout horizontal start resource-indicator">
               <wl-icon class="fg green">developer_board</wl-icon>
               <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
               <span class="indicator">${_t("general.cores")}</span>
@@ -712,7 +712,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <template class="header">${_t("agent.Starts")}</template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable header="${_t("agent.Resources")}" .renderer="${this._boundResourceRenderer}">
+        <vaadin-grid-column resizable width="140px" header="${_t("agent.Resources")}" .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-sort-column width="100px" resizable path="scaling_group" header="${_t("general.ResourceGroup")}"></vaadin-grid-sort-column>
         <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
