@@ -297,6 +297,39 @@ export default class BackendAIAgentList extends BackendAIPage {
             });
             agents[objectKey].cuda_mem_live = cuda_mem;
           }
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_util' in agents[objectKey].live_stat.devices) {
+            let rocm_util: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.rocm_util).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              rocm_util.push(agentInfo);
+            });
+            agents[objectKey].rocm_util_live = rocm_util;
+          }
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_mem' in agents[objectKey].live_stat.devices) {
+            let rocm_mem: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.rocm_mem).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              rocm_mem.push(agentInfo);
+            });
+            agents[objectKey].rocm_mem_live = rocm_mem;
+          }
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_util' in agents[objectKey].live_stat.devices) {
+            let tpu_util: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.tpu_util).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              tpu_util.push(agentInfo);
+            });
+            agents[objectKey].tpu_util_live = tpu_util;
+          }
+          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_mem' in agents[objectKey].live_stat.devices) {
+            let tpu_mem: Array<any> = [];
+            Object.entries(agents[objectKey].live_stat.devices.tpu_mem).forEach(([k, v]) => {
+              let agentInfo = Object.assign({}, v, {num: k});
+              tpu_mem.push(agentInfo);
+            });
+            agents[objectKey].tpu_mem_live = tpu_mem;
+          }
+
           this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
         });
       }
@@ -777,7 +810,61 @@ export default class BackendAIAgentList extends BackendAIPage {
               </div>`)}
 
             </div>` : html``}
+          ${'rocm_util_live' in this.agentDetail ?
+      html`<div style="margin-left:10px;">
+              <h3>ROCm Devices</h3>
+              <h4>Utilization</h4>
+            ${this.agentDetail.rocm_util_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
+                <div class="horizontal start-justified center layout">
+                  <lablup-progress-bar class="cuda"
+                    progress="${item.pct / 100.0}"
+                    description=""
+                  ></lablup-progress-bar>
+                </div>
+              </div>`)}
+              <h4>Memory</h4>
+            ${this.agentDetail.rocm_mem_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
+                <div class="horizontal start-justified center layout">
+                  <lablup-progress-bar class="cuda"
+                    progress="${item.pct / 100.0}"
+                    description=""
+                  ></lablup-progress-bar>
+                </div>
+              </div>`)}
 
+            </div>` : html``}
+          ${'tpu_util_live' in this.agentDetail ?
+      html`<div style="margin-left:10px;">
+              <h3>TPU Devices</h3>
+              <h4>Utilization</h4>
+            ${this.agentDetail.tpu_util_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">TPU${item.num}</div>
+                <div class="horizontal start-justified center layout">
+                  <lablup-progress-bar class="cuda"
+                    progress="${item.pct / 100.0}"
+                    description=""
+                  ></lablup-progress-bar>
+                </div>
+              </div>`)}
+              <h4>Memory</h4>
+            ${this.agentDetail.tpu_mem_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">TPU${item.num}</div>
+                <div class="horizontal start-justified center layout">
+                  <lablup-progress-bar class="cuda"
+                    progress="${item.pct / 100.0}"
+                    description=""
+                  ></lablup-progress-bar>
+                </div>
+              </div>`)}
+
+            </div>` : html``}
+씨
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
