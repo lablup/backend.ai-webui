@@ -537,7 +537,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                 <span class="indicator">GPU</span>
               </div>
               <span class="flex"></span>
-              <lablup-progress-bar id="gpu-bar" value="${rowData.item.used_cuda_gpu_slots_ratio}"
+              <lablup-progress-bar id="gpu-bar" progress="${rowData.item.used_cuda_gpu_slots_ratio}"
                               buffer="${rowData.item.used_cuda_gpu_slots_ratio}"
                               description="${rowData.item.used_cuda_gpu_slots}"></lablup-progress-bar>
             </div>
@@ -550,7 +550,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                 <span class="indicator">fGPU</span>
               </div>
               <span class="flex"></span>
-              <lablup-progress-bar id="vgpu-bar" value="${rowData.item.used_cuda_fgpu_slots_ratio}"
+              <lablup-progress-bar id="vgpu-bar" progress="${rowData.item.used_cuda_fgpu_slots_ratio}"
                               buffer="${rowData.item.used_cuda_fgpu_slots_ratio}"
                               description="${rowData.item.used_cuda_fgpu_slots}"></lablup-progress-bar>
 \            </div>
@@ -563,7 +563,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                 <span class="indicator">ROCm</span>
               </div>
               <span class="flex"></span>
-              <lablup-progress-bar id="rocm-gpu-bar" value="${rowData.item.used_rocm_gpu_slots_ratio}"
+              <lablup-progress-bar id="rocm-gpu-bar" progress="${rowData.item.used_rocm_gpu_slots_ratio}"
                                 buffer="${rowData.item.used_rocm_gpu_slots_ratio}"
                                 description="${rowData.item.used_rocm_gpu_slots}"></lablup-progress-bar>
             </div>
@@ -576,7 +576,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                 <span class="indicator">TPU</span>
               </div>
               <span class="flex"></span>
-              <lablup-progress-bar id="tpu-bar" value="${rowData.item.used_tpu_slots_ratio}"
+              <lablup-progress-bar id="tpu-bar" progress="${rowData.item.used_tpu_slots_ratio}"
                                 buffer="${rowData.item.used_tpu_slots_ratio}"
                                 description="${rowData.item.used_tpu_slots}"></lablup-progress-bar>
             </div>
