@@ -214,7 +214,8 @@
     "Terminated": "종료됨",
     "Maintaining": "보수중",
     "Status": "상태",
-    "DetailedInformation": "상세 정보"
+    "DetailedInformation": "상세 정보",
+    "Running": "실행중"
   },
   "general": {
     "cores": "코어",

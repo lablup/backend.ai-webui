@@ -512,7 +512,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         html`
           <div class="layout vertical">
             <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
-            <lablup-shields app="Terminated" color="yellow"
+            <lablup-shields app="${_t('agent.Terminated')}" color="yellow"
                             description="${elapsed}" ui="flat"></lablup-shields>
 
           </div>`, root
@@ -524,7 +524,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         html`
           <div class="layout vertical">
             <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
-            <lablup-shields app="Running" color="darkgreen"
+            <lablup-shields app="${_t('agent.Running')}" color="darkgreen"
                             description="${elapsed}" ui="flat"></lablup-shields>
 
           </div>`, root

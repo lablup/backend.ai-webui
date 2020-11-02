@@ -216,7 +216,8 @@
     "Terminated": "Terminated",
     "Maintaining": "Maintaining",
     "Status": "Status",
-    "DetailedInformation": "Detailed Information"
+    "DetailedInformation": "Detailed Information",
+    "Running": "Running"
   },
   "general": {
     "cores": "cores",
