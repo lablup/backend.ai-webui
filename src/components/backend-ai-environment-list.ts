@@ -92,7 +92,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       css`
         vaadin-grid {
           font-size: 14px;
-          height: calc(100vh - 150px);
+          height: calc(100vh - 235px);
         }
 
         wl-button > wl-icon {

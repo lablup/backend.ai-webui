@@ -51,6 +51,9 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
       css`
         mwc-textfield {
           width: 100%;
+          --mdc-text-field-fill-color: var(--general-menu-color);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
         }
       `
     ];
@@ -73,6 +76,12 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
       this.clientConfig,
       'Backend.AI Console.',
     );
+    this.successDialog.addEventListener('didHide', () => {
+      this._redirectToLoginPage();
+      });
+    this.failDialog.addEventListener('didHide', () => {
+      this._redirectToLoginPage();
+      });
   }
 
   /**
