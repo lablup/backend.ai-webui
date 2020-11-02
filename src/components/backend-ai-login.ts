@@ -455,12 +455,6 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
-  }
-
   _cancelLogin(e) {
     this._hideDialog(e);
     this.open();

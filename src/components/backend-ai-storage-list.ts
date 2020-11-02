@@ -1677,17 +1677,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
-   * Hide the current dialog.
-   *
-   * @param {Event} e - click the close or cancel button
-   * */
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
-  }
-
-  /**
    * Open dialog to share folder.
    *
    * @param {Event} e - click the share button
