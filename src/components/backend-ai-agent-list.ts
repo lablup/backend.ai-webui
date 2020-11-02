@@ -751,6 +751,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           ${'cuda_util_live' in this.agentDetail ?
       html`<div style="margin-left:10px;">
               <h3>CUDA Devices</h3>
+              <h4>Utilization</h4>
             ${this.agentDetail.cuda_util_live.map(item => html`
               <div class="horizontal start-justified center layout">
                 <div style="font-size:8px;width:35px;">CUDA${item.num}</div>
@@ -759,12 +760,20 @@ export default class BackendAIAgentList extends BackendAIPage {
                     progress="${item.pct / 100.0}"
                     description=""
                   ></lablup-progress-bar>
+                </div>
+              </div>`)}
+              <h4>Memory</h4>
+            ${this.agentDetail.cuda_mem_live.map(item => html`
+              <div class="horizontal start-justified center layout">
+                <div style="font-size:8px;width:35px;">CUDA${item.num}</div>
+                <div class="horizontal start-justified center layout">
                   <lablup-progress-bar class="cuda"
                     progress="${item.pct / 100.0}"
                     description=""
                   ></lablup-progress-bar>
                 </div>
               </div>`)}
+
             </div>` : html``}
 
           </div>
