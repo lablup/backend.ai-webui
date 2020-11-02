@@ -12,17 +12,19 @@ import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid-sort-column';
 import '../plastics/lablup-shields/lablup-shields';
 
-import 'weightless/icon';
 import 'weightless/button';
 
 import '@material/mwc-linear-progress';
 import '@material/mwc-icon-button';
+import '@material/mwc-list';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-icon';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 import './backend-ai-dialog';
-
+import './lablup-progress-bar';
 /**
  Backend.AI Agent List
 
@@ -40,6 +42,8 @@ import './backend-ai-dialog';
 export default class BackendAIAgentList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Array}) agents = Array();
+  @property({type: Object}) agentsObject = Object();
+  @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
@@ -62,11 +66,6 @@ export default class BackendAIAgentList extends BackendAIPage {
           border: 0;
           font-size: 14px;
           height: calc(100vh - 200px);
-        }
-
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
         }
 
         wl-icon {
@@ -117,12 +116,13 @@ export default class BackendAIAgentList extends BackendAIPage {
         .terminated mwc-linear-progress {
           --mdc-linear-progress-buffering-dots-image: url("data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 1 1'%3E%3Cpath d='M0,0h1v1H0' fill='#fff'/%3E%3C/svg%3E");
         }
+
         .date-indicator {
           font-size: 12px;
         }
 
         .asic-indicator {
-          border-top: 1px solid #ccc;
+          border-top: 1px solid #cccccc;
           margin-top: 3px;
           padding-top: 3px;
         }
@@ -251,6 +251,8 @@ export default class BackendAIAgentList extends BackendAIPage {
             let cuda_plugin = compute_plugins['cuda'];
             agents[objectKey].cuda_plugin = cuda_plugin;
           }
+          //console.log(agents[objectKey]);
+          this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
         });
       }
       this.agents = agents;
@@ -602,31 +604,35 @@ export default class BackendAIAgentList extends BackendAIPage {
         </div>`, root
     );
   }
+
   /**
    * Show detailed agent information as dialog form.
    *
    * @param {DOM element} root
    * @param {<vaadin-grid-column> element} column
    * @param {object} rowData
-  */
+   */
   showAgentDetailDialog(agentId) {
     console.log(agentId);
+    console.log(this.agentsObject[agentId]);
+    this.agentDetail = this.agentsObject[agentId];
     this.shadowRoot.querySelector('#agent-detail').show();
     return;
   }
+
   /**
    * Render control buttons such as assignment, build, add an alarm, pause and delete.
    *
    * @param {DOM element} root
    * @param {<vaadin-grid-column> element} column
    * @param {object} rowData
-  */
+   */
   controlRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment" @click="${(e)=>this.showAgentDetailDialog(rowData.item.addr)}"></mwc-icon-button>
+          <mwc-icon-button class="fg blue controls-running" icon="assignment" @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
             <mwc-icon-button disabled class="fg controls-running" icon="build"></mwc-icon-button>
             <mwc-icon-button disabled class="fg controls-running" icon="alarm"></mwc-icon-button>
@@ -666,7 +672,11 @@ export default class BackendAIAgentList extends BackendAIPage {
       <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent>
         <span slot="title">${_t("agent.DetailedInformation")}</span>
         <div slot="content">
-        TEST
+              <lablup-progress-bar class="end"
+                progress="0.5"
+                description=""
+              ></lablup-progress-bar>
+
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
@@ -674,7 +684,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               id="close-button"
               icon="check"
               label="${_t("button.Close")}"
-              @click="${(e)=>this._hideDialog(e)}"></mwc-button>
+              @click="${(e) => this._hideDialog(e)}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;
