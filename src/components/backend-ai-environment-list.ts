@@ -92,7 +92,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       css`
         vaadin-grid {
           font-size: 14px;
-          height: calc(100vh - 150px);
+          height: calc(100vh - 235px);
         }
 
         wl-button > wl-icon {
@@ -411,7 +411,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           this.notification.show();
           this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:none;');
           return ;
-        } 
+        }
       }
 
       if ('cuda.device' in resourceSlots && 'cuda.shares' in resourceSlots) { // Can be possible after 20.03
