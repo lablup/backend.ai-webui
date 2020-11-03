@@ -917,7 +917,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             appOptions['runtime'] = 'jupyter';
             appOptions['filename'] = this.importFilename;
           }
-          globalThis.appLauncher.showLauncher(appOptions);
+          // only launch app when it has valid service ports
+          if (service_info.length > 0) {
+            globalThis.appLauncher.showLauncher(appOptions);
+          } else {
+            throw { "message": _text('session.CreationFailed')}
+          }
         }).catch((err) => {
           // remove redundant error message
         });
