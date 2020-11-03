@@ -41,6 +41,7 @@ Backend.AI console focuses to
     * User resource statistics
     * Session statistics
     * Workload statistics
+    * Per-node statistics
     * Insight (working)
  * Configurations
     * User-specific web / app configurations
