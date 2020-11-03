@@ -82,7 +82,9 @@
     "Permission": "권한",
     "Announcement": "공지",
     "SystemResources": "시스템 자원",
-    "CurrentVersion": "현재 버전"
+    "CurrentVersion": "현재 버전",
+    "NoAnnouncement": "표시 할 안내문이 없습니다.",
+    "NoInvitations": "초대 받은 폴더가 없습니다."
   },
   "session": {
     "launcher": {

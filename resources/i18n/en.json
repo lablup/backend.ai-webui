@@ -83,7 +83,10 @@
     "Permission": "Permission",
     "Announcement": "Announcement",
     "SystemResources": "System Resources",
-    "CurrentVersion": "Current Version"
+    "CurrentVersion": "Current Version",
+    "NoAnnouncement": "There are no announcement to display.",
+    "NoInvitations": "There are no invitations to display."
+
   },
   "session": {
     "launcher": {
