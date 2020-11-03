@@ -193,12 +193,6 @@ export default class BackendAiSignup extends BackendAIPage {
     }
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
-  }
-
   block(message = '') {
     this.errorMsg = message;
     this.blockPanel.show();

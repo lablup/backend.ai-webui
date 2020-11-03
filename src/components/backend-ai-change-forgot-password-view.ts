@@ -74,7 +74,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     this.consoleShell = document.querySelector('#console-shell');
     this.consoleShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
-    this.passwordChangeDialog = this.shadowRoot.querySelector('#verification-success-dialog');
+    this.passwordChangeDialog = this.shadowRoot.querySelector('#update-password-dialog');
     this.failDialog = this.shadowRoot.querySelector('#verification-fail-dialog');
 
     this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
@@ -82,6 +82,12 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
       this.clientConfig,
       'Backend.AI Console.',
     );
+    this.passwordChangeDialog.addEventListener('didHide', () => {
+      this._redirectToLoginPage();
+      });
+    this.failDialog.addEventListener('didHide', () => {
+      this._redirectToLoginPage();
+      });
   }
 
   /**

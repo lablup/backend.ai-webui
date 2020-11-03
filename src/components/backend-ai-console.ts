@@ -150,11 +150,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
-    this.appPage = this.shadowRoot.querySelector('#app-page');
     this.contentBody = this.shadowRoot.querySelector('#content-body');
     this.contentBody.type = 'dismissible';
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
-    //this.mainToolbar.scrollTarget = this.appPage;
     this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
     this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
     this.splash = this.shadowRoot.querySelector('#about-backendai-panel');
@@ -940,17 +938,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
       <div id="loading-curtain" class="loading-background"></div>
-      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="position:fixed;visibility:hidden;">
-        <div class="drawer-content drawer-menu" style="height:100vh;position:fixed;">
+      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="visibility:hidden;">
+        <div class="drawer-menu" style="height:100vh;">
           <div id="portrait-bar" class="draggable">
             <div class="horizontal center layout flex bar draggable" style="cursor:pointer;" @click="${() => this._moveTo('/summary')}">
               <div class="portrait-canvas"></div>
               <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
                 <div class="site-name"><span class="bold">Backend</span>.AI</div>
-                ${this.siteDescription ?
-      html`<div class="site-name" style="font-size:13px;text-align:right;">${this.siteDescription}</div>` :
-      html``
-    }
+                ${this.siteDescription ? html`
+                  <div class="site-name" style="font-size:13px;text-align:right;">
+                    ${this.siteDescription}
+                  </div>` : html``}
               </div>
               <span class="flex"></span>
             </div>
@@ -988,36 +986,34 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
             ${this.is_admin ?
-      html`
-            <h3 class="full-menu">${_t("console.menu.Administration")}</h3>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'credential'}" @click="${() => this._moveTo('/credential')}" ?disabled="${!this.is_admin}">
-              <i class="fas fa-address-card" slot="graphic" id="user-menu-icon"></i>
-              <span class="full-menu">${_t("console.menu.Users")}</span>
-            </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'environment'}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}">
-              <i class="fas fa-microchip" slot="graphic" id="environments-menu-icon"></i>
-              <span class="full-menu">${_t("console.menu.Environments")}</span>
-            </mwc-list-item>
-    ` : html``}
+              html`
+                <h3 class="full-menu">${_t("console.menu.Administration")}</h3>
+                <mwc-list-item graphic="icon" ?selected="${this._page === 'credential'}" @click="${() => this._moveTo('/credential')}" ?disabled="${!this.is_admin}">
+                  <i class="fas fa-address-card" slot="graphic" id="user-menu-icon"></i>
+                  <span class="full-menu">${_t("console.menu.Users")}</span>
+                </mwc-list-item>
+                <mwc-list-item graphic="icon" ?selected="${this._page === 'environment'}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}">
+                  <i class="fas fa-microchip" slot="graphic" id="environments-menu-icon"></i>
+                  <span class="full-menu">${_t("console.menu.Environments")}</span>
+                </mwc-list-item>` : html``}
             ${this.is_superadmin ?
-      html`
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
-              <i class="fas fa-server" slot="graphic" id="resources-menu-icon"></i>
-              <span class="full-menu">${_t("console.menu.Resources")}</span>
-            </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
-              <i class="fas fa-cog" slot="graphic" id="configurations-menu-icon"></i>
-              <span class="full-menu">${_t("console.menu.Configurations")}</span>
-            </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
-              <i class="fas fa-wrench" slot="graphic" id="maintenance-menu-icon"></i>
-              <span class="full-menu">${_t("console.menu.Maintenance")}</span>
-            </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'information'}" @click="${() => this._moveTo('/information')}" ?disabled="${!this.is_superadmin}">
-              <i class="fas fa-info-circle" slot="graphic" id="information-menu-icon"></i>
-              <span class="full-menu">${_t("console.menu.Information")}</span>
-            </mwc-list-item>
-    ` : html``}
+              html`
+                <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
+                  <i class="fas fa-server" slot="graphic" id="resources-menu-icon"></i>
+                  <span class="full-menu">${_t("console.menu.Resources")}</span>
+                </mwc-list-item>
+                <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
+                  <i class="fas fa-cog" slot="graphic" id="configurations-menu-icon"></i>
+                  <span class="full-menu">${_t("console.menu.Configurations")}</span>
+                </mwc-list-item>
+                <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
+                  <i class="fas fa-wrench" slot="graphic" id="maintenance-menu-icon"></i>
+                  <span class="full-menu">${_t("console.menu.Maintenance")}</span>
+                </mwc-list-item>
+                <mwc-list-item graphic="icon" ?selected="${this._page === 'information'}" @click="${() => this._moveTo('/information')}" ?disabled="${!this.is_superadmin}">
+                  <i class="fas fa-info-circle" slot="graphic" id="information-menu-icon"></i>
+                  <span class="full-menu">${_t("console.menu.Information")}</span>
+                </mwc-list-item>` : html``}
           </mwc-list>
           <footer class="full-menu">
             <div class="terms-of-use" style="margin-bottom:10px;">
@@ -1035,7 +1031,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.11.0.201102</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.11.1.201102</small>
             </address>
           </footer>
           <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">

@@ -215,7 +215,9 @@
     "Connected": "Connected",
     "Terminated": "Terminated",
     "Maintaining": "Maintaining",
-    "Status": "Status"
+    "Status": "Status",
+    "DetailedInformation": "Detailed Information",
+    "Running": "Running"
   },
   "general": {
     "cores": "cores",
@@ -461,10 +463,9 @@
     "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
     "Created": "Resource preset created",
     "Updated": "Resource preset updated",
-    "MinimumCPUUnit":"CPU starts with 1 core",
-    "MinimumMemUnit":"Memory starts with 1 GB",
+    "MinimumCPUUnit": "CPU starts with 1 core",
+    "MinimumMemUnit": "Memory starts with 1 GB",
     "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB."
-    
   },
   "usersettings": {
     "General": "General",
@@ -508,7 +509,7 @@
     "PrivateKey": "Private Key",
     "InvalidPortNumber": "Port number should be positive number between 1025~65534",
     "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard.",
-    "ShellEnvironments":"Shell Environments"
+    "ShellEnvironments": "Shell Environments"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",

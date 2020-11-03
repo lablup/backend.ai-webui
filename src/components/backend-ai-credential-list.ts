@@ -563,17 +563,6 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   /**
-   * Hide the backend.ai dialog.
-   *
-   * @param {Event} e - Dispatches from the native input event each time the input changes.
-   */
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
-  }
-
-  /**
    * Save a keypair modification.
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.

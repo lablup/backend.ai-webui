@@ -213,7 +213,9 @@
     "Connected": "연결중",
     "Terminated": "종료됨",
     "Maintaining": "보수중",
-    "Status": "상태"
+    "Status": "상태",
+    "DetailedInformation": "상세 정보",
+    "Running": "실행중"
   },
   "general": {
     "cores": "코어",
@@ -293,7 +295,7 @@
     "UserIDAsEmail": "E-mail을 사용자 ID로 사용",
     "AccessKeyOptional": "접근 키 (선택)",
     "SecretKeyOptional": "비밀 키 (선택)",
-    "UserAccountCreated":"사용자 계정이 성공적으로 생성되었습니다.",
+    "UserAccountCreated": "사용자 계정이 성공적으로 생성되었습니다.",
     "UserAccountCreatedError": "이미 가입한 이력이 있는 사용자 입니다.",
     "KeypairCreated": "키페어가 성공적으로 생성되었습니다.",
     "UserIDRequired": "사용자 계정(email)은 필수 입력입니다."
@@ -458,8 +460,8 @@
     "MemoryShouldBeLargerThanSHMEM": "메모리는 공유메모리보다 커야 합니다",
     "Created": "자원 프리셋이 생성되었습니다",
     "Updated": "자원 프리셋에 수정되었습니다",
-    "MinimumCPUUnit":"CPU 최소 단위: 1 코어",
-    "MinimumMemUnit":"메모리 최소 단위: 1 GB",
+    "MinimumCPUUnit": "CPU 최소 단위: 1 코어",
+    "MinimumMemUnit": "메모리 최소 단위: 1 GB",
     "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다."
   },
   "usersettings": {
