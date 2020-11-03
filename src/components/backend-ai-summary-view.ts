@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
@@ -78,8 +78,7 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
-
-  public invitations: any;
+  @property({type: Object}) invitations = Object();
 
   constructor() {
     super();
@@ -256,6 +255,16 @@ export default class BackendAISummary extends BackendAIPage {
           margin-left: 12px;
           margin-right: 11px;
         }
+
+        lablup-activity-panel.inner-panel:hover {
+          --card-background-color: var(--general-sidepanel-color);
+        }
+
+        .fade-out {
+          opacity: 1;
+          -webkit-transition: opacity 1000ms linear;
+          transition: opacity 1000ms linear;
+        }
       `
     ];
   }
@@ -293,13 +302,11 @@ export default class BackendAISummary extends BackendAIPage {
         this.authenticated = true;
         this.manager_version = globalThis.backendaiclient.managerVersion;
         this.console_version = globalThis.packageVersion;
+        
         if (this.activeConnected) {
           this._refreshConsoleUpdateInformation();
-          this._refreshInvitations();
-          this.requestUpdate();
-          //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
-          //document.dispatchEvent(event);
         }
+        this._refreshInvitations();
       }, true);
     } else {
       this.is_superadmin = globalThis.backendaiclient.is_superadmin;
@@ -325,7 +332,6 @@ export default class BackendAISummary extends BackendAIPage {
           this.announcement = marked(res.message);
         }
       }).catch(err=>{
-
     });
   }
 
@@ -383,6 +389,8 @@ export default class BackendAISummary extends BackendAIPage {
         });
         this.notification.text = `You can now access folder: ${invitation.vfolder_name}`;
         this.notification.show();
+        // remove panel after a few seconds.
+        this._removeWithFadeOut(panel, 1500);
         this._refreshInvitations(true);
       })
       .catch(err => {
@@ -411,12 +419,24 @@ export default class BackendAISummary extends BackendAIPage {
         });
         this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
         this.notification.show();
+        // remove panel after a few seconds.
+        this._removeWithFadeOut(panel, 1500);
         this._refreshInvitations(true);
       });
   }
 
   _stripHTMLTags(str) {
     return str.replace(/(<([^>]+)>)/gi, "");
+  }
+
+  _removeWithFadeOut(el, speed) {
+    let seconds = speed / 1000;
+    el.style.transition = "opacity " + seconds + "s ease";
+
+    el.style.opacity = 0;
+    setTimeout( () => {
+      el.parentNode.removeChild(el);
+    }, speed);
   }
 
   render() {
@@ -462,41 +482,46 @@ export default class BackendAISummary extends BackendAIPage {
             </div>
           </lablup-activity-panel>
           <backend-ai-resource-panel ?active="${this.active === true}" height="500"></backend-ai-resource-panel>
-          ${this.announcement != '' ? html`
-            <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1">
-              <div slot="message">
-                ${unsafeHTML(this.announcement)}
-              </div>
-            </lablup-activity-panel>
-            ` : html``}
-          ${this.invitations ? this.invitations.map(invitation => html`
-            <lablup-activity-panel title="${_t('summary.Invitation')}">
-              <div slot="message">
-                <h3>From ${invitation.inviter}</h3>
-                <span class="invitation_folder_name">${_t("summary.FolderName")}>: ${invitation.vfolder_name}</span>
-                <div class="horizontal center layout">
-                  ${_t("summary.Permission")}>:
-                  ${[...invitation.perm].map(c => {
-                    return html`
-                      <lablup-shields app="" color="${['green', 'blue', 'red'][['r', 'w', 'd'].indexOf(c)]}"
-                              description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;})}
+          <div class="horizontal wrap layout">
+            <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" height="220">
+                <div slot="message">
+                  ${this.announcement !== '' ? unsafeHTML(this.announcement) : _t('summary.NoAnnouncement')}
                 </div>
-                <div style="margin-top:25px;" class="horizontal layout justified">
-                  <mwc-button
-                      unelevated
-                      icon="add"
-                      label="${_t('summary.Accept')}"
-                      @click="${e => this._acceptInvitation(e, invitation)}"></mwc-button>
-                  <span class="flex"></span>
-                  <mwc-button
-                      outlined
-                      icon="remove"
-                      label="${_t('summary.Decline')}"
-                      @click="${e => this._deleteInvitation(e, invitation)}"></mwc-button>
+              </lablup-activity-panel>
+              <lablup-activity-panel title="${_t('summary.Invitation')}" elevation="1" height="220" scrollableY>
+                  <div slot="message">
+                    ${this.invitations.length > 0 ? this.invitations.map(invitation => html`
+                      <lablup-activity-panel class="inner-panel" noheader autowidth elevation="0" height="130">
+                        <div slot="message">
+                          <div class="wrap layout">
+                          <h3 style="padding-top:10px;">From ${invitation.inviter}</h3>
+                          <span class="invitation_folder_name">${_t("summary.FolderName")}: ${invitation.vfolder_name}</span>
+                          <div class="horizontal center layout">
+                            ${_t("summary.Permission")}:
+                            ${[...invitation.perm].map(c => {
+                              return html`
+                                <lablup-shields app="" color="${['green', 'blue', 'red'][['r', 'w', 'd'].indexOf(c)]}"
+                                        description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;})}
+                          </div>
+                          <div style="margin:15px auto;" class="horizontal layout justified">
+                            <mwc-button
+                                unelevated
+                                label="${_t('summary.Accept')}"
+                                @click="${e => this._acceptInvitation(e, invitation)}"></mwc-button>
+                            <span class="flex"></span>
+                            <mwc-button
+                                outlined
+                                label="${_t('summary.Decline')}"
+                                @click="${e => this._deleteInvitation(e, invitation)}"></mwc-button>
+                          </div>
+                        </div>
+                      </lablup-activity-panel>`) : html`
+                      <p>${_text('summary.NoInvitations')}</p>`
+                  }
+                  </div>
                 </div>
-              </div>
-            </lablup-activity-panel>
-            `) : html``}
+              </lablup-activity-panel>
+            </div>
           </div>
           <div class="vertical layout">
             ${this.is_admin ? html`
