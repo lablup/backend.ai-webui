@@ -742,7 +742,8 @@
     "UpdatePasswordMessage": "사용하고 있는 이메일과 새로운 비밀번호를 입력한 뒤 업데이트 버튼을 누르십시오.",
     "PasswordChanged": "비밀번호가 변경되었습니다",
     "InvalidChangePasswordToken": "토큰 오류",
-    "InvalidChangePasswordTokenMessage": "비밀번호 변경을 위해 발급된 토큰에 오류가 있습니다. 비밀번호 변경 이메일을 다시 보내고 시도해 보십시오."
+    "InvalidChangePasswordTokenMessage": "비밀번호 변경을 위해 발급된 토큰에 오류가 있습니다. 비밀번호 변경 이메일을 다시 보내고 시도해 보십시오.",
+    "PleaseInputLoginInfo": "로그인을 위한 ID 와 PW를 입력해주세요."
   },
   "signup": {
     "SignupBETA": "가입 (베타 초대 대상)",
