@@ -1781,6 +1781,17 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+    /**
+   * Hide a wl dialog.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('wl-dialog');
+    dialog.hide();
+  }
+
 }
 declare global {
   interface HTMLElementTagNameMap {
