@@ -259,12 +259,6 @@ export default class BackendAISummary extends BackendAIPage {
         lablup-activity-panel.inner-panel:hover {
           --card-background-color: var(--general-sidepanel-color);
         }
-
-        .fade-out {
-          opacity: 1;
-          -webkit-transition: opacity 1000ms linear;
-          transition: opacity 1000ms linear;
-        }
       `
     ];
   }
@@ -364,8 +358,8 @@ export default class BackendAISummary extends BackendAIPage {
       this.invitations = res.invitations;
       if (this.active && !refreshOnly) {
         setTimeout(() => {
-          this._refreshInvitations()
-        }, 15000);
+          this._refreshInvitations();
+        }, 1000);
       }
     });
   }
@@ -376,28 +370,30 @@ export default class BackendAISummary extends BackendAIPage {
    * @param {Event} e - Click the accept button
    * @param {any} invitation
    * */
-  _acceptInvitation(e, invitation: any) {
+  async _acceptInvitation(e, invitation: any) {
     if (!this.activeConnected) {
       return;
     }
     let panel = e.target.closest('lablup-activity-panel');
-    globalThis.backendaiclient.vfolder.accept_invitation(invitation.id)
-      .then(response => {
-        panel.setAttribute('disabled', 'true');
-        panel.querySelectorAll('wl-button').forEach((btn) => {
-          btn.setAttribute('disabled', 'true');
-        });
-        this.notification.text = `You can now access folder: ${invitation.vfolder_name}`;
-        this.notification.show();
-        // remove panel after a few seconds.
-        this._removeWithFadeOut(panel, 1500);
-        this._refreshInvitations(true);
-      })
-      .catch(err => {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
+    try {
+      panel.setAttribute('disabled', 'true');
+      panel.querySelectorAll('wl-button').forEach((btn) => {
+        btn.setAttribute('disabled', 'true');
       });
+      await globalThis.backendaiclient.vfolder.accept_invitation(invitation.id);
+      this.notification.text = _text('summary.AcceptSharedVFolder') + `${invitation.vfolder_name}`;
+      this.notification.show();
+      this._refreshInvitations();
+      this.requestUpdate();
+    } catch(err) {
+      panel.setAttribute('disabled', 'false');
+      panel.querySelectorAll('wl-button').forEach((btn) => {
+        btn.setAttribute('disabled', 'false');
+      });
+      this.notification.text = PainKiller.relieve(err.title);
+      this.notification.detail = err.message;
+      this.notification.show(true, err);
+    }
   }
 
   /**
@@ -406,37 +402,35 @@ export default class BackendAISummary extends BackendAIPage {
    * @param {Event} e - Click the decline button
    * @param {any} invitation
    * */
-  _deleteInvitation(e, invitation: any) {
+  async _deleteInvitation(e, invitation: any) {
     if (!this.activeConnected) {
       return;
     }
     let panel = e.target.closest('lablup-activity-panel');
-    globalThis.backendaiclient.vfolder.delete_invitation(invitation.id)
-      .then(res => {
-        panel.setAttribute('disabled', 'true');
-        panel.querySelectorAll('mwc-button').forEach((btn) => {
-          btn.setAttribute('disabled', 'true');
-        });
-        this.notification.text = `Folder invitation is deleted: ${invitation.vfolder_name}`;
-        this.notification.show();
-        // remove panel after a few seconds.
-        this._removeWithFadeOut(panel, 1500);
-        this._refreshInvitations(true);
+    
+    try {
+      panel.setAttribute('disabled', 'true');
+      panel.querySelectorAll('wl-button').forEach((btn) => {
+        btn.setAttribute('disabled', 'true');
       });
+      await globalThis.backendaiclient.vfolder.delete_invitation(invitation.id);
+      this.notification.text =  _text('summary.DeclineSharedVFolder') + `${invitation.vfolder_name}`;
+      this.notification.show();
+      this._refreshInvitations();
+      this.requestUpdate();
+    } catch(err) {
+      panel.setAttribute('disabled', 'false');
+      panel.querySelectorAll('wl-button').forEach((btn) => {
+        btn.setAttribute('disabled', 'false');
+      });
+      this.notification.text = PainKiller.relieve(err.title);
+      this.notification.detail = err.message;
+      this.notification.show(true, err);
+    }
   }
 
   _stripHTMLTags(str) {
     return str.replace(/(<([^>]+)>)/gi, "");
-  }
-
-  _removeWithFadeOut(el, speed) {
-    let seconds = speed / 1000;
-    el.style.transition = "opacity " + seconds + "s ease";
-
-    el.style.opacity = 0;
-    setTimeout( () => {
-      el.parentNode.removeChild(el);
-    }, speed);
   }
 
   render() {
@@ -490,7 +484,7 @@ export default class BackendAISummary extends BackendAIPage {
               </lablup-activity-panel>
               <lablup-activity-panel title="${_t('summary.Invitation')}" elevation="1" height="220" scrollableY>
                   <div slot="message">
-                    ${this.invitations.length > 0 ? this.invitations.map(invitation => html`
+                    ${this.invitations.length > 0 ? this.invitations.map((invitation, index) => html`
                       <lablup-activity-panel class="inner-panel" noheader autowidth elevation="0" height="130">
                         <div slot="message">
                           <div class="wrap layout">
