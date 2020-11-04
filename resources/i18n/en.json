@@ -745,7 +745,8 @@
     "UpdatePasswordMessage": "Type your email and a new password, and then press Update button.",
     "PasswordChanged": "Password is successfully changed",
     "InvalidChangePasswordToken": "Invalid Token",
-    "InvalidChangePasswordTokenMessage": "Issued token to change password has error. Please send another email for changing password and try again."
+    "InvalidChangePasswordTokenMessage": "Issued token to change password has error. Please send another email for changing password and try again.",
+    "PleaseInputLoginInfo": "Please input ID and password for login."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",
