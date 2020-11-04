@@ -310,7 +310,6 @@ export default class BackendAISummary extends BackendAIPage {
       this.console_version = globalThis.packageVersion;
       this._refreshConsoleUpdateInformation();
       this._refreshInvitations();
-      this.requestUpdate();
       //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
       //document.dispatchEvent(event);
     }
@@ -384,7 +383,6 @@ export default class BackendAISummary extends BackendAIPage {
       this.notification.text = _text('summary.AcceptSharedVFolder') + `${invitation.vfolder_name}`;
       this.notification.show();
       this._refreshInvitations();
-      this.requestUpdate();
     } catch(err) {
       panel.setAttribute('disabled', 'false');
       panel.querySelectorAll('wl-button').forEach((btn) => {
@@ -417,7 +415,6 @@ export default class BackendAISummary extends BackendAIPage {
       this.notification.text =  _text('summary.DeclineSharedVFolder') + `${invitation.vfolder_name}`;
       this.notification.show();
       this._refreshInvitations();
-      this.requestUpdate();
     } catch(err) {
       panel.setAttribute('disabled', 'false');
       panel.querySelectorAll('wl-button').forEach((btn) => {
