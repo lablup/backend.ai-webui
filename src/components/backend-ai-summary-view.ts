@@ -355,10 +355,12 @@ export default class BackendAISummary extends BackendAIPage {
     }
     globalThis.backendaiclient.vfolder.invitations().then(res => {
       this.invitations = res.invitations;
+
+      // refresh invitation lists every 10sec
       if (this.active && !refreshOnly) {
         setTimeout(() => {
           this._refreshInvitations();
-        }, 1000);
+        }, 10000);
       }
     });
   }
