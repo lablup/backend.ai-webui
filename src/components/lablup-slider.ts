@@ -43,6 +43,7 @@ export default class LablupSlider extends LitElement {
   @property({type: Boolean}) disabled = null;
   @property({type: Object}) slider;
   @property({type: Object}) textfield;
+  @property({type: String}) unit = '';
 
   static get styles() {
     return [
@@ -60,14 +61,30 @@ export default class LablupSlider extends LitElement {
         wl-textfield {
           --input-state-color-invalid :  var(--input-state-color-inactive,hsl(var(--shade-400,var(--shade-hue,200),var(--shade-saturation,4%),var(--shade-lightness,65%))));
           width: var(--textfield-min-width, 65px);
-          margin-left: 10px;
+          margin-left: 5px;
         }
 
         mwc-slider {
           width: var(--slider-width, 100px);
-          --mdc-theme-secondary: var(--slider-color, '#018786');
+          --mdc-theme-secondary: #627ef2; /* var(--slider-color, '#627ef2'); */
           color: var(--paper-grey-700);
         }
+
+        .slider-label {
+          background-color: var(--input-bg, #f2f2f2);
+          width: var(--input-width, 105px);
+          margin-left: 10px;
+          border: 1px solid #E8E8E8;
+          border-radius: 2px;
+        }
+
+        p.unit {
+          display: block;
+          font-size: 12px;
+          padding-left: 10px;
+          color: var(--unit-font-color, #A4A4A4);
+        }
+
       `];
   }
 
@@ -75,17 +92,20 @@ export default class LablupSlider extends LitElement {
     // language=HTML
     return html`
       <div class="horizontal center layout">
-      <mwc-slider id="slider" class="${this.id}" value="${this.value}"
-          min="${this.min}" max="${this.max}"
-          ?pin="${this.pin}"
-          ?disabled="${this.disabled}"
-          ?markers="${this.markers}"
-          @change="${this.syncToText}">
-      </mwc-slider>
-      <wl-textfield style="display:none" id="textfield" class="${this.id}" type="number"
-        value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
-        @change="${this.syncToSlider}">
-      </wl-textfield>
+        <mwc-slider id="slider" class="${this.id}" value="${this.value}"
+            min="${this.min}" max="${this.max}"
+            ?pin="${this.pin}"
+            ?disabled="${this.disabled}"
+            ?markers="${this.markers}"
+            @change="${() => this.syncToText()}">
+        </mwc-slider>
+        <div class="horizontal center layout slider-label">
+          <wl-textfield style="display:none" id="textfield" class="${this.id}" type="number"
+            value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
+            @change="${() => this.syncToSlider()}">
+          </wl-textfield>
+          <p class="unit">${this.unit}</p>
+        </div>
       </div>
     `;
   }
@@ -112,6 +132,7 @@ export default class LablupSlider extends LitElement {
       this.step = 1.0;
     }
     this.checkMarkerDisplay();
+    this.slider.layout();
   }
 
   connectedCallback() {
