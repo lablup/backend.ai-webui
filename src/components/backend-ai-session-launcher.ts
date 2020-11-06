@@ -175,12 +175,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // language=CSS
       css`
         lablup-slider {
-          width: 210px !important;
+          width: 250px !important; /* 210px !important; */
           --textfield-width: 50px;
-          --slider-width: 135px;
+          --slider-width: 114px;
+          --input-width: 110px;
+          margin-right: 10px;
         }
 
-        lablup-slider.mem,
+        /* lablup-slider.mem,
         lablup-slider.shmem {
           --slider-color: var(--paper-orange-400);
         }
@@ -195,7 +197,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         lablup-slider.session {
           --slider-color: var(--paper-pink-400);
-        }
+        } */
 
         mwc-linear-progress {
           width: 90px;
@@ -255,7 +257,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         div.resource-type {
           font-size: 14px;
+          font-width: bold;
           width: 70px;
+          margin-right: 10px;
         }
 
         .resources.horizontal .monitor.session {
@@ -475,7 +479,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         mwc-icon-button.info {
-          --mdc-icon-button-size: 30px;
+          --mdc-icon-button-size: 24px;
+          color: #627ef2;
+        }
+
+        mwc-icon-button.info:hover {
+          opacity: 0.7 !important;
         }
 
         mwc-icon {
@@ -1955,9 +1964,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                @click="${this._resourceTemplateToCustom}"
                                marker_limit="${this.marker_limit}"
                                min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
-                               value="${this.cpu_request}"></lablup-slider>
-                <span class="caption">${_t("session.launcher.Core")}</span>
-                <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
+                               value="${this.cpu_request}"
+                               unit="${_t("session.launcher.Core")}"></lablup-slider>
+                <!--<span class="caption">${_t("session.launcher.Core")}</span>-->
+                <mwc-icon-button icon="info" class="info" @click="${(e) => {
       this._showResourceDescription(e, 'cpu');
     }}"></mwc-icon-button>
             </div>
@@ -1968,9 +1978,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                              @click="${this._resourceTemplateToCustom}"
                              marker_limit="${this.marker_limit}"
                              min="${this.mem_metric.min}" max="${this.mem_metric.max}"
-                             value="${this.mem_request}"></lablup-slider>
-              <span class="caption">GB</span>
-              <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
+                             value="${this.mem_request}"
+                             unit="GB"></lablup-slider>
+              <!--<span class="caption">GB</span>-->
+              <mwc-icon-button icon="info" class="info" @click="${(e) => {
       this._showResourceDescription(e, 'mem');
     }}"></mwc-icon-button>
             </div>
@@ -1981,9 +1992,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                              @click="${this._resourceTemplateToCustom}"
                              marker_limit="${this.marker_limit}"
                              min="0.0625" max="${this.shmem_metric.max}"
-                             value="${this.shmem_request}"></lablup-slider>
-              <span class="caption">GB</span>
-              <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
+                             value="${this.shmem_request}"
+                             unit="GB"></lablup-slider>
+              <!--<span class="caption">GB</span>-->
+              <mwc-icon-button icon="info" class="info" @click="${(e) => {
       this._showResourceDescription(e, 'shmem');
     }}"></mwc-icon-button>
             </div>
@@ -1993,9 +2005,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                              pin snaps editable markers step="${this.gpu_step}"
                              @click="${this._resourceTemplateToCustom}"
                              marker_limit="${this.marker_limit}"
-                             min="0.0" max="${this.cuda_device_metric.max}" value="${this.gpu_request}"></lablup-slider>
-              <span class="caption">GPU</span>
-              <mwc-icon-button icon="info" class="fg blue info" @click="${(e) => {
+                             min="0.0" max="${this.cuda_device_metric.max}"
+                             value="${this.gpu_request}"
+                             unit="GPU"></lablup-slider>
+              <!--<span class="caption">GPU</span>-->
+              <mwc-icon-button icon="info" class="info" @click="${(e) => {
       this._showResourceDescription(e, 'gpu');
     }}"></mwc-icon-button>
             </div>
@@ -2005,9 +2019,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                              pin snaps editable markers step="1"
                              @click="${this._resourceTemplateToCustom}"
                              marker_limit="${this.marker_limit}"
-                             min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
-              <span class="caption">#</span>
-              <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
+                             min="1" max="${this.concurrency_limit}"
+                             value="${this.session_request}"
+                             unit="#"></lablup-slider>
+              <!--<span class="caption">#</span>-->
+              <mwc-icon-button icon="info" class="info" @click="${(e) => {
       this._showResourceDescription(e, 'session');
     }}"></mwc-icon-button>
             </div>
