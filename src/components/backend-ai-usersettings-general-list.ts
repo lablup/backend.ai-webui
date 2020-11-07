@@ -856,9 +856,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                 @click="${this._openSSHKeypairRefreshDialog}">
             </mwc-icon-button>
           </div>
-          <!--<wl-button id="ssh-keypair-details" fab inverted flat @click="${this._openSSHKeypairRefreshDialog}">
-            <wl-icon id="ssh-keypair-icon">more</wl-icon>
-          </wl-button>-->
         </div>
         <div class="horizontal layout wrap setting-item">
           <div class="vertical start start-justified layout setting-desc">
@@ -905,14 +902,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             outlined
             label="${_t("usersettings.EditUserConfigScript")}"
             @click="${() => this._launchUserConfigDialog()}"></mwc-button>
-        <!--<wl-button class="fg teal" outlined @click="${() => this._editBootstrapScript()}" style="margin-right:20px; background: none; display: none;">
-          <wl-icon>edit</wl-icon>
-          ${_t("usersettings.EditBootstrapScript")}
-        </wl-button>
-        <wl-button class="fg green" outlined @click="${() => this._launchUserConfigDialog()}" style="background: none;">
-          <wl-icon>edit</wl-icon>
-          ${_t("usersettings.EditUserConfigScript")}
-        </wl-button>-->
       </div>
       <h3 class="horizontal center layout" style="display:none;">
         <span>${_t("usersettings.PackageInstallation")}</span>
