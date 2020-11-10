@@ -87,7 +87,8 @@
     "NoAnnouncement": "There are no announcement to display.",
     "NoInvitations": "There are no invitations to display.",
     "AcceptSharedVFolder": "You can now access folder: ",
-    "DeclineSharedVFolder": "Folder invitation is deleted: "
+    "DeclineSharedVFolder": "Folder invitation is deleted: ",
+    "connectingToCluster": "Connecting to Backend.AI Cluster..."
   },
   "session": {
     "launcher": {

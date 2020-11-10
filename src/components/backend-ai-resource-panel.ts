@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
+import {translate as _t, get as _text, translateUnsafeHTML as _tr} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -237,9 +237,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     }).catch(err => {
       this.spinner.hide();
       this.sessions = 0;
-      this.notification.text = PainKiller.relieve('Couldn\'t connect to manager.');
+      this.notification.text = _text('summary.connectingToCluster');
       this.notification.detail = err;
-      this.notification.show(true, err);
+      this.notification.show(false, err);
     });
   }
 
