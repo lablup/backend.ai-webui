@@ -144,7 +144,6 @@ export default class BackendAiInformationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <!--<wl-card elevation="1">-->
       <div class="horizontal layout flex wrap">
         <div class="vertical layout">
           <lablup-activity-panel title="${_t("information.Core")}" horizontalsize="1x">
@@ -295,7 +294,6 @@ export default class BackendAiInformationView extends BackendAIPage {
           </div>
         </div>
       </lablup-activity-panel>
-      <!--</wl-card>-->
     `;
   }
 

@@ -1211,8 +1211,6 @@ export default class BackendAiSessionList extends BackendAIPage {
                   ${rowData.item.mounts[0].replace(/[\[\]\,\'\"]/g, '').split(' ')[0]}
                 </button>
               ` : html``}
-            <!-- <span>${rowData.item.storage_capacity}</span> -->
-            <!-- <span class="indicator">${rowData.item.storage_unit}</span> -->
           </div>
         </div>
      `, root
