@@ -149,7 +149,8 @@
       "PleaseChooseFoldersToMount": "Please Choose Folders To Mount",
       "StartImportedNotebook": "Start Imported Notebook",
       "SessionNameAllowCondition": "Session name only allows at least 4 characters without any whitespaces.",
-      "NoFolderExists": "No Folder Exists"
+      "NoFolderExists": "No Folder Exists",
+      "sessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app."
     },
     "Running": "Running",
     "Finished": "Finished",

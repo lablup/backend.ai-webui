@@ -964,7 +964,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000);
     task.catch((err) => {
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        if ('statusCode' in err && err.statusCode === 408) {
+          this.notification.text = _text("session.launcher.sessionStillPreparing");
+        } else {
+          this.notification.text = PainKiller.relieve(err.message);
+        }
         this.notification.detail = err.message;
         this.notification.show(true, err);
       } else if (err && err.title) {
