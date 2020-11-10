@@ -23,7 +23,6 @@ import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 
 import '@vaadin/vaadin-item/vaadin-item';
-import '@vaadin/vaadin-upload/vaadin-upload';
 
 import 'weightless/button';
 import 'weightless/card';
