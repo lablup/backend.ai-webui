@@ -864,14 +864,21 @@ class Client {
     return uaSig;
   }
 
-  /* GraphQL requests */
-  async query(q, v, signal = null, timeout: number = 0) {
+  /**
+   * Send GraphQL requests
+   *
+   * @param {string} q - query string for GraphQL
+   * @param {string} v - variable string for GraphQL
+   * @param {number} timeout - Timeout to force terminate request
+   * @param {number} retry - The number of retry when request is failled
+   */
+  async query(q, v, signal = null, timeout: number = 0, retry: number = 0) {
     let query = {
       'query': q,
       'variables': v
     };
     let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
-    return this._wrapWithPromise(rqst, false, signal, timeout);
+    return this._wrapWithPromise(rqst, false, signal, timeout, retry);
   }
 
   /**
