@@ -107,7 +107,7 @@ class Client {
         this.code = null;
         this.sessionId = null;
         this.kernelType = null;
-        this.clientVersion = '20.8.1';
+        this.clientVersion = '20.11.0';
         this.agentSignature = agentSignature;
         if (config === undefined) {
             this._config = ClientConfig.createFromEnv();
@@ -780,7 +780,7 @@ class Client {
      *
      * @param {string} method - the HTTP method
      * @param {string} queryString - the URI path and GET parameters
-     * @param {string} body - an object that will be encoded as JSON in the request body
+     * @param {any} body - an object that will be encoded as JSON in the request body
      */
     newSignedRequest(method, queryString, body) {
         let content_type = "application/json";
