@@ -755,7 +755,7 @@ class Client {
         let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download_single?${q}`, null);
         return this._wrapWithPromise(rqst, true);
     }
-    async mangleUserAgentSignature() {
+    mangleUserAgentSignature() {
         let uaSig = this.clientVersion
             + (this.agentSignature ? ('; ' + this.agentSignature) : '');
         return uaSig;
