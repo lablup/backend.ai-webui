@@ -240,6 +240,11 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       this.notification.text = _text('summary.connectingToCluster');
       this.notification.detail = err;
       this.notification.show(false, err);
+      if (this.active) {
+        setTimeout(() => {
+          this._refreshSessionInformation()
+        }, 15000);
+      }
     });
   }
 

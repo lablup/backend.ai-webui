@@ -169,8 +169,9 @@ class Client {
      * @param {Boolean} rawFile - True if it is raw request
      * @param {AbortController.signal} signal - Request signal to abort fetch
      * @param {number} timeout - Custom timeout (sec.) If no timeout is given, default timeout is used.
+     * @param {number} retry - an integer to retry this request
      */
-    async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout = 0) {
+    async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout = 0, retry = 0) {
         let errorType = Client.ERR_REQUEST;
         let errorTitle = '';
         let errorMsg;
@@ -229,6 +230,10 @@ class Client {
             }
         }
         catch (err) {
+            if (retry > 0) {
+                await new Promise(r => setTimeout(r, 2000)); // Retry after 2 seconds.
+                return this._wrapWithPromise(rqst, rawFile, signal, timeout, retry - 1);
+            }
             let error_message;
             if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
                 error_message = err.title; // formatted message
