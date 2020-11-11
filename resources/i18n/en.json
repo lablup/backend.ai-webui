@@ -185,7 +185,11 @@
       "AppMustBeRun": "Start only when the app is already running",
       "AppMustBeRunDialog": "This app can only be accessed and used if it is already running through the terminal. If not, you will be directed to an error page that occurs when the app is not running.",
       "ConfirmAndRun": "I checked and I'll start"
-    }
+    },
+    "SessionTerminated": "Session terminated.",
+    "SessionsTerminated": "Sessions terminated.",
+    "NoSession": "No session.",
+    "DownloadingCSVFile": "Downloading CSV file..."
   },
   "button": {
     "Cancel": "Cancel",
