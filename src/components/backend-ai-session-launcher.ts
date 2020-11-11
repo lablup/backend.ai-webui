@@ -1877,7 +1877,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
           <wl-expansion name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
-            <!--<span slot="description" style="font-size:12px;color:#646464;"></span>-->
             <mwc-list fullwidth multi id="vfolder"
               @selected="${this._updateSelectedFolder}">
             ${this.vfolders.length === 0 ? html`
