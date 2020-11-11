@@ -398,6 +398,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
+  /**
+   * Refresh the job list.
+   *
+   * @param {boolean} refresh - if true, dispatch the 'backend-ai-resource-refreshed' event
+   * @param {boolean} repeat - repeat the job data reading. Set refreshTime to 5000 for running list else 30000
+   * */
   async refreshList(refresh = true, repeat = true) {
     return this._refreshJobData(refresh, repeat);
   }
@@ -406,7 +412,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Refresh the job data - data fields, sessions, etc.
    *
    * @param {boolean} refresh - if true, dispatch the 'backend-ai-resource-refreshed' event
-   * @param {boolean} repeat - set refreshTime to 5000 if true else 30000
+   * @param {boolean} repeat - repeat the job data reading. Set refreshTime to 5000 for running list else 30000
    * */
   async _refreshJobData(refresh = false, repeat = true) {
     await this.updateComplete;
