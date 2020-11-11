@@ -578,6 +578,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
       }
     }).catch(err => {
+      this.refreshing = false;
       this.spinner.hide();
       console.log(err);
       if (err && err.message) {
