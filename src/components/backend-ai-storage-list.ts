@@ -418,7 +418,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
-          <mwc-button unelevated class="fullwidth blue button" type="submit" icon="edit" id="rename-button" outlined @click="${() => this._renameFolder()}">
+          <mwc-button unelevated class="fullwidth bg-blue button" type="submit" icon="edit" id="rename-button" outlined @click="${() => this._renameFolder()}">
             ${_t('data.folders.Rename')}
           </mwc-button>
         </div>
@@ -435,7 +435,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
-          <mwc-button unelevated class="fullwidth blue button" type="submit" icon="close" id="delete-button" @click="${() => this._deleteFolderWithCheck()}">
+          <mwc-button unelevated class="fullwidth red button" type="submit" icon="close" id="delete-button" @click="${() => this._deleteFolderWithCheck()}">
             ${_t("data.folders.Delete")}
           </mwc-button>
         </div>
@@ -685,8 +685,8 @@ export default class BackendAiStorageList extends BackendAIPage {
             ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout distancing">
-            <mwc-button inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</mwc-button>
-            <mwc-button @click="${(e) => this._deleteFileWithCheck(e)}">${_t("button.Okay")}</mwc-button>
+            <mwc-button outlined @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</mwc-button>
+            <mwc-button raised @click="${(e) => this._deleteFileWithCheck(e)}">${_t("button.Okay")}</mwc-button>
          </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="download-file-dialog" fixed backdrop>
