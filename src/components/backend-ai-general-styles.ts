@@ -252,10 +252,10 @@ export const BackendAiStyles = [
       --mdc-select-min-width: 100px; /* Fallback to apply width */
     }
 
-    mwc-button,
-    mwc-button[outlined],
-    mwc-button[raised],
-    mwc-button[unelevated] {
+    mwc-button.primary-action,
+    mwc-button.primary-action[outlined],
+    mwc-button.primary-action[raised],
+    mwc-button.primary-action[unelevated] {
       border-radius: 5px;
       background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
       --mdc-theme-primary: transparent; /* gradient-color doesn't work in mwc-button styling */
@@ -454,38 +454,47 @@ export const BackendAiStyles = [
 
     .bg-blue {
       background-color: var(--paper-light-blue-400);
+      --mdc-theme-primary: var(--paper-light-blue-400);
     }
 
     .bg-red {
       background-color: var(--paper-red-400);
+      --mdc-theme-primary: var(--paper-red-400);
     }
 
     .bg-yellow {
       background-color: var(--paper-yellow-400);
+      --mdc-theme-primary: var(--paper-yellow-400);
     }
 
     .bg-orange {
       background-color: var(--paper-amber-400);
+      --mdc-theme-primary: var(--paper-amber-400);
     }
 
     .bg-green {
       background-color: var(--paper-green-400);
+      --mdc-theme-primary: var(--paper-green-400);
     }
 
     .bg-cyan {
       background-color: var(--paper-cyan-400);
+      --mdc-theme-primary: var(--paper-cyan-400);
     }
 
     .bg-lime {
       background-color: var(--paper-lime-400);
+      --mdc-theme-primary: var(--paper-lime-400);
     }
 
     .bg-pink {
       background-color: var(--paper-pink-a200);
+      --mdc-theme-primary: var(--paper-pink-a200);
     }
 
     .bg-purple {
       background-color: var(--paper-purple-400);
+      --mdc-theme-primary: var(--paper-purple-400);
     }
 
     .white {
@@ -502,42 +511,52 @@ export const BackendAiStyles = [
 
     .fg.blue {
       color: var(--paper-light-blue-400) !important;
+      --mdc-theme-on-primary: var(--paper-light-blue-400) !important;
     }
 
     .fg.red {
       color: var(--paper-red-400) !important;
+      --mdc-theme-on-primary: var(--paper-red-400) !important;
     }
 
     .fg.yellow {
       color: var(--paper-yellow-400) !important;
+      --mdc-theme-on-primary: var(--paper-yellow-400) !important;
     }
 
     .fg.orange {
       color: var(--paper-amber-400) !important;
+      --mdc-theme-on-primary: var(--paper-amber-400) !important;
     }
 
     .fg.green {
       color: var(--paper-green-400) !important;
+      --mdc-theme-on-primary: var(--paper-green-400) !important;
     }
 
     .fg.teal {
       color: var(--paper-teal-400) !important;
+      --mdc-theme-on-primary: var(--paper-teal-400) !important;
     }
 
     .fg.cyan {
       color: var(--paper-cyan-400) !important;
+      --mdc-theme-on-primary: var(--paper-cyan-400) !important;
     }
 
     .fg.lime {
       color: var(--paper-lime-400) !important;
+      --mdc-theme-on-primary: var(--paper-lime-400) !important;
     }
 
     .fg.pink {
       color: var(--paper-pink-a200) !important;
+      --mdc-theme-on-primary: var(--paper-pink-a200) !important;
     }
 
     .fg.purple {
       color: var(--paper-purple-400) !important;
+      --mdc-theme-on-primary: var(--paper-purple-400) !important;
     }
 
     /* Layout */

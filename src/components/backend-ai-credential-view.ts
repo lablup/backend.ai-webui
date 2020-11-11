@@ -992,10 +992,6 @@ export default class BackendAICredentialView extends BackendAIPage {
               <div class="flex"></div>
               <mwc-button raised id="add-user" icon="add" label="${_t("credential.AddCredential")}"
                   @click="${this._launchKeyPairDialog}"></mwc-button>
-              <!--<wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
-                <wl-icon>add</wl-icon>
-                ${_t("credential.AddCredential")}
-              </wl-button>-->
             </h4>
             <backend-ai-credential-list class="list-content" id="active-credential-list" condition="active" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
             <backend-ai-credential-list class="list-content" style="display:none;" id="inactive-credential-list" condition="inactive" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
@@ -1006,10 +1002,6 @@ export default class BackendAICredentialView extends BackendAIPage {
               <span class="flex"></span>
               <mwc-button raised id="add-user" icon="add" label="${_t("credential.CreatePolicy")}"
               @click="${this._launchResourcePolicyDialog}"></mwc-button>
-              <!--<wl-button class="fg green" id="add-policy" outlined @click="${this._launchResourcePolicyDialog}">
-                <wl-icon>add</wl-icon>
-                ${_t("credential.CreatePolicy")}
-              </wl-button>-->
             </h4>
             <div>
               <backend-ai-resource-policy-list id="resource-policy-list" ?active="${this._activeTab === 'resource-policy-lists'}"></backend-ai-resource-policy-list>
@@ -1017,7 +1009,6 @@ export default class BackendAICredentialView extends BackendAIPage {
           </wl-card>
         </div>
       </lablup-activity-panel>
-      <!--</wl-card>-->
       <backend-ai-dialog id="new-keypair-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("credential.AddCredential")}</span>
         <div slot="content">
@@ -1065,11 +1056,6 @@ export default class BackendAICredentialView extends BackendAIPage {
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button raised id="create-keypair-button" icon="add" label="${_t("general.Add")}" style="width:100%;"
           @click="${this._addKeyPair}"></mwc-button>
-            <!--<wl-button class="fg blue full-size" id="create-keypair-button" outlined type="button"
-            @click="${this._addKeyPair}">
-                       <wl-icon>add</wl-icon>
-                       ${_t("general.Add")}
-                       </wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="new-policy-dialog" fixed backdrop blockscrolling>
@@ -1249,11 +1235,6 @@ export default class BackendAICredentialView extends BackendAIPage {
               icon="get_app"
               label="${_t("credential.ExportCSVFile")}"
               @click="${this._exportToCSV}"></mwc-button>
-          <!--<wl-button class="fg green" type="button" inverted outlined style="width:100%;"
-          @click="${this._exportToCSV}">
-            <wl-icon>get_app</wl-icon>
-            ${_t("credential.ExportCSVFile")}
-          </wl-button>-->
         </div>
       </backend-ai-dialog>
     `;

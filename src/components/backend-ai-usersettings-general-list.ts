@@ -856,9 +856,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                 @click="${this._openSSHKeypairRefreshDialog}">
             </mwc-icon-button>
           </div>
-          <!--<wl-button id="ssh-keypair-details" fab inverted flat @click="${this._openSSHKeypairRefreshDialog}">
-            <wl-icon id="ssh-keypair-icon">more</wl-icon>
-          </wl-button>-->
         </div>
         <div class="horizontal layout wrap setting-item">
           <div class="vertical start start-justified layout setting-desc">
@@ -905,14 +902,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             outlined
             label="${_t("usersettings.EditUserConfigScript")}"
             @click="${() => this._launchUserConfigDialog()}"></mwc-button>
-        <!--<wl-button class="fg teal" outlined @click="${() => this._editBootstrapScript()}" style="margin-right:20px; background: none; display: none;">
-          <wl-icon>edit</wl-icon>
-          ${_t("usersettings.EditBootstrapScript")}
-        </wl-button>
-        <wl-button class="fg green" outlined @click="${() => this._launchUserConfigDialog()}" style="background: none;">
-          <wl-icon>edit</wl-icon>
-          ${_t("usersettings.EditUserConfigScript")}
-        </wl-button>-->
       </div>
       <h3 class="horizontal center layout" style="display:none;">
         <span>${_t("usersettings.PackageInstallation")}</span>
@@ -966,10 +955,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <mwc-button unelevated id="save-code-and-close" label="${_t("button.SaveAndClose")}" @click="${() => this._saveUserConfigScriptAndCloseDialog()}"></mwc-button>
           <mwc-button unelevated id="delete-rcfile" label="${_t("button.Delete")}" @click="${() => this._deleteRcFile()}"></mwc-button>
 
-          <!--<wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">${_t("button.Cancel")}</wl-button>
-          <wl-button style="margin-left:10px;" id="save-code" class="button" @click="${() => this._saveUserConfigScript()}">${_t("button.Save")}</wl-button>
-          <wl-button style="margin-left:10px;" id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
-          <wl-button style="margin-left:10px;" id="delete-rcfile" @click="${() => this._deleteRcFile()}" style="display:none;">${_t("button.Delete")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
