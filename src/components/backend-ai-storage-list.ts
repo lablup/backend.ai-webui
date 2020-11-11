@@ -378,7 +378,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         font-size: 12px;
         text-align: center;
         border-radius: 6px;
-        padding: 5px 0;
+        padding: 5px;
         position: absolute;
         z-index: 1;
         top: 150%;
@@ -548,14 +548,13 @@ export default class BackendAiStorageList extends BackendAIPage {
                 unelevated
                 id="mkdir"
                 class="tooltip"
-                title="${_text('data.explorer.WritePermissionRequiredInUploadFiles')}"
                 icon="create_new_folder"
                 label="${_t("data.explorer.NewFolder")}"
                 ?disabled=${!this.isWritable}
                 @click="${() => this._mkdirDialog()}">
             </mwc-button>
             <span class="tooltiptext" id="mkdir-tooltip">
-              ${_text('data.explorer.WritePermissionRequiredInUploadFiles')}
+              ${_text('data.explorer.WritePermissionRequiredInFolderCreation')}
             </span>
           </div>
         </div>
