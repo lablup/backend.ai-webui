@@ -15,6 +15,7 @@ import '@material/mwc-textfield';
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-icon-button';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -35,7 +36,6 @@ import 'weightless/label';
 import 'weightless/select';
 import 'weightless/title';
 import 'weightless/textfield';
-import '@material/mwc-icon-button';
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
 import tus from '../lib/tus';
@@ -95,6 +95,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) _boundCreatedTimeRenderer = Object();
   @property({type: Object}) _boundPermissionRenderer = Object();
   @property({type: Boolean}) _uploadFlag = true;
+  @property({type: Boolean}) isWritable = false;
 
   constructor() {
     super();
@@ -267,6 +268,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-theme-primary: var(--paper-red-400) !important;
         }
 
+        mwc-button {
+          margin: auto 10px;
+        }
+
         wl-button.goto {
           margin: 0;
           padding: 5px;
@@ -357,6 +362,41 @@ export default class BackendAiStorageList extends BackendAIPage {
           --component-min-width: 350px;
         }
 
+      .tooltip {
+        position: relative;
+        display: inline-block;
+      }
+      
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: black;
+        color: #fff;
+        font-size: 12px;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        top: 150%;
+        left: 50%;
+        margin-left: -60px;
+      }
+      
+      .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent transparent black transparent;
+      }
+      
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+      }
       `];
   }
 
@@ -489,14 +529,34 @@ export default class BackendAiStorageList extends BackendAIPage {
             <div class="horizontal center layout">
             <wl-icon style="--icon-size: 20px;margin-right:5px;">delete</wl-icon><span>${_t("data.explorer.Delete")}</span></div>
           </wl-button>
-          <wl-button outlined id="add-btn" @click="${(e) => this._uploadFileBtnClick(e)}">
-            <wl-icon style="--icon-size: 20px;margin-right:5px;">cloud_upload</wl-icon>
-            ${_t("data.explorer.UploadFiles")}
-          </wl-button>
-          <wl-button outlined id="mkdir" @click="${() => this._mkdirDialog()}">
-            <wl-icon style="--icon-size: 20px;margin-right:5px;">create_new_folder</wl-icon>
-            ${_t("data.explorer.NewFolder")}
-          </wl-button>
+          <div class="tooltip">
+            <mwc-button
+                unelevated
+                id="add-btn"
+                icon="cloud_upload"
+                label="${_t("data.explorer.UploadFiles")}"
+                ?disabled=${!this.isWritable}
+                @click="${(e) => this._uploadFileBtnClick(e)}">
+            </mwc-button>
+            <span class="tooltiptext" id="add-btn-tooltip">
+              ${_text('data.explorer.WritePermissionRequiredInUploadFiles')}
+            </span>
+          </div>
+          <div class="tooltip">
+            <mwc-button
+                unelevated
+                id="mkdir"
+                class="tooltip"
+                title="${_text('data.explorer.WritePermissionRequiredInUploadFiles')}"
+                icon="create_new_folder"
+                label="${_t("data.explorer.NewFolder")}"
+                ?disabled=${!this.isWritable}
+                @click="${() => this._mkdirDialog()}">
+            </mwc-button>
+            <span class="tooltiptext" id="mkdir-tooltip">
+              ${_text('data.explorer.WritePermissionRequiredInUploadFiles')}
+            </span>
+          </div>
         </div>
         <div slot="content">
           <div class="breadcrumb">
@@ -833,7 +893,7 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-icon-button
                 class="fg blue controls-running"
                 icon="folder_open"
-                @click="${(e) => this._folderExplorer(e)}" .folder-id="${rowData.item.name}"
+                @click="${(e) => this._folderExplorer(e, this._hasPermission(rowData.item, 'w'))}" .folder-id="${rowData.item.name}"
               ></mwc-icon-button>
             `
             : html``
@@ -1235,16 +1295,33 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Set up the explorer of the folder and call the _clearExplorer() function.
    *
    * @param {Event} e - click the folder_open icon button
+   * @param {boolean} isWritable - check whether write operation is allowed or not
    * */
-  _folderExplorer(e) {
+  _folderExplorer(e, isWritable) {
     let folderId = this._getControlId(e);
     let explorer = {
       id: folderId,
       breadcrumb: ['.'],
     };
-
+    this.isWritable = isWritable;
+    this._toggleTooltip();
     this.explorer = explorer;
     this._clearExplorer(explorer.breadcrumb.join('/'), explorer.id, true);
+  }
+
+  /**
+   * display the tooltip for buttons in folder-explorer dialog only if folder is read-only.
+   */
+  _toggleTooltip() {
+    let addBtnTooltip = this.shadowRoot.querySelector('#add-btn-tooltip');
+    let mkdirBtnTooltip = this.shadowRoot.querySelector('#mkdir-tooltip');
+    if(this.isWritable) {
+      addBtnTooltip.style.display = 'none';
+      mkdirBtnTooltip.style.display = 'none';
+    } else {
+      addBtnTooltip.style.display = 'block';
+      mkdirBtnTooltip.style.display = 'block';
+    }
   }
 
   /**
