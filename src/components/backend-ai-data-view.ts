@@ -273,8 +273,8 @@ export default class BackendAIData extends BackendAIPage {
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
         <div slot="content">
-          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="^[\.a-zA-Z0-9_-]+$"
-              auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
+          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" @change="${() => this._validateFolderName()}"
+            required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
           <div class="horizontal layout">
             <mwc-multi-select id="add-folder-host" label="${_t("data.Host")}">
               ${this.vhosts.map((item, idx) => html`
@@ -536,6 +536,41 @@ export default class BackendAIData extends BackendAIPage {
       this.closeDialog('add-folder-dialog');
     } else {
       return;
+    }
+  }
+
+  /**
+   * Validate folder name.
+   */
+  _validateFolderName() {
+    const folderName = this.shadowRoot.querySelector('#add-folder-name');
+    folderName.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          folderName.validationMessage = _text('data.FolderNameRequired');
+          return {
+            valid: nativeValidity.valid,
+            valueMissing: !nativeValidity.valid
+          };
+        } else {
+          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        // custom validation for folder name using regex
+        let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/]/gi;
+        let isValid = !regex.test(folderName.value);
+        if (!isValid) {
+          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
     }
   }
 
