@@ -338,7 +338,7 @@
       "TypeNewFolderName": "새 폴더 이름을 입력하세요",
       "Rename": "이름 변경",
       "FolderRenamed": "폴더 이름이 변경되었습니다",
-      "FolderNameMismatched": "폴더 이름을 정확하게 입력하세요",
+      "FolderNameMismatched": "폴더 이름을 정확하게 입력하세요. 입력 칸에 공백문자가 있는지 확인해주세요.",
       "FolderDeleted": "폴더가 삭제되었습니다",
       "FileRenamed": "파일명이 변경되었습니다",
       "FileDeleted": "파일이 삭제되었습니다",

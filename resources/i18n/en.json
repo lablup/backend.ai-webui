@@ -342,7 +342,7 @@
       "FolderCreated": "Folder created",
       "Rename": "Rename",
       "FolderRenamed": "Folder renamed",
-      "FolderNameMismatched": "Folder name mismmatched",
+      "FolderNameMismatched": "Folder name mismmatched. Please Check whether space character in the input field or not.",
       "FolderDeleted": "Folder deleted",
       "FileRenamed": "File Renamed",
       "FileDeleted": "File Deleted",
