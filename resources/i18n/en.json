@@ -319,6 +319,7 @@
     "DialogFolderStartingWithDotAutomount": "Folders starting with a .(dot) are automatically mounted when a new session is started.",
     "User": "User",
     "Create": "Create",
+    "FolderNameRequired":"Folder name is required",
     "Allowslettersnumbersand-_dot": "Allows letters, numbers and -_.",
     "Host": "Host",
     "Foldername": "Folder name",
