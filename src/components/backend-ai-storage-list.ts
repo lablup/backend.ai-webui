@@ -994,7 +994,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     return this._refreshFolderList();
   }
 
-  _refreshFolderList() {
+  /**
+   * If both refreshOnly and activeConnected are true, refresh folderlists.
+   * 
+   * @param {boolean} refreshOnly
+   */
+  _refreshFolderList(refreshOnly = false) {
     this.spinner.show();
     let groupId = null;
     groupId = globalThis.backendaiclient.current_group_id();
@@ -1010,9 +1015,15 @@ export default class BackendAiStorageList extends BackendAIPage {
       });
       this.folders = folders;
     });
-    let vhosts = globalThis.backendaiclient.vfolder.list_hosts();
-    vhosts.then((response) => {
+    globalThis.backendaiclient.vfolder.list_hosts().then(res => {
+      // refresh folder list every 10sec
+      if (this.active && !refreshOnly) {
+        setTimeout(() => {
+          this._refreshFolderList();
+        }, 10000);
+      };
     });
+
   }
 
   _refreshFolderUI(e) {
