@@ -414,8 +414,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.folders.RenameAFolder')}</span>
         <div slot="content">
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
-            pattern="^[a-zA-Z0-9_-]+$"
-            validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
+           required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"
+           @change="${() => {this._validateFolderName()}}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
           <mwc-button unelevated class="fullwidth bg-blue button" type="submit" icon="edit" id="rename-button" outlined @click="${() => this._renameFolder()}">
@@ -428,11 +428,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t("data.folders.DeleteAFolder")}</span>
         <div slot="content" style="width:100%;">
           <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
-          <div>
-            <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
-                         pattern="^[a-zA-Z0-9_-]+$"
-                         validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
-          </div>
+          <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
           <mwc-button unelevated class="fullwidth red button" type="submit" icon="close" id="delete-button" @click="${() => this._deleteFolderWithCheck()}">
@@ -581,9 +577,9 @@ export default class BackendAiStorageList extends BackendAIPage {
         <div slot="content">
           <mwc-textfield id="mkdir-name"
                          label="${_t("data.explorer.Foldername")}"
-                         auto-validate
+                         @change="${() => this._validatePathName()}"
                          required
-                         validationMessage="Value is required."></mwc-textfield>
+                         validationMessage="${_text("data.explorer.ValueRequired")}"></mwc-textfield>
           <br/>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
@@ -729,7 +725,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({"detail": {"mini-ui": globalThis.mini_ui}});
-    this._validatePathName();
   }
 
   _modifySharedFolderPermissions() {
@@ -1175,7 +1170,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _deleteFolderWithCheck() {
     let typedDeleteFolderName = this.shadowRoot.querySelector('#delete-folder-name').value;
-    if (typedDeleteFolderName != this.deleteFolderId) {
+    if (typedDeleteFolderName !== this.deleteFolderId) {
       this.notification.text = _text('data.folders.FolderNameMismatched');
       this.notification.show();
       return;
@@ -1203,6 +1198,41 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+  }
+
+    /**
+   * Validate folder name.
+   */
+  _validateFolderName() {
+    const folderName = this.shadowRoot.querySelector('#add-folder-name');
+    folderName.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          folderName.validationMessage = _text('data.FolderNameRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else {
+          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        // custom validation for folder name using regex
+        let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/]/gi;
+        let isValid = !regex.test(folderName.value);
+        if (!isValid) {
+          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
+    }
   }
 
   /*Folder Explorer*/
@@ -1758,12 +1788,12 @@ export default class BackendAiStorageList extends BackendAIPage {
         } else {
           return {
             valid: nativeValidity.valid,
-            badInput: !nativeValidity.valid
+            customError: !nativeValidity.valid
           }
         }
       } else {
         // custom validation for path name using regex
-        let regex = /^([.a-zA-Z0-9-_]{1,})+(\/[a-zA-Z0-9-_]{1,})*([\/,\\]{0,1})$/gm;
+        let regex = /^(.+)\/([^/]+)$/;
         let isValid = regex.exec(path_info.value);
         if (!isValid) {
           path_info.validationMessage = _text('data.explorer.ValueShouldBeStarted');
