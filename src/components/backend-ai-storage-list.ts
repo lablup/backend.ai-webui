@@ -414,8 +414,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.folders.RenameAFolder')}</span>
         <div slot="content">
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
-           required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"
-           @change="${() => {this._validateFolderName()}}"></mwc-textfield>
+           required auto-validate validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"
+           @change="${() => {this._validateFolderName(true)}}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
           <mwc-button unelevated class="fullwidth bg-blue button" type="submit" icon="edit" id="rename-button" outlined @click="${() => this._renameFolder()}">
@@ -665,7 +665,8 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="rename-file-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('data.explorer.RenameAFile')}</span>
         <div slot="content">
-          <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"></mwc-textfield>
+          <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"
+          required @change="${() => this._validateExistingFileName()}" auto-validate></mwc-textfield>
           <div id="old-file-name" style="height:2.5em"></div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
@@ -1137,21 +1138,28 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _renameFolder() {
     globalThis.backendaiclient.vfolder.name = this.renameFolderId;
-    const newName = this.shadowRoot.querySelector('#new-folder-name').value;
-    const job = globalThis.backendaiclient.vfolder.rename(newName);
-    this.closeDialog('rename-folder-dialog');
-    job.then((value) => {
-      this.notification.text = _text('data.folders.FolderRenamed');
-      this.notification.show();
-      this._refreshFolderList();
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+    const newNameEl = this.shadowRoot.querySelector('#new-folder-name');
+    const newName = newNameEl.value;
+    newNameEl.reportValidity();
+    if (newNameEl.checkValidity()) {
+      const job = globalThis.backendaiclient.vfolder.rename(newName);
+      this.closeDialog('rename-folder-dialog');
+      job.then((value) => {
+        this.notification.text = _text('data.folders.FolderRenamed');
+        this.notification.show();
+        this._refreshFolderList();
+      }).catch(err => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
+    } else {
+      return;
+    }
+    
   }
 
   /**
@@ -1200,11 +1208,62 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
-    /**
-   * Validate folder name.
+  /**
+   * Validate file/subfolder name.
    */
-  _validateFolderName() {
-    const folderName = this.shadowRoot.querySelector('#add-folder-name');
+  _validateExistingFileName() {
+    const filename = this.shadowRoot.querySelector('#new-file-name');
+    filename.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          filename.validationMessage = _text('data.FileandFoldernameRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else {
+          filename.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/]/gi;
+        let isValid : boolean;
+        // compare old name and new name.
+        console.log(this.renameFileDialog.querySelector('#old-file-name').textContent)
+        if (filename.value ===  this.renameFileDialog.querySelector('#old-file-name').textContent) {
+          filename.validationMessage = _text('data.EnterDifferentValue');
+          isValid = false;
+          return {
+            valid: isValid,
+            customError: !isValid
+          };
+        } else {
+          isValid = true;
+        }
+        // custom validation for folder name using regex
+        isValid = !regex.test(filename.value);
+        if (!isValid) {
+          filename.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
+    }
+  }
+
+  /**
+   * Validate folder name.
+   * 
+   * @param {boolean} isModifying
+   */
+  _validateFolderName(isModifying = false) {
+    const folderName = isModifying ? this.shadowRoot.querySelector('#new-folder-name') : this.shadowRoot.querySelector('#add-folder-name');
+    
     folderName.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
@@ -1221,9 +1280,23 @@ export default class BackendAiStorageList extends BackendAIPage {
           };
         }
       } else {
-        // custom validation for folder name using regex
+        let isValid : boolean;
         let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/]/gi;
-        let isValid = !regex.test(folderName.value);
+        // if renaming its name, then compare old name and new name.
+        if (isModifying) {
+          if (folderName.value === this.renameFolderId) {
+            folderName.validationMessage = _text('data.EnterDifferentValue');
+            isValid = false; 
+            return {
+              valid: isValid,
+              customError: !isValid
+            }
+          } else {
+            isValid = true;
+          }
+        }
+        // custom validation for folder name using regex
+        isValid = !regex.test(folderName.value);
         if (!isValid) {
           folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
         }
@@ -1314,7 +1387,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     newfolderEl.reportValidity();
     if (newfolderEl.checkValidity()) {
       let job = globalThis.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id).catch((err) => {
-        console.log(err);
+        // console.log(err);
         if (err & err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
@@ -1370,7 +1443,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           this.notification.text = _text('data.explorer.DragDropFileUploadSizeLimit');
           this.notification.show();
           return;
-          // console.log('File size limit (< 1 MiB)');
         } else {
           file.progress = 0;
           file.caption = '';
@@ -1591,22 +1663,27 @@ export default class BackendAiStorageList extends BackendAIPage {
   _renameFile(e) {
     const fn = this.renameFileDialog.filename;
     const path = this.explorer.breadcrumb.concat(fn).join("/");
-    const newName = this.renameFileDialog.querySelector('#new-file-name').value;
-    if (!newName) return;
-    const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id);
-    job.then((res) => {
-      this.notification.text = _text('data.folders.FileRenamed');
-      this.notification.show();
-      this._clearExplorer();
-      this.renameFileDialog.hide();
-    }).catch((err) => {
-      console.error(err);
-      if (err && err.message) {
-        this.notification.text = err.title;
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+    const newNameEl = this.renameFileDialog.querySelector('#new-file-name');
+    const newName = newNameEl.value;
+    newNameEl.reportValidity();
+    if (newNameEl.checkValidity()) {
+      const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id);
+      job.then((res) => {
+        this.notification.text = _text('data.folders.FileRenamed');
+        this.notification.show();
+        this._clearExplorer();
+        this.renameFileDialog.hide();
+      }).catch((err) => {
+        console.error(err);
+        if (err && err.message) {
+          this.notification.text = err.title;
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
+    } else {
+      return;
+    }
   }
 
   /**
@@ -1783,7 +1860,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           path_info.validationMessage = _text('data.explorer.ValueRequired');
           return {
             valid: nativeValidity.valid,
-            valueMissing: !nativeValidity.valid
+            customError: !nativeValidity.valid
           };
         } else {
           return {
@@ -1793,12 +1870,12 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
       } else {
         // custom validation for path name using regex
-        let regex = /^(.+)\/([^/]+)$/;
-        let isValid = regex.exec(path_info.value);
-        if (!isValid) {
+        let regex = /^([^`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\r\n\/]{1,})+(\/[^`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\r\n\/]{1,})*([\/,\\]{0,1})$/gm;
+        let isValid = regex.test(path_info.value);
+        if (!isValid || path_info.value === './') {
           path_info.validationMessage = _text('data.explorer.ValueShouldBeStarted');
+          isValid = false;
         }
-
         return {
           valid: isValid,
           customError: !isValid

@@ -526,7 +526,6 @@ export default class BackendAIData extends BackendAIPage {
         this.notification.show();
         this._refreshFolderList();
       }).catch(err => {
-        console.log(err);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
@@ -550,7 +549,7 @@ export default class BackendAIData extends BackendAIPage {
           folderName.validationMessage = _text('data.FolderNameRequired');
           return {
             valid: nativeValidity.valid,
-            valueMissing: !nativeValidity.valid
+            customError: !nativeValidity.valid
           };
         } else {
           folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
