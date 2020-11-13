@@ -324,7 +324,7 @@ export default class BackendAIData extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal flex">
           <mwc-button
-              raised
+              unelevated
               id="add-button"
               icon="rowing"
               label="${_t("data.Create")}"

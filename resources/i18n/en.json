@@ -87,7 +87,8 @@
     "NoAnnouncement": "There are no announcement to display.",
     "NoInvitations": "There are no invitations to display.",
     "AcceptSharedVFolder": "You can now access folder: ",
-    "DeclineSharedVFolder": "Folder invitation is deleted: "
+    "DeclineSharedVFolder": "Folder invitation is deleted: ",
+    "connectingToCluster": "Connecting to Backend.AI Cluster..."
   },
   "session": {
     "launcher": {
@@ -148,7 +149,8 @@
       "PleaseChooseFoldersToMount": "Please Choose Folders To Mount",
       "StartImportedNotebook": "Start Imported Notebook",
       "SessionNameAllowCondition": "Session name only allows at least 4 characters without any whitespaces.",
-      "NoFolderExists": "No Folder Exists"
+      "NoFolderExists": "No Folder Exists",
+      "sessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app."
     },
     "Running": "Running",
     "Finished": "Finished",
@@ -183,7 +185,11 @@
       "AppMustBeRun": "Start only when the app is already running",
       "AppMustBeRunDialog": "This app can only be accessed and used if it is already running through the terminal. If not, you will be directed to an error page that occurs when the app is not running.",
       "ConfirmAndRun": "I checked and I'll start"
-    }
+    },
+    "SessionTerminated": "Session terminated.",
+    "SessionsTerminated": "Sessions terminated.",
+    "NoSession": "No session.",
+    "DownloadingCSVFile": "Downloading CSV file..."
   },
   "button": {
     "Cancel": "Cancel",
