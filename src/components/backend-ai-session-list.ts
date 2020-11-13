@@ -567,18 +567,21 @@ export default class BackendAiSessionList extends BackendAIPage {
           document.dispatchEvent(event);
         }
         if (repeat === true) {
-          if (this.condition === 'running') {
-            refreshTime = 5000;
-          } else {
-            refreshTime = 30000;
-          }
+          refreshTime = this.condition === 'running' ? 5000 : 30000;
           this.refreshTimer = setTimeout(() => {
-            this._refreshJobData()
+            this._refreshJobData();
           }, refreshTime);
         }
       }
     }).catch(err => {
       this.refreshing = false;
+      if (this.active && repeat) {
+        // Keep trying to fetch session list with more delay
+        const refreshTime = this.condition === 'running' ? 20000 : 120000;
+        this.refreshTimer = setTimeout(() => {
+          this._refreshJobData();
+        }, refreshTime);
+      }
       this.spinner.hide();
       console.log(err);
       if (err && err.message) {
