@@ -876,8 +876,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._createPopover("#summary-menu-icon", _text("console.menu.Summary"));
     this._createPopover("#sessions-menu-icon", _text("console.menu.Sessions"));
     this._createPopover("#data-menu-icon", _text("console.menu.Data&Storage"));
+    this._createPopover("#import-menu-icon", _text("console.menu.Import&Run"));
     this._createPopover("#statistics-menu-icon", _text("console.menu.Statistics"));
     this._createPopover("#usersettings-menu-icon", _text("console.menu.Settings"));
+    this._createPopover("backend-ai-help-button", _text("console.menu.Help"));
     if (this.is_admin) {
       this._createPopover("#user-menu-icon", _text("console.menu.Users"));
     }
