@@ -313,6 +313,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       passive: false
     });
     this.addTooltips();
+    this.sidebarMenu.style.minHeight = (this.is_admin || this.is_superadmin) ? '600px' : '250px';
   }
 
   showUpdateNotifier(): void {
@@ -961,7 +962,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
-          <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
+          <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}" style="height:calc(100vh - 280px);">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}">
               <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Summary")}</span>
@@ -1035,11 +1036,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <small class="sidebar-footer">Lablup Inc.</small>
               <small class="sidebar-footer" style="font-size:9px;">20.11.1.201102</small>
             </address>
+            <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
+              <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
+              <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
+            </div>
           </footer>
-          <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
-            <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
-            <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
-          </div>
         </div>
         <div id="app-content" slot="appContent">
           <mwc-drawer id="content-body">
