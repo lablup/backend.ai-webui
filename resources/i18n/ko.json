@@ -830,6 +830,7 @@
     "YouCanCreateNotebookCode": "노트북의 주소를 입력하면 어디에서나 Backend.AI로 바로 연결되어 실행할 수 있는 아래와 같은 배지 코드를 만들어 줍니다.",
     "NoNotebookCode": "노트북 주소가 입력되지 않았습니다. 노트북 코드 입력후 배지를 출력할 수 있는 코드를 복사할 수 있습니다.",
     "NotebookBadgeCodeCopied": "노트북 배지 코드가 클립보드에 복사되었습니다.",
+    "CouldNotCopyText": "다음 텍스트 복사에 실패하였습니다 : ",
     "NotebookBadgeURL": "노트북 주소",
     "NotebookBadgeCode": "노트북 배지 코드",
     "GetAndRunNotebook": "가져와서 실행",
