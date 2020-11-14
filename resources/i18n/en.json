@@ -439,6 +439,7 @@
     "Base": "Base",
     "Constraint": "Constraint",
     "ResourceLimit": "Resource Limit",
+    "DescDeleteAppInfo": "You are about to delete the app info: ",
     "DescDeleteImage": "You are about to delete the image(s): ",
     "DescDownloadImage": "You are about to install the image(s): ",
     "DescSignificantDownloadTime": "This process requires significant download time.",
@@ -460,7 +461,11 @@
     "Disabled": "disabled",
     "NoResourcesForImage": "Not Enough resources for pulling the image. Image name: ",
     "InstallingImage": "Installing: ",
-    "TakesTime": ". It takes time so have a cup of coffee!"
+    "TakesTime": ". It takes time so have a cup of coffee!",
+    "AppInfoDeleted": "App information successfully deleted.",
+    "NoChangeMade": "",
+    "SuccessfullyModified": "Successfully modified",
+    "ProblemOccurred": "Problem occurred"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",

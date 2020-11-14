@@ -436,6 +436,7 @@
     "Base": "기반",
     "Constraint": "제약",
     "ResourceLimit": "자원 제한",
+    "DescDeleteAppInfo": "다음 앱 정보를 삭제하려고 합니다: ",
     "DescDeleteImage": "다음 설치된 이미지를 삭제하려고 합니다: ",
     "DescDownloadImage": "다음 이미지를 다운로드하려고 합니다: ",
     "DescSignificantDownloadTime": "다운로드에 매우 오랜 시간이 걸릴 것입니다.",
@@ -457,7 +458,11 @@
     "Disabled": "사용 안함",
     "NoResourcesForImage": "이미지를 가져오기 위해 필요한 최소한의 자원이 없거나 지원되지 않습니다. 이미지명: ",
     "InstallingImage": "다운로드 중인 이미지: ",
-    "TakesTime": ". 시간이 다소 소요되오니 커피 한 잔의 여유를 즐기시며 잠시 기다려 주세요."
+    "TakesTime": ". 시간이 다소 소요되오니 커피 한 잔의 여유를 즐기시며 잠시 기다려 주세요.",
+    "AppInfoDeleted": "선택한 앱 정보가 성공적으로 삭제되었습니다.",
+    "NoChangeMade": "변경된 내역이 없습니다.",
+    "SuccessfullyModified": "성공적으로 수정되었습니다.",
+    "ProblemOccurred": "문제가 발생했습니다."
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
