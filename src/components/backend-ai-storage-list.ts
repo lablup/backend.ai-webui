@@ -22,8 +22,6 @@ import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 
-import '@vaadin/vaadin-item/vaadin-item';
-
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/checkbox';
@@ -350,7 +348,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         backend-ai-dialog {
           --component-min-width: 350px;
         }
-
       `];
   }
 
@@ -590,7 +587,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div class="vertical layout flex" id="textfields">
             <div class="horizontal layout">
               <div style="flex-grow: 2">
-                <mwc-textfield type="email" label="${_t("data.explorer.EnterEmailAddress")}"></mwc-textfield>
+                <mwc-textfield class="share-email" type="email" label="${_t("data.explorer.EnterEmailAddress")}"></mwc-textfield>
               </div>
               <div>
                 <wl-button fab flat @click="${() => this._addTextField()}">
@@ -726,7 +723,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _modifySharedFolderPermissions() {
-    const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog mwc-select');
+    const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog wl-select');
     const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as any)[idx].perm)
       .map((pulldown, idx) => ({
         'perm': pulldown.value === 'kickout' ? null : pulldown.value,
@@ -749,20 +746,26 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Render permission options - View, Edit, EditDelete, KickOut.
    *
    * @param {Element} root - the row details content DOM element
-   * @param {Element} colxumn - the column element that controls the state of the host element
+   * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   permissionRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
-        <div>
-          <mwc-select outlined label="${_t('data.folders.SelectPermission')}">
+        <div class="vertical layout">
+          <wl-select label="${_t('data.folders.SelectPermission')}">
+            <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
+            <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
+            <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
+            <option value=kickout>${_t('data.folders.KickOut')}</option>
+          </wl-select>
+          <!--<mwc-select outlined label="${_t('data.folders.SelectPermission')}">
             <mwc-list-item ?selected=${rowData.item.perm === 'ro'} value="ro">
             <mwc-list-item ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</mwc-list-item>
             <mwc-list-item ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</mwc-list-item>
             <mwc-list-item value="kickout">${_t('data.folders.KickOut')}</mwc-list-item>
-          </mwc-select>
+          </mwc-select>-->
         </div>
       `, root
     )
@@ -776,6 +779,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     let newTextField = document.createElement('mwc-textfield');
     newTextField.label = _text('data.explorer.EnterEmailAddress');
     newTextField.type = "email";
+    newTextField.className = "share-email";
     newTextField.style.width = "auto";
     newTextField.style.marginRight = "83px";
     this.shadowRoot.querySelector('#textfields').appendChild(newTextField);
@@ -1698,11 +1702,10 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the share-button
    * */
   _shareFolder(e) {
-    // the .children property is an HtmlCollection. They don't have the map function like an array would
-    const emailHtmlCollection = this.shadowRoot.querySelector('#textfields').children;
+    const emailHtmlCollection = this.shadowRoot.querySelectorAll('mwc-textfield.share-email');
 
     // filter invalid and empty fields
-    const emailArray = Array.prototype.filter.call(emailHtmlCollection, e => !e.hasAttribute('invalid') && e.value !== '').map(e => e.value.trim());
+    const emailArray = Array.prototype.filter.call(emailHtmlCollection, e => e.isUiValid && e.value !== '').map(e => e.value.trim());
     const permission = 'r' + (this.shadowRoot.querySelector('#share-folder-write').checked ? 'w' : 'o');
 
     if (emailArray.length === 0) {
