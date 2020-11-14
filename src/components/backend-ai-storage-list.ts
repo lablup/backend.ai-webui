@@ -318,15 +318,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           color: var(--paper-orange-900);
         }
 
-        backend-ai-dialog wl-textfield,
-        backend-ai-dialog wl-select {
-          --input-font-family: Roboto, Noto, sans-serif;
-          --input-color-disabled: #222222;
-          --input-label-color-disabled: #222222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #cccccc;
-        }
-
         backend-ai-dialog mwc-textfield,
         backend-ai-dialog mwc-select {
           --mdc-typography-font-family: var(--general-font-family);
@@ -596,17 +587,19 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t("data.explorer.ShareFolder")}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;" >
           <div style="margin: 10px 0px">${_t("data.explorer.People")}</div>
-          <div style="display: flex;">
-            <div id="textfields" style="flex-grow: 2">
-              <mwc-textfield type="email" label="${_t("data.explorer.EnterEmailAddress")}"></mwc-textfield>
-            </div>
-            <div>
-              <wl-button fab flat @click="${(e) => this._addTextField(e)}">
-                <wl-icon>add</wl-icon>
-              </wl-button>
-              <wl-button fab flat @click="${(e) => this._removeTextField(e)}">
-                <wl-icon>remove</wl-icon>
-              </wl-button>
+          <div class="vertical layout flex" id="textfields">
+            <div class="horizontal layout">
+              <div style="flex-grow: 2">
+                <mwc-textfield type="email" label="${_t("data.explorer.EnterEmailAddress")}"></mwc-textfield>
+              </div>
+              <div>
+                <wl-button fab flat @click="${() => this._addTextField()}">
+                  <wl-icon>add</wl-icon>
+                </wl-button>
+                <wl-button fab flat @click="${() => this._removeTextField()}">
+                  <wl-icon>remove</wl-icon>
+                </wl-button>
+              </div>
             </div>
           </div>
           <div style="margin: 10px 0px">${_t("data.explorer.Permissions")}</div>
@@ -778,17 +771,21 @@ export default class BackendAiStorageList extends BackendAIPage {
   /**
    * Add textfield to write email.
    *
-   * @param {Event} e - click the add button
    * */
-  _addTextField(e) {
-    let newTextField = document.createElement('wl-textfield');
-    newTextField.label = _text('data.invitation.EnterEmail');
+  _addTextField() {
+    let newTextField = document.createElement('mwc-textfield');
+    newTextField.label = _text('data.explorer.EnterEmailAddress');
     newTextField.type = "email";
-
-    this.shadowRoot.querySelector('#textfields').appendChild(newTextField)
+    newTextField.style.width = "auto";
+    newTextField.style.marginRight = "83px";
+    this.shadowRoot.querySelector('#textfields').appendChild(newTextField);
   }
 
-  _removeTextField(e) {
+  /**
+   * Remove existing email textfield.
+   * 
+   */
+  _removeTextField() {
     const textfields = this.shadowRoot.querySelector('#textfields');
     if (textfields.children.length > 1) {
       textfields.removeChild(textfields.lastChild);
