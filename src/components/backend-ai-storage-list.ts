@@ -950,9 +950,9 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
               filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
         `}
-        <mwc-icon-button id="rename-btn" class="tiny fg green" icon="edit" required
+        <mwc-icon-button id="rename-btn" ?disabled="${!this.isWritable}" class="tiny fg green" icon="edit" required
             filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
-        <mwc-icon-button id="delete-btn" class="tiny fg red" icon="delete_forever"
+        <mwc-icon-button id="delete-btn" ?disabled="${!this.isWritable}" class="tiny fg red" icon="delete_forever"
             filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
        `, root
     );
