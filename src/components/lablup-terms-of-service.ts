@@ -20,7 +20,6 @@ import {
   IronPositioning
 } from "../plastics/layout/iron-flex-layout-classes";
 import {default as PainKiller} from "./backend-ai-painkiller";
-import { ItemMixin } from "@vaadin/vaadin-item/src/vaadin-item-mixin";
 
 /**
  Lablup Terms of Service dialog
