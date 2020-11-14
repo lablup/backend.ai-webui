@@ -482,7 +482,7 @@ export default class BackendAIUserList extends BackendAIPage {
             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="signout-user-dialog" fixed backdrop>
-        <span slot="title">Let's double-check</span>
+        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
         <div slot="content">
           <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>.</p>
           <p>${_t("dialog.ask.DoYouWantToProceed")}</p>
