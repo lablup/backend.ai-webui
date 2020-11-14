@@ -288,7 +288,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         this.rcfile = '.bashrc';
       }
     }
-    this.beta_feature_panel = !this.shadowRoot.querySelector('#beta-feature-switch').disabled;
+    // this.beta_feature_panel = !this.shadowRoot.querySelector('#beta-feature-switch').disabled;
   }
 
   /**
@@ -874,7 +874,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <mwc-switch id="automatic-update-check-switch" @change="${(e) => this.toggleAutomaticUploadCheck(e)}" ?checked="${globalThis.backendaioptions.get('automatic_update_check')}"></mwc-switch>
           </div>
         </div>
-        <div class="horizontal layout wrap setting-item">
+        <div class="horizontal layout wrap setting-item" style="display:none;!impo">
           <div class="vertical start start-justified layout setting-desc">
             <div class="title">${_t("usersettings.BetaFeatures")}</div>
             <div class="description">${_tr("usersettings.DescBetaFeatures")}</div>
