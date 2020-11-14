@@ -604,7 +604,7 @@ export default class BackendAICredentialView extends BackendAIPage {
 
       globalThis.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
         this.shadowRoot.querySelector('#new-policy-dialog').close();
-        this.notification.text = "Resource policy successfully updated.";
+        this.notification.text = _text("resourcePolicy.SuccessfullyUpdated");
         this.notification.show();
         this.shadowRoot.querySelector('#resource-policy-list').refresh();
       }).catch(err => {
@@ -700,7 +700,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         if (!checkbox || !checkbox['checked']) {
           textfield['required'] = true;
           textfield.focus();
-          throw { "message" : "Please input value or check unlimited." };
+          throw { "message" : _text("resourcePolicy.PleaseInputValue") };
         }
         else {
           textfield['required'] = false;
@@ -723,7 +723,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       resource.value = '';
     } else {
       if (resource.value === '') {
-          throw {"message" : "Cannot create Resource Policy. Please check input values." };
+          throw {"message" : _text("resourcePolicy.CannotCreateResourcePolicy") };
       }
     }
   }
@@ -831,7 +831,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         JsonToCsv.exportToCsv(fileNameEl.value, resource_policy);
         break;
     }
-    this.notification.text = "Downloading CSV file...";
+    this.notification.text = _text("session.DownloadingCSVFile");
     this.notification.show();
     this.exportToCsvDialog.hide();
   }
@@ -1063,7 +1063,7 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         <div slot="content">
           <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
-                           validationMessage="Policy name is Required."
+                           validationMessage="${_t('explorer.ValueRequired')}"
                            required></mwc-textfield>
           <h4>${_t("credential.ResourcePolicy")}</h4>
           <div class="horizontal center layout">

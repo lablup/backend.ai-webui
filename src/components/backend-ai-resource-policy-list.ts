@@ -225,7 +225,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <span slot="title">${_t("resourcePolicy.UpdateResourcePolicy")}</span>
         <div slot="content">
           <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}" pattern="^[a-zA-Z0-9_-]+$"
-                         validationMessage="Policy name is Required."
+                         validationMessage="${_t('explorer.ValueRequired')}"
                          required></mwc-textfield>
           <h4>${_t("resourcePolicy.ResourcePolicy")}</h4>
           <div class="horizontal center layout distancing">

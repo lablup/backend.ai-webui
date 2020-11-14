@@ -563,7 +563,10 @@
     "Capacity": "Capacity",
     "Folders": "Folders",
     "Name": "Name",
-    "AllowedHosts": "Allowed hosts"
+    "AllowedHosts": "Allowed hosts",
+    "PleaseInputValue": "Please input value or check unlimited.",
+    "CannotCreateResourcePolicy": "Cannot create Resource Policy. Please check input values.",
+    "SuccessfullyUpdated": "Resource policy successfully updated."
   },
   "registry": {
     "Hostname": "Hostname",
