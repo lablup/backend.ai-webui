@@ -132,6 +132,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
         wl-textfield {
           width: 100%;
+          --input-state-color-invalid: red;
           --input-padding-top-bottom: 0px;
           --input-font-family: Roboto, Noto, sans-serif;
         }
@@ -139,9 +140,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         wl-checkbox {
           --checkbox-size: 10px;
           --checkbox-border-radius: 2px;
-          --checkbox-bg-checked: var(--paper-green-800);
-          --checkbox-checkmark-stroke-color: var(--paper-lime-100);
-          --checkbox-color-checked: var(--paper-green-800);
+          --checkbox-bg-checked: var(--general-checkbox-color);
+          --checkbox-checkmark-stroke-color: white;
+          --checkbox-color-checked: white;
         }
 
         mwc-textfield {
@@ -313,7 +314,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               </wl-label>
             </div>
             <div class="vertical layout">
-              <wl-label class="folders">Max.#</wl-label>
+              <wl-label class="folders">${_t("credential.Max#")}</wl-label>
               <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
             </div>
           </div>
@@ -325,6 +326,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               id="create-policy-button"
               icon="check"
               label="${_t("button.Update")}"
+              style="width:100%;"
               @click="${() => this._modifyResourcePolicy()}"></mwc-button>
         </div>
       </backend-ai-dialog>

@@ -159,10 +159,6 @@ export default class BackendAICredentialView extends BackendAIPage {
           --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
         }
 
-        mwc-select {
-          margin: 10px;
-          --mdc-theme-primary: var(--general-sidebar-color);
-        }
 
         mwc-list-item {
           height: auto;
@@ -185,7 +181,6 @@ export default class BackendAICredentialView extends BackendAIPage {
         wl-label {
           width: 100%;
           min-width: 60px;
-          font-weight: 400;
           font-size: 11px;
           --label-font-family: Roboto, Noto, sans-serif;
         }
@@ -255,10 +250,14 @@ export default class BackendAICredentialView extends BackendAIPage {
           --component-max-width: 390px;
         }
 
-        #allowed_vfolder-hosts {
-          width: auto;
+        backend-ai-dialog h4 {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          height: 20px;
+          border-bottom: 1px solid #DDD;
         }
-
       `];
   }
 
@@ -1058,110 +1057,114 @@ export default class BackendAICredentialView extends BackendAIPage {
           @click="${this._addKeyPair}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="new-policy-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="new-policy-dialog" fixed backdrop blockscrolling narrowLayout>
         <span slot="title">${_t("credential.CreateResourcePolicy")}</span>
-
         <div slot="content">
-          <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
-                           validationMessage="${_t('explorer.ValueRequired')}"
-                           required></mwc-textfield>
-          <h4>${_t("credential.ResourcePolicy")}</h4>
-          <div class="horizontal center layout">
-              <div class="vertical layout" style="width:75px; margin:0px 10px 0px 0px;">
-                <wl-label>CPU</wl-label>
-                <wl-textfield id="cpu-resource" type="number"
-                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                  <wl-label class="unlimited">
-                    <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                    ${_t("credential.Unlimited")}
-                  </wl-label>
-              </div>
-              <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
-                <wl-label>RAM(GB)</wl-label>
-                <wl-textfield id="ram-resource" type="number"
-                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+          <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}" pattern="^[a-zA-Z0-9_-]+$"
+                         validationMessage="${_t('explorer.ValueRequired')}"
+                         required></mwc-textfield>
+          <h4>${_t("resourcePolicy.ResourcePolicy")}</h4>
+          <div class="horizontal center layout distancing">
+            <div class="vertical layout" style="margin: 0 10px 0 0;">
+              <wl-label>CPU</wl-label>
+              <wl-textfield id="cpu-resource" type="number"
+                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("credential.Unlimited")}
+                  ${_t("resourcePolicy.Unlimited")}
                 </wl-label>
-              </div>
-              <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
-                <wl-label>GPU</wl-label>
-                <wl-textfield id="gpu-resource" type="number"
-                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                <wl-label class="unlimited">
-                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("credential.Unlimited")}
-                </wl-label>
-              </div>
-              <div class="vertical layout" style="width:75px; margin:0px 0px 0px 10px;">
-                <wl-label>fGPU</wl-label>
-                <wl-textfield id="fgpu-resource" type="number"
-                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                <wl-label class="unlimited">
-                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("credential.Unlimited")}
-                </wl-label>
-              </div>
+            </div>
+            <div class="vertical layout" style="margin: 0px 10px 0px 10px;">
+              <wl-label>RAM(GB)</wl-label>
+              <wl-textfield id="ram-resource" type="number"
+                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <wl-label class="unlimited">
+                <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                ${_t("resourcePolicy.Unlimited")}
+              </wl-label>
+            </div>
+            <div class="vertical layout" style="margin: 0px 10px 0px 10px;">
+              <wl-label>GPU</wl-label>
+              <wl-textfield id="gpu-resource" type="number"
+                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <wl-label class="unlimited">
+                <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                ${_t("resourcePolicy.Unlimited")}
+              </wl-label>
+            </div>
+            <div class="vertical layout" style="margin: 0px 0px 0px 10px;">
+              <wl-label>fGPU</wl-label>
+              <wl-textfield id="fgpu-resource" type="number"
+                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <wl-label class="unlimited">
+                <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                ${_t("resourcePolicy.Unlimited")}
+              </wl-label>
+            </div>
           </div>
-          <h4>${_t("credential.Sessions")}</h4>
-          <div class="horizontal center layout">
-            <div class="vertical left layout" style="width: 110px;">
-                <wl-label>${_t("credential.ContainerPerSession")}</wl-label>
+          <h4>${_t("resourcePolicy.Sessions")}</h4>
+          <div class="horizontal center layout distancing">
+            <div class="vertical left layout">
+                <wl-label>${_t("resourcePolicy.ContainerPerSession")}</wl-label>
                 <wl-textfield id="container-per-session-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("credential.Unlimited")}
+                  ${_t("resourcePolicy.Unlimited")}
                 </wl-label>
               </div>
-              <div class="vertical left layout" style="width: 110px; margin: 0px 15px;">
-                <wl-label>${_t("credential.IdleTimeoutSec")}</wl-label>
+              <div class="vertical left layout" style="margin: 0px 15px;">
+                <wl-label>${_t("resourcePolicy.IdleTimeoutSec")}</wl-label>
                 <wl-textfield id="idle-timeout" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("credential.Unlimited")}
+                  ${_t("resourcePolicy.Unlimited")}
                 </wl-label>
               </div>
-              <div class="vertical left layout" style="width: 110px;">
-                  <wl-label>${_t("credential.ConcurrentJobs")}</wl-label>
+              <div class="vertical left layout">
+                  <wl-label>${_t("resourcePolicy.ConcurrentJobs")}</wl-label>
                   <wl-textfield id="concurrency-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                    ${_t("credential.Unlimited")}
+                   ${_t("resourcePolicy.Unlimited")}
                   </wl-label>
               </div>
           </div>
-          <h4 style="margin-bottom:0px;">${_t("credential.Folders")}</h4>
-          <div class="horizontal center layout">
-            <div class="vertical layout" style="width: 110px;">
-              <mwc-select id="allowed_vfolder-hosts" label="${_t("credential.AllowedHosts")}">
-                ${this.allowed_vfolder_hosts.map(item => html`
-                  <mwc-list-item
-                                 id="${item}"
-                                 value="${item}">
-                    ${item}
-                  </mwc-list-item>
-                `)}
-              </mwc-select>
-            </div>
-            <div class="vertical layout" style="width: 110px; margin: 21px 15px 0;">
-              <wl-label class="folders">${_t("credential.Capacity(GB)")}</wl-label>
+          <h4 style="margin-bottom:0px;">${_t("resourcePolicy.Folders")}</h4>
+          <div class="horizontal center layout distancing">
+            <mwc-select id="allowed_vfolder-hosts" label="${_t("resourcePolicy.AllowedHosts")}">
+              ${this.allowed_vfolder_hosts.map(item => html`
+                <mwc-list-item class="owner-group-dropdown"
+                               id="${item}"
+                               value="${item}">
+                  ${item}
+                </mwc-list-item>
+              `)}
+            </mwc-select>
+            <div class="vertical layout" style="margin: 21px 15px 0 15px;">
+              <wl-label class="folders">${_t("resourcePolicy.Capacity")}(GB)</wl-label>
               <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                ${_t("credential.Unlimited")}
-            </wl-label>
+                ${_t("resourcePolicy.Unlimited")}
+              </wl-label>
             </div>
-            <div class="vertical layout" style="width: 110px;">
+            <div class="vertical layout">
               <wl-label class="folders">${_t("credential.Max#")}</wl-label>
               <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
             </div>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button raised id="create-policy-button" icon="add" label="${_t("credential.Create")}" style="width:100%;"
-          @click="${() => this._addResourcePolicy()}"></mwc-button>
+        <div slot="footer" class="horizontal end-justified flex layout distancing">
+          <mwc-button
+              unelevated
+              outlined
+              id="create-policy-button"
+              icon="check"
+              label="${_t("credential.Create")}"
+              style="width:100%;"
+              @click="${() => this._addResourcePolicy()}"></mwc-button>
         </div>
+      </backend-ai-dialog>
       </backend-ai-dialog>
       <backend-ai-dialog id="new-user-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t("credential.CreateUser")}</span>
