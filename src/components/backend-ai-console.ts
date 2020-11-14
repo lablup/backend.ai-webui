@@ -544,7 +544,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.notification.show();
       return;
     }
-    const p = globalThis.backendaiclient.updatePassword(oldPassword, newPassword1El.value, newPassword2El.value);
+    const p = globalThis.backendaiclient.update_password(oldPassword, newPassword1El.value, newPassword2El.value);
     p.then((resp) => {
       this.notification.text = 'Password updated';
       this.notification.show();
