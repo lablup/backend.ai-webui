@@ -527,4 +527,8 @@ export const BackendAiConsoleStyles = [
         color: var(--general-sidebar-color);
       }
     }
+    
+    .temporarily-hide {
+      display: none !important;
+    }
   `];

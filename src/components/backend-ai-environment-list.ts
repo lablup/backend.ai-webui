@@ -774,7 +774,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="horizontal layout flex end-justified" style="margin:10px;">
         <mwc-button raised label="${_t('environment.Install')}" class="operation" id="install-image" icon="get_app" @click="${this.openInstallImageDialog}"></mwc-button>
-        <mwc-button disabled label="${_t('environment.Delete')}" class="operation" id="delete-image" icon="delete" @click="${this.openDeleteImageDialog}"></mwc-button>
+        <mwc-button disabled label="${_t('environment.Delete')}" class="operation temporarily-hide" id="delete-image" icon="delete" @click="${this.openDeleteImageDialog}"></mwc-button>
       </div>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
         <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
