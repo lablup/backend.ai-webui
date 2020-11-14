@@ -22,7 +22,6 @@ import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
-
 import '@vaadin/vaadin-item/vaadin-item';
 
 import 'weightless/button';
@@ -35,6 +34,7 @@ import 'weightless/label';
 import 'weightless/select';
 import 'weightless/title';
 import 'weightless/textfield';
+import 'weightless/tooltip';
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
 import tus from '../lib/tus';
@@ -356,6 +356,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           --checkbox-bg-disabled-checked: var(--paper-orange-900);
         }
 
+        wl-tooltip {
+          font-size: 12px;
+        }
+
         #modify-permission-dialog {
           --dialog-min-width: 600px;
           --component-min-width: 600px;
@@ -364,42 +368,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         backend-ai-dialog {
           --component-min-width: 350px;
         }
-
-      .tooltip {
-        position: relative;
-        display: inline-block;
-      }
-      
-      .tooltip .tooltiptext {
-        visibility: hidden;
-        width: 120px;
-        background-color: black;
-        color: #fff;
-        font-size: 12px;
-        text-align: center;
-        border-radius: 6px;
-        padding: 5px;
-        position: absolute;
-        z-index: 1;
-        top: 150%;
-        left: 50%;
-        margin-left: -60px;
-      }
-      
-      .tooltip .tooltiptext::after {
-        content: "";
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: transparent transparent black transparent;
-      }
-      
-      .tooltip:hover .tooltiptext {
-        visibility: visible;
-      }
       `];
   }
 
@@ -530,7 +498,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             <div class="horizontal center layout">
             <wl-icon style="--icon-size: 20px;margin-right:5px;">delete</wl-icon><span>${_t("data.explorer.Delete")}</span></div>
           </wl-button>
-          <div class="tooltip">
+          <div id="add-btn-cover">
             <mwc-button
                 unelevated
                 id="add-btn"
@@ -539,11 +507,23 @@ export default class BackendAiStorageList extends BackendAIPage {
                 ?disabled=${!this.isWritable}
                 @click="${(e) => this._uploadFileBtnClick(e)}">
             </mwc-button>
-            <span class="tooltiptext" id="add-btn-tooltip">
-              ${_text('data.explorer.WritePermissionRequiredInUploadFiles')}
-            </span>
           </div>
-          <div class="tooltip">
+          ${this.isWritable ? html`` : html`
+          <wl-tooltip
+            fixed
+            closeOnClick
+            anchor="#add-btn-cover"
+            id="add-btn-tooltip"
+            anchororiginx="center"
+            anchororiginy="bottom"
+            transformoriginx="center"
+            transformoriginy="top"
+            .anchorOpenEvents="${["mouseover"]}"
+            .anchorCloseEvents="${["mouseout"]}">
+            ${_text('data.explorer.WritePermissionRequiredInUploadFiles')}
+          </wl-tooltip>
+          `}
+          <div id="mkdir-cover">
             <mwc-button
                 unelevated
                 id="mkdir"
@@ -553,10 +533,22 @@ export default class BackendAiStorageList extends BackendAIPage {
                 ?disabled=${!this.isWritable}
                 @click="${() => this._mkdirDialog()}">
             </mwc-button>
-            <span class="tooltiptext" id="mkdir-tooltip">
-              ${_text('data.explorer.WritePermissionRequiredInFolderCreation')}
-            </span>
           </div>
+          ${this.isWritable ? html``: html`
+          <wl-tooltip
+            fixed
+            closeOnClick
+            anchor="#mkdir-cover"
+            id="mkdir-tooltip"
+            anchororiginx="center"
+            anchororiginy="bottom"
+            transformoriginx="center"
+            transformoriginy="top"
+            .anchorOpenEvents="${["mouseover"]}"
+            .anchorCloseEvents="${["mouseout"]}">
+            ${_text('data.explorer.WritePermissionRequiredInFolderCreation')}
+          </wl-tooltip>
+          `}
         </div>
         <div slot="content">
           <div class="breadcrumb">
@@ -1302,24 +1294,8 @@ export default class BackendAiStorageList extends BackendAIPage {
       breadcrumb: ['.'],
     };
     this.isWritable = isWritable;
-    this._toggleTooltip();
     this.explorer = explorer;
     this._clearExplorer(explorer.breadcrumb.join('/'), explorer.id, true);
-  }
-
-  /**
-   * display the tooltip for buttons in folder-explorer dialog only if folder is read-only.
-   */
-  _toggleTooltip() {
-    let addBtnTooltip = this.shadowRoot.querySelector('#add-btn-tooltip');
-    let mkdirBtnTooltip = this.shadowRoot.querySelector('#mkdir-tooltip');
-    if(this.isWritable) {
-      addBtnTooltip.style.display = 'none';
-      mkdirBtnTooltip.style.display = 'none';
-    } else {
-      addBtnTooltip.style.display = 'block';
-      mkdirBtnTooltip.style.display = 'block';
-    }
   }
 
   /**
