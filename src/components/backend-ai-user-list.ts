@@ -539,7 +539,6 @@ export default class BackendAIUserList extends BackendAIPage {
                   <mwc-switch
                       id="is_active"
                       ?checked="${this.userInfo.is_active}"></mwc-switch>
-                  ${_text("credential.DescActiveUser")}
                 </div>
                 <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text("credential.DescRequirePasswordChange")}</p>
