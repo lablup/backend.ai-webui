@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage, translateUnsafeHTML as _tr} from "lit-translate";
 import {customElement, html, css, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
@@ -467,7 +467,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     div.className = "horizontal center center-justified layout";
     let p = document.createElement('p') as any;
     p.setAttribute('style', "font-size:12px;color:#8c8484;");
-    p.innerHTML = _text("console.menu.Project");
+    p.innerHTML = `${_text("console.menu.Project")}`;
     let select = document.createElement('mwc-select') as any;
     select.id = 'group-select';
     select.value = this.current_group;
@@ -936,6 +936,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.currentPageParams = this._pageParams;
   }
 
+  /**
+   * Check Fullname exists, and if not then use user_id instead.
+   */
+  _getUsername() {
+    let name = this.full_name ? this.full_name : this.user_id;
+    return name;
+  }
+
   protected render() {
     // language=HTML
     return html`
@@ -1055,9 +1063,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
                 </div>
                 <div slot="navigationIcon" class="vertical-line" style="height:35px;"></div>
-                <p slot="title" style="padding-top:15px;margin:auto;">
-                  ${_text("console.menu.WelcomeMessage") + this.full_name + "."}
-                </p>
+                <div class="horizontal layout" slot="title" style="font-size:12px;margin-left:10px;padding-top:10px;">
+                  <p>${_t("console.menu.WelcomeMessage")}</p>
+                  <p>&nbsp;${this._getUsername() + "."}</p>
+                </div>
                 <div slot="actionItems" style="margin:0px;">
                   <div class="horizontal flex center layout">
                     <div id="group-select-box" style="height:48px;"></div>

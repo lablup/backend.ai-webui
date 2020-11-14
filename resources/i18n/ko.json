@@ -324,6 +324,7 @@
     "User": "사용자",
     "Create": "생성",
     "Allowslettersnumbersand-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
+    "Allowslettersnumbersand-_": "문자, 숫자 및 -_ 만 허용됩니다.",
     "Host": "호스트",
     "Foldername": "폴더 이름",
     "Type": "종류",
@@ -474,7 +475,9 @@
     "Updated": "자원 프리셋에 수정되었습니다",
     "MinimumCPUUnit": "CPU 최소 단위: 1 코어",
     "MinimumMemUnit": "메모리 최소 단위: 1 GB",
-    "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다."
+    "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다.",
+    "RAM(GB)": "메모리 (GB)",
+    "SharedMemory(GB)": "공유메모리 (GB)"
   },
   "usersettings": {
     "General": "일반",
@@ -518,7 +521,10 @@
     "PrivateKey": "비밀 키",
     "InvalidPortNumber": "포트 번호는 1025~65534 사이의 양수여야 합니다.",
     "SSHKeyClipboardCopy": "SSH 키가 클립보드에 복사되었습니다.",
-    "ShellEnvironments": "쉘 스크립트 환경"
+    "ShellEnvironments": "쉘 스크립트 환경",
+    "ConfigFilename": "구성 파일 이름 선택",
+    "Edit_ShellScriptTitle_1": " ",
+    "Edit_ShellScriptTitle_2": " 셀 스크립트 수정하기"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",

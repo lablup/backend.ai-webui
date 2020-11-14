@@ -53,9 +53,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: Object}) userconfigDialog = Object();
   @property({type: Object}) notification;
   @property({type: Array}) supportLanguages = [
-    {name: _text("language.OSDefault"), code: "default"},
-    {name: _text("language.English"), code: "en"},
-    {name: _text("language.Korean"), code: "ko"}
+    {name: _t("language.OSDefault"), code: "default"},
+    {name: _t("language.English"), code: "en"},
+    {name: _t("language.Korean"), code: "ko"}
   ];
   @property({type: Boolean}) beta_feature_panel = false;
   @property({type: Boolean}) shell_script_edit = false;
@@ -895,7 +895,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       ` : html``}
       ${this.shell_script_edit ? html`
       <h3 class="horizontal center layout">
-        <span>${_text('usersettings.ShellEnvironments')}</span>
+        <span>${_t('usersettings.ShellEnvironments')}</span>
         <span class="flex"></span>
       </h3>
       <div class="horizontal wrap layout setting-item">
@@ -939,10 +939,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
-        <span slot="title">Edit ${this.rcfile} shell script</span>
+        <span slot="title">${_t("usersettings.Edit_ShellScriptTitle_1")} ${this.rcfile} ${_t("usersettings.Edit_ShellScriptTitle_2")}</span>
         <div slot="action" class="vertical layout">
           <mwc-select id="select-rcfile-type"
-                      label="config file name"
+                      label="${_t("usersettings.ConfigFilename")}"
                       required
                       outlined
                       validationMessage="Please select one option."
@@ -981,12 +981,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <mwc-button
               unelevated
               id="discard-editor-data"
-              label="${_t("button.No")}"
+              label="${_t("button.Yes")}"
               @click="${() => this._discardCurrentEditorChange()}"></mwc-button>
           <mwc-button
               unelevated
               id="save-editor-data"
-              label="${_t("button.No")}"
+              label="${_t("button.SaveAndClose")}"
               @click="${() => this._saveCurrentEditorChange()}"></mwc-button>
         </div>
       </backend-ai-dialog>

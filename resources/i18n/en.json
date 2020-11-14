@@ -327,6 +327,7 @@
     "User": "User",
     "Create": "Create",
     "Allowslettersnumbersand-_dot": "Allows letters, numbers and -_.",
+    "Allowslettersnumbersand-_": "문자, 숫자 및 -_ 만 허용됩니다.",
     "Host": "Host",
     "Foldername": "Folder name",
     "Type": "Type",
@@ -521,7 +522,10 @@
     "PrivateKey": "Private Key",
     "InvalidPortNumber": "Port number should be positive number between 1025~65534",
     "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard.",
-    "ShellEnvironments": "Shell Environments"
+    "ShellEnvironments": "Shell Environments",
+    "ConfigFilename": "Config file name",
+    "Edit_ShellScriptTitle_1": "Edit ",
+    "Edit_ShellScriptTitle_2": " shell script"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
