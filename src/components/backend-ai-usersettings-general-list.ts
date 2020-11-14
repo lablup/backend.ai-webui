@@ -682,11 +682,19 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   async _openSSHKeypairRefreshDialog() {
     globalThis.backendaiclient.fetchSSHKeypair().then((resp) => {
       const dialog = this.shadowRoot.querySelector('#ssh-keypair-management-dialog');
-      dialog.querySelector('#current-ssh-public-key').value = resp.ssh_public_key;
+      let publicKeyEl = dialog.querySelector('#current-ssh-public-key');
+      let publicKeyCopyBtn = dialog.querySelector('#copy-current-ssh-public-key-button');
+      publicKeyEl.value = resp.ssh_public_key ? resp.ssh_public_key : '';
+
+      // disable textarea and copy button when the user has never generated SSH Keypair. 
+      publicKeyEl.disabled = publicKeyEl.value === '' ? true : false;
+      publicKeyCopyBtn.disabled = publicKeyEl.disabled;
+
+      // show information text for SSH generation
+      publicKeyEl.value = _text('usersettings.NoExistingSSHKeypair');
       dialog.show();
     });
   }
-
   _openSSHKeypairClearDialog() {
     this.shadowRoot.querySelector('#clear-ssh-keypair-dialog').show();
   }
@@ -988,6 +996,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <span slot="title"> ${_t("usersettings.CurrentSSHPublicKey")}</span>
           <mwc-textarea class="ssh-keypair" style="width:435px; height:270px;" id="current-ssh-public-key" outlined readonly></mwc-textarea>
           <mwc-icon-button
+              id="copy-current-ssh-public-key-button"
               icon="content_copy"
               @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
         </div>

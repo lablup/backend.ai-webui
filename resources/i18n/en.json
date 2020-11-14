@@ -515,7 +515,7 @@
     "CurrentSSHPublicKey": "Current public key: ",
     "SSHKeypairGeneration": "SSH Keypair Generation",
     "SSHKeypairGenerationWarning": "You cannot get private key again. Store on your local disk if needed.",
-    "NoExistingSSHKeypair": "No SSH Keypair to be copied. Please press Generate button or input SSH keypair.",
+    "NoExistingSSHKeypair": "No SSH Keypair to be copied. To get SSH Keypair, Please press Generate button.",
     "ClearSSHKeypairInput": "Written SSH Keypair will be removed. Are you sure you want to continue?",
     "PublicKey": "Public Key",
     "PrivateKey": "Private Key",
