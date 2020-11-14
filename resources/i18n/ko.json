@@ -86,7 +86,8 @@
     "NoAnnouncement": "표시 할 안내문이 없습니다.",
     "NoInvitations": "초대 받은 폴더가 없습니다.",
     "AcceptSharedVFolder": "다음 폴더에 대한 공유를 받습니다. 공유 받은 폴더 명: ",
-    "DeclineSharedVFolder": "다음 폴더에 대한 초대를 거부하였습니다. 거부한 폴더 명: "
+    "DeclineSharedVFolder": "다음 폴더에 대한 초대를 거부하였습니다. 거부한 폴더 명: ",
+    "connectingToCluster": "Backend.AI 클러스터에 연결중..."
   },
   "session": {
     "launcher": {
@@ -147,7 +148,8 @@
       "PleaseChooseFoldersToMount": "마운트할 폴더들을 선택하세요",
       "StartImportedNotebook": "가져온 노트북 열기",
       "SessionNameAllowCondition": "세션 이름은 공백없이 4글자 이상 영문/숫자만 입력 가능합니다.",
-      "NoFolderExists": "폴더가 없습니다"
+      "NoFolderExists": "폴더가 없습니다",
+      "sessionStillPreparing": "세션이 아직 준비중입니다. 세션이 시작된 후 직접 앱 아이콘을 눌러 앱을 시작해주세요."
     },
     "Running": "실행중",
     "Finished": "종료",
@@ -181,7 +183,11 @@
       "AppMustBeRun": "이미 앱이 실행중일 때만 시작하세요",
       "AppMustBeRunDialog": "이 앱은 터미널을 통해 미리 실행되고 있는 경우에만 접근 및 사용할 수 있습니다. 그렇지 않은 경우, 앱이 실행중이 아닐때 발생하는 오류 페이지에 접속될 것입니다.",
       "ConfirmAndRun": "확인하였으며 시작하겠습니다"
-    }
+    },
+    "SessionTerminated": "세선을 중지했습니다.",
+    "SessionsTerminated": "세션들을 중지했습니다.",
+    "NoSession": "세션이 없습니다.",
+    "DownloadingCSVFile": "CSV 파일을 내려받습니다."
   },
   "button": {
     "Cancel": "취소",

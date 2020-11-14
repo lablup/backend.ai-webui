@@ -398,6 +398,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
+  /**
+   * Refresh the job list.
+   *
+   * @param {boolean} refresh - if true, dispatch the 'backend-ai-resource-refreshed' event
+   * @param {boolean} repeat - repeat the job data reading. Set refreshTime to 5000 for running list else 30000
+   * */
   async refreshList(refresh = true, repeat = true) {
     return this._refreshJobData(refresh, repeat);
   }
@@ -406,7 +412,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Refresh the job data - data fields, sessions, etc.
    *
    * @param {boolean} refresh - if true, dispatch the 'backend-ai-resource-refreshed' event
-   * @param {boolean} repeat - set refreshTime to 5000 if true else 30000
+   * @param {boolean} repeat - repeat the job data reading. Set refreshTime to 5000 for running list else 30000
    * */
   async _refreshJobData(refresh = false, repeat = true) {
     await this.updateComplete;
@@ -561,17 +567,21 @@ export default class BackendAiSessionList extends BackendAIPage {
           document.dispatchEvent(event);
         }
         if (repeat === true) {
-          if (this.condition === 'running') {
-            refreshTime = 5000;
-          } else {
-            refreshTime = 30000;
-          }
+          refreshTime = this.condition === 'running' ? 5000 : 30000;
           this.refreshTimer = setTimeout(() => {
-            this._refreshJobData()
+            this._refreshJobData();
           }, refreshTime);
         }
       }
     }).catch(err => {
+      this.refreshing = false;
+      if (this.active && repeat) {
+        // Keep trying to fetch session list with more delay
+        const refreshTime = this.condition === 'running' ? 20000 : 120000;
+        this.refreshTimer = setTimeout(() => {
+          this._refreshJobData();
+        }, refreshTime);
+      }
       this.spinner.hide();
       console.log(err);
       if (err && err.message) {
@@ -869,8 +879,6 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.notification.show();
       return false;
     }
-    this.notification.text = 'Terminating session...';
-    this.notification.show();
     return this._terminateKernel(sessionName, accessKey);
   }
 
@@ -880,17 +888,18 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.notification.show();
       return false;
     }
-    this.notification.text = 'Terminating session...';
-    this.notification.show();
+    this.spinner.show();
     return this._terminateKernel(this.terminateSessionDialog.sessionName, this.terminateSessionDialog.accessKey).then(response => {
+      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
-      this.notification.text = "Session terminated.";
+      this.notification.text = _text("session.SessionTerminated");
       this.notification.show();
       let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
+      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -917,21 +926,21 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _terminateSelectedSessionsWithCheck() {
-    this.notification.text = 'Terminating sessions...';
-    this.notification.show();
-
+    this.spinner.show();
     let terminateSessionQueue = this._selected_items.map(item => {
       return this._terminateKernel(item[this.sessionNameField], item.access_key);
     });
     this._selected_items = [];
     return Promise.all(terminateSessionQueue).then(response => {
+      this.spinner.hide();
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
-      this.notification.text = "Sessions terminated.";
+      this.notification.text = _text("session.SessionsTerminated");
       this.notification.show();
 
     }).catch((err) => {
+      this.spinner.hide();
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
@@ -943,19 +952,19 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Terminate selected sessions without check.
    * */
   _terminateSelectedSessions() {
-    this.notification.text = 'Terminating sessions...';
-    this.notification.show();
-
+    this.spinner.show();
     let terminateSessionQueue = this._selected_items.map(item => {
       return this._terminateKernel(item[this.sessionNameField], item.access_key);
     });
     return Promise.all(terminateSessionQueue).then(response => {
+      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
-      this.notification.text = "Sessions terminated.";
+      this.notification.text = _text("session.SessionsTerminated");
       this.notification.show();
     }).catch((err) => {
+      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
@@ -1405,7 +1414,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     globalThis.backendaiclient.computeSession.listAll(fields, status, this.filterAccessKey, limit, 0, groupId).then((response) => {
       const sessions = response;
       if (sessions.length === 0) {
-        this.notification.text = "No sessions";
+        this.notification.text = _text("session.NoSession");
         this.notification.show();
         this.exportToCsvDialog.hide();
         return;
@@ -1467,7 +1476,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       });
 
       JsonToCsv.exportToCsv(fileNameEl.value, exportList);
-      this.notification.text = "Downloading CSV file...";
+      this.notification.text = _text("session.DownloadingCSVFile");
       this.notification.show();
       this.exportToCsvDialog.hide();
     });

@@ -961,10 +961,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, config) {
-    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 10000);
+    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000);
     task.catch((err) => {
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        if ('statusCode' in err && err.statusCode === 408) {
+          this.notification.text = _text("session.launcher.sessionStillPreparing");
+        } else {
+          this.notification.text = PainKiller.relieve(err.message);
+        }
         this.notification.detail = err.message;
         this.notification.show(true, err);
       } else if (err && err.title) {
@@ -1877,7 +1881,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
           <wl-expansion name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
-            <!--<span slot="description" style="font-size:12px;color:#646464;"></span>-->
             <mwc-list fullwidth multi id="vfolder"
               @selected="${this._updateSelectedFolder}">
             ${this.vfolders.length === 0 ? html`

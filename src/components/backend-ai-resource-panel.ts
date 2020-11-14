@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {get as _text, translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
+import {translate as _t, get as _text, translateUnsafeHTML as _tr} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -40,7 +40,6 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Number}) sessions = 0;
-  @property({type: Object}) jobs = Object();
   @property({type: Number}) agents = 0;
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
@@ -226,7 +225,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     let fields = ["created_at"];
     globalThis.backendaiclient.computeSession.list(fields, status).then((response) => {
       this.spinner.hide();
-      this.jobs = response;
       if (!response.compute_session_list && response.legacy_compute_session_list) {
         response.compute_session_list = response.legacy_compute_session_list;
       }
@@ -238,11 +236,15 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       }
     }).catch(err => {
       this.spinner.hide();
-      this.jobs = [];
       this.sessions = 0;
-      this.notification.text = PainKiller.relieve('Couldn\'t connect to manager.');
+      this.notification.text = _text('summary.connectingToCluster');
       this.notification.detail = err;
-      this.notification.show(true, err);
+      this.notification.show(false, err);
+      if (this.active) {
+        setTimeout(() => {
+          this._refreshSessionInformation()
+        }, 15000);
+      }
     });
   }
 
