@@ -578,7 +578,7 @@ export default class BackendAISummary extends BackendAIPage {
                     
                     <lablup-activity-panel noheader autowidth>
                       <div slot="message" class="layout horizontal center center-justified flex upper-space">
-                          <a href="/environment">
+                          <a href="/maintenance">
                             <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
                               <i class="fas fa-tools larger left-end-icon"></i>
                               ${_t('summary.SystemMaintenance')}
