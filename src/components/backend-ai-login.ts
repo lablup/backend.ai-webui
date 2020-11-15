@@ -765,6 +765,9 @@ export default class BackendAILogin extends BackendAIPage {
       this.block();
     }
     this.client.get_manager_version().then(response => {
+      const currentTime = Math.floor(Date.now() / 1000);
+      globalThis.backendaioptions.set('last_login', currentTime, 'general');
+      globalThis.backendaioptions.set('login_attempt', 0, 'general');
       this._connectViaGQL();
     }).catch((err) => {   // Connection failed
       this.free();
