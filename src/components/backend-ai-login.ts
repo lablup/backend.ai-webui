@@ -393,6 +393,14 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       this.allow_signout = true;
     }
+    if (typeof config.general === "undefined" || typeof config.general.loginAttemptLimit === "undefined" || config.general.loginAttemptLimit === '') {
+    } else {
+      this.login_attempt_limit = parseInt(config.general.loginAttemptLimit);
+    }
+    if (typeof config.general === "undefined" || typeof config.general.loginBlockTime === "undefined" || config.general.loginBlockTime === '') {
+    } else {
+      this.login_block_time = parseInt(config.general.loginBlockTime);
+    }
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
     } else {

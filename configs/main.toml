@@ -9,6 +9,8 @@ signupSupport = false
 allowSignout = false
 allowAnonymousChangePassword = false
 allowProjectResourceMonitor = true
+#loginAttemptLimit = 5
+#loginBlockTime = 180
 debug = true
 
 [wsproxy]
