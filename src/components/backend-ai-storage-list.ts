@@ -500,7 +500,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           </wl-button>
           <div id="add-btn-cover">
             <mwc-button
-                unelevated
                 id="add-btn"
                 icon="cloud_upload"
                 label="${_t("data.explorer.UploadFiles")}"
@@ -525,7 +524,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           `}
           <div id="mkdir-cover">
             <mwc-button
-                unelevated
                 id="mkdir"
                 class="tooltip"
                 icon="create_new_folder"
