@@ -494,10 +494,10 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${this.explorer.id}</span>
         <div slot="action" class="horizontal layout flex folder-action-buttons">
           <div class="flex"></div>
-          <wl-button outlined class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
+          <mwc-button outlined class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
             <div class="horizontal center layout">
             <wl-icon style="--icon-size: 20px;margin-right:5px;">delete</wl-icon><span>${_t("data.explorer.Delete")}</span></div>
-          </wl-button>
+          </mwc-button>
           <div id="add-btn-cover">
             <mwc-button
                 id="add-btn"
