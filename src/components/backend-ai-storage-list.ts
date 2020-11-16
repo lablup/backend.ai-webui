@@ -498,6 +498,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             <div class="horizontal center layout">
             <wl-icon style="--icon-size: 20px;margin-right:5px;">delete</wl-icon><span>${_t("data.explorer.Delete")}</span></div>
           </mwc-button>
+          ${this.isWritable ? html`
           <div id="add-btn-cover">
             <mwc-button
                 id="add-btn"
@@ -507,21 +508,6 @@ export default class BackendAiStorageList extends BackendAIPage {
                 @click="${(e) => this._uploadFileBtnClick(e)}">
             </mwc-button>
           </div>
-          ${this.isWritable ? html`` : html`
-          <wl-tooltip
-            fixed
-            closeOnClick
-            anchor="#add-btn-cover"
-            id="add-btn-tooltip"
-            anchororiginx="center"
-            anchororiginy="bottom"
-            transformoriginx="center"
-            transformoriginy="top"
-            .anchorOpenEvents="${["mouseover"]}"
-            .anchorCloseEvents="${["mouseout"]}">
-            ${_text('data.explorer.WritePermissionRequiredInUploadFiles')}
-          </wl-tooltip>
-          `}
           <div id="mkdir-cover">
             <mwc-button
                 id="mkdir"
@@ -532,20 +518,13 @@ export default class BackendAiStorageList extends BackendAIPage {
                 @click="${() => this._mkdirDialog()}">
             </mwc-button>
           </div>
-          ${this.isWritable ? html``: html`
-          <wl-tooltip
-            fixed
-            closeOnClick
-            anchor="#mkdir-cover"
-            id="mkdir-tooltip"
-            anchororiginx="center"
-            anchororiginy="bottom"
-            transformoriginx="center"
-            transformoriginy="top"
-            .anchorOpenEvents="${["mouseover"]}"
-            .anchorCloseEvents="${["mouseout"]}">
-            ${_text('data.explorer.WritePermissionRequiredInFolderCreation')}
-          </wl-tooltip>
+          ` : html`
+          <mwc-button
+              id="readonly-btn"
+              style="width:150px;"
+              label="${_t("data.explorer.ReadonlyFolder")}"
+              disabled>
+          </mwc-button>
           `}
         </div>
         <div slot="content">

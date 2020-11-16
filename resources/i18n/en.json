@@ -387,7 +387,8 @@
       "LessThan10Sec": "Less than 10 seconds",
       "MoreThanADay": "More than a day",
       "WritePermissionRequiredInFolderCreation": "Write permission is required in creating a folder.",
-      "WritePermissionRequiredInUploadFiles": "Write permission is required in uploading file(s)."
+      "WritePermissionRequiredInUploadFiles": "Write permission is required in uploading file(s).",
+      "ReadonlyFolder": "Read-only Folder"
     },
     "invitation": {
       "EnterEmail": "Enter email address",
