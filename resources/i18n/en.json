@@ -387,7 +387,10 @@
       "ValueShouldBeStarted": "Path should start with .(dot) or letters, numbers only.",
       "DragDropFileUploadSizeLimit": "File size limit (< 1 GiB)",
       "LessThan10Sec": "Less than 10 seconds",
-      "MoreThanADay": "More than a day"
+      "MoreThanADay": "More than a day",
+      "WritePermissionRequiredInFolderCreation": "Write permission is required in creating a folder.",
+      "WritePermissionRequiredInUploadFiles": "Write permission is required in uploading file(s).",
+      "ReadonlyFolder": "Read-only Folder"
     },
     "invitation": {
       "EnterEmail": "Enter email address",
@@ -770,7 +773,8 @@
     "PasswordChanged": "Password is successfully changed",
     "InvalidChangePasswordToken": "Invalid Token",
     "InvalidChangePasswordTokenMessage": "Issued token to change password has error. Please send another email for changing password and try again.",
-    "PleaseInputLoginInfo": "Please input ID and password for login."
+    "PleaseInputLoginInfo": "Please input ID and password for login.",
+    "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",

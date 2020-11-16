@@ -384,7 +384,10 @@
       "ValueShouldBeStarted": "경로는 .(점), 문자 또는 숫자만 포함해야 합니다",
       "DragDropFileUploadSizeLimit": "드래그 & 드롭시 업로드 가능한 파일 사이즈는 1 GiB 이하로 제한됩니다.",
       "LessThan10Sec": "10초 이하의 시간 소요",
-      "MoreThanADay": "최소 1일 이상 소요"
+      "MoreThanADay": "최소 1일 이상 소요",
+      "WritePermissionRequiredInFolderCreation": "폴더를 만들기 위해서는 쓰기(write) 권한이 필요합니다.",
+      "WritePermissionRequiredInUploadFiles": "파일을 업로드하기 위해서는 쓰기(write) 권한이 필요합니다.",
+      "ReadonlyFolder": "읽기 전용 폴더"
     },
     "invitation": {
       "EnterEmail": "이메일을 입력하세요",
@@ -769,7 +772,8 @@
     "PasswordChanged": "비밀번호가 변경되었습니다",
     "InvalidChangePasswordToken": "토큰 오류",
     "InvalidChangePasswordTokenMessage": "비밀번호 변경을 위해 발급된 토큰에 오류가 있습니다. 비밀번호 변경 이메일을 다시 보내고 시도해 보십시오.",
-    "PleaseInputLoginInfo": "로그인을 위한 ID 와 PW를 입력해주세요."
+    "PleaseInputLoginInfo": "로그인을 위한 ID 와 PW를 입력해주세요.",
+    "TooManyAttempt": "너무 많은 로그인 시도가 있었습니다. 잠시동안 로그인 시도가 차단되었습니다."
   },
   "signup": {
     "SignupBETA": "가입 (베타 초대 대상)",

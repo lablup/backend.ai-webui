@@ -15,12 +15,14 @@ import '@material/mwc-textfield';
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-icon-button';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
+import '@vaadin/vaadin-item/vaadin-item';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -32,7 +34,7 @@ import 'weightless/label';
 import 'weightless/select';
 import 'weightless/title';
 import 'weightless/textfield';
-import '@material/mwc-icon-button';
+
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
 import tus from '../lib/tus';
@@ -92,6 +94,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) _boundCreatedTimeRenderer = Object();
   @property({type: Object}) _boundPermissionRenderer = Object();
   @property({type: Boolean}) _uploadFlag = true;
+  @property({type: Boolean}) isWritable = false;
 
   constructor() {
     super();
@@ -262,6 +265,10 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-textfield.red {
           --mdc-theme-primary: var(--paper-red-400) !important;
+        }
+
+        mwc-button {
+          margin: auto 10px;
         }
 
         wl-button.goto {
@@ -474,15 +481,38 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${this.explorer.id}</span>
         <div slot="action" class="horizontal layout flex folder-action-buttons">
           <div class="flex"></div>
-          <mwc-button icon="delete" class="multiple-action-buttons" @click="${() => this._openDeleteMultipleFileDialog()}" style="display:none;">
-            ${_t("data.explorer.Delete")}
+          <mwc-button outlined class="multiple-action-buttons fg red" icon="delete" @click="${() => this._openDeleteMultipleFileDialog()}"
+            label="${_t("data.explorer.Delete")}"
+            style="display:none;">
           </mwc-button>
-          <mwc-button icon="cloud_upload" id="add-btn" @click="${(e) => this._uploadFileBtnClick(e)}">
-            ${_t("data.explorer.UploadFiles")}
+          ${this.isWritable ? html`
+          <div id="add-btn-cover">
+            <mwc-button
+                id="add-btn"
+                icon="cloud_upload"
+                label="${_t("data.explorer.UploadFiles")}"
+                ?disabled=${!this.isWritable}
+                @click="${(e) => this._uploadFileBtnClick(e)}">
+            </mwc-button>
+          </div>
+          <div id="mkdir-cover">
+            <mwc-button
+                id="mkdir"
+                class="tooltip"
+                icon="create_new_folder"
+                label="${_t("data.explorer.NewFolder")}"
+                ?disabled=${!this.isWritable}
+                @click="${() => this._mkdirDialog()}">
+            </mwc-button>
+          </div>
+          ` : html`
+          <mwc-button
+              id="readonly-btn"
+              style="width:150px;"
+              label="${_t("data.explorer.ReadonlyFolder")}"
+              disabled>
           </mwc-button>
-          <mwc-button icon="create_new_folder" id="mkdir" @click="${() => this._mkdirDialog()}">
-            ${_t("data.explorer.NewFolder")}
-          </mwc-button>
+          `}
         </div>
         <div slot="content">
           <div class="breadcrumb">
@@ -787,7 +817,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Remove existing email textfield.
-   * 
+   *
    */
   _removeTextField() {
     const textfields = this.shadowRoot.querySelector('#textfields');
@@ -830,7 +860,7 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-icon-button
                 class="fg blue controls-running"
                 icon="folder_open"
-                @click="${(e) => this._folderExplorer(e)}" .folder-id="${rowData.item.name}"
+                @click="${(e) => this._folderExplorer(e, this._hasPermission(rowData.item, 'w'))}" .folder-id="${rowData.item.name}"
               ></mwc-icon-button>
             `
             : html``
@@ -897,9 +927,9 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
               filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
         `}
-        <mwc-icon-button id="rename-btn" class="tiny fg green" icon="edit" required
+        <mwc-icon-button id="rename-btn" ?disabled="${!this.isWritable}" class="tiny fg green" icon="edit" required
             filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
-        <mwc-icon-button id="delete-btn" class="tiny fg red" icon="delete_forever"
+        <mwc-icon-button id="delete-btn" ?disabled="${!this.isWritable}" class="tiny fg red" icon="delete_forever"
             filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
        `, root
     );
@@ -1232,14 +1262,15 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Set up the explorer of the folder and call the _clearExplorer() function.
    *
    * @param {Event} e - click the folder_open icon button
+   * @param {boolean} isWritable - check whether write operation is allowed or not
    * */
-  _folderExplorer(e) {
+  _folderExplorer(e, isWritable) {
     let folderId = this._getControlId(e);
     let explorer = {
       id: folderId,
       breadcrumb: ['.'],
     };
-
+    this.isWritable = isWritable;
     this.explorer = explorer;
     this._clearExplorer(explorer.breadcrumb.join('/'), explorer.id, true);
   }

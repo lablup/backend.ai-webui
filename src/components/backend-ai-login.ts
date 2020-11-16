@@ -63,6 +63,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) blockType = '';
   @property({type: String}) blockMessage = '';
   @property({type: String}) connection_mode = 'SESSION';
+  @property({type: Number}) login_attempt_limit = 5;
+  @property({type: Number}) login_block_time = 180;
   @property({type: String}) user;
   @property({type: String}) email;
   @property({type: Object}) config = Object();
@@ -234,7 +236,7 @@ export default class BackendAILogin extends BackendAIPage {
           position: relative;
           -webkit-transform: scale(1.1);
               -ms-transform: scale(1.1);
-                  transform: scale(1.1); 
+                  transform: scale(1.1);
         }
         .sk-folding-cube .sk-cube:before {
           content: '';
@@ -268,7 +270,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
         .sk-folding-cube .sk-cube3:before {
           -webkit-animation-delay: 0.6s;
-                  animation-delay: 0.6s; 
+                  animation-delay: 0.6s;
         }
         .sk-folding-cube .sk-cube4:before {
           -webkit-animation-delay: 0.9s;
@@ -278,31 +280,31 @@ export default class BackendAILogin extends BackendAIPage {
           0%, 10% {
             -webkit-transform: perspective(140px) rotateX(-180deg);
                     transform: perspective(140px) rotateX(-180deg);
-            opacity: 0; 
+            opacity: 0;
           } 25%, 75% {
             -webkit-transform: perspective(140px) rotateX(0deg);
                     transform: perspective(140px) rotateX(0deg);
-            opacity: 1; 
+            opacity: 1;
           } 90%, 100% {
             -webkit-transform: perspective(140px) rotateY(180deg);
                     transform: perspective(140px) rotateY(180deg);
-            opacity: 0; 
-          } 
+            opacity: 0;
+          }
         }
-        
+
         @keyframes sk-foldCubeAngle {
           0%, 10% {
             -webkit-transform: perspective(140px) rotateX(-180deg);
                     transform: perspective(140px) rotateX(-180deg);
-            opacity: 0; 
+            opacity: 0;
           } 25%, 75% {
             -webkit-transform: perspective(140px) rotateX(0deg);
                     transform: perspective(140px) rotateX(0deg);
-            opacity: 1; 
+            opacity: 1;
           } 90%, 100% {
             -webkit-transform: perspective(140px) rotateY(180deg);
                     transform: perspective(140px) rotateY(180deg);
-            opacity: 0; 
+            opacity: 0;
           }
         }
       `];
@@ -390,6 +392,14 @@ export default class BackendAILogin extends BackendAIPage {
       this.allow_signout = false;
     } else {
       this.allow_signout = true;
+    }
+    if (typeof config.general === "undefined" || typeof config.general.loginAttemptLimit === "undefined" || config.general.loginAttemptLimit === '') {
+    } else {
+      this.login_attempt_limit = parseInt(config.general.loginAttemptLimit);
+    }
+    if (typeof config.general === "undefined" || typeof config.general.loginBlockTime === "undefined" || config.general.loginBlockTime === '') {
+    } else {
+      this.login_block_time = parseInt(config.general.loginBlockTime);
     }
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
@@ -605,6 +615,22 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   _login() {
+    let loginAttempt = globalThis.backendaioptions.get('login_attempt', 0, 'general');
+    let lastLogin =  globalThis.backendaioptions.get('last_login', Math.floor(Date.now() / 1000), 'general');
+    let currentTime = Math.floor(Date.now() / 1000);
+    if (loginAttempt >= this.login_attempt_limit && currentTime - lastLogin > this.login_block_time) { // Reset login counter and last login after 180sec.
+      globalThis.backendaioptions.set('last_login', currentTime, 'general');
+      globalThis.backendaioptions.set('login_attempt', 0, 'general');
+    } else if (loginAttempt >= this.login_attempt_limit) { // login count exceeds limit, block login and set the last login.
+      globalThis.backendaioptions.set('last_login', currentTime, 'general');
+      globalThis.backendaioptions.set('login_attempt', loginAttempt + 1, 'general');
+      this.notification.text = _text('login.TooManyAttempt');
+      this.notification.show();
+      return;
+    } else {
+      globalThis.backendaioptions.set('login_attempt', loginAttempt + 1, 'general');
+    }
+
     this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     if (this.api_endpoint === '') {
@@ -727,7 +753,9 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     this.client.ready = false;
-    this._connectGQL(showError);
+    this.client.get_manager_version().then(response => {
+      return this._connectGQL(showError);
+    });
   }
 
   /**
@@ -738,7 +766,10 @@ export default class BackendAILogin extends BackendAIPage {
     if (this.loginPanel.open !== true) {
       this.block();
     }
-    this.client.get_manager_version().then(response => {
+    new Promise(() => {
+      const currentTime = Math.floor(Date.now() / 1000);
+      globalThis.backendaioptions.set('last_login', currentTime, 'general');
+      globalThis.backendaioptions.set('login_attempt', 0, 'general');
       this._connectViaGQL();
     }).catch((err) => {   // Connection failed
       this.free();
