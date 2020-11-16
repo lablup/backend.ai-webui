@@ -301,12 +301,16 @@ export default class BackendAIImport extends BackendAIPage {
 
   /**
    * Copy textarea when user clicks the element.
-   * 
+   *
    * @param id - text-area htmlElement for copying
    */
-  _copyTextArea(id) {
-    if (id !== "") {
-      let copyText: string = this.shadowRoot.querySelector(id).value;
+  _copyTextArea(e) {
+    let copyText = "";
+    if ('value' in e.target) {
+      copyText = e.target.value;
+    }
+    if (copyText !== "") {
+      //let copyText: string = this.shadowRoot.querySelector(id).value;
       if (copyText.length === 0) {
         this.notification.text = _text("import.NoNotebookCode");
         this.notification.show();
@@ -327,6 +331,8 @@ export default class BackendAIImport extends BackendAIPage {
           tmpInputElement.select();
           document.execCommand("copy"); // copy operation
           document.body.removeChild(tmpInputElement);
+          this.notification.text = _text("import.NotebookBadgeCodeCopied");
+          this.notification.show();
         }
       }
     }
@@ -361,8 +367,8 @@ export default class BackendAIImport extends BackendAIPage {
               <img src="/resources/badge.svg" style="margin-top:5px;margin-bottom:5px;"/>
               <mwc-textfield id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"></mwc-textfield>
               <mwc-button style="width:100%;" @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
-              <mwc-textarea disabled id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}" @click="${() => this._copyTextArea('#notebook-badge-code')}">></mwc-textarea>
-              <mwc-textarea disabled id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}" @click="${() => this._copyTextArea('#notebook-badge-code-markdown')}">></mwc-textarea>
+              <mwc-textarea id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
+              <mwc-textarea id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
             </div>
           </div>
         </lablup-activity-panel>
