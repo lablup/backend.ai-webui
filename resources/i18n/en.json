@@ -322,7 +322,7 @@
     "FolderNameRequired":"Folder name is required",
     "FileandFoldernameRequired": "File/Folder name is required",
     "Allowslettersnumbersand-_dot": "Allows letters, numbers and -_.",
-    "EnterDifferentValue": "Please enter a value different from the existing file or folder name.",
+    "EnterDifferentValue": "Please enter a value different from the existing file or folder name. Please Check whether space character in the input field or not.",
     "Host": "Host",
     "Foldername": "Folder name",
     "Type": "Type",

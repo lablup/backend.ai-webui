@@ -318,7 +318,7 @@
     "Create": "생성",
     "FolderNameRequired":"폴더명은 필수 입력입니다.",
     "Allowslettersnumbersand-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
-    "EnterDifferentValue": "기존 파일 또는 폴더 명과 다른 값을 입력해주세요.",
+    "EnterDifferentValue": "기존 파일 또는 폴더 명과 다른 값을 입력해주세요. 기존 폴더 명에 공백문자가 있는지 확인해주세요.",
     "Host": "호스트",
     "Foldername": "폴더 이름",
     "Type": "종류",

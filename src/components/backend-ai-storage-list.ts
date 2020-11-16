@@ -415,6 +415,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <div slot="content">
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
            required auto-validate validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"
+           style="width:320px;"
            @change="${() => {this._validateFolderName(true)}}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
@@ -666,8 +667,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.explorer.RenameAFile')}</span>
         <div slot="content">
           <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"
-          required @change="${() => this._validateExistingFileName()}" auto-validate></mwc-textfield>
-          <div id="old-file-name" style="height:2.5em"></div>
+          required @change="${() => this._validateExistingFileName()}" auto-validate style="width:320px;"></mwc-textfield>
+          <div id="old-file-name" style="height:2.5em;"></div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
           <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" outlined @click="${(e) => this._renameFile(e)}">
@@ -1243,7 +1244,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/]/gi;
         let isValid : boolean;
         // compare old name and new name.
-        console.log(this.renameFileDialog.querySelector('#old-file-name').textContent)
         if (filename.value ===  this.renameFileDialog.querySelector('#old-file-name').textContent) {
           filename.validationMessage = _text('data.EnterDifferentValue');
           isValid = false;
@@ -1292,7 +1292,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
       } else {
         let isValid : boolean;
-        let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/]/gi;
+        let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/\s]/gi;
         // if renaming its name, then compare old name and new name.
         if (isModifying) {
           if (folderName.value === this.renameFolderId) {
