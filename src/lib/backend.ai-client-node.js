@@ -1885,7 +1885,7 @@ class ContainerImage {
             resource = { 'cpu': '1', 'mem': '512m' };
         }
         return this.client.createIfNotExists(registry + name, sessionId, resource, 600000).then((response) => {
-            return this.client.destroyKernel(sessionId);
+            return this.client.destroy(sessionId);
         }).catch(err => {
             throw err;
         });
