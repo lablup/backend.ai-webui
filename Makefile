@@ -30,7 +30,7 @@ compile_wsproxy:
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
 all: dep mac win linux
 dep:
-	./src/plastics/weightless/patch-input-behavior.sh
+	cd ./src/plastics/weightless && bash ./patch-input-behavior.sh
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
 		make compile_wsproxy; \
@@ -85,7 +85,8 @@ endif
 linux: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=linux --icon=manifest/backend-ai.ico
-	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-linux-x64 ./backend.ai-console-linux-x64-$(BUILD_DATE).zip
+	#cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-linux-x64 ./backend.ai-console-linux-x64-$(BUILD_DATE).zip
+	cd app; zip -r -9 ./backend.ai-console-linux-x64-$(BUILD_DATE).zip ./backend.ai-console-linux-x64
 ifeq ($(site),main)
 	mv ./app/backend.ai-console-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-console-$(BUILD_VERSION)-linux-x64.zip
 else

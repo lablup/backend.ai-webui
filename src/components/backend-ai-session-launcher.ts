@@ -7,25 +7,17 @@ import {css, customElement, html, property} from "lit-element";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-item/paper-item';
-
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-list/mwc-check-list-item';
 import '@material/mwc-icon-button';
+import '@material/mwc-button';
 import '@material/mwc-textfield/mwc-textfield';
 
-import 'weightless/button';
-import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/expansion';
-import 'weightless/icon';
 import 'weightless/label';
-import 'weightless/radio';
-import 'weightless/slider';
 
 import '@material/mwc-linear-progress';
 
@@ -183,12 +175,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        wl-card h4 {
-          padding: 5px 20px;
-          border-bottom: 1px solid #dddddd;
-          font-weight: 100;
-        }
-
         lablup-slider {
           width: 210px !important;
           --textfield-width: 50px;
@@ -263,10 +249,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 100px;
         }
 
-        wl-icon {
-          --icon-size: 24px;
-        }
-
         img.resource-type-icon {
           width: 24px;
           height: 24px;
@@ -304,6 +286,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         #new-session-dialog {
+          --component-width: 400px;
           z-index: 100;
         }
 
@@ -332,12 +315,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         #launch-session {
+          width: var(--component-width, auto);
+        }
+
+        #launch-session[disabled] {
+          background-image: var(--general-sidebar-color);
+          --mdc-theme-on-primary: var(--general-button-color);
+        }
+
+        /* #launch-session {
           height: var(--component-height, auto);
           width: var(--component-width, auto);
-          --button-color: var(--paper-red-600);
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
+          --button-color: var(--component-color, var(--paper-red-600));
+          --button-bg: var(--component-bg, var(--paper-red-50));
+          --button-bg-hover: var(--component-bg-hover, var(--paper-red-100));
+          --button-bg-active: var(--component-bg-active, var(--paper-red-600));
+          --button-shadow-color: var(--component-shadow-color, hsla(224, 47%, 38%, 0.2));
         }
 
         #launch-session[disabled] {
@@ -346,39 +339,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --button-bg: var(--paper-gray-50);
           --button-bg-hover: var(--paper-gray-100);
           --button-bg-active: var(--paper-gray-600);
-        }
-
-        wl-button.launch-button {
-          width: 335px;
-          --button-bg: var(--paper-red-50);
-          --button-bg-active: var(--paper-red-300);
-          --button-bg-hover: var(--paper-red-300);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: var(--paper-red-600);
-          --button-color-active: red;
-          --button-color-hover: red;
-        }
-
-        wl-button.launch-confirmation-button {
-          width: 335px;
-          --button-bg: var(--paper-red-50);
-          --button-bg-active: var(--paper-red-300);
-          --button-bg-hover: var(--paper-red-300);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: var(--paper-red-600);
-          --button-color-active: red;
-          --button-color-hover: red;
-        }
-
-        wl-button.resource-button {
-          --button-bg: white;
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-hover: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: #8899aa;
-          --button-color-active: red;
-          --button-color-hover: red;
-        }
+        } */
 
         wl-expansion {
           --font-family-serif: var(--general-font-family);
@@ -404,6 +365,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .resources.vertical .monitor div:first-child {
           width: 40px;
+        }
+
+        mwc-textfield {
+          font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
         }
 
         mwc-select {
@@ -435,6 +401,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-select-min-width: 190px;
         }
 
+        mwc-select#owner-group {
+          margin-right: 0;
+          padding-right: 0;
+          width: 50%;
+          --mdc-select-min-width: 190px;
+        }
+        mwc-select#owner-scaling-group {
+          margin-right: 0;
+          padding-right: 0;
+          width: 50%;
+          --mdc-select-min-width: 190px;
+        }
+
         mwc-textfield {
           width: 100%;
           --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0.42);
@@ -449,6 +428,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding-left: 0;
           margin-left: 0;
           margin-bottom: 1px;
+        }
+
+        mwc-button, mwc-button[raised], mwc-button[unelevated], mwc-button[disabled] {
+          width: 100%;
+        }
+
+        mwc-button[disabled] {
+          background-image: none;
+          --mdc-theme-primary: #ddd;
+          --mdc-on-theme-primary: var(--general-sidebar-topbar-background-color);
         }
 
         #environment {
@@ -469,11 +458,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
         #vfolder mwc-list-item[disabled] {
           background-color: rgba(255, 0, 0, 0.04) !important;
-        }
-
-        wl-button[fab] {
-          --button-fab-size: 70px;
-          border-radius: 6px;
         }
 
         wl-label {
@@ -501,6 +485,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         mwc-icon-button.info {
           --mdc-icon-button-size: 30px;
         }
+
+        mwc-icon {
+          --mdc-icon-size: 14px;
+        }
+
+        ul {
+          list-style-type: none;
+        }
+
       `];
   }
 
@@ -815,10 +808,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     config['cluster_size'] = this.cluster_size;
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     if (ownerEnabled && ownerEnabled.checked) {
-      config['group_name'] = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
+      config['group_name'] = this.shadowRoot.querySelector('#owner-group').value;
       config['domain'] = this.ownerDomain;
-      config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').selectedItemLabel;
-      config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').selectedItemLabel;
+      config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').value;
+      config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').value;
       if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
         this.notification.text = _text("session.launcher.NotEnoughOwnershipInfo");
         this.notification.show();
@@ -933,7 +926,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             appOptions['runtime'] = 'jupyter';
             appOptions['filename'] = this.importFilename;
           }
-          globalThis.appLauncher.showLauncher(appOptions);
+          // only launch app when it has valid service ports
+          if (service_info.length > 0) {
+            globalThis.appLauncher.showLauncher(appOptions);
+          }
         }).catch((err) => {
           // remove redundant error message
         });
@@ -974,10 +970,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, config) {
-    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config);
+    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000);
     task.catch((err) => {
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        if ('statusCode' in err && err.statusCode === 408) {
+          this.notification.text = _text("session.launcher.sessionStillPreparing");
+        } else {
+          this.notification.text = PainKiller.relieve(err.message);
+        }
         this.notification.detail = err.message;
         this.notification.show(true, err);
       } else if (err && err.title) {
@@ -1600,7 +1600,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let environment = this.shadowRoot.querySelector('#environment');
     //await environment.updateComplete; async way.
     let obj = environment.items.find(o => o.value === this.default_language);
-    if (typeof obj === 'undefined' && typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient.ready === true) { // Not ready yet.
+    if (typeof obj === 'undefined' && typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient.ready === false) { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
         return this.selectDefaultLanguage(forceUpdate, language);
@@ -1623,7 +1623,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   async _fetchSessionOwnerGroups() {
     if (!this.ownerFeatureInitialized) {
-      this.shadowRoot.querySelector('#owner-group').addEventListener('selected-item-label-changed', this._fetchSessionOwnerScalingGroups.bind(this));
+      this.shadowRoot.querySelector('#owner-group').addEventListener('selected', this._fetchSessionOwnerScalingGroups.bind(this));
       this.ownerFeatureInitialized = true;
     }
     const ownerEmail = this.shadowRoot.querySelector('#owner-email');
@@ -1646,19 +1646,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.ownerGroups = [];
       return;
     }
-    this.shadowRoot.querySelector('#owner-accesskey paper-listbox').selected = this.ownerKeypairs[0].access_key;
+    this.shadowRoot.querySelector('#owner-accesskey').layout(true).then(()=>{
+      this.shadowRoot.querySelector('#owner-accesskey').select(0);
+    });
 
     /* Fetch domain / group information */
     const userInfo = await globalThis.backendaiclient.user.get(email, ['domain_name', 'groups {id name}']);
     this.ownerDomain = userInfo.user.domain_name;
     this.ownerGroups = userInfo.user.groups;
     if (this.ownerGroups) {
-      this.shadowRoot.querySelector('#owner-group paper-listbox').selected = this.ownerGroups[0].name;
+      this.shadowRoot.querySelector('#owner-group').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#owner-group').select(0);
+      });
     }
   }
 
   async _fetchSessionOwnerScalingGroups() {
-    const group = this.shadowRoot.querySelector('#owner-group').selectedItemLabel;
+    const group = this.shadowRoot.querySelector('#owner-group').value;
     if (!group) {
       this.ownerScalingGroups = [];
       return;
@@ -1666,7 +1670,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const sgroupInfo = await globalThis.backendaiclient.scalingGroup.list(group);
     this.ownerScalingGroups = sgroupInfo.scaling_groups;
     if (this.ownerScalingGroups) {
-      this.shadowRoot.querySelector('#owner-scaling-group paper-listbox').selected = 0;
+      this.shadowRoot.querySelector('#owner-scaling-group').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#owner-scaling-group').select(0);
+      });
     }
   }
 
@@ -1804,38 +1810,34 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-button ?disabled="${!this.enableLaunchButton}" id="launch-session" outlined @click="${() => this._launchSessionDialog()}">
-        <wl-icon>add</wl-icon>
-        ${_t("session.launcher.Start")}
-      </wl-button>
+      <mwc-button raised class="primary-action" id="launch-session" label="${_t("session.launcher.Start")}" ?disabled="${!this.enableLaunchButton}" @click="${() => this._launchSessionDialog()}">
+      </mwc-button>
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>
-        <form slot="content" id="launch-session-form" class="horizontal center layout centered">
-          <div class="vertical center start-justified layout" style="max-width:400px;border-right:1px solid #ccc;">
-            <div class="vertical center layout" style="padding-top:15px;max-width:400px;">
-              <mwc-select id="environment" label="${_t("session.launcher.Environments")}" fullwidth required
-                value="${this.default_language}">
-                <mwc-list-item selected style="display:none!important;">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
-                  ${this.languages.map(item => html`
-                    ${item.clickable === false ? html`
-                      <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
-                    ` : html`
-                      <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
-                        <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
-                        <div class="horizontal justified center flex layout" style="width:293px;">
-                          <div style="padding-right:5px;">${item.basename}</div>
-                          <div class="flex"></div>
-                          <div class="horizontal layout end-justified center flex">
-                          ${item.tags ? item.tags.map(item => html`
-                            <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}" description="${item.tag}"></lablup-shields>
-                            <span style="display:none">(${item.tag})</span>
-                          `) : ''}
-                            <mwc-icon-button icon="info" class="fg blue info"
-                                             @click="${(e) => {
-        this._showKernelDescription(e, item);
-      }}">
-                            </mwc-icon-button>
-                          </div>
+        <form slot="content" id="launch-session-form" class="centered">
+          <div class="vertical center layout" style="padding-top:15px;">
+            <mwc-select id="environment" label="${_t("session.launcher.Environments")}" fullwidth required
+              value="${this.default_language}">
+              <mwc-list-item selected style="dispxlay:none!important;">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
+                ${this.languages.map(item => html`
+                  ${item.clickable === false ? html`
+                    <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
+                  ` : html`
+                    <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
+                      <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
+                      <div class="horizontal justified center flex layout" style="width:293px;">
+                        <div style="padding-right:5px;">${item.basename}</div>
+                        <div class="flex"></div>
+                        <div class="horizontal layout end-justified center flex">
+                        ${item.tags ? item.tags.map(item => html`
+                          <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}" description="${item.tag}"></lablup-shields>
+                          <span style="display:none">(${item.tag})</span>
+                        `) : ''}
+                          <mwc-icon-button icon="info"
+                                           class="fg blue info"
+                                           @click="${(e) => {
+                                             this._showKernelDescription(e, item);}}">
+                          </mwc-icon-button>
                         </div>
                       </mwc-list-item>
                     `}
@@ -2070,6 +2072,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             Reserved for multi-container UI
           </div>
       </form>
+      <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <mwc-button
+            unelevated
+            class="launch-button"
+            id="launch-button"
+            icon="rowing"
+            @click="${() => this._newSessionWithConfirmation()}">
+          <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+        </mwc-button>
+      </div>
     </backend-ai-dialog>
     <backend-ai-dialog id="help-description" fixed backdrop>
       <span slot="title">${this._helpDescriptionTitle}</span>
@@ -2087,12 +2099,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <p>${_t('session.launcher.LaunchConfirmationDialog')}</p>
         <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
       </div>
-      <div slot="footer" style="padding-top:0;margin:0 5px;">
-        <wl-button class="launch-confirmation-button" type="button" id="launch-confirmation-button"
-                                     outlined @click="${() => this._newSession()}">
-                                    <wl-icon>rowing</wl-icon>
-          <span>${_t('session.launcher.LaunchWithoutMount')}</span>
-        </wl-button>
+      <div slot="footer" class="horizontal end-justified flex layout">
+        <mwc-button
+            unelevated
+            class="launch-confirmation-button"
+            id="launch-confirmation-button"
+            icon="rowing"
+            @click="${() => this._newSession()}">
+          <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+        </mwc-button>
       </div>
     </backend-ai-dialog>
 `;

@@ -6,6 +6,7 @@ import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-button/mwc-button';
 import 'weightless/card';
 
 import './backend-ai-dialog';
@@ -53,20 +54,27 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
         mwc-textfield {
           width: 100%;
         }
+
+        mwc-button, mwc-button[unelevated] {
+          margin: auto 10px;
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+        }
       `
     ];
   }
 
   /**
    * Initialize the client.
-   * 
+   *
    * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   _initClient(apiEndpoint: string) {
     this.consoleShell = document.querySelector('#console-shell');
     this.consoleShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
-    this.passwordChangeDialog = this.shadowRoot.querySelector('#verification-success-dialog');
+    this.passwordChangeDialog = this.shadowRoot.querySelector('#update-password-dialog');
     this.failDialog = this.shadowRoot.querySelector('#verification-fail-dialog');
 
     this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
@@ -74,6 +82,12 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
       this.clientConfig,
       'Backend.AI Console.',
     );
+    this.passwordChangeDialog.addEventListener('didHide', () => {
+      this._redirectToLoginPage();
+      });
+    this.failDialog.addEventListener('didHide', () => {
+      this._redirectToLoginPage();
+      });
   }
 
   /**
@@ -85,7 +99,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
 
   /**
    * Open the upadate password dialog.
-   * 
+   *
    * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   open(apiEndpoint: string) {
@@ -158,10 +172,10 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button outlined flat class="fg red mini flex" type="button"
-              @click="${() => this._updatePassword()}">
-            ${_t("console.menu.Update")}
-          </wl-button>
+          <mwc-button
+              unelevated
+              label="${_t("console.menu.Update")}"
+              @click="${() => this._updatePassword()}"></mwc-button>
         </div>
       </backend-ai-dialog>
 
@@ -177,10 +191,10 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button outlined flat class="fg mini flex red" type="button"
-              @click="${() => this._redirectToLoginPage()}">
-            ${_t("button.Close")}
-          </wl-button>
+          <mwc-button
+              unelevated
+              label="${_t("button.Close")}"
+              @click="${() => this._redirectToLoginPage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

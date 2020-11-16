@@ -1,5 +1,161 @@
 # Changelog
 
+## v20.11.2 / v20.11.3 (16/11/2020)
+
+#### Enhancements:
+
+- [**enhancement**] Limit login trial number [#783](https://github.com/lablup/backend.ai-console/issues/783)
+- [**UI / UX**][**bug**][**enhancement**][**library / SDK**][**major**] Retry manager connection while some requests are failed [#778](https://github.com/lablup/backend.ai-console/issues/778)
+- [**UI / UX**][**enhancement**][**hard**][**library / SDK**][**major**] Simple webcomponent to use / test TensorFlow.js [#668](https://github.com/lablup/backend.ai-console/issues/668)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**urgency**] Prevent folder creation/file upload from only read permission [#777](https://github.com/lablup/backend.ai-console/issues/777)
+- [**UI / UX**][**bug**][**invalid**] Vfolder creation/updating/deletion operation should be fixed. [#776](https://github.com/lablup/backend.ai-console/issues/776)
+- [**UI / UX**][**bug**][**invalid**] Vfolder invitation in the summary page shows up only after redirected to the summary page more than once. [#761](https://github.com/lablup/backend.ai-console/issues/761)
+- [**blocker**][**bug**] When session failed to start, App selection dialog still appears. [#758](https://github.com/lablup/backend.ai-console/issues/758)
+ - [**bugfix**][**minor**][**UI / UX**] Project dropdown in top-app-bar overlaps when value is longer than the width of the element. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Mini-ui should show every menu title as an tooltip in the navigation sidebar when hovering to the each menu. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Footer in the navigation sidebar should be located in to bottom. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Language Select buttons in the terms-of-services and privacy policy dialog should be converted to dropdown. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Enable the sign-out feature*. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Change password request in login panel throws error. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Agreement for terms-of-services and privacy policy should support language translation. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Limit the number of login attempts. (e.g. disable login If login fails more than 5 times in a row.) [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] **[Admin/Superadmin Only]** Change hyper reference link in Maintain Keypairs button to the proper page in Summary page. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] **[Admin/Superadmin Only]** Access key in the session list looks like as if is covered by the panel inside. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Notebook Badge code area should be Read-Only field. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Support Copying to the clipboard when user clicks notebook badge code area. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] In each width email input field in vfolder sharing invitation at Data & Storage page should be same. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Permission selection in the permission settings dialog in the Data & Storage page overlaps in the grid row. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Input area in Current Public key shows "null" literally. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Hide Beta Feature description and toggle button in the usersettings page if there's no beta feature is available. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Shell environment title in the usersettings page doesn't change when language is changed. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] The label of dropdown in shell script configuration dialog should support multi-language translation. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] **[Admin/Superadmin Only]** Active user text is redundantly duplicated in the Keypair resource policy modification dialog at Users page. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] **[Admin/Superadmin Only]** Allowed host selection dropdown width is too narrow to recognize the values inside. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] **[Admin/Superadmin Only]** Modify App dialog should alert after adding/deleting app information in case of user mistakes. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] **[Admin/Superadmin Only]** Delete button in image list at environments page should be hidden since it's not implemented yet. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] **[Admin/Superadmin Only]** Some of resource presets in modification resource preset dialog should support multi-language. (e.g. Korean) [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] **[Admin/Superadmin Only]** Hide disabled buttons in the control panel at Resources page If related features are not available. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] **[Admin/Superadmin Only]** Hide cleanup images button with title and description in the Image / Environment panel at Maintenance page If the feature is not available. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+ - [**bugfix**][**minor**][**UI / UX**] Show proper help page for usersettings when the user clicks help button at the usersettings page. [#782](https://github.com/lablup/backend.ai-console/issues/782)
+
+#### UI / UX:
+
+- [**UI / UX**][**easy**] Apply loading indicator in the login process. [#760](https://github.com/lablup/backend.ai-console/issues/760)
+
+
+## v20.11.1 (02/11/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**enterprise**][**library / SDK**][**major**] GPU/ASIC usage gauge per node [#766](https://github.com/lablup/backend.ai-console/issues/766)
+
+#### Bug Fixes:
+
+- [**bug**] verifying email and changing password page doesn't show anything on the page. [#767](https://github.com/lablup/backend.ai-console/issues/767)
+
+## v20.11.0 (01/11/2020)
+
+#### Bug Fixes:
+
+- [**blocker**][**bug**][**library / SDK**][**major**] Invitation token page is not showing [#764](https://github.com/lablup/backend.ai-console/issues/764)
+
+
+## v20.10.1 (30/10/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**library / SDK**][**minor**] Prevent console from automatic login to unreachable manager [#762](https://github.com/lablup/backend.ai-console/issues/762)
+
+#### UI / UX:
+
+- [**UI / UX**][**need confirmation**] requested UI updates [#750](https://github.com/lablup/backend.ai-console/issues/750)
+
+
+## v20.10.0 (23/10/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**easy**][**enhancement**][**minor**] Implicitly let user know when no folder exists on session launcher [#753](https://github.com/lablup/backend.ai-console/issues/753)
+- [**UI / UX**][**enhancement**][**library / SDK**][**minor**] Change ownership delegation component on session launcher to mwc-select [#731](https://github.com/lablup/backend.ai-console/issues/731)
+- [**UI / UX**][**enhancement**][**enterprise**][**library / SDK**][**major**] UI update (20.10) [#729](https://github.com/lablup/backend.ai-console/issues/729)
+- [**UI / UX**][**enhancement**][**minor**] Validate app labels of images before saving [#715](https://github.com/lablup/backend.ai-console/issues/715)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**library / SDK**][**major**] Resource group deletion doesn't get reflected to the table of resource groups tab in the Resources page. [#743](https://github.com/lablup/backend.ai-console/issues/743)
+- [**blocker**][**bug**] Minor errors occur in Environments page. [#742](https://github.com/lablup/backend.ai-console/issues/742)
+- [**blocker**][**bug**] Cannot create user in the users page. [#741](https://github.com/lablup/backend.ai-console/issues/741)
+- [**blocker**][**bug**] Minor errors occur in the creating folder dialog from Data & Storage page. [#740](https://github.com/lablup/backend.ai-console/issues/740)
+- [**UI / UX**][**bug**][**library / SDK**][**major**] exporting CSV in Sessions page doesn't work. [#739](https://github.com/lablup/backend.ai-console/issues/739)
+- [**UI / UX**][**bug**][**easy**] When clicking Backend.AI Logo in the drawer, nothing happens. [#738](https://github.com/lablup/backend.ai-console/issues/738)
+- [**bug**] icons in drawer and some panel don't show up in the new UI. [#736](https://github.com/lablup/backend.ai-console/issues/736)
+- [**UI / UX**][**bug**][**easy**] Image rescan/Recalculate usage button throws an error. [#734](https://github.com/lablup/backend.ai-console/issues/734)
+- [**UI / UX**][**bug**] Image download dialog appears every time the checkbox is clicked [#725](https://github.com/lablup/backend.ai-console/issues/725)
+
+#### UI / UX:
+
+- [**UI / UX**][**easy**][**good first issue**] Language Setting dropdown overlaps SSH Keypair text [#719](https://github.com/lablup/backend.ai-console/issues/719)
+
+
+## v20.09.2 (28/09/2020)
+
+
+#### Bug Fixes:
+
+- [**bug**][**easy**][**minor**] Extend current request timeout in session creation [#722](https://github.com/lablup/backend.ai-console/issues/722)
+- [**UI / UX**][**bug**] Multiple clicks cause duplicated directory path [#717](https://github.com/lablup/backend.ai-console/issues/717)
+
+
+## v20.09.1 (22/09/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**blocker**][**bug**] Local proxy is not working on the app mode with Backend.AI 20.09 alpha [#720](https://github.com/lablup/backend.ai-console/issues/720)
+- [**UI / UX**][**bug**][**easy**][**good first issue**] Usage shows [Object Object] on finished tab of session list [#685](https://github.com/lablup/backend.ai-console/issues/685)
+
+
+## v20.09.0 (18/09/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**] Provide help about 'copying text from terminal' [#698](https://github.com/lablup/backend.ai-console/issues/698)
+- [**UI / UX**][**enhancement**][**good first issue**] Update manual to explain 'SSH Keypair change' menu [#695](https://github.com/lablup/backend.ai-console/issues/695)
+- [**UI / UX**][**bug**][**enhancement**][**good first issue**][**minor**] Disable turn off button on finished session list [#686](https://github.com/lablup/backend.ai-console/issues/686)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Refactor storage selection on session launch [#662](https://github.com/lablup/backend.ai-console/issues/662)
+- [**UI / UX**][**enhancement**][**minor**] Skip rendering paths to increase speed [#661](https://github.com/lablup/backend.ai-console/issues/661)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Migrate compute_session from v4 to v5 [#651](https://github.com/lablup/backend.ai-console/issues/651)
+- [**enhancement**][**maintenance**] Change default branch from master to main [#637](https://github.com/lablup/backend.ai-console/issues/637)
+- [**UI / UX**][**enhancement**][**minor**] Show mounted folder information on session list [#628](https://github.com/lablup/backend.ai-console/issues/628)
+- [**enhancement**] Add comments on source code [#402](https://github.com/lablup/backend.ai-console/issues/402)
+- [**UI / UX**][**enhancement**][**minor**] Support NNI [#207](https://github.com/lablup/backend.ai-console/issues/207)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**good first issue**] Dropdown menu is positioned incorrectly [#707](https://github.com/lablup/backend.ai-console/issues/707)
+- [**bug**] Login Information mismatch error, when build&run console-server in local environment [#700](https://github.com/lablup/backend.ai-console/issues/700)
+- [**bug**][**minor**] Error logs are not displayed [#689](https://github.com/lablup/backend.ai-console/issues/689)
+- [**bug**][**major**] Session's app cannot be accessed if there are multiple sessions with the same name prefix [#687](https://github.com/lablup/backend.ai-console/issues/687)
+- [**UI / UX**][**bug**] Incorrect image downloaded after filtered by keywords [#679](https://github.com/lablup/backend.ai-console/issues/679)
+- [**UI / UX**][**bug**][**easy**] Fix resource preset dialog validation [#672](https://github.com/lablup/backend.ai-console/issues/672)
+- [**bug**][**urgency**] Unable to create a session due to vfolder-related issue [#670](https://github.com/lablup/backend.ai-console/issues/670)
+- [**UI / UX**][**blocker**][**bug**][**cloud**][**minor**] Wrong password condition error message on signup [#663](https://github.com/lablup/backend.ai-console/issues/663)
+- [**UI / UX**][**blocker**][**bug**] Sometimes GitHub notebook import does not work [#660](https://github.com/lablup/backend.ai-console/issues/660)
+- [**UI / UX**][**bug**] After terminating a session, resource occupation is not updated [#639](https://github.com/lablup/backend.ai-console/issues/639)
+- [**UI / UX**][**bug**][**easy**] Although user inputs invalid session name, session creating dialog get closed. [#638](https://github.com/lablup/backend.ai-console/issues/638)
+
+#### UI / UX:
+
+- [**UI / UX**][**easy**][**good first issue**][**minor**] Change 'About' to 'About Backend.AI' [#694](https://github.com/lablup/backend.ai-console/issues/694)
+- [**UI / UX**][**minor**] No error messages when kernel creation request has error response [#691](https://github.com/lablup/backend.ai-console/issues/691)
+- [**UI / UX**][**good first issue**][**minor**] Fix layout overlap in Start new session dialog [#676](https://github.com/lablup/backend.ai-console/issues/676)
+- [**UI / UX**][**easy**] Apply toggle visibility in password input field [#665](https://github.com/lablup/backend.ai-console/issues/665)
+- [**UI / UX**] Add UI to specify SSH Keypair by user [#657](https://github.com/lablup/backend.ai-console/issues/657)
+- [**UI / UX**] Neater message when vfolder invitation is duplicated [#653](https://github.com/lablup/backend.ai-console/issues/653)
+
+
 ## v20.08.0 (04/08/2020)
 
 #### Bug Fixes:

@@ -82,20 +82,25 @@ export default class LablupTermsOfService extends LitElement {
           }
         }
 
-        wl-button.language {
-          --button-bg: transparent;
-          --button-bg-hover: var(--paper-lightblue-300);
-          --button-bg-active: var(--paper-lightblue-300);
-        }
-
-        wl-button.language[active] {
-          --button-bg: var(--paper-lightblue-300);
-        }
-
-        wl-button.dismiss {
-          --button-bg: transparent;
-          --button-bg-hover: var(--paper-green-300);
-          --button-bg-active: var(--paper-green-300);
+        mwc-select {
+          width: 100%;
+          font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
+          --mdc-theme-primary: var(--general-sidebar-color);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-focused-dropdown-icon-color: var(--general-sidebar-color);
+          --mdc-select-disabled-dropdown-icon-color: var(--general-sidebar-color);
+          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
+          --mdc-select-hover-line-color: var(--general-sidebar-color);
+          --mdc-select-outlined-idle-border-color: var(--general-sidebar-color);
+          --mdc-select-outlined-hover-border-color: var(--general-sidebar-color);
+          --mdc-theme-surface: white;
+          --mdc-list-vertical-padding: 5px;
+          --mdc-list-side-padding: 25px;
+          --mdc-list-item__primary-text: {
+            height: 20px;
+          };
         }
       `];
   }
@@ -113,24 +118,25 @@ export default class LablupTermsOfService extends LitElement {
         <span slot="title">${this.title}</span>
         <div slot="action" class="horizontal end-justified center flex layout">
           ${this.tosLanguages ? html`
-            <span style="font-size:14px;">${_t("language.Language")}</span>
-            ${this.tosLanguages.map(item => html`
-            <wl-button class="fg blue language" outlined type="button" ?active="${this.tosLanguage === item.code}" @click="${() => {
-      this.changeLanguage(item.code)
-    }}">
-                ${item.text}
-            </wl-button>`)}
-          ` : html``}
+            <mwc-select id="select-language" label="${_text("language.Language")}"
+              @change=${() => this.changeLanguage()}>
+              ${this.tosLanguages.map(item => html`
+                <mwc-list-item value="${item.text}" ?selected="${this.tosLanguage === item.code}">${item.text}</mwc-list-item>
+              `)}
+            </mwc-select>
+          `: html``}
         </div>
         <div slot="content">
           <div id="terms-of-service-dialog-content"></div>
           <div class="horizontal end-justified flex layout">
             <div class="flex"></div>
-            <wl-button class="fg green dismiss" id="dismiss-button" outlined type="button" @click="${() => {
-      this.close();
-    }}">
-                ${_t("button.Dismiss")}
-            </wl-button>
+            <mwc-button
+                unelevated
+                id="dismis-button"
+                label=${_t("button.Dismiss")}
+                @click="${() => {
+                  this.close();
+                }}"></mwc-button>
           </div>
         </div>
       </backend-ai-dialog>
@@ -174,9 +180,10 @@ export default class LablupTermsOfService extends LitElement {
     this._hideTOSdialog();
   }
 
-  changeLanguage(lang) {
+  changeLanguage() {
+    let language = this.shadowRoot.querySelector('#select-language').value;
     this.tosContent = "";
-    this.tosLanguage = lang;
+    this.tosLanguage = this.tosLanguages.filter(item => item.text === language).map(item => item.code).toString();
     this._showTOSdialog(true);
   }
 

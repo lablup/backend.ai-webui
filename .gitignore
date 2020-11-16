@@ -98,7 +98,9 @@ src/lib/webcomponents-loader.js
 **/*.html-E
 **/*.js-E
 **/*.ts-E
+# Documentation
 
+docs/
 # backend.ai app directory
 backend.ai-app/
 

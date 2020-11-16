@@ -1,10 +1,13 @@
 {
   "console": {
     "menu": {
+      "WelcomeMessage": "Welcome, ",
       "Summary": "Summary",
       "Sessions": "Sessions",
+      "Import&Run": "Import & Run",
       "Data&Storage": "Data & Storage",
       "Statistics": "Statistics",
+      "Help": "Help",
       "Settings": "Settings",
       "Administration": "Administration",
       "Users": "Users",
@@ -40,8 +43,7 @@
       "Experiments": "Experiments",
       "UserName": "User Name",
       "Menu": "Menu",
-      "Run": "Run",
-      "Import&Run": "Import & Run"
+      "Run": "Run"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
@@ -58,6 +60,8 @@
     "CoresReserved": "Cores reserved",
     "reserved": "reserved",
     "FractionalGPUScalingEnabled": "Fractional GPU scaling enabled",
+    "ROCMGPUEnabled": "ROCm GPU enabled",
+    "TPUEnabled": "TPU Enabled",
     "Reserved": "Reserved",
     "Used": "Used",
     "Total": "Total",
@@ -79,14 +83,20 @@
     "FolderName": "Folder Name",
     "Permission": "Permission",
     "Announcement": "Announcement",
-    "SystemResources": "System Resources"
+    "SystemResources": "System Resources",
+    "CurrentVersion": "Current Version",
+    "NoAnnouncement": "There are no announcement to display.",
+    "NoInvitations": "There are no invitations to display.",
+    "AcceptSharedVFolder": "You can now access folder: ",
+    "DeclineSharedVFolder": "Folder invitation is deleted: ",
+    "connectingToCluster": "Connecting to Backend.AI Cluster..."
   },
   "session": {
     "launcher": {
       "TOTAL": "TOTAL",
       "RESOURCE": "RESOURCE",
       "MY": "MY",
-      "Session": "Session",
+      "Sessions": "Sessions",
       "Project": "Project",
       "UserResourceLimit": "User Resource Limit",
       "ResourceGroup": "Resource Group",
@@ -139,7 +149,9 @@
       "CustomResourceApplied": "Custom resource is applied",
       "PleaseChooseFoldersToMount": "Please Choose Folders To Mount",
       "StartImportedNotebook": "Start Imported Notebook",
-      "SessionNameAllowCondition": "Session name only allows at least 4 characters without any whitespaces."
+      "SessionNameAllowCondition": "Session name only allows at least 4 characters without any whitespaces.",
+      "NoFolderExists": "No Folder Exists",
+      "sessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app."
     },
     "Running": "Running",
     "Finished": "Finished",
@@ -169,12 +181,17 @@
     "ExportCSVFile": "Export CSV File",
     "ResourceGroup": "Resource Group",
     "NoLogs": "No logs.",
+    "CreationFailed": "Session creation failed. Please try again in few minutes.",
     "applauncher": {
       "AppMustBeRun": "Start only when the app is already running",
       "AppMustBeRunDialog": "This app can only be accessed and used if it is already running through the terminal. If not, you will be directed to an error page that occurs when the app is not running.",
       "ConfirmAndRun": "I checked and I'll start"
     },
-    "NoSessionExists": "No session. Start a new one?"
+    "NoSessionExists": "No session. Start a new one?",
+    "SessionTerminated": "Session terminated.",
+    "SessionsTerminated": "Sessions terminated.",
+    "NoSession": "No session.",
+    "DownloadingCSVFile": "Downloading CSV file..."
   },
   "button": {
     "Cancel": "Cancel",
@@ -211,7 +228,9 @@
     "Connected": "Connected",
     "Terminated": "Terminated",
     "Maintaining": "Maintaining",
-    "Status": "Status"
+    "Status": "Status",
+    "DetailedInformation": "Detailed Information",
+    "Running": "Running"
   },
   "general": {
     "cores": "cores",
@@ -243,6 +262,7 @@
     "active": "active",
     "concurrentsessions": "Concurrent sessions",
     "RateLimit": "Rate Limit",
+    "RateLimitFor15min": "Rate Limit (for 15 min.)",
     "for900seconds": "for 900 seconds",
     "Users": "Users",
     "exportCSV": "export CSV",
@@ -279,13 +299,22 @@
     "Description": "Description",
     "Days": "Days",
     "validation": {
+      "InvalidEmailAddress": "Invalid Email Address.",
       "PolicyName": "Policy name Required.",
       "LetterNumber-_dot": "Allows letters, numbers and -_.",
       "NameAlreadyExists": "Policy Name Already Exists!"
     },
     "ProjectAndGroup": "Projects & Groups",
     "ModifyKeypairResourcePolicy": "Modify keypair resource policy",
-    "SelectPolicy": "Select Policy"
+    "SelectPolicy": "Select Policy",
+    "AllowedHosts": "Allowed Hosts",
+    "UserIDAsEmail": "User ID as E-mail",
+    "AccessKeyOptional": "Access Key (optional)",
+    "SecretKeyOptional": "Secret Key (optional)",
+    "UserAccountCreated": "User account is successfully created",
+    "UserAccountCreatedError": "This account has already been registered.",
+    "KeypairCreated": "Keypair successfully created.",
+    "UserIDRequired": "User ID is required."
   },
   "data": {
     "Folders": "Folders",
@@ -298,7 +327,11 @@
     "DialogFolderStartingWithDotAutomount": "Folders starting with a .(dot) are automatically mounted when a new session is started.",
     "User": "User",
     "Create": "Create",
+    "FolderNameRequired":"Folder name is required",
+    "FileandFoldernameRequired": "File/Folder name is required",
     "Allowslettersnumbersand-_dot": "Allows letters, numbers and -_.",
+    "Allowslettersnumbersand-_": "Allows letters, numbers and -_",
+    "EnterDifferentValue": "Please enter a value different from the existing file or folder name. Please Check whether space character in the input field or not.",
     "Host": "Host",
     "Foldername": "Folder name",
     "Type": "Type",
@@ -318,8 +351,11 @@
       "FolderCreated": "Folder created",
       "Rename": "Rename",
       "FolderRenamed": "Folder renamed",
-      "FolderNameMismatched": "Folder name mismmatched",
+      "FolderNameMismatched": "Folder name mismmatched. Please Check whether space character in the input field or not.",
       "FolderDeleted": "Folder deleted",
+      "FileRenamed": "File Renamed",
+      "FileDeleted": "File Deleted",
+      "MultipleFilesDeleted": "Multiple Files deleted",
       "NumberOfFiles": "Number of files",
       "Ownership": "Ownership",
       "DescYouAreFolderOwner": "You are the owner of this folder.",
@@ -352,7 +388,13 @@
       "DownloadFile": "Download File",
       "TouchToDownload": "Touch to Download file",
       "ValueRequired": "Value is required",
-      "ValueShouldBeStarted": "Path should start with .(dot) or letters, numbers only."
+      "ValueShouldBeStarted": "Path should start with .(dot) or letters, numbers only.",
+      "DragDropFileUploadSizeLimit": "File size limit (< 1 GiB)",
+      "LessThan10Sec": "Less than 10 seconds",
+      "MoreThanADay": "More than a day",
+      "WritePermissionRequiredInFolderCreation": "Write permission is required in creating a folder.",
+      "WritePermissionRequiredInUploadFiles": "Write permission is required in uploading file(s).",
+      "ReadonlyFolder": "Read-only Folder"
     },
     "invitation": {
       "EnterEmail": "Enter email address",
@@ -396,7 +438,7 @@
     "Language": "Language",
     "Version": "Version",
     "Digest": "Digest",
-    "ModifyImage": "Modify Image",
+    "ModifyImageResourceLimit": "Modify Image Resource Limit",
     "ManageApps": "Manage Apps",
     "AppName": "App Name",
     "Protocol": "Protocol",
@@ -405,11 +447,33 @@
     "Base": "Base",
     "Constraint": "Constraint",
     "ResourceLimit": "Resource Limit",
-    "DescDownloadImage": "You are about to install the image: ",
+    "DescDeleteAppInfo": "You are about to delete the app info: ",
+    "DescDeleteImage": "You are about to delete the image(s): ",
+    "DescDownloadImage": "You are about to install the image(s): ",
     "DescSignificantDownloadTime": "This process requires significant download time.",
+    "Install": "Install",
+    "Delete": "Delete",
+    "Installed": "installed",
+    "Installing": "installing",
+    "Status": "Status",
     "Images": "Images",
     "ResourcePresets": "Resource Presets",
-    "Registries": "Registries"
+    "Registries": "Registries",
+    "ProtocolMustBeOneOfHttpTcpPty": "Protocol must be one of 'http', 'tcp', and 'pty'",
+    "AppNameMustNotBeEmpty": "App Name must not be empty",
+    "PortMustBeUnique": "Port must be unique for each app",
+    "PortMustBeInRange": "Port must be between 0 to 65534",
+    "PortReservedForInternalUse": "Ports 2000 to 2003, 2200, and 7681 are reserved for internal use",
+    "SelectedImagesAlreadyInstalled": "Selected Image(s) are already installed or None. Please check again.",
+    "SelectedImagesNotInstalled": "Selected Images(s) are not installed. Please check again.",
+    "Disabled": "disabled",
+    "NoResourcesForImage": "Not Enough resources for pulling the image. Image name: ",
+    "InstallingImage": "Installing: ",
+    "TakesTime": ". It takes time so have a cup of coffee!",
+    "AppInfoDeleted": "App information successfully deleted.",
+    "NoChangeMade": "",
+    "SuccessfullyModified": "Successfully modified",
+    "ProblemOccurred": "Problem occurred"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",
@@ -425,6 +489,8 @@
     "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
     "Created": "Resource preset created",
     "Updated": "Resource preset updated",
+    "MinimumCPUUnit": "CPU starts with 1 core",
+    "MinimumMemUnit": "Memory starts with 1 GB",
     "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB."
   },
   "usersettings": {
@@ -459,15 +525,20 @@
     "SSHKeypairManagement": "SSH Keypair Management",
     "DescSSHKeypairManagement": "Refresh SSH Keypair already exists or generate SSH Keypair by random.",
     "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
+    "SessionTerminationDialog": "Session termination cannot be undone. Do you want to proceed to terminate the session?",
     "CurrentSSHPublicKey": "Current public key: ",
     "SSHKeypairGeneration": "SSH Keypair Generation",
     "SSHKeypairGenerationWarning": "You cannot get private key again. Store on your local disk if needed.",
-    "NoExistingSSHKeypair": "No SSH Keypair to be copied. Please press Generate button or input SSH keypair.",
+    "NoExistingSSHKeypair": "No SSH Keypair to be copied. To get SSH Keypair, Please press Generate button.",
     "ClearSSHKeypairInput": "Written SSH Keypair will be removed. Are you sure you want to continue?",
     "PublicKey": "Public Key",
     "PrivateKey": "Private Key",
     "InvalidPortNumber": "Port number should be positive number between 1025~65534",
-    "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard."
+    "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard.",
+    "ShellEnvironments": "Shell Environments",
+    "ConfigFilename": "Config file name",
+    "Edit_ShellScriptTitle_1": "Edit ",
+    "Edit_ShellScriptTitle_2": " shell script"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
@@ -504,7 +575,11 @@
     "ConcurrentJobs": "Concurrent Jobs",
     "Capacity": "Capacity",
     "Folders": "Folders",
-    "Name": "Name"
+    "Name": "Name",
+    "AllowedHosts": "Allowed hosts",
+    "PleaseInputValue": "Please input value or check unlimited.",
+    "CannotCreateResourcePolicy": "Cannot create Resource Policy. Please check input values.",
+    "SuccessfullyUpdated": "Resource policy successfully updated."
   },
   "registry": {
     "Hostname": "Hostname",
@@ -526,7 +601,15 @@
     "ProjectNameIsRequired": "Project name is required",
     "TypeRegistryNameToDelete": "Type registry hostname to delete",
     "RegistryTurnedOn": "Registry enabled",
-    "RegistryTurnedOff": "Registry disabled"
+    "RegistryTurnedOff": "Registry disabled",
+    "RegistryHostnameAlreadyExists": "Hostname Already Exists. Please change the hostname to add",
+    "RegistrySuccessfullyAdded": "Registry successfully added.",
+    "RegistrySuccessfullyDeleted": "Registry successfully deleted.",
+    "HostnameDoesNotMatch": "Hostname does not match!",
+    "UpdatingRegistryInfo": "Updating registry information...",
+    "RegistryUpdateFinished": "Registry update finished.",
+    "RegistryUpdateFailed": "Registry update failed.",
+    "RescanFailed": "Rescan Failed."
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",
@@ -541,7 +624,14 @@
     "SelectDomain": "Select Domain",
     "ModifyResourceGroup": "Modify Resource Group",
     "TypeResourceGroupNameToDelete": "Type resource group name to delete",
-    "ResourceGroupName": "ResourceGroupName"
+    "ResourceGroupName": "ResourceGroupName",
+    "Active": "Active",
+    "SelectScheduler": "Select Scheduler",
+    "NochangesMade": "No changes made",
+    "ResourceGroupNameNotMatch": "Resource group name does not match!",
+    "ResourceGroupCreated": "Resource group succesfully created",
+    "ResourceGroupModified": "Resource group successfully modified",
+    "ResourceGroupDeleted": "Resource group successfully deleted"
   },
   "maintenance": {
     "General": "General",
@@ -579,9 +669,9 @@
     "AutomaticImageUpdateFromRepo": "Automatic image update from repository",
     "DescAutomaticImageUpdateFromRepo": "When new image comes out, update current image automatically. Please turn off when you preserve the current environment without updating.",
     "UseCLIonGUI": "Use Backend.AI CLI on GUI",
-    "DescUseCLIonGUI": "Provide Backend.AI CLI on GUI app/web.<br/>Requires Backend.AI CLI image.",
+    "DescUseCLIonGUI": "Provide Backend.AI CLI on GUI app/web. Requires Backend.AI CLI image.",
     "UseGUIonWeb": "Use Backend.AI GUI on Web",
-    "DescUseGUIonWeb": "Provide Backend.AI GUI as a web service.<br/>Requires Backend.AI Console image.",
+    "DescUseGUIonWeb": "Provide Backend.AI GUI as a web service. Requires Backend.AI Console image.",
     "NoteAboutFixedSetup": "Note: The settings below are automatically applied depending on the installation environment and status.",
     "Scaling": "Scaling",
     "AllowAgentSideRegistration": "Allow agent-side registration",
@@ -605,7 +695,7 @@
     "RequireTPUPlugin": "Requires resource nodes on Google Cloud with Cloud TPU enabled / binded.",
     "Image": "Image",
     "ImagePullBehavior": "Image auto install / update rule",
-    "DescImagePullBehavior": "Determines the conditions for automatically downloading new images when a new version is registered in the registry.<br />For none, new images will not be automatically downloaded.",
+    "DescImagePullBehavior": "Determines the conditions for automatically downloading new images when a new version is registered in the registry. For none, new images will not be automatically downloaded.",
     "GUI": "GUI",
     "image": {
       "digest": "Digest",
@@ -687,7 +777,9 @@
     "UpdatePasswordMessage": "Type your email and a new password, and then press Update button.",
     "PasswordChanged": "Password is successfully changed",
     "InvalidChangePasswordToken": "Invalid Token",
-    "InvalidChangePasswordTokenMessage": "Issued token to change password has error. Please send another email for changing password and try again."
+    "InvalidChangePasswordTokenMessage": "Issued token to change password has error. Please send another email for changing password and try again.",
+    "PleaseInputLoginInfo": "Please input ID and password for login.",
+    "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",
@@ -700,8 +792,12 @@
     "PasswordInvalid": "Use 8 or more characters with a mix of letters, numbers & symbols.",
     "PasswordNotMatched": "Those passwords didn't match. Try it again.",
     "Signup": "Signup",
+    "SignupSucceeded": "Successfully signed up.",
     "InvitationToken": "Invitation Token",
     "TokenInputRequired": "Token is required.",
+    "PolicyAgreement_1":"I have read and agree to the ",
+    "PolicyAgreement_2":" and ",
+    "PolicyAgreement_3":".",
     "TermsOfService": "Terms of service",
     "RequestAgreementTermsOfService": "Please read and agree with the terms of service to proceed.",
     "PrivacyPolicy": "Privacy Policy",
@@ -742,6 +838,9 @@
     "CreateButtonCode": "Create",
     "NotebookButtonURL": "Notebook URL",
     "YouCanCreateNotebookCode": "Enter the notebook URL to create a badge code like below that you can run directly on Backend.AI.",
+    "NoNotebookCode": "Notebook Address is empty. Please input a valid notebook code to copy the badge code.",
+    "NotebookBadgeCodeCopied": "Notebook badge code is copied to the clipboard.",
+    "CouldNotCopyText": "Could not copy text: ",
     "NotebookBadgeURL": "Notebook URL",
     "NotebookBadgeCode": "Notebook Badge Code",
     "GetAndRunNotebook": "Import & Run",
@@ -760,5 +859,10 @@
     "NotebookBadgeCodeHTML": "Notebook Badge Code (HTML)",
     "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)"
   },
-  "DownloadSSHKey": "Download SSH Key"
+  "DownloadSSHKey": "Download SSH Key",
+  "license": {
+    "Perpetual": "Perpetual",
+    "Subscription": "Subscription",
+    "OpenSource": "Open Source"
+  }
 }
