@@ -668,10 +668,10 @@ export default class BackendAiStorageList extends BackendAIPage {
         <div slot="content">
           <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"
           required @change="${() => this._validateExistingFileName()}" auto-validate style="width:320px;"></mwc-textfield>
-          <div id="old-file-name" style="height:2.5em;"></div>
+          <div id="old-file-name" style="padding-left:15px;height:2.5em;"></div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
-          <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" outlined @click="${(e) => this._renameFile(e)}">
+          <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" unelevated @click="${(e) => this._renameFile(e)}">
             ${_t('data.explorer.RenameAFile')}
           </mwc-button>
         </div>
@@ -997,7 +997,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * If both refreshOnly and activeConnected are true, refresh folderlists.
-   * 
+   *
    * @param {boolean} refreshOnly
    */
   _refreshFolderList(refreshOnly = false) {
@@ -1171,7 +1171,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     } else {
       return;
     }
-    
+
   }
 
   /**
@@ -1269,12 +1269,12 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Validate folder name.
-   * 
+   *
    * @param {boolean} isModifying
    */
   _validateFolderName(isModifying = false) {
     const folderName = isModifying ? this.shadowRoot.querySelector('#new-folder-name') : this.shadowRoot.querySelector('#add-folder-name');
-    
+
     folderName.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
@@ -1297,7 +1297,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         if (isModifying) {
           if (folderName.value === this.renameFolderId) {
             folderName.validationMessage = _text('data.EnterDifferentValue');
-            isValid = false; 
+            isValid = false;
             return {
               valid: isValid,
               customError: !isValid
