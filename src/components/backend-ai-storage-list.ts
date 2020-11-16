@@ -409,8 +409,9 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.folders.RenameAFolder')}</span>
         <div slot="content">
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
-            pattern="^[a-zA-Z0-9_-]+$"
-            validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
+           required auto-validate validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"
+           style="width:320px;"
+           @change="${() => {this._validateFolderName(true)}}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
           <mwc-button unelevated class="fullwidth bg-blue button" type="submit" icon="edit" id="rename-button" outlined @click="${() => this._renameFolder()}">
@@ -423,11 +424,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t("data.folders.DeleteAFolder")}</span>
         <div slot="content" style="width:100%;">
           <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
-          <div>
-            <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
-                         pattern="^[a-zA-Z0-9_-]+$"
-                         validationMessage="Allows letters, numbers and -_." auto-validate></mwc-textfield>
-          </div>
+          <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
           <mwc-button unelevated class="fullwidth red button" type="submit" icon="close" id="delete-button" @click="${() => this._deleteFolderWithCheck()}">
@@ -599,9 +596,9 @@ export default class BackendAiStorageList extends BackendAIPage {
         <div slot="content">
           <mwc-textfield id="mkdir-name"
                          label="${_t("data.explorer.Foldername")}"
-                         auto-validate
+                         @change="${() => this._validatePathName()}"
                          required
-                         validationMessage="Value is required."></mwc-textfield>
+                         validationMessage="${_text("data.explorer.ValueRequired")}"></mwc-textfield>
           <br/>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
@@ -689,11 +686,12 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="rename-file-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('data.explorer.RenameAFile')}</span>
         <div slot="content">
-          <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"></mwc-textfield>
-          <div id="old-file-name" style="height:2.5em"></div>
+          <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"
+          required @change="${() => this._validateExistingFileName()}" auto-validate style="width:320px;"></mwc-textfield>
+          <div id="old-file-name" style="padding-left:15px;height:2.5em;"></div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
-          <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" outlined @click="${(e) => this._renameFile(e)}">
+          <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" unelevated @click="${(e) => this._renameFile(e)}">
             ${_t('data.explorer.RenameAFile')}
           </mwc-button>
         </div>
@@ -749,7 +747,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({"detail": {"mini-ui": globalThis.mini_ui}});
-    this._validatePathName();
   }
 
   _modifySharedFolderPermissions() {
@@ -1029,7 +1026,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     return this._refreshFolderList();
   }
 
-  _refreshFolderList() {
+  /**
+   * If both refreshOnly and activeConnected are true, refresh folderlists.
+   *
+   * @param {boolean} refreshOnly
+   */
+  _refreshFolderList(refreshOnly = false) {
     this.spinner.show();
     let groupId = null;
     groupId = globalThis.backendaiclient.current_group_id();
@@ -1045,9 +1047,15 @@ export default class BackendAiStorageList extends BackendAIPage {
       });
       this.folders = folders;
     });
-    let vhosts = globalThis.backendaiclient.vfolder.list_hosts();
-    vhosts.then((response) => {
+    globalThis.backendaiclient.vfolder.list_hosts().then(res => {
+      // refresh folder list every 10sec
+      if (this.active && !refreshOnly) {
+        setTimeout(() => {
+          this._refreshFolderList();
+        }, 10000);
+      };
     });
+
   }
 
   _refreshFolderUI(e) {
@@ -1173,21 +1181,28 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _renameFolder() {
     globalThis.backendaiclient.vfolder.name = this.renameFolderId;
-    const newName = this.shadowRoot.querySelector('#new-folder-name').value;
-    const job = globalThis.backendaiclient.vfolder.rename(newName);
-    this.closeDialog('rename-folder-dialog');
-    job.then((value) => {
-      this.notification.text = _text('data.folders.FolderRenamed');
-      this.notification.show();
-      this._refreshFolderList();
-    }).catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+    const newNameEl = this.shadowRoot.querySelector('#new-folder-name');
+    const newName = newNameEl.value;
+    newNameEl.reportValidity();
+    if (newNameEl.checkValidity()) {
+      const job = globalThis.backendaiclient.vfolder.rename(newName);
+      this.closeDialog('rename-folder-dialog');
+      job.then((value) => {
+        this.notification.text = _text('data.folders.FolderRenamed');
+        this.notification.show();
+        this._refreshFolderList();
+      }).catch(err => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
+    } else {
+      return;
+    }
+
   }
 
   /**
@@ -1206,7 +1221,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _deleteFolderWithCheck() {
     let typedDeleteFolderName = this.shadowRoot.querySelector('#delete-folder-name').value;
-    if (typedDeleteFolderName != this.deleteFolderId) {
+    if (typedDeleteFolderName !== this.deleteFolderId) {
       this.notification.text = _text('data.folders.FolderNameMismatched');
       this.notification.show();
       return;
@@ -1234,6 +1249,105 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+  }
+
+  /**
+   * Validate file/subfolder name.
+   */
+  _validateExistingFileName() {
+    const filename = this.shadowRoot.querySelector('#new-file-name');
+    filename.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          filename.validationMessage = _text('data.FileandFoldernameRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else {
+          filename.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/]/gi;
+        let isValid : boolean;
+        // compare old name and new name.
+        if (filename.value ===  this.renameFileDialog.querySelector('#old-file-name').textContent) {
+          filename.validationMessage = _text('data.EnterDifferentValue');
+          isValid = false;
+          return {
+            valid: isValid,
+            customError: !isValid
+          };
+        } else {
+          isValid = true;
+        }
+        // custom validation for folder name using regex
+        isValid = !regex.test(filename.value);
+        if (!isValid) {
+          filename.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
+    }
+  }
+
+  /**
+   * Validate folder name.
+   *
+   * @param {boolean} isModifying
+   */
+  _validateFolderName(isModifying = false) {
+    const folderName = isModifying ? this.shadowRoot.querySelector('#new-folder-name') : this.shadowRoot.querySelector('#add-folder-name');
+
+    folderName.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          folderName.validationMessage = _text('data.FolderNameRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else {
+          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        let isValid : boolean;
+        let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/\s]/gi;
+        // if renaming its name, then compare old name and new name.
+        if (isModifying) {
+          if (folderName.value === this.renameFolderId) {
+            folderName.validationMessage = _text('data.EnterDifferentValue');
+            isValid = false;
+            return {
+              valid: isValid,
+              customError: !isValid
+            }
+          } else {
+            isValid = true;
+          }
+        }
+        // custom validation for folder name using regex
+        isValid = !regex.test(folderName.value);
+        if (!isValid) {
+          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
+    }
   }
 
   /*Folder Explorer*/
@@ -1316,7 +1430,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     newfolderEl.reportValidity();
     if (newfolderEl.checkValidity()) {
       let job = globalThis.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id).catch((err) => {
-        console.log(err);
+        // console.log(err);
         if (err & err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
@@ -1372,7 +1486,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           this.notification.text = _text('data.explorer.DragDropFileUploadSizeLimit');
           this.notification.show();
           return;
-          // console.log('File size limit (< 1 MiB)');
         } else {
           file.progress = 0;
           file.caption = '';
@@ -1593,22 +1706,27 @@ export default class BackendAiStorageList extends BackendAIPage {
   _renameFile(e) {
     const fn = this.renameFileDialog.filename;
     const path = this.explorer.breadcrumb.concat(fn).join("/");
-    const newName = this.renameFileDialog.querySelector('#new-file-name').value;
-    if (!newName) return;
-    const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id);
-    job.then((res) => {
-      this.notification.text = _text('data.folders.FileRenamed');
-      this.notification.show();
-      this._clearExplorer();
-      this.renameFileDialog.hide();
-    }).catch((err) => {
-      console.error(err);
-      if (err && err.message) {
-        this.notification.text = err.title;
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+    const newNameEl = this.renameFileDialog.querySelector('#new-file-name');
+    const newName = newNameEl.value;
+    newNameEl.reportValidity();
+    if (newNameEl.checkValidity()) {
+      const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id);
+      job.then((res) => {
+        this.notification.text = _text('data.folders.FileRenamed');
+        this.notification.show();
+        this._clearExplorer();
+        this.renameFileDialog.hide();
+      }).catch((err) => {
+        console.error(err);
+        if (err && err.message) {
+          this.notification.text = err.title;
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
+    } else {
+      return;
+    }
   }
 
   /**
@@ -1784,22 +1902,22 @@ export default class BackendAiStorageList extends BackendAIPage {
           path_info.validationMessage = _text('data.explorer.ValueRequired');
           return {
             valid: nativeValidity.valid,
-            valueMissing: !nativeValidity.valid
+            customError: !nativeValidity.valid
           };
         } else {
           return {
             valid: nativeValidity.valid,
-            badInput: !nativeValidity.valid
+            customError: !nativeValidity.valid
           }
         }
       } else {
         // custom validation for path name using regex
-        let regex = /^([.a-zA-Z0-9-_]{1,})+(\/[a-zA-Z0-9-_]{1,})*([\/,\\]{0,1})$/gm;
-        let isValid = regex.exec(path_info.value);
-        if (!isValid) {
+        let regex = /^([^`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\r\n\/]{1,})+(\/[^`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\r\n\/]{1,})*([\/,\\]{0,1})$/gm;
+        let isValid = regex.test(path_info.value);
+        if (!isValid || path_info.value === './') {
           path_info.validationMessage = _text('data.explorer.ValueShouldBeStarted');
+          isValid = false;
         }
-
         return {
           valid: isValid,
           customError: !isValid
