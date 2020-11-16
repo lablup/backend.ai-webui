@@ -77,6 +77,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) exportToCsvDialog = Object();
   @property({type: String}) _defaultFileName = '';
+  @property({type: Number}) selectAreaHeight;
 
   constructor() {
     super();
@@ -283,6 +284,8 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
     const userIdInput = this.shadowRoot.querySelector('#id_new_user_id');
     this._addInputValidator(userIdInput);
+    // monkeypatch for height calculation.
+    this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '123px';
   }
 
   /**
@@ -942,6 +945,25 @@ export default class BackendAICredentialView extends BackendAIPage {
     isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
   }
 
+  /**
+   * 
+   * Expand or Shrink the dialog height by the number of items in the dropdown.
+   * 
+   * @param isOpened
+   */
+  _controlHeightByVfolderHostCount(isOpened = false) {
+    if (!isOpened) {
+      this.shadowRoot.querySelector('#dropdown-area').style.height = this.selectAreaHeight;
+      console.log(this.selectAreaHeight);
+      return;
+    }
+    let itemCount = this.shadowRoot.querySelector('#allowed_vfolder-hosts').items.length;
+    let actualHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight;
+    if (itemCount > 0) {
+    this.shadowRoot.querySelector('#dropdown-area').style.height = (actualHeight + itemCount * 14) +'px';
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -1130,8 +1152,10 @@ export default class BackendAICredentialView extends BackendAIPage {
               </div>
           </div>
           <h4 style="margin-bottom:0px;">${_t("resourcePolicy.Folders")}</h4>
-          <div class="horizontal center layout distancing">
-            <mwc-select id="allowed_vfolder-hosts" label="${_t("resourcePolicy.AllowedHosts")}">
+          <div class="vertical center layout distancing" id="dropdown-area">
+            <mwc-select id="allowed_vfolder-hosts" label="${_t("resourcePolicy.AllowedHosts")}" style="width:100%;"
+              @opened="${() => this._controlHeightByVfolderHostCount(true)}"
+              @closed="${() => this._controlHeightByVfolderHostCount()}">
               ${this.allowed_vfolder_hosts.map(item => html`
                 <mwc-list-item class="owner-group-dropdown"
                                id="${item}"
@@ -1140,17 +1164,19 @@ export default class BackendAICredentialView extends BackendAIPage {
                 </mwc-list-item>
               `)}
             </mwc-select>
-            <div class="vertical layout" style="margin: 21px 15px 0 15px;">
-              <wl-label class="folders">${_t("resourcePolicy.Capacity")}(GB)</wl-label>
-              <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-              <wl-label class="unlimited">
-                <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                ${_t("resourcePolicy.Unlimited")}
-              </wl-label>
-            </div>
-            <div class="vertical layout">
-              <wl-label class="folders">${_t("credential.Max#")}</wl-label>
-              <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+            <div class="horizontal layout">
+              <div class="vertical layout" style="margin-right: 10px;">
+                <wl-label class="folders">${_t("resourcePolicy.Capacity")}(GB)</wl-label>
+                <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t("resourcePolicy.Unlimited")}
+                </wl-label>
+              </div>
+              <div class="vertical layout" style="margin-left: 10px;">
+                <wl-label class="folders">${_t("credential.Max#")}</wl-label>
+                <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              </div>
             </div>
           </div>
         </div>
