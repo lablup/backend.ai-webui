@@ -41,13 +41,14 @@ Backend.AI console focuses to
     * User resource statistics
     * Session statistics
     * Workload statistics
+    * Per-node statistics
     * Insight (working)
  * Configurations
     * User-specific web / app configurations
     * Beta features
     * Console logs / errors
  * License
-    * Check current license information
+    * Check current license information (for enterprise only)
 
 ## Management Features
 

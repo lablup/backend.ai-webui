@@ -63,6 +63,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) blockType = '';
   @property({type: String}) blockMessage = '';
   @property({type: String}) connection_mode = 'SESSION';
+  @property({type: Number}) login_attempt_limit = 5;
+  @property({type: Number}) login_block_time = 180;
   @property({type: String}) user;
   @property({type: String}) email;
   @property({type: Object}) config = Object();
@@ -202,6 +204,109 @@ export default class BackendAILogin extends BackendAIPage {
           font-size: 18px;
           margin-top: 5px;
         }
+
+        .sk-folding-cube {
+          margin: 20px auto;
+          width: 30px;
+          height: 30px;
+          position: relative;
+          -webkit-transform: rotateZ(45deg);
+                  transform: rotateZ(45deg);
+          z-index: 10;
+          position: absolute;
+          top: 35%;
+          left: 50%;
+        }
+
+        .sk-folding-cube > .loading {
+          -webkit-transform: rotateZ(-45deg);
+                  transform: rotateZ(-45deg);
+          font-size: 12px;
+          letter-spacing: 0.1em;
+          display: block;
+          position: relative;
+          top: 50%;
+          left: 40%;
+        }
+
+        .sk-folding-cube .sk-cube {
+          float: left;
+          width: 50%;
+          height: 50%;
+          position: relative;
+          -webkit-transform: scale(1.1);
+              -ms-transform: scale(1.1);
+                  transform: scale(1.1);
+        }
+        .sk-folding-cube .sk-cube:before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: #3e872d;
+          -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
+                  animation: sk-foldCubeAngle 2.4s infinite linear both;
+          -webkit-transform-origin: 100% 100%;
+              -ms-transform-origin: 100% 100%;
+                  transform-origin: 100% 100%;
+        }
+        .sk-folding-cube .sk-cube2 {
+          -webkit-transform: scale(1.1) rotateZ(90deg);
+                  transform: scale(1.1) rotateZ(90deg);
+        }
+        .sk-folding-cube .sk-cube3 {
+          -webkit-transform: scale(1.1) rotateZ(180deg);
+                  transform: scale(1.1) rotateZ(180deg);
+        }
+        .sk-folding-cube .sk-cube4 {
+          -webkit-transform: scale(1.1) rotateZ(270deg);
+                  transform: scale(1.1) rotateZ(270deg);
+        }
+        .sk-folding-cube .sk-cube2:before {
+          -webkit-animation-delay: 0.3s;
+                  animation-delay: 0.3s;
+        }
+        .sk-folding-cube .sk-cube3:before {
+          -webkit-animation-delay: 0.6s;
+                  animation-delay: 0.6s;
+        }
+        .sk-folding-cube .sk-cube4:before {
+          -webkit-animation-delay: 0.9s;
+                  animation-delay: 0.9s;
+        }
+        @-webkit-keyframes sk-foldCubeAngle {
+          0%, 10% {
+            -webkit-transform: perspective(140px) rotateX(-180deg);
+                    transform: perspective(140px) rotateX(-180deg);
+            opacity: 0;
+          } 25%, 75% {
+            -webkit-transform: perspective(140px) rotateX(0deg);
+                    transform: perspective(140px) rotateX(0deg);
+            opacity: 1;
+          } 90%, 100% {
+            -webkit-transform: perspective(140px) rotateY(180deg);
+                    transform: perspective(140px) rotateY(180deg);
+            opacity: 0;
+          }
+        }
+
+        @keyframes sk-foldCubeAngle {
+          0%, 10% {
+            -webkit-transform: perspective(140px) rotateX(-180deg);
+                    transform: perspective(140px) rotateX(-180deg);
+            opacity: 0;
+          } 25%, 75% {
+            -webkit-transform: perspective(140px) rotateX(0deg);
+                    transform: perspective(140px) rotateX(0deg);
+            opacity: 1;
+          } 90%, 100% {
+            -webkit-transform: perspective(140px) rotateY(180deg);
+                    transform: perspective(140px) rotateY(180deg);
+            opacity: 0;
+          }
+        }
       `];
   }
 
@@ -287,6 +392,14 @@ export default class BackendAILogin extends BackendAIPage {
       this.allow_signout = false;
     } else {
       this.allow_signout = true;
+    }
+    if (typeof config.general === "undefined" || typeof config.general.loginAttemptLimit === "undefined" || config.general.loginAttemptLimit === '') {
+    } else {
+      this.login_attempt_limit = parseInt(config.general.loginAttemptLimit);
+    }
+    if (typeof config.general === "undefined" || typeof config.general.loginBlockTime === "undefined" || config.general.loginBlockTime === '') {
+    } else {
+      this.login_block_time = parseInt(config.general.loginBlockTime);
     }
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
@@ -502,6 +615,22 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   _login() {
+    let loginAttempt = globalThis.backendaioptions.get('login_attempt', 0, 'general');
+    let lastLogin =  globalThis.backendaioptions.get('last_login', Math.floor(Date.now() / 1000), 'general');
+    let currentTime = Math.floor(Date.now() / 1000);
+    if (loginAttempt >= this.login_attempt_limit && currentTime - lastLogin > this.login_block_time) { // Reset login counter and last login after 180sec.
+      globalThis.backendaioptions.set('last_login', currentTime, 'general');
+      globalThis.backendaioptions.set('login_attempt', 0, 'general');
+    } else if (loginAttempt >= this.login_attempt_limit) { // login count exceeds limit, block login and set the last login.
+      globalThis.backendaioptions.set('last_login', currentTime, 'general');
+      globalThis.backendaioptions.set('login_attempt', loginAttempt + 1, 'general');
+      this.notification.text = _text('login.TooManyAttempt');
+      this.notification.show();
+      return;
+    } else {
+      globalThis.backendaioptions.set('login_attempt', loginAttempt + 1, 'general');
+    }
+
     this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     if (this.api_endpoint === '') {
@@ -510,10 +639,20 @@ export default class BackendAILogin extends BackendAIPage {
       return;
     }
     if (this.connection_mode === 'SESSION') {
+      this._disableUserInput();
       this.user_id = (this.shadowRoot.querySelector('#id_user_id') as any).value;
       this.password = (this.shadowRoot.querySelector('#id_password') as any).value;
-      this._connectUsingSession(true);
+
+      // show error message when id or password input is empty
+      if (this.user_id === '' || this.user_id === 'undefined' || this.password === '' || this.password === 'undefined') {
+        this.notification.text = _text("login.PleaseInputLoginInfo");
+        this.notification.show();
+        this._enableUserInput();
+      } else {
+        this._connectUsingSession(true);
+      }
     } else {
+      this._disableUserInput();
       this.api_key = (this.shadowRoot.querySelector('#id_api_key') as any).value;
       this.secret_key = (this.shadowRoot.querySelector('#id_secret_key') as any).value;
       this._connectUsingAPI(true);
@@ -581,8 +720,9 @@ export default class BackendAILogin extends BackendAIPage {
             }
             this.notification.show();
           }
-          this.open();
         });
+        this.open();
+        this._enableUserInput();
       } else { // Login already succeeded.
         this.is_connected = true;
         return this._connectGQL();
@@ -590,6 +730,7 @@ export default class BackendAILogin extends BackendAIPage {
     }).catch((err)=>{ // Server is unreachable
       this.free();
       this.open();
+      this._enableUserInput();
       if (showError) {
         this.notification.text = PainKiller.relieve('Endpoint is unreachable. Please check the connection or endpoint');
         this.notification.show();
@@ -612,7 +753,9 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     this.client.ready = false;
-    this._connectGQL(showError);
+    this.client.get_manager_version().then(response => {
+      return this._connectGQL(showError);
+    });
   }
 
   /**
@@ -623,7 +766,10 @@ export default class BackendAILogin extends BackendAIPage {
     if (this.loginPanel.open !== true) {
       this.block();
     }
-    this.client.get_manager_version().then(response => {
+    new Promise(() => {
+      const currentTime = Math.floor(Date.now() / 1000);
+      globalThis.backendaioptions.set('last_login', currentTime, 'general');
+      globalThis.backendaioptions.set('login_attempt', 0, 'general');
       this._connectViaGQL();
     }).catch((err) => {   // Connection failed
       this.free();
@@ -648,6 +794,7 @@ export default class BackendAILogin extends BackendAIPage {
         }
       }
       this.open();
+      this._enableUserInput();
     });
   }
 
@@ -781,6 +928,25 @@ export default class BackendAILogin extends BackendAIPage {
     this.requestUpdate();
   }
 
+  _disableUserInput() {
+    if (this.connection_mode === 'SESSION') {
+      this.shadowRoot.querySelector('#id_user_id').disabled = true;
+      this.shadowRoot.querySelector('#id_password').disabled = true;
+    } else {
+      this.shadowRoot.querySelector('#id_user_id').disabled = true;
+      this.shadowRoot.querySelector('#id_password').disabled = true;
+    }
+    this.shadowRoot.querySelector('#loading-animator').style.display = 'block';
+  }
+
+  _enableUserInput() {
+    this.shadowRoot.querySelector('#id_user_id').disabled = false;
+    this.shadowRoot.querySelector('#id_password').disabled = false;
+    this.shadowRoot.querySelector('#id_user_id').disabled = false;
+    this.shadowRoot.querySelector('#id_password').disabled = false;
+    this.shadowRoot.querySelector('#loading-animator').style.display = 'none';
+  }
+
   render() {
     // language=HTML
     return html`
@@ -805,86 +971,95 @@ export default class BackendAILogin extends BackendAIPage {
                 </div>
             ` : html``}
           </h3>
-          <form id="session-login-form" style="${this.connection_mode == 'SESSION' ? `display:block;` : `display:none;`}">
-            <fieldset>
-              <div class="horizontal layout start-justified center login-input">
-                <mwc-icon>email</mwc-icon>
-                <input type="email" id="id_user_id" maxlength="50" autocomplete="username"
-                             label="${_t("login.E-mail")}" placeholder="${_t("login.E-mail")}" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></input>
-              </div>
-              <div class="horizontal layout start-justified center login-input">
-                <mwc-icon>vpn_key</mwc-icon>
-                <input type="password" id="id_password" autocomplete="current-password"
-                             label="${_t("login.Password")}" placeholder="${_t("login.Password")}" icon="vpn_key" value="${this.password}" @keyup="${this._submitIfEnter}"></input>
-              </div>
-            </fieldset>
-          </form>
-          <form id="api-login-form" style="${this.connection_mode == 'SESSION' ? `display:none;` : `display:block;`}">
-            <fieldset>
-              <mwc-textfield type="text" id="id_api_key" maxlength="30"
-                           label="${_t("login.APIKey")}" icon="lock" value="${this.api_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
-              <mwc-textfield type="password" id="id_secret_key"
-                           label="${_t("login.SecretKey")}" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
-            </fieldset>
-          </form>
-          <form>
-            <fieldset>
-              <div class="horizontal layout" id="id_api_endpoint_container" style="display:none;">
-                <mwc-icon-button id="endpoint-button" icon="cloud_queue" style="margin-left:5px;" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
-                <mwc-menu id="endpoint-list" @selected="${() => this._updateEndpoint()}">
-                  <mwc-list-item disabled>${_t("login.EndpointHistory")}</mwc-list-item>
-                  ${this.endpoints.length === 0 ? html`
-                  <mwc-list-item value="">${_t("login.NoEndpointSaved")}</mwc-list-item>
-                  ` : html``}
+          <div class="login-form">
+            <div class="sk-folding-cube" id="loading-animator" style="display:none;">
+              <div class="sk-cube1 sk-cube"></div>
+              <div class="sk-cube2 sk-cube"></div>
+              <div class="sk-cube4 sk-cube"></div>
+              <div class="sk-cube3 sk-cube"></div>
+              <span class="loading">Waiting...</span>
+            </div>
+            <form id="session-login-form" style="${this.connection_mode == 'SESSION' ? `display:block;` : `display:none;`}">
+              <fieldset>
+                <div class="horizontal layout start-justified center login-input">
+                  <mwc-icon>email</mwc-icon>
+                  <input type="email" id="id_user_id" maxlength="50" autocomplete="username"
+                              label="${_t("login.E-mail")}" placeholder="${_t("login.E-mail")}" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></input>
+                </div>
+                <div class="horizontal layout start-justified center login-input">
+                  <mwc-icon>vpn_key</mwc-icon>
+                  <input type="password" id="id_password" autocomplete="current-password"
+                              label="${_t("login.Password")}" placeholder="${_t("login.Password")}" icon="vpn_key" value="${this.password}" @keyup="${this._submitIfEnter}"></input>
+                </div>
+              </fieldset>
+            </form>
+            <form id="api-login-form" style="${this.connection_mode == 'SESSION' ? `display:none;` : `display:block;`}">
+              <fieldset>
+                <mwc-textfield type="text" id="id_api_key" maxlength="30"
+                            label="${_t("login.APIKey")}" icon="lock" value="${this.api_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                <mwc-textfield type="password" id="id_secret_key"
+                            label="${_t("login.SecretKey")}" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+              </fieldset>
+            </form>
+            <form>
+              <fieldset>
+                <div class="horizontal layout" id="id_api_endpoint_container" style="display:none;">
+                  <mwc-icon-button id="endpoint-button" icon="cloud_queue" style="margin-left:5px;" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
+                  <mwc-menu id="endpoint-list" @selected="${() => this._updateEndpoint()}">
+                    <mwc-list-item disabled>${_t("login.EndpointHistory")}</mwc-list-item>
+                    ${this.endpoints.length === 0 ? html`
+                    <mwc-list-item value="">${_t("login.NoEndpointSaved")}</mwc-list-item>
+                    ` : html``}
 
-                  ${this.endpoints.map(item =>
-      html`<mwc-list-item value="${item}">
-                    <div class="horizontal justified center flex layout" style="width:365px;">
-                      <span>${item}</span><span class="flex"></span>
-                      <mwc-icon-button icon="delete" @click="${() => this._deleteEndpoint(item)}" class="endpoint-control-button"></mwc-icon-button>
-                    </div>
-                  </mwc-list-item>`)}
-                </mwc-menu>
-                <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
-                             style="--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
-                             label="${_t("login.Endpoint")}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
-              </div>
-              <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized"
-                           style="display:none;--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
-                           label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
-              <mwc-button
-                    unelevated
-                    id="login-button"
-                    icon="check"
-                    style="width:100%;"
-                    label="${_t("login.Login")}"
-                    @click="${() => this._login()}"></mwc-button>
-              ${this.signup_support && this.allowAnonymousChangePassword ? html`
-              <div class="layout horizontal" style="margin-top:2em;">
-                ${this.signup_support ? html`
-                  <div class="vertical center-justified layout" style="width:100%;">
-                    <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.NotAUser")}</div>
-                    <mwc-button
-                        outlined
-                        label="${_t("login.SignUp")}"
-                        @click="${() => this._showSignupDialog()}"></mwc-button>
-                  </div>
-                `: html``}
+                    ${this.endpoints.map(item =>
+        html`<mwc-list-item value="${item}">
+                      <div class="horizontal justified center flex layout" style="width:365px;">
+                        <span>${item}</span><span class="flex"></span>
+                        <mwc-icon-button icon="delete" @click="${() => this._deleteEndpoint(item)}" class="endpoint-control-button"></mwc-icon-button>
+                      </div>
+                    </mwc-list-item>`)}
+                  </mwc-menu>
+                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
+                              style="--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
+                              label="${_t("login.Endpoint")}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                </div>
+                <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized"
+                            style="display:none;--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
+                            label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
+                <mwc-button
+                      unelevated
+                      id="login-button"
+                      icon="check"
+                      style="width:100%;"
+                      label="${_t("login.Login")}"
+                      @click="${() => this._login()}"></mwc-button>
                 ${this.signup_support && this.allowAnonymousChangePassword ? html`
-                  <span class="flex" style="min-width:1em;"></span>
-                `: html``}
-                ${this.allowAnonymousChangePassword ? html`
-                  <div class="vertical center-justified layout" style="width:100%;">
-                    <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.ForgotPassword")}</div>
-                    <mwc-button
-                        outlined
-                        label="${_t("login.ChangePassword")}"
-                        @click="${() => this._showChangePasswordEmailDialog()}"></mwc-button>
-                  </div>
-                ` : html``}
-              </div>`:html``}
-            </fieldset>
-          </form>
+                <div class="layout horizontal" style="margin-top:2em;">
+                  ${this.signup_support ? html`
+                    <div class="vertical center-justified layout" style="width:100%;">
+                      <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.NotAUser")}</div>
+                      <mwc-button
+                          outlined
+                          label="${_t("login.SignUp")}"
+                          @click="${() => this._showSignupDialog()}"></mwc-button>
+                    </div>
+                  `: html``}
+                  ${this.signup_support && this.allowAnonymousChangePassword ? html`
+                    <span class="flex" style="min-width:1em;"></span>
+                  `: html``}
+                  ${this.allowAnonymousChangePassword ? html`
+                    <div class="vertical center-justified layout" style="width:100%;">
+                      <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.ForgotPassword")}</div>
+                      <mwc-button
+                          outlined
+                          label="${_t("login.ChangePassword")}"
+                          @click="${() => this._showChangePasswordEmailDialog()}"></mwc-button>
+                    </div>
+                  ` : html``}
+                </div>`:html``}
+              </fieldset>
+            </form>
+          </div>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>

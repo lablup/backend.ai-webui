@@ -154,7 +154,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
                   @click="${() => this.rescan_images()}">
               </mwc-button>
             </div>
-            <div class="horizontal flex layout wrap setting-item">
+            <div class="horizontal flex layout wrap setting-item temporarily-hide">
               <div class="vertical center-justified layout setting-desc">
                 <div class="title">${_t("maintenance.CleanupOldImages")}</div>
                 <div class="description">${_t("maintenance.DescCleanupOldImages")}

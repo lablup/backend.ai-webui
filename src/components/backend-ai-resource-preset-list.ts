@@ -244,12 +244,12 @@ class BackendAiResourcePresetList extends BackendAIPage {
                           auto-validate required
                           pattern="[a-zA-Z0-9_-]+"
                           disabled
-                          error-message="Policy name only accepts letters, numbers, underscore, and dash"></mwc-textfield>
+                          error-message="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
               <h4>${_t("resourcePreset.ResourcePreset")}</h4>
               <div class="horizontal center layout">
                 <mwc-textfield id="cpu-resource" class="modify" type="number" label="CPU"
                     min="1" value="1" required validationMessage="${_t("resourcePreset.MinimumCPUUnit")}"></mwc-textfield>
-                <mwc-textfield id="ram-resource" class="modify" type="number" label="RAM (GB)"
+                <mwc-textfield id="ram-resource" class="modify" type="number" label="${_t("resourcePreset.RAM(GB)")}"
                     min="1" value="1" required validationMessage="${_t("resourcePreset.MinimumMemUnit")}"></mwc-textfield>
               </div>
               <div class="horizontal center layout">
@@ -260,7 +260,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
               </div>
               <div class="horizontal center layout">
                 <mwc-textfield id="shmem-resource" class="modify" type="number"
-                    label="Shared Memory (GB)" min="0" step="0.01"
+                    label="${_t("resourcePreset.SharedMemory(GB)")}" min="0" step="0.01"
                     validationMessage="${_t("resourcePreset.MinimumShmemUnit")}"></mwc-textfield>
               </div>
             </fieldset>
@@ -287,7 +287,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
             auto-validate
             required
             pattern="[a-zA-Z0-9-_]+"
-            error-message="Preset name only accepts letters and numbers"
+            error-message="${_t("data.Allowslettersnumbersand-_")}"
           ></mwc-textfield>
           <h4>${_t("resourcePreset.ResourcePreset")}</h4>
           <div class="horizontal center layout">

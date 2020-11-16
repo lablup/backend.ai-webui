@@ -262,11 +262,6 @@ export default class BackendAIUsageList extends BackendAIPage {
             <mwc-list-item value="1D" selected>${_t("statistics.1Day")}</mwc-list-item>
             <mwc-list-item value="1W">${_t("statistics.1Week")}</mwc-list-item>
           </mwc-select>
-          <!--<wl-select label="${_t("statistics.SelectPeriod")}" style="width: 130px;" @input=${this.pulldownChange}>
-            <option value disabled>${_t("statistics.SelectPeriod")}</option>
-            <option value="1D" selected>${_t("statistics.1Day")}</option>
-            <option value="1W">${_t("statistics.1Week")}</option>
-          </wl-select>-->
           <span class="flex"></span>
         </h3>
         ${Object.keys(this.collection).length > 0 ?

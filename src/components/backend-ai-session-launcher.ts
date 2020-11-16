@@ -917,7 +917,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             appOptions['runtime'] = 'jupyter';
             appOptions['filename'] = this.importFilename;
           }
-          globalThis.appLauncher.showLauncher(appOptions);
+          // only launch app when it has valid service ports
+          if (service_info.length > 0) {
+            globalThis.appLauncher.showLauncher(appOptions);
+          }
         }).catch((err) => {
           // remove redundant error message
         });
@@ -958,10 +961,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, config) {
-    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 10000);
+    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000);
     task.catch((err) => {
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        if ('statusCode' in err && err.statusCode === 408) {
+          this.notification.text = _text("session.launcher.sessionStillPreparing");
+        } else {
+          this.notification.text = PainKiller.relieve(err.message);
+        }
         this.notification.detail = err.message;
         this.notification.show(true, err);
       } else if (err && err.title) {
@@ -1794,7 +1801,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <mwc-button raised id="launch-session" label="${_t("session.launcher.Start")}" ?disabled="${!this.enableLaunchButton}" @click="${() => this._launchSessionDialog()}">
+      <mwc-button raised class="primary-action" id="launch-session" label="${_t("session.launcher.Start")}" ?disabled="${!this.enableLaunchButton}" @click="${() => this._launchSessionDialog()}">
       </mwc-button>
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>
@@ -1874,7 +1881,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
           <wl-expansion name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
-            <!--<span slot="description" style="font-size:12px;color:#646464;"></span>-->
             <mwc-list fullwidth multi id="vfolder"
               @selected="${this._updateSelectedFolder}">
             ${this.vfolders.length === 0 ? html`

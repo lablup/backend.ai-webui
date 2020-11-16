@@ -185,7 +185,7 @@ class Client {
     this.code = null;
     this.sessionId = null;
     this.kernelType = null;
-    this.clientVersion = '20.8.1';
+    this.clientVersion = '20.11.0';
     this.agentSignature = agentSignature;
     if (config === undefined) {
       this._config = ClientConfig.createFromEnv();
@@ -249,8 +249,9 @@ class Client {
    * @param {Boolean} rawFile - True if it is raw request
    * @param {AbortController.signal} signal - Request signal to abort fetch
    * @param {number} timeout - Custom timeout (sec.) If no timeout is given, default timeout is used.
+   * @param {number} retry - an integer to retry this request
    */
-  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0) {
+  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0, retry: number = 0) {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
@@ -304,6 +305,10 @@ class Client {
         throw body;
       }
     } catch (err) {
+      if (retry > 0) {
+        await new Promise(r => setTimeout(r, 2000)); // Retry after 2 seconds.
+        return this._wrapWithPromise(rqst, rawFile, signal, timeout, retry - 1);
+      }
       let error_message;
       if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
         error_message = err.title; // formatted message
@@ -767,7 +772,7 @@ class Client {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
     }
     let rqst = this.newSignedRequest('DELETE', queryString, null);
-    return this._wrapWithPromise(rqst);
+    return this._wrapWithPromise(rqst, false, null, 15000, 2); // 15 sec., two trial when error occurred.
   }
 
   /**
@@ -853,20 +858,27 @@ class Client {
     return this._wrapWithPromise(rqst, true);
   }
 
-  async mangleUserAgentSignature() {
+  mangleUserAgentSignature() {
     let uaSig = this.clientVersion
       + (this.agentSignature ? ('; ' + this.agentSignature) : '');
     return uaSig;
   }
 
-  /* GraphQL requests */
-  async query(q, v, signal = null, timeout: number = 0) {
+  /**
+   * Send GraphQL requests
+   *
+   * @param {string} q - query string for GraphQL
+   * @param {string} v - variable string for GraphQL
+   * @param {number} timeout - Timeout to force terminate request
+   * @param {number} retry - The number of retry when request is failled
+   */
+  async query(q, v, signal = null, timeout: number = 0, retry: number = 0) {
     let query = {
       'query': q,
       'variables': v
     };
     let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
-    return this._wrapWithPromise(rqst, false, signal, timeout);
+    return this._wrapWithPromise(rqst, false, signal, timeout, retry);
   }
 
   /**
@@ -875,9 +887,9 @@ class Client {
    *
    * @param {string} method - the HTTP method
    * @param {string} queryString - the URI path and GET parameters
-   * @param {string} body - an object that will be encoded as JSON in the request body
+   * @param {any} body - an object that will be encoded as JSON in the request body
    */
-  newSignedRequest(method, queryString, body) {
+  newSignedRequest(method: string, queryString, body: any) {
     let content_type = "application/json";
     let requestBody;
     let authBody;
@@ -2027,7 +2039,7 @@ class ContainerImage {
       resource = {'cpu': '1', 'mem': '512m'};
     }
     return this.client.createIfNotExists(registry + name, sessionId, resource, 600000).then((response) => {
-      return this.client.destroyKernel(sessionId);
+      return this.client.destroy(sessionId);
     }).catch(err => {
       throw err;
     });

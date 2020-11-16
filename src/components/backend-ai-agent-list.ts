@@ -719,10 +719,10 @@ export default class BackendAIAgentList extends BackendAIPage {
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
           <mwc-icon-button class="fg blue controls-running" icon="assignment" @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
-            <mwc-icon-button disabled class="fg controls-running" icon="build"></mwc-icon-button>
-            <mwc-icon-button disabled class="fg controls-running" icon="alarm"></mwc-icon-button>
-            <mwc-icon-button disabled class="fg controls-running" icon="pause"></mwc-icon-button>
-            <mwc-icon-button disabled class="fg controls-running" icon="delete"></mwc-icon-button>
+            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running" icon="build"></mwc-icon-button>
+            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running" icon="alarm"></mwc-icon-button>
+            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running" icon="pause"></mwc-icon-button>
+            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running" icon="delete"></mwc-icon-button>
           ` : html``}
     </div>`, root
     );

@@ -50,6 +50,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: String}) default_vfolder_host = '';
   @property({type: Array}) resource_policy_names = Array();
   @property({type: String}) current_policy_name = '';
+  @property({type: Number}) selectAreaHeight;
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundConcurrencyRenderer = this.concurrencyRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
@@ -132,6 +133,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
         wl-textfield {
           width: 100%;
+          --input-state-color-invalid: red;
           --input-padding-top-bottom: 0px;
           --input-font-family: Roboto, Noto, sans-serif;
         }
@@ -139,9 +141,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         wl-checkbox {
           --checkbox-size: 10px;
           --checkbox-border-radius: 2px;
-          --checkbox-bg-checked: var(--paper-green-800);
-          --checkbox-checkmark-stroke-color: var(--paper-lime-100);
-          --checkbox-color-checked: var(--paper-green-800);
+          --checkbox-bg-checked: var(--general-checkbox-color);
+          --checkbox-checkmark-stroke-color: white;
+          --checkbox-color-checked: white;
         }
 
         mwc-textfield {
@@ -156,6 +158,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-on-theme-primary: var(--general-button-background-color);
           --mdc-typography-font-family: var(--general-font-family);
+        }
+
+        mwc-list-item {
+          --mdc-menu-item-height: auto;
+          font-size : 14px;
         }
 
         backend-ai-dialog {
@@ -225,7 +232,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <span slot="title">${_t("resourcePolicy.UpdateResourcePolicy")}</span>
         <div slot="content">
           <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}" pattern="^[a-zA-Z0-9_-]+$"
-                         validationMessage="Policy name is Required."
+                         validationMessage="${_t('explorer.ValueRequired')}"
                          required></mwc-textfield>
           <h4>${_t("resourcePolicy.ResourcePolicy")}</h4>
           <div class="horizontal center layout distancing">
@@ -294,8 +301,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               </div>
           </div>
           <h4 style="margin-bottom:0px;">${_t("resourcePolicy.Folders")}</h4>
-          <div class="horizontal center layout distancing">
-            <mwc-select id="allowed_vfolder-hosts" label="${_t("resourcePolicy.AllowedHosts")}">
+          <div class="vertical center layout distancing" id="dropdown-area">
+            <mwc-select id="allowed_vfolder-hosts" label="${_t("resourcePolicy.AllowedHosts")}" style="width:100%;"
+              @opened="${() => this._controlHeightByVfolderHostCount(true)}"
+              @closed="${() => this._controlHeightByVfolderHostCount()}">
               ${this.allowed_vfolder_hosts.map(item => html`
                 <mwc-list-item class="owner-group-dropdown"
                                id="${item}"
@@ -304,17 +313,19 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                 </mwc-list-item>
               `)}
             </mwc-select>
-            <div class="vertical layout" style="margin: 21px 15px 0 15px;">
-              <wl-label class="folders">${_t("resourcePolicy.Capacity")}(GB)</wl-label>
-              <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-              <wl-label class="unlimited">
-                <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                ${_t("resourcePolicy.Unlimited")}
-              </wl-label>
-            </div>
-            <div class="vertical layout">
-              <wl-label class="folders">Max.#</wl-label>
-              <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+            <div class="horizontal layout">
+              <div class="vertical layout" style="margin-right: 10px;">
+                <wl-label class="folders">${_t("resourcePolicy.Capacity")}(GB)</wl-label>
+                <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t("resourcePolicy.Unlimited")}
+                </wl-label>
+              </div>
+              <div class="vertical layout" style="margin-left: 10px;">
+                <wl-label class="folders">${_t("credential.Max#")}</wl-label>
+                <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              </div>
             </div>
           </div>
         </div>
@@ -325,6 +336,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               id="create-policy-button"
               icon="check"
               label="${_t("button.Update")}"
+              style="width:100%;"
               @click="${() => this._modifyResourcePolicy()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -415,6 +427,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     this._validatePolicyName();
+    // monkeypatch for height calculation.
+    this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '123px';
   }
 
   async _viewStateChanged(active) {
@@ -740,7 +754,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _updateInputStatus(resource) {
     let textfield = resource;
     let checkbox = textfield.closest('div').querySelector('wl-checkbox');
-    console.log(textfield.id);
     if (textfield.value === '' || textfield.value === "0") {
       textfield.disabled = true;
       checkbox.checked = true;
@@ -774,6 +787,26 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.vfolder_capacity = this.shadowRoot.querySelector('#vfolder-capacity-limit');
     this.vfolder_max_limit = this.shadowRoot.querySelector('#vfolder-count-limit');
   }
+
+  /**
+   * 
+   * Expand or Shrink the dialog height by the number of items in the dropdown.
+   * 
+   * @param isOpened
+   */
+  _controlHeightByVfolderHostCount(isOpened = false) {
+    if (!isOpened) {
+      this.shadowRoot.querySelector('#dropdown-area').style.height = this.selectAreaHeight;
+      console.log(this.selectAreaHeight);
+      return;
+    }
+    let itemCount = this.shadowRoot.querySelector('#allowed_vfolder-hosts').items.length;
+    let actualHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight;
+    if (itemCount > 0) {
+    this.shadowRoot.querySelector('#dropdown-area').style.height = (actualHeight + itemCount * 14) +'px';
+    }
+  }
+
 }
 
 declare global {
