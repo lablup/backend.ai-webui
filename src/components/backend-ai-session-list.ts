@@ -978,7 +978,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   async _terminateKernel(sessionName, accessKey) {
     this.terminationQueue.push(sessionName);
     return this._terminateApp(sessionName).then(() => {
-      globalThis.backendaiclient.destroyKernel(sessionName, accessKey).then((req) => {
+      globalThis.backendaiclient.destroy(sessionName, accessKey).then((req) => {
         setTimeout(async () => {
           this.terminationQueue = [];
           //await this.refreshList(true, false); // Will be called from session-view from the event below

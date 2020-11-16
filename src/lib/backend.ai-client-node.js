@@ -686,7 +686,7 @@ class Client {
             queryString = `${queryString}?owner_access_key=${ownerKey}`;
         }
         let rqst = this.newSignedRequest('DELETE', queryString, null);
-        return this._wrapWithPromise(rqst);
+        return this._wrapWithPromise(rqst, false, null, 15000, 2); // 15 sec., two trial when error occurred.
     }
     /**
      * Restart the kernel session keeping its work directory and volume mounts.
