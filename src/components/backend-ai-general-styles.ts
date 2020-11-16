@@ -732,4 +732,7 @@ export const BackendAiStyles = [
       --component-shadow-color: #37c995;
     }
 
+    .temporarily-hide {
+      display: none !important;
+    }
   `];

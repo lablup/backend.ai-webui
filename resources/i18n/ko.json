@@ -4,8 +4,10 @@
       "WelcomeMessage": "환영합니다. ",
       "Summary": "요약",
       "Sessions": "세션",
+      "Import&Run": "가져오기 & 실행",
       "Data&Storage": "데이터 & 폴더",
       "Statistics": "통계",
+      "Help": "도움말",
       "Settings": "설정",
       "Administration": "관리",
       "Users": "사용자",
@@ -40,8 +42,7 @@
       "Experiments": "실험",
       "UserName": "사용자 이름",
       "Menu": "메뉴",
-      "Run": "실행",
-      "Import&Run": "가져오기 & 실행"
+      "Run": "실행"
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",
@@ -324,6 +325,7 @@
     "Create": "생성",
     "FolderNameRequired":"폴더 이름은 필수 입력입니다.",
     "Allowslettersnumbersand-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
+    "Allowslettersnumbersand-_": "문자, 숫자 및 -_ 만 허용됩니다.",
     "EnterDifferentValue": "기존 파일 또는 폴더 이름과 다른 값을 입력해주세요. 변경하려는 폴더 이름에 공백문자가 있는지 확인해주세요.",
     "Host": "호스트",
     "Foldername": "폴더 이름",
@@ -439,6 +441,7 @@
     "Base": "기반",
     "Constraint": "제약",
     "ResourceLimit": "자원 제한",
+    "DescDeleteAppInfo": "다음 앱 정보를 삭제하려고 합니다: ",
     "DescDeleteImage": "다음 설치된 이미지를 삭제하려고 합니다: ",
     "DescDownloadImage": "다음 이미지를 다운로드하려고 합니다: ",
     "DescSignificantDownloadTime": "다운로드에 매우 오랜 시간이 걸릴 것입니다.",
@@ -460,7 +463,11 @@
     "Disabled": "사용 안함",
     "NoResourcesForImage": "이미지를 가져오기 위해 필요한 최소한의 자원이 없거나 지원되지 않습니다. 이미지명: ",
     "InstallingImage": "다운로드 중인 이미지: ",
-    "TakesTime": ". 시간이 다소 소요되오니 커피 한 잔의 여유를 즐기시며 잠시 기다려 주세요."
+    "TakesTime": ". 시간이 다소 소요되오니 커피 한 잔의 여유를 즐기시며 잠시 기다려 주세요.",
+    "AppInfoDeleted": "선택한 앱 정보가 성공적으로 삭제되었습니다.",
+    "NoChangeMade": "변경된 내역이 없습니다.",
+    "SuccessfullyModified": "성공적으로 수정되었습니다.",
+    "ProblemOccurred": "문제가 발생했습니다."
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
@@ -478,7 +485,9 @@
     "Updated": "자원 프리셋에 수정되었습니다",
     "MinimumCPUUnit": "CPU 최소 단위: 1 코어",
     "MinimumMemUnit": "메모리 최소 단위: 1 GB",
-    "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다."
+    "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다.",
+    "RAM(GB)": "메모리 (GB)",
+    "SharedMemory(GB)": "공유메모리 (GB)"
   },
   "usersettings": {
     "General": "일반",
@@ -516,13 +525,16 @@
     "CurrentSSHPublicKey": "현재 공개 키: ",
     "SSHKeypairGeneration": "SSH 키페어 생성",
     "SSHKeypairGenerationWarning": "비밀 키는 다시 받을 수 없습니다. 필요한 경우 로컬 디스크에 저장하시기 바랍니다.",
-    "NoExistingSSHKeypair": "복사할 키페어가 없습니다. 생성하기 버튼을 클릭 또는 SSH 키페어를 직접 입력해주세요.",
+    "NoExistingSSHKeypair": "복사할 키페어가 없습니다. SSH 키페어를 받으시려면 생성하기 버튼을 클릭해주세요.",
     "ClearSSHKeypairInput": "지금까지 작성된 SSH 키페어는 삭제될 예정입니다. 계속하겠습니까?",
     "PublicKey": "공개 키",
     "PrivateKey": "비밀 키",
     "InvalidPortNumber": "포트 번호는 1025~65534 사이의 양수여야 합니다.",
     "SSHKeyClipboardCopy": "SSH 키가 클립보드에 복사되었습니다.",
-    "ShellEnvironments": "쉘 스크립트 환경"
+    "ShellEnvironments": "쉘 스크립트 환경",
+    "ConfigFilename": "구성 파일 이름 선택",
+    "Edit_ShellScriptTitle_1": " ",
+    "Edit_ShellScriptTitle_2": " 셀 스크립트 수정하기"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",
@@ -560,7 +572,10 @@
     "Capacity": "용량",
     "Folders": "폴더",
     "Name": "이름",
-    "AllowedHosts": "허용된 호스트"
+    "AllowedHosts": "허용된 호스트",
+    "PleaseInputValue": "값을 입력하거나 무제한 사용에 체크해주세요.",
+    "CannotCreateResourcePolicy": "자원 정책 생성에 실패했습니다. 입력 값을 확인해주세요.",
+    "SuccessfullyUpdated": "자원 정책이 성공적으로 갱신되었습니다."
   },
   "registry": {
     "Hostname": "호스트명",
@@ -773,8 +788,12 @@
     "PasswordInvalid": "암호는 최소 8자 이상, 영문 및 숫자와 특수문자를 최소 1자 이상 포함해야 합니다.",
     "PasswordNotMatched": "암호가 불일치합니다. 다시 입력해주세요.",
     "Signup": "가입",
+    "SignupSucceeded": "가입 완료",
     "InvitationToken": "초대 토큰",
     "TokenInputRequired": "토큰은 필수 입력입니다.",
+    "PolicyAgreement_1":"나는 다음 ",
+    "PolicyAgreement_2":" 및 ",
+    "PolicyAgreement_3":"을 확인했으며, 이에 동의합니다.",
     "TermsOfService": "약관",
     "RequestAgreementTermsOfService": "상기 서비스 이용약관에 동의합니다.",
     "PrivacyPolicy": "개인정보보호정책",
@@ -815,6 +834,9 @@
     "CreateButtonCode": "배지 코드 생성",
     "NotebookButtonURL": "노트북 주소",
     "YouCanCreateNotebookCode": "노트북의 주소를 입력하면 어디에서나 Backend.AI로 바로 연결되어 실행할 수 있는 아래와 같은 배지 코드를 만들어 줍니다.",
+    "NoNotebookCode": "노트북 주소가 입력되지 않았습니다. 노트북 코드 입력후 배지를 출력할 수 있는 코드를 복사할 수 있습니다.",
+    "NotebookBadgeCodeCopied": "노트북 배지 코드가 클립보드에 복사되었습니다.",
+    "CouldNotCopyText": "다음 텍스트 복사에 실패하였습니다 : ",
     "NotebookBadgeURL": "노트북 주소",
     "NotebookBadgeCode": "노트북 배지 코드",
     "GetAndRunNotebook": "가져와서 실행",

@@ -283,20 +283,66 @@ export default class BackendAIImport extends BackendAIPage {
     let rawURL = this.regularizeGithubURL(url);
     let badgeURL = rawURL.replace('https://raw.githubusercontent.com/', '');
     let baseURL: string = '';
-    if (globalThis.isElectron) {
-      baseURL = "https://cloud.backend.ai/github?";
-    } else {
-      baseURL = window.location.protocol + '//' + window.location.hostname;
-      if (window.location.port) {
-        baseURL = baseURL + ':' + window.location.port;
-      }
-      baseURL = baseURL + '/github?';
-    }
-    let fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
-    let fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
-    this.shadowRoot.querySelector('#notebook-badge-code').value = fullText;
-    this.shadowRoot.querySelector('#notebook-badge-code-markdown').value = fullTextMarkdown;
 
+    if (url === '') {
+      this.notification.text = _text('import.NoNotebookCode');
+      this.notification.show();
+      this.shadowRoot.querySelector('#notebook-badge-code').value = '';
+      this.shadowRoot.querySelector('#notebook-badge-code-markdown').value = '';
+    } else {
+      if (globalThis.isElectron) {
+        baseURL = "https://cloud.backend.ai/github?";
+      } else {
+        baseURL = window.location.protocol + '//' + window.location.hostname;
+        if (window.location.port) {
+          baseURL = baseURL + ':' + window.location.port;
+        }
+        baseURL = baseURL + '/github?';
+      }
+      let fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
+      let fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
+      this.shadowRoot.querySelector('#notebook-badge-code').value = fullText;
+      this.shadowRoot.querySelector('#notebook-badge-code-markdown').value = fullTextMarkdown;
+    }
+  }
+
+  /**
+   * Copy textarea when user clicks the element.
+   *
+   * @param id - text-area htmlElement for copying
+   */
+  _copyTextArea(e) {
+    let copyText = "";
+    if ('value' in e.target) {
+      copyText = e.target.value;
+    }
+    if (copyText !== "") {
+      //let copyText: string = this.shadowRoot.querySelector(id).value;
+      if (copyText.length === 0) {
+        this.notification.text = _text("import.NoNotebookCode");
+        this.notification.show();
+      } else {
+        if (navigator.clipboard !== undefined) { // for Chrome, Safari
+          navigator.clipboard.writeText(copyText).then( () => {
+            this.notification.text = _text("import.NotebookBadgeCodeCopied");
+            this.notification.show();
+          }, (err) => {
+            console.error(_text('import.CouldNotCopyText'), err);
+          });
+        } else { // other browsers
+          let tmpInputElement = document.createElement("input");
+          tmpInputElement.type = "text";
+          tmpInputElement.value = copyText;
+
+          document.body.appendChild(tmpInputElement);
+          tmpInputElement.select();
+          document.execCommand("copy"); // copy operation
+          document.body.removeChild(tmpInputElement);
+          this.notification.text = _text("import.NotebookBadgeCodeCopied");
+          this.notification.show();
+        }
+      }
+    }
   }
 
   render() {
@@ -328,8 +374,8 @@ export default class BackendAIImport extends BackendAIPage {
               <img src="/resources/badge.svg" style="margin-top:5px;margin-bottom:5px;"/>
               <mwc-textfield id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"></mwc-textfield>
               <mwc-button style="width:100%;" @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
-              <mwc-textarea id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}">></mwc-textarea>
-              <mwc-textarea id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}">></mwc-textarea>
+              <mwc-textarea id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
+              <mwc-textarea id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
             </div>
           </div>
         </lablup-activity-panel>

@@ -4,8 +4,10 @@
       "WelcomeMessage": "Welcome, ",
       "Summary": "Summary",
       "Sessions": "Sessions",
+      "Import&Run": "Import & Run",
       "Data&Storage": "Data & Storage",
       "Statistics": "Statistics",
+      "Help": "Help",
       "Settings": "Settings",
       "Administration": "Administration",
       "Users": "Users",
@@ -41,8 +43,7 @@
       "Experiments": "Experiments",
       "UserName": "User Name",
       "Menu": "Menu",
-      "Run": "Run",
-      "Import&Run": "Import & Run"
+      "Run": "Run"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
@@ -328,6 +329,7 @@
     "FolderNameRequired":"Folder name is required",
     "FileandFoldernameRequired": "File/Folder name is required",
     "Allowslettersnumbersand-_dot": "Allows letters, numbers and -_.",
+    "Allowslettersnumbersand-_": "Allows letters, numbers and -_",
     "EnterDifferentValue": "Please enter a value different from the existing file or folder name. Please Check whether space character in the input field or not.",
     "Host": "Host",
     "Foldername": "Folder name",
@@ -443,6 +445,7 @@
     "Base": "Base",
     "Constraint": "Constraint",
     "ResourceLimit": "Resource Limit",
+    "DescDeleteAppInfo": "You are about to delete the app info: ",
     "DescDeleteImage": "You are about to delete the image(s): ",
     "DescDownloadImage": "You are about to install the image(s): ",
     "DescSignificantDownloadTime": "This process requires significant download time.",
@@ -464,7 +467,11 @@
     "Disabled": "disabled",
     "NoResourcesForImage": "Not Enough resources for pulling the image. Image name: ",
     "InstallingImage": "Installing: ",
-    "TakesTime": ". It takes time so have a cup of coffee!"
+    "TakesTime": ". It takes time so have a cup of coffee!",
+    "AppInfoDeleted": "App information successfully deleted.",
+    "NoChangeMade": "",
+    "SuccessfullyModified": "Successfully modified",
+    "ProblemOccurred": "Problem occurred"
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",
@@ -520,13 +527,16 @@
     "CurrentSSHPublicKey": "Current public key: ",
     "SSHKeypairGeneration": "SSH Keypair Generation",
     "SSHKeypairGenerationWarning": "You cannot get private key again. Store on your local disk if needed.",
-    "NoExistingSSHKeypair": "No SSH Keypair to be copied. Please press Generate button or input SSH keypair.",
+    "NoExistingSSHKeypair": "No SSH Keypair to be copied. To get SSH Keypair, Please press Generate button.",
     "ClearSSHKeypairInput": "Written SSH Keypair will be removed. Are you sure you want to continue?",
     "PublicKey": "Public Key",
     "PrivateKey": "Private Key",
     "InvalidPortNumber": "Port number should be positive number between 1025~65534",
     "SSHKeyClipboardCopy": "SSH Key has been copied to the clipboard.",
-    "ShellEnvironments": "Shell Environments"
+    "ShellEnvironments": "Shell Environments",
+    "ConfigFilename": "Config file name",
+    "Edit_ShellScriptTitle_1": "Edit ",
+    "Edit_ShellScriptTitle_2": " shell script"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
@@ -564,7 +574,10 @@
     "Capacity": "Capacity",
     "Folders": "Folders",
     "Name": "Name",
-    "AllowedHosts": "Allowed hosts"
+    "AllowedHosts": "Allowed hosts",
+    "PleaseInputValue": "Please input value or check unlimited.",
+    "CannotCreateResourcePolicy": "Cannot create Resource Policy. Please check input values.",
+    "SuccessfullyUpdated": "Resource policy successfully updated."
   },
   "registry": {
     "Hostname": "Hostname",
@@ -777,8 +790,12 @@
     "PasswordInvalid": "Use 8 or more characters with a mix of letters, numbers & symbols.",
     "PasswordNotMatched": "Those passwords didn't match. Try it again.",
     "Signup": "Signup",
+    "SignupSucceeded": "Successfully signed up.",
     "InvitationToken": "Invitation Token",
     "TokenInputRequired": "Token is required.",
+    "PolicyAgreement_1":"I have read and agree to the ",
+    "PolicyAgreement_2":" and ",
+    "PolicyAgreement_3":".",
     "TermsOfService": "Terms of service",
     "RequestAgreementTermsOfService": "Please read and agree with the terms of service to proceed.",
     "PrivacyPolicy": "Privacy Policy",
@@ -819,6 +836,9 @@
     "CreateButtonCode": "Create",
     "NotebookButtonURL": "Notebook URL",
     "YouCanCreateNotebookCode": "Enter the notebook URL to create a badge code like below that you can run directly on Backend.AI.",
+    "NoNotebookCode": "Notebook Address is empty. Please input a valid notebook code to copy the badge code.",
+    "NotebookBadgeCodeCopied": "Notebook badge code is copied to the clipboard.",
+    "CouldNotCopyText": "Could not copy text: ",
     "NotebookBadgeURL": "Notebook URL",
     "NotebookBadgeCode": "Notebook Badge Code",
     "GetAndRunNotebook": "Import & Run",

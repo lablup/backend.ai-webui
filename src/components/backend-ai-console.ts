@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage, translateUnsafeHTML as _tr} from "lit-translate";
 import {customElement, html, css, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
@@ -313,6 +313,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       passive: false
     });
     this.addTooltips();
+    this.sidebarMenu.style.minHeight = (this.is_admin || this.is_superadmin) ? '600px' : '250px';
   }
 
   showUpdateNotifier(): void {
@@ -466,11 +467,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     div.className = "horizontal center center-justified layout";
     let p = document.createElement('p') as any;
     p.setAttribute('style', "font-size:12px;color:#8c8484;");
-    p.innerHTML = _text("console.menu.Project");
+    p.innerHTML = `${_text("console.menu.Project")}`;
     let select = document.createElement('mwc-select') as any;
     select.id = 'group-select';
     select.value = this.current_group;
-    select.style.width = '130px';
+    select.style.width = 'auto';
     //select.setAttribute('naturalMenuWidth', 'true');
     select.addEventListener('selected', (e) => this.changeGroup(e));
     let opt = document.createElement('mwc-list-item');
@@ -543,7 +544,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.notification.show();
       return;
     }
-    const p = globalThis.backendaiclient.updatePassword(oldPassword, newPassword1El.value, newPassword2El.value);
+    const p = globalThis.backendaiclient.update_password(oldPassword, newPassword1El.value, newPassword2El.value);
     p.then((resp) => {
       this.notification.text = 'Password updated';
       this.notification.show();
@@ -876,8 +877,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._createPopover("#summary-menu-icon", _text("console.menu.Summary"));
     this._createPopover("#sessions-menu-icon", _text("console.menu.Sessions"));
     this._createPopover("#data-menu-icon", _text("console.menu.Data&Storage"));
+    this._createPopover("#import-menu-icon", _text("console.menu.Import&Run"));
     this._createPopover("#statistics-menu-icon", _text("console.menu.Statistics"));
     this._createPopover("#usersettings-menu-icon", _text("console.menu.Settings"));
+    this._createPopover("backend-ai-help-button", _text("console.menu.Help"));
     if (this.is_admin) {
       this._createPopover("#user-menu-icon", _text("console.menu.Users"));
     }
@@ -933,6 +936,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.currentPageParams = this._pageParams;
   }
 
+  /**
+   * Check Fullname exists, and if not then use user_id instead.
+   */
+  _getUsername() {
+    let name = this.full_name ? this.full_name : this.user_id;
+    return name;
+  }
+
   protected render() {
     // language=HTML
     return html`
@@ -955,11 +966,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </div>
           <div class="horizontal center-justified center layout flex" style="max-height:40px;">
             <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
-            <mwc-icon-button disabled class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'yellow' : 'white'}" id="feedback-icon" icon="question_answer"></mwc-icon-button>
+            <mwc-icon-button disabled class="temporarily-hide full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'yellow' : 'white'}" id="feedback-icon" icon="question_answer"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
-          <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
+          <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}" style="height:calc(100vh - 280px);">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}">
               <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Summary")}</span>
@@ -1033,11 +1044,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <small class="sidebar-footer">Lablup Inc.</small>
               <small class="sidebar-footer" style="font-size:9px;">20.11.1.201102</small>
             </address>
+            <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
+              <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
+              <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
+            </div>
           </footer>
-          <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
-            <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
-            <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
-          </div>
         </div>
         <div id="app-content" slot="appContent">
           <mwc-drawer id="content-body">
@@ -1052,9 +1063,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
                 </div>
                 <div slot="navigationIcon" class="vertical-line" style="height:35px;"></div>
-                <p slot="title" style="padding-top:15px;margin:auto;">
-                  ${_text("console.menu.WelcomeMessage") + this.full_name + "."}
-                </p>
+                <div class="horizontal layout" slot="title" style="font-size:12px;margin-left:10px;padding-top:10px;">
+                  <p>${_t("console.menu.WelcomeMessage")}</p>
+                  <p>&nbsp;${this._getUsername() + "."}</p>
+                </div>
                 <div slot="actionItems" style="margin:0px;">
                   <div class="horizontal flex center layout">
                     <div id="group-select-box" style="height:48px;"></div>
@@ -1147,7 +1159,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
            anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
           <wl-popover-card>
             <div style="padding:5px">
-              <mwc-icon-button disabled class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'red' : 'black'}" id="feedback-icon-popover" icon="question_answer"></mwc-icon-button>
+              <mwc-icon-button disabled class="temporarily-hide side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'red' : 'black'}" id="feedback-icon-popover" icon="question_answer"></mwc-icon-button>
               <mwc-icon-button class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'red' : 'black'}" id="notification-icon-popover" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
               <mwc-icon-button class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'red' : 'black'}" id="task-icon-popover" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
             </div>

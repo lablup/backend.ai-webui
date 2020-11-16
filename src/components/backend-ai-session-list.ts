@@ -1514,7 +1514,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <span class="flex"></span>
         <wl-textfield id="access-key-filter" type="search" size=30
                      label="${_t("general.AccessKey")}" no-label-float .value="${this.filterAccessKey}"
-                     style="display:none"
+                     style="display:none;margin-right:50px;"
                      @change="${(e) => this._updateFilterAccessKey(e)}">
         </wl-textfield>
       </div>
