@@ -753,7 +753,9 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     this.client.ready = false;
-    this._connectGQL(showError);
+    this.client.get_manager_version().then(response => {
+      return this._connectGQL(showError);
+    });
   }
 
   /**
@@ -764,7 +766,7 @@ export default class BackendAILogin extends BackendAIPage {
     if (this.loginPanel.open !== true) {
       this.block();
     }
-    this.client.get_manager_version().then(response => {
+    new Promise(() => {
       const currentTime = Math.floor(Date.now() / 1000);
       globalThis.backendaioptions.set('last_login', currentTime, 'general');
       globalThis.backendaioptions.set('login_attempt', 0, 'general');
