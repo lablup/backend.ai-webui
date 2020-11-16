@@ -560,7 +560,7 @@ export default class BackendAIData extends BackendAIPage {
         }
       } else {
         // custom validation for folder name using regex
-        let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/]/gi;
+        let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/\s]/gi;
         let isValid = !regex.test(folderName.value);
         if (!isValid) {
           folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
