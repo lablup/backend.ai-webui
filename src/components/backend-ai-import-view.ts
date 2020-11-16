@@ -283,20 +283,27 @@ export default class BackendAIImport extends BackendAIPage {
     let rawURL = this.regularizeGithubURL(url);
     let badgeURL = rawURL.replace('https://raw.githubusercontent.com/', '');
     let baseURL: string = '';
-    if (globalThis.isElectron) {
-      baseURL = "https://cloud.backend.ai/github?";
-    } else {
-      baseURL = window.location.protocol + '//' + window.location.hostname;
-      if (window.location.port) {
-        baseURL = baseURL + ':' + window.location.port;
-      }
-      baseURL = baseURL + '/github?';
-    }
-    let fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
-    let fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
-    this.shadowRoot.querySelector('#notebook-badge-code').value = fullText;
-    this.shadowRoot.querySelector('#notebook-badge-code-markdown').value = fullTextMarkdown;
 
+    if (url === '') {
+      this.notification.text = _text('import.NoNotebookCode');
+      this.notification.show();
+      this.shadowRoot.querySelector('#notebook-badge-code').value = '';
+      this.shadowRoot.querySelector('#notebook-badge-code-markdown').value = '';
+    } else {
+      if (globalThis.isElectron) {
+        baseURL = "https://cloud.backend.ai/github?";
+      } else {
+        baseURL = window.location.protocol + '//' + window.location.hostname;
+        if (window.location.port) {
+          baseURL = baseURL + ':' + window.location.port;
+        }
+        baseURL = baseURL + '/github?';
+      }
+      let fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
+      let fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
+      this.shadowRoot.querySelector('#notebook-badge-code').value = fullText;
+      this.shadowRoot.querySelector('#notebook-badge-code-markdown').value = fullTextMarkdown;
+    }
   }
 
   /**
