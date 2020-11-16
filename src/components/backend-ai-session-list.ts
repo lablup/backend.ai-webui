@@ -558,6 +558,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         });
       }
       this.compute_sessions = sessions;
+      this.requestUpdate();
       let refreshTime;
       this.refreshing = false;
       if (this.active === true) {
