@@ -34,7 +34,7 @@ import 'weightless/label';
 import 'weightless/select';
 import 'weightless/title';
 import 'weightless/textfield';
-import 'weightless/tooltip';
+
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
 import tus from '../lib/tus';
@@ -354,10 +354,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           --checkbox-bg-checked: var(--paper-orange-900);
           --checkbox-color-disabled-checked: var(--paper-orange-900);
           --checkbox-bg-disabled-checked: var(--paper-orange-900);
-        }
-
-        wl-tooltip {
-          font-size: 12px;
         }
 
         #modify-permission-dialog {
