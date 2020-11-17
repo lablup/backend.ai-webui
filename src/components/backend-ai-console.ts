@@ -720,7 +720,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this._page = 'summary';
         globalThis.history.pushState({}, '', '/summary');
         store.dispatch(navigate(decodeURIComponent('/')));
-        this.loginPanel.login();
+        //globalThis.location.reload();
+        document.body.style.backgroundImage = 'url("/resources/images/loading-background-large.jpg")';
+        this.appBody.style.visibility = 'hidden';
+        let curtain: HTMLElement = this.shadowRoot.getElementById('loading-curtain');
+        curtain.classList.remove('visuallyhidden');
+        curtain.addEventListener('transitionend', () => {
+          curtain.classList.remove('hidden');
+        }, {
+          capture: false,
+          once: true,
+          passive: false
+        });
+        this.loginPanel.open();
       } else {
         globalThis.location.reload();
       }
@@ -1042,7 +1054,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.11.3.201116</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.11.3.201117</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
