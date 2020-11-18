@@ -968,7 +968,11 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
-      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      if ('description' in err) {
+        this.notification.text = PainKiller.relieve(err.description);
+      } else {
+        this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      }
       this.notification.show(true, err);
     });
   }
@@ -989,7 +993,11 @@ export default class BackendAiSessionList extends BackendAIPage {
         //this.refreshList(true, false); // Will be called from session-view from the event below
         let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
         document.dispatchEvent(event);
-        this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+        if ('description' in err) {
+          this.notification.text = PainKiller.relieve(err.description);
+        } else {
+          this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+        }
         this.notification.show(true, err);
       });
     }).catch((err) => {
