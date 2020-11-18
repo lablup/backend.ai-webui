@@ -1101,7 +1101,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div class="layout horizontal center wrap">
               ${rowData.item.additional_reqs.map((tag) => {
         return html`
-                  <lablup-shields app="" color="green" description="${tag}" ui="round"></lablup-shields>
+                  <lablup-shields app="" color="green" description="${tag}" ui="round" style="margin-top:3px;margin-right:3px;"></lablup-shields>
                 `;
       })}
             </div>
@@ -1556,20 +1556,14 @@ export default class BackendAiSessionList extends BackendAIPage {
         <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t("session.Configuration")}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t("session.Usage")}" .renderer="${this._boundUsageRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t("session.Starts")}" path="created_at">
+        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t("session.Reservation")}" path="created_at">
           <template>
             <div class="layout vertical">
               <span>[[item.created_at_hr]]</span>
+              <span>([[item.elapsed]])</span>
             </div>
           </template>
         </vaadin-grid-sort-column>
-        <vaadin-grid-column width="100px" flex-grow="0" resizable header="${_t("session.Reservation")}">
-          <template>
-            <div class="layout vertical">
-              <span>[[item.elapsed]]</span>
-            </div>
-          </template>
-        </vaadin-grid-column>
         ${this.is_superadmin ? html`
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t("session.Agent")}">
             <template>
