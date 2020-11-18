@@ -90,11 +90,12 @@ export default class BackendAiHelpButton extends BackendAIPage {
 
   /**
    * Open the online help page.
-   * 
-   * @param {string} postfix 
+   *
+   * @param {string} postfix
    */
   showOnlineHelpPage(postfix: string) {
-    window.open(`https://console.docs.backend.ai/${this.lang}/latest/` + postfix, '_blank');
+    // window.open(`https://console.docs.backend.ai/${this.lang}/latest/` + postfix, '_blank');
+    window.open(`https://console.docs.backend.ai/${this.lang}/docs-essential-guide-r2/`, '_blank');
   }
 
   render() {
