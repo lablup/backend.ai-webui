@@ -137,7 +137,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
             </mwc-button>
           </div>
         </lablup-activity-panel>
-        <lablup-activity-panel title="${_t("maintenance.ImagesEnvironment")}">
+        <lablup-activity-panel title="${_t("maintenance.ImagesEnvironment")}" style="display:none">
           <div slot="message">
             <div class="horizontal flex layout wrap setting-item">
               <div class="vertical center-justified layout setting-desc">

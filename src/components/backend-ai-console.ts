@@ -996,7 +996,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <i class="fas fa-flask" slot="graphic"></i>
               <span class="full-menu">${_t("console.menu.Experiments")}</span>
             </mwc-list-item>` : html``}
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'github' || this._page === 'import'}" @click="${() => this._moveTo('/import')}" ?disabled="${this.blockedMenuitem.includes('import')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'github' || this._page === 'import'}" @click="${() => this._moveTo('/import')}" ?disabled="${this.blockedMenuitem.includes('import')}" style="display:none">
               <i class="fas fa-play" slot="graphic" id="import-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Import&Run")}</span>
             </mwc-list-item>
@@ -1015,17 +1015,17 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <i class="fas fa-address-card" slot="graphic" id="user-menu-icon"></i>
                   <span class="full-menu">${_t("console.menu.Users")}</span>
                 </mwc-list-item>
-                <mwc-list-item graphic="icon" ?selected="${this._page === 'environment'}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}">
+                <mwc-list-item graphic="icon" ?selected="${this._page === 'environment'}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}" style="display:none">
                   <i class="fas fa-microchip" slot="graphic" id="environments-menu-icon"></i>
                   <span class="full-menu">${_t("console.menu.Environments")}</span>
                 </mwc-list-item>` : html``}
             ${this.is_superadmin ?
               html`
-                <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
+                <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}" style="display:none">
                   <i class="fas fa-server" slot="graphic" id="resources-menu-icon"></i>
                   <span class="full-menu">${_t("console.menu.Resources")}</span>
                 </mwc-list-item>
-                <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
+                <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}" style="display:none">
                   <i class="fas fa-cog" slot="graphic" id="configurations-menu-icon"></i>
                   <span class="full-menu">${_t("console.menu.Configurations")}</span>
                 </mwc-list-item>
