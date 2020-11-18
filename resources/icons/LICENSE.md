@@ -25,3 +25,7 @@ Icons from wikimedia ( https://upload.wikimedia.org/wikipedia/commons/8/83/tpu.s
 
  * tpu.svg
 
+Icons from www.flaticon.com made by https://www.flaticon.com/authors/dave-gandy ( licensed under the Creative Commons Attribution 3.0 Unported license.)
+
+ * terminal.svg (as code form)
+

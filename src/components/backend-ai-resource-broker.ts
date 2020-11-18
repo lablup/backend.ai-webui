@@ -648,7 +648,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
         remaining_slot['concurrency'] = this.concurrency_max - this.concurrency_used;
       }
-      this.concurrency_limit = Math.min(remaining_slot['concurrency'], 5);
+      this.concurrency_limit = Math.min(remaining_slot['concurrency'], 3);
       this.available_slot = remaining_sg_slot;
       this.used_slot_percent = used_slot_percent;
       this.used_resource_group_slot_percent = used_resource_group_slot_percent;

@@ -175,6 +175,7 @@ class Client {
         let errorType = Client.ERR_REQUEST;
         let errorTitle = '';
         let errorMsg;
+        let errorDesc = '';
         let resp, body, requestTimer;
         try {
             if (rqst.method == 'GET') {
@@ -250,16 +251,19 @@ class Client {
                     if (navigator.onLine) {
                         errorTitle = error_message;
                         errorMsg = `sending request has failed: ${error_message}`;
+                        errorDesc = error_message;
                     }
                     else {
                         errorTitle = "Network disconnected.";
                         errorMsg = `sending request has failed: Network disconnected`;
+                        errorDesc = 'Network disconnected';
                     }
                     break;
                 case Client.ERR_RESPONSE:
                     errorType = 'https://api.backend.ai/probs/client-response-error';
                     errorTitle = error_message;
                     errorMsg = `reading response has failed: ${error_message}`;
+                    errorDesc = error_message;
                     break;
                 case Client.ERR_SERVER:
                     errorType = 'https://api.backend.ai/probs/server-error';
@@ -267,15 +271,18 @@ class Client {
                     errorMsg = 'server responded failure: ';
                     if (body.msg) {
                         errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.msg}`;
+                        errorDesc = body.msg;
                     }
                     else {
                         errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.title}`;
+                        errorDesc = body.title;
                     }
                     break;
                 case Client.ERR_ABORT:
                     errorType = 'https://api.backend.ai/probs/request-abort-error';
                     errorTitle = `Request aborted`;
                     errorMsg = 'Request aborted by user';
+                    errorDesc = errorMsg;
                     resp.status = 408;
                     resp.statusText = 'Request aborted by user';
                     break;
@@ -283,6 +290,7 @@ class Client {
                     errorType = 'https://api.backend.ai/probs/request-timeout-error';
                     errorTitle = `Request timeout`;
                     errorMsg = 'No response returned during the timeout period';
+                    errorDesc = errorMsg;
                     resp.status = 408;
                     resp.statusText = 'Timeout exceeded';
                     break;
@@ -299,6 +307,9 @@ class Client {
                     }
                     errorMsg = 'server responded failure: '
                         + `${resp.status} ${resp.statusText} - ${body.title}`;
+                    if (body.title !== '') {
+                        errorDesc = body.title;
+                    }
             }
             throw {
                 isError: true,
@@ -311,6 +322,7 @@ class Client {
                 statusText: resp.statusText,
                 title: errorTitle,
                 message: errorMsg,
+                description: errorDesc
             };
         }
         let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
