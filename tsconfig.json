@@ -91,6 +91,7 @@
   },
   "include": [
     "src/components/*",
+    "src/plugins/*",
     "src/reducers/*",
     "src/*"
   ]

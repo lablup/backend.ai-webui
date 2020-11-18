@@ -97,10 +97,10 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
       import('./components/backend-ai-import-view.js');
       break;
     default:
-      if (typeof globalThis.backendaiPage !== 'undefined') {
-        for (let item of globalThis.backendaiPage) {
+      if (typeof globalThis.backendaiPages !== 'undefined') {
+        for (let item of globalThis.backendaiPages) {
           if ('url' in item) {
-            import('./plugins/' + item.url);
+            import('./plugins/' + item.url + '.js');
             break;
           }
         }

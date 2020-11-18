@@ -150,6 +150,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
+    this.appPage = this.shadowRoot.querySelector('#app-page');
     this.contentBody = this.shadowRoot.querySelector('#content-body');
     this.contentBody.type = 'dismissible';
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
@@ -269,16 +270,27 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.plugins['login'] = config.plugin.login;
       }
       if ('page' in config.plugin) {
-        //for (let [key, item] of Object.entries(config.plugin.page)) {
-        //  console.log(key, item);
-        //}
-        this.plugins['page'] = config.plugin.page;
-        globalThis.backendaiPages = config.plugin.page;
+        this.plugins['page'] = [];
+        this.plugins['menuitem'] = {};
+        this.plugins['sidebar'] = [];
+        for (let page of config.plugin.page.split(',')) {
+          this.plugins['page'].push({
+            'name': page,
+            'url': page,
+          });
+          this.plugins['menuitem'][page] = page;
+          this.plugins['sidebar'].push(page);
+        }
+        globalThis.backendaiPages = this.plugins['page'];
+        for (let item of globalThis.backendaiPages) {
+          let pageItem = document.createElement(item.name) as any;
+          pageItem.classList.add("page");
+          pageItem.setAttribute('name', item.name);
+          this.appPage.appendChild(pageItem);
+        }
       }
-      if ('sidebar' in config.plugin) {
-        // TODO : multiple sidebar plugins
-        this.plugins['sidebar'] = config.plugin.sidebar;
-      }
+      console.log(this.plugins['menuitem']);
+      this.requestUpdate();
     }
     this.loginPanel.refreshWithConfig(config);
   }
@@ -592,69 +604,58 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       case 'summary':
       case 'verify-email':
         this.menuTitle = _text("console.menu.Summary");
-        // this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'change-password':
         this.menuTitle = _text("console.menu.Summary") + this.user_id;
-        // this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'job':
         this.menuTitle = _text("console.menu.Sessions");
-        // this.updateTitleColor('var(--paper-red-800)', '#efefef');
         break;
       case 'experiment':
         this.menuTitle = _text("console.menu.Experiments");
-        // this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'data':
         this.menuTitle = _text("console.menu.Data&Storage");
-        // this.updateTitleColor('var(--paper-orange-800)', '#efefef');
         break;
       case 'statistics':
         this.menuTitle = _text("console.menu.Statistics");
-        // this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
         break;
       case 'usersettings':
         this.menuTitle = _text("console.menu.Settings&Logs");
-        // this.updateTitleColor('var(--paper-teal-800)', '#efefef');
         break;
       case 'credential':
         this.menuTitle = _text("console.menu.UserCredentials&Policies");
-        // this.updateTitleColor('var(--paper-lime-800)', '#efefef');
         break;
       case 'environment':
         this.menuTitle = _text("console.menu.Environments&Presets");
-        // this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
         break;
       case 'agent':
         this.menuTitle = _text("console.menu.ComputationResources");
-        // this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'settings':
         this.menuTitle = _text("console.menu.Configurations");
-        // this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'maintenance':
         this.menuTitle = _text("console.menu.Maintenance");
-        // this.updateTitleColor('var(--paper-pink-800)', '#efefef');
         break;
       case 'information':
         this.menuTitle = _text("console.menu.Information");
-        // this.updateTitleColor('var(--paper-purple-800)', '#efefef');
         break;
       case 'logs':
         this.menuTitle = _text("console.menu.Logs");
-        // this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
       case 'github':
       case 'import':
         this.menuTitle = _text("console.menu.Import&Run");
-        // this.updateTitleColor('var(--paper-blue-800)', '#efefef');
         break;
       default:
+        if ('menuitem' in this.plugins && view in this.plugins['menuitem']) {
+          this.menuTitle = view;
+          console.log('view:', view);
+          break;
+        }
         this._page = 'error';
         this.menuTitle = _text("console.NOTFOUND");
-      // this.updateTitleColor('var(--paper-grey-800)', '#efefef');
     }
   }
 
@@ -1019,6 +1020,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <i class="fas fa-microchip" slot="graphic" id="environments-menu-icon"></i>
                   <span class="full-menu">${_t("console.menu.Environments")}</span>
                 </mwc-list-item>` : html``}
+                ${'sidebar' in this.plugins ? this.plugins['sidebar'].map(item => html`
+                <mwc-list-item graphic="icon" ?selected="${this._page === item}" @click="${() => this._moveTo('/'+ item)}" ?disabled="${!this.is_admin}">
+                  <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
+                  <span class="full-menu">${item}</span>
+                </mwc-list-item>
+                `) : html``}
             ${this.is_superadmin ?
               html`
                 <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
@@ -1036,7 +1043,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <mwc-list-item graphic="icon" ?selected="${this._page === 'information'}" @click="${() => this._moveTo('/information')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-info-circle" slot="graphic" id="information-menu-icon"></i>
                   <span class="full-menu">${_t("console.menu.Information")}</span>
-                </mwc-list-item>` : html``}
+                </mwc-list-item>
+            ` : html``}
           </mwc-list>
           <footer class="full-menu">
             <div class="terms-of-use" style="margin-bottom:10px;">
