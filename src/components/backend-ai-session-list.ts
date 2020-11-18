@@ -1128,22 +1128,39 @@ export default class BackendAiSessionList extends BackendAIPage {
              .kernel-image="${rowData.item.kernel_image}"
              .app-services="${rowData.item.app_services}">
           ${rowData.item.appSupport ? html`
-            <wl-button fab flat inverted class="fg controls-running green"
+            <mwc-icon-button class="fg controls-running green"
                                @click="${(e) => this._showAppLauncher(e)}"
-                               icon="vaadin:caret-right"><wl-icon>launch</wl-icon></wl-button>
-            <wl-button fab flat inverted class="fg controls-running"
-                               @click="${(e) => this._runTerminal(e)}"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
+                               icon="apps"></mwc-icon-button>
+            <mwc-icon-button class="fg controls-running"
+                               @click="${(e) => this._runTerminal(e)}">
+              <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 width="471.362px" height="471.362px" viewBox="0 0 471.362 471.362" style="enable-background:new 0 0 471.362 471.362;"
+                 xml:space="preserve">
+              <g>
+                <g>
+                  <path d="M468.794,355.171c-1.707-1.718-3.897-2.57-6.563-2.57H188.145c-2.664,0-4.854,0.853-6.567,2.57
+                    c-1.711,1.711-2.565,3.897-2.565,6.563v18.274c0,2.662,0.854,4.853,2.565,6.563c1.713,1.712,3.903,2.57,6.567,2.57h274.086
+                    c2.666,0,4.856-0.858,6.563-2.57c1.711-1.711,2.567-3.901,2.567-6.563v-18.274C471.365,359.068,470.513,356.882,468.794,355.171z"
+                    />
+                  <path d="M30.259,85.075c-1.903-1.903-4.093-2.856-6.567-2.856s-4.661,0.953-6.563,2.856L2.852,99.353
+                    C0.95,101.255,0,103.442,0,105.918c0,2.478,0.95,4.664,2.852,6.567L115.06,224.69L2.852,336.896C0.95,338.799,0,340.989,0,343.46
+                    c0,2.478,0.95,4.665,2.852,6.567l14.276,14.273c1.903,1.906,4.089,2.854,6.563,2.854s4.665-0.951,6.567-2.854l133.048-133.045
+                    c1.903-1.902,2.853-4.096,2.853-6.57c0-2.473-0.95-4.663-2.853-6.565L30.259,85.075z"/>
+                </g>
+              </g>
+            </svg>
+            </mwc-icon-button>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._isError(rowData.item.status) ? html`
-            <wl-button fab flat inverted class="fg red controls-running"
-                               @click="${(e) => this._openTerminateSessionDialog(e)}"><wl-icon>power_settings_new</wl-icon></wl-button>
+            <mwc-icon-button class="fg red controls-running"
+                               icon="power_settings_new" @click="${(e) => this._openTerminateSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
-            <wl-button fab flat inverted class="fg blue controls-running" icon="assignment"
+            <mwc-icon-button class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"
-                               on-tap="_showLogs"><wl-icon>assignment</wl-icon></wl-button>
+                               icon="assignment"></mwc-icon-button>
           ` : html`
-            <wl-button fab flat inverted disabled class="fg controls-running" icon="assignment"><wl-icon>assignment</wl-icon></wl-button>
+            <mwc-icon-button fab flat inverted disabled class="fg controls-running" icon="assignment"></mwc-icon-button>
           `}
         </div>
       `, root
@@ -1535,7 +1552,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column width="90px" flex-grow="0" header="${_t("session.Status")}" resizable .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="160px" flex-grow="0" header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="210px" flex-grow="0" header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t("session.Configuration")}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t("session.Usage")}" .renderer="${this._boundUsageRenderer}">
         </vaadin-grid-column>
