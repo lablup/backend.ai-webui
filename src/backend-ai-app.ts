@@ -105,6 +105,9 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
           }
         }
         break;
+      } else {
+        document.addEventListener('backend-ai-plugin-loaded', () => {
+        });
       }
       import('./components/backend-ai-error-view.js').then((module) => {
       });
