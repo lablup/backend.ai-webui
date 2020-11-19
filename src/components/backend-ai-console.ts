@@ -837,12 +837,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         if (item !== this._page) {
           let component = this.shadowRoot.querySelector(item);
           component.active = false;
+          component.removeAttribute('active');
         }
       }
     }
     if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(this._page)) {
       let component = this.shadowRoot.querySelector(this._page);
       component.active = true;
+      component.setAttribute('active', true);
       component.render();
     }
   }
