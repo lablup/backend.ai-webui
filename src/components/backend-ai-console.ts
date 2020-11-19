@@ -272,22 +272,23 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if ('page' in config.plugin) {
         this.plugins['page'] = [];
         this.plugins['menuitem'] = {};
-        this.plugins['sidebar'] = [];
         for (let page of config.plugin.page.split(',')) {
-          this.plugins['page'].push({
-            'name': page,
-            'url': page,
+          import('../plugins/' + page + '.js').then((module) => {
+            let pageItem = document.createElement(page) as any;
+            pageItem.classList.add("page");
+            pageItem.setAttribute('name', page);
+            this.appPage.appendChild(pageItem);
+            this.plugins['menuitem'][page] = page;
+            this.plugins['page'].push({
+              'name': page,
+              'url': page,
+              'menuitem': pageItem.menuitem
+            });
           });
-          this.plugins['menuitem'][page] = page;
-          this.plugins['sidebar'].push(page);
         }
         globalThis.backendaiPages = this.plugins['page'];
-        for (let item of globalThis.backendaiPages) {
-          let pageItem = document.createElement(item.name) as any;
-          pageItem.classList.add("page");
-          pageItem.setAttribute('name', item.name);
-          this.appPage.appendChild(pageItem);
-        }
+        //for (let item of globalThis.backendaiPages) {
+        //}
       }
       console.log(this.plugins['menuitem']);
       this.requestUpdate();
@@ -1020,10 +1021,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <i class="fas fa-microchip" slot="graphic" id="environments-menu-icon"></i>
                   <span class="full-menu">${_t("console.menu.Environments")}</span>
                 </mwc-list-item>` : html``}
-                ${'sidebar' in this.plugins ? this.plugins['sidebar'].map(item => html`
-                <mwc-list-item graphic="icon" ?selected="${this._page === item}" @click="${() => this._moveTo('/'+ item)}" ?disabled="${!this.is_admin}">
+                ${'page' in this.plugins ? this.plugins['page'].map(item => html`
+                <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
                   <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
-                  <span class="full-menu">${item}</span>
+                  <span class="full-menu">${item.menuitem}</span>
                 </mwc-list-item>
                 `) : html``}
             ${this.is_superadmin ?
