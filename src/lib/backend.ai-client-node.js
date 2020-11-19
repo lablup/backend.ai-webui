@@ -607,9 +607,12 @@ class Client {
             if (resources['env']) {
                 config['environ'] = resources['env'];
             }
-            if (resources['clustersize']) {
-                config['clusterSize'] = resources['clustersize'];
+            if (resources['cluster_size']) {
+                params['cluster_size'] = resources['cluster_size'];
             }
+            // if (resources['cluster_mode']) {
+            //   params['cluster_mode'] = resources['cluster_mode'];
+            // }
             if (resources['group_name']) {
                 params['group_name'] = resources['group_name'];
             }
