@@ -34,6 +34,7 @@ export const navigate = (path: any, params: Object = {}) => (dispatch: any) => {
   //const page = path === '/' ? 'summary' : path.slice(1);
   // Any other info you might want to extract from the path (like page type),
   // you can do here
+  console.log(page);
   dispatch(loadPage(page, params));
 
   // Close the drawer - in case the *path* change came from a link in the drawer.
@@ -101,9 +102,9 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
         for (let item of globalThis.backendaiPages) {
           if ('url' in item) {
             import('./plugins/' + item.url + '.js');
-            break;
           }
         }
+        break;
       }
       import('./components/backend-ai-error-view.js').then((module) => {
       });

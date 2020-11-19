@@ -271,24 +271,36 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       }
       if ('page' in config.plugin) {
         this.plugins['page'] = [];
-        this.plugins['menuitem'] = {};
+        this.plugins['menuitem'] = [];
+        this.plugins['menuitem-user'] = [];
+        this.plugins['menuitem-admin'] = [];
+        this.plugins['menuitem-superadmin'] = [];
         for (let page of config.plugin.page.split(',')) {
           import('../plugins/' + page + '.js').then((module) => {
             let pageItem = document.createElement(page) as any;
             pageItem.classList.add("page");
             pageItem.setAttribute('name', page);
             this.appPage.appendChild(pageItem);
-            this.plugins['menuitem'][page] = page;
+            this.plugins['menuitem'].push(page);
+            switch (pageItem.permission) {
+              case 'superadmin':
+                this.plugins['menuitem-superadmin'].push(page);
+                break;
+              case 'admin':
+                this.plugins['menuitem-admin'].push(page);
+                break;
+              default:
+                this.plugins['menuitem-user'].push(page);
+            }
             this.plugins['page'].push({
               'name': page,
               'url': page,
               'menuitem': pageItem.menuitem
             });
+            pageItem.requestUpdate();
           });
         }
         globalThis.backendaiPages = this.plugins['page'];
-        //for (let item of globalThis.backendaiPages) {
-        //}
       }
       console.log(this.plugins['menuitem']);
       this.requestUpdate();
@@ -650,9 +662,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.menuTitle = _text("console.menu.Import&Run");
         break;
       default:
-        if ('menuitem' in this.plugins && view in this.plugins['menuitem']) {
+        if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(view)) {
           this.menuTitle = view;
-          console.log('view:', view);
           break;
         }
         this._page = 'error';
@@ -821,6 +832,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   _moveTo(url) {
     globalThis.history.pushState({}, '', url);
     store.dispatch(navigate(decodeURIComponent(url), {}));
+    if ('menuitem' in this.plugins) {
+      for (let item of this.plugins.menuitem) {
+        if (item !== this._page) {
+          let component = this.shadowRoot.querySelector(item);
+          component.active = false;
+        }
+      }
+    }
+    if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(this._page)) {
+      let component = this.shadowRoot.querySelector(this._page);
+      component.active = true;
+      component.render();
+    }
   }
 
   /**
@@ -1010,6 +1034,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
+            ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-user'].includes(item.url))).map(item => html`
+            <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
+              <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
+              <span class="full-menu">${item.menuitem}</span>
+            </mwc-list-item>
+            `) : html``}
             ${this.is_admin ?
               html`
                 <h3 class="full-menu">${_t("console.menu.Administration")}</h3>
@@ -1021,7 +1051,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <i class="fas fa-microchip" slot="graphic" id="environments-menu-icon"></i>
                   <span class="full-menu">${_t("console.menu.Environments")}</span>
                 </mwc-list-item>` : html``}
-                ${'page' in this.plugins ? this.plugins['page'].map(item => html`
+                ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-admin'].includes(item.url))).map(item => html`
                 <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
                   <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
                   <span class="full-menu">${item.menuitem}</span>
@@ -1045,6 +1075,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <i class="fas fa-info-circle" slot="graphic" id="information-menu-icon"></i>
                   <span class="full-menu">${_t("console.menu.Information")}</span>
                 </mwc-list-item>
+                ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-superadmin'].includes(item.url))).map(item => html`
+                <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
+                  <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
+                  <span class="full-menu">${item.menuitem}</span>
+                </mwc-list-item>
+                `) : html``}
             ` : html``}
           </mwc-list>
           <footer class="full-menu">
