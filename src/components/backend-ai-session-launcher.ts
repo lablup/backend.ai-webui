@@ -96,6 +96,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'min': '1',
     'max': '1'
   };
+  @property({type: Array}) cluster_mode_list = [
+    'single-node', 'multi-node'
+  ];
   @property({type: Object}) images;
   @property({type: Object}) total_slot;
   @property({type: Object}) total_resource_group_slot;
@@ -148,7 +151,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) max_cuda_device_per_session = 16;
   @property({type: Number}) max_shm_per_session = 2;
   @property({type: Object}) resourceBroker;
-
+  @property({type: Number}) cluster_size = 0;
+  @property({type: String}) cluster_mode;
 
   constructor() {
     super();
@@ -241,6 +245,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           display: block;
           font-size: 12px;
           padding-left: 10px;
+          font-weight: 300;
         }
 
         div.caption {
@@ -413,6 +418,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-select-min-width: 190px;
         }
 
+        mwc-select > mwc-list-item.cluster-mode-dropdown {
+          --mdc-list-side-padding: auto 0px;
+        }
+
         mwc-textfield {
           width: 100%;
           --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0.42);
@@ -523,6 +532,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
+    this.cluster_size = 0;
+    this.cluster_mode = 'single-node';
     /* Parameters required to launch a session on behalf of other user */
     this.ownerFeatureInitialized = false;
     this.ownerDomain = '';
@@ -796,6 +807,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     config['group_name'] = globalThis.backendaiclient.current_group;
     config['domain'] = globalThis.backendaiclient._config.domainName;
     config['scaling_group'] = this.scaling_group;
+    config['cluster_mode'] = this.cluster_mode;
+    config['cluster_size'] = this.cluster_mode === 'multi-node' ? this.cluster_size : 0;
     config['maxWaitSeconds'] = 10;
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     if (ownerEnabled && ownerEnabled.checked) {
@@ -1515,6 +1528,28 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Set Cluster mode between 'single-node' and 'multi-node'
+   * 
+   * @param {Event} e 
+   */
+  _setClusterMode(e) {
+    this.cluster_mode = e.target.value;
+  }
+
+  /**
+   * Set Cluster size when the cluster mode is 'multi-node'
+   * 
+   * @param {Event} e
+   */
+  _setClusterSize(e) {
+    if (this.cluster_mode === 'single-node') {
+      return;
+    } else {
+      this.cluster_size = e.target.value;
+    }
+  } 
+
+  /**
    * Choose resource template
    * - cpu, mem, cuda_device, cuda_shares, rocm_device, tpu_device, shmem
    *
@@ -1723,6 +1758,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       'session': {
         'name': _text("session.launcher.TitleSession"),
         'desc': _text("session.launcher.DescSession")
+      },
+      'single-node': {
+        'name': _text("session.launcher.SingleNode"),
+        'desc': _text("session.launcher.DescSingleNode")
+      },
+      'multi-node': {
+        'name': _text("session.launcher.MultiNode"),
+        'desc': _text("session.launcher.DescMultiNode")
       }
     };
     if (item in resource_description) {
@@ -2016,7 +2059,36 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </div>
           </div>
         </wl-expansion>
-
+        <mwc-select id="cluster-mode" label="${_t("session.launcher.ClusterMode")}" fullwidth required
+              value="${this.cluster_mode}" @change="${(e) => this._setClusterMode(e)}">
+          ${this.cluster_mode_list.map(item => html`
+            <mwc-list-item 
+                class="cluster-mode-dropdown"
+                id="${item}"
+                value="${item}">
+              <div class="horizontal layout center" style="width:100%;">
+                <p style="width:300px;margin-left:21px;">${item}</p>
+                <mwc-icon-button
+                    icon="info"
+                    @click="${(e) => this._showResourceDescription(e, item)}">
+                </mwc-icon-button>
+              </div>
+            </mwc-list-item>
+          `)}
+        </mwc-select>
+        <div class="horizontal layout center" style="padding:0 24px 24px 24px;">
+          <div class="resource-type" style="width:150px;margin-right:50px;">${_t("session.launcher.ClusterSize")}</div>
+          <mwc-textfield
+              ?disabled="${this.cluster_mode === 'single-node'}"
+              ?required="${this.cluster_mode !== 'single-node'}"
+              id="cluster-size"
+              type="number"
+              value="${this.cluster_size}"
+              autoValidate
+              @change="${(e) => this._setClusterSize(e)}"
+              style="width:75px;"></mwc-textfield>
+          <span class="caption">${_t('session.launcher.Node')}</span>
+        </div>
         <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
           <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.SetSessionOwner")}</span>
           <span slot="description"></span>
