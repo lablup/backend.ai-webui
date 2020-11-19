@@ -102,6 +102,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) splash = Object();
   @property({type: Object}) loginPanel = Object();
   @property({type: String}) _page = '';
+  @property({type: String}) _lazyPage = '';
   @property({type: Object}) _pageParams = {};
   @property({type: String}) _sidepanel = '';
   @property({type: Boolean}) _drawerOpened = false;
@@ -275,35 +276,39 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.plugins['menuitem-user'] = [];
         this.plugins['menuitem-admin'] = [];
         this.plugins['menuitem-superadmin'] = [];
+        const pluginLoaderQueue = [] as any;
         for (let page of config.plugin.page.split(',')) {
-          import('../plugins/' + page + '.js').then((module) => {
-            let pageItem = document.createElement(page) as any;
-            pageItem.classList.add("page");
-            pageItem.setAttribute('name', page);
-            this.appPage.appendChild(pageItem);
-            this.plugins['menuitem'].push(page);
-            switch (pageItem.permission) {
-              case 'superadmin':
-                this.plugins['menuitem-superadmin'].push(page);
-                break;
-              case 'admin':
-                this.plugins['menuitem-admin'].push(page);
-                break;
-              default:
-                this.plugins['menuitem-user'].push(page);
-            }
-            this.plugins['page'].push({
-              'name': page,
-              'url': page,
-              'menuitem': pageItem.menuitem
-            });
-            pageItem.requestUpdate();
-          });
+          pluginLoaderQueue.push(import('../plugins/' + page + '.js').then((module) => {
+              let pageItem = document.createElement(page) as any;
+              pageItem.classList.add("page");
+              pageItem.setAttribute('name', page);
+              this.appPage.appendChild(pageItem);
+              this.plugins['menuitem'].push(page);
+              switch (pageItem.permission) {
+                case 'superadmin':
+                  this.plugins['menuitem-superadmin'].push(page);
+                  break;
+                case 'admin':
+                  this.plugins['menuitem-admin'].push(page);
+                  break;
+                default:
+                  this.plugins['menuitem-user'].push(page);
+              }
+              this.plugins['page'].push({
+                'name': page,
+                'url': page,
+                'menuitem': pageItem.menuitem
+              });
+              return Promise.resolve(true);
+            }));
         }
-        globalThis.backendaiPages = this.plugins['page'];
+        Promise.all(pluginLoaderQueue).then((v)=>{
+          globalThis.backendaiPages = this.plugins['page'];
+          let event: CustomEvent = new CustomEvent("backend-ai-plugin-loaded", {"detail": true});
+          document.dispatchEvent(event);
+          this.requestUpdate();
+        });
       }
-      console.log(this.plugins['menuitem']);
-      this.requestUpdate();
     }
     this.loginPanel.refreshWithConfig(config);
   }
@@ -665,7 +670,22 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(view)) {
           this.menuTitle = view;
           break;
+        } else {
+          if (this._page !== 'error') {
+            this._lazyPage = this._page;
+          }
+          document.addEventListener('backend-ai-plugin-loaded', () => {
+            this._page = this._lazyPage;
+            if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(this._page)) {
+              let component = this.shadowRoot.querySelector(this._page);
+              component.active = true;
+              component.setAttribute('active', true);
+              component.render();
+            }
+          });
+          break;
         }
+        console.log("set to error");
         this._page = 'error';
         this.menuTitle = _text("console.NOTFOUND");
     }
@@ -772,7 +792,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.backendaiclient.current_group = e.target.value;
     this.current_group = globalThis.backendaiclient.current_group;
     this._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
-    let event = new CustomEvent("backend-ai-group-changed", {"detail": globalThis.backendaiclient.current_group});
+    let event: CustomEvent = new CustomEvent("backend-ai-group-changed", {"detail": globalThis.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
 
