@@ -447,7 +447,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     let fields = [
       "id", "name", "image",
       "created_at", "terminated_at", "status", "status_info",
-      "service_ports", "mounts",
+      "service_ports", "mounts", "cluster_size", 'cluster_mode',
       "occupied_slots", "access_key",
     ];
     if (this.enableScalingGroup) {
@@ -488,7 +488,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
           sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
           if (sessions[objectKey].containers && sessions[objectKey].containers.length > 0) {
-            // Assume a session has only one container (no consideration on multi-container bundling)
             const container = sessions[objectKey].containers[0];
             const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
             sessions[objectKey].agent = container.agent
@@ -541,6 +540,8 @@ export default class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.image);
           const specs = session.image.split('/');
+          console.log(sessions[objectKey]);
+          sessions[objectKey].cluster_size = parseInt(sessions[objectKey].cluster_size);
           const tag = specs[specs.length - 1].split(':')[1]
           let tags = tag.split('-');
           if (tags[1] !== undefined) {
