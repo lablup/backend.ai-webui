@@ -96,9 +96,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'min': '1',
     'max': '1'
   };
+  @property({type: Object}) cluster_metric = {
+    'min' : 0
+  };
   @property({type: Array}) cluster_mode_list = [
     'single-node', 'multi-node'
   ];
+
   @property({type: Object}) images;
   @property({type: Object}) total_slot;
   @property({type: Object}) total_resource_group_slot;
@@ -808,7 +812,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     config['domain'] = globalThis.backendaiclient._config.domainName;
     config['scaling_group'] = this.scaling_group;
     config['cluster_mode'] = this.cluster_mode;
-    config['cluster_size'] = this.cluster_mode === 'multi-node' ? this.cluster_size : 0;
+    config['cluster_size'] = this.cluster_size > 0 ? this.cluster_size : 0;
     config['maxWaitSeconds'] = 10;
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     if (ownerEnabled && ownerEnabled.checked) {
@@ -1542,11 +1546,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {Event} e
    */
   _setClusterSize(e) {
-    if (this.cluster_mode === 'single-node') {
-      return;
-    } else {
-      this.cluster_size = e.target.value;
-    }
+    this.cluster_size = e.target.value > 0 ? Math.round(e.target.value) : 0;
+    this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
   } 
 
   /**
@@ -2079,10 +2080,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <div class="horizontal layout center" style="padding:0 24px 24px 24px;">
           <div class="resource-type" style="width:150px;margin-right:50px;">${_t("session.launcher.ClusterSize")}</div>
           <mwc-textfield
-              ?disabled="${this.cluster_mode === 'single-node'}"
               ?required="${this.cluster_mode !== 'single-node'}"
               id="cluster-size"
               type="number"
+              min=${this.cluster_metric.min}
               value="${this.cluster_size}"
               autoValidate
               @change="${(e) => this._setClusterSize(e)}"
