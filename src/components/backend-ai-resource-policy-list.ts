@@ -238,7 +238,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           <div class="horizontal center layout distancing">
             <div class="vertical layout" style="margin: 0 10px 0 0;">
               <wl-label>CPU</wl-label>
-              <wl-textfield id="cpu-resource" type="number"
+              <wl-textfield class="discrete" id="cpu-resource" type="number"
                             @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
@@ -277,7 +277,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           <div class="horizontal center layout distancing">
             <div class="vertical left layout">
                 <wl-label>${_t("resourcePolicy.ContainerPerSession")}</wl-label>
-                <wl-textfield id="container-per-session-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-textfield class="discrete" id="container-per-session-limit" type="number"
+                    @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                   ${_t("resourcePolicy.Unlimited")}
@@ -285,7 +286,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               </div>
               <div class="vertical left layout" style="margin: 0px 15px;">
                 <wl-label>${_t("resourcePolicy.IdleTimeoutSec")}</wl-label>
-                <wl-textfield id="idle-timeout" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-textfield class="discrete" id="idle-timeout" type="number"
+                    @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                   ${_t("resourcePolicy.Unlimited")}
@@ -293,7 +295,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               </div>
               <div class="vertical left layout">
                   <wl-label>${_t("resourcePolicy.ConcurrentJobs")}</wl-label>
-                  <wl-textfield id="concurrency-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                  <wl-textfield class="discrete" id="concurrency-limit" type="number"
+                      @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                    ${_t("resourcePolicy.Unlimited")}
@@ -717,8 +720,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       checkbox = null;
     }
 
-    if (textfield.value < 0) {
-      textfield.value = 0;
+    if (textfield.value <= 0) {
+      // concurrency job limit must be upper than 0.
+      textfield.value = textfield.id === 'concurrency-limit' ? 1 : 0;
+    }
+
+    if (textfield.className === 'discrete' || !textfield.valid) {
+      textfield.value = Math.round(textfield.value);
     }
 
     if (textfield.value === '') {
