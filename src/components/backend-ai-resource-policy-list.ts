@@ -231,9 +231,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       <backend-ai-dialog id="modify-policy-dialog" fixed backdrop blockscrolling narrowLayout>
         <span slot="title">${_t("resourcePolicy.UpdateResourcePolicy")}</span>
         <div slot="content">
-          <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}" pattern="^[a-zA-Z0-9_-]+$"
-                         validationMessage="${_t('explorer.ValueRequired')}"
-                         required></mwc-textfield>
+          <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}" disabled></mwc-textfield>
           <h4>${_t("resourcePolicy.ResourcePolicy")}</h4>
           <div class="horizontal center layout distancing">
             <div class="vertical layout" style="margin: 0 10px 0 0;">
@@ -452,7 +450,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this._validatePolicyName();
     // monkeypatch for height calculation.
     this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '123px';
   }
@@ -479,8 +476,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _launchResourcePolicyDialog(e) {
     this.updateCurrentPolicyToDialog(e);
-    this.shadowRoot.querySelector('#id_new_policy_name').mdcFoundation.setValid(true);
-    this.shadowRoot.querySelector('#id_new_policy_name').isUiValid = true;
     this.shadowRoot.querySelector('#modify-policy-dialog').show();
   }
 
@@ -496,7 +491,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.resource_policy_names = Object.keys(resourcePolicies);
     let resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
-    // this.shadowRoot.querySelector('#id_new_policy_name').isUiValid = true;
     this.current_policy_name = policyName;
     this.cpu_resource['value'] = resourcePolicy.total_resource_slots['cpu'];
     this.ram_resource['value'] = resourcePolicy.total_resource_slots['mem'];
@@ -633,12 +627,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _modifyResourcePolicy() {
-    let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
-    let name = policy_info.value;
-    if(!policy_info.checkValidity()) {
-      policy_info.reportValidity();
-      return;
-    }
     try {
       let input = this._readResourcePolicyInput();
       globalThis.backendaiclient.resourcePolicy.mutate(this.current_policy_name, input)
@@ -755,46 +743,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       }
     }
   }
-
-  _validatePolicyName() {
-    let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
-    policy_info.validityTransform = (newValue, nativeValidity) => {
-      if (!nativeValidity.valid) {
-        if (nativeValidity.patternMismatch) {
-          policy_info.validationMessage = "Allows letters, numbers and -_.";
-          return {
-            valid: nativeValidity.valid,
-            patternMismatch: !nativeValidity.valid
-          };
-        } else if (nativeValidity.valueMissing) {
-          policy_info.validationMessage = "Policy name is Required."
-          return {
-            valid: nativeValidity.valid,
-            valueMissing: !nativeValidity.valid
-          };
-        }
-        else {
-          policy_info.validationMessage = "Allows letters, numbers and -_."
-          return {
-            valid: nativeValidity.valid,
-            badInput: !nativeValidity.valid
-          }
-        }
-      } else {
-        let policy_names = this.resource_policy_names;
-        policy_names = policy_names.filter(item => item !== this.current_policy_name);
-        const isValid = !policy_names.includes(newValue);
-        if (!isValid) {
-          policy_info.validationMessage = "Policy Name Already Exists!";
-        }
-
-        return {
-          valid: isValid,
-          customError: !isValid,
-        };
-      }
-    };
-   }
 
   _updateInputStatus(resource) {
     let textfield = resource;
