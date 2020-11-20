@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -338,6 +338,25 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               @click="${() => this._modifyResourcePolicy()}"></mwc-button>
         </div>
       </backend-ai-dialog>
+      <backend-ai-dialog id="delete-policy-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
+        <div slot="content">
+          <p>${_t("resourcePolicy.AboutToDeleteResourcePolicy")}</p>
+          <p style="text-align:center;color:blue;">${this.current_policy_name}</p>
+          <p>${_t("dialog.warning.CannotBeUndone")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+                class="operation"
+                label="${_t("button.Cancel")}"
+                @click="${(e) => this._hideDialog(e)}"></mwc-button>
+            <mwc-button
+                unelevated
+                class="operation"
+                label="${_t("button.Okay")}"
+                @click="${() => this._deleteResourcePolicy()}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 
@@ -417,6 +436,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               <wl-button fab flat inverted class="fg green controls-running" icon="settings"
                                  @click="${(e) => this._launchResourcePolicyDialog(e)}"><wl-icon>settings</wl-icon></wl-button>
                                  ` : html``}
+        ${this.is_admin ? html`
+              <wl-button fab flat inverted class="fg red controls-running" icon="delete"
+                                 @click="${(e) => this._openDeleteResourcePolicyListDialog(e)}"><wl-icon>delete</wl-icon></wl-button>
+                                 ` : html``}
         </div>
     `, root
     );
@@ -451,6 +474,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _launchResourcePolicyDialog(e) {
     this.updateCurrentPolicyToDialog(e);
     this.shadowRoot.querySelector('#modify-policy-dialog').show();
+  }
+
+  _openDeleteResourcePolicyListDialog(e) {
+    this.updateCurrentPolicyToDialog(e);
+    this.shadowRoot.querySelector('#delete-policy-dialog').show();
   }
 
   updateCurrentPolicyToDialog(e) {
@@ -598,12 +626,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _modifyResourcePolicy() {
     try {
       let input = this._readResourcePolicyInput();
-
-      globalThis.backendaiclient.resourcePolicy.mutate(name, input)
+      globalThis.backendaiclient.resourcePolicy.mutate(this.current_policy_name, input)
         .then(({modify_keypair_resource_policy}) => {
           if (modify_keypair_resource_policy.ok) {
             this.shadowRoot.querySelector('#modify-policy-dialog').hide();
-            this.notification.text = "Resource policy successfully updated.";
+            this.notification.text = _text("resourcePolicy.SuccessfullyUpdated");
             this.notification.show();
             this.refresh();
           } else if (modify_keypair_resource_policy.msg) {
@@ -628,11 +655,21 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     }
   }
 
-  _deleteKey(e) {
-    const controls = e.target.closest('#controls');
-    const accessKey = controls.accessKey;
-    globalThis.backendaiclient.keypair.delete(accessKey).then(response => {
-      this.refresh();
+  _deleteResourcePolicy() {
+    let name = this.current_policy_name;
+    console.log(this.current_policy_name)
+    globalThis.backendaiclient.resourcePolicy.delete(name).then(({delete_keypair_resource_policy}) => {
+      if (delete_keypair_resource_policy.ok) {
+        this.shadowRoot.querySelector('#delete-policy-dialog').hide();
+        this.notification.text = _text("resourcePolicy.SuccessfullyDeleted");
+        this.notification.show();
+        this.refresh();
+      } else if (delete_keypair_resource_policy.msg) {
+        this.shadowRoot.querySelector('#delete-policy-dialog').hide();
+        this.notification.text = delete_keypair_resource_policy.msg;
+        this.notification.show();
+        this.refresh();
+      }
     })
     .catch(err => {
       console.log(err);
@@ -642,6 +679,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+
   }
 
   _toggleCheckbox(e) {
@@ -675,7 +713,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         if (!checkbox || !checkbox['checked']) {
           textfield['required'] = true;
           textfield.focus();
-          throw {"message": "Please input value or check unlimited."};
+          throw {"message": _text('resourcePolicy.CannotCreateResourcePolicy')};
         } else {
           textfield['required'] = false;
           textfield.value = '';
@@ -693,7 +731,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       resource.value = '';
     } else {
       if (resource.value === '') {
-        throw {"message": "Cannot Update Resource Policy. Please check input values."};
+        throw {"message": _text('resourcePolicy.CannotCreateResourcePolicy')};
       }
     }
   }
