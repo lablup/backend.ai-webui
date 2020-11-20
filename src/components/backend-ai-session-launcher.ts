@@ -96,9 +96,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'min': '1',
     'max': '1'
   };
+  @property({type: Object}) cluster_metric = {
+    'min' : 0
+  };
   @property({type: Array}) cluster_mode_list = [
     'single-node', 'multi-node'
   ];
+
   @property({type: Object}) images;
   @property({type: Object}) total_slot;
   @property({type: Object}) total_resource_group_slot;
@@ -1542,11 +1546,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {Event} e
    */
   _setClusterSize(e) {
-    if (this.cluster_mode === 'single-node') {
-      return;
-    } else {
-      this.cluster_size = e.target.value;
-    }
+    this.cluster_size = e.target.value > 0 ? Math.round(e.target.value) : 0;
+    this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
   } 
 
   /**
@@ -2083,6 +2084,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ?required="${this.cluster_mode !== 'single-node'}"
               id="cluster-size"
               type="number"
+              min=${this.cluster_metric.min}
               value="${this.cluster_size}"
               autoValidate
               @change="${(e) => this._setClusterSize(e)}"

@@ -7,6 +7,8 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-tree-column';
+import '@vaadin/vaadin-grid/vaadin-grid-tree-toggle';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
@@ -1102,7 +1104,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           item.tag = rowData.item.baseversion;
         }
         return html`
-                <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}" ui="round"></lablup-shields>
+                <lablup-shields app="${item.category === undefined ? '' : item.category}" 
+                                color="${item.color}"
+                                description="${item.tag}"
+                                ui="round"></lablup-shields>
               `;
       })}
           `) : html``}
@@ -1110,11 +1115,24 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div class="layout horizontal center wrap">
               ${rowData.item.additional_reqs.map((tag) => {
         return html`
-                  <lablup-shields app="" color="green" description="${tag}" ui="round" style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                  <lablup-shields app=""
+                                  color="green"
+                                  description="${tag}"
+                                  ui="round"
+                                  style="margin-top:3px;margin-right:3px;"></lablup-shields>
                 `;
       })}
             </div>
           ` : html``}
+          ${rowData.item.cluster_size > 1 ? html`
+            <div class="layout horizontal center wrap">
+              <lablup-shields app="${rowData.item.cluster_mode === 'single-node' ? 'Multi-container': 'Multi-node'}"
+                              color="blue"
+                              description="${ 'X ' + rowData.item.cluster_size}"
+                              ui="round"
+                              style="margin-top:3px;margin-right:3px;"></lablup-shields>
+            </div>
+          `: html``}
         </div>
       `, root
     );
