@@ -575,7 +575,10 @@
     "AllowedHosts": "허용된 호스트",
     "PleaseInputValue": "값을 입력하거나 무제한 사용에 체크해주세요.",
     "CannotCreateResourcePolicy": "자원 정책 생성에 실패했습니다. 입력 값을 확인해주세요.",
-    "SuccessfullyUpdated": "자원 정책이 성공적으로 갱신되었습니다."
+    "SuccessfullyUpdated": "자원 정책이 성공적으로 갱신되었습니다.",
+    "SuccessfullyDeleted": "자원 정책이 성공적으로 삭제되었습니다.",
+    "PolicyNameEmpty": "자원 정책명은 필수 입력입니다.",
+    "AboutToDeleteResourcePolicy": "아래의 자원 정책을 삭제하려고 합니다: "
   },
   "registry": {
     "Hostname": "호스트명",

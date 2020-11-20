@@ -518,7 +518,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       name_field.checkValidity();
       let name = name_field.value;
       if (name === '') {
-        throw {"message": "Policy name should not be empty"};
+        throw {"message": _text("resourcePolicy.PolicyNameEmpty")};
       }
       let input = this._readResourcePolicyInput();
       globalThis.backendaiclient.resourcePolicy.add(name, input).then(response => {

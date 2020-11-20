@@ -577,7 +577,11 @@
     "AllowedHosts": "Allowed hosts",
     "PleaseInputValue": "Please input value or check unlimited.",
     "CannotCreateResourcePolicy": "Cannot create Resource Policy. Please check input values.",
-    "SuccessfullyUpdated": "Resource policy successfully updated."
+    "SuccessfullyUpdated": "Resource policy successfully updated.",
+    "SuccessfullyDeleted": "Resource policy successfully deleted.",
+    "PolicyNameEmpty": "Policy name should not be empty.",
+    "AboutToDeleteResourcePolicy": "You are about to delete this resource policy: "
+
   },
   "registry": {
     "Hostname": "Hostname",
