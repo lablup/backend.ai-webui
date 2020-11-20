@@ -518,7 +518,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       name_field.checkValidity();
       let name = name_field.value;
       if (name === '') {
-        throw {"message": "Policy name should not be empty"};
+        throw {"message": _text("resourcePolicy.PolicyNameEmpty")};
       }
       let input = this._readResourcePolicyInput();
       globalThis.backendaiclient.resourcePolicy.add(name, input).then(response => {
@@ -693,8 +693,13 @@ export default class BackendAICredentialView extends BackendAIPage {
       checkbox = null;
     }
 
-    if (textfield.value < 0) {
-      textfield.value = 0;
+    if (textfield.value <= 0 ) {
+      // concurrency job limit must be upper than 0.
+      textfield.value = textfield.id === 'concurrency-limit' ? 1 : 0;
+    }
+
+    if (textfield.className === 'discrete') {
+      textfield.value = Math.round(textfield.value);
     }
 
     if (textfield.value === '') {
@@ -954,7 +959,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   _controlHeightByVfolderHostCount(isOpened = false) {
     if (!isOpened) {
       this.shadowRoot.querySelector('#dropdown-area').style.height = this.selectAreaHeight;
-      console.log(this.selectAreaHeight);
       return;
     }
     let itemCount = this.shadowRoot.querySelector('#allowed_vfolder-hosts').items.length;
@@ -1083,13 +1087,13 @@ export default class BackendAICredentialView extends BackendAIPage {
         <span slot="title">${_t("credential.CreateResourcePolicy")}</span>
         <div slot="content">
           <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}" pattern="^[a-zA-Z0-9_-]+$"
-                         validationMessage="${_t('explorer.ValueRequired')}"
+                         validationMessage="${_t('data.explorer.ValueRequired')}"
                          required></mwc-textfield>
           <h4>${_t("resourcePolicy.ResourcePolicy")}</h4>
           <div class="horizontal center layout distancing">
             <div class="vertical layout" style="margin: 0 10px 0 0;">
               <wl-label>CPU</wl-label>
-              <wl-textfield id="cpu-resource" type="number"
+              <wl-textfield class="discrete" id="cpu-resource" type="number"
                             @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
@@ -1128,7 +1132,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           <div class="horizontal center layout distancing">
             <div class="vertical left layout">
                 <wl-label>${_t("resourcePolicy.ContainerPerSession")}</wl-label>
-                <wl-textfield id="container-per-session-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-textfield class="discrete" id="container-per-session-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                   ${_t("resourcePolicy.Unlimited")}
@@ -1136,7 +1140,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               </div>
               <div class="vertical left layout" style="margin: 0px 15px;">
                 <wl-label>${_t("resourcePolicy.IdleTimeoutSec")}</wl-label>
-                <wl-textfield id="idle-timeout" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-textfield class="discrete" id="idle-timeout" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                   ${_t("resourcePolicy.Unlimited")}
@@ -1144,7 +1148,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               </div>
               <div class="vertical left layout">
                   <wl-label>${_t("resourcePolicy.ConcurrentJobs")}</wl-label>
-                  <wl-textfield id="concurrency-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                  <wl-textfield class="discrete" id="concurrency-limit" type="number" min="1" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                    ${_t("resourcePolicy.Unlimited")}
