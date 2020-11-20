@@ -808,7 +808,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     config['domain'] = globalThis.backendaiclient._config.domainName;
     config['scaling_group'] = this.scaling_group;
     config['cluster_mode'] = this.cluster_mode;
-    config['cluster_size'] = this.cluster_mode === 'multi-node' ? this.cluster_size : 0;
+    // config['cluster_size'] = this.cluster_mode === 'multi-node' ? this.cluster_size : 0;
+    config['cluster_size'] = this.cluster_size;
     config['maxWaitSeconds'] = 10;
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     if (ownerEnabled && ownerEnabled.checked) {
@@ -2079,7 +2080,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <div class="horizontal layout center" style="padding:0 24px 24px 24px;">
           <div class="resource-type" style="width:150px;margin-right:50px;">${_t("session.launcher.ClusterSize")}</div>
           <mwc-textfield
-              ?disabled="${this.cluster_mode === 'single-node'}"
               ?required="${this.cluster_mode !== 'single-node'}"
               id="cluster-size"
               type="number"
