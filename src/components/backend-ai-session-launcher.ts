@@ -808,7 +808,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     config['domain'] = globalThis.backendaiclient._config.domainName;
     config['scaling_group'] = this.scaling_group;
     config['cluster_mode'] = this.cluster_mode;
-    // config['cluster_size'] = this.cluster_mode === 'multi-node' ? this.cluster_size : 0;
     config['cluster_size'] = this.cluster_size;
     config['maxWaitSeconds'] = 10;
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
@@ -2066,7 +2065,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <mwc-list-item 
                 class="cluster-mode-dropdown"
                 id="${item}"
-                value="${item}">
+                value="${item}"
+                ?disabled="${item === 'multi-node'}">
               <div class="horizontal layout center" style="width:100%;">
                 <p style="width:300px;margin-left:21px;">${item}</p>
                 <mwc-icon-button
