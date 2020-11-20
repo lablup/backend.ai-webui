@@ -144,9 +144,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
-  @property({type: Number}) max_cpu_core_per_session = 64;
-  @property({type: Number}) max_cuda_device_per_session = 16;
-  @property({type: Number}) max_shm_per_session = 2;
+  @property({type: Number}) max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerSession;
+  @property({type: Number}) max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerSession;
+  @property({type: Number}) max_shm_per_session = globalThis.backendaiclient._config.maxShmPerSession;
   @property({type: Object}) resourceBroker;
 
 
