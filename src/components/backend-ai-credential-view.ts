@@ -954,7 +954,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   _controlHeightByVfolderHostCount(isOpened = false) {
     if (!isOpened) {
       this.shadowRoot.querySelector('#dropdown-area').style.height = this.selectAreaHeight;
-      console.log(this.selectAreaHeight);
       return;
     }
     let itemCount = this.shadowRoot.querySelector('#allowed_vfolder-hosts').items.length;
@@ -1083,7 +1082,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         <span slot="title">${_t("credential.CreateResourcePolicy")}</span>
         <div slot="content">
           <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}" pattern="^[a-zA-Z0-9_-]+$"
-                         validationMessage="${_t('explorer.ValueRequired')}"
+                         validationMessage="${_t('data.explorer.ValueRequired')}"
                          required></mwc-textfield>
           <h4>${_t("resourcePolicy.ResourcePolicy")}</h4>
           <div class="horizontal center layout distancing">
