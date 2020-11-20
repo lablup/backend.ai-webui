@@ -673,7 +673,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _deleteResourcePolicy() {
     let name = this.current_policy_name;
-    console.log(this.current_policy_name)
     globalThis.backendaiclient.resourcePolicy.delete(name).then(({delete_keypair_resource_policy}) => {
       if (delete_keypair_resource_policy.ok) {
         this.shadowRoot.querySelector('#delete-policy-dialog').hide();
