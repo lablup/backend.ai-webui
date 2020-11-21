@@ -11,7 +11,6 @@ import 'weightless/checkbox';
 import 'weightless/icon';
 import 'weightless/label';
 import 'weightless/textfield';
-import 'weightless/title';
 import '@material/mwc-icon-button';
 import '@material/mwc-button';
 import 'macro-carousel';
