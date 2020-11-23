@@ -12,13 +12,11 @@ import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid-sort-column';
 import '../plastics/lablup-shields/lablup-shields';
 
-import 'weightless/button';
-
 import '@material/mwc-linear-progress';
 import '@material/mwc-icon-button';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-icon';
+import '@material/mwc-icon/mwc-icon';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -70,18 +68,8 @@ export default class BackendAIAgentList extends BackendAIPage {
           height: calc(100vh - 200px);
         }
 
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
-
-        wl-icon {
-          width: 16px;
-          height: 16px;
-          --icon-size: 16px;
-          min-width: 16px;
-          min-height: 16px;
-          padding: 0;
+        mwc-icon {
+          --mdc-icon-size: 16px;
         }
 
         img.indicator-icon {
@@ -588,7 +576,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         <div class="layout flex">
           <div class="layout horizontal center flex">
             <div class="layout horizontal start resource-indicator">
-              <wl-icon class="fg green">developer_board</wl-icon>
+              <mwc-icon class="fg green">developer_board</mwc-icon>
               <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
               <span class="indicator">${_t("general.cores")}</span>
             </div>
@@ -599,7 +587,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           </div>
           <div class="layout horizontal center flex">
             <div class="layout horizontal start resource-indicator">
-              <wl-icon class="fg green">memory</wl-icon>
+              <mwc-icon class="fg green">memory</mwc-icon>
               <span style="padding-left:5px;">${rowData.item.mem_slots}</span>
               <span class="indicator">GB</span>
             </div>
