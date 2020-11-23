@@ -120,6 +120,8 @@
       "SharedMemory": "Shared Memory",
       "SingleNode": "Single Node",
       "MultiNode": "Multi Node",
+      "single-node": "Single Node",
+      "multi-node": "Multi Node",
       "ClusterMode": "Set Cluster mode",
       "ClusterSize": "Cluster size",
       "Node": "Node",

@@ -119,6 +119,8 @@
       "SharedMemory": "공유 메모리",
       "SingleNode": "싱글 노드",
       "MultiNode": "다중 노드",
+      "single-node": "싱글 노드",
+      "multi-node": "다중 노드",
       "ClusterMode": "클러스터 모드 설정",
       "ClusterSize": "클러스터 크기",
       "Node": "노드",

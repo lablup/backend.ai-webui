@@ -2079,7 +2079,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 value="${item}"
                 ?disabled="${item === 'multi-node'}">
               <div class="horizontal layout center" style="width:100%;">
-                <p style="width:300px;margin-left:21px;">${item}</p>
+                <p style="width:300px;margin-left:21px;">${_t('session.launcher.'+ item)}</p>
                 <mwc-icon-button
                     icon="info"
                     @click="${(e) => this._showResourceDescription(e, item)}">
