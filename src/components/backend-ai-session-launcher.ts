@@ -567,18 +567,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.is_connected = true;
-        this._enableLaunchButton();
         this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerSession || 64;
         this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerSession || 16;
         this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerSession || 2;
+        this.is_connected = true;
+        this._enableLaunchButton();
       }, {once: true});
     } else {
-      this.is_connected = true;
-      this._enableLaunchButton();
       this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerSession || 64;
       this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerSession || 16;
       this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerSession || 2;
+      this.is_connected = true;
+      this._enableLaunchButton();
     }
   }
 
