@@ -31,6 +31,7 @@ export const navigate = (path: any, params: Object = {}) => (dispatch: any) => {
   } else {
     page = path;
   }
+
   //const page = path === '/' ? 'summary' : path.slice(1);
   // Any other info you might want to extract from the path (like page type),
   // you can do here

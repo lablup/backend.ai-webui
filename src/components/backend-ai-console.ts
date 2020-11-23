@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage, translateUnsafeHTML as _tr} from "lit-translate";
-import {customElement, html, css, LitElement, property} from "lit-element";
+import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import {css, customElement, html, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
 import {installOfflineWatcher} from 'pwa-helpers/network';
@@ -289,13 +289,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               pageItem.classList.add("page");
               pageItem.setAttribute('name', page);
               this.appPage.appendChild(pageItem);
-              this.plugins['menuitem'].push(page);
+            this.plugins['menuitem'].push(page);
+            this.availablePages.push(page);
               switch (pageItem.permission) {
                 case 'superadmin':
                   this.plugins['menuitem-superadmin'].push(page);
+                  this.adminOnlyPages.push(page);
                   break;
                 case 'admin':
                   this.plugins['menuitem-admin'].push(page);
+                  this.adminOnlyPages.push(page);
                   break;
                 default:
                   this.plugins['menuitem-user'].push(page);
@@ -619,7 +622,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       let view: string = this._page;
       // load data for view
       if (this.availablePages.includes(view) !== true) { // Fallback for Windows OS
-        view = 'error';
+        let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
+        if (typeof modified_view != 'undefined') {
+          view = modified_view;
+        } else {
+          view = 'summary';
+        }
       } else if(this.adminOnlyPages.includes(view)) {
         if (!this.is_admin || !this.is_superadmin) {
           view = 'unauthorized';
@@ -869,13 +877,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    */
   _moveTo(url) {
     let page = url.split('/')[1];
-
-    if (!this.availablePages.includes(page)) {
+    if (!this.availablePages.includes(page) && (this.is_admin && !this.adminOnlyPages.includes(page))) {
       store.dispatch(navigate(decodeURIComponent("/error")));
       this._page = 'error';
       return;
     }
-
+    globalThis.history.pushState({}, '', url);
+    store.dispatch(navigate(decodeURIComponent(url), {}));
     if ('menuitem' in this.plugins) {
       for (let item of this.plugins.menuitem) {
         if (item !== this._page) {
@@ -891,8 +899,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         component.render();
       }
     }
-  globalThis.history.pushState({}, '', url);
-  store.dispatch(navigate(decodeURIComponent(url), {}));
   }
 
   /**
