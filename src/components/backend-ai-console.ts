@@ -625,10 +625,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
         if (typeof modified_view != 'undefined') {
           view = modified_view;
-        } else {
-          view = 'summary';
         }
-      } else if(this.adminOnlyPages.includes(view)) {
+      }
+      if (this.adminOnlyPages.includes(view)) {
         if (!this.is_admin || !this.is_superadmin) {
           view = 'unauthorized';
         }
@@ -702,6 +701,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           }
           document.addEventListener('backend-ai-plugin-loaded', () => {
             this._page = this._lazyPage;
+            if (this.availablePages.includes(this._page) !== true) {
+              this._page = 'error';
+            }
             if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(this._page)) {
               let component = this.shadowRoot.querySelector(this._page);
               component.active = true;
