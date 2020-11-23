@@ -413,7 +413,7 @@ export default class BackendAiStorageList extends BackendAIPage {
            style="width:320px;"
            @change="${() => {this._validateFolderName(true)}}"></mwc-textfield>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button unelevated class="fullwidth bg-blue button" type="submit" icon="edit" id="rename-button" outlined @click="${() => this._renameFolder()}">
             ${_t('data.folders.Rename')}
           </mwc-button>
@@ -426,7 +426,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
           <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"></mwc-textfield>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button unelevated class="fullwidth red button" type="submit" icon="close" id="delete-button" @click="${() => this._deleteFolderWithCheck()}">
             ${_t("data.folders.Delete")}
           </mwc-button>
@@ -638,7 +638,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             </wl-label>
           </div>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
             icon="share"
             type="button"
@@ -671,7 +671,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             </vaadin-grid-column>
           </vaadin-grid>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
             icon="check"
             type="button"
@@ -690,7 +690,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           required @change="${() => this._validateExistingFileName()}" auto-validate style="width:320px;"></mwc-textfield>
           <div id="old-file-name" style="padding-left:15px;height:2.5em;"></div>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" unelevated @click="${(e) => this._renameFile(e)}">
             ${_t('data.explorer.RenameAFile')}
           </mwc-button>
@@ -702,7 +702,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             <p>${_t("dialog.warning.CannotBeUndone")}
             ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
-         <div slot="footer" class="horizontal end-justified flex layout distancing">
+         <div slot="footer" class="horizontal end-justified flex layout">
             <mwc-button outlined @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</mwc-button>
             <mwc-button raised @click="${(e) => this._deleteFileWithCheck(e)}">${_t("button.Okay")}</mwc-button>
          </div>
