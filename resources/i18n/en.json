@@ -50,7 +50,8 @@
     "YouAreOnline": "You are now online",
     "NOTFOUND": "<p>Oops!<br/>Page not Found...</p>",
     "DescNOTFOUND": "Sorry, the page you are looking for could not be found.",
-    "AdminOnlyPage": "you don't have permission to access this page. Redirecting to summary page instead."
+    "UNAUTHORIZEDACCESS":"Unauthorized Access",
+    "AdminOnlyPage": "You don't have permission to access this page.<br />Click the button below to redirect to summary page."
   },
   "summary": {
     "Dashboard": "Dashboard",
