@@ -174,7 +174,7 @@ export const BackendAiConsoleStyles = [
       --mdc-on-theme-primary: var(--general-button-background-color);
     }
 
-    mwc-button[unelevate--mdc-theme-primaryd] {
+    mwc-button[unelevate--mdc-theme-primary] {
       : var(--general-button-background-color);
       --mdc-on-theme-primary: var(--general-button-background-color);
     }

@@ -125,6 +125,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Number}) minibarWidth = 88;
   @property({type: Number}) sidebarWidth = 250;
   @property({type: Number}) sidepanelWidth = 250;
+  @property({type: Array}) availablePages = ["summary", "verify-email", "change-password", "job",
+                                             "data", "statistics", "usersettings", "credential",
+                                             "environment", "agent", "settings", "maintenance",
+                                             "information", "logs", "github", "import"];
+  @property({type: Array}) adminOnlyPages = ["experiment", "credential", "environment", "agent",
+                                             "settings", "maintenance", "information"];
 
   constructor() {
     super();
@@ -599,15 +605,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view: string = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'information', 'statistics', 'github', 'import'].includes(view) !== true) { // Fallback for Windows OS
-        let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
-        if (typeof modified_view != 'undefined') {
-          view = modified_view;
-        } else {
-          view = 'summary';
-        }
-        this._page = view;
+      if (this.availablePages.includes(view) !== true) { // Fallback for Windows OS
+        view = 'error';
       }
+      this._page = view;
       this._updateSidebar(view);
     }
   }
@@ -850,8 +851,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * @param {string} url
    */
   _moveTo(url) {
-    globalThis.history.pushState({}, '', url);
-    store.dispatch(navigate(decodeURIComponent(url), {}));
+    let page = url.split('/')[1];
+
+    if (!this.availablePages.includes(page)) {
+      store.dispatch(navigate(decodeURIComponent("/error")));
+      this._page = 'error';
+      return;
+    }
+
     if ('menuitem' in this.plugins) {
       for (let item of this.plugins.menuitem) {
         if (item !== this._page) {
@@ -860,13 +867,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           component.removeAttribute('active');
         }
       }
+      if (this.plugins['menuitem'].includes(this._page)) {
+        let component = this.shadowRoot.querySelector(this._page);
+        component.active = true;
+        component.setAttribute('active', true);
+        component.render();
+      }
     }
-    if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(this._page)) {
-      let component = this.shadowRoot.querySelector(this._page);
-      component.active = true;
-      component.setAttribute('active', true);
-      component.render();
-    }
+  store.dispatch(navigate(decodeURIComponent(url), {}));
   }
 
   /**
