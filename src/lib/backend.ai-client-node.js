@@ -1767,7 +1767,7 @@ class ResourcePolicy {
     /**
      * mutate specified resource policy with given name with new values.
      *
-     * @param {string} name - resource policy name to mutate.
+     * @param {string} name - resource policy name to mutate. (READ-ONLY)
      * @param {json} input - resource policy specification and data. Required fields are:
      * {
      *   {string} 'default_for_unspecified': 'UNLIMITED', // default resource policy when resource slot is not given. 'UNLIMITED' or 'LIMITED'.
@@ -1790,6 +1790,27 @@ class ResourcePolicy {
             let v = {
                 'name': name,
                 'input': input
+            };
+            return this.client.query(q, v);
+        }
+        else {
+            return Promise.resolve(false);
+        }
+    }
+    /**
+     * delete specified resource policy that exists in policy list.
+     *
+     * @param {string} name - resource policy name to delete. (READ-ONLY)
+     */
+    async delete(name = null) {
+        if (this.client.is_superadmin === true && name !== null) {
+            let q = `mutation($name: String!) {` +
+                ` delete_keypair_resource_policy(name: $name) {` +
+                `   ok msg ` +
+                ` }` +
+                `}`;
+            let v = {
+                'name': name
             };
             return this.client.query(q, v);
         }
