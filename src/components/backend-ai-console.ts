@@ -128,7 +128,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Array}) availablePages = ["summary", "verify-email", "change-password", "job",
                                              "data", "statistics", "usersettings", "credential",
                                              "environment", "agent", "settings", "maintenance",
-                                             "information", "logs", "github", "import", 'unauthorized'];
+                                             "information", "github", "import", 'unauthorized'];
   @property({type: Array}) adminOnlyPages = ["experiment", "credential", "environment", "agent",
                                              "settings", "maintenance", "information"];
 

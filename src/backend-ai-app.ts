@@ -88,9 +88,6 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
     case 'statistics':
       import('./components/backend-ai-statistics-view.js');
       break;
-    case 'logs':
-      import('./components/backend-ai-error-log-view.js');
-      break;
     case 'verify-email':
       import('./components/backend-ai-email-verification-view.js');
       break;
