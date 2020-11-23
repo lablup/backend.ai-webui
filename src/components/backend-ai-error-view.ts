@@ -12,7 +12,7 @@ import '@material/mwc-button';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 import {store} from '../store';
-import {navigate, updateOffline} from '../backend-ai-app';
+import {navigate} from '../backend-ai-app';
 
 /**
  `<backend-ai-error-view>` is a blank panel of backend.ai console.
