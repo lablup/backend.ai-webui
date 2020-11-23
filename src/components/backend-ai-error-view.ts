@@ -3,11 +3,12 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
+import '@material/mwc-button';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
@@ -37,9 +38,23 @@ export default class BackendAIErrorView extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        wl-card {
-          height: calc(100vh - 150px);
-        }
+      .title {
+        font-size: 2em;
+        font-weight: bolder;
+        color: var(--general-navbar-footer-color, #424242);
+        line-height: 1em;
+      }
+      
+      .description {
+        font-size: 1em;
+        font-weight: normal;
+        color: var(--general-sidebar-color, #949494);
+      }
+
+      mwc-button {
+        width: auto;
+      }
+
       `
     ];
   }
@@ -54,15 +69,34 @@ export default class BackendAIErrorView extends BackendAIPage {
     }
   }
 
+  /**
+   * 
+   * @param url - page to redirect from the current page.
+   */
+  _moveTo(url = '') {
+    let page = url !== '' ? url : 'summary';
+    window.location.href = '/'+ page;
+
+  }
+
   render() {
     // language=HTML
     return html`
-      <wl-card class="item" elevation="1">
-        <div class="vertical center-center flex layout">
-          <p>${_t('console.NOTFOUND')}</p>
+    <div class="horizontal center flex layout" style="margin:20px;">
+      <img src="/resources/images/404_not_found.svg" style="width:500px;margin:20px;"/>
+      <div class="vertical layout" style="width:100%;">
+        <div class="title">${_tr('console.NOTFOUND')}</div>
+        <p class="description">${_t('console.DescNOTFOUND')}</p>
+        <div style="width:auto;">
+          <mwc-button
+              unelevated
+              id="go-to-summary"
+              label="${_t("button.GoBackToSummaryPage")}"
+              @click="${() => this._moveTo('summary')}"></mwc-button>
         </div>
-      </wl-card>
-`;
+      </div>
+    </div>
+    `;
   }
 }
 
