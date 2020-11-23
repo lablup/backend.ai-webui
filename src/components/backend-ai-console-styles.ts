@@ -357,6 +357,7 @@ export const BackendAiConsoleStyles = [
       width: 100%;
       --mdc-text-field-fill-color: transparent;
       --mdc-theme-primary: var(--general-textfield-selected-color);
+      --mdc-text-field-idle-line-color: var(--general-textfield-selected-color);
       font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-size: 14px;
@@ -369,6 +370,7 @@ export const BackendAiConsoleStyles = [
       width: 100%;
       --mdc-text-field-fill-color: transparent;
       --mdc-theme-primary: var(--general-textarea-selected-color);
+      --mdc-text-area-outlined-idle-border-color: var(--general-textarea-selected-color);
       font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-size: 14px;

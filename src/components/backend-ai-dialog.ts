@@ -202,7 +202,7 @@ export default class BackendAiDialog extends LitElement {
             <slot name="content"></slot>
           </div>
           <div class="footer horizontal flex layout">
-            <slot name="footer">
+            <slot name="footer"></slot>
           </div>
         </div>
       </mwc-dialog>
