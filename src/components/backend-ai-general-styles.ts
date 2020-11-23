@@ -53,6 +53,7 @@ export const BackendAiStyles = [
       --general-textfield-selected-color: #27824F;
       --general-dropdown-color: var(--general-sidebar-color);
       --general-checkbox-color: var(--general-textfield-selected-color);
+      --general-textarea-color: var(--general-textfield-selected-color);
       --general-button-background-color: #27824F;
       --general-button-color: #ffffff;
       --general-switch-off-color: #AAA;
@@ -198,7 +199,8 @@ export const BackendAiStyles = [
       --icon-size: 12px;
     }
 
-    wl-card {
+    wl-card,
+    div.card {
       display: block;
       background: white;
       box-sizing: border-box;
@@ -210,32 +212,35 @@ export const BackendAiStyles = [
       color: #000000;
     }
 
-    #content > wl-card {
+    #content > wl-card,
+    #content > div.card {
       max-width: var(--general-content-container-width, 980px);
     }
 
     @media screen and (max-width: 399px) {
-      wl-card {
+      wl-card, div.card {
         margin-left: 0;
         margin-right: 0;
       }
     }
 
     @media screen and (max-width: 449px) {
-      #content > wl-card {
+      #content > wl-card, #content > div.card {
         width: 100%;
       }
     }
 
     @media screen and (min-width: 450px) {
       #content > wl-card,
-      #content > div {
+      #content > div,
+      #content > div.card {
         width: 100%;
         --card-elevation: 0;
         --card-padding: 0;
       }
 
-      #content > wl-card {
+      #content > wl-card,
+      #content > div.card {
         margin: 0 !important;
       }
     }
@@ -285,25 +290,30 @@ export const BackendAiStyles = [
       --mdc-theme-secondary: var(--general-switch-on-color);
     }
 
-    wl-card p {
+    wl-card p,
+    div.card p {
       padding: 10px;
     }
 
-    wl-card > .entry > p {
+    wl-card > .entry > p,
+    div.card > .entry > p {
       padding: 5px;
     }
 
-    wl-card .commands {
+    wl-card .commands,
+    div.card .commands {
       margin: 0;
       border-top: 1px solid #dddddd;
       text-align: left;
     }
 
-    wl-card.item div.items {
+    wl-card.item div.items,
+    div.card.item div.items {
       padding-bottom: 10px;
     }
 
-    wl-card .commands.float {
+    wl-card .commands.float,
+    div.card .commands.float {
       border-top: none;
       position: fixed;
       right: 0;
@@ -312,6 +322,7 @@ export const BackendAiStyles = [
     }
 
     .panels wl-card,
+    .panels div.card,
     .panels div {
       width: var(--general-panel-width);
     }
@@ -320,7 +331,8 @@ export const BackendAiStyles = [
       margin: 0 0 10px 0;
     }
 
-    .wide-panels wl-card {
+    .wide-panels wl-card,
+    .wide-panels div.card {
       width: 100%;
       margin: 0 0 16px 0;
     }
@@ -357,7 +369,8 @@ export const BackendAiStyles = [
       margin-bottom: 10px;
     }
 
-    wl-card > h3 {
+    wl-card > h3,
+    div.card > h3 {
       font-size: 20px;
       font-weight: 400;
       padding: 10px 20px;
@@ -366,7 +379,8 @@ export const BackendAiStyles = [
       border-bottom: 1px solid #dddddd;
     }
 
-    wl-card > h3 > .date {
+    wl-card > h3 > .date,
+    div.card > h3 > .date {
       font-size: 12px;
       text-align: right;
       color: #888888;
@@ -374,43 +388,58 @@ export const BackendAiStyles = [
     }
 
     wl-card > h3.blue,
-    wl-card > h4.blue {
+    wl-card > h4.blue,
+    div.card > h3.blue,
+    div.card > h4.blue {
       border-left: 3px solid var(--paper-light-blue-400);
     }
 
     wl-card > h3.red,
-    wl-card > h4.red {
+    wl-card > h4.red,
+    div.card > h3.red,
+    div.card > h4.red {
       border-left: 3px solid var(--paper-red-400);
     }
 
     wl-card > h3.green,
-    wl-card > h4.green {
+    wl-card > h4.green,
+    div.card > h3.green,
+    div.card > h4.green {
       border-left: 3px solid var(--paper-green-400);
     }
 
     wl-card > h3.orange,
-    wl-card > h4.orange {
+    wl-card > h4.orange,
+    div.card > h3.orange,
+    div.card > h4.orange {
 
       border-left: 3px solid var(--paper-orange-400);
     }
 
     wl-card > h3.cyan,
-    wl-card > h4.cyan {
+    wl-card > h4.cyan,
+    div.card > h3.cyan,
+    div.card > h4.cyan {
 
       border-left: 3px solid var(--paper-cyan-400);
     }
 
     wl-card > h3.lime,
-    wl-card > h4.lime {
+    wl-card > h4.lime,
+    div.card > h3.lime,
+    div.card > h4.lime {
       border-left: 3px solid var(--paper-lime-400);
     }
 
     wl-card > h3.pink,
-    wl-card > h4.pink {
+    wl-card > h4.pink,
+    div.card > h3.pink,
+    div.card > h4.pink {
       border-left: 3px solid var(--paper-pink-400);
     }
 
-    wl-card > h4 {
+    wl-card > h4,
+    div.card > h4 {
       font-size: 14px;
       padding: 5px 15px 5px 20px;
       margin: 0 0 10px 0;
@@ -421,11 +450,13 @@ export const BackendAiStyles = [
       justify-content: space-between;
     }
 
-    wl-card .flex {
+    wl-card .flex
+    div.card .flex {
       display: flex;
     }
 
-    wl-card.entries > div {
+    wl-card.entries > div,
+    div.card.entries > div {
       margin: 20px;
     }
 
@@ -575,10 +606,11 @@ export const BackendAiStyles = [
     }
 
     .distancing {
-      margin:15px;
+      margin: 15px;
     }
 
-    wl-card > h4 {
+    wl-card > h4,
+    div.card > h4 {
       font-weight: 200;
     }
 
@@ -593,7 +625,8 @@ export const BackendAiStyles = [
     }
 
     /* Tab on head */
-    wl-card h3.tab {
+    wl-card h3.tab,
+    div.card h3.tab {
       padding-top: 0;
       padding-bottom: 0;
       padding-left: 0;

@@ -7,7 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
-import 'weightless/card';
 
 import './backend-ai-dialog';
 import {BackendAIPage} from './backend-ai-page';
