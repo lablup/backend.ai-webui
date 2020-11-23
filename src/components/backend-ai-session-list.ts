@@ -1609,7 +1609,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         </div>
         <div slot="content" id="work-area" style="overflow:scroll;"></div>
         <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
-                style="border-style: none;width: 100%;"></iframe>
+                style="border-style: none;display: none;width: 100%;"></iframe>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminate-session-dialog" fixed backdrop>
          <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>

@@ -193,7 +193,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           --component-height: calc(100vh - 200px); /* calc(100vh - 170px); */
           right: 0;
           top: 0;
-          position: fixed;
           margin: 170px 0 0 0;
         }
 
