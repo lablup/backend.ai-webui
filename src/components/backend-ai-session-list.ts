@@ -804,7 +804,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = controls['access-key'];
 
-    globalThis.backendaiclient.get_logs(sessionId, accessKey).then((req) => {
+    globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
       const ansi_up = new AnsiUp();
       let logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
@@ -832,7 +832,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const sessionName = this.shadowRoot.querySelector('#work-dialog').sessionName;
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = this.shadowRoot.querySelector('#work-dialog').accessKey;
-    globalThis.backendaiclient.getLogs(sessionId, accessKey).then((req) => {
+    globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
       const ansi_up = new AnsiUp();
       const logs = ansi_up.ansi_to_html(req.result.logs);
       this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
