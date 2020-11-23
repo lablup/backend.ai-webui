@@ -1594,18 +1594,17 @@ export default class BackendAiSessionList extends BackendAIPage {
         <wl-label style="padding-top: 5px; width:auto; text-align:center;">
         ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</wl-label>
         <mwc-icon-button
-        class="pagination"
-        id="next-page"
-        icon="navigate_next"
-        ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
-        @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
+          class="pagination"
+          id="next-page"
+          icon="navigate_next"
+          ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
+          @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
       </div>
       <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
         <span slot="title" id="work-title"></span>
         <div slot="action">
-          <wl-button fab flat inverted @click="${(e) => this._refreshLogs()}">
-            <wl-icon>refresh</wl-icon>
-          </wl-button>
+          <mwc-icon-button fab flat inverted icon="refresh" @click="${(e) => this._refreshLogs()}">
+          </mwc-icon-button>
         </div>
         <div slot="content" id="work-area" style="overflow:scroll;"></div>
         <iframe id="work-page" frameborder="0" border="0" cellspacing="0"

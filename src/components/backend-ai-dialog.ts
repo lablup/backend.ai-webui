@@ -10,6 +10,7 @@ import 'weightless/card';
 import 'weightless/dialog';
 import 'weightless/icon';
 import '../plastics/mwc/mwc-dialog';
+import '@material/mwc-icon-button';
 
 import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
 
@@ -108,7 +109,7 @@ export default class BackendAiDialog extends LitElement {
         mwc-dialog[scrollable] div.content-area {
           overflow-y: scroll; /* Has to be scroll (not auto) to get smooth scrolling on iOS */
           -webkit-overflow-scrolling: touch;
-          max-height: calc(100vh - 190px);
+          max-height: calc(100vh - 120px);
         }
 
         mwc-dialog div.content h4 {
@@ -193,9 +194,8 @@ export default class BackendAiDialog extends LitElement {
             <div class="flex"></div>
             <slot name="action"></slot>
             ${this.noclosebutton ? html`` : html`
-            <wl-button fab flat inverted @click="${() => this._hideDialog()}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
+            <mwc-icon-button icon="close" fab flat inverted @click="${() => this._hideDialog()}">
+            </mwc-icon-button>
             `}
           </h3>
           <div class="content content-area">
