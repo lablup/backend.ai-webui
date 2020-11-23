@@ -15,7 +15,6 @@ import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 
-import 'weightless/card';
 import 'weightless/textfield';
 import 'weightless/tab';
 import 'weightless/tab-group';
@@ -95,17 +94,17 @@ export default class BackendAICredentialView extends BackendAIPage {
           height: 100%;
         }
 
-        wl-card > h4 {
+        div.card > h4 {
           margin-bottom: 0px;
         }
 
-        wl-card h3 {
+        div.card h3 {
           padding-top: 0;
           padding-right: 15px;
           padding-bottom: 0;
         }
 
-        wl-card wl-card {
+        div.card div.card {
           margin: 0;
           padding: 0;
           --card-elevation: 0;
@@ -979,7 +978,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 </mwc-icon-button>
               ` : html``}
           </h3>
-          <wl-card id="user-lists" class="admin item tab-content">
+          <div id="user-lists" class="admin item tab-content card">
             <h4 class="horizontal flex center center-justified layout">
               <span>${_t("credential.Users")}</span>
               <span class="flex"></span>
@@ -989,8 +988,8 @@ export default class BackendAICredentialView extends BackendAIPage {
             <div>
               <backend-ai-user-list id="user-list" ?active="${this._status === 'active'}"></backend-ai-user-list>
             </div>
-          </wl-card>
-          <wl-card id="credential-lists" class="item tab-content" style="display:none;">
+          </div>
+          <div id="credential-lists" class="item tab-content card" style="display:none;">
             <h4 class="horizontal flex center center-justified layout">
               <wl-tab-group style="margin-bottom:-8px;">
                 <wl-tab value="active-credential-list" checked @click="${(e) => this._showList(e.target)}">${_t("credential.Active")}</wl-tab>
@@ -1002,8 +1001,8 @@ export default class BackendAICredentialView extends BackendAIPage {
             </h4>
             <backend-ai-credential-list class="list-content" id="active-credential-list" condition="active" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
             <backend-ai-credential-list class="list-content" style="display:none;" id="inactive-credential-list" condition="inactive" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
-          </wl-card>
-          <wl-card id="resource-policy-lists" class="admin item tab-content" style="display:none;">
+          </div>
+          <div id="resource-policy-lists" class="admin item tab-content card" style="display:none;">
             <h4 class="horizontal flex center center-justified layout">
               <span>${_t("credential.PolicyGroup")}</span>
               <span class="flex"></span>
@@ -1013,7 +1012,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             <div>
               <backend-ai-resource-policy-list id="resource-policy-list" ?active="${this._activeTab === 'resource-policy-lists'}"></backend-ai-resource-policy-list>
             </div>
-          </wl-card>
+          </div>
         </div>
       </lablup-activity-panel>
       <backend-ai-dialog id="new-keypair-dialog" fixed backdrop blockscrolling>
