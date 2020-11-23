@@ -55,7 +55,7 @@ export default class BackendAiDialog extends LitElement {
       css`
         mwc-dialog {
           --mdc-dialog-min-width: var(--component-min-width);
-          --mdc-dialog-max-width: var(--component-max-width, auto);
+          --mdc-dialog-max-width: var(--component-max-width, 100%);
           --mdc-dialog-max-height: var(--component-max-height);
           --mdc-dialog-width: var(--component-width, auto);
           --mdc-dialog-height: var(--component-height, auto);
@@ -63,6 +63,7 @@ export default class BackendAiDialog extends LitElement {
           --mdc-typography-body1-font-color: black;
           --mdc-typography-headline6-font-family: var(--general-font-family);
           --mdc-typography-headline6-font-color: black;
+          --mdc-shape-medium: 10px;
         }
 
         mwc-dialog > div.card {
@@ -126,6 +127,18 @@ export default class BackendAiDialog extends LitElement {
     let height = this.dialog.style.getPropertyValue('--mdc-dialog-height');
     if (height === '') {
       this.dialog.style.setProperty('--mdc-dialog-height', 'auto');
+    }
+    let maxheight = this.dialog.style.getPropertyValue('--mdc-dialog-max-height');
+    if (maxheight === '') {
+      this.dialog.style.setProperty('--mdc-dialog-max-height', 'auto');
+    }
+    let width = this.dialog.style.getPropertyValue('--mdc-dialog-width');
+    if (width === '') {
+      this.dialog.style.setProperty('--mdc-dialog-width', 'auto');
+    }
+    let maxwidth = this.dialog.style.getPropertyValue('--mdc-dialog-max-width');
+    if (maxwidth === '') {
+      this.dialog.style.setProperty('--mdc-dialog-max-width', 'auto');
     }
     this.open = this.dialog.open;
     this.dialog.addEventListener('didShow', () => {

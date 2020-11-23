@@ -181,19 +181,19 @@ export default class BackendAiSessionList extends BackendAIPage {
         @media screen and (max-width: 899px) {
           #work-dialog,
           #work-dialog.mini_ui {
-            --left: 0;
+            left: 0;
             --component-width: 100%;
           }
         }
 
         @media screen and (min-width: 900px) {
           #work-dialog {
-            --left: 100px;
+            left: 100px;
             --component-width: calc(100% - 50px);
           }
 
           #work-dialog.mini_ui {
-            --left: 40px;
+            left: 40px;
             --component-width: calc(100% - 50px);
           }
         }
@@ -201,6 +201,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         #work-area {
           width: 100%;
           padding: 5px;
+          font-size:12px;
+          line-height: 12px;
           height: calc(100vh - 120px);
           background-color: #222222;
           color: #efefef;

@@ -392,6 +392,8 @@ export const BackendAiConsoleStyles = [
 
     mwc-list-item {
       font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      --mdc-typography-body2-font-family: var(--general-font-family);
       font-weight: 400;
     }
 

@@ -123,7 +123,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         vaadin-grid.folderlist {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 210px);
+          height: calc(100vh - 230px);
         }
 
         vaadin-grid.explorer {
@@ -153,6 +153,8 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         div.big.indicator {
           font-size: 48px;
+          margin-top:10px;
+          margin-bottom: 10px;
         }
 
         .folder-action-buttons wl-button {
@@ -435,7 +437,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="info-folder-dialog" fixed backdrop>
         <span slot="title">${this.folderInfo.name}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;">
-          <div class="horizontal justified layout wrap">
+          <div class="horizontal justified layout wrap" style="margin-top:15px;">
               <div class="vertical layout center info-indicator">
                 <div class="big indicator">${this.folderInfo.host}</div>
                 <span>${_t("data.folders.Location")}</span>
@@ -739,9 +741,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._addInputValidator(textfield);
     }
     if (this.storageType === 'automount') {
-      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 210px)';
+      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 230px)';
     } else {
-      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 165px)';
+      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 185px)';
     }
 
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());

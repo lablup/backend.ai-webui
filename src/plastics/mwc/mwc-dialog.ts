@@ -34,7 +34,7 @@ export class Dialog extends DialogBase {
       padding: 0;
     }
     .mdc-dialog .mdc-dialog__surface {
-      width: 100%!important;
+      width: var(--mdc-dialog-width, auto)!important;
     }
     `];
   }
