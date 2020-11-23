@@ -97,7 +97,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'max': '1'
   };
   @property({type: Object}) cluster_metric = {
-    'min' : 0
+    'min' : 0,
+    'max' : 0
   };
   @property({type: Array}) cluster_mode_list = [
     'single-node', 'multi-node'
@@ -183,9 +184,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // language=CSS
       css`
         lablup-slider {
-          width: 210px !important;
+          width: 200px !important;
           --textfield-width: 50px;
-          --slider-width: 135px;
+          --slider-width: 120px;
         }
 
         lablup-slider.mem,
@@ -203,6 +204,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         lablup-slider.session {
           --slider-color: var(--paper-pink-400);
+        }
+
+        lablup-slider.cluster {
+          --slider-color: var(--paper-blue-500);
         }
 
         mwc-linear-progress {
@@ -265,6 +270,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         div.resource-type {
           font-size: 14px;
           width: 70px;
+          margin-right: 10px;
         }
 
         .resources.horizontal .monitor.session {
@@ -1287,12 +1293,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             } else {
               cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu'], this.max_cpu_core_per_session);
             }
+            // monkeypatch for cluster_metric max size
+            this.cluster_metric.max = cpu_metric.max;
           } else {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
               cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu'], this.max_cpu_core_per_session);
             } else {
               cpu_metric.max = Math.min(this.available_slot['cpu'], this.max_cpu_core_per_session);
             }
+            // monkeypatch for cluster_metric max size
+            this.cluster_metric.max = cpu_metric.max;
           }
           if (cpu_metric.min >= cpu_metric.max) {
             if (cpu_metric.min > cpu_metric.max) {
@@ -1996,7 +2006,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <span slot="description" style="font-size:12px;color:#646464;"></span>
             <div class="vertical layout">
               <div class="horizontal center layout">
-                <div class="resource-type" style="width:70px;">CPU</div>
+                <div class="resource-type">CPU</div>
                 <lablup-slider id="cpu-resource" class="cpu"
                                pin snaps expand editable markers
                                @click="${this._resourceTemplateToCustom}"
@@ -2009,7 +2019,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
-              <div class="resource-type" style="width:70px;">RAM</div>
+              <div class="resource-type">RAM</div>
               <lablup-slider id="mem-resource" class="mem"
                              pin snaps step=0.05 editable markers
                              @click="${this._resourceTemplateToCustom}"
@@ -2022,7 +2032,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
-              <div class="resource-type" style="width:70px;">${_t("session.launcher.SharedMemory")}</div>
+              <div class="resource-type">${_t("session.launcher.SharedMemory")}</div>
               <lablup-slider id="shmem-resource" class="mem"
                              pin snaps step="0.0025" editable markers
                              @click="${this._resourceTemplateToCustom}"
@@ -2035,7 +2045,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
-              <div class="resource-type" style="width:70px;">GPU</div>
+              <div class="resource-type">GPU</div>
               <lablup-slider id="gpu-resource" class="gpu"
                              pin snaps editable markers step="${this.gpu_step}"
                              @click="${this._resourceTemplateToCustom}"
@@ -2047,7 +2057,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
-              <div class="resource-type" style="width:70px;">Sessions</div>
+              <div class="resource-type">${_t("console.menu.Sessions")}</div>
               <lablup-slider id="session-resource" class="session"
                              pin snaps editable markers step="1"
                              @click="${this._resourceTemplateToCustom}"
@@ -2079,17 +2089,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           `)}
         </mwc-select>
         <div class="horizontal layout center" style="padding:0 24px 24px 24px;">
-          <div class="resource-type" style="width:150px;margin-right:50px;">${_t("session.launcher.ClusterSize")}</div>
-          <mwc-textfield
-              ?required="${this.cluster_mode !== 'single-node'}"
-              id="cluster-size"
-              type="number"
-              min=${this.cluster_metric.min}
-              value="${this.cluster_size}"
-              autoValidate
-              @change="${(e) => this._setClusterSize(e)}"
-              style="width:75px;"></mwc-textfield>
-          <span class="caption">${_t('session.launcher.Node')}</span>
+          <div class="resource-type">${_t("session.launcher.ClusterSize")}</div>
+          <lablup-slider id="cluster-size" class="cluster"
+                         pin snaps expand editable markers
+                         marker_limit="${this.marker_limit}"
+                         min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
+                         value="${this.cluster_size}"
+                         @change="${(e) => this._setClusterSize(e)}"></lablup-slider>
+          <span class="caption">${_t("session.launcher.Node")}</span>
         </div>
         <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
           <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.SetSessionOwner")}</span>
