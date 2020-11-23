@@ -53,6 +53,7 @@ export const BackendAiStyles = [
       --general-textfield-selected-color: #27824F;
       --general-dropdown-color: var(--general-sidebar-color);
       --general-checkbox-color: var(--general-textfield-selected-color);
+      --general-textarea-color: var(--general-textfield-selected-color);
       --general-button-background-color: #27824F;
       --general-button-color: #ffffff;
       --general-switch-off-color: #AAA;
