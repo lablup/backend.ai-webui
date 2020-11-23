@@ -1286,11 +1286,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (cpu_metric.min >= cpu_metric.max) {
             if (cpu_metric.min > cpu_metric.max) {
               cpu_metric.min = cpu_metric.max;
-              cpu_metric.max = cpu_metric.max + 1;
               disableLaunch = true;
               this.shadowRoot.querySelector('#cpu-resource').disabled = true;
             } else { // min == max
-              cpu_metric.max = cpu_metric.max + 1;
               this.shadowRoot.querySelector('#cpu-resource').disabled = true;
             }
           }
