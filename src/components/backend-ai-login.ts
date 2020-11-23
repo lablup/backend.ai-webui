@@ -82,6 +82,9 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Boolean}) openPortToPublic = false;
+  @property({type: Boolean}) maxCPUCoresPerSession = 64;
+  @property({type: Boolean}) maxCUDADevicesPerSession = 16;
+  @property({type: Boolean}) maxShmPerSession = 2;
   @property({type: Array}) endpoints;
 
   constructor() {
@@ -382,10 +385,26 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       this.allow_project_resource_monitor = true;
     }
-    if (typeof config.general === "undefined" || typeof config.general.openPortToPublic === "undefined" || config.general.openPortToPublic === '' || config.general.openPortToPublic == false) {
+
+    if (typeof config.resources === "undefined" || typeof config.resources.openPortToPublic === "undefined" || config.resources.openPortToPublic === '' || config.resources.openPortToPublic == false) {
       this.openPortToPublic = false;
     } else {
       this.openPortToPublic = true;
+    }
+    if (typeof config.resources === "undefined" || typeof config.resources.maxCPUCoresPerSession === "undefined" || isNaN(parseInt(config.resources.maxCPUCoresPerSession))) {
+      this.maxCPUCoresPerSession = 64;
+    } else {
+      this.maxCPUCoresPerSession = parseInt(config.resources.maxCPUCoresPerSession);
+    }
+    if (typeof config.resources === "undefined" || typeof config.resources.maxCUDADevicesPerSession === "undefined" || isNaN(parseInt(config.resources.maxCUDADevicesPerSession))) {
+      this.maxCUDADevicesPerSession = 16;
+    } else {
+      this.maxCUDADevicesPerSession = parseInt(config.resources.maxCUDADevicesPerSession);
+    }
+    if (typeof config.resources === "undefined" || typeof config.resources.maxShmPerSession === "undefined" || isNaN(parseFloat(config.resources.maxShmPerSession))) {
+      this.maxShmPerSession = 2;
+    } else {
+      this.maxShmPerSession = parseFloat(config.resources.maxShmPerSession);
     }
 
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
@@ -863,6 +882,9 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
       globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
+      globalThis.backendaiclient._config.maxCPUCoresPerSession = this.maxCPUCoresPerSession;
+      globalThis.backendaiclient._config.maxCUDADevicesPerSession = this.maxCUDADevicesPerSession;
+      globalThis.backendaiclient._config.maxShmPerSession = this.maxShmPerSession;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
