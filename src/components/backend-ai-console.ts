@@ -128,7 +128,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Array}) availablePages = ["summary", "verify-email", "change-password", "job",
                                              "data", "statistics", "usersettings", "credential",
                                              "environment", "agent", "settings", "maintenance",
-                                             "information", "logs", "github", "import"];
+                                             "information", "logs", "github", "import", 'unauthorized'];
   @property({type: Array}) adminOnlyPages = ["experiment", "credential", "environment", "agent",
                                              "settings", "maintenance", "information"];
 
@@ -350,6 +350,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     });
     this.addTooltips();
     this.sidebarMenu.style.minHeight = (this.is_admin || this.is_superadmin) ? '600px' : '250px';
+    if (!this.is_admin || !this.is_superadmin) {
+      if (this.adminOnlyPages.includes(this._page) || this._page === 'unauthorized') {
+        this._page = 'unauthorized';
+        globalThis.history.pushState({}, '', '/unauthorized');
+        store.dispatch(navigate(decodeURIComponent(this._page)));
+      }
+    } else {
+      if (this._page === 'unauthorized') {
+        this._page = 'summary';
+        globalThis.history.pushState({}, '', '/summary');
+        store.dispatch(navigate(decodeURIComponent(this._page)));
+      }
+    }
   }
 
   showUpdateNotifier(): void {
@@ -607,6 +620,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       // load data for view
       if (this.availablePages.includes(view) !== true) { // Fallback for Windows OS
         view = 'error';
+      } else if(this.adminOnlyPages.includes(view)) {
+        if (!this.is_admin || !this.is_superadmin) {
+          view = 'unauthorized';
+        }
       }
       this._page = view;
       this._updateSidebar(view);
@@ -1235,6 +1252,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                     <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
                     <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${this._page === 'change-password'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>
                     <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view>
+                    <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${this._page === 'unauthorized'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view>
                   </div>
                 </section>
               </div>

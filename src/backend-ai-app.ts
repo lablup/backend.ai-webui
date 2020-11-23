@@ -10,7 +10,7 @@ export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const navigate = (path: any, params: Object = {}) => (dispatch: any) => {
   // Extract the page name from path.
-  if (['/summary', '/job', '/experiment', '/data', '/statistics', '/usersettings',
+  if (['/summary', '/job', '/data', '/statistics', '/usersettings', //'/experiment',
     '/agent', '/resource', '/user', '/credential', '/environment', '/settings',
     '/maintenance', '/information', '/github', '/import'].includes(path) !== true) { // Fallback for Electron Shell/Windows OS
     let fragments = path.split(/[\/]+/);
@@ -34,7 +34,12 @@ export const navigate = (path: any, params: Object = {}) => (dispatch: any) => {
   //const page = path === '/' ? 'summary' : path.slice(1);
   // Any other info you might want to extract from the path (like page type),
   // you can do here
-  console.log(page);
+  if (['agent', 'resource', 'user', 'credential', 'environment', 'settings',
+  'maintenance', 'information'].includes(page)) {
+    console.log(globalThis.backendaiclient);
+      // page = 'summary';
+      // globalThis.history.pushState({}, '', '/summary');
+  }
   dispatch(loadPage(page, params));
 
   // Close the drawer - in case the *path* change came from a link in the drawer.
@@ -51,9 +56,9 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
     case 'job':
       import('./components/backend-ai-session-view.js');
       break;
-    case 'experiment':
+    /* case 'experiment':
       import('./components/backend-ai-experiment-view.js');
-      break;
+      break; */
     case 'data':
       import('./components/backend-ai-data-view.js');
       break;
@@ -97,6 +102,10 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
     case 'import':
       import('./components/backend-ai-import-view.js');
       break;
+    case 'unauthorized':
+      import('./components/backend-ai-permission-denied-view.js');
+      break;
+    case 'error':
     default:
       if (typeof globalThis.backendaiPages !== 'undefined') {
         for (let item of globalThis.backendaiPages) {
