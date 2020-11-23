@@ -874,6 +874,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         component.render();
       }
     }
+  globalThis.history.pushState({}, '', url);
   store.dispatch(navigate(decodeURIComponent(url), {}));
   }
 
