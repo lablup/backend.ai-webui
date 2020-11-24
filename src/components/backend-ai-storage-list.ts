@@ -285,6 +285,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           width: 100%;
         }
 
+        mwc-button#readonly-btn {
+          width: 150px;
+        }
+
         div#upload {
           margin: 0;
           padding: 0;
@@ -354,6 +358,15 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         backend-ai-dialog {
           --component-min-width: 350px;
+        }
+
+        @media screen and (max-width: 750px) {
+          mwc-button {
+            width: auto;
+          }
+          mwc-button > span {
+            display: none;
+          }
         }
       `];
   }
@@ -478,18 +491,22 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${this.explorer.id}</span>
         <div slot="action" class="horizontal layout flex folder-action-buttons">
           <div class="flex"></div>
-          <mwc-button outlined class="multiple-action-buttons fg red" icon="delete" @click="${() => this._openDeleteMultipleFileDialog()}"
-            label="${_t("data.explorer.Delete")}"
-            style="display:none;">
+          <mwc-button
+              outlined
+              class="multiple-action-buttons fg red"
+              icon="delete"
+              @click="${() => this._openDeleteMultipleFileDialog()}"
+              style="display:none;">
+              <span>${_t("data.explorer.Delete")}</span>
           </mwc-button>
           ${this.isWritable ? html`
           <div id="add-btn-cover">
             <mwc-button
                 id="add-btn"
                 icon="cloud_upload"
-                label="${_t("data.explorer.UploadFiles")}"
                 ?disabled=${!this.isWritable}
                 @click="${(e) => this._uploadFileBtnClick(e)}">
+                <span>${_t("data.explorer.UploadFiles")}</span>
             </mwc-button>
           </div>
           <div id="mkdir-cover">
@@ -497,17 +514,16 @@ export default class BackendAiStorageList extends BackendAIPage {
                 id="mkdir"
                 class="tooltip"
                 icon="create_new_folder"
-                label="${_t("data.explorer.NewFolder")}"
                 ?disabled=${!this.isWritable}
                 @click="${() => this._mkdirDialog()}">
+                <span>${_t("data.explorer.NewFolder")}</span>
             </mwc-button>
           </div>
           ` : html`
           <mwc-button
               id="readonly-btn"
-              style="width:150px;"
-              label="${_t("data.explorer.ReadonlyFolder")}"
               disabled>
+            <span>${_t("data.explorer.ReadonlyFolder")}</span>
           </mwc-button>
           `}
         </div>
