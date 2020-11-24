@@ -259,6 +259,13 @@ export default class BackendAISummary extends BackendAIPage {
         lablup-activity-panel.inner-panel:hover {
           --card-background-color: var(--general-sidepanel-color);
         }
+
+        @media screen and (max-width: 750px) {
+          lablup-activity-panel.footer-menu > div > a > div > span {
+            text-align: left;
+            width: 250px;
+          }
+        }
       `
     ];
   }
@@ -521,8 +528,8 @@ export default class BackendAISummary extends BackendAIPage {
               <div class="horizontal layout wrap">
                 <div class="vertical layout">
                   <div class="line"></div>
-                  <div class="horizontal layout flex wrap">
-                    <lablup-activity-panel noheader autowidth style="display: none;">
+                  <div class="horizontal layout flex wrap center-justified">
+                    <lablup-activity-panel class="footer-menu" noheader autowidth style="display: none;">
                       <div slot="message" class="vertical layout center start-justified flex upper-space">
                         <h3 style="margin-top:0px;">${_t("summary.CurrentVersion")}</h3>
                         ${this.is_superadmin ? html`
@@ -541,47 +548,47 @@ export default class BackendAISummary extends BackendAIPage {
                         ` : html``}
                       </div>
                     </lablup-activity-panel>
-                    <lablup-activity-panel noheader autowidth>
+                    <lablup-activity-panel class="footer-menu" noheader autowidth>
                       <div slot="message" class="layout horizontal center center-justified flex upper-space">
                           <a href="/environment">
                             <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
                               <i class="fas fa-sync-alt larger left-end-icon"></i>
-                              ${_t('summary.UpdateEnvironmentImages')}
+                              <span>${_t('summary.UpdateEnvironmentImages')}</span>
                               <i class="fas fa-chevron-right right-end-icon"></i>
                             </div>
                           </a>
                       </div>
                     </lablup-activity-panel>
                     ${this.is_superadmin ? html`
-                    <lablup-activity-panel noheader autowidth>
+                    <lablup-activity-panel class="footer-menu" noheader autowidth>
                     <div slot="message" class="layout horizontal center center-justified flex upper-space">
                       <a href="/agent">
                         <div class="layout horizontal center center-justified flex" style="font-size:14px;">
                           <i class="fas fa-box larger left-end-icon"></i>
-                          ${_t('summary.CheckResources')}
+                          <span>${_t('summary.CheckResources')}</span>
                           <i class="fas fa-chevron-right right-end-icon"></i>
                         </div>
                       </a>
                     </div>
                   </lablup-activity-panel>
-                  <lablup-activity-panel noheader autowidth>
+                  <lablup-activity-panel class="footer-menu" noheader autowidth>
                     <div slot="message" class="layout horizontal center center-justified flex upper-space">
                         <a href="/settings">
                           <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
                             <i class="fas fa-desktop larger left-end-icon"></i>
-                            ${_t('summary.ChangeSystemSetting')}
+                            <span>${_t('summary.ChangeSystemSetting')}</span>
                             <i class="fas fa-chevron-right right-end-icon"></i>
                           </div>
                         </a>
                     </div>
                   </lablup-activity-panel>` : html``}
                     
-                    <lablup-activity-panel noheader autowidth>
+                    <lablup-activity-panel class="footer-menu" noheader autowidth>
                       <div slot="message" class="layout horizontal center center-justified flex upper-space">
                           <a href="/maintenance">
                             <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
                               <i class="fas fa-tools larger left-end-icon"></i>
-                              ${_t('summary.SystemMaintenance')}
+                              <span>${_t('summary.SystemMaintenance')}</span>
                               <i class="fas fa-chevron-right right-end-icon"></i>
                             </div>
                           </a>
