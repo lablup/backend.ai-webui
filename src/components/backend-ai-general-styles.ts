@@ -18,7 +18,7 @@ export const BackendAiStyles = [
       --general-navbar-footer-background-color-r: 255;
       --general-navbar-footer-background-color-g: 255;
       --general-navbar-footer-background-color-b: 255;
-      --general-navbar-footer-background-color: rgba(255, 255, 255, 0.95);
+      --general-navbar-footer-background-color: #2a2c30;
       --general-navbar-footer-background-color-less: rgba(255, 255, 255, 0.6);
       --general-navbar-footer-background-border: rgba(23, 23, 23, 1);
       --general-navbar-footer-background-opacity: 1;
