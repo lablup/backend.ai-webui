@@ -260,6 +260,17 @@ export default class BackendAISummary extends BackendAIPage {
           --card-background-color: var(--general-sidepanel-color);
         }
 
+        @media screen and (max-width: 850px) {
+          .notice-ticker {
+            margin-left: 0px;
+          }
+
+          .notice-ticker > span {
+            max-width: 250px;
+            line-height: 1em;
+          }
+        }
+
         @media screen and (max-width: 750px) {
           lablup-activity-panel.footer-menu > div > a > div > span {
             text-align: left;
