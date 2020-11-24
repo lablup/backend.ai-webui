@@ -54,6 +54,12 @@ export default class ChartJs extends LitElement {
           width: 100%;
           height: 100%
         }
+
+        @media only screen and (max-width: 1015px) {
+          .chart-sub-container {
+            width: 90%;
+          }
+        }
       `
     ];
   }
@@ -66,7 +72,7 @@ export default class ChartJs extends LitElement {
 
   public render(): void | TemplateResult {
     return html`
-      <div class="chart-top-container">
+      <div class="chart-top-container" style="display:grid;place-items:center;">
         <div class="chart-shell chart-sub-container">
           <canvas></canvas>
         </div>
