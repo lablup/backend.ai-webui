@@ -240,6 +240,17 @@ export default class BackendAICredentialView extends BackendAIPage {
           height: 20px;
           border-bottom: 1px solid #DDD;
         }
+
+        @media screen and (max-width: 805px) {
+          mwc-tab, mwc-button {
+            --mdc-typography-button-font-size: 10px;
+          }
+
+          wl-tab {
+            width: 5px;
+          }
+        }
+
       `];
   }
 
@@ -996,7 +1007,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 <wl-tab value="inactive-credential-list" @click="${(e) => this._showList(e.target)}">${_t("credential.Inactive")}</wl-tab>
               </wl-tab-group>
               <div class="flex"></div>
-              <mwc-button raised id="add-user" icon="add" label="${_t("credential.AddCredential")}"
+              <mwc-button raised id="add-keypair" icon="add" label="${_t("credential.AddCredential")}"
                   @click="${this._launchKeyPairDialog}"></mwc-button>
             </h4>
             <backend-ai-credential-list class="list-content" id="active-credential-list" condition="active" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
