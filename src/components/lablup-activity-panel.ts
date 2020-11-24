@@ -111,6 +111,7 @@ export default class LablupActivityPanel extends LitElement {
           div.card {
             min-width: 350px;
             width: 350px !important;
+            height: auto !important;
           }
         }
       `];

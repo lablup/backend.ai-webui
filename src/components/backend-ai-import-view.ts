@@ -383,12 +383,12 @@ export default class BackendAIImport extends BackendAIPage {
       id="session-launcher" ?active="${this.active === true}"
       .newSessionDialogTitle="${_t('session.launcher.StartImportedNotebook')}"></backend-ai-session-launcher>
       <div class="horizontal wrap layout">
-        <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" width="350" narrow>
+        <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" width="350" height="490" narrow>
           <div slot="message">
               <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>
           </div>
         </lablup-activity-panel>
-        <lablup-activity-panel title="${_t('import.CreateNotebookButton')}" elevation="1">
+        <lablup-activity-panel title="${_t('import.CreateNotebookButton')}" elevation="1" height="490">
           <div slot="message">
             <div class="vertical wrap layout center description">
               ${_t('import.YouCanCreateNotebookCode')}
