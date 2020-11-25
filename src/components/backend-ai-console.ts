@@ -371,6 +371,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * Display the toggle sidebar when this.mini_ui is true.
    */
   toggleSidebarUI(): void {
+    if (this.contentBody.open === true) {
+      this._sidepanel = '';
+      this.toggleSidePanelUI();
+    }
     if (!this.mini_ui) {
       this.mini_ui = true;
     } else {
@@ -421,6 +425,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * @param {string} panel
    */
   _openSidePanel(panel): void {
+    if (document.body.clientWidth < 750) {
+      this.mini_ui = true;
+      this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight, true);
+    }
+
     if (this.contentBody.open === true) {
       if (panel != this._sidepanel) { // change panel only.
         this._sidepanel = panel;
@@ -439,10 +448,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    *
    * @param {number} width
    * @param {number} height
+   * @param {boolean} applyMiniui
    */
-  _changeDrawerLayout(width, height): void {
+  _changeDrawerLayout(width, height, applyMiniui = false): void {
     this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
-    if (width < 700) {  // Close drawer
+    if (width < 700 && !applyMiniui) {  // Close drawer
       this.appBody.style.setProperty('--mdc-drawer-width', this.sidebarWidth + 'px');
       this.appBody.type = 'modal';
       this.appBody.open = false;
@@ -452,6 +462,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (this.mini_ui) {
         this.mini_ui = false;
         globalThis.mini_ui = this.mini_ui;
+      }
+      /* close opened sidepanel immediately */
+      if(this.contentBody.open) {
+        this.contentBody.open = false;
       }
     } else { // Open drawer
       if (this.mini_ui) {

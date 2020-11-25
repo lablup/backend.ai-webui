@@ -526,21 +526,15 @@ export const BackendAiConsoleStyles = [
         background-color: var(--general-navbar-footer-background-color);
         color: var(--general-sidebar-navbar-footer-color);
       }
-      div#center-area {
-        display: none;
-      }
-      span.email {
-        display: none;
-      }
-      span.full_name {
-        display: none;
-      }
-      span.log_out {
+      div#center-area, span.email, span.full_name, span.log_out {
         display: none;
       }
       mwc-menu#dropdown-menu {
         position: relative;
         left: 12vw;
+      }
+      mwc-top-app-bar-fixed {
+        --mdc-top-app-bar-width: 410px !important;
       }
     }
 
@@ -548,14 +542,12 @@ export const BackendAiConsoleStyles = [
       mwc-select#group-select {
         display: none;
       }
+
     }
 
     @media screen and (max-width: 1030px) {
-      span.email {
-        display: none;
-      }
-
-      #group-select-box > div > p {
+      span.email, #group-select-box > div > p
+       {
         display: none;
       }
     }
