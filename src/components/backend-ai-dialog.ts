@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 //import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {css, customElement, html, LitElement, property, query} from "lit-element";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import 'weightless/button';
 import 'weightless/card';
@@ -30,7 +30,6 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 @customElement("backend-ai-dialog")
 export default class BackendAiDialog extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: Object}) dialog = Object();
   @property({type: Boolean}) fixed = false;
   @property({type: Boolean}) narrowLayout = false;
   @property({type: Boolean}) scrollable = false;
@@ -41,6 +40,8 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) hideActions = true;
   @property({type: Boolean}) open = false;
   @property({type: String}) type = 'normal';
+
+  @query('#dialog') protected dialog;
 
   constructor() {
     super();
@@ -90,14 +91,6 @@ export default class BackendAiDialog extends LitElement {
           padding: 5px 15px 15px 15px;
         }
 
-        mwc-dialog wl-button.cancel {
-          margin-right: 5px;
-        }
-
-        mwc-dialog wl-button.ok {
-          margin-right: 5px;
-        }
-
         mwc-dialog[narrow] div.content,
         mwc-dialog[narrow] div.footer {
           padding: 0;
@@ -123,13 +116,19 @@ export default class BackendAiDialog extends LitElement {
   }
 
   firstUpdated() {
-    this.dialog = this.shadowRoot.querySelector('#dialog');
     this.open = this.dialog.open;
-    this.dialog.addEventListener('didShow', () => {
-      this._syncOpenState()
+    if (this.persistent) {
+      this.dialog.scrimClickAction = 'persistent';
+    }
+    this.dialog.addEventListener('opened', () => {
+      this.open = this.dialog.open;
     });
-    this.dialog.addEventListener('didHide', () => {
-      this._syncOpenState()
+    this.dialog.addEventListener('closed', (e) => {
+      if ('action' in e.detail && e.detail.action === 'persistent') {
+        this.show();
+      } else {
+        this.open = this.dialog.open;
+      }
     });
   }
 
@@ -138,25 +137,10 @@ export default class BackendAiDialog extends LitElement {
   }
 
   /**
-   * Synchronize the open state according to this.open.
-   */
-  _syncOpenState() {
-    this.open = this.dialog.open;
-    if (this.open === true) {
-      let event = new CustomEvent("didShow", {"detail": ""});
-      this.dispatchEvent(event);
-    } else {
-      let event = new CustomEvent("didHide", {"detail": ""});
-      this.dispatchEvent(event);
-    }
-  }
-
-  /**
    * Hide a dialog.
    */
   _hideDialog() {
     this.dialog.close();
-    this.open = this.dialog.open;
   }
 
   /**
@@ -164,7 +148,6 @@ export default class BackendAiDialog extends LitElement {
    */
   show() {
     this.dialog.show();
-    this.open = this.dialog.open;
   }
 
   /**
@@ -172,7 +155,6 @@ export default class BackendAiDialog extends LitElement {
    */
   hide() {
     this.dialog.close();
-    this.open = this.dialog.open;
   }
 
   render() {
