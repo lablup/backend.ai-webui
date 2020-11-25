@@ -234,7 +234,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 305px;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-size: 16px;
+          --mdc-typography-subtitle1-font-size: 14px;
           --mdc-typography-subtitle1-font-color: rgb(24, 24, 24);
           --mdc-typography-subtitle1-font-weight: 400;
           --mdc-typography-subtitle1-line-height: 16px;
