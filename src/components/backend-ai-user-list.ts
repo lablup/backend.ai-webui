@@ -447,25 +447,26 @@ export default class BackendAIUserList extends BackendAIPage {
       return;
     }
 
-    globalThis.backendaiclient.user.modify(this.userInfo.email, input)
+    // globalThis.backendaiclient.user.modify(this.userInfo.email, input)
+    globalThis.backendaiclient.user.update(this.userInfo.email, input)
       .then(res => {
         if (res.modify_user.ok) {
           this.shadowRoot.querySelector("#user-info-dialog").hide();
 
-          this.notification.text = "Successfully Modified";
+          this.notification.text = _text('environment.SuccessfullyModified');
           this.userInfo = {...this.userInfo, ...input, password: null};
           this._refreshUserData();
           this.shadowRoot.querySelector("#password").value = "";
           this.shadowRoot.querySelector("#confirm").value = "";
         } else {
-          this.notification.text = `Error: ${res.modify_user.msg}`;
+          this.notification.text = res.modify_user.msg ? `${ _text('logs.errorMessage') + ':  ' + res.modify_user.msg}` : _text('dialog.ErrorOccurred');
 
           this.shadowRoot.querySelector("#username").value = this.userInfo.username;
           this.shadowRoot.querySelector("#description").value = this.userInfo.description;
         }
-
         this.notification.show();
-      })
+      });
+    
   }
 
   render() {
@@ -520,6 +521,7 @@ export default class BackendAIUserList extends BackendAIPage {
               <mwc-textfield
                   ?disabled=${!this.editMode}
                   label="${_text("credential.FullName")}"
+                  id="full_name"
                   pattern="^[a-zA-Z0-9_ ]*$"
                   value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}"
                   ></mwc-textfield>
@@ -528,11 +530,15 @@ export default class BackendAIUserList extends BackendAIPage {
                     type="password"
                     id="password"
                     label="${_text("general.NewPassword")}"></mwc-textfield>
+                    <mwc-textfield
+                    type="password"
+                    id="confirm"
+                    label="${_text("console.menu.NewPasswordAgain")}"></mwc-textfield>
                 <mwc-textarea
                     type="text"
                     id="description"
                     label="${_text("credential.Description")}"
-                    id="password"></mwc-textfield>`: html``}
+                    id="description"></mwc-textfield>`: html``}
               ${this.editMode ? html`
                 <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text("credential.DescActiveUser")}</p>
