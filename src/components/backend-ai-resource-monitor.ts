@@ -431,8 +431,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if (forceUpdate === true) {
         await this._refreshResourcePolicy();
         this.aggregateResource('update-scaling-group');
-      } else {
-      }
+      } 
     }
   }
 
