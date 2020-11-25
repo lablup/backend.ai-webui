@@ -26,6 +26,7 @@ import '@material/mwc-menu';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
 import '../plastics/lablup-shields/lablup-shields';
+import './lablup-progress-bar';
 import './backend-ai-dialog';
 
 import JsonToCsv from '../lib/json_to_csv';
@@ -277,6 +278,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           --mdc-theme-primary: var(--paper-green-600);
         }
 
+        lablup-progress-bar.usage {
+          --progress-bar-height: 5px;
+          --progress-bar-width: 60px;
+          margin-bottom: 0;
+        }
+
         div.filters #access-key-filter {
           --input-font-size: small;
           --input-label-font-size: small;
@@ -496,6 +503,16 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
             } else {
               sessions[objectKey].cpu_used_time = this._automaticScaledTime(0);
+            }
+            if (liveStat && liveStat.cpu_util) {
+              sessions[objectKey].cpu_util = liveStat.cpu_util.current;
+            } else {
+              sessions[objectKey].cpu_util = 0;
+            }
+            if (liveStat && liveStat.mem) {
+              sessions[objectKey].mem_current = liveStat.mem.current;
+            } else {
+              sessions[objectKey].mem_current = 0;
             }
             if (liveStat && liveStat.io_read) {
               sessions[objectKey].io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
@@ -1260,8 +1277,35 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   usageRenderer(root, column?, rowData?) {
-    render(
-      html`
+    if (this.condition === 'running') {
+      render(
+        // language=HTML
+        html`
+        <div class="vertical start start-justified layout">
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">CPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.cpu_util / (rowData.item.cpu_slot) }"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">RAM</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.mem_current / (rowData.item.mem_slot * 1000000000) }"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>
+       </div>
+        `, root);
+    } else if (this.condition === 'finished') {
+      render(
+        // language=HTML
+        html`
         <div class="layout horizontal center flex">
           <wl-icon class="fg blue indicator" style="margin-right:3px;">developer_board</wl-icon>
           ${rowData.item.cpu_used_time.D ? html`
@@ -1305,7 +1349,8 @@ export default class BackendAiSessionList extends BackendAIPage {
             <span class="indicator">WRITE</span>
           </div>
         </div>`, root
-    );
+      );
+    }
   }
 
   _toggleCheckbox(object) {
