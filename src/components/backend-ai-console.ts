@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage, translateUnsafeHTML as _tr} from "lit-translate";
-import {customElement, html, css, LitElement, property} from "lit-element";
+import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import {css, customElement, html, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
 import {installOfflineWatcher} from 'pwa-helpers/network';
@@ -125,6 +125,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Number}) minibarWidth = 88;
   @property({type: Number}) sidebarWidth = 250;
   @property({type: Number}) sidepanelWidth = 250;
+  @property({type: Array}) availablePages = ["summary", "verify-email", "change-password", "job",
+                                             "data", "statistics", "usersettings", "credential",
+                                             "environment", "agent", "settings", "maintenance",
+                                             "information", "github", "import", 'unauthorized'];
+  @property({type: Array}) adminOnlyPages = ["experiment", "credential", "environment", "agent",
+                                             "settings", "maintenance", "information"];
 
   constructor() {
     super();
@@ -283,13 +289,16 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               pageItem.classList.add("page");
               pageItem.setAttribute('name', page);
               this.appPage.appendChild(pageItem);
-              this.plugins['menuitem'].push(page);
+            this.plugins['menuitem'].push(page);
+            this.availablePages.push(page);
               switch (pageItem.permission) {
                 case 'superadmin':
                   this.plugins['menuitem-superadmin'].push(page);
+                  this.adminOnlyPages.push(page);
                   break;
                 case 'admin':
                   this.plugins['menuitem-admin'].push(page);
+                  this.adminOnlyPages.push(page);
                   break;
                 default:
                   this.plugins['menuitem-user'].push(page);
@@ -344,6 +353,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     });
     this.addTooltips();
     this.sidebarMenu.style.minHeight = (this.is_admin || this.is_superadmin) ? '600px' : '250px';
+    if (!this.is_admin || !this.is_superadmin) {
+      if (this.adminOnlyPages.includes(this._page) || this._page === 'unauthorized') {
+        this._page = 'unauthorized';
+        globalThis.history.pushState({}, '', '/unauthorized');
+        store.dispatch(navigate(decodeURIComponent(this._page)));
+      }
+    } else {
+      if (this._page === 'unauthorized') {
+        this._page = 'summary';
+        globalThis.history.pushState({}, '', '/summary');
+        store.dispatch(navigate(decodeURIComponent(this._page)));
+      }
+    }
   }
 
   showUpdateNotifier(): void {
@@ -599,15 +621,18 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view: string = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'information', 'statistics', 'github', 'import'].includes(view) !== true) { // Fallback for Windows OS
+      if (this.availablePages.includes(view) !== true) { // Fallback for Windows OS
         let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
         if (typeof modified_view != 'undefined') {
           view = modified_view;
-        } else {
-          view = 'summary';
         }
-        this._page = view;
       }
+      if (this.adminOnlyPages.includes(view)) {
+        if (!this.is_admin || !this.is_superadmin) {
+          view = 'unauthorized';
+        }
+      }
+      this._page = view;
       this._updateSidebar(view);
     }
   }
@@ -676,6 +701,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           }
           document.addEventListener('backend-ai-plugin-loaded', () => {
             this._page = this._lazyPage;
+            if (this.availablePages.includes(this._page) !== true) {
+              this._page = 'error';
+            }
             if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(this._page)) {
               let component = this.shadowRoot.querySelector(this._page);
               component.active = true;
@@ -850,6 +878,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * @param {string} url
    */
   _moveTo(url) {
+    let page = url.split('/')[1];
+    if (!this.availablePages.includes(page) && (this.is_admin && !this.adminOnlyPages.includes(page))) {
+      store.dispatch(navigate(decodeURIComponent("/error")));
+      this._page = 'error';
+      return;
+    }
     globalThis.history.pushState({}, '', url);
     store.dispatch(navigate(decodeURIComponent(url), {}));
     if ('menuitem' in this.plugins) {
@@ -860,12 +894,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           component.removeAttribute('active');
         }
       }
-    }
-    if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(this._page)) {
-      let component = this.shadowRoot.querySelector(this._page);
-      component.active = true;
-      component.setAttribute('active', true);
-      component.render();
+      if (this.plugins['menuitem'].includes(this._page)) {
+        let component = this.shadowRoot.querySelector(this._page);
+        component.active = true;
+        component.setAttribute('active', true);
+        component.render();
+      }
     }
   }
 
@@ -1213,7 +1247,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                     <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
                     <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
                     <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
-                    <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>
+                    <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
                     <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
                     <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
@@ -1226,6 +1260,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                     <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
                     <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${this._page === 'change-password'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>
                     <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view>
+                    <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${this._page === 'unauthorized'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view>
                   </div>
                 </section>
               </div>
