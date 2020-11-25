@@ -486,6 +486,21 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           list-style-type: none;
         }
 
+        mwc-button > mwc-icon {
+          display: none;
+        }
+
+        @media screen and (max-width: 750px) {
+          #launch-session {
+            --component-width: 48px;
+          }
+          mwc-button > span {
+            display: none;
+          }
+          mwc-button > mwc-icon {
+            display: inline-block;
+          }
+        }
       `];
   }
 
@@ -1805,7 +1820,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <mwc-button raised class="primary-action" id="launch-session" label="${_t("session.launcher.Start")}" ?disabled="${!this.enableLaunchButton}" @click="${() => this._launchSessionDialog()}">
+      <mwc-button raised class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}" @click="${() => this._launchSessionDialog()}" icon="power_settings_new">
+        <span>${_t("session.launcher.Start")}</span>
       </mwc-button>
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>

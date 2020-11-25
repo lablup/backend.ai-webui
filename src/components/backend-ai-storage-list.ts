@@ -188,11 +188,16 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         #folder-explorer-dialog {
+          width: calc(100% - 250px); /* 250px is width for drawer menu */
           --component-height: calc(100vh - 200px); /* calc(100vh - 170px); */
           right: 0;
           top: 0;
           position: fixed;
           margin: 170px 0 0 0;
+        }
+
+        #folder-explorer-dialog.mini_ui {
+          width: calc(100% - 88px); /* 88px is width for mini-ui icon of drawer menu */
         }
 
         #folder-explorer-dialog vaadin-grid vaadin-grid-column {
@@ -204,24 +209,32 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-icon-button-size: 28px;
         }
 
-        @media screen and (max-width: 899px) {
+        @media screen and (max-width: 700px) {
           #folder-explorer-dialog,
           #folder-explorer-dialog.mini_ui {
-            left: 0;
+            min-width: 410px;
             --component-width: 100%;
             width: 100%;
+            position: absolute;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0px;
+            right: 0px;
+          }
+        }
+
+        @media screen and (max-width: 750px) {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui {
+            --component-width: auto;
           }
         }
 
         @media screen and (min-width: 900px) {
-          #folder-explorer-dialog {
-            left: 250px; /* 190px; */
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui
+           {
             --component-width: calc(100% - 45px); /* calc(100% - 30px); */
-          }
-
-          #folder-explorer-dialog.mini_ui {
-            left: 85px; /* 65px; */
-            --component-width: calc(100% - 45px);
           }
         }
 
@@ -352,7 +365,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         #modify-permission-dialog {
-          --dialog-min-width: 600px;
           --component-min-width: 600px;
         }
 
@@ -366,6 +378,9 @@ export default class BackendAiStorageList extends BackendAIPage {
           }
           mwc-button > span {
             display: none;
+          }
+          #modify-permission-dialog {
+            --component-min-width: 100%;
           }
         }
       `];
@@ -593,7 +608,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             <vaadin-grid-sort-column flex-grow="2" resizable header="${_t("data.explorer.Created")}" path="ctime" .renderer="${this._boundCreatedTimeRenderer}">
             </vaadin-grid-sort-column>
 
-            <vaadin-grid-column flex-grow="1" resizable>
+            <vaadin-grid-column auto-width resizable>
               <template class="header">
                 <vaadin-grid-sorter path="size">${_t("data.explorer.Size")}</vaadin-grid-sorter>
               </template>

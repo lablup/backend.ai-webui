@@ -290,7 +290,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         .resources .monitor {
-          margin-right: 5px;
+          margin-right: 20px;
           margin-bottom: 15px;
         }
 
@@ -355,7 +355,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         .horizontal-card > #resource-gauges > .monitor {
-          width: 180px;
+          width: 200px;
         }
 
         @media screen and (min-width: 750px) {

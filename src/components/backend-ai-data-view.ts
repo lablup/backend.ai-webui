@@ -239,9 +239,10 @@ export default class BackendAIData extends BackendAIPage {
         }
 
         @media screen and (max-width: 750px) {
-          mwc-button {
-            width: auto;
+          mwc-tab {
+            --mdc-typography-button-font-size: 10px;
           }
+
           mwc-button > span {
             display: none;
           }

@@ -106,7 +106,11 @@ export default class BackendAiSessionView extends BackendAIPage {
           --component-width: 100px;
           --component-shadow-color: transparent;
         }
-
+        @media screen and (max-width: 805px) {
+          mwc-tab {
+            --mdc-typography-button-font-size: 10px;
+          }
+        }
       `];
   }
 

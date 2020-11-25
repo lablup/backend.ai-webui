@@ -46,6 +46,13 @@ export class TopAppBarFixed extends TopAppBarFixedBase {
         .mdc-top-app-bar--prominent-fixed-adjust {
           padding-top: 96px;
         }
+
+        /* min-width for mobile-view */
+        @media screen and (max-width: 375px) {
+          .mdc-top-app-bar {
+            min-width: 375px !important;
+          }
+        }
       `];
   }
 }
