@@ -7,7 +7,6 @@ import {css, customElement, html, LitElement, property} from "lit-element";
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import 'weightless/button';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/icon';
 import '../plastics/mwc/mwc-dialog';
 import '@material/mwc-icon-button';

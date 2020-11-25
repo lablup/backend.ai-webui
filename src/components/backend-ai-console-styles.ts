@@ -8,7 +8,6 @@ export const BackendAiConsoleStyles = [
     .loading-background {
       transition: all 0.3s linear;
       position: fixed;
-      z-index: 10000;
       top: 0;
       left: 0;
       width: 100%;

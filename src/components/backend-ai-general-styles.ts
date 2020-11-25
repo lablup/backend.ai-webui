@@ -485,6 +485,7 @@ export const BackendAiStyles = [
       --mdc-theme-primary: var(--general-textfield-selected-color);
       --mdc-text-field-hover-line-color: transparent;
       --mdc-text-field-idle-line-color: var(--general-textfield-idle-color);
+      --mdc-text-field-fill-color: rgb(250, 250, 250);
       font-family: var(--general-font-family);
       --mdc-typography-font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);

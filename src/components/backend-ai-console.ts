@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage, translateUnsafeHTML as _tr} from "lit-translate";
-import {customElement, html, css, LitElement, property} from "lit-element";
+import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import {css, customElement, html, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
 import {installOfflineWatcher} from 'pwa-helpers/network';
@@ -332,6 +332,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._writeRecentProjectGroup(this.current_group);
     document.body.style.backgroundImage = 'none';
     this.appBody.style.visibility = 'visible';
+
     let curtain: HTMLElement = this.shadowRoot.getElementById('loading-curtain');
     curtain.classList.add('visuallyhidden');
     curtain.addEventListener('transitionend', () => {
