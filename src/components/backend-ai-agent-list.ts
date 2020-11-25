@@ -130,15 +130,6 @@ export default class BackendAIAgentList extends BackendAIPage {
           width: 100px !important;
         }
 
-        .date-indicator {
-          font-size: 12px;
-        }
-
-        .asic-indicator {
-          border-top: 1px solid #cccccc;
-          margin-top: 3px;
-          padding-top: 3px;
-        }
       `];
   }
 
