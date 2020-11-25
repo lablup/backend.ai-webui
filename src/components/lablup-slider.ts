@@ -42,7 +42,7 @@ export default class LablupSlider extends LitElement {
   @property({type: Number}) marker_limit = 30;
   @property({type: Boolean}) disabled = null;
   @property({type: Object}) textfield;
-  @query('#slider') slider;
+  @query('#slider', true) slider;
 
   static get styles() {
     return [
