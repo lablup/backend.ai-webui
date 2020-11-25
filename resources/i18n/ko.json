@@ -298,6 +298,7 @@
     "FullName": "성명",
     "Description": "소개",
     "Days": "일",
+    "NoChanges": "변경 사항이 없습니다.",
     "validation": {
       "InvalidEmailAddress": "잘못된 이메일 주소 형식입니다.",
       "PolicyName": "정책 이름이 필요합니다.",

@@ -302,6 +302,7 @@
     "FullName": "Full Name",
     "Description": "Description",
     "Days": "Days",
+    "NoChanges": "No changes were made",
     "validation": {
       "InvalidEmailAddress": "Invalid Email Address.",
       "PolicyName": "Policy name Required.",
