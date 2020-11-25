@@ -94,6 +94,10 @@ export default class BackendAIAgentList extends BackendAIPage {
           margin-right: 5px;
         }
 
+        #agent-detail {
+          --component-max-width: 90%;
+        }
+
         lablup-progress-bar {
           width: 100px;
           border-radius: 3px;
@@ -753,14 +757,16 @@ export default class BackendAIAgentList extends BackendAIPage {
           ${'cpu_util_live' in this.agentDetail ?
       html`<div>
               <h3>CPU</h3>
+              <div class="horizontal wrap layout" style="max-width:600px;">
             ${this.agentDetail.cpu_util_live.map(item => html`
-              <div class="horizontal start-justified center layout">
+              <div class="horizontal start-justified center layout" style="padding:0 5px;">
                 <div style="font-size:8px;width:35px;">CPU${item.num}</div>
                 <lablup-progress-bar class="cpu"
                   progress="${item.pct / 100.0}"
                   description=""
                 ></lablup-progress-bar>
               </div>`)}
+              </div>
             </div>` : html``}
             <div style="margin-left:10px;">
               <h3>Memory</h3>
