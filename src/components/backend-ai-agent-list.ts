@@ -122,6 +122,10 @@ export default class BackendAIAgentList extends BackendAIPage {
           margin-bottom: 0;
         }
 
+        lablup-shields {
+          margin: 1px;
+        }
+
         .resource-indicator {
           width: 100px !important;
         }
@@ -666,17 +670,17 @@ export default class BackendAIAgentList extends BackendAIPage {
       html`
         <div class="layout vertical start justified wrap">
           <lablup-shields app="Agent" color="${this._heartbeatColor(rowData.item.status)}"
-                          description="${rowData.item.version}" ui="flat"></lablup-shields>
+                          description="${rowData.item.version}" ui="round"></lablup-shields>
           ${rowData.item.cuda_plugin ? html`
           <lablup-shields app="CUDA Plugin" color="blue"
-                          description="${rowData.item.cuda_plugin['version']}" ui="flat"></lablup-shields>
+                          description="${rowData.item.cuda_plugin['version']}" ui="round"></lablup-shields>
         ${rowData.item.cuda_fgpu_slots ? html`
           <lablup-shields app="" color="blue"
-                          description="Fractional GPU™" ui="flat"></lablup-shields>
+                          description="Fractional GPU™" ui="round"></lablup-shields>
         ` : html``}
           ${'cuda_version' in rowData.item.cuda_plugin ? html`
           <lablup-shields app="CUDA" color="green"
-                          description="${rowData.item.cuda_plugin['cuda_version']}" ui="flat"></lablup-shields>`
+                          description="${rowData.item.cuda_plugin['cuda_version']}" ui="round"></lablup-shields>`
         : html`          <lablup-shields app="CUDA Disabled" color="green"
                           description="" ui="flat"></lablup-shields>`}` : html``}
 
