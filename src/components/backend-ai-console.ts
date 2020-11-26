@@ -344,6 +344,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._writeRecentProjectGroup(this.current_group);
     document.body.style.backgroundImage = 'none';
     this.appBody.style.visibility = 'visible';
+
     let curtain: HTMLElement = this.shadowRoot.getElementById('loading-curtain');
     curtain.classList.add('visuallyhidden');
     curtain.addEventListener('transitionend', () => {

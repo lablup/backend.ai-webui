@@ -5,7 +5,6 @@
 import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import '../plastics/mwc/mwc-drawer';
-import '@material/mwc-dialog';
 import '@material/mwc-icon';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';

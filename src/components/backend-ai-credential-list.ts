@@ -125,6 +125,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         backend-ai-dialog {
           --component-min-width: 400px;
         }
+
         backend-ai-dialog h4 {
           font-size: 14px;
           padding: 5px 15px 5px 12px;
@@ -143,13 +144,6 @@ export default class BackendAICredentialList extends BackendAIPage {
 
         mwc-select {
           --mdc-theme-primary: var(--general-sidebar-color);
-        }
-
-        mwc-textfield {
-          width: 100%;
-          --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
         }
       `];
   }
