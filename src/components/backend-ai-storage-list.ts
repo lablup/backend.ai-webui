@@ -859,6 +859,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 icon="folder_open"
                 @click="${(e) => 
                           this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') 
+                                                  || rowData.item.is_owner
                                                   || (rowData.item.type === 'group' && this.is_admin)))}"
                 .folder-id="${rowData.item.name}"></mwc-icon-button>
             `
