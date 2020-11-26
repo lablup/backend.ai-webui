@@ -457,8 +457,8 @@ export default class BackendAICredentialList extends BackendAIPage {
   /**
    * Render an index.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   _indexRenderer(root, column, rowData) {
@@ -487,8 +487,8 @@ export default class BackendAICredentialList extends BackendAIPage {
   /**
    * Render a key elasped time.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   keyageRenderer(root, column?, rowData?) {
@@ -505,8 +505,8 @@ export default class BackendAICredentialList extends BackendAIPage {
   /**
    * Render key control buttons.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   controlRenderer(root, column?, rowData?) {
