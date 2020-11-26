@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage, translateUnsafeHTML as _tr} from "lit-translate";
-import {customElement, html, css, LitElement, property} from "lit-element";
+import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import {css, customElement, html, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
 import {installOfflineWatcher} from 'pwa-helpers/network';
@@ -102,6 +102,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) splash = Object();
   @property({type: Object}) loginPanel = Object();
   @property({type: String}) _page = '';
+  @property({type: String}) _lazyPage = '';
   @property({type: Object}) _pageParams = {};
   @property({type: String}) _sidepanel = '';
   @property({type: Boolean}) _drawerOpened = false;
@@ -124,6 +125,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Number}) minibarWidth = 88;
   @property({type: Number}) sidebarWidth = 250;
   @property({type: Number}) sidepanelWidth = 250;
+  @property({type: Array}) availablePages = ["summary", "verify-email", "change-password", "job",
+                                             "data", "statistics", "usersettings", "credential",
+                                             "environment", "agent", "settings", "maintenance",
+                                             "information", "github", "import", 'unauthorized'];
+  @property({type: Array}) adminOnlyPages = ["experiment", "credential", "environment", "agent",
+                                             "settings", "maintenance", "information"];
 
   constructor() {
     super();
@@ -150,6 +157,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
+    this.appPage = this.shadowRoot.querySelector('#app-page');
     this.contentBody = this.shadowRoot.querySelector('#content-body');
     this.contentBody.type = 'dismissible';
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
@@ -269,15 +277,46 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.plugins['login'] = config.plugin.login;
       }
       if ('page' in config.plugin) {
-        //for (let [key, item] of Object.entries(config.plugin.page)) {
-        //  console.log(key, item);
-        //}
-        this.plugins['page'] = config.plugin.page;
-        globalThis.backendaiPages = config.plugin.page;
-      }
-      if ('sidebar' in config.plugin) {
-        // TODO : multiple sidebar plugins
-        this.plugins['sidebar'] = config.plugin.sidebar;
+        this.plugins['page'] = [];
+        this.plugins['menuitem'] = [];
+        this.plugins['menuitem-user'] = [];
+        this.plugins['menuitem-admin'] = [];
+        this.plugins['menuitem-superadmin'] = [];
+        const pluginLoaderQueue = [] as any;
+        for (let page of config.plugin.page.split(',')) {
+          pluginLoaderQueue.push(import('../plugins/' + page + '.js').then((module) => {
+              let pageItem = document.createElement(page) as any;
+              pageItem.classList.add("page");
+              pageItem.setAttribute('name', page);
+              this.appPage.appendChild(pageItem);
+            this.plugins['menuitem'].push(page);
+            this.availablePages.push(page);
+              switch (pageItem.permission) {
+                case 'superadmin':
+                  this.plugins['menuitem-superadmin'].push(page);
+                  this.adminOnlyPages.push(page);
+                  break;
+                case 'admin':
+                  this.plugins['menuitem-admin'].push(page);
+                  this.adminOnlyPages.push(page);
+                  break;
+                default:
+                  this.plugins['menuitem-user'].push(page);
+              }
+              this.plugins['page'].push({
+                'name': page,
+                'url': page,
+                'menuitem': pageItem.menuitem
+              });
+              return Promise.resolve(true);
+            }));
+        }
+        Promise.all(pluginLoaderQueue).then((v)=>{
+          globalThis.backendaiPages = this.plugins['page'];
+          let event: CustomEvent = new CustomEvent("backend-ai-plugin-loaded", {"detail": true});
+          document.dispatchEvent(event);
+          this.requestUpdate();
+        });
       }
     }
     this.loginPanel.refreshWithConfig(config);
@@ -314,6 +353,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     });
     this.addTooltips();
     this.sidebarMenu.style.minHeight = (this.is_admin || this.is_superadmin) ? '600px' : '250px';
+    if (!this.is_admin || !this.is_superadmin) {
+      if (this.adminOnlyPages.includes(this._page) || this._page === 'unauthorized') {
+        this._page = 'unauthorized';
+        globalThis.history.pushState({}, '', '/unauthorized');
+        store.dispatch(navigate(decodeURIComponent(this._page)));
+      }
+    } else {
+      if (this._page === 'unauthorized') {
+        this._page = 'summary';
+        globalThis.history.pushState({}, '', '/summary');
+        store.dispatch(navigate(decodeURIComponent(this._page)));
+      }
+    }
   }
 
   showUpdateNotifier(): void {
@@ -569,15 +621,18 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view: string = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'information', 'statistics', 'github', 'import'].includes(view) !== true) { // Fallback for Windows OS
+      if (this.availablePages.includes(view) !== true) { // Fallback for Windows OS
         let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
         if (typeof modified_view != 'undefined') {
           view = modified_view;
-        } else {
-          view = 'summary';
         }
-        this._page = view;
       }
+      if (this.adminOnlyPages.includes(view)) {
+        if (!this.is_admin || !this.is_superadmin) {
+          view = 'unauthorized';
+        }
+      }
+      this._page = view;
       this._updateSidebar(view);
     }
   }
@@ -592,69 +647,75 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       case 'summary':
       case 'verify-email':
         this.menuTitle = _text("console.menu.Summary");
-        // this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'change-password':
         this.menuTitle = _text("console.menu.Summary") + this.user_id;
-        // this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'job':
         this.menuTitle = _text("console.menu.Sessions");
-        // this.updateTitleColor('var(--paper-red-800)', '#efefef');
         break;
       case 'experiment':
         this.menuTitle = _text("console.menu.Experiments");
-        // this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'data':
         this.menuTitle = _text("console.menu.Data&Storage");
-        // this.updateTitleColor('var(--paper-orange-800)', '#efefef');
         break;
       case 'statistics':
         this.menuTitle = _text("console.menu.Statistics");
-        // this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
         break;
       case 'usersettings':
         this.menuTitle = _text("console.menu.Settings&Logs");
-        // this.updateTitleColor('var(--paper-teal-800)', '#efefef');
         break;
       case 'credential':
         this.menuTitle = _text("console.menu.UserCredentials&Policies");
-        // this.updateTitleColor('var(--paper-lime-800)', '#efefef');
         break;
       case 'environment':
         this.menuTitle = _text("console.menu.Environments&Presets");
-        // this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
         break;
       case 'agent':
         this.menuTitle = _text("console.menu.ComputationResources");
-        // this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'settings':
         this.menuTitle = _text("console.menu.Configurations");
-        // this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'maintenance':
         this.menuTitle = _text("console.menu.Maintenance");
-        // this.updateTitleColor('var(--paper-pink-800)', '#efefef');
         break;
       case 'information':
         this.menuTitle = _text("console.menu.Information");
-        // this.updateTitleColor('var(--paper-purple-800)', '#efefef');
         break;
       case 'logs':
         this.menuTitle = _text("console.menu.Logs");
-        // this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
       case 'github':
       case 'import':
         this.menuTitle = _text("console.menu.Import&Run");
-        // this.updateTitleColor('var(--paper-blue-800)', '#efefef');
         break;
       default:
+        if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(view)) {
+          this.menuTitle = view;
+          break;
+        } else {
+          if (this._page !== 'error') {
+            this._lazyPage = this._page;
+          }
+          document.addEventListener('backend-ai-plugin-loaded', () => {
+            this._page = this._lazyPage;
+            if (this.availablePages.includes(this._page) !== true) {
+              this._page = 'error';
+            }
+            if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(this._page)) {
+              let component = this.shadowRoot.querySelector(this._page);
+              component.active = true;
+              component.setAttribute('active', true);
+              component.render();
+            }
+          });
+          break;
+        }
+        console.log("set to error");
         this._page = 'error';
         this.menuTitle = _text("console.NOTFOUND");
-      // this.updateTitleColor('var(--paper-grey-800)', '#efefef');
     }
   }
 
@@ -759,7 +820,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.backendaiclient.current_group = e.target.value;
     this.current_group = globalThis.backendaiclient.current_group;
     this._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
-    let event = new CustomEvent("backend-ai-group-changed", {"detail": globalThis.backendaiclient.current_group});
+    let event: CustomEvent = new CustomEvent("backend-ai-group-changed", {"detail": globalThis.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
 
@@ -817,8 +878,29 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * @param {string} url
    */
   _moveTo(url) {
+    let page = url.split('/')[1];
+    if (!this.availablePages.includes(page) && (this.is_admin && !this.adminOnlyPages.includes(page))) {
+      store.dispatch(navigate(decodeURIComponent("/error")));
+      this._page = 'error';
+      return;
+    }
     globalThis.history.pushState({}, '', url);
     store.dispatch(navigate(decodeURIComponent(url), {}));
+    if ('menuitem' in this.plugins) {
+      for (let item of this.plugins.menuitem) {
+        if (item !== this._page) {
+          let component = this.shadowRoot.querySelector(item);
+          component.active = false;
+          component.removeAttribute('active');
+        }
+      }
+      if (this.plugins['menuitem'].includes(this._page)) {
+        let component = this.shadowRoot.querySelector(this._page);
+        component.active = true;
+        component.setAttribute('active', true);
+        component.render();
+      }
+    }
   }
 
   /**
@@ -1008,6 +1090,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
+            ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-user'].includes(item.url))).map(item => html`
+            <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
+              <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
+              <span class="full-menu">${item.menuitem}</span>
+            </mwc-list-item>
+            `) : html``}
             ${this.is_admin ?
               html`
                 <h3 class="full-menu">${_t("console.menu.Administration")}</h3>
@@ -1019,6 +1107,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <i class="fas fa-microchip" slot="graphic" id="environments-menu-icon"></i>
                   <span class="full-menu">${_t("console.menu.Environments")}</span>
                 </mwc-list-item>` : html``}
+                ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-admin'].includes(item.url))).map(item => html`
+                <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
+                  <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
+                  <span class="full-menu">${item.menuitem}</span>
+                </mwc-list-item>
+                `) : html``}
             ${this.is_superadmin ?
               html`
                 <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}" style="display:none">
@@ -1036,7 +1130,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <mwc-list-item graphic="icon" ?selected="${this._page === 'information'}" @click="${() => this._moveTo('/information')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-info-circle" slot="graphic" id="information-menu-icon"></i>
                   <span class="full-menu">${_t("console.menu.Information")}</span>
-                </mwc-list-item>` : html``}
+                </mwc-list-item>
+                ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-superadmin'].includes(item.url))).map(item => html`
+                <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
+                  <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
+                  <span class="full-menu">${item.menuitem}</span>
+                </mwc-list-item>
+                `) : html``}
+            ` : html``}
           </mwc-list>
           <footer class="full-menu">
             <div class="terms-of-use" style="margin-bottom:10px;">
@@ -1054,7 +1155,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.11.3.201118</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.11.3.201123</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1146,7 +1247,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                     <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
                     <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
                     <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
-                    <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>
+                    <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
                     <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
                     <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
@@ -1159,6 +1260,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                     <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
                     <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${this._page === 'change-password'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>
                     <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view>
+                    <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${this._page === 'unauthorized'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view>
                   </div>
                 </section>
               </div>

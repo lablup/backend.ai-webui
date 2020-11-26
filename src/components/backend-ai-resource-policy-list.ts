@@ -656,7 +656,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       this.notification.text = err.message;
       this.notification.show();
     }
-
   }
 
   _deleteResourcePolicy() {
@@ -790,7 +789,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _controlHeightByVfolderHostCount(isOpened = false) {
     if (!isOpened) {
       this.shadowRoot.querySelector('#dropdown-area').style.height = this.selectAreaHeight;
-      console.log(this.selectAreaHeight);
       return;
     }
     let itemCount = this.shadowRoot.querySelector('#allowed_vfolder-hosts').items.length;

@@ -11,7 +11,12 @@ allowAnonymousChangePassword = false
 debug = false
 allowProjectResourceMonitor = false
 AllowBetaFeatures = false
+
+[resources]
 openPortToPublic = false
+maxCPUCoresPerSession = 64
+maxCUDADevicesPerSession = 16
+maxShmPerSession = 2
 
 [menu]
 blocklist = "summary,statistics" # Separated by comma.

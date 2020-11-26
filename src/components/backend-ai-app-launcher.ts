@@ -5,15 +5,10 @@
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/checkbox';
-import 'weightless/icon';
-import 'weightless/label';
-import 'weightless/textfield';
-import 'weightless/title';
-import '@material/mwc-icon-button';
 import '@material/mwc-button';
+import '@material/mwc-checkbox';
+import '@material/mwc-icon-button';
+import '@material/mwc-textfield';
 import 'macro-carousel';
 
 import './lablup-loading-spinner';
@@ -102,15 +97,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           --component-font-size: 14px;
         }
 
-        wl-button.app-launch-confirmation-button {
-          width: 335px;
-          --button-bg: var(--paper-red-50);
-          --button-bg-active: var(--paper-red-300);
-          --button-bg-hover: var(--paper-red-300);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: var(--paper-red-600);
-          --button-color-active: red;
-          --button-color-hover: red;
+        mwc-textfield {
+          --mdc-shape-small: 14px;
         }
 
         macro-carousel {
@@ -151,11 +139,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           --macro-carousel-pagination-size-dot: 10px;
         }
 
-        wl-label {
-          font-family: 'Ubuntu', 'Quicksand', Roboto, sans-serif;
-        }
-
-        wl-label.keyboard {
+        span.keyboard {
           font-family: Menlo, Courier, "Courier New";
           padding: 20px;
           background-color: var(--paper-grey-200);
@@ -163,19 +147,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           margin: 0px 10px;
         }
 
-        wl-label.invert {
+        span.invert {
           font-size: 26px;
           color: var(--paper-grey-200);
           background-color: transparent;
           margin: 0px 10px;
         }
 
-        wl-label.one-key {
+        span.one-key {
           text-align: center;
           width: 24px;
         }
 
-        wl-checkbox#hide-guide {
+        mwc-checkbox#hide-guide {
           margin-right: 10px;
         }
 
@@ -188,7 +172,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           -moz-background-clip: padding;
           -webkit-background-clip: padding-box;
           background-clip: padding-box;
-          border: 1px solid #ccc;
+          border: 1px solid #cccccc;
           background-color: #f9f9f9;
           padding: 0px 3px;
           display: inline-block;
@@ -655,9 +639,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const div: HTMLElement = document.createElement('div');
     div.setAttribute('class', 'horizontal layout flex');
 
-    const checkbox = document.createElement('wl-checkbox');
+    const checkbox = document.createElement('mwc-checkbox');
     checkbox.setAttribute("id", "hide-guide");
-    const checkboxMsg = document.createElement('wl-label');
+    const checkboxMsg = document.createElement('span');
     checkboxMsg.innerHTML = `${_text("dialog.hide.DonotShowThisAgain")}`;
 
     div.appendChild(checkbox);
@@ -682,9 +666,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <macro-carousel pagination navigation selected="0" auto-focus reduced-motion disable-drag>
         <article class="slide vertical layout center">
           <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-1.png); border:auto;">
-            <wl-label class="keyboard">Ctrl</wl-label>
-            <wl-label class="keyboard invert">+</wl-label>
-            <wl-label class="keyboard one-key">B</wl-label>
+            <span class="keyboard">Ctrl</span>
+            <span class="keyboard invert">+</span>
+            <span class="keyboard one-key">B</span>
           </span>
           <p>${_text("webTerminalUsageGuide.CopyGuideOne")}</p>
         </article>
@@ -698,9 +682,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         </article>
         <article class="slide vertical layout center">
           <span style="background-image:url(/resources/images/web-terminal-guide-4.png);">
-            <wl-label class="keyboard">Ctrl</wl-label>
-            <wl-label class="keyboard invert">+</wl-label>
-            <wl-label class="keyboard one-key">B</wl-label>
+            <span class="keyboard">Ctrl</span>
+            <span class="keyboard invert">+</span>
+            <span class="keyboard one-key">B</span>
           </span>
           <div class="flex layout center-justified vertical center">
             <p>${_text("webTerminalUsageGuide.CopyGuideFour")}</p>
@@ -735,15 +719,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div style="padding:10px 20px 0 20px">
             ${globalThis.isElectron || !this.openPortToPublic ? `` : html`
               <div class="horizontal layout center">
-                <wl-checkbox id="chk-open-to-public" style="margin-right:0.5em"></wl-checkbox>
+                <mwc-checkbox id="chk-open-to-public" style="margin-right:0.5em"></mwc-checkbox>
                 ${_t("session.OpenToPublic")}
               </div>
             `}
             <div class="horizontal layout center">
-              <wl-checkbox id="chk-preferred-port" style="margin-right:0.5em"></wl-checkbox>
+              <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em"></mwc-checkbox>
               ${_t("session.TryPreferredPort")}
-              <wl-textfield id="app-port" type="number" no-label-float value="10250"
-                  min="1025" max="65534" style="margin-left:1em; width:70px"></wl-textfield>
+              <mwc-textfield id="app-port" type="number" no-label-float value="10250" outlined
+                  min="1025" max="65534" style="margin-left:1em; width:90px"></mwc-textfield>
             </div>
           </div>
         </div>

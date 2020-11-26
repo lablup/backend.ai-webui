@@ -25,6 +25,7 @@ export default {
       globDirectory: 'build/rollup/',
       globPatterns: ["dist/**/*.{html,json,js,css}",
         "src/lib/**/*.{js, map}"],
+	  skipWaiting: true,
     })
 //    babel()
   ]
