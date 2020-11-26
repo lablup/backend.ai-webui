@@ -1384,7 +1384,11 @@ export default class BackendAiStorageList extends BackendAIPage {
       id: folderId,
       breadcrumb: ['.'],
     };
-    this.isWritable = isWritable;
+
+    /**
+     * NOTICE: If it's admin user, It will have write permission.
+     */
+    this.isWritable = (isWritable || this.is_admin);
     this.explorer = explorer;
     this._clearExplorer(explorer.breadcrumb.join('/'), explorer.id, true);
   }
