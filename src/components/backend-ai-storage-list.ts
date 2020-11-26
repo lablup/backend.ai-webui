@@ -857,8 +857,10 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-icon-button
                 class="fg blue controls-running"
                 icon="folder_open"
-                @click="${(e) => this._folderExplorer(e, this._hasPermission(rowData.item, 'w'))}" .folder-id="${rowData.item.name}"
-              ></mwc-icon-button>
+                @click="${(e) => 
+                          this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') 
+                                                  || (rowData.item.type === 'group' && this.is_admin)))}"
+                .folder-id="${rowData.item.name}"></mwc-icon-button>
             `
             : html``
           }
@@ -1386,9 +1388,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     };
 
     /**
-     * NOTICE: If it's admin user, It will have write permission.
+     * NOTICE: If it's admin user and the folder type is group, It will have write permission.
      */
-    this.isWritable = (isWritable || this.is_admin);
+    this.isWritable = isWritable;
     this.explorer = explorer;
     this._clearExplorer(explorer.breadcrumb.join('/'), explorer.id, true);
   }
