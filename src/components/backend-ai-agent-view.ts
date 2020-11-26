@@ -8,10 +8,6 @@ import {css, customElement, html, property} from "lit-element";
 
 import {BackendAIPage} from './backend-ai-page';
 
-import 'weightless/card';
-import 'weightless/tab';
-import 'weightless/tab-group';
-
 import '@material/mwc-tab-bar';
 import '@material/mwc-tab';
 
@@ -66,7 +62,7 @@ export default class BackendAIAgentView extends BackendAIPage {
 
   /**
    * Change agent's backend.ai running state.
-   * 
+   *
    * @param {Boolean} active
    */
   async _viewStateChanged(active: Boolean) {
@@ -86,8 +82,8 @@ export default class BackendAIAgentView extends BackendAIPage {
 
   /**
    * Display the tab.
-   * 
-   * @param tab 
+   *
+   * @param tab
    */
   _showTab(tab) {
     let els = this.shadowRoot.querySelectorAll(".tab-content");

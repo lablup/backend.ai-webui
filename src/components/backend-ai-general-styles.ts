@@ -53,6 +53,7 @@ export const BackendAiStyles = [
       --general-textfield-selected-color: #27824F;
       --general-dropdown-color: var(--general-sidebar-color);
       --general-checkbox-color: var(--general-textfield-selected-color);
+      --general-textarea-color: var(--general-textfield-selected-color);
       --general-button-background-color: #27824F;
       --general-button-color: #ffffff;
       --general-switch-off-color: #AAA;
@@ -61,6 +62,10 @@ export const BackendAiStyles = [
       --general-dialog-background-color: #ffffff;
       --general-font-family: 'Ubuntu', 'Quicksand', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
+      --general-progress-bar-bg: #e8e8e8;
+      --general-progress-bar-reserved: linear-gradient(to left, #722cd7, #5c7cfa);
+      --general-progress-bar-using: linear-gradient(to left, #18aa7c, #60bb43),
+                                       linear-gradient(to left, #722cd7, #5c7cfa);
     }
 
     body {
@@ -194,7 +199,8 @@ export const BackendAiStyles = [
       --icon-size: 12px;
     }
 
-    wl-card {
+    wl-card,
+    div.card {
       display: block;
       background: white;
       box-sizing: border-box;
@@ -206,32 +212,35 @@ export const BackendAiStyles = [
       color: #000000;
     }
 
-    #content > wl-card {
+    #content > wl-card,
+    #content > div.card {
       max-width: var(--general-content-container-width, 980px);
     }
 
     @media screen and (max-width: 399px) {
-      wl-card {
+      wl-card, div.card {
         margin-left: 0;
         margin-right: 0;
       }
     }
 
     @media screen and (max-width: 449px) {
-      #content > wl-card {
+      #content > wl-card, #content > div.card {
         width: 100%;
       }
     }
 
     @media screen and (min-width: 450px) {
       #content > wl-card,
-      #content > div {
+      #content > div,
+      #content > div.card {
         width: 100%;
         --card-elevation: 0;
         --card-padding: 0;
       }
 
-      #content > wl-card {
+      #content > wl-card,
+      #content > div.card {
         margin: 0 !important;
       }
     }
@@ -248,10 +257,10 @@ export const BackendAiStyles = [
       --mdc-select-min-width: 100px; /* Fallback to apply width */
     }
 
-    mwc-button,
-    mwc-button[outlined],
-    mwc-button[raised],
-    mwc-button[unelevated] {
+    mwc-button.primary-action,
+    mwc-button.primary-action[outlined],
+    mwc-button.primary-action[raised],
+    mwc-button.primary-action[unelevated] {
       border-radius: 5px;
       background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
       --mdc-theme-primary: transparent; /* gradient-color doesn't work in mwc-button styling */
@@ -281,25 +290,30 @@ export const BackendAiStyles = [
       --mdc-theme-secondary: var(--general-switch-on-color);
     }
 
-    wl-card p {
+    wl-card p,
+    div.card p {
       padding: 10px;
     }
 
-    wl-card > .entry > p {
+    wl-card > .entry > p,
+    div.card > .entry > p {
       padding: 5px;
     }
 
-    wl-card .commands {
+    wl-card .commands,
+    div.card .commands {
       margin: 0;
       border-top: 1px solid #dddddd;
       text-align: left;
     }
 
-    wl-card.item div.items {
+    wl-card.item div.items,
+    div.card.item div.items {
       padding-bottom: 10px;
     }
 
-    wl-card .commands.float {
+    wl-card .commands.float,
+    div.card .commands.float {
       border-top: none;
       position: fixed;
       right: 0;
@@ -308,6 +322,7 @@ export const BackendAiStyles = [
     }
 
     .panels wl-card,
+    .panels div.card,
     .panels div {
       width: var(--general-panel-width);
     }
@@ -316,7 +331,8 @@ export const BackendAiStyles = [
       margin: 0 0 10px 0;
     }
 
-    .wide-panels wl-card {
+    .wide-panels wl-card,
+    .wide-panels div.card {
       width: 100%;
       margin: 0 0 16px 0;
     }
@@ -353,7 +369,8 @@ export const BackendAiStyles = [
       margin-bottom: 10px;
     }
 
-    wl-card > h3 {
+    wl-card > h3,
+    div.card > h3 {
       font-size: 20px;
       font-weight: 400;
       padding: 10px 20px;
@@ -362,7 +379,8 @@ export const BackendAiStyles = [
       border-bottom: 1px solid #dddddd;
     }
 
-    wl-card > h3 > .date {
+    wl-card > h3 > .date,
+    div.card > h3 > .date {
       font-size: 12px;
       text-align: right;
       color: #888888;
@@ -370,43 +388,58 @@ export const BackendAiStyles = [
     }
 
     wl-card > h3.blue,
-    wl-card > h4.blue {
+    wl-card > h4.blue,
+    div.card > h3.blue,
+    div.card > h4.blue {
       border-left: 3px solid var(--paper-light-blue-400);
     }
 
     wl-card > h3.red,
-    wl-card > h4.red {
+    wl-card > h4.red,
+    div.card > h3.red,
+    div.card > h4.red {
       border-left: 3px solid var(--paper-red-400);
     }
 
     wl-card > h3.green,
-    wl-card > h4.green {
+    wl-card > h4.green,
+    div.card > h3.green,
+    div.card > h4.green {
       border-left: 3px solid var(--paper-green-400);
     }
 
     wl-card > h3.orange,
-    wl-card > h4.orange {
+    wl-card > h4.orange,
+    div.card > h3.orange,
+    div.card > h4.orange {
 
       border-left: 3px solid var(--paper-orange-400);
     }
 
     wl-card > h3.cyan,
-    wl-card > h4.cyan {
+    wl-card > h4.cyan,
+    div.card > h3.cyan,
+    div.card > h4.cyan {
 
       border-left: 3px solid var(--paper-cyan-400);
     }
 
     wl-card > h3.lime,
-    wl-card > h4.lime {
+    wl-card > h4.lime,
+    div.card > h3.lime,
+    div.card > h4.lime {
       border-left: 3px solid var(--paper-lime-400);
     }
 
     wl-card > h3.pink,
-    wl-card > h4.pink {
+    wl-card > h4.pink,
+    div.card > h3.pink,
+    div.card > h4.pink {
       border-left: 3px solid var(--paper-pink-400);
     }
 
-    wl-card > h4 {
+    wl-card > h4,
+    div.card > h4 {
       font-size: 14px;
       padding: 5px 15px 5px 20px;
       margin: 0 0 10px 0;
@@ -417,11 +450,13 @@ export const BackendAiStyles = [
       justify-content: space-between;
     }
 
-    wl-card .flex {
+    wl-card .flex
+    div.card .flex {
       display: flex;
     }
 
-    wl-card.entries > div {
+    wl-card.entries > div,
+    div.card.entries > div {
       margin: 20px;
     }
 
@@ -440,40 +475,57 @@ export const BackendAiStyles = [
       --mdc-typography-font-family: var(--general-font-family);
     }
 
+    mwc-textfield, mwc-textarea {
+      --mdc-text-field-hover-line-color: transparent;
+      --mdc-text-field-idle-line-color: transparent;
+      --mdc-text-field-fill-color: var(--general-background-color, #fafafa);
+      --mdc-typography-subtitle1-font-size: 14px;
+      --mdc-typography-font-family: var(--general-font-family);
+    }
+
     .bg-blue {
       background-color: var(--paper-light-blue-400);
+      --mdc-theme-primary: var(--paper-light-blue-400);
     }
 
     .bg-red {
       background-color: var(--paper-red-400);
+      --mdc-theme-primary: var(--paper-red-400);
     }
 
     .bg-yellow {
       background-color: var(--paper-yellow-400);
+      --mdc-theme-primary: var(--paper-yellow-400);
     }
 
     .bg-orange {
       background-color: var(--paper-amber-400);
+      --mdc-theme-primary: var(--paper-amber-400);
     }
 
     .bg-green {
       background-color: var(--paper-green-400);
+      --mdc-theme-primary: var(--paper-green-400);
     }
 
     .bg-cyan {
       background-color: var(--paper-cyan-400);
+      --mdc-theme-primary: var(--paper-cyan-400);
     }
 
     .bg-lime {
       background-color: var(--paper-lime-400);
+      --mdc-theme-primary: var(--paper-lime-400);
     }
 
     .bg-pink {
       background-color: var(--paper-pink-a200);
+      --mdc-theme-primary: var(--paper-pink-a200);
     }
 
     .bg-purple {
       background-color: var(--paper-purple-400);
+      --mdc-theme-primary: var(--paper-purple-400);
     }
 
     .white {
@@ -490,42 +542,52 @@ export const BackendAiStyles = [
 
     .fg.blue {
       color: var(--paper-light-blue-400) !important;
+      --mdc-theme-on-primary: var(--paper-light-blue-400) !important;
     }
 
     .fg.red {
       color: var(--paper-red-400) !important;
+      --mdc-theme-on-primary: var(--paper-red-400) !important;
     }
 
     .fg.yellow {
       color: var(--paper-yellow-400) !important;
+      --mdc-theme-on-primary: var(--paper-yellow-400) !important;
     }
 
     .fg.orange {
       color: var(--paper-amber-400) !important;
+      --mdc-theme-on-primary: var(--paper-amber-400) !important;
     }
 
     .fg.green {
       color: var(--paper-green-400) !important;
+      --mdc-theme-on-primary: var(--paper-green-400) !important;
     }
 
     .fg.teal {
       color: var(--paper-teal-400) !important;
+      --mdc-theme-on-primary: var(--paper-teal-400) !important;
     }
 
     .fg.cyan {
       color: var(--paper-cyan-400) !important;
+      --mdc-theme-on-primary: var(--paper-cyan-400) !important;
     }
 
     .fg.lime {
       color: var(--paper-lime-400) !important;
+      --mdc-theme-on-primary: var(--paper-lime-400) !important;
     }
 
     .fg.pink {
       color: var(--paper-pink-a200) !important;
+      --mdc-theme-on-primary: var(--paper-pink-a200) !important;
     }
 
     .fg.purple {
       color: var(--paper-purple-400) !important;
+      --mdc-theme-on-primary: var(--paper-purple-400) !important;
     }
 
     /* Layout */
@@ -544,10 +606,11 @@ export const BackendAiStyles = [
     }
 
     .distancing {
-      margin:15px;
+      margin: 15px;
     }
 
-    wl-card > h4 {
+    wl-card > h4,
+    div.card > h4 {
       font-weight: 200;
     }
 
@@ -562,7 +625,8 @@ export const BackendAiStyles = [
     }
 
     /* Tab on head */
-    wl-card h3.tab {
+    wl-card h3.tab,
+    div.card h3.tab {
       padding-top: 0;
       padding-bottom: 0;
       padding-left: 0;
@@ -586,23 +650,22 @@ export const BackendAiStyles = [
       --font-family-sans-serif: var(--general-font-family);
     }
 
-    wl-progress-bar {
+    lablup-progress-bar {
+      --progress-bar-width: 186px;
       --progress-bar-height: 17px;
-      --progress-bar-bg: #e8e8e8;
-      border-radius: 3px;
-      margin: 3px auto;
-      width: 186px;
+      --progres-bar-font-family: var(--general-font-family);
+      --progress-bar-border-radius: 3px;
+      --progress-bar-font-color-inverse: white;
+      --progress-bar-font-color: black;
+      margin-bottom: 5px;
     }
 
-
-    wl-progress-bar.start-bar,
-    .full-bar {
-      --progress-bar-color: linear-gradient(to left, #722cd7, #5c7cfa);
+    lablup-progress-bar.start {
+      --progress-bar-background: var(--general-progress-bar-reserved);
     }
 
-    wl-progress-bar.end-bar {
-      --progress-bar-color: linear-gradient(to left, #18aa7c, #60bb43),
-                         linear-gradient(to left, #722cd7, #5c7cfa);
+    lablup-progress-bar.end {
+      --progress-bar-background: var(--general-progress-bar-using);
     }
 
     div.progress-bar {
@@ -637,11 +700,15 @@ export const BackendAiStyles = [
     }
 
     span.start-bar {
-      margin: auto auto 5px 5px;
+      margin-bottom: 5px;
+      margin-left: 5px;
+      padding-bottom: 5px;
     }
 
     span.end-bar {
-      margin: 5px auto auto 5px;
+      margin-top: 5px;
+      margin-left: 5px;
+      padding-bottom: 5px;
     }
 
     .resource-name {
@@ -660,12 +727,25 @@ export const BackendAiStyles = [
       margin-right: 5px;
     }
 
-    div.resource-legend-icon {
+    .resource-legend-icon {
       width:10px;
       height: 10px;
+      margin-top: 2px;
       margin-left: 10px;
       margin-right: 3px;
       border-radius: 4px;
+    }
+
+    .resource-legend-icon.start {
+      background-color: rgba(103, 82, 232, 1);
+    }
+
+    .resource-legend-icon.end {
+      background-color: rgba(58, 178, 97, 1);
+    }
+
+    .resource-legend-icon.total {
+      background-color: #E0E0E0;
     }
 
     .vertical-card {
@@ -685,4 +765,7 @@ export const BackendAiStyles = [
       --component-shadow-color: #37c995;
     }
 
+    .temporarily-hide {
+      display: none !important;
+    }
   `];

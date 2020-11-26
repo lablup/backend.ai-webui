@@ -107,7 +107,7 @@ class Client {
         this.code = null;
         this.sessionId = null;
         this.kernelType = null;
-        this.clientVersion = '20.10.0';
+        this.clientVersion = '20.11.0';
         this.agentSignature = agentSignature;
         if (config === undefined) {
             this._config = ClientConfig.createFromEnv();
@@ -169,11 +169,13 @@ class Client {
      * @param {Boolean} rawFile - True if it is raw request
      * @param {AbortController.signal} signal - Request signal to abort fetch
      * @param {number} timeout - Custom timeout (sec.) If no timeout is given, default timeout is used.
+     * @param {number} retry - an integer to retry this request
      */
-    async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout = 0) {
+    async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout = 0, retry = 0) {
         let errorType = Client.ERR_REQUEST;
         let errorTitle = '';
         let errorMsg;
+        let errorDesc = '';
         let resp, body, requestTimer;
         try {
             if (rqst.method == 'GET') {
@@ -229,6 +231,10 @@ class Client {
             }
         }
         catch (err) {
+            if (retry > 0) {
+                await new Promise(r => setTimeout(r, 2000)); // Retry after 2 seconds.
+                return this._wrapWithPromise(rqst, rawFile, signal, timeout, retry - 1);
+            }
             let error_message;
             if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
                 error_message = err.title; // formatted message
@@ -245,16 +251,19 @@ class Client {
                     if (navigator.onLine) {
                         errorTitle = error_message;
                         errorMsg = `sending request has failed: ${error_message}`;
+                        errorDesc = error_message;
                     }
                     else {
                         errorTitle = "Network disconnected.";
                         errorMsg = `sending request has failed: Network disconnected`;
+                        errorDesc = 'Network disconnected';
                     }
                     break;
                 case Client.ERR_RESPONSE:
                     errorType = 'https://api.backend.ai/probs/client-response-error';
                     errorTitle = error_message;
                     errorMsg = `reading response has failed: ${error_message}`;
+                    errorDesc = error_message;
                     break;
                 case Client.ERR_SERVER:
                     errorType = 'https://api.backend.ai/probs/server-error';
@@ -262,15 +271,18 @@ class Client {
                     errorMsg = 'server responded failure: ';
                     if (body.msg) {
                         errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.msg}`;
+                        errorDesc = body.msg;
                     }
                     else {
                         errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.title}`;
+                        errorDesc = body.title;
                     }
                     break;
                 case Client.ERR_ABORT:
                     errorType = 'https://api.backend.ai/probs/request-abort-error';
                     errorTitle = `Request aborted`;
                     errorMsg = 'Request aborted by user';
+                    errorDesc = errorMsg;
                     resp.status = 408;
                     resp.statusText = 'Request aborted by user';
                     break;
@@ -278,6 +290,7 @@ class Client {
                     errorType = 'https://api.backend.ai/probs/request-timeout-error';
                     errorTitle = `Request timeout`;
                     errorMsg = 'No response returned during the timeout period';
+                    errorDesc = errorMsg;
                     resp.status = 408;
                     resp.statusText = 'Timeout exceeded';
                     break;
@@ -294,6 +307,9 @@ class Client {
                     }
                     errorMsg = 'server responded failure: '
                         + `${resp.status} ${resp.statusText} - ${body.title}`;
+                    if (body.title !== '') {
+                        errorDesc = body.title;
+                    }
             }
             throw {
                 isError: true,
@@ -306,6 +322,7 @@ class Client {
                 statusText: resp.statusText,
                 title: errorTitle,
                 message: errorMsg,
+                description: errorDesc
             };
         }
         let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
@@ -684,7 +701,7 @@ class Client {
             queryString = `${queryString}?owner_access_key=${ownerKey}`;
         }
         let rqst = this.newSignedRequest('DELETE', queryString, null);
-        return this._wrapWithPromise(rqst);
+        return this._wrapWithPromise(rqst, false, null, 15000, 2); // 15 sec., two trial when error occurred.
     }
     /**
      * Restart the kernel session keeping its work directory and volume mounts.
@@ -758,19 +775,26 @@ class Client {
         let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download_single?${q}`, null);
         return this._wrapWithPromise(rqst, true);
     }
-    async mangleUserAgentSignature() {
+    mangleUserAgentSignature() {
         let uaSig = this.clientVersion
             + (this.agentSignature ? ('; ' + this.agentSignature) : '');
         return uaSig;
     }
-    /* GraphQL requests */
-    async query(q, v, signal = null, timeout = 0) {
+    /**
+     * Send GraphQL requests
+     *
+     * @param {string} q - query string for GraphQL
+     * @param {string} v - variable string for GraphQL
+     * @param {number} timeout - Timeout to force terminate request
+     * @param {number} retry - The number of retry when request is failled
+     */
+    async query(q, v, signal = null, timeout = 0, retry = 0) {
         let query = {
             'query': q,
             'variables': v
         };
         let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
-        return this._wrapWithPromise(rqst, false, signal, timeout);
+        return this._wrapWithPromise(rqst, false, signal, timeout, retry);
     }
     /**
      * Generate a RequestInfo object that can be passed to fetch() API,
@@ -778,7 +802,7 @@ class Client {
      *
      * @param {string} method - the HTTP method
      * @param {string} queryString - the URI path and GET parameters
-     * @param {string} body - an object that will be encoded as JSON in the request body
+     * @param {any} body - an object that will be encoded as JSON in the request body
      */
     newSignedRequest(method, queryString, body) {
         let content_type = "application/json";
@@ -1565,11 +1589,8 @@ class Keypair {
      * @param {boolean} isAdmin - is_admin state. Default is False.
      * @param {string} resourcePolicy - resource policy name to assign. Default is `default`.
      * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
-     * @param {string} accessKey - Manual access key (optional)
-     * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional)
-  
      */
-    async add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default', rateLimit = 1000, accessKey = null, secretKey = null) {
+    async add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default', rateLimit = 1000) {
         let fields = [
             'is_active',
             'is_admin',
@@ -1577,40 +1598,47 @@ class Keypair {
             'concurrency_limit',
             'rate_limit'
         ];
-        if (accessKey !== null && accessKey !== '') {
-            fields = fields.concat(['access_key', 'secret_key']);
-        }
         let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
             `  create_keypair(user_id: $user_id, props: $input) {` +
             `    ok msg keypair { ${fields.join(" ")} }` +
             `  }` +
             `}`;
-        let v;
-        if (accessKey !== null && accessKey !== '') {
-            v = {
-                'user_id': userId,
-                'input': {
-                    'is_active': isActive,
-                    'is_admin': isAdmin,
-                    'resource_policy': resourcePolicy,
-                    'rate_limit': rateLimit,
-                    'access_key': accessKey,
-                    'secret_key': secretKey
-                },
-            };
-        }
-        else {
-            v = {
-                'user_id': userId,
-                'input': {
-                    'is_active': isActive,
-                    'is_admin': isAdmin,
-                    'resource_policy': resourcePolicy,
-                    'rate_limit': rateLimit
-                },
-            };
-        }
+        let v = {
+            'user_id': userId,
+            'input': {
+                'is_active': isActive,
+                'is_admin': isAdmin,
+                'resource_policy': resourcePolicy,
+                'rate_limit': rateLimit,
+            },
+        };
         return this.client.query(q, v);
+        /** accessKey is no longer used */
+        /*
+        if (accessKey !== null && accessKey !== '') {
+          fields = fields.concat(['access_key', 'secret_key']);
+        } */
+        /* if (accessKey !== null && accessKey !== '') {
+         v = {
+           'user_id': userId,
+           'input': {
+             'is_active': isActive,
+             'is_admin': isAdmin,
+             'resource_policy': resourcePolicy,
+             'rate_limit': rateLimit,
+           },
+         };
+       } else {
+         v = {
+           'user_id': userId,
+           'input': {
+             'is_active': isActive,
+             'is_admin': isAdmin,
+             'resource_policy': resourcePolicy,
+             'rate_limit': rateLimit
+           },
+         };
+       } */
     }
     /**
      * mutate Keypair for given accessKey.
@@ -1739,7 +1767,7 @@ class ResourcePolicy {
     /**
      * mutate specified resource policy with given name with new values.
      *
-     * @param {string} name - resource policy name to mutate.
+     * @param {string} name - resource policy name to mutate. (READ-ONLY)
      * @param {json} input - resource policy specification and data. Required fields are:
      * {
      *   {string} 'default_for_unspecified': 'UNLIMITED', // default resource policy when resource slot is not given. 'UNLIMITED' or 'LIMITED'.
@@ -1762,6 +1790,27 @@ class ResourcePolicy {
             let v = {
                 'name': name,
                 'input': input
+            };
+            return this.client.query(q, v);
+        }
+        else {
+            return Promise.resolve(false);
+        }
+    }
+    /**
+     * delete specified resource policy that exists in policy list.
+     *
+     * @param {string} name - resource policy name to delete. (READ-ONLY)
+     */
+    async delete(name = null) {
+        if (this.client.is_superadmin === true && name !== null) {
+            let q = `mutation($name: String!) {` +
+                ` delete_keypair_resource_policy(name: $name) {` +
+                `   ok msg ` +
+                ` }` +
+                `}`;
+            let v = {
+                'name': name
             };
             return this.client.query(q, v);
         }
@@ -1872,7 +1921,7 @@ class ContainerImage {
             resource = { 'cpu': '1', 'mem': '512m' };
         }
         return this.client.createIfNotExists(registry + name, sessionId, resource, 600000).then((response) => {
-            return this.client.destroyKernel(sessionId);
+            return this.client.destroy(sessionId);
         }).catch(err => {
             throw err;
         });

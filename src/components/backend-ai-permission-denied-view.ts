@@ -15,18 +15,18 @@ import {store} from '../store';
 import {navigate} from '../backend-ai-app';
 
 /**
- `<backend-ai-error-view>` is a blank panel of backend.ai console.
+ `<backend-ai-permission-denied-view>` is a blank panel of backend.ai console.
 
  Example:
- <backend-ai-error-view active></backend-ai-error-view>
+ <backend-ai-permission-denied-view active></backend-ai-permission-denied-view>
 
  @group Lablup Elements
- @element backend-ai-error-view
+ @element backend-ai-permission-denied-view
  */
 
-@customElement("backend-ai-error-view")
-export default class BackendAIErrorView extends BackendAIPage {
-  @property({type: Number}) error_code = 404;
+@customElement("backend-ai-permission-denied-view")
+export default class BackendAIPermissionDeniedView extends BackendAIPage {
+  @property({type: Number}) error_code = 401;
 
   constructor() {
     super();
@@ -84,11 +84,11 @@ export default class BackendAIErrorView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-    <div class="horizontal center flex layout" style="margin:20px;">
-      <img src="/resources/images/404_not_found.svg" style="width:500px;margin:20px;"/>
+    <div class="horizontal center flex layout center-justified" style="margin:20px;">
+      <img src="/resources/images/401_unauthorized_access.svg" style="width:400px;margin:20px;"/>
       <div class="vertical layout" style="width:100%;">
-        <div class="title">${_tr('console.NOTFOUND')}</div>
-        <p class="description">${_t('console.DescNOTFOUND')}</p>
+        <div class="title">${_tr('console.UNAUTHORIZEDACCESS')}</div>
+        <p class="description">${_tr('console.AdminOnlyPage')}</p>
         <div style="width:auto;">
           <mwc-button
               unelevated
@@ -104,6 +104,6 @@ export default class BackendAIErrorView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-error-view": BackendAIErrorView;
+    "backend-ai-permission-denied-view": BackendAIPermissionDeniedView;
   }
 }

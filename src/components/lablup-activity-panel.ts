@@ -8,7 +8,6 @@ import 'weightless/card';
 import 'weightless/icon';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-
 /**
  Lablup Activitiy Panel
 
@@ -44,6 +43,7 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) narrow = false;
   @property({type: Boolean}) noheader = false;
+  @property({type: Boolean}) scrollableY = false;
 
   constructor() {
     super();
@@ -57,7 +57,7 @@ export default class LablupActivityPanel extends LitElement {
       css`
         div.card {
           display: block;
-          background: white;
+          background: var(--card-background-color, #ffffff);
           box-sizing: border-box;
           margin: 16px;
           padding: 0;
@@ -163,6 +163,9 @@ export default class LablupActivityPanel extends LitElement {
     }
     if (this.noheader === true) {
       this.shadowRoot.querySelector("#header").style.display = 'none';
+    }
+    if (this.scrollableY) {
+      this.shadowRoot.querySelector('.card').style.overflowY = 'auto';
     }
   }
 

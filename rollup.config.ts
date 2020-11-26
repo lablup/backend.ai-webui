@@ -1,6 +1,6 @@
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
-//import babel from 'rollup-plugin-babel'; // To support legacy browsers
+//import babel from 'rollup-plugin-babel'; // To support legacy browsers. Disabled by default.
 import typescript from 'rollup-plugin-typescript';
 //import typescript from '@rollup/plugin-typescript';
 import { generateSW } from 'rollup-plugin-workbox';
@@ -25,6 +25,7 @@ export default {
       globDirectory: 'build/rollup/',
       globPatterns: ["dist/**/*.{html,json,js,css}",
         "src/lib/**/*.{js, map}"],
+	  skipWaiting: true,
     })
 //    babel()
   ]

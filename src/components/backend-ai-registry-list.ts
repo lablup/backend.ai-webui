@@ -14,9 +14,7 @@ import 'weightless/button';
 import 'weightless/card';
 import 'weightless/icon';
 import 'weightless/label';
-import 'weightless/switch';
 import 'weightless/textfield';
-import 'weightless/title';
 
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
@@ -47,6 +45,7 @@ class BackendAIRegistryList extends BackendAIPage {
   @property({type: String}) boundControlsRenderer = this._controlsRenderer.bind(this);
   @property({type: Array}) _registryType = Array();
   @property({type: Array}) allowed_registries = Array();
+  @property({type: Array}) hostnames = Array();
 
   constructor() {
     super();
@@ -113,7 +112,7 @@ class BackendAIRegistryList extends BackendAIPage {
           width: 100%;
           padding-right: 10px;
           --mdc-select-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-orange-400);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 
         mwc-list-item {
@@ -163,10 +162,12 @@ class BackendAIRegistryList extends BackendAIPage {
   _refreshRegistryList() {
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
-      console.log(this.allowed_registries);
-      return globalThis.backendaiclient.registry.list()
+      return globalThis.backendaiclient.registry.list();
     }).then(({result}) => {
       this.registryList = this._parseRegistryList(result);
+      this.hostnames = this.registryList.map( value => {
+        return value.hostname;
+      });
       this.requestUpdate();
     })
   }
@@ -251,13 +252,22 @@ class BackendAIRegistryList extends BackendAIPage {
       }
     }
 
+    // if hostname already exists
+    if (this.hostnames.includes(hostname)) {
+      this.notification.text = _text('registry.RegistryHostnameAlreadyExists');
+      this.notification.show();
+      return;
+    }
+
     globalThis.backendaiclient.registry.add(hostname, input)
       .then(({result}) => {
         if (result === "ok") {
-          this.notification.text = "Registry successfully added";
+          this.notification.text = _text('registry.RegistrySuccessfullyAdded');
+          // add 
+          this.hostnames.push(hostname);
           this._refreshRegistryList();
         } else {
-          this.notification.text = "Error occurred";
+          this.notification.text = _text('dialog.ErrorOccurred');
         }
         this._hideDialogById("#add-registry-dialog");
         this.notification.show();
@@ -269,23 +279,28 @@ class BackendAIRegistryList extends BackendAIPage {
    * */
   _deleteRegistry() {
     const name = (<HTMLInputElement>this.shadowRoot.querySelector("#delete-registry")).value;
-
-    if (this.registryList[this.selectedIndex].hostname === encodeURIComponent(name)) {
+    if (this.registryList[this.selectedIndex].hostname === name) {
       globalThis.backendaiclient.registry.delete(name)
         .then(({result}) => {
           if (result === "ok") {
-            this.notification.text = "Registry successfully deleted";
+            this.notification.text = _text('registry.RegistrySuccessfullyDeleted');
+            // remove the hostname from allowed registries if it contains deleting registry.
+            if (this.hostnames.includes(name)) {
+              this.hostnames.splice(this.hostnames.indexOf(name));
+            }
             this._refreshRegistryList();
           } else {
-            this.notification.text = "Error Occurred";
+            this.notification.text = _text('dialog.ErrorOccurred');
           }
           this._hideDialogById("#delete-registry-dialog");
           this.notification.show();
         })
     } else {
-      this.notification.text = "Hostname does not match!";
+      this.notification.text = _text('registry.HostnameDoesNotMatch');
       this.notification.show();
     }
+    // remove written hostname
+    this.shadowRoot.querySelector("#delete-registry").value = '';
   }
 
   /**
@@ -293,13 +308,13 @@ class BackendAIRegistryList extends BackendAIPage {
    * */
   async _rescanImage() {
     let indicator = await this.indicator.start('indeterminate');
-    indicator.set(10, 'Updating registry information...');
+    indicator.set(10, _text('registry.UpdatingRegistryInfo'));
     globalThis.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
       .then(({rescan_images}) => {
         if (rescan_images.ok) {
-          indicator.set(100, 'Registry update finished.');
+          indicator.set(100, _text('registry.RegistryUpdateFinished'));
         } else {
-          indicator.set(50, 'Registry update failed.');
+          indicator.set(50, _text('registry.RegistryUpdateFailed'));
           indicator.end(1000);
           this.notification.text = PainKiller.relieve(rescan_images.msg);
           this.notification.detail = rescan_images.msg;
@@ -307,7 +322,7 @@ class BackendAIRegistryList extends BackendAIPage {
         }
       }).catch(err => {
       console.log(err);
-      indicator.set(50, 'Rescan failed.');
+      indicator.set(50, _text('registry.RescanFailed'));
       indicator.end(1000);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -338,18 +353,9 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _validateUrl() {
-    let url = this.shadowRoot.querySelector('#add-registry-url').value;
+    let url = this.shadowRoot.querySelector('#add-registry-url');
     let validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
-    // regular expression for URL check
-    let expression = "^(http|https|ftp)\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$";
-    let regex = new RegExp(expression);
-    if (url && url.match(regex)) {
-      this.shadowRoot.querySelector('#add-registry-url').invalid = false;
-      validationMessage.style.display = 'none';
-    } else {
-      this.shadowRoot.querySelector('#add-registry-url').invalid = true;
-      validationMessage.style.display = 'block';
-    }
+    validationMessage.style.display = url.valid ? 'none' : 'block';
   }
 
   _validateHostname() {
@@ -373,7 +379,6 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   toggleRegistry(e, hostname) {
-    console.log(e, hostname);
     if (!e.target.checked) {
       this._changeRegistryState(hostname, false);
     } else {
@@ -400,7 +405,7 @@ class BackendAIRegistryList extends BackendAIPage {
       this.notification.text = _text("registry.RegistryTurnedOff");
     }
     //input.allowed_docker_registries = this.allowed_registries;
-    globalThis.backendaiclient.domain.modify(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this.allowed_registries}).then((response) => {
+    globalThis.backendaiclient.domain.update(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this.allowed_registries}).then((response) => {
       this.notification.show();
     });
   }
@@ -509,7 +514,7 @@ class BackendAIRegistryList extends BackendAIPage {
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this.registryList}">
         <vaadin-grid-column flex-grow="0" width="40px" header="#" text-align="center" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t("registry.Hostname")}" .renderer=${this._hostRenderer}>
+        <vaadin-grid-column flex-grow="1" auto-width header="${_t("registry.Hostname")}" .renderer=${this._hostRenderer}>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="2" auto-width header="${_t("registry.RegistryURL")}" resizable .renderer=${this._registryRenderer}>
         </vaadin-grid-column>
@@ -558,9 +563,9 @@ class BackendAIRegistryList extends BackendAIPage {
             class="helper-text"
             label="${_t("registry.RegistryURL")}"
             required
-            pattern="^(http|https)\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$"
-            @click=${this._validateUrl}
-            @change=${this._validateUrl}
+            pattern="^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$";"
+            @click=${() => this._validateUrl()}
+            @change=${() => this._validateUrl()}
           ></wl-textfield>
           <wl-label class="helper-text" id="registry-url-validation" style="display:none;">${_t("registry.DescURLStartString")}</wl-label>
          <div class="horizontal layout flex">
@@ -611,8 +616,8 @@ class BackendAIRegistryList extends BackendAIPage {
             label="${_t("registry.TypeRegistryNameToDelete")}"
           ></wl-textfield>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button raised icon="delete" label="${_t("button.Delete")}"
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button unelevated icon="delete" label="${_t("button.Delete")}"
               @click=${this._deleteRegistry} style="width:100%;"></mwc-button>
         </div>
       </backend-ai-dialog>

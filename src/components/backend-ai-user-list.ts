@@ -399,12 +399,6 @@ export default class BackendAIUserList extends BackendAIPage {
     );
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
-  }
-
   /**
    * Save any changes. - username, full_name, password, etc.
    *
@@ -488,7 +482,7 @@ export default class BackendAIUserList extends BackendAIPage {
             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="signout-user-dialog" fixed backdrop>
-        <span slot="title">Let's double-check</span>
+        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
         <div slot="content">
           <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>.</p>
           <p>${_t("dialog.ask.DoYouWantToProceed")}</p>
@@ -545,7 +539,6 @@ export default class BackendAIUserList extends BackendAIPage {
                   <mwc-switch
                       id="is_active"
                       ?checked="${this.userInfo.is_active}"></mwc-switch>
-                  ${_text("credential.DescActiveUser")}
                 </div>
                 <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text("credential.DescRequirePasswordChange")}</p>
