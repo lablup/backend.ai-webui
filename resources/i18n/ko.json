@@ -298,6 +298,7 @@
     "FullName": "성명",
     "Description": "소개",
     "Days": "일",
+    "NoChanges": "변경 사항이 없습니다.",
     "validation": {
       "InvalidEmailAddress": "잘못된 이메일 주소 형식입니다.",
       "PolicyName": "정책 이름이 필요합니다.",
@@ -314,6 +315,7 @@
     "UserAccountCreated": "사용자 계정이 성공적으로 생성되었습니다.",
     "UserAccountCreatedError": "이미 가입한 이력이 있는 사용자 입니다.",
     "KeypairCreated": "키페어가 성공적으로 생성되었습니다.",
+    "UserNotFound": "다음 사용자 계정을 찾을 수 없어 자격 증명 생성에 실패하였습니다. : ",
     "UserIDRequired": "사용자 계정(email)은 필수 입력입니다."
   },
   "data": {
