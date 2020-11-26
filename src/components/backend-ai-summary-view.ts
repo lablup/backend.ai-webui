@@ -296,7 +296,7 @@ export default class BackendAISummary extends BackendAIPage {
         this.authenticated = true;
         this.manager_version = globalThis.backendaiclient.managerVersion;
         this.console_version = globalThis.packageVersion;
-        
+
         if (this.activeConnected) {
           this._refreshConsoleUpdateInformation();
         }
@@ -407,7 +407,7 @@ export default class BackendAISummary extends BackendAIPage {
       return;
     }
     let panel = e.target.closest('lablup-activity-panel');
-    
+
     try {
       panel.setAttribute('disabled', 'true');
       panel.querySelectorAll('wl-button').forEach((btn) => {
@@ -541,7 +541,7 @@ export default class BackendAISummary extends BackendAIPage {
                         ` : html``}
                       </div>
                     </lablup-activity-panel>
-                    <lablup-activity-panel noheader autowidth>
+                    <lablup-activity-panel noheader autowidth style="display:none">
                       <div slot="message" class="layout horizontal center center-justified flex upper-space">
                           <a href="/environment">
                             <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
@@ -553,7 +553,7 @@ export default class BackendAISummary extends BackendAIPage {
                       </div>
                     </lablup-activity-panel>
                     ${this.is_superadmin ? html`
-                    <lablup-activity-panel noheader autowidth>
+                    <lablup-activity-panel noheader autowidth style="display:none">
                     <div slot="message" class="layout horizontal center center-justified flex upper-space">
                       <a href="/agent">
                         <div class="layout horizontal center center-justified flex" style="font-size:14px;">
@@ -564,7 +564,7 @@ export default class BackendAISummary extends BackendAIPage {
                       </a>
                     </div>
                   </lablup-activity-panel>
-                  <lablup-activity-panel noheader autowidth>
+                  <lablup-activity-panel noheader autowidth style="display:none">
                     <div slot="message" class="layout horizontal center center-justified flex upper-space">
                         <a href="/settings">
                           <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
@@ -575,8 +575,8 @@ export default class BackendAISummary extends BackendAIPage {
                         </a>
                     </div>
                   </lablup-activity-panel>` : html``}
-                    
-                    <lablup-activity-panel noheader autowidth>
+
+                    <lablup-activity-panel noheader autowidth style="display:none">
                       <div slot="message" class="layout horizontal center center-justified flex upper-space">
                           <a href="/maintenance">
                             <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
