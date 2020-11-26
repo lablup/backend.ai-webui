@@ -506,8 +506,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  async _refreshResourcePolicy() {
-    return this.resourceBroker._refreshResourcePolicy().then(() => {
+  /**
+   *  If bot refreshOnly and active are true, refresh resource monitor indicator
+   * 
+   * @param {boolean} refreshOnly 
+   * 
+   */
+  _refreshResourcePolicy(refreshOnly = false) {
+    if(!this.active) {
+      return;
+    }
+
+    this.resourceBroker._refreshResourcePolicy().then(() => {
       this.concurrency_used = this.resourceBroker.concurrency_used;
       //this.userResourceLimit = this.resourceBroker.userResourceLimit;
       this.concurrency_max = this.concurrency_used > this.resourceBroker.concurrency_max ? this.concurrency_used : this.resourceBroker.concurrency_max;
@@ -524,6 +534,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+
+    // refresh resource monitor every 10sec
+    if(this.active && !refreshOnly) {
+    setTimeout(async () => {
+        await this._refreshResourcePolicy();
+        this.aggregateResource('update-scaling-group');
+      }, 10000);
+    }
   }
 
   _aliasName(value) {
