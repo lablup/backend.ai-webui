@@ -512,7 +512,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
    * @param {boolean} refreshOnly 
    * 
    */
-  _refreshResourcePolicy(refreshOnly = false) {
+  async _refreshResourcePolicy(refreshOnly = false) {
     if(!this.active) {
       return;
     }
