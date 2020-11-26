@@ -302,6 +302,7 @@
     "FullName": "Full Name",
     "Description": "Description",
     "Days": "Days",
+    "NoChanges": "No changes were made",
     "validation": {
       "InvalidEmailAddress": "Invalid Email Address.",
       "PolicyName": "Policy name Required.",
@@ -318,6 +319,7 @@
     "UserAccountCreated": "User account is successfully created",
     "UserAccountCreatedError": "This account has already been registered.",
     "KeypairCreated": "Keypair successfully created.",
+    "UserNotFound": "Credential creation failed, since the following user ID could't be found : ",
     "UserIDRequired": "User ID is required."
   },
   "data": {
