@@ -1041,12 +1041,12 @@ export default class BackendAICredentialView extends BackendAIPage {
                 required
                 autoValidate></mwc-textfield>
 
-            <mwc-select outlined id="resource-policy" label="${_t("credential.ResourcePolicy")}" style="width:100%;">
+            <mwc-select outlined id="resource-policy" label="${_t("credential.ResourcePolicy")}" style="width:100%;margin:10px 0;">
               ${this.resource_policy_names.map(item => html`
                 <mwc-list-item value="${item}">${item}</mwc-list-item>
               `)}
             </mwc-select>
-            <mwc-select outlined id="rate-limit" label="${_t("credential.RateLimitFor15min")}" style="width:100%;">
+            <mwc-select outlined id="rate-limit" label="${_t("credential.RateLimitFor15min")}" style="width:100%;margin:10px 0;">
               ${this.rate_metric.map(item => html`
                   <mwc-list-item value="${item}">${item}</mwc-list-item>
               `)}

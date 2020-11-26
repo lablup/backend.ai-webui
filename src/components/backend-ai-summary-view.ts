@@ -184,7 +184,6 @@ export default class BackendAISummary extends BackendAIPage {
 
         #session-launcher {
           --component-width: 284px;
-          --component-height: 57px;
         }
 
         .start-menu-items {
