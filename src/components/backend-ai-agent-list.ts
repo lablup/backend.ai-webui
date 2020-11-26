@@ -437,8 +437,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render an index.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   _indexRenderer(root, column, rowData) {
@@ -454,8 +454,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render regions by platforms and locations.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   regionRenderer(root, column?, rowData?) {
@@ -528,8 +528,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render a first contact date.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   contactDateRenderer(root, column?, rowData?) {
@@ -564,8 +564,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render a resource.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   resourceRenderer(root, column?, rowData?) {
@@ -651,8 +651,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render a heartbeat status.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   statusRenderer(root, column?, rowData?) {
@@ -682,8 +682,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Show detailed agent information as dialog form.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   showAgentDetailDialog(agentId) {
@@ -695,8 +695,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render control buttons such as assignment, build, add an alarm, pause and delete.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   controlRenderer(root, column?, rowData?) {

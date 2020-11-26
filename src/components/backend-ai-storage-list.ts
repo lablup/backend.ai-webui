@@ -858,13 +858,14 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-icon-button
                 class="fg blue controls-running"
                 icon="folder_open"
-                @click="${(e) => this._folderExplorer(e, this._hasPermission(rowData.item, 'w'))}" .folder-id="${rowData.item.name}"
-              ></mwc-icon-button>
+                @click="${(e) => 
+                          this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') 
+                                                  || rowData.item.is_owner
+                                                  || (rowData.item.type === 'group' && this.is_admin)))}"
+                .folder-id="${rowData.item.name}"></mwc-icon-button>
             `
             : html``
           }
-
-          ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
           ${rowData.item.is_owner && rowData.item.type == 'user'
             ? html`
               <mwc-icon-button
@@ -887,7 +888,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             : html``
           }
 
-          ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd')
+          ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd') || (rowData.item.type === 'group' && this.is_admin)
             ? html`
               <mwc-icon-button
                 class="fg blue controls-running"
@@ -1385,6 +1386,10 @@ export default class BackendAiStorageList extends BackendAIPage {
       id: folderId,
       breadcrumb: ['.'],
     };
+
+    /**
+     * NOTICE: If it's admin user and the folder type is group, It will have write permission.
+     */
     this.isWritable = isWritable;
     this.explorer = explorer;
     this._clearExplorer(explorer.breadcrumb.join('/'), explorer.id, true);

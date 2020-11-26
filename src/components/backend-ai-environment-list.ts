@@ -474,8 +474,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Render requirments such as cpu limit, memoty limit
    * cuda share limit, rocm device limit and tpu limit.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   requirementsRenderer(root, column?, rowData?) {
@@ -697,8 +697,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   /**
    * Render controllers.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   controlsRenderer(root, column, rowData) {
@@ -737,8 +737,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 /**
  * Render an installed tag for each image.
  *
- * @param {DOM element} root
- * @param {<vaadin-grid-column> element} column
+ * @param {DOMelement} root
+ * @param {object} column (<vaadin-grid-column> element)
  * @param {object} rowData
  */
   installRenderer(root, column, rowData) {
@@ -1103,8 +1103,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Check whether delete operation will proceed or not.
-   * 
-   * @param e - Dispatches from the native input event each time the input changes. 
+   *
+   * @param e - Dispatches from the native input event each time the input changes.
    */
   _checkDeleteAppInfo(e) {
     // htmlCollection should be converted to Array.

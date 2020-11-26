@@ -125,6 +125,11 @@ export default class BackendAIUserList extends BackendAIPage {
           width: 70px !important;
         }
 
+        div.password-area {
+          width: 100%;
+          max-width: 322px;
+        }
+
         backend-ai-dialog wl-textfield,
         backend-ai-dialog wl-textarea {
           padding-left: 15px;
@@ -400,6 +405,32 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   /**
+   * Toggle password visible/invisible mode.
+   * 
+   * @param element 
+   */
+  _togglePasswordVisibility(element) {
+    const isVisible = element.__on;
+    const password = element.closest('div').querySelector('mwc-textfield');
+    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+  }
+
+  /**
+   * Toggle password and confirm input field is required or not.
+   * 
+   */
+  _togglePasswordInputRequired() {
+    const passwordEl = this.shadowRoot.querySelector('#password'),
+      password = passwordEl.value,
+      confirmEl = this.shadowRoot.querySelector('#confirm'),
+      confirm = confirmEl.value;
+    passwordEl.required = (password === '' && confirm !== '') ? true : false;
+    confirmEl.required = (password !== '' && confirm === '') ? true : false;
+    passwordEl.reportValidity();
+    confirmEl.reportValidity();
+  }
+
+  /**
    * Save any changes. - username, full_name, password, etc.
    *
    * @param {Event} event - click SaveChanges button
@@ -407,17 +438,26 @@ export default class BackendAIUserList extends BackendAIPage {
   _saveChanges(event) {
     const username = this.shadowRoot.querySelector('#username').value,
       full_name = this.shadowRoot.querySelector('#full_name').value,
-      password = this.shadowRoot.querySelector('#password').value,
-      confirm = this.shadowRoot.querySelector('#confirm').value,
+      passwordEl = this.shadowRoot.querySelector('#password'),
+      password = passwordEl.value,
+      confirmEl = this.shadowRoot.querySelector('#confirm'),
+      confirm = confirmEl.value,
       description = this.shadowRoot.querySelector('#description').value,
       is_active = this.shadowRoot.querySelector('#is_active').checked,
       need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
+
+      this._togglePasswordInputRequired();
+
+    if (!passwordEl.checkValidity() || !confirmEl.checkValidity()) {
+      return;
+    }
 
     if (password !== confirm) {
       this.notification.text = "Password and Confirmation do not match.";
       this.notification.show();
       return;
     }
+
     let input: any = Object();
 
     if (password !== '')
@@ -447,25 +487,26 @@ export default class BackendAIUserList extends BackendAIPage {
       return;
     }
 
-    globalThis.backendaiclient.user.modify(this.userInfo.email, input)
+    // globalThis.backendaiclient.user.modify(this.userInfo.email, input)
+    globalThis.backendaiclient.user.update(this.userInfo.email, input)
       .then(res => {
         if (res.modify_user.ok) {
           this.shadowRoot.querySelector("#user-info-dialog").hide();
 
-          this.notification.text = "Successfully Modified";
+          this.notification.text = _text('environment.SuccessfullyModified');
           this.userInfo = {...this.userInfo, ...input, password: null};
           this._refreshUserData();
           this.shadowRoot.querySelector("#password").value = "";
           this.shadowRoot.querySelector("#confirm").value = "";
         } else {
-          this.notification.text = `Error: ${res.modify_user.msg}`;
+          this.notification.text = res.modify_user.msg ? `${ _text('logs.errorMessage') + ':  ' + res.modify_user.msg}` : _text('dialog.ErrorOccurred');
 
           this.shadowRoot.querySelector("#username").value = this.userInfo.username;
           this.shadowRoot.querySelector("#description").value = this.userInfo.description;
         }
-
         this.notification.show();
-      })
+      });
+    
   }
 
   render() {
@@ -520,19 +561,44 @@ export default class BackendAIUserList extends BackendAIPage {
               <mwc-textfield
                   ?disabled=${!this.editMode}
                   label="${_text("credential.FullName")}"
+                  id="full_name"
                   pattern="^[a-zA-Z0-9_ ]*$"
                   value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}"
                   ></mwc-textfield>
               ${this.editMode ? html`
-                <mwc-textfield
-                    type="password"
-                    id="password"
-                    label="${_text("general.NewPassword")}"></mwc-textfield>
+                <div class="horizontal layout password-area">
+                  <mwc-textfield
+                      type="password"
+                      id="password"
+                      autoValidate
+                      validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
+                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                      min-length="8"
+                      label="${_text("general.NewPassword")}"
+                      @change=${() => this._togglePasswordInputRequired()}></mwc-textfield>
+                  <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                      @click="${(e) => this._togglePasswordVisibility(e.target)}">
+                  </mwc-icon-button-toggle>
+                </div>
+                <div class="horizontal layout password-area">
+                  <mwc-textfield
+                      type="password"
+                      id="confirm"
+                      autoValidate
+                      validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
+                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                      min-length="8"
+                      @change=${() => this._togglePasswordInputRequired()}
+                      label="${_text("console.menu.NewPasswordAgain")}"></mwc-textfield>
+                  <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                      @click="${(e) => this._togglePasswordVisibility(e.target)}">
+                  </mwc-icon-button-toggle>
+                </div>
                 <mwc-textarea
                     type="text"
                     id="description"
                     label="${_text("credential.Description")}"
-                    id="password"></mwc-textfield>`: html``}
+                    id="description"></mwc-textfield>`: html``}
               ${this.editMode ? html`
                 <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text("credential.DescActiveUser")}</p>
