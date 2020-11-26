@@ -26,6 +26,7 @@ import '@material/mwc-menu';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
 import '../plastics/lablup-shields/lablup-shields';
+import './lablup-progress-bar';
 import './backend-ai-dialog';
 
 import JsonToCsv from '../lib/json_to_csv';
@@ -279,6 +280,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           --mdc-theme-primary: var(--paper-green-600);
         }
 
+        lablup-progress-bar.usage {
+          --progress-bar-height: 5px;
+          --progress-bar-width: 60px;
+          margin-bottom: 0;
+        }
+
         div.filters #access-key-filter {
           --input-font-size: small;
           --input-label-font-size: small;
@@ -495,9 +502,19 @@ export default class BackendAiSessionList extends BackendAIPage {
             const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
             sessions[objectKey].agent = container.agent
             if (liveStat && liveStat.cpu_used) {
-              sessions[objectKey].cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
+              sessions[objectKey].cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.current);
             } else {
               sessions[objectKey].cpu_used_time = this._automaticScaledTime(0);
+            }
+            if (liveStat && liveStat.cpu_util) {
+              sessions[objectKey].cpu_util = liveStat.cpu_util.current;
+            } else {
+              sessions[objectKey].cpu_util = 0;
+            }
+            if (liveStat && liveStat.mem) {
+              sessions[objectKey].mem_current = liveStat.mem.current;
+            } else {
+              sessions[objectKey].mem_current = 0;
             }
             if (liveStat && liveStat.io_read) {
               sessions[objectKey].io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
@@ -508,6 +525,21 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
             } else {
               sessions[objectKey].io_write_bytes_mb = 0;
+            }
+            if (liveStat && liveStat.cuda_util) {
+              sessions[objectKey].cuda_util = liveStat.cuda_util;
+            } else {
+              sessions[objectKey].cuda_util = 0;
+            }
+            if (liveStat && liveStat.rocm_util) {
+              sessions[objectKey].rocm_util = liveStat.rocm_util;
+            } else {
+              sessions[objectKey].rocm_util = 0;
+            }
+            if (liveStat && liveStat.tpu_util) {
+              sessions[objectKey].tpu_util = liveStat.tpu_util;
+            } else {
+              sessions[objectKey].tpu_util = 0;
             }
           }
           let service_info = JSON.parse(sessions[objectKey].service_ports);
@@ -1262,8 +1294,82 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   usageRenderer(root, column?, rowData?) {
-    render(
-      html`
+    if (this.condition === 'running') {
+      render(
+        // language=HTML
+        html`
+        <div class="vertical start start-justified layout">
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">CPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.cpu_util / (rowData.item.cpu_slot * 100)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">RAM</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.mem_current / (rowData.item.mem_slot * 1000000000)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>
+          ${rowData.item.cuda_gpu_slot && parseInt(rowData.item.cuda_gpu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.cuda_util / rowData.item.cuda_gpu_slot * 100}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          ${rowData.item.cuda_fgpu_slot && parseFloat(rowData.item.cuda_fgpu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.cuda_util / rowData.item.cuda_fgpu_slot * 100}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          ${rowData.item.rocm_gpu_slot && parseFloat(rowData.item.cuda_rocm_gpu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.rocm_util / rowData.item.rocm_gpu_slot * 100}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          ${rowData.item.tpu_slot && parseFloat(rowData.item.tpu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">TPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.tpu_util / rowData.item.tpu_slot * 100}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">I/O</div>
+            <div style="font-size:8px;" class="horizontal start-justified center layout">
+            R: ${rowData.item.io_read_bytes_mb}MB /
+            W: ${rowData.item.io_write_bytes_mb}MB
+            </div>
+          </div>
+       </div>
+        `, root);
+    } else if (this.condition === 'finished') {
+      render(
+        // language=HTML
+        html`
         <div class="layout horizontal center flex">
           <wl-icon class="fg blue indicator" style="margin-right:3px;">developer_board</wl-icon>
           ${rowData.item.cpu_used_time.D ? html`
@@ -1307,7 +1413,8 @@ export default class BackendAiSessionList extends BackendAIPage {
             <span class="indicator">WRITE</span>
           </div>
         </div>`, root
-    );
+      );
+    }
   }
 
   _toggleCheckbox(object) {
@@ -1480,8 +1587,8 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
           const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
           if (liveStat) {
-            if (liveStat.cpu_used && liveStat.cpu_used.capacity) {
-              exportListItem.cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
+            if (liveStat.cpu_used && liveStat.cpu_used.current) {
+              exportListItem.cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.current);
             } else {
               exportListItem.cpu_used_time = 0;
             }
