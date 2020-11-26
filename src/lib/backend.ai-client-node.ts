@@ -517,6 +517,9 @@ class Client {
       this._features['system-images'] = true;
       this._features['detailed-session-states'] = true;
     }
+    if (this.isAPIVersionCompatibleWith('v6.20200815')) {
+      this._features['change-user-name'] = true;
+    }
   }
 
   /**
@@ -1947,7 +1950,7 @@ class ResourcePolicy {
 
   /**
    * delete specified resource policy that exists in policy list.
-   * 
+   *
    * @param {string} name - resource policy name to delete. (READ-ONLY)
    */
   async delete(name = null) {
