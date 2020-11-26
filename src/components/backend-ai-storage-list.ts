@@ -864,8 +864,6 @@ export default class BackendAiStorageList extends BackendAIPage {
             `
             : html``
           }
-
-          ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
           ${rowData.item.is_owner && rowData.item.type == 'user'
             ? html`
               <mwc-icon-button
@@ -888,7 +886,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             : html``
           }
 
-          ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd')
+          ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd') || (rowData.item.type === 'group' && this.is_admin)
             ? html`
               <mwc-icon-button
                 class="fg blue controls-running"
