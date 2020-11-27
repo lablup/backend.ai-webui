@@ -357,7 +357,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         .horizontal-card > #resource-gauges > .monitor {
-          width: 200px;
+          width: 250px;
         }
 
         @media screen and (min-width: 750px) {
@@ -869,7 +869,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       html``}
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
-              <span class="gauge-name" style="width:36.67px;">${_t('session.launcher.Sessions')}</span>
+              <span class="gauge-name">${_t('session.launcher.Sessions')}</span>
             </div>
             <div class="layout vertical center-justified wrap">
               <lablup-progress-bar id="concurrency-usage-bar" class="start"
