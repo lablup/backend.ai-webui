@@ -431,7 +431,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if (forceUpdate === true) {
         await this._refreshResourcePolicy();
         this.aggregateResource('update-scaling-group');
-      } 
+      }
     }
   }
 
@@ -508,22 +508,28 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   /**
    *  If bot refreshOnly and active are true, refresh resource monitor indicator
-   * 
-   * @param {boolean} refreshOnly 
-   * 
+   *
+   * @param {boolean} refreshOnly
+   *
    */
   async _refreshResourcePolicy(refreshOnly = false) {
     if(!this.active) {
-      return;
+      return Promise.resolve(true);
     }
-
-    this.resourceBroker._refreshResourcePolicy().then(() => {
+    // refresh resource monitor every 10sec
+    if(this.active && !refreshOnly) {
+      setTimeout(async () => {
+          await this._refreshResourcePolicy();
+          this.aggregateResource('refresh-resource-policy');
+        }, 10000);
+    }
+    return this.resourceBroker._refreshResourcePolicy().then(() => {
       this.concurrency_used = this.resourceBroker.concurrency_used;
       //this.userResourceLimit = this.resourceBroker.userResourceLimit;
       this.concurrency_max = this.concurrency_used > this.resourceBroker.concurrency_max ? this.concurrency_used : this.resourceBroker.concurrency_max;
       //this.updateResourceAllocationPane('refresh resource policy');
+      return Promise.resolve(true);
     }).catch((err) => {
-      console.log(err);
       this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -533,15 +539,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.show(true, err);
       }
+      return Promise.resolve(false); // Cannot use reject due to the blocking happens.
     });
-
-    // refresh resource monitor every 10sec
-    if(this.active && !refreshOnly) {
-    setTimeout(async () => {
-        await this._refreshResourcePolicy();
-        this.aggregateResource('update-scaling-group');
-      }, 10000);
-    }
   }
 
   _aliasName(value) {
