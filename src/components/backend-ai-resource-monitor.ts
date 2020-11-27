@@ -702,7 +702,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
     });
   }
-  _numberWithPostfix(str, postfix) {
+  _numberWithPostfix(str, postfix = '') {
     if (isNaN(parseInt(str))) {
       return '';
     } else {
