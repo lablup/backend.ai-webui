@@ -109,6 +109,7 @@ export default class BackendAiSessionView extends BackendAIPage {
         @media screen and (max-width: 805px) {
           mwc-tab {
             --mdc-typography-button-font-size: 10px;
+            max-width: 80px;
           }
         }
       `];
