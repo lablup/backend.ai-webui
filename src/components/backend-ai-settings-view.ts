@@ -114,7 +114,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           width: auto;
         }
 
-        .setting-desc {
+        .setting-desc, .setting-desc-select {
           float: left;
           width: 100%;
         }
@@ -161,10 +161,19 @@ export default class BackendAiSettingsView extends BackendAIPage {
           };
         }
 
-        @media screen and (min-width: 710px) {
-          lablup-activity-panel {
-            width: 100%;
+        @media screen and (max-width: 750px) {
+          .setting-desc, .setting-desc-shrink {
+            width: 275px;
           }
+
+          .setting-desc-select {
+            width: 190px;
+          }
+
+          div.description-shrink {
+            width: auto;
+          }
+          
         }
 
         @media screen and (min-width: 1400px) {
@@ -192,7 +201,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
               </div>
             </div>
             <div class="horizontal layout setting-item">
-              <div class="vertical center-justified layout setting-desc">
+              <div class="vertical center-justified layout setting-desc-select">
                 <div class="title">${_t("settings.ImagePullBehavior")}</div>
                 <div class="description-extra">${_tr("settings.DescImagePullBehavior")}<br />
                     ${_t("settings.Require2003orAbove")}
@@ -252,7 +261,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
               </h3>
               <div class="horizontal wrap layout">
                 <div class="horizontal layout wrap setting-item">
-                  <div class="vertical center-justified layout" style="width:275px;">
+                  <div class="vertical center-justified layout setting-desc-shrink">
                     <div class="title">${_t("settings.AllowAgentSideRegistration")}</div>
                     <div class="description-shrink">${_tr("settings.DescAllowAgentSideRegistration")}
                     </div>
@@ -290,7 +299,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     </div>
                   </div>
                   <div class="horizontal layout setting-item">
-                    <div class="vertical center-justified layout setting-desc-shrink" style="margin: 15px 0px;">
+                    <div class="vertical center-justified layout setting-desc-select" style="margin: 15px 0px;">
                       <div class="title">${_t("settings.Scheduler")}</div>
                       <div class="description-shrink">${_t("settings.JobScheduler")}<br/>
                           ${_t("settings.Require1912orAbove")}

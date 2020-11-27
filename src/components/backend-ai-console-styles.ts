@@ -162,7 +162,7 @@ export const BackendAiConsoleStyles = [
 
     mwc-menu#dropdown-menu {
       position: relative;
-      left: -30px;
+      left: 170px;
       top: 20px;
     }
 
@@ -489,7 +489,6 @@ export const BackendAiConsoleStyles = [
       bottom: 0 !important; /* Workaround to prevent miscalculated height */
       text-align: center;
       height: 100px;
-      border-top: 1px solid #eeeeee;
       background-color: var(--general-navbar-footer-background-color);
       color: var(--general-sidebar-navbar-footer-color);
     }
@@ -509,15 +508,37 @@ export const BackendAiConsoleStyles = [
 
     @media screen and (max-width: 449px) {
       #sidebar-navbar-footer {
-        border-top: 1px solid #eeeeee;
         background-color: var(--general-navbar-footer-background-color);
         color: var(--general-sidebar-navbar-footer-color);
+      }
+      div#center-area, span.email, span.full_name, span.log_out {
+        display: none;
+      }
+      mwc-menu#dropdown-menu {
+        position: relative;
+        left: 12vw;
+      }
+      mwc-top-app-bar-fixed {
+        --mdc-top-app-bar-width: 410px !important;
+      }
+    }
+
+    @media screen and (max-width: 889px) {
+      mwc-select#group-select {
+        display: none;
+      }
+
+    }
+
+    @media screen and (max-width: 1030px) {
+      span.email, #group-select-box > div > p
+       {
+        display: none;
       }
     }
 
     @media screen and (min-width: 450px) {
       #sidebar-navbar-footer {
-        border-top: 1px solid var(--general-sidebar-background-color);
         background-color: var(--general-sidebar-background-color);
         color: var(--general-sidebar-color);
       }

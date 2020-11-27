@@ -425,7 +425,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   concurrencyRenderer(root, column?, rowData?) {
     render(
       html`
-        <div>${rowData.item.max_concurrent_sessions === 1000000 ? html`∞` : rowData.item.max_concurrent_sessions}</div>
+        <div>${rowData.item.max_concurrent_sessions === 1000000 ? '∞' : rowData.item.max_concurrent_sessions}</div>
     `, root
     );
   }

@@ -161,6 +161,15 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         .outer-space {
           margin: 20px;
         }
+
+        @media screen and (max-width: 750px) {
+          mwc-button {
+            width: auto;
+          }
+          mwc-button > span {
+            display: none;
+          }
+        }
       `];
   }
 
@@ -190,14 +199,16 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
                   class="log"
                   icon="refresh"
                   outlined
-                  label="${_t("button.Refresh")}"
-                  @click="${() => this._refreshLogs()}"></mwc-button>
+                  @click="${() => this._refreshLogs()}">
+                <span>${_t("button.Refresh")}</span>
+              </mwc-button>
               <mwc-button
                   class="log"
                   icon="delete"
                   outlined
-                  label="${_t("button.ClearLogs")}"
-                  @click="${() => this._showClearLogsDialog()}"></mwc-button>
+                  @click="${() => this._showClearLogsDialog()}">
+                <span>${_t("button.ClearLogs")}</span>
+              </mwc-button>
             </h3>
             <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
           </div>

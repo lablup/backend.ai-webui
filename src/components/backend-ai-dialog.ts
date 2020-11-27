@@ -124,7 +124,8 @@ export default class BackendAiDialog extends LitElement {
       this.open = this.dialog.open;
     });
     this.dialog.addEventListener('closed', (e) => {
-      if ('action' in e.detail && e.detail.action === 'persistent') {
+      // execute action only if the event target is dialog
+      if (e.target.id === 'dialog' && 'action' in e.detail && e.detail.action === 'persistent') {
         this.show();
       } else {
         this.open = this.dialog.open;

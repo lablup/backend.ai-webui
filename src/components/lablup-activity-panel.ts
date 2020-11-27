@@ -100,6 +100,26 @@ export default class LablupActivityPanel extends LitElement {
         #button {
           display: none;
         }
+
+        @media screen and (max-width: 1015px) {
+          div.card {
+            max-width: 700px;
+          }
+        }
+
+        @media screen and (max-width: 750px) {
+          div.card {
+            min-width: 350px;
+            width: auto;
+            height: auto !important;
+          }
+        }
+
+        @media screen and (max-width: 375px) {
+          div.card {
+            width: 350px;
+          }
+        }
       `];
   }
 

@@ -240,6 +240,17 @@ export default class BackendAICredentialView extends BackendAIPage {
           height: 20px;
           border-bottom: 1px solid #DDD;
         }
+
+        @media screen and (max-width: 805px) {
+          mwc-tab, mwc-button {
+            --mdc-typography-button-font-size: 10px;
+          }
+
+          wl-tab {
+            width: 5px;
+          }
+        }
+
       `];
   }
 
