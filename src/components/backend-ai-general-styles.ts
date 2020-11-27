@@ -257,6 +257,11 @@ export const BackendAiStyles = [
       }
     }
 
+    wl-button.primary-action[raised] {
+      background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
+      height: 20px;
+    }
+
     mwc-multi-select {
       --mdc-select-min-width: 100px; /* Fallback to apply width */
     }
