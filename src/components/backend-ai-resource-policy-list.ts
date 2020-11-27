@@ -706,13 +706,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       checkbox = null;
     }
 
-    if (textfield.value <= 0) {
-      // concurrency job limit must be upper than 0.
-      textfield.value = textfield.id === 'concurrency-limit' ? 1 : 0;
-    }
-
     if (textfield.className === 'discrete' || !textfield.valid) {
       textfield.value = Math.round(textfield.value);
+    }
+
+    if (textfield.value <= 0) {
+      // concurrency job and container-per-session limit must be upper than 0.
+      textfield.value = ((textfield.id === 'concurrency-limit') || (textfield.id === 'container-per-session-limit')) ? 1 : 0;
     }
 
     if (textfield.value === '') {
