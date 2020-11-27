@@ -232,6 +232,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         #scaling-group-select-box mwc-select {
           width: 305px;
+          height: 57px;
+          border: 1px solid #ccc;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-size: 14px;
@@ -245,7 +247,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --mdc-select-focused-dropdown-icon-color: rgba(24, 24, 24, 0.87);
           --mdc-select-disabled-dropdown-icon-color: rgba(24, 24, 24, 0.87);
           --mdc-select-idle-line-color: transparent;
-          --mdc-select-hover-line-color: rgba(255, 255, 255, 0.87);
+          --mdc-select-hover-line-color: transparent;
           --mdc-select-ink-color: rgb(24, 24, 24);
           --mdc-select-outlined-idle-border-color: rgba(24, 24, 24, 0.42);
           --mdc-select-outlined-hover-border-color: rgba(24, 24, 24, 0.87);
@@ -507,7 +509,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       scaling_select.id = 'scaling-group-select';
       scaling_select.value = this.scaling_group;
       scaling_select.setAttribute('fullwidth', 'true');
-      scaling_select.setAttribute('outlined', 'true');
+      scaling_select.style.margin= "1px solid #ccc";
+      // scaling_select.setAttribute('outlined', 'true');
       scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
       let opt = document.createElement('mwc-list-item');
       opt.setAttribute('disabled', 'true');
