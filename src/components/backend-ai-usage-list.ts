@@ -8,9 +8,6 @@ import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
-import 'weightless/tab-group';
-import 'weightless/tab';
-import 'weightless/select';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
 
@@ -75,14 +72,6 @@ export default class BackendAIUsageList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        wl-select {
-          --input-font-family: Roboto, Noto, sans-serif;
-          --input-color-disabled: #222222;
-          --input-label-color-disabled: #222222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #cccccc;
-        }
-
         mwc-select {
           width: 100%;
           font-family: var(--general-font-family);

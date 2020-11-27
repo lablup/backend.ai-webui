@@ -17,6 +17,7 @@ import '@material/mwc-textfield/mwc-textfield';
 
 import 'weightless/checkbox';
 import 'weightless/expansion';
+import 'weightless/icon';
 import 'weightless/label';
 
 import '@material/mwc-linear-progress';
@@ -315,6 +316,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #launch-session {
           width: var(--component-width, auto);
+          height: var(--component-height, 36px);
         }
 
         #launch-session[disabled] {
@@ -322,23 +324,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-theme-on-primary: var(--general-button-color);
         }
 
-        /* #launch-session {
-          height: var(--component-height, auto);
-          width: var(--component-width, auto);
-          --button-color: var(--component-color, var(--paper-red-600));
-          --button-bg: var(--component-bg, var(--paper-red-50));
-          --button-bg-hover: var(--component-bg-hover, var(--paper-red-100));
-          --button-bg-active: var(--component-bg-active, var(--paper-red-600));
-          --button-shadow-color: var(--component-shadow-color, hsla(224, 47%, 38%, 0.2));
+        wl-button > span {
+          margin-left: 5px;
+          font-weight: normal;
         }
 
-        #launch-session[disabled] {
-          --button-color: var(--paper-gray-600);
-          --button-color-disabled: var(--paper-gray-600);
-          --button-bg: var(--paper-gray-50);
-          --button-bg-hover: var(--paper-gray-100);
-          --button-bg-active: var(--paper-gray-600);
-        } */
+        wl-icon {
+          --icon-size: 20px;
+        }
 
         wl-expansion {
           --font-family-serif: var(--general-font-family);
@@ -486,6 +479,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           list-style-type: none;
         }
 
+        mwc-button > mwc-icon {
+          display: none;
+        }
+
+        @media screen and (max-width: 750px) {
+          mwc-button > mwc-icon {
+            display: inline-block;
+          }
+        }
       `];
   }
 
@@ -1807,8 +1809,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <mwc-button raised class="primary-action" id="launch-session" label="${_t("session.launcher.Start")}" ?disabled="${!this.enableLaunchButton}" @click="${() => this._launchSessionDialog()}">
-      </mwc-button>
+      <wl-button raised class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}" @click="${() => this._launchSessionDialog()}">
+        <wl-icon>power_settings_new</wl-icon>
+        <span>${_t("session.launcher.Start")}</span>
+      </wl-button>
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>
         <form slot="content" id="launch-session-form" class="centered">
