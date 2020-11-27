@@ -49,7 +49,6 @@
       "Experiments": "실험",
       "Menu": "메뉴",
       "Run": "실행",
-      "Import&Run": "가져오기 & 실행",
       "UserName": "사용자"
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
@@ -501,8 +500,8 @@
     "MinimumCPUUnit": "CPU 최소 단위: 1 코어",
     "MinimumMemUnit": "메모리 최소 단위: 1 GB",
     "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다.",
-    "RAM(GB)": "메모리 (GB)",
-    "SharedMemory(GB)": "공유메모리 (GB)"
+    "RAM": "메모리 (GB)",
+    "SharedMemory": "공유메모리 (GB)"
   },
   "usersettings": {
     "General": "일반",

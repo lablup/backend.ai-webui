@@ -505,7 +505,9 @@
     "Updated": "Resource preset updated",
     "MinimumCPUUnit": "CPU starts with 1 core",
     "MinimumMemUnit": "Memory starts with 1 GB",
-    "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB."
+    "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB.",
+    "RAM": "RAM (GB)",
+    "SharedMemory": "Shared memory (GB)"
   },
   "usersettings": {
     "General": "General",
