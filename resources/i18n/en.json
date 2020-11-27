@@ -162,7 +162,8 @@
       "StartImportedNotebook": "Start Imported Notebook",
       "SessionNameAllowCondition": "Session name only allows at least 4 characters without any whitespaces.",
       "NoFolderExists": "No Folder Exists",
-      "sessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app."
+      "sessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app.",
+      "UnSelectAllVFolders": "UNSELECT ALL"
     },
     "Running": "Running",
     "Finished": "Finished",
