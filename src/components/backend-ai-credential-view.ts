@@ -330,6 +330,9 @@ export default class BackendAICredentialView extends BackendAIPage {
   async _launchKeyPairDialog() {
     await this._getResourcePolicies();
     this.shadowRoot.querySelector('#new-keypair-dialog').show();
+    
+    // initialize user_id
+    this.shadowRoot.querySelector('#id_new_user_id').value = '';
   }
 
   /**
@@ -430,10 +433,20 @@ export default class BackendAICredentialView extends BackendAIPage {
     // Read resources
       globalThis.backendaiclient.keypair.add(user_id, is_active, is_admin,
         resource_policy, rate_limit).then(response => {
-      this.shadowRoot.querySelector('#new-keypair-dialog').hide();
-      this.notification.text = _text('credential.KeypairCreated');
-      this.notification.show();
-      this.shadowRoot.querySelector('#active-credential-list').refresh();
+          if (response.create_keypair.ok) {
+            this.shadowRoot.querySelector('#new-keypair-dialog').hide();
+            this.notification.text = _text('credential.KeypairCreated');
+            this.notification.show();
+            this.shadowRoot.querySelector('#active-credential-list').refresh();
+          } else if (response.create_keypair.msg){
+            let id_requested = response.create_keypair.msg.split(':')[1];
+            this.notification.text = _text('credential.UserNotFound') + id_requested;
+            this.notification.show();
+          } else {
+            this.notification.text = _text('dialog.ErrorOccurred');
+            this.notification.show();
+          }
+      
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -1017,7 +1030,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             <h4 class="horizontal flex center center-justified layout">
               <span>${_t("credential.PolicyGroup")}</span>
               <span class="flex"></span>
-              <mwc-button raised id="add-user" icon="add" label="${_t("credential.CreatePolicy")}"
+              <mwc-button raised id="add-policy" icon="add" label="${_t("credential.CreatePolicy")}"
               @click="${this._launchResourcePolicyDialog}"></mwc-button>
             </h4>
             <div>
@@ -1039,12 +1052,12 @@ export default class BackendAICredentialView extends BackendAIPage {
                 required
                 autoValidate></mwc-textfield>
 
-            <mwc-select outlined id="resource-policy" label="${_t("credential.ResourcePolicy")}" style="width:100%;">
+            <mwc-select outlined id="resource-policy" label="${_t("credential.ResourcePolicy")}" style="width:100%;margin:10px 0;">
               ${this.resource_policy_names.map(item => html`
                 <mwc-list-item value="${item}">${item}</mwc-list-item>
               `)}
             </mwc-select>
-            <mwc-select outlined id="rate-limit" label="${_t("credential.RateLimitFor15min")}" style="width:100%;">
+            <mwc-select outlined id="rate-limit" label="${_t("credential.RateLimitFor15min")}" style="width:100%;margin:10px 0;">
               ${this.rate_metric.map(item => html`
                   <mwc-list-item value="${item}">${item}</mwc-list-item>
               `)}

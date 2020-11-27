@@ -184,7 +184,6 @@ export default class BackendAISummary extends BackendAIPage {
 
         #session-launcher {
           --component-width: 284px;
-          --component-height: 57px;
         }
 
         .start-menu-items {
@@ -314,7 +313,7 @@ export default class BackendAISummary extends BackendAIPage {
         this.authenticated = true;
         this.manager_version = globalThis.backendaiclient.managerVersion;
         this.console_version = globalThis.packageVersion;
-        
+
         if (this.activeConnected) {
           this._refreshConsoleUpdateInformation();
         }
@@ -425,7 +424,7 @@ export default class BackendAISummary extends BackendAIPage {
       return;
     }
     let panel = e.target.closest('lablup-activity-panel');
-    
+
     try {
       panel.setAttribute('disabled', 'true');
       panel.querySelectorAll('wl-button').forEach((btn) => {

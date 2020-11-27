@@ -94,6 +94,10 @@ export default class BackendAIAgentList extends BackendAIPage {
           margin-right: 5px;
         }
 
+        #agent-detail {
+          --component-max-width: 90%;
+        }
+
         lablup-progress-bar {
           width: 100px;
           border-radius: 3px;
@@ -118,19 +122,14 @@ export default class BackendAIAgentList extends BackendAIPage {
           margin-bottom: 0;
         }
 
+        lablup-shields {
+          margin: 1px;
+        }
+
         .resource-indicator {
           width: 100px !important;
         }
 
-        .date-indicator {
-          font-size: 12px;
-        }
-
-        .asic-indicator {
-          border-top: 1px solid #cccccc;
-          margin-top: 3px;
-          padding-top: 3px;
-        }
       `];
   }
 
@@ -438,8 +437,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render an index.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   _indexRenderer(root, column, rowData) {
@@ -455,8 +454,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render regions by platforms and locations.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   regionRenderer(root, column?, rowData?) {
@@ -529,8 +528,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render a first contact date.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   contactDateRenderer(root, column?, rowData?) {
@@ -565,8 +564,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render a resource.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   resourceRenderer(root, column?, rowData?) {
@@ -652,8 +651,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render a heartbeat status.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   statusRenderer(root, column?, rowData?) {
@@ -662,17 +661,17 @@ export default class BackendAIAgentList extends BackendAIPage {
       html`
         <div class="layout vertical start justified wrap">
           <lablup-shields app="Agent" color="${this._heartbeatColor(rowData.item.status)}"
-                          description="${rowData.item.version}" ui="flat"></lablup-shields>
+                          description="${rowData.item.version}" ui="round"></lablup-shields>
           ${rowData.item.cuda_plugin ? html`
           <lablup-shields app="CUDA Plugin" color="blue"
-                          description="${rowData.item.cuda_plugin['version']}" ui="flat"></lablup-shields>
+                          description="${rowData.item.cuda_plugin['version']}" ui="round"></lablup-shields>
         ${rowData.item.cuda_fgpu_slots ? html`
           <lablup-shields app="" color="blue"
-                          description="Fractional GPU™" ui="flat"></lablup-shields>
+                          description="Fractional GPU™" ui="round"></lablup-shields>
         ` : html``}
           ${'cuda_version' in rowData.item.cuda_plugin ? html`
           <lablup-shields app="CUDA" color="green"
-                          description="${rowData.item.cuda_plugin['cuda_version']}" ui="flat"></lablup-shields>`
+                          description="${rowData.item.cuda_plugin['cuda_version']}" ui="round"></lablup-shields>`
         : html`          <lablup-shields app="CUDA Disabled" color="green"
                           description="" ui="flat"></lablup-shields>`}` : html``}
 
@@ -683,8 +682,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Show detailed agent information as dialog form.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   showAgentDetailDialog(agentId) {
@@ -696,8 +695,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render control buttons such as assignment, build, add an alarm, pause and delete.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   controlRenderer(root, column?, rowData?) {
@@ -753,14 +752,16 @@ export default class BackendAIAgentList extends BackendAIPage {
           ${'cpu_util_live' in this.agentDetail ?
       html`<div>
               <h3>CPU</h3>
+              <div class="horizontal wrap layout" style="max-width:600px;">
             ${this.agentDetail.cpu_util_live.map(item => html`
-              <div class="horizontal start-justified center layout">
+              <div class="horizontal start-justified center layout" style="padding:0 5px;">
                 <div style="font-size:8px;width:35px;">CPU${item.num}</div>
                 <lablup-progress-bar class="cpu"
                   progress="${item.pct / 100.0}"
                   description=""
                 ></lablup-progress-bar>
               </div>`)}
+              </div>
             </div>` : html``}
             <div style="margin-left:10px;">
               <h3>Memory</h3>

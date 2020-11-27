@@ -6,12 +6,13 @@ import {customElement, html, property} from "lit-element";
 import {BackendAIPage} from "../components/backend-ai-page";
 
 /**
- Test plugin
+ Test plugin for Backend.AI Console
+
  */
 @customElement("test-plugin")
 export default class TestPlugin extends BackendAIPage {
-  @property({type: String}) menuitem = 'TestPage';
-  @property({type: String}) is = 'test-plugin';
+  @property({type: String}) menuitem = 'TestPage'; // Menu name on sidebar.
+  @property({type: String}) is = 'test-plugin'; // Should be exist.
   @property({type: String}) permission = 'user'; // Can be 'user', 'admin' or 'superadmin'.
 
   constructor() {

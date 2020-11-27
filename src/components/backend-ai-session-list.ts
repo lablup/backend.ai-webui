@@ -182,19 +182,19 @@ export default class BackendAiSessionList extends BackendAIPage {
         @media screen and (max-width: 899px) {
           #work-dialog,
           #work-dialog.mini_ui {
-            --left: 0;
+            left: 0;
             --component-width: 100%;
           }
         }
 
         @media screen and (min-width: 900px) {
           #work-dialog {
-            --left: 100px;
+            left: 100px;
             --component-width: calc(100% - 50px);
           }
 
           #work-dialog.mini_ui {
-            --left: 40px;
+            left: 40px;
             --component-width: calc(100% - 50px);
           }
         }
@@ -202,6 +202,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         #work-area {
           width: 100%;
           padding: 5px;
+          font-size:12px;
+          line-height: 12px;
           height: calc(100vh - 120px);
           background-color: #222222;
           color: #efefef;
@@ -834,7 +836,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = controls['access-key'];
 
-    globalThis.backendaiclient.get_logs(sessionId, accessKey).then((req) => {
+    globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
       const ansi_up = new AnsiUp();
       let logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
@@ -862,7 +864,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const sessionName = this.shadowRoot.querySelector('#work-dialog').sessionName;
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = this.shadowRoot.querySelector('#work-dialog').accessKey;
-    globalThis.backendaiclient.getLogs(sessionId, accessKey).then((req) => {
+    globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
       const ansi_up = new AnsiUp();
       const logs = ansi_up.ansi_to_html(req.result.logs);
       this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
@@ -1699,22 +1701,21 @@ export default class BackendAiSessionList extends BackendAIPage {
         <wl-label style="padding-top: 5px; width:auto; text-align:center;">
         ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</wl-label>
         <mwc-icon-button
-        class="pagination"
-        id="next-page"
-        icon="navigate_next"
-        ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
-        @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
+          class="pagination"
+          id="next-page"
+          icon="navigate_next"
+          ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
+          @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
       </div>
       <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
         <span slot="title" id="work-title"></span>
         <div slot="action">
-          <wl-button fab flat inverted @click="${(e) => this._refreshLogs()}">
-            <wl-icon>refresh</wl-icon>
-          </wl-button>
+          <mwc-icon-button fab flat inverted icon="refresh" @click="${(e) => this._refreshLogs()}">
+          </mwc-icon-button>
         </div>
         <div slot="content" id="work-area" style="overflow:scroll;"></div>
         <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
-                style="border-style: none;width: 100%;"></iframe>
+                style="border-style: none;display: none;width: 100%;"></iframe>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminate-session-dialog" fixed backdrop>
          <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>

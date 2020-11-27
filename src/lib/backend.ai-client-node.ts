@@ -517,6 +517,9 @@ class Client {
       this._features['system-images'] = true;
       this._features['detailed-session-states'] = true;
     }
+    if (this.isAPIVersionCompatibleWith('v6.20200815')) {
+      this._features['change-user-name'] = true;
+    }
   }
 
   /**
@@ -763,14 +766,15 @@ class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    * @param {string | null} ownerKey - owner key to access
+   * @param {number} timeout - timeout to wait log query. Set to 0 to use default value.
    */
-  async get_logs(sessionId, ownerKey = null) {
+  async get_logs(sessionId, ownerKey = null, timeout = 0) {
     let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
     }
     let rqst = this.newSignedRequest('GET', queryString, null);
-    return this._wrapWithPromise(rqst);
+    return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
   /**
@@ -1947,7 +1951,7 @@ class ResourcePolicy {
 
   /**
    * delete specified resource policy that exists in policy list.
-   * 
+   *
    * @param {string} name - resource policy name to delete. (READ-ONLY)
    */
   async delete(name = null) {

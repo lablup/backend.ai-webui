@@ -51,9 +51,13 @@ export const BackendAiStyles = [
       --general-tabbar-tab-disabled-color: var(--general-sidebar-color);
       --general-tabbar-button-color: var(--general-sidebar-selected-color);
       --general-textfield-selected-color: #27824F;
+      --general-textfield-idle-color: #27824F;
       --general-dropdown-color: var(--general-sidebar-color);
       --general-checkbox-color: var(--general-textfield-selected-color);
       --general-textarea-color: var(--general-textfield-selected-color);
+      --general-textarea-idle-color: var(--general-textfield-selected-color);
+      --general-select-color: var(--general-textfield-selected-color);
+      --general-select-idle-color: var(--general-textfield-selected-color);
       --general-button-background-color: #27824F;
       --general-button-color: #ffffff;
       --general-switch-off-color: #AAA;
@@ -468,6 +472,7 @@ export const BackendAiStyles = [
     paper-toolbar {
       --paper-toolbar-sm-height: 45px;
     }
+
     mwc-button, mwc-button[unelevated] {
       background-image: none;
       --mdc-theme-primary: var(--general-button-background-color);
@@ -475,12 +480,55 @@ export const BackendAiStyles = [
       --mdc-typography-font-family: var(--general-font-family);
     }
 
-    mwc-textfield, mwc-textarea {
+    mwc-textfield {
+      --mdc-text-field-fill-color: transparent;
+      --mdc-theme-primary: var(--general-textfield-selected-color);
       --mdc-text-field-hover-line-color: transparent;
-      --mdc-text-field-idle-line-color: transparent;
-      --mdc-text-field-fill-color: var(--general-background-color, #fafafa);
-      --mdc-typography-subtitle1-font-size: 14px;
+      --mdc-text-field-idle-line-color: var(--general-textfield-idle-color);
+      --mdc-text-field-fill-color: rgb(250, 250, 250);
+      font-family: var(--general-font-family);
       --mdc-typography-font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-size: 14px;
+      --mdc-typography-subtitle1-font-color: black;
+      --mdc-typography-subtitle1-font-weight: 400;
+      --mdc-typography-subtitle1-line-height: 16px;
+    }
+
+    mwc-textarea {
+      --mdc-text-field-fill-color: transparent;
+      --mdc-theme-primary: var(--general-textarea-color);
+      --mdc-text-area-outlined-idle-border-color: var(--general-textarea-idle-color);
+      font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-size: 14px;
+      --mdc-typography-subtitle1-font-color: black;
+      --mdc-typography-subtitle1-font-weight: 400;
+      --mdc-typography-subtitle1-line-height: 16px;
+    }
+
+    mwc-select {
+      font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-size: 14px;
+      --mdc-typography-subtitle1-font-color: black;
+      --mdc-typography-subtitle1-font-weight: 400;
+      --mdc-typography-subtitle1-line-height: 16px;
+      --mdc-theme-primary: var(--general-select-color);
+      --mdc-select-idle-line-color: var(--general-select-idle-color);
+      --mdc-select-hover-line-color: var(--general-select-color);
+      --mdc-select-outlined-idle-border-color: var(--general-select-idle-color);
+      --mdc-select-outlined-hover-border-color: var(--general-select-color);
+      --mdc-select-outlined-disabled-border-color: rgba(255, 255, 255, 0.87);
+      --mdc-select-fill-color: transparent;
+      --mdc-select-disabled-fill-color: transparent;
+      --mdc-select-ink-color: black;
+      --mdc-select-label-ink-color: black;
+      --mdc-select-focused-label-color: rgba(24, 24, 24, 1.0);
+      --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
+      --mdc-select-dropdown-icon-color: #747474;
+      --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
+      --mdc-select-disabled-dropdown-icon-color: #747474;
     }
 
     .bg-blue {
