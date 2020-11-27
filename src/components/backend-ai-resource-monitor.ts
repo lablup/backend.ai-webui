@@ -704,6 +704,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
+  _calcConcurrencyMax() {
+    return this.concurrency_max === 1000000 ? `∞` : this.concurrency_max;
+  }
+
   render() {
     // language=HTML
     return html`
@@ -861,7 +865,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <div class="layout vertical start-justified flex">
               <lablup-progress-bar id="concurrency-usage-bar" class="start"
                 progress="${this.used_slot_percent.concurrency / 100.0}"
-                description="${this.concurrency_used}/${this.concurrency_max === 1000000 ? html`∞` : this.concurrency_max}"
+                description="${this.concurrency_used}/${this._calcConcurrencyMax()}"
                 ></lablup-progress-bar>
             </div>
             <div class="layout vertical start start-justified">
