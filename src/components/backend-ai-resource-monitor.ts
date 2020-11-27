@@ -232,8 +232,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
         #scaling-group-select-box mwc-select {
           width: 305px;
-          height: 57px;
-          border: 1px solid #ccc;
+          height: 58px;
+          border: 0.1em solid #ccc;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-size: 14px;
