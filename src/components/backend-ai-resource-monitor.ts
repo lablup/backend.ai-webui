@@ -408,6 +408,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_connected = true;
+        setInterval(() => {
+          this._periodicUpdateResourcePolicy();
+        }, 20000);
       }, {once: true});
     } else {
       this.is_connected = true;
@@ -415,6 +418,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     document.addEventListener('backend-ai-session-list-refreshed', () => {
       this._updatePageVariables(true);
     });
+  }
+
+  async _periodicUpdateResourcePolicy() {
+    // refresh resource monitor every 10sec
+    if (this.active) {
+      await this._refreshResourcePolicy();
+      this.aggregateResource('refresh-resource-policy');
+      return Promise.resolve(true);
+    }
+    return Promise.resolve(false);
   }
 
   _updateSelectedScalingGroup() {
@@ -434,7 +447,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if (forceUpdate === true) {
         await this._refreshResourcePolicy();
         this.aggregateResource('update-scaling-group');
-      } else {
       }
     }
   }
@@ -519,14 +531,23 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  async _refreshResourcePolicy() {
+  /**
+   *  If bot refreshOnly and active are true, refresh resource monitor indicator
+   *
+   * @param {boolean} refreshOnly
+   *
+   */
+  async _refreshResourcePolicy(refreshOnly = false) {
+    if(!this.active) {
+      return Promise.resolve(true);
+    }
     return this.resourceBroker._refreshResourcePolicy().then(() => {
       this.concurrency_used = this.resourceBroker.concurrency_used;
       //this.userResourceLimit = this.resourceBroker.userResourceLimit;
       this.concurrency_max = this.concurrency_used > this.resourceBroker.concurrency_max ? this.concurrency_used : this.resourceBroker.concurrency_max;
       //this.updateResourceAllocationPane('refresh resource policy');
+      return Promise.resolve(true);
     }).catch((err) => {
-      console.log(err);
       this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -536,6 +557,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.show(true, err);
       }
+      return Promise.resolve(false); // Cannot use reject due to the blocking happens.
     });
   }
 
@@ -701,7 +723,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       }
     });
   }
-  _numberWithPostfix(str, postfix) {
+  _numberWithPostfix(str, postfix = '') {
     if (isNaN(parseInt(str))) {
       return '';
     } else {
@@ -849,7 +871,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <div class="layout vertical center-justified wrap">
               <lablup-progress-bar id="concurrency-usage-bar" class="start"
                 progress="${this.used_slot_percent.concurrency / 100.0}"
-                description="${this.concurrency_used}/${this.concurrency_max === 1000000 ? html`∞` : this.concurrency_max}"
+                description="${this.concurrency_used}/${this.concurrency_max === 1000000 ? html`∞` : parseInt(this.concurrency_max)}"
                 ></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">

@@ -754,6 +754,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         ownershipPanel.style.display = 'none';
       }
       this._updateSelectedScalingGroup();
+      /* To reflect current resource policy */
+      await this._refreshResourcePolicy();
       this.requestUpdate();
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }

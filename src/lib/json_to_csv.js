@@ -1,4 +1,4 @@
-'use babel';
+//'use babel';
 /*
 Backend.AI API : JSON to CSV Converter
 ======================================

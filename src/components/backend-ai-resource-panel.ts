@@ -222,8 +222,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       default:
         status = 'RUNNING';
     }
-    let fields = ["created_at"];
-    globalThis.backendaiclient.computeSession.list(fields, status).then((response) => {
+    globalThis.backendaiclient.computeSession.total_count(status).then((response) => {
       this.spinner.hide();
       if (!response.compute_session_list && response.legacy_compute_session_list) {
         response.compute_session_list = response.legacy_compute_session_list;
