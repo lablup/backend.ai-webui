@@ -14,7 +14,9 @@ export default {
     sourcemap: false
   },
   plugins: [
-    typescript(),
+    typescript({
+      tsconfig: "./tsconfig.json"
+    }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
@@ -25,7 +27,7 @@ export default {
       globDirectory: 'build/rollup/',
       globPatterns: ["dist/**/*.{html,json,js,css}",
         "src/lib/**/*.{js, map}"],
-	  skipWaiting: true,
+  	  skipWaiting: true,
     })
 //    babel()
   ]

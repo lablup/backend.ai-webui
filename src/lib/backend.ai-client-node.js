@@ -435,6 +435,9 @@ class Client {
             this._features['system-images'] = true;
             this._features['detailed-session-states'] = true;
         }
+        if (this.isAPIVersionCompatibleWith('v6.20200815')) {
+            this._features['change-user-name'] = true;
+        }
     }
     /**
      * Return if manager is compatible with given version.
@@ -678,14 +681,15 @@ class Client {
      *
      * @param {string} sessionId - the sessionId given when created
      * @param {string | null} ownerKey - owner key to access
+     * @param {number} timeout - timeout to wait log query. Set to 0 to use default value.
      */
-    async get_logs(sessionId, ownerKey = null) {
+    async get_logs(sessionId, ownerKey = null, timeout = 0) {
         let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
         if (ownerKey != null) {
             queryString = `${queryString}?owner_access_key=${ownerKey}`;
         }
         let rqst = this.newSignedRequest('GET', queryString, null);
-        return this._wrapWithPromise(rqst);
+        return this._wrapWithPromise(rqst, false, null, timeout);
     }
     /**
      * Terminate and destroy the kernel session.
@@ -1956,6 +1960,35 @@ class ComputeSession {
      */
     constructor(client) {
         this.client = client;
+    }
+    /**
+     * Get the number of compute sessions with specific conditions.
+     *
+     * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+     * @param {string} accessKey - access key that is used to start compute sessions.
+     * @param {number} limit - limit number of query items.
+     * @param {number} offset - offset for item query. Useful for pagination.
+     * @param {string} group - project group id to query. Default returns sessions from all groups.
+     */
+    async total_count(status = 'RUNNING', accessKey = '', limit = 1, offset = 0, group = '') {
+        let q, v;
+        q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
+        total_count
+      }
+    }`;
+        v = {
+            'limit': limit,
+            'offset': offset,
+            'status': status
+        };
+        if (accessKey != '') {
+            v['ak'] = accessKey;
+        }
+        if (group != '') {
+            v['group_id'] = group;
+        }
+        return this.client.query(q, v);
     }
     /**
      * list compute sessions with specific conditions.

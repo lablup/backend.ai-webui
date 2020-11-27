@@ -69,12 +69,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           padding: 3px;
         }
 
-        #app-dialog {
-          --component-width: 330px;
-          --component-width: auto;
-          --component-max-width: 70%;
-        }
-
         #ssh-dialog {
           --component-width: 330px;
         }

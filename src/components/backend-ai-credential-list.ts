@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import {render} from 'lit-html';
@@ -125,6 +125,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         backend-ai-dialog {
           --component-min-width: 400px;
         }
+
         backend-ai-dialog h4 {
           font-size: 14px;
           padding: 5px 15px 5px 12px;
@@ -143,13 +144,6 @@ export default class BackendAICredentialList extends BackendAIPage {
 
         mwc-select {
           --mdc-theme-primary: var(--general-sidebar-color);
-        }
-
-        mwc-textfield {
-          width: 100%;
-          --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
         }
       `];
   }
@@ -457,8 +451,8 @@ export default class BackendAICredentialList extends BackendAIPage {
   /**
    * Render an index.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   _indexRenderer(root, column, rowData) {
@@ -487,8 +481,8 @@ export default class BackendAICredentialList extends BackendAIPage {
   /**
    * Render a key elasped time.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   keyageRenderer(root, column?, rowData?) {
@@ -505,8 +499,8 @@ export default class BackendAICredentialList extends BackendAIPage {
   /**
    * Render key control buttons.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   controlRenderer(root, column?, rowData?) {
@@ -551,16 +545,16 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
 
     if (Object.entries(input).length === 0) {
-      this.notification.text = "No changes were made";
+      this.notification.text = _text('credential.NoChanges');
       this.notification.show();
     } else {
       globalThis.backendaiclient.keypair.mutate(this.keypairInfo.access_key, input)
         .then(res => {
           if (res.modify_keypair.ok) {
-            this.notification.text = "Successfully modified";
+            this.notification.text = _text('environment.SuccessfullyModified');
             this.refresh();
           } else {
-            this.notification.text = "Error";
+            this.notification.text = _text('dialog.ErrorOccurred');
           }
           this.notification.show();
         })

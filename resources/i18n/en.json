@@ -18,6 +18,9 @@
       "Information": "Information",
       "About": "About",
       "AboutBackendAI": "About Backend.AI",
+      "ChangeUserInformation": "Change User Information",
+      "ChangeUserInfo": "Change User Info",
+      "FullName": "Full Name",
       "ChangePassword": "Change Password",
       "Preferences": "Preferences",
       "LogsErrors": "Logs / Errors",
@@ -27,8 +30,12 @@
       "OriginalPassword": "Original password",
       "NewPassword": "New password",
       "NewPasswordAgain": "New password (again)",
+      "InputOriginalPassword": "Please Input Original Password",
       "InvalidPasswordMessage": "At least 1 alphabet, 1 number and 1 special character is required with at least 8 chars.",
+      "NewPasswordMismatch": "Two new passwords do not match.",
       "PasswordMismatch": "Password mismatch",
+      "PasswordUpdated": "Password is successfully updated.",
+      "FullnameUpdated": "Full name is successfully updated.",
       "TermsOfService": "Terms of Service",
       "PrivacyPolicy": "Privacy Policy",
       "LeaveService": "Leave service",
@@ -41,9 +48,10 @@
       "NoProject": "No Project",
       "SelectProject": "Select Project",
       "Experiments": "Experiments",
-      "UserName": "User Name",
       "Menu": "Menu",
-      "Run": "Run"
+      "Run": "Run",
+      "Import&Run": "Import & Run",
+      "UserName": "User Name"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
@@ -302,6 +310,7 @@
     "FullName": "Full Name",
     "Description": "Description",
     "Days": "Days",
+    "NoChanges": "No changes were made",
     "validation": {
       "InvalidEmailAddress": "Invalid Email Address.",
       "PolicyName": "Policy name Required.",
@@ -318,6 +327,7 @@
     "UserAccountCreated": "User account is successfully created",
     "UserAccountCreatedError": "This account has already been registered.",
     "KeypairCreated": "Keypair successfully created.",
+    "UserNotFound": "Credential creation failed, since the following user ID could't be found : ",
     "UserIDRequired": "User ID is required."
   },
   "data": {
@@ -871,5 +881,8 @@
     "Perpetual": "Perpetual",
     "Subscription": "Subscription",
     "OpenSource": "Open Source"
+  },
+  "error": {
+    "APINotSupported": "API not supported. Requires latest version of Backend.AI manager."
   }
 }

@@ -8,7 +8,6 @@ export const BackendAiConsoleStyles = [
     .loading-background {
       transition: all 0.3s linear;
       position: fixed;
-      z-index: 10000;
       top: 0;
       left: 0;
       width: 100%;
@@ -355,26 +354,10 @@ export const BackendAiConsoleStyles = [
 
     mwc-textfield {
       width: 100%;
-      --mdc-text-field-fill-color: transparent;
-      --mdc-theme-primary: var(--general-textfield-selected-color);
-      font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-size: 14px;
-      --mdc-typography-subtitle1-font-color: black;
-      --mdc-typography-subtitle1-font-weight: 400;
-      --mdc-typography-subtitle1-line-height: 16px;
     }
 
     mwc-textarea {
       width: 100%;
-      --mdc-text-field-fill-color: transparent;
-      --mdc-theme-primary: var(--general-textarea-selected-color);
-      font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-size: 14px;
-      --mdc-typography-subtitle1-font-color: black;
-      --mdc-typography-subtitle1-font-weight: 400;
-      --mdc-typography-subtitle1-line-height: 16px;
     }
 
     wl-popover-card {
@@ -392,6 +375,8 @@ export const BackendAiConsoleStyles = [
 
     mwc-list-item {
       font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      --mdc-typography-body2-font-family: var(--general-font-family);
       font-weight: 400;
     }
 
