@@ -1924,6 +1924,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <li><mwc-icon>folder_open</mwc-icon>${item}</li>
               `)}
           </ul>
+          ${this.selectedVfolders.length > 0 ? html`
+            <div class="horizontal layout end-justified">
+              <mwc-button
+                  outlined
+                  label="${_t("session.launcher.UnSelectAllVFolders")}"
+                  style="width:auto;margin-right:10px;"
+                  @click=${() => this._unselectAllSelectedFolder()}></mwc-button>
+            </div>
+          ` : html``}
           <div class="vertical center layout" style="padding-top:15px;">
             <mwc-select id="resource-templates" label="${_t("session.launcher.ResourceAllocation")}" fullwidth required>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
