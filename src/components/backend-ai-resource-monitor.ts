@@ -874,7 +874,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <div class="layout vertical center-justified wrap">
               <lablup-progress-bar id="concurrency-usage-bar" class="start"
                 progress="${this.used_slot_percent.concurrency / 100.0}"
-                description="${this.concurrency_used}/${this.concurrency_max === 1000000 ? html`∞` : parseInt(this.concurrency_max)}"
+                description="${this.concurrency_used}/${this.concurrency_max === 1000000 ? '∞' : parseInt(this.concurrency_max)}"
                 ></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">
