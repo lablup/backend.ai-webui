@@ -243,7 +243,7 @@ export default class BackendAIUsageList extends BackendAIPage {
     return html`
       <div class="card" elevation="0">
         <h3 class="horizontal center layout">
-          <mwc-select outlined label="${_t("statistics.SelectPeriod")}" style="width: 130px;" @change="${(e) => {
+          <mwc-select label="${_t("statistics.SelectPeriod")}" style="width: 130px;border:1px solid #ccc;" @change="${(e) => {
       this.pulldownChange(e)
     }}">
             <mwc-list-item value="1D" selected>${_t("statistics.1Day")}</mwc-list-item>
