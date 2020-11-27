@@ -27,7 +27,8 @@ export default class BackendAIPainKiller {
     "server responded failure: 401 Unauthorized - Credential/signature mismatch. (Access key not found)": "Login information mismatch. Check your information",
     "server responded failure: 401 Unauthorized - Credential/signature mismatch.": "Login information mismatch. Check your information",
     "server responded failure: 412 Precondition Failed - You have reached your resource limit.": "Reached your resource limit. Check resources and sessions.",
-    "Authentication failed. Check information and manager status.": "Authentication failed. Check information and manager status."
+    "Authentication failed. Check information and manager status.": "Authentication failed. Check information and manager status.",
+    "TypeError: NetworkError when attempting to fetch resource.": "Network connection failed. Check network status."
   };
   static regexTable = {
     'integrity error: duplicate key value violates unique constraint "pk_resource_presets"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A resource policy with the same name already exists.',
@@ -44,7 +45,7 @@ export default class BackendAIPainKiller {
     if (typeof msg === 'undefined') {
       return 'Problem occurred.';
     }
-    console.log(msg);
+    console.log("Error:", msg);
     if (globalThis.backendaiconsole.debug === true) {
       return msg;
     }
