@@ -20,25 +20,24 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import {default as PainKiller} from './backend-ai-painkiller';
+import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
 
 /**
  Backend AI Pipeline List
 
- `backend-ai-pipeline-list` is a list of pipelines.
+ `backend-ai-pipeline-list` is fetches and lists user's pipelines.
 
  @group Backend.AI Console
  @element backend-ai-pipeline-list
  */
 @customElement('backend-ai-pipeline-list')
-export default class BackendAIPipelineList extends BackendAIPage {
+export default class BackendAIPipelineList extends BackendAIPipelineCommon {
   // Elements
   @property({type: Object}) spinner = Object();
-  // Configs
-  @property({type: String}) pipelineConfigPath = 'config.json';
   // Pipeline prpoerties
   @property({type: Array}) pipelineFolders = Object();
   @property({type: String}) pipelineSelectedName;
-  @property({type: String}) pipelineSelectedConfig;
+  @property({type: Object}) pipelineSelectedConfig;
 
   constructor() {
     super();
@@ -49,7 +48,6 @@ export default class BackendAIPipelineList extends BackendAIPage {
 
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
-    this._fetchPipelineFolders();
   }
 
   async _viewStateChanged(active) {
@@ -57,29 +55,43 @@ export default class BackendAIPipelineList extends BackendAIPage {
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
+        this._fetchPipelineFolders();
       }, true);
     } else {
+      this._fetchPipelineFolders();
     }
   }
 
   /**
-   * Download pipeline config file and return it.
+   * Select current pipeline.
    *
-   * @param {String} folderName - virtual folder name to fetch pipeline config.
+   * @param {String} folderName - Name of the pipeline to select.
    * */
-  async _downloadPipelineConfig(folderName) {
-    try {
-      const res = await window.backendaiclient.vfolder.download(
-          this.pipelineConfigPath, folderName, false, true);
-      return await res.json();
-    } catch (err) {
-      console.error(err);
-      this.notification.text = PainKiller.relieve(err.title);
-      this.notification.detail = err.message;
-      this.notification.show(true);
+  async changePipeline(folderName) {
+    await this._fetchPipelineFolders();
+    this.pipelineSelectedName = folderName;
+    this.pipelineSelectedConfig = this.pipelineFolders[folderName].config;
+    this.shadowRoot.querySelector('#pipeline-selector').selectedText = this.pipelineSelectedConfig.title;
+    localStorage.setItem('backendaiconsole.pipeline.selectedName', this.pipelineSelectedName);
+    localStorage.setItem('backendaiconsole.pipeline.selectedConfig', this.pipelineSelectedConfig);
+  }
+
+  /**
+   * Current pipeline is changed from the dropdown menu.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   * */
+  _pipelineChanged(e) {
+    const folderName = e.target.value;
+    if (!folderName) {
+      return;
     }
+    this.pipelineSelectedName = folderName;
+    this.pipelineSelectedConfig = this.pipelineFolders[folderName].config;
+    localStorage.setItem('backendaiconsole.pipeline.selectedName', this.pipelineSelectedName);
+    localStorage.setItem('backendaiconsole.pipeline.selectedConfig', this.pipelineSelectedConfig);
   }
 
   /**
@@ -101,7 +113,7 @@ export default class BackendAIPipelineList extends BackendAIPage {
           downloadJobs.push(job);
         }
       });
-      Promise.all(downloadJobs).then(() => {
+      return Promise.all(downloadJobs).then(() => {
         this.pipelineFolders = pipelines;
         this.spinner.hide();
       });
@@ -112,22 +124,6 @@ export default class BackendAIPipelineList extends BackendAIPage {
       this.notification.show(true);
       this.spinner.hide();
     }
-  }
-
-  /**
-   * Current pipeline is changed from the dropdown menu.
-   *
-   * @param {Event} e - Dispatches from the native input event each time the input changes.
-   * */
-  _pipelineChanged(e) {
-    const folderName = e.target.value;
-    if (!folderName) {
-      return;
-    }
-    this.pipelineSelectedName = folderName;
-    this.pipelineSelectedConfig = this.pipelineFolders[folderName].config;
-    localStorage.setItem('backendaiconsole.pipeline.selectedName', this.pipelineSelectedName);
-    localStorage.setItem('backendaiconsole.pipeline.selectedConfig', this.pipelineSelectedConfig);
   }
 
   static get styles() {
@@ -161,8 +157,8 @@ export default class BackendAIPipelineList extends BackendAIPage {
     ];
   }
 
-    // language=HTML
   render() {
+    // language=HTML
     return html`
       <div class="card" elevation="0">
         <h3 class="horizontal center layout wrap">
@@ -178,7 +174,7 @@ export default class BackendAIPipelineList extends BackendAIPage {
             `)}
           </mwc-select>
           <div id="pipeline-description" class="layout vertical">
-            ${this.pipelineSelectedConfig.description ? html`
+            ${this.pipelineSelectedConfig && this.pipelineSelectedConfig.description ? html`
               <span>${this.pipelineSelectedConfig.description}</span>
               <span class="indicator monospace">${this.pipelineSelectedConfig.environment + ':' + this.pipelineSelectedConfig.version}</span>
             ` : html``}

@@ -674,7 +674,15 @@
     "List": "List",
     "Running": "Running",
     "Finished": "Finished",
-    "SelectPipeline": "Select Pipeline"
+    "SelectPipeline": "Select Pipeline",
+    "PipelineDialog": {
+      "CreateTitle": "Create pipeline",
+      "UpdateTitle": "Update pipeline"
+      "Name": "Pipeline Name",
+      "Description": "Pipeline description",
+      "Environment": "Environment",
+      "Version": "Version"
+    }
   },
   "statistics": {
     "Usage": "Usage",

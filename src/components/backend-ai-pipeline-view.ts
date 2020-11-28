@@ -3,31 +3,6 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
- /*
-  Assumptions on the vFolder structure for storing pipeline configs and data.
-
-  /home/work/<vfolder-name>/config.json  # pipeline configuration file which stores following fields
-    - title
-    - description
-    - environment
-    - version
-    - scaling_group
-    - folder_host
-  /home/work/<vfolder-name>/components.json  # stores whole pipeline components
-    - id
-    - title
-    - description
-    - path  # eg) /home/work/<vfolder-name>/001-load-data/
-            # code is assumed to be stored in `main.py` inside `path`
-    - cpu
-    - mem
-    - gpu
-    - executed
-  /home/work/<vfolder-name>/001-load-data/      # root path for each pipeline component
-  /home/work/<vfolder-name>/002-validate-data/
-  ...
-  */
-
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
@@ -35,22 +10,10 @@ import {BackendAIPage} from './backend-ai-page';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-menu';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-textfield';
 
-import Sortable from 'sortablejs';
-import 'weightless/button';
-import 'weightless/icon';
-import 'weightless/dialog';
-import 'weightless/expansion';
-import 'weightless/card';
-import 'weightless/tab';
-import 'weightless/tab-group';
 import 'weightless/list-item';
-import 'weightless/divider';
-import 'weightless/textfield';
-import tus from '../lib/tus';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -61,40 +24,25 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-dialog';
+import './backend-ai-pipeline-create';
+import './backend-ai-pipeline-list';
 import './backend-ai-session-list';
 import './lablup-codemirror';
 import './lablup-loading-spinner';
 
 @customElement("backend-ai-pipeline-view")
 export default class BackendAIPipelineView extends BackendAIPage {
-  public shadowRoot: any;
-  public notification: any;
-  public $: any;
+  // Elements
+  @property({type: Object}) notification = Object();
+  @property({type: Object}) indicator = Object();
+  @property({type: Object}) pipelineCreate = Object();
+  @property({type: Object}) pipelineList = Object();
 
-  public indicator: any;
-
-  @property({type: Object}) supports = Object();
-  @property({type: Object}) aliases = Object();
-  @property({type: Object}) images = Object();
-  @property({type: Object}) tags = Object();
-  @property({type: Object}) imageInfo = Object();
-  @property({type: Object}) imageNames = Object();
-  @property({type: Array}) versions = Array();
-  @property({type: Array}) languages = Array();
-  @property({type: String}) defaultLanguage = '';
-  @property({type: Object}) resourceLimits = Object();
-  @property({type: String}) scalingGroup = '';
-  @property({type: Array}) scalingGroups = Array();
-  @property({type: String}) vhost = '';
-  @property({type: Array}) vhosts = Array();
   @property({type: String}) _status = 'inactive';
-  @property({type: String}) pipelineCreateMode = 'create';
   @property({type: String}) componentCreateMode = 'create';
-  @property({type: Array}) pipelineFolderList = Array();
   /* Properties for selected pipeline */
   @property({type: String}) pipelineFolderName = '';
   @property({type: Object}) pipelineConfig = Object();
-  @property({type: Object}) pipelineSortable = Object();
   @property({type: Array}) pipelineComponents = Array();
   @property({type: Number}) selectedComponentIndex = -1;
   @property({type: Array}) componentsToBeRun = Array();
@@ -105,29 +53,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
   constructor() {
     super();
     this.active = false;
-    this.supports = {};
-    this.aliases = {
-      'TensorFlow': 'python-tensorflow',
-      'Lablup ResearchEnv.': 'python-ff',
-      'Python': 'python',
-      'PyTorch': 'python-pytorch',
-      'Chainer': 'chainer',
-      'R': 'r',
-      'Julia': 'julia',
-      'Lua': 'lua',
-    };
-    this.versions = [];
-    this.languages = [];
-    this.defaultLanguage = '';
-
-    this.pipelineConfig = {
-      title: '',
-      description: '',
-      environment: '',
-      version: '',
-      scaling_group: '',
-      folder_host: '',
-    }
   }
 
   static get styles() {
@@ -152,26 +77,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
         .pipeline-item,
         .sidebar-item {
           max-width: 300px;
-        }
-
-        mwc-select {
-          width: 100%;
-          --mdc-theme-primary: var(--paper-blue-600);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: rgba(255, 0, 0, 0.87);
-          --mdc-select-focused-dropdown-icon-color: rgba(255, 0, 0, 0.42);
-          --mdc-select-disabled-dropdown-icon-color: rgba(255, 0, 0, 0.87);
-          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
-          --mdc-select-hover-line-color: rgba(0, 0, 255, 0.87);
-          --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
-          --mdc-select-outlined-hover-border-color: rgba(255, 0, 0, 0.87);
-          --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
-          --mdc-list-side-padding: 25px;
-          --mdc-list-item__primary-text: {
-            height: 20px;
-          };
         }
 
         mwc-textfield {
@@ -225,6 +130,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
           cursor: pointer;
         }
 
+        #edit-pipeline {
+          margin: 5px;
+        }
+
         #codemirror-dialog {
           --dialog-min-width: calc(100vw - 200px);
           --dialog-max-width: calc(100vw - 200px);
@@ -235,34 +144,21 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   firstUpdated() {
-    fetch('resources/image_metadata.json').then(
-      response => response.json()
-    ).then(
-      json => {
-        this.imageInfo = json.imageInfo;
-        for (let key in this.imageInfo) {
-          this.tags[key] = [];
-          if ("name" in this.imageInfo[key]) {
-            this.aliases[key] = this.imageInfo[key].name;
-            this.imageNames[key] = this.imageInfo[key].name;
-          }
-          if ("label" in this.imageInfo[key]) {
-            this.imageInfo[key].label.forEach((item)=>{
-              if (!("category" in item)) {
-                this.tags[key].push(item.tag);
-              }
-            });
-          }
-        }
-      }
-    );
-    this.shadowRoot.querySelector('#pipeline-environment').addEventListener('selected', this.updateLanguage.bind(this));
-    this._refreshImageList();
+    this.pipelineCreate = this.shadowRoot.querySelector('backend-ai-pipeline-create');
+    this.pipelineList = this.shadowRoot.querySelector('backend-ai-pipeline-list');
 
     const dialog = this.shadowRoot.querySelector('#codemirror-dialog');
     dialog.addEventListener('didShow', () => {
       this.shadowRoot.querySelector('#codemirror-editor').refresh();
-    })
+    });
+    this.pipelineCreate.addEventListener('backend-ai-pipeline-created', (e) => {
+      const folderName = e.detail;
+      this.pipelineList.changePipeline(folderName);
+    });
+    this.pipelineCreate.addEventListener('backend-ai-pipeline-updated', (e) => {
+      const folderName = e.detail;
+      this.pipelineList.changePipeline(folderName);
+    });
 
     this.notification = globalThis.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#loading-spinner');
@@ -275,484 +171,17 @@ export default class BackendAIPipelineView extends BackendAIPage {
     }
     if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
-        this._initPipelinePage();
-        await this._fetchPipelineFolders();
-        await this._makeSortablePipelineComponents();
       }, true);
     } else {
-      this._initPipelinePage();
-      await this._fetchPipelineFolders();
-      await this._makeSortablePipelineComponents();
     }
-  }
-
-  _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll(".tab-content");
-    for (let x = 0; x < els.length; x++) {
-      els[x].style.display = 'none';
-    }
-    this.shadowRoot.querySelector('#' + tab.ariaLabel).style.display = 'block';
-  }
-
-  _initPipelinePage() {
-    this.pipelineFolderName = '';
-    this.pipelineConfig = {};
-    this.pipelineComponents = [];
-  }
-
-  async _fetchPipelineFolders() {
-    this.indicator.show();
-    try {
-      const folders = await window.backendaiclient.vfolder.list();
-      const pipelines: Array<object> = [];
-      const downloadJobs: Array<object> = [];
-      folders.forEach((folder) => {
-        if (folder.name.startsWith('pipeline-')) {
-          const job = this._downloadPipelineConfig(folder.name)
-              .then((resp) => {
-                folder.config = resp;
-                pipelines.push(folder);
-              })
-              .catch((err) => {
-                console.error(err)
-                if (err && err.message) {
-                  this.notification.text = PainKiller.relieve(err.title);
-                  this.notification.detail = err.message;
-                  this.notification.show(true);
-                }
-              });
-          downloadJobs.push(job);
-        }
-      });
-      Promise.all(downloadJobs)
-          .then(() => {
-            this.pipelineFolderList = pipelines;
-            this.indicator.hide();
-          })
-          .catch((err) => {
-            console.error(err)
-            if (err && err.message) {
-              this.notification.text = PainKiller.relieve(err.title);
-              this.notification.detail = err.message;
-              this.notification.show(true);
-            }
-            this.indicator.hide();
-          });
-    } catch (err) {
-      console.error(err)
-      this.notification.text = PainKiller.relieve(err.title);
-      this.notification.detail = err.message;
-      this.notification.show(true);
-      this.indicator.hide();
-    }
-  }
-
-  updateLanguage() {
-    const selectedItem = this.shadowRoot.querySelector('#pipeline-environment').selected;
-    if (selectedItem === null) return;
-    let kernel = selectedItem.id;
-    this._updateVersions(kernel);
-  }
-
-  _updateVersions(kernel) {
-    const tagEl = this.shadowRoot.querySelector('#pipeline-environment-tag');
-    if (kernel in this.supports) {
-      let versions = this.supports[kernel];
-      versions.sort();
-      versions.reverse(); // New version comes first.
-      this.versions = versions;
-    }
-    if (this.versions !== undefined) {
-      tagEl.value = this.versions[0];
-      tagEl.selectedText = tagEl.value;
-      // this.updateMetric('update versions');
-    }
-  }
-
-  _refreshImageList() {
-    const fields = [
-      'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
-      'resource_limits { key min max }'
-    ];
-    window.backendaiclient.image.list(fields, true).then((response) => {
-      const images: Array<object> = [];
-      Object.keys(response.images).map((objectKey, index) => {
-        const item = response.images[objectKey];
-        if (item.installed === true) {
-          images.push(item);
-        }
-      });
-      if (images.length === 0) {
-        return;
-      }
-      this.images = images;
-      this.supports = {};
-      Object.keys(this.images).map((objectKey, index) => {
-        const item = this.images[objectKey];
-        const supportsKey = `${item.registry}/${item.name}`;
-        if (!(supportsKey in this.supports)) {
-          this.supports[supportsKey] = [];
-        }
-        this.supports[supportsKey].push(item.tag);
-        this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
-      });
-      this._updateEnvironment();
-    }).catch((err) => {
-      // this.metadata_updating = false;
-      console.error(err)
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true);
-      }
-    });
-  }
-
-  async _fetchResourceGroup() {
-    const currentGroup = window.backendaiclient.current_group || null;
-    let sgs = await window.backendaiclient.scalingGroup.list(currentGroup);
-    this.scalingGroups = sgs.scaling_groups;
-    this.scalingGroup = sgs.scaling_groups[0].name;
-  }
-
-  _updateEnvironment() {
-    // this.languages = Object.keys(this.supports);
-    // this.languages.sort();
-    const langs = Object.keys(this.supports);
-    if (langs === undefined) return;
-    langs.sort();
-    this.languages = [];
-    langs.forEach((item, index) => {
-      if (!(Object.keys(this.aliases).includes(item))) {
-        const humanizedName = this._guessHumanizedNames(item);
-        if (humanizedName !== null) {
-          this.aliases[item] = humanizedName;
-        } else {
-          this.aliases[item] = item;
-        }
-      }
-      let specs = item.split('/');
-      let registry = specs[0];
-      let prefix, kernelName;
-      if (specs.length == 2) {
-        prefix = '';
-        kernelName = specs[1];
-      } else {
-        prefix = specs[1];
-        kernelName = specs[2];
-      }
-      const alias = this.aliases[item];
-      let basename;
-      if (alias !== undefined) {
-        basename = alias.split(' (')[0];
-      } else {
-        basename = kernelName;
-      }
-      let tags: string[] = [];
-      if (kernelName in this.tags) {
-        tags = tags.concat(this.tags[kernelName]);
-      }
-      if (prefix != '') {
-        tags.push(prefix);
-      }
-      this.languages.push({
-        name: item,
-        registry: registry,
-        prefix: prefix,
-        kernelname: kernelName,
-        alias: alias,
-        basename: basename,
-        tags: tags
-      });
-    });
-    this._initAliases();
-  }
-
-  _guessHumanizedNames(kernelName) {
-    const candidate = this.imageNames;
-    let imageName = '';
-    let humanizedName = null;
-    let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
-    Object.keys(candidate).forEach((item, index) => {
-      let specs = kernelName.split('/');
-      if (specs.length == 2) {
-        imageName = specs[1];
-      } else {
-        imageName = specs[2];
-      }
-      if (imageName === item) {
-        humanizedName = candidate[item];
-        matchedString = item;
-      } else if (imageName === '' && kernelName.endsWith(item) && item.length < matchedString.length) {
-        humanizedName = candidate[item];
-        matchedString = item;
-      }
-    });
-    return humanizedName;
-  }
-
-  selectDefaultLanguage() {
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._selectDefaultLanguage();
-      }, true);
-    } else {
-      this._selectDefaultLanguage();
-    }
-  }
-
-  _selectDefaultLanguage() {
-    if (window.backendaiclient._config.default_session_environment !== undefined &&
-      'default_session_environment' in window.backendaiclient._config &&
-      window.backendaiclient._config.default_session_environment !== '') {
-      this.defaultLanguage = window.backendaiclient._config.default_session_environment;
-    } else if (this.languages.length !== 0) {
-      this.defaultLanguage = this.languages[0].name;
-    } else {
-      this.defaultLanguage = 'index.docker.io/lablup/ngc-tensorflow';
-    }
-    return true;
-  }
-
-
-  _initAliases() {
-    for (let item in this.aliases) {
-      this.aliases[this.aliases[item]] = item;
-    }
-  }
-
-  async _uploadFile(vfpath, blob, folder_name) {
-    return new Promise((resolve, reject) => {
-      globalThis.backendaiclient.vfolder.create_upload_session(vfpath, blob, folder_name)
-          .then((uploadUrl) => {
-            const uploader = new tus.Upload(blob, {
-              endpoint: uploadUrl,
-              retryDelays: [0, 3000, 5000, 10000, 20000],
-              uploadUrl: uploadUrl,
-              chunksize: 15728640,
-              metadata: {
-                filename: vfpath,
-                filetype: blob.type,
-              },
-              onError: (err) => {
-                console.error("upload failed:" + err);
-                this.notification.text = err;
-                this.notification.show(true);
-                reject(new Error(err));
-              },
-              onSuccess: () => {
-                console.log(`${vfpath} uploaded`)
-                resolve();
-              }
-            });
-            uploader.start();
-          })
-          .catch((err) => {
-            console.error(err)
-            this.notification.text = err;
-            this.notification.show(true);
-            reject(new Error(err));
-          });
-    });
-  }
-
-  _selectPipeline(e) {
-    let itemEl;
-    if (typeof e === 'string') {
-      itemEl = this.shadowRoot.querySelector(`.pipeline-item[folder-name="${e}"]`)
-    } else {
-      itemEl = e.target.closest('.pipeline-item');
-    }
-    this.pipelineFolderName = itemEl.getAttribute('folder-name');
-    const configJob = this._downloadPipelineConfig(this.pipelineFolderName)
-        .then((resp) => {
-          this.pipelineConfig = resp;
-        })
-        .catch((err) => {
-          console.error(err)
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true);
-          }
-        });
-    const componentJob = this._downloadPipelineComponents(this.pipelineFolderName)
-        .then((resp) => {
-          this.pipelineComponents = [];
-          this.pipelineComponents = resp;
-        })
-        .catch((err) => {
-          console.error(err)
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true);
-          }
-        });
-    Promise.all([configJob, componentJob])
-        .then(() => {
-          this._makeSortablePipelineComponents();
-          itemEl.active = true;
-        })
-        .catch((err) => {
-          console.error(err)
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true);
-          }
-          this.indicator.hide();
-        });
   }
 
   _openPipelineCreateDialog() {
-    this.selectDefaultLanguage();
-    this._fetchResourceGroup();
-    this._fillPipelineCreateDialogFields(null);
-    this.pipelineCreateMode = 'create';
-    window.backendaiclient.vfolder.list_hosts()
-        .then((resp) => {
-          const folderHostEl = this.shadowRoot.querySelector('#pipeline-folder-host');
-          this.vhosts = resp.allowed.slice();
-          this.vhost = resp.default;
-          folderHostEl.value = this.vhost;
-        })
-        .catch((err) => {
-          console.error(err)
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true);
-          }
-        });
-    this.shadowRoot.querySelector('#pipeline-create-dialog').show();
+    this.pipelineCreate._openPipelineCreateDialog();
   }
 
-  _hidePipelineCreateDialog() {
-    const dialog = this.shadowRoot.querySelector('#pipeline-create-dialog');
-    dialog.hide();
-  }
-
-  async _createPipeline() {
-    const title = this.shadowRoot.querySelector('#pipeline-title').value;
-    const description = this.shadowRoot.querySelector('#pipeline-description').value;
-    const environment = this.shadowRoot.querySelector('#pipeline-environment').value;
-    const version = this.shadowRoot.querySelector('#pipeline-environment-tag').value;
-    const scaling_group = this.shadowRoot.querySelector('#pipeline-scaling-group').value;
-    const folder_host = this.shadowRoot.querySelector('#pipeline-folder-host').value;
-    const slugged_title = `pipeline-${window.backendaiclient.slugify(title)}-${window.backendaiclient.generateSessionId(8, true)}`;
-    if (!title || !environment || !version || !scaling_group || !folder_host) {
-      this.notification.text = 'Fill all input fields';
-      this.notification.show();
-      return;
-    }
-    const configObj = {
-      title, description, environment, version, scaling_group, folder_host
-    }
-    this.indicator.show();
-    if (this.pipelineCreateMode === 'create') {
-      try {
-        await window.backendaiclient.vfolder.create(slugged_title,folder_host);
-        const uploadPipelineTask = this._uploadPipelineConfig(slugged_title, configObj);
-        const uploadComponentsTask = this._uploadPipelineComponents(slugged_title, []);
-        const fetchFoldersTask = this._fetchPipelineFolders();
-        await Promise.all([uploadPipelineTask, uploadComponentsTask, fetchFoldersTask]);
-        this._hidePipelineCreateDialog();
-        this.indicator.hide();
-        this.notification.text = 'Pipeline created';
-        this.notification.show();
-      } catch (err) {
-        console.error(err)
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true);
-        }
-        this.indicator.hide();
-      }
-    } else {
-      try {
-        await this._uploadPipelineConfig(this.pipelineFolderName, configObj);
-        await this._fetchPipelineFolders();
-        this._hidePipelineCreateDialog();
-        this._selectPipeline(this.pipelineFolderName);
-        this.indicator.hide();
-      } catch (err) {
-        console.error(err)
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true);
-        }
-        this.indicator.hide();
-      }
-    }
-  }
-
-  async _openPipelineUpdateDialog() {
-    if (!this.pipelineFolderName) {
-      this.notification.text = 'No pipeline selected';
-      this.notification.show();
-      return;
-    }
-    this._fetchResourceGroup();
-    const config = await this._downloadPipelineConfig(this.pipelineFolderName);
-    this.pipelineCreateMode = 'update';
-    window.backendaiclient.vfolder.list_hosts()
-        .then((resp) => {
-          const folderHostEl = this.shadowRoot.querySelector('#pipeline-folder-host');
-          this.vhosts = resp.allowed.slice();
-          this.vhost = config.folder_host;
-          folderHostEl.value = this.vhost;
-        })
-        .catch((err) => {
-          console.error(err)
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true);
-          }
-        });
-    this._fillPipelineCreateDialogFields(config);
-    this.shadowRoot.querySelector('#pipeline-create-dialog').show();
-  }
-
-  _fillPipelineCreateDialogFields(config) {
-    if (!config) config = {};
-    const dialog = this.shadowRoot.querySelector('#pipeline-create-dialog');
-    dialog.querySelector('#pipeline-title').value = config.title || '';
-    dialog.querySelector('#pipeline-description').value = config.description || '';
-    if (config.environment) {
-      dialog.querySelector('#pipeline-environment').value = config.environment;
-    }
-    if (config.version) {
-      dialog.querySelector('#pipeline-environment-tag').value = config.version;
-    }
-    if (config.scaling_group) {
-      dialog.querySelector('#pipeline-scaling-group').value = config.scaling_group;
-    }
-    if (config.folder_host) {
-      dialog.querySelector('#pipeline-folder-host').value = config.folder_host;
-    }
-  }
-
-  async _uploadPipelineConfig(folderName, configObj) {
-    const vfpath = 'config.json';
-    const blob = new Blob([JSON.stringify(configObj, null, 2)], {type: 'application/json'});
-    await this._uploadFile(vfpath, blob, folderName);
-  }
-
-  async _downloadPipelineConfig(folder_name) {
-    const vfpath = 'config.json';
-    try {
-      const res = await window.backendaiclient.vfolder.download(vfpath, folder_name, false, true);
-      return await res.json();
-    } catch (err) {
-      console.error(err)
-      this.notification.text = PainKiller.relieve(err.title);
-      this.notification.detail = err.message;
-      this.notification.show(true);
-    }
+  _openPipelineUpdateDialog() {
+    this.pipelineCreate._openPipelineUpdateDialog(this.pipelineList.pipelineSelectedName);
   }
 
   _openComponentAddDialog() {
@@ -889,34 +318,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.notification.detail = err.message;
       this.notification.show(true);
     }
-  }
-
-  async _makeSortablePipelineComponents() {
-    if (this.pipelineSortable && this.pipelineSortable.destroy) {
-      await this.pipelineSortable.destroy();
-    }
-    const el = this.shadowRoot.querySelector('#pipeline-component-list');
-    this.pipelineSortable = Sortable.create(el, {
-      sort: true,
-      animation: 150,
-      onMove: (evt) => {
-        // evt.related.style.backgroundColor = 'red';
-        this._dragSource = evt.dragged;
-        this._dragTarget = evt.related;
-        return false;
-      },
-      onEnd: (evt) => {
-        if (!this._dragSource.dataset || !this._dragTarget.dataset) return;
-        const srcIdx = this._dragSource.dataset.id
-        const targetIdx = this._dragTarget.dataset.id
-        const src = this.pipelineComponents[srcIdx];
-        this.pipelineComponents.splice(srcIdx, 1);
-        this.pipelineComponents.splice(targetIdx, 0, src);
-        this.pipelineComponents = this.pipelineComponents.slice();
-        this._dragSource = Object();
-        this._dragTarget = Object();
-      }
-    });
   }
 
   async _ensureComponentFolder(component) {
@@ -1205,50 +606,31 @@ export default class BackendAIPipelineView extends BackendAIPage {
           <div slot="message">
             <h3 class="tab horizontal center layout">
               <mwc-tab-bar>
-                <mwc-tab aria-label="exp-lists" label="List"
-                    @click="${(e) => this._showTab(e.target)}">
+                <mwc-tab aria-label="exp-lists" label="${_t('pipeline.List')}">
                 </mwc-tab>
-                <mwc-tab style="display:none" aria-label="running-lists" label="Running" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-                <mwc-tab style="display:none" aria-label="finished-lists" label="Finished" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                <mwc-tab style="display:none" aria-label="running-lists"
+                    label="${_t('pipeline.Running')}">
+                </mwc-tab>
+                <mwc-tab style="display:none" aria-label="finished-lists"
+                    label="${_t('pipeline.Finished')}">
+                </mwc-tab>
               </mwc-tab-bar>
               <span class="flex"></span>
               <mwc-button outlined id="edit-pipeline" icon="edit"
-                    label="Edit"
-                    @click="${() => this._openPipelineUpdateDialog()}">
+                  label="${_t('button.Edit')}" @click="${() => this._openPipelineUpdateDialog()}">
               </mwc-button>
-              <mwc-button dense raised id="add-experiment" icon="add"
-                    label="Add" style="margin-right:15px"
-                    @click="${() => this._openPipelineCreateDialog()}">
+              <mwc-button dense raised id="add-pipeline" icon="add"
+                  label="${_t('button.Create')}" style="margin-right:15px"
+                  @click="${() => this._openPipelineCreateDialog()}">
               </mwc-button>
             </h3>
             <div class="horizontal wrap layout">
+              <backend-ai-pipeline-list ?active="${this.active}"></backend-ai-pipeline-list>
+              <backend-ai-pipeline-create ?active="${this.active}"></backend-ai-pipeline-create>
+
+      <!--
               <div id="exp-lists" class="tab-content" style="margin:0;padding:0;height:calc(100vh - 235px);">
                 <div class="horizontal wrap layout" style="margin:0;padding:0;">
-                  <div id="exp-sidebar">
-                    <h4>Pipeline</h4>
-                    ${this.pipelineFolderList.map((item) => html`
-                      <mwc-list-item class="pipeline-item" twoline graphic="icon"
-                          @click="${this._selectPipeline}"
-                          ?selected="${item.name === this.pipelineFolderName}"
-                          folder-id="${item.id}" folder-name="${item.name}" folder-host="${item.host}">
-                        <i class="fas fa-stream" slot="graphic"></i>
-                        <span>${item.config.title}</span>
-                        <span slot="secondary">${item.config.description}</span>
-                      </mwc-list-item>
-                    `)}
-                    ${this.pipelineFolderList.length < 1 ? html`<mwc-list-item>No pipeline.</mwc-list-item>` : ''}
-                    <h4>Templates</h4>
-                    <mwc-list-item class="sidebar-item" twoline graphic="icon" disabled>
-                      <i class="fas fa-stream" slot="graphic"></i>
-                      <span>MNIST (PyTorch)</span>
-                      <span slot="secondary">Basic experiment example using PyTorch</span>
-                    </mwc-list-item>
-                    <mwc-list-item class="sidebar-item" twoline graphic="icon" disabled>
-                      <i class="fas fa-stream" slot="graphic"></i>
-                      <span>Chicago Taxi (TensorFlow)</span>
-                      <span slot="secondary">Basic example for pipeline</span>
-                    </mwc-list-item>
-                  </div>
                   <div class="layout vertical flex">
                     <div class="layout vertical" style="padding:5px 20px">
                       <div class="layout vertical flex" style="margin-bottom:0.5em;">
@@ -1328,64 +710,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
               <div id="finished-lists" class="tab-content" style="display:none;">
                 <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
               </div>
-            </div>
+            </div> -->
           </div>
         </lablup-activity-panel>
       </div>
-
-      <backend-ai-dialog id="pipeline-create-dialog" fixed backdrop>
-        <span slot="title">${this.pipelineCreateMode === 'create' ? 'Create' : 'Update'} pipeline config</span>
-        <div slot="content" class="layout vertical" style="width:450px">
-          <mwc-textfield id="pipeline-title" type="text" autofocus
-              label="Pipeline title" maxLength="30">
-          </mwc-textfield>
-          <mwc-textfield id="pipeline-description" type="text"
-              label="Pipeline description" maxLength="200">
-          </mwc-textfield>
-          <mwc-select id="pipeline-environment" label="Environments">
-            <mwc-list-item style="display:none;" value="None">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
-            ${this.languages.map((item) => html`
-              <mwc-list-item id="${item.name}" value="${item.name}"
-                  ?selected="${item.name === this.defaultLanguage}">
-                <div class="layout horizontal">
-                  ${item.basename}
-                  ${item.tags ? item.tags.map(item => html`
-                    <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
-                  `) : ''}
-                </div>
-              </mwc-list-item>
-            `)}
-          </mwc-select>
-          <mwc-select id="pipeline-environment-tag" label="Version">
-            <mwc-list-item style="display:none"></mwc-list-item>
-            ${this.versions.map((item, idx) => html`
-              <mwc-list-item id="${item}" value="${item}"
-                  ?selected="${idx === 0}">${item}</mwc-list-item>
-            `)}
-          </mwc-select>
-          <mwc-select id="pipeline-scaling-group" label="${_t('session.launcher.OwnerResourceGroup')}">
-            ${this.scalingGroups.map((item) => html`
-              <mwc-list-item id="${item.name}" value="${item.name}"
-                  ?selected="${item.name === this.scalingGroup}">
-                ${item.name}
-              </mwc-list-item>
-            `)}
-          </mwc-select>
-          <mwc-select id="pipeline-folder-host" label="Folder host">
-            ${this.vhosts.map((item, idx) => html`
-              <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
-            `)}
-          </mwc-select>
-        </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <div class="flex"></div>
-          <mwc-button label="${_t("button.Cancel")}"
-              @click="${this._hidePipelineCreateDialog}"></mwc-button>
-          <mwc-button unelevated
-              label="${this.pipelineCreateMode === 'create' ? _t('button.Create') : _t('button.Update')}"
-              @click="${this._createPipeline}"></mwc-button>
-        </div>
-      </backend-ai-dialog>
 
       <backend-ai-dialog id="component-add-dialog" fixed backdrop>
         <span slot="title">${this.componentCreateMode === 'create' ? 'Add' : 'Update'} component</span>
