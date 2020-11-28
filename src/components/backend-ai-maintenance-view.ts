@@ -66,12 +66,13 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
         }
 
         div.title {
+          font-size: 14px;
           font-weight: bold;
         }
 
         div.description,
         span.description {
-          font-size: 11px;
+          font-size: 13px;
           margin-top: 5px;
           margin-right: 5px;
         }
@@ -153,7 +154,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
                   @click="${() => this.rescan_images()}">
               </mwc-button>
             </div>
-            <div class="horizontal flex layout wrap setting-item">
+            <div class="horizontal flex layout wrap setting-item temporarily-hide">
               <div class="vertical center-justified layout setting-desc">
                 <div class="title">${_t("maintenance.CleanupOldImages")}</div>
                 <div class="description">${_t("maintenance.DescCleanupOldImages")}

@@ -63,6 +63,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) blockType = '';
   @property({type: String}) blockMessage = '';
   @property({type: String}) connection_mode = 'SESSION';
+  @property({type: Number}) login_attempt_limit = 5;
+  @property({type: Number}) login_block_time = 180;
   @property({type: String}) user;
   @property({type: String}) email;
   @property({type: Object}) config = Object();
@@ -80,6 +82,9 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Boolean}) openPortToPublic = false;
+  @property({type: Boolean}) maxCPUCoresPerSession = 64;
+  @property({type: Boolean}) maxCUDADevicesPerSession = 16;
+  @property({type: Boolean}) maxShmPerSession = 2;
   @property({type: Array}) endpoints;
 
   constructor() {
@@ -169,54 +174,8 @@ export default class BackendAILogin extends BackendAIPage {
           --mdc-on-theme-primary: var(--general-button-background-color);
         }
 
-        #login-panel {
-          --dialog-width: 400px;
-          --backdrop-bg: transparent;
-          --dialog-elevation: 0px 0px 5px 5px rgba(0, 0, 0, 0.1);
-        }
-
         h3 small {
           --button-font-size: 12px;
-        }
-
-        wl-button {
-          --button-bg: transparent;
-        }
-
-        wl-button.red {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-          color: var(--paper-red-900);
-        }
-
-        wl-button.mini {
-          font-size: 12px;
-        }
-
-        wl-button.full {
-          width: 335px;
-        }
-
-        wl-button.login-button,
-        wl-button.login-cancel-button {
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-        }
-
-        wl-button.signup-button {
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
-        }
-
-        wl-button.change-login-mode-button {
-          --button-bg-hover: var(--paper-blue-100);
-          --button-bg-active: var(--paper-blue-600);
-        }
-
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
         }
 
         wl-icon {
@@ -241,6 +200,109 @@ export default class BackendAILogin extends BackendAIPage {
           margin-bottom: 5px;
           font-size: 18px;
           margin-top: 5px;
+        }
+
+        .sk-folding-cube {
+          margin: 20px auto;
+          width: 30px;
+          height: 30px;
+          position: relative;
+          -webkit-transform: rotateZ(45deg);
+                  transform: rotateZ(45deg);
+          z-index: 10;
+          position: absolute;
+          top: 35%;
+          left: 50%;
+        }
+
+        .sk-folding-cube > .loading {
+          -webkit-transform: rotateZ(-45deg);
+                  transform: rotateZ(-45deg);
+          font-size: 12px;
+          letter-spacing: 0.1em;
+          display: block;
+          position: relative;
+          top: 50%;
+          left: 40%;
+        }
+
+        .sk-folding-cube .sk-cube {
+          float: left;
+          width: 50%;
+          height: 50%;
+          position: relative;
+          -webkit-transform: scale(1.1);
+              -ms-transform: scale(1.1);
+                  transform: scale(1.1);
+        }
+        .sk-folding-cube .sk-cube:before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: #3e872d;
+          -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
+                  animation: sk-foldCubeAngle 2.4s infinite linear both;
+          -webkit-transform-origin: 100% 100%;
+              -ms-transform-origin: 100% 100%;
+                  transform-origin: 100% 100%;
+        }
+        .sk-folding-cube .sk-cube2 {
+          -webkit-transform: scale(1.1) rotateZ(90deg);
+                  transform: scale(1.1) rotateZ(90deg);
+        }
+        .sk-folding-cube .sk-cube3 {
+          -webkit-transform: scale(1.1) rotateZ(180deg);
+                  transform: scale(1.1) rotateZ(180deg);
+        }
+        .sk-folding-cube .sk-cube4 {
+          -webkit-transform: scale(1.1) rotateZ(270deg);
+                  transform: scale(1.1) rotateZ(270deg);
+        }
+        .sk-folding-cube .sk-cube2:before {
+          -webkit-animation-delay: 0.3s;
+                  animation-delay: 0.3s;
+        }
+        .sk-folding-cube .sk-cube3:before {
+          -webkit-animation-delay: 0.6s;
+                  animation-delay: 0.6s;
+        }
+        .sk-folding-cube .sk-cube4:before {
+          -webkit-animation-delay: 0.9s;
+                  animation-delay: 0.9s;
+        }
+        @-webkit-keyframes sk-foldCubeAngle {
+          0%, 10% {
+            -webkit-transform: perspective(140px) rotateX(-180deg);
+                    transform: perspective(140px) rotateX(-180deg);
+            opacity: 0;
+          } 25%, 75% {
+            -webkit-transform: perspective(140px) rotateX(0deg);
+                    transform: perspective(140px) rotateX(0deg);
+            opacity: 1;
+          } 90%, 100% {
+            -webkit-transform: perspective(140px) rotateY(180deg);
+                    transform: perspective(140px) rotateY(180deg);
+            opacity: 0;
+          }
+        }
+
+        @keyframes sk-foldCubeAngle {
+          0%, 10% {
+            -webkit-transform: perspective(140px) rotateX(-180deg);
+                    transform: perspective(140px) rotateX(-180deg);
+            opacity: 0;
+          } 25%, 75% {
+            -webkit-transform: perspective(140px) rotateX(0deg);
+                    transform: perspective(140px) rotateX(0deg);
+            opacity: 1;
+          } 90%, 100% {
+            -webkit-transform: perspective(140px) rotateY(180deg);
+                    transform: perspective(140px) rotateY(180deg);
+            opacity: 0;
+          }
         }
       `];
   }
@@ -317,16 +379,40 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       this.allow_project_resource_monitor = true;
     }
-    if (typeof config.general === "undefined" || typeof config.general.openPortToPublic === "undefined" || config.general.openPortToPublic === '' || config.general.openPortToPublic == false) {
+
+    if (typeof config.resources === "undefined" || typeof config.resources.openPortToPublic === "undefined" || config.resources.openPortToPublic === '' || config.resources.openPortToPublic == false) {
       this.openPortToPublic = false;
     } else {
       this.openPortToPublic = true;
+    }
+    if (typeof config.resources === "undefined" || typeof config.resources.maxCPUCoresPerSession === "undefined" || isNaN(parseInt(config.resources.maxCPUCoresPerSession))) {
+      this.maxCPUCoresPerSession = 64;
+    } else {
+      this.maxCPUCoresPerSession = parseInt(config.resources.maxCPUCoresPerSession);
+    }
+    if (typeof config.resources === "undefined" || typeof config.resources.maxCUDADevicesPerSession === "undefined" || isNaN(parseInt(config.resources.maxCUDADevicesPerSession))) {
+      this.maxCUDADevicesPerSession = 16;
+    } else {
+      this.maxCUDADevicesPerSession = parseInt(config.resources.maxCUDADevicesPerSession);
+    }
+    if (typeof config.resources === "undefined" || typeof config.resources.maxShmPerSession === "undefined" || isNaN(parseFloat(config.resources.maxShmPerSession))) {
+      this.maxShmPerSession = 2;
+    } else {
+      this.maxShmPerSession = parseFloat(config.resources.maxShmPerSession);
     }
 
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
       this.allow_signout = false;
     } else {
       this.allow_signout = true;
+    }
+    if (typeof config.general === "undefined" || typeof config.general.loginAttemptLimit === "undefined" || config.general.loginAttemptLimit === '') {
+    } else {
+      this.login_attempt_limit = parseInt(config.general.loginAttemptLimit);
+    }
+    if (typeof config.general === "undefined" || typeof config.general.loginBlockTime === "undefined" || config.general.loginBlockTime === '') {
+    } else {
+      this.login_block_time = parseInt(config.general.loginBlockTime);
     }
     if (typeof config.wsproxy === "undefined" || typeof config.wsproxy.proxyURL === "undefined" || config.wsproxy.proxyURL === '') {
       this.proxy_url = 'http://127.0.0.1:5050/';
@@ -431,7 +517,7 @@ export default class BackendAILogin extends BackendAIPage {
   /**
    * Login according to connection_mode and api_endpoint.
    * */
-  login() {
+  login(showError: boolean = true) {
     if (this.api_endpoint === '') {
       let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
       if (api_endpoint != null) {
@@ -441,10 +527,10 @@ export default class BackendAILogin extends BackendAIPage {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION') {
       //this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
-      this._connectUsingSession();
+      this._connectUsingSession(showError);
     } else if (this.connection_mode === 'API') {
       //this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
-      this._connectUsingAPI();
+      this._connectUsingAPI(showError);
     } else {
       this.open();
     }
@@ -495,12 +581,6 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
-  }
-
   _cancelLogin(e) {
     this._hideDialog(e);
     this.open();
@@ -548,6 +628,22 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   _login() {
+    let loginAttempt = globalThis.backendaioptions.get('login_attempt', 0, 'general');
+    let lastLogin =  globalThis.backendaioptions.get('last_login', Math.floor(Date.now() / 1000), 'general');
+    let currentTime = Math.floor(Date.now() / 1000);
+    if (loginAttempt >= this.login_attempt_limit && currentTime - lastLogin > this.login_block_time) { // Reset login counter and last login after 180sec.
+      globalThis.backendaioptions.set('last_login', currentTime, 'general');
+      globalThis.backendaioptions.set('login_attempt', 0, 'general');
+    } else if (loginAttempt >= this.login_attempt_limit) { // login count exceeds limit, block login and set the last login.
+      globalThis.backendaioptions.set('last_login', currentTime, 'general');
+      globalThis.backendaioptions.set('login_attempt', loginAttempt + 1, 'general');
+      this.notification.text = _text('login.TooManyAttempt');
+      this.notification.show();
+      return;
+    } else {
+      globalThis.backendaioptions.set('login_attempt', loginAttempt + 1, 'general');
+    }
+
     this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     if (this.api_endpoint === '') {
@@ -556,20 +652,35 @@ export default class BackendAILogin extends BackendAIPage {
       return;
     }
     if (this.connection_mode === 'SESSION') {
+      this._disableUserInput();
       this.user_id = (this.shadowRoot.querySelector('#id_user_id') as any).value;
       this.password = (this.shadowRoot.querySelector('#id_password') as any).value;
-      this._connectUsingSession();
+
+      // show error message when id or password input is empty
+      if (this.user_id === '' || this.user_id === 'undefined' || this.password === '' || this.password === 'undefined') {
+        this.notification.text = _text("login.PleaseInputLoginInfo");
+        this.notification.show();
+        this._enableUserInput();
+      } else {
+        this._connectUsingSession(true);
+      }
     } else {
+      this._disableUserInput();
       this.api_key = (this.shadowRoot.querySelector('#id_api_key') as any).value;
       this.secret_key = (this.shadowRoot.querySelector('#id_secret_key') as any).value;
-      this._connectUsingAPI();
+      this._connectUsingAPI(true);
     }
   }
 
   /**
    * Connect GQL when SESSION mode.
    * */
-  async _connectUsingSession() {
+  async _connectUsingSession(showError: boolean = true) {
+    if (this.api_endpoint === '') {
+      this.free();
+      this.open();
+      return Promise.resolve(false);
+    }
     this.clientConfig = new ai.backend.ClientConfig(
       this.user_id,
       this.password,
@@ -580,57 +691,71 @@ export default class BackendAILogin extends BackendAIPage {
       this.clientConfig,
       `Backend.AI Console.`,
     );
-    let isLogon = await this.client.check_login();
-    if (isLogon === false) { // Not authenticated yet.
-      this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
-      this.client.login().then(response => {
-        if (response === false) {
-          this.open();
-          if (this.user_id != '' && this.password != '') {
-            this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
+    return this.client.get_manager_version().then(async ()=>{
+      let isLogon = await this.client.check_login();
+      if (isLogon === false) { // Not authenticated yet.
+        this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
+        this.client.login().then(response => {
+          if (response === false) {
+            this.open();
+            if (this.user_id != '' && this.password != '') {
+              this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
+              this.notification.show();
+            }
+          } else if (response.fail_reason) {
+            this.open();
+            if (this.user_id != '' && this.password != '') {
+              this.notification.text = PainKiller.relieve(response.fail_reason);
+              this.notification.show();
+            }
+          } else {
+            this.is_connected = true;
+            return this._connectGQL();
+          }
+        }).catch((err) => {   // Connection failed
+          this.free();
+          if (showError) {
+            if (this.loginPanel.open !== true) {
+              if (typeof err.message !== "undefined") {
+                this.notification.text = PainKiller.relieve(err.title);
+                this.notification.detail = err.message;
+              } else {
+                this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
+              }
+            } else {
+              if (typeof err.message !== "undefined") {
+                this.notification.text = PainKiller.relieve(err.title);
+                this.notification.detail = err.message;
+              } else {
+                this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+              }
+              console.log(err);
+            }
             this.notification.show();
           }
-        } else if (response.fail_reason) {
-          this.open();
-          if (this.user_id != '' && this.password != '') {
-            this.notification.text = PainKiller.relieve(response.fail_reason);
-            this.notification.show();
-          }
-        } else {
-          this.is_connected = true;
-          return this._connectGQL();
-        }
-      }).catch((err) => {   // Connection failed
-        this.free();
-        if (this.loginPanel.open !== true) {
-          if (typeof err.message !== "undefined") {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-          } else {
-            this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
-          }
-        } else {
-          if (typeof err.message !== "undefined") {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-          } else {
-            this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-          }
-          console.log(err);
-        }
-        this.notification.show();
+        });
         this.open();
-      });
-    } else { // Login already succeeded.
-      this.is_connected = true;
-      return this._connectGQL();
-    }
+        this._enableUserInput();
+      } else { // Login already succeeded.
+        this.is_connected = true;
+        return this._connectGQL();
+      }
+    }).catch((err)=>{ // Server is unreachable
+      this.free();
+      this.open();
+      this._enableUserInput();
+      if (showError) {
+        this.notification.text = PainKiller.relieve('Endpoint is unreachable. Please check the connection or endpoint');
+        this.notification.show();
+      }
+      return Promise.resolve(false);
+    });
   }
 
   /**
    * Connect GQL when API mode.
    * */
-  _connectUsingAPI() {
+  _connectUsingAPI(showError: boolean = true) {
     this.clientConfig = new ai.backend.ClientConfig(
       this.api_key,
       this.secret_key,
@@ -641,40 +766,48 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     this.client.ready = false;
-    this._connectGQL();
+    this.client.get_manager_version().then(response => {
+      return this._connectGQL(showError);
+    });
   }
 
   /**
    * Call _connectViaGQL() to connect to GQL.
    * */
-  _connectGQL() {
+  _connectGQL(showError: boolean = true) {
     // Test connection
     if (this.loginPanel.open !== true) {
       this.block();
     }
-    this.client.get_manager_version().then(response => {
+    new Promise(() => {
+      const currentTime = Math.floor(Date.now() / 1000);
+      globalThis.backendaioptions.set('last_login', currentTime, 'general');
+      globalThis.backendaioptions.set('login_attempt', 0, 'general');
       this._connectViaGQL();
     }).catch((err) => {   // Connection failed
-      if (this.loginPanel.open !== true) {
-        if (typeof err.message !== "undefined") {
-          if (err.status === 408) { // Failed while loading getManagerVersion
-            this.notification.text = "Login succeed but manager is not responding.";
-            this.notification.detail = err.message;
-          } else {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-          }
-        } else {
-          this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
-        }
-        this.notification.show(false, err);
-        this.open();
-      } else {
-        this.notification.text = PainKiller.relieve('Login failed. Check login information.');
-        this.notification.show();
-      }
       this.free();
+      if (showError) {
+        if (this.loginPanel.open !== true) {
+          if (typeof err.message !== "undefined") {
+            if (err.status === 408) { // Failed while loading getManagerVersion
+              this.notification.text = "Login succeed but manager is not responding.";
+              this.notification.detail = err.message;
+            } else {
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+            }
+          } else {
+            this.notification.text = PainKiller.relieve('Login information mismatch. If the information is correct, logout and login again.');
+          }
+          this.notification.show(false, err);
+          this.open();
+        } else {
+          this.notification.text = PainKiller.relieve('Login failed. Check login information.');
+          this.notification.show();
+        }
+      }
       this.open();
+      this._enableUserInput();
     });
   }
 
@@ -743,6 +876,9 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
       globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
+      globalThis.backendaiclient._config.maxCPUCoresPerSession = this.maxCPUCoresPerSession;
+      globalThis.backendaiclient._config.maxCUDADevicesPerSession = this.maxCUDADevicesPerSession;
+      globalThis.backendaiclient._config.maxShmPerSession = this.maxShmPerSession;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
@@ -808,6 +944,25 @@ export default class BackendAILogin extends BackendAIPage {
     this.requestUpdate();
   }
 
+  _disableUserInput() {
+    if (this.connection_mode === 'SESSION') {
+      this.shadowRoot.querySelector('#id_user_id').disabled = true;
+      this.shadowRoot.querySelector('#id_password').disabled = true;
+    } else {
+      this.shadowRoot.querySelector('#id_user_id').disabled = true;
+      this.shadowRoot.querySelector('#id_password').disabled = true;
+    }
+    this.shadowRoot.querySelector('#loading-animator').style.display = 'block';
+  }
+
+  _enableUserInput() {
+    this.shadowRoot.querySelector('#id_user_id').disabled = false;
+    this.shadowRoot.querySelector('#id_password').disabled = false;
+    this.shadowRoot.querySelector('#id_user_id').disabled = false;
+    this.shadowRoot.querySelector('#id_password').disabled = false;
+    this.shadowRoot.querySelector('#loading-animator').style.display = 'none';
+  }
+
   render() {
     // language=HTML
     return html`
@@ -817,7 +972,7 @@ export default class BackendAILogin extends BackendAIPage {
           <div class="flex"></div>
         </div>
         <div slot="content" class="login-panel intro centered" style="margin: 0;">
-          <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;">
+          <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;min-height:40px;">
             <div>${this.connection_mode == 'SESSION' ? _t("login.LoginWithE-mail") : _t("login.LoginWithIAM")}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
@@ -832,85 +987,95 @@ export default class BackendAILogin extends BackendAIPage {
                 </div>
             ` : html``}
           </h3>
-          <form id="session-login-form" style="${this.connection_mode == 'SESSION' ? `display:block;` : `display:none;`}">
-            <fieldset>
-              <div class="horizontal layout start-justified center login-input">
-                <mwc-icon>email</mwc-icon>
-                <input type="email" id="id_user_id" maxlength="50" autocomplete="username"
-                             label="${_t("login.E-mail")}" placeholder="${_t("login.E-mail")}" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></input>
-              </div>
-              <div class="horizontal layout start-justified center login-input">
-                <mwc-icon>vpn_key</mwc-icon>
-                <input type="password" id="id_password" autocomplete="current-password"
-                             label="${_t("login.Password")}" placeholder="${_t("login.Password")}" icon="vpn_key" value="${this.password}" @keyup="${this._submitIfEnter}"></input>
-              </div>
-            </fieldset>
-          </form>
-          <form id="api-login-form" style="${this.connection_mode == 'SESSION' ? `display:none;` : `display:block;`}">
-            <fieldset>
-              <mwc-textfield type="text" id="id_api_key" maxlength="30"
-                           label="${_t("login.APIKey")}" icon="lock" value="${this.api_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
-              <mwc-textfield type="password" id="id_secret_key"
-                           label="${_t("login.SecretKey")}" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
-            </fieldset>
-          </form>
-          <form>
-            <fieldset>
-              <div class="horizontal layout" id="id_api_endpoint_container" style="display:none;">
-                <mwc-icon-button id="endpoint-button" icon="cloud_queue" style="margin-left:5px;" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
-                <mwc-menu id="endpoint-list" @selected="${() => this._updateEndpoint()}">
-                  <mwc-list-item disabled>${_t("login.EndpointHistory")}</mwc-list-item>
-                  ${this.endpoints.length === 0 ? html`
-                  <mwc-list-item value="">${_t("login.NoEndpointSaved")}</mwc-list-item>
-                  ` : html``}
+          <div class="login-form">
+            <div class="sk-folding-cube" id="loading-animator" style="display:none;">
+              <div class="sk-cube1 sk-cube"></div>
+              <div class="sk-cube2 sk-cube"></div>
+              <div class="sk-cube4 sk-cube"></div>
+              <div class="sk-cube3 sk-cube"></div>
+              <span class="loading">Waiting...</span>
+            </div>
+            <form id="session-login-form" style="${this.connection_mode == 'SESSION' ? `display:block;` : `display:none;`}">
+              <fieldset>
+                <div class="horizontal layout start-justified center login-input">
+                  <mwc-icon>email</mwc-icon>
+                  <input type="email" id="id_user_id" maxlength="50" autocomplete="username"
+                              label="${_t("login.E-mail")}" placeholder="${_t("login.E-mail")}" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></input>
+                </div>
+                <div class="horizontal layout start-justified center login-input">
+                  <mwc-icon>vpn_key</mwc-icon>
+                  <input type="password" id="id_password" autocomplete="current-password"
+                              label="${_t("login.Password")}" placeholder="${_t("login.Password")}" icon="vpn_key" value="${this.password}" @keyup="${this._submitIfEnter}"></input>
+                </div>
+              </fieldset>
+            </form>
+            <form id="api-login-form" style="${this.connection_mode == 'SESSION' ? `display:none;` : `display:block;`}">
+              <fieldset>
+                <mwc-textfield type="text" id="id_api_key" maxlength="30"
+                            label="${_t("login.APIKey")}" icon="lock" value="${this.api_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                <mwc-textfield type="password" id="id_secret_key"
+                            label="${_t("login.SecretKey")}" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+              </fieldset>
+            </form>
+            <form>
+              <fieldset>
+                <div class="horizontal layout" id="id_api_endpoint_container" style="display:none;">
+                  <mwc-icon-button id="endpoint-button" icon="cloud_queue" style="margin-left:5px;" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
+                  <mwc-menu id="endpoint-list" @selected="${() => this._updateEndpoint()}">
+                    <mwc-list-item disabled>${_t("login.EndpointHistory")}</mwc-list-item>
+                    ${this.endpoints.length === 0 ? html`
+                    <mwc-list-item value="">${_t("login.NoEndpointSaved")}</mwc-list-item>
+                    ` : html``}
 
-                  ${this.endpoints.map(item =>
-      html`<mwc-list-item value="${item}">
-                    <div class="horizontal justified center flex layout" style="width:365px;">
-                      <span>${item}</span><span class="flex"></span>
-                      <mwc-icon-button icon="delete" @click="${() => this._deleteEndpoint(item)}" class="endpoint-control-button"></mwc-icon-button>
-                    </div>
-                  </mwc-list-item>`)}
-                </mwc-menu>
-                <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
-                             style="--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
-                             label="${_t("login.Endpoint")}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
-              </div>
-              <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized"
-                           style="display:none;--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
-                           label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
-              <mwc-button
-                    raised
-                    id="login-button"
-                    icon="check"
-                    style="width:100%;"
-                    label="${_t("login.Login")}"
-                    @click="${() => this._login()}"></mwc-button>
-              <div class="layout horizontal" style="margin-top:2em;">
-                ${this.signup_support ? html`
-                  <div class="vertical center-justified layout" style="width:100%;">
-                    <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.NotAUser")}</div>
-                    <mwc-button
-                        unelevated
-                        label="${_t("login.SignUp")}"
-                        @click="${() => this._showSignupDialog()}"></mwc-button>
-                  </div>
-                `: html``}
+                    ${this.endpoints.map(item =>
+        html`<mwc-list-item value="${item}">
+                      <div class="horizontal justified center flex layout" style="width:365px;">
+                        <span>${item}</span><span class="flex"></span>
+                        <mwc-icon-button icon="delete" @click="${() => this._deleteEndpoint(item)}" class="endpoint-control-button"></mwc-icon-button>
+                      </div>
+                    </mwc-list-item>`)}
+                  </mwc-menu>
+                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
+                              style="--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
+                              label="${_t("login.Endpoint")}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                </div>
+                <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized"
+                            style="display:none;--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
+                            label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
+                <mwc-button
+                      unelevated
+                      id="login-button"
+                      icon="check"
+                      style="width:100%;"
+                      label="${_t("login.Login")}"
+                      @click="${() => this._login()}"></mwc-button>
                 ${this.signup_support && this.allowAnonymousChangePassword ? html`
-                  <span class="flex" style="min-width:1em;"></span>
-                `: html``}
-                ${this.allowAnonymousChangePassword ? html`
-                  <div class="vertical center-justified layout" style="width:100%;">
-                    <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.ForgotPassword")}</div>
-                    <mwc-button
-                        unelevated
-                        label="${_t("login.ChangePassword")}"
-                        @click="${() => this._showChangePasswordEmailDialog()}"></mwc-button>
-                  </div>
-                ` : html``}
-              </div>
-            </fieldset>
-          </form>
+                <div class="layout horizontal" style="margin-top:2em;">
+                  ${this.signup_support ? html`
+                    <div class="vertical center-justified layout" style="width:100%;">
+                      <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.NotAUser")}</div>
+                      <mwc-button
+                          outlined
+                          label="${_t("login.SignUp")}"
+                          @click="${() => this._showSignupDialog()}"></mwc-button>
+                    </div>
+                  `: html``}
+                  ${this.signup_support && this.allowAnonymousChangePassword ? html`
+                    <span class="flex" style="min-width:1em;"></span>
+                  `: html``}
+                  ${this.allowAnonymousChangePassword ? html`
+                    <div class="vertical center-justified layout" style="width:100%;">
+                      <div style="font-size:12px; margin:0 10px; text-align:center;">${_t("login.ForgotPassword")}</div>
+                      <mwc-button
+                          outlined
+                          label="${_t("login.ChangePassword")}"
+                          @click="${() => this._showChangePasswordEmailDialog()}"></mwc-button>
+                    </div>
+                  ` : html``}
+                </div>`:html``}
+              </fieldset>
+            </form>
+          </div>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>

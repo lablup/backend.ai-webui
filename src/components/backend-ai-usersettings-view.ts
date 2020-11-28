@@ -161,6 +161,15 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         .outer-space {
           margin: 20px;
         }
+
+        @media screen and (max-width: 750px) {
+          mwc-button {
+            width: auto;
+          }
+          mwc-button > span {
+            display: none;
+          }
+        }
       `];
   }
 
@@ -168,7 +177,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <!--<wl-card class="item">-->
         <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
@@ -178,10 +186,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
               <mwc-tab title="logs" label="${_t("usersettings.Logs")}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
-            <!--<wl-tab-group>
-              <wl-tab value="general" checked @click="${(e) => this._showTab(e.target)}">${_t("usersettings.General")}</wl-tab>
-              <wl-tab value="logs" @click="${(e) => this._showTab(e.target)}">${_t("usersettings.Logs")}</wl-tab>
-            </wl-tab-group>-->
           </h3>
           <div id="general" class="item tab-content outer-space">
             <backend-ai-usersettings-general-list active="true"></backend-ai-usersettings-general-list>
@@ -195,28 +199,21 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
                   class="log"
                   icon="refresh"
                   outlined
-                  label="${_t("button.Refresh")}"
-                  @click="${() => this._refreshLogs()}"></mwc-button>
+                  @click="${() => this._refreshLogs()}">
+                <span>${_t("button.Refresh")}</span>
+              </mwc-button>
               <mwc-button
                   class="log"
                   icon="delete"
                   outlined
-                  label="${_t("button.ClearLogs")}"
-                  @click="${() => this._showClearLogsDialog()}"></mwc-button>
-              <!--<wl-button class="fg cyan" inverted outlined @click="${() => this._refreshLogs()}" style="margin: 0px 10px;">
-                <wl-icon>refresh</wl-icon>
-                ${_t("button.Refresh")}
-              </wl-button>
-              <wl-button class="fg teal" inverted outlined @click="${() => this._showClearLogsDialog()}" style="margin: 0px 10px;">
-                <wl-icon>delete</wl-icon>
-                ${_t("button.ClearLogs")}
-            </wl-button>-->
+                  @click="${() => this._showClearLogsDialog()}">
+                <span>${_t("button.ClearLogs")}</span>
+              </mwc-button>
             </h3>
             <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
           </div>
         </div>
       </lablup-activity-panel>
-      <!--</wl-card>-->
       <backend-ai-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling>
         <span slot="title">${_t("dialog.warning.LogDeletion")}</span>
         <div slot="content">${_t("dialog.warning.CannotBeUndone")}</div>
@@ -232,12 +229,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
               id="apply-removal"
               label="${_t("button.Yes")}"
               @click="${() => this._removeLogMessage()}"></mwc-button>
-          <!--<wl-button inverted flat id="discard-removal"
-                     style="margin: 0 5px;"
-                     @click="${() => this._hideClearLogsDialog()}">${_t("button.No")}</wl-button>
-          <wl-button id="apply-removal" class="button"
-                     style="margin: 0 5px;"
-                     @click="${() => this._removeLogMessage()}">${_t("button.Yes")}</wl-button>-->
         </div>
       </backend-ai-dialog>
     `;

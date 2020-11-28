@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import {render} from 'lit-html';
@@ -14,11 +14,6 @@ import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
-
-import 'weightless/button';
-import 'weightless/label';
-import 'weightless/select';
-import 'weightless/textfield';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
@@ -88,22 +83,14 @@ export default class BackendAICredentialList extends BackendAIPage {
           height: calc(100vh - 235px);
         }
 
-        wl-button > wl-icon {
-          --icon-size: 24px;
+        mwc-icon-button {
+          --mdc-icon-size: 24px;
           padding: 0;
         }
 
-        wl-icon {
-          --icon-size: 16px;
+        mwc-icon {
+          --mdc-icon-size: 16px;
           padding: 0;
-        }
-
-        wl-card h4 {
-          font-size: 14px;
-          padding: 5px 15px 5px 12px;
-          margin: 0 0 10px 0;
-          display: block;
-          border-bottom: 1px solid #DDD;
         }
 
         vaadin-item {
@@ -121,15 +108,8 @@ export default class BackendAICredentialList extends BackendAIPage {
           width: 70px !important;
         }
 
-        div.configuration wl-icon {
+        div.configuration mwc-icon {
           padding-right: 5px;
-        }
-
-        wl-button.fab {
-          --button-bg: var(--paper-light-green-600);
-          --button-bg-hover: var(--paper-green-600);
-          --button-bg-active: var(--paper-green-900);
-          color: var(--paper-green-900);
         }
 
         #keypair-modify-save {
@@ -142,13 +122,10 @@ export default class BackendAICredentialList extends BackendAIPage {
           width: 100%;
         }
 
-        wl-label {
-          --label-color: black;
-        }
-
         backend-ai-dialog {
           --component-min-width: 400px;
         }
+
         backend-ai-dialog h4 {
           font-size: 14px;
           padding: 5px 15px 5px 12px;
@@ -167,13 +144,6 @@ export default class BackendAICredentialList extends BackendAIPage {
 
         mwc-select {
           --mdc-theme-primary: var(--general-sidebar-color);
-        }
-
-        mwc-textfield {
-          width: 100%;
-          --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
         }
       `];
   }
@@ -481,8 +451,8 @@ export default class BackendAICredentialList extends BackendAIPage {
   /**
    * Render an index.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   _indexRenderer(root, column, rowData) {
@@ -511,8 +481,8 @@ export default class BackendAICredentialList extends BackendAIPage {
   /**
    * Render a key elasped time.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   keyageRenderer(root, column?, rowData?) {
@@ -529,8 +499,8 @@ export default class BackendAICredentialList extends BackendAIPage {
   /**
    * Render key control buttons.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   controlRenderer(root, column?, rowData?) {
@@ -538,39 +508,23 @@ export default class BackendAICredentialList extends BackendAIPage {
       html`
             <div id="controls" class="layout horizontal flex center"
                  .access-key="${rowData.item.access_key}">
-              <wl-button class="fg green" fab flat inverted @click="${(e) => this._showKeypairDetail(e)}">
-                 <wl-icon>assignment</wl-icon>
-              </wl-button>
-              <wl-button class="fg blue" fab flat inverted @click="${e => this._modifyResourcePolicy(e)}">
-                <wl-icon>settings</wl-icon>
-              </wl-button>
+              <mwc-icon-button class="fg green" icon="assignment" fab flat inverted @click="${(e) => this._showKeypairDetail(e)}">
+              </mwc-icon-button>
+              <mwc-icon-button class="fg blue" icon="settings" fab flat inverted @click="${e => this._modifyResourcePolicy(e)}">
+              </mwc-icon-button>
               ${this.isAdmin && this._isActive() ? html`
-                <wl-button class="fg blue" fab flat inverted @click="${(e) => this._revokeKey(e)}">
-                   <wl-icon>delete</wl-icon>
-                </wl-button>
-                <wl-button class="fg red" fab flat inverted @click="${(e) => this._deleteKey(e)}">
-                   <wl-icon>delete_forever</wl-icon>
-                </wl-button>
+                <mwc-icon-button class="fg blue" icon="delete" fab flat inverted @click="${(e) => this._revokeKey(e)}">
+                </mwc-icon-button>
+                <mwc-icon-button class="fg red" icon="delete_forever" fab flat inverted @click="${(e) => this._deleteKey(e)}">
+                </mwc-icon-button>
               ` : html``}
               ${this._isActive() === false ? html`
-                <wl-button class="fg blue" fab flat inverted @click="${(e) => this._reuseKey(e)}">
-                   <wl-icon>redo</wl-icon>
-                </wl-button>
+                <mwc-icon-button class="fg blue" icon="redo" fab flat inverted @click="${(e) => this._reuseKey(e)}">
+                </mwc-icon-button>
               ` : html``}
             </div>
       `, root
     );
-  }
-
-  /**
-   * Hide the backend.ai dialog.
-   *
-   * @param {Event} e - Dispatches from the native input event each time the input changes.
-   */
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
   }
 
   /**
@@ -591,16 +545,16 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
 
     if (Object.entries(input).length === 0) {
-      this.notification.text = "No changes were made";
+      this.notification.text = _text('credential.NoChanges');
       this.notification.show();
     } else {
       globalThis.backendaiclient.keypair.mutate(this.keypairInfo.access_key, input)
         .then(res => {
           if (res.modify_keypair.ok) {
-            this.notification.text = "Successfully modified";
+            this.notification.text = _text('environment.SuccessfullyModified');
             this.refresh();
           } else {
-            this.notification.text = "Error";
+            this.notification.text = _text('dialog.ErrorOccurred');
           }
           this.notification.show();
         })
@@ -645,12 +599,12 @@ export default class BackendAICredentialList extends BackendAIPage {
           <template>
             <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
-                <wl-icon class="fg green">developer_board</wl-icon>
+                <mwc-icon class="fg green">developer_board</mwc-icon>
                 <span>[[item.total_resource_slots.cpu]]</span>
                 <span class="indicator">${_t("general.cores")}</span>
               </div>
               <div class="layout horizontal configuration">
-                <wl-icon class="fg green">memory</wl-icon>
+                <mwc-icon class="fg green">memory</mwc-icon>
                 <span>[[item.total_resource_slots.mem]]</span>
                 <span class="indicator">GB</span>
               </div>
@@ -658,14 +612,14 @@ export default class BackendAICredentialList extends BackendAIPage {
             <div class="layout horizontal wrap center">
               <template is="dom-if" if="[[item.total_resource_slots.cuda_device]]">
                 <div class="layout horizontal configuration">
-                  <wl-icon class="fg green">view_module</wl-icon>
+                  <mwc-icon class="fg green">view_module</mwc-icon>
                   <span>[[item.total_resource_slots.cuda_device]]</span>
                   <span class="indicator">GPU</span>
                 </div>
               </template>
               <template is="dom-if" if="[[item.total_resource_slots.cuda_shares]]">
                 <div class="layout horizontal configuration">
-                  <wl-icon class="fg green">view_module</wl-icon>
+                  <mwc-icon class="fg green">view_module</mwc-icon>
                   <span>[[item.total_resource_slots.cuda_shares]]</span>
                   <span class="indicator">fGPU</span>
                 </div>
@@ -673,12 +627,12 @@ export default class BackendAICredentialList extends BackendAIPage {
             </div>
             <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
-                <wl-icon class="fg green">cloud_queue</wl-icon>
+                <mwc-icon class="fg green">cloud_queue</mwc-icon>
                 <span>[[item.max_vfolder_size]]</span>
                 <span class="indicator">GB</span>
               </div>
               <div class="layout horizontal configuration">
-                <wl-icon class="fg green">folder</wl-icon>
+                <mwc-icon class="fg green">folder</mwc-icon>
                 <span>[[item.max_vfolder_count]]</span>
                 <span class="indicator">${_t("general.Folders")}</span>
               </div>

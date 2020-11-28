@@ -8,9 +8,6 @@ import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
-import 'weightless/tab-group';
-import 'weightless/tab';
-import 'weightless/select';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
 
@@ -75,18 +72,6 @@ export default class BackendAIUsageList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        wl-select {
-          --input-font-family: Roboto, Noto, sans-serif;
-          --input-color-disabled: #222222;
-          --input-label-color-disabled: #222222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #cccccc;
-        }
-
-        wl-card {
-          --card-elevation: 0;
-        }
-
         mwc-select {
           width: 100%;
           font-family: var(--general-font-family);
@@ -229,7 +214,7 @@ export default class BackendAIUsageList extends BackendAIPage {
    * */
   pulldownChange(e) {
     this.period = e.target.value;
-
+    console.log(this.period);
     const {data, period, collection, _map, templates} = this;
 
     if (!(period in collection)) {
@@ -256,23 +241,20 @@ export default class BackendAIUsageList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-card elevation="0">
+      <div class="card" elevation="0">
         <h3 class="horizontal center layout">
-          <mwc-select outlined label="${_t("statistics.SelectPeriod")}" style="width: 130px;" @change="${ () => {this.pulldownChange}}">
+          <mwc-select outlined label="${_t("statistics.SelectPeriod")}" style="width: 130px;" @change="${(e) => {
+      this.pulldownChange(e)
+    }}">
             <mwc-list-item value="1D" selected>${_t("statistics.1Day")}</mwc-list-item>
             <mwc-list-item value="1W">${_t("statistics.1Week")}</mwc-list-item>
           </mwc-select>
-          <!--<wl-select label="${_t("statistics.SelectPeriod")}" style="width: 130px;" @input=${this.pulldownChange}>
-            <option value disabled>${_t("statistics.SelectPeriod")}</option>
-            <option value="1D" selected>${_t("statistics.1Day")}</option>
-            <option value="1W">${_t("statistics.1Week")}</option>
-          </wl-select>-->
           <span class="flex"></span>
         </h3>
         ${Object.keys(this.collection).length > 0 ?
       Object.keys(this._map).map((key, idx) =>
         html`
-          <wl-card>
+          <div class="card">
             <h3 class="horizontal center layout">
               <span>${this._map[key]}</span>
               <span class="flex"></span>
@@ -284,9 +266,9 @@ export default class BackendAIUsageList extends BackendAIPage {
                 .collection=${this.collection[this.period][key]}
               ></backend-ai-chart>
             </div>
-          </wl-card>
+          </div>
             `) : html``}
-      </wl-card>
+      </div>
     `;
   }
 }

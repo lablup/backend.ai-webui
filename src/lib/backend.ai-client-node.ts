@@ -185,7 +185,7 @@ class Client {
     this.code = null;
     this.sessionId = null;
     this.kernelType = null;
-    this.clientVersion = '20.8.1';
+    this.clientVersion = '20.11.0';
     this.agentSignature = agentSignature;
     if (config === undefined) {
       this._config = ClientConfig.createFromEnv();
@@ -249,11 +249,13 @@ class Client {
    * @param {Boolean} rawFile - True if it is raw request
    * @param {AbortController.signal} signal - Request signal to abort fetch
    * @param {number} timeout - Custom timeout (sec.) If no timeout is given, default timeout is used.
+   * @param {number} retry - an integer to retry this request
    */
-  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0) {
+  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0, retry: number = 0) {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
+    let errorDesc = '';
     let resp, body, requestTimer;
 
     try {
@@ -304,6 +306,10 @@ class Client {
         throw body;
       }
     } catch (err) {
+      if (retry > 0) {
+        await new Promise(r => setTimeout(r, 2000)); // Retry after 2 seconds.
+        return this._wrapWithPromise(rqst, rawFile, signal, timeout, retry - 1);
+      }
       let error_message;
       if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
         error_message = err.title; // formatted message
@@ -319,15 +325,18 @@ class Client {
           if (navigator.onLine) {
             errorTitle = error_message;
             errorMsg = `sending request has failed: ${error_message}`;
+            errorDesc = error_message;
           } else {
             errorTitle = "Network disconnected.";
             errorMsg = `sending request has failed: Network disconnected`;
+            errorDesc = 'Network disconnected';
           }
           break;
         case Client.ERR_RESPONSE:
           errorType = 'https://api.backend.ai/probs/client-response-error';
           errorTitle = error_message;
           errorMsg = `reading response has failed: ${error_message}`;
+          errorDesc = error_message;
           break;
         case Client.ERR_SERVER:
           errorType = 'https://api.backend.ai/probs/server-error';
@@ -335,14 +344,17 @@ class Client {
           errorMsg = 'server responded failure: ';
           if (body.msg) {
             errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.msg}`;
+            errorDesc = body.msg;
           } else {
             errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.title}`;
+            errorDesc = body.title;
           }
           break;
         case Client.ERR_ABORT:
           errorType = 'https://api.backend.ai/probs/request-abort-error';
           errorTitle = `Request aborted`;
           errorMsg = 'Request aborted by user';
+          errorDesc = errorMsg;
           resp.status = 408;
           resp.statusText = 'Request aborted by user'
           break;
@@ -350,8 +362,9 @@ class Client {
           errorType = 'https://api.backend.ai/probs/request-timeout-error';
           errorTitle = `Request timeout`;
           errorMsg = 'No response returned during the timeout period';
+          errorDesc = errorMsg;
           resp.status = 408;
-          resp.statusText = 'Timeout exceeded'
+          resp.statusText = 'Timeout exceeded';
           break;
         default:
           if (typeof resp.status === 'undefined') {
@@ -366,6 +379,9 @@ class Client {
           }
           errorMsg = 'server responded failure: '
             + `${resp.status} ${resp.statusText} - ${body.title}`;
+          if (body.title !== '') {
+            errorDesc = body.title;
+          }
       }
       throw {
         isError: true,
@@ -378,6 +394,7 @@ class Client {
         statusText: resp.statusText,
         title: errorTitle,
         message: errorMsg,
+        description: errorDesc
       };
     }
 
@@ -499,6 +516,9 @@ class Client {
       this._features['group-folder'] = true;
       this._features['system-images'] = true;
       this._features['detailed-session-states'] = true;
+    }
+    if (this.isAPIVersionCompatibleWith('v6.20200815')) {
+      this._features['change-user-name'] = true;
     }
   }
 
@@ -752,14 +772,15 @@ class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    * @param {string | null} ownerKey - owner key to access
+   * @param {number} timeout - timeout to wait log query. Set to 0 to use default value.
    */
-  async get_logs(sessionId, ownerKey = null) {
+  async get_logs(sessionId, ownerKey = null, timeout = 0) {
     let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
     }
     let rqst = this.newSignedRequest('GET', queryString, null);
-    return this._wrapWithPromise(rqst);
+    return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
   /**
@@ -784,7 +805,7 @@ class Client {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
     }
     let rqst = this.newSignedRequest('DELETE', queryString, null);
-    return this._wrapWithPromise(rqst);
+    return this._wrapWithPromise(rqst, false, null, 15000, 2); // 15 sec., two trial when error occurred.
   }
 
   /**
@@ -870,20 +891,27 @@ class Client {
     return this._wrapWithPromise(rqst, true);
   }
 
-  async mangleUserAgentSignature() {
+  mangleUserAgentSignature() {
     let uaSig = this.clientVersion
       + (this.agentSignature ? ('; ' + this.agentSignature) : '');
     return uaSig;
   }
 
-  /* GraphQL requests */
-  async query(q, v, signal = null, timeout: number = 0) {
+  /**
+   * Send GraphQL requests
+   *
+   * @param {string} q - query string for GraphQL
+   * @param {string} v - variable string for GraphQL
+   * @param {number} timeout - Timeout to force terminate request
+   * @param {number} retry - The number of retry when request is failled
+   */
+  async query(q, v, signal = null, timeout: number = 0, retry: number = 0) {
     let query = {
       'query': q,
       'variables': v
     };
     let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
-    return this._wrapWithPromise(rqst, false, signal, timeout);
+    return this._wrapWithPromise(rqst, false, signal, timeout, retry);
   }
 
   /**
@@ -892,9 +920,9 @@ class Client {
    *
    * @param {string} method - the HTTP method
    * @param {string} queryString - the URI path and GET parameters
-   * @param {string} body - an object that will be encoded as JSON in the request body
+   * @param {any} body - an object that will be encoded as JSON in the request body
    */
-  newSignedRequest(method, queryString, body) {
+  newSignedRequest(method: string, queryString, body: any) {
     let content_type = "application/json";
     let requestBody;
     let authBody;
@@ -1709,7 +1737,7 @@ class Keypair {
       // From 20.03, there is no single query to fetch every keypairs, so
       // we iterate pages to gather all keypairs for client-side compability.
       const limit = 100;
-      const keypairs = [];
+      const keypairs = [] as any;
       q = (this.client.is_admin && userId == null) ? `
         query($offset:Int!, $limit:Int!, $is_active: Boolean) {
           keypair_list(offset:$offset, limit:$limit, is_active: $is_active) {
@@ -1937,7 +1965,7 @@ class ResourcePolicy {
   /**
    * mutate specified resource policy with given name with new values.
    *
-   * @param {string} name - resource policy name to mutate.
+   * @param {string} name - resource policy name to mutate. (READ-ONLY)
    * @param {json} input - resource policy specification and data. Required fields are:
    * {
    *   {string} 'default_for_unspecified': 'UNLIMITED', // default resource policy when resource slot is not given. 'UNLIMITED' or 'LIMITED'.
@@ -1966,6 +1994,28 @@ class ResourcePolicy {
       return Promise.resolve(false);
     }
   }
+
+  /**
+   * delete specified resource policy that exists in policy list.
+   *
+   * @param {string} name - resource policy name to delete. (READ-ONLY)
+   */
+  async delete(name = null) {
+    if (this.client.is_superadmin === true && name !== null) {
+      let q =`mutation($name: String!) {` +
+        ` delete_keypair_resource_policy(name: $name) {` +
+        `   ok msg ` +
+        ` }` +
+        `}`;
+      let v = {
+        'name': name
+      };
+      return this.client.query(q, v);
+    } else {
+      return Promise.resolve(false);
+    }
+  }
+
 }
 
 class ContainerImage {
@@ -2073,7 +2123,7 @@ class ContainerImage {
       resource = {'cpu': '1', 'mem': '512m'};
     }
     return this.client.createIfNotExists(registry + name, sessionId, resource, 600000).then((response) => {
-      return this.client.destroyKernel(sessionId);
+      return this.client.destroy(sessionId);
     }).catch(err => {
       throw err;
     });
@@ -2117,6 +2167,36 @@ class ComputeSession {
    */
   constructor(client) {
     this.client = client;
+  }
+
+  /**
+   * Get the number of compute sessions with specific conditions.
+   *
+   * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+   * @param {string} accessKey - access key that is used to start compute sessions.
+   * @param {number} limit - limit number of query items.
+   * @param {number} offset - offset for item query. Useful for pagination.
+   * @param {string} group - project group id to query. Default returns sessions from all groups.
+   */
+  async total_count(status = 'RUNNING', accessKey = '', limit = 1, offset = 0, group = '') {
+    let q, v;
+    q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
+        total_count
+      }
+    }`;
+    v = {
+      'limit': limit,
+      'offset': offset,
+      'status': status
+    };
+    if (accessKey != '') {
+      v['ak'] = accessKey;
+    }
+    if (group != '') {
+      v['group_id'] = group;
+    }
+    return this.client.query(q, v);
   }
 
   /**
@@ -2608,7 +2688,7 @@ class User {
       // From 20.03, there is no single query to fetch every users, so
       // we iterate pages to gather all users for client-side compability.
       const limit = 100;
-      const users = [];
+      const users = [] as any;
       q = this.client.is_admin ? `
         query($offset:Int!, $limit:Int!, $is_active:Boolean) {
           user_list(offset:$offset, limit:$limit, is_active:$is_active) {

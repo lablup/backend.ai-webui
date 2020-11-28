@@ -253,13 +253,13 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       }
 
       // Reload number of sessions
-      let fields = ["created_at"];
+      let fields = ["name"];
       await globalThis.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
         .then(res => {
           if (!res.compute_session_list && res.legacy_compute_session_list) {
             res.compute_session_list = res.legacy_compute_session_list;
           }
-          this.sessions_list = res.compute_session_list.items.map(e => e.created_at);
+          this.sessions_list = res.compute_session_list.items.map(e => e.name);
         });
       this._initAliases();
       await this._refreshResourcePolicy();
@@ -648,7 +648,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
         remaining_slot['concurrency'] = this.concurrency_max - this.concurrency_used;
       }
-      this.concurrency_limit = Math.min(remaining_slot['concurrency'], 5);
+      this.concurrency_limit = Math.min(remaining_slot['concurrency'], 3);
       this.available_slot = remaining_sg_slot;
       this.used_slot_percent = used_slot_percent;
       this.used_resource_group_slot_percent = used_resource_group_slot_percent;

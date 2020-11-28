@@ -63,6 +63,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) deleteImageDialog = Object();
   @property({type: Array}) installImageNameList = Array();
   @property({type: Array}) deleteImageNameList = Array();
+  @property({type: Object}) deleteAppInfo = Object();
+  @property({type: Object}) deleteAppRow = Object();
   @property({type: Object}) installImageResource = Object();
   @property({type: Object}) selectedCheckbox = Object();
   @property({type: Object}) _grid = Object();
@@ -92,7 +94,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       css`
         vaadin-grid {
           font-size: 14px;
-          height: calc(100vh - 150px);
+          height: calc(100vh - 235px);
         }
 
         wl-button > wl-icon {
@@ -179,7 +181,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
         #modify-app-dialog {
           --component-max-height: 550px;
-          --component-min-width: 600px;
         }
 
         backend-ai-dialog vaadin-grid {
@@ -268,17 +269,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Hide a backend.ai dialog.
-   *
-   * @param {Event} e - Dispatches from the native input event each time the input changes.
-   */
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
-  }
-
-  /**
    * Hide a dialog by id.
    *
    * @param id
@@ -325,7 +315,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const image = this.images[this.selectedIndex];
 
     if (Object.keys(input).length === 0) {
-      this.notification.text = "No changes made";
+      this.notification.text = _text('environment.NoChangeMade');
       this.notification.show();
       this._hideDialogById("#modify-image-dialog");
       return;
@@ -338,9 +328,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         if (ok) {
           this._getImages();
           this.requestUpdate();
-          this.notification.text = "Successfully modified";
+          this.notification.text = _text('environment.SuccessfullyModified');
         } else {
-          this.notification.text = "Problem occurred";
+          this.notification.text = _text('environment.ProblemOccurred');
         }
 
         this.notification.show();
@@ -411,7 +401,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           this.notification.show();
           this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:none;');
           return ;
-        } 
+        }
       }
 
       if ('cuda.device' in resourceSlots && 'cuda.shares' in resourceSlots) { // Can be possible after 20.03
@@ -483,8 +473,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Render requirments such as cpu limit, memoty limit
    * cuda share limit, rocm device limit and tpu limit.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   requirementsRenderer(root, column?, rowData?) {
@@ -706,8 +696,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   /**
    * Render controllers.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   controlsRenderer(root, column, rowData) {
@@ -746,8 +736,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 /**
  * Render an installed tag for each image.
  *
- * @param {DOM element} root
- * @param {<vaadin-grid-column> element} column
+ * @param {DOMelement} root
+ * @param {object} column (<vaadin-grid-column> element)
  * @param {object} rowData
  */
   installRenderer(root, column, rowData) {
@@ -783,15 +773,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="horizontal layout flex end-justified" style="margin:10px;">
         <mwc-button raised label="${_t('environment.Install')}" class="operation" id="install-image" icon="get_app" @click="${this.openInstallImageDialog}"></mwc-button>
-        <mwc-button disabled label="${_t('environment.Delete')}" class="operation" id="delete-image" icon="delete" @click="${this.openDeleteImageDialog}"></mwc-button>
-        <!--<wl-button outlined class="operation" id="install-image" @click="${this.openInstallImageDialog}">
-          <wl-icon>get_app</wl-icon>
-          ${_t('environment.Install')}
-        </wl-button>
-        <wl-button outlined class="operation" id="delete-image" @click="${this.openDeleteImageDialog}" disabled>
-          <wl-icon>delete</wl-icon>
-          ${_t('environment.Delete')}
-        </wl-button>-->
+        <mwc-button disabled label="${_t('environment.Delete')}" class="operation temporarily-hide" id="delete-image" icon="delete" @click="${this.openDeleteImageDialog}"></mwc-button>
       </div>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
         <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
@@ -944,7 +926,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             <wl-button
               fab flat
               class="fg pink"
-              @click=${e => this._removeRow(e)}
+              @click=${e => this._checkDeleteAppInfo(e)}
             >
               <wl-icon>remove</wl-icon>
             </wl-button>
@@ -974,7 +956,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="install-image-dialog" fixed backdrop persistent>
-        <span slot="title">Let's double-check</span>
+        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
         <div slot="content">
           <p>${_t("environment.DescDownloadImage")}</p>
           <p style="margin:auto; "><span style="color:blue;">
@@ -1001,7 +983,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-image-dialog" fixed backdrop persistent>
-        <span slot="title">Let's double-check</span>
+        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
         <div slot="content">
           <p>${_t("environment.DescDeleteImage")}</p>
           <p style="margin:auto; "><span style="color:blue;">
@@ -1027,19 +1009,51 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               @click="${() => this._deleteImage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
+      <backend-ai-dialog id="delete-app-info-dialog" fixed backdrop persistent>
+        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
+        <div slot="content">
+          <p>${_t("environment.DescDeleteAppInfo")}</p>
+          <div class="horizontal layout">
+              <p>${_t('environment.AppName')}</p>
+              <p style="color:blue;">: ${this.deleteAppInfo[0]}</p>
+            </div>
+            <div class="horizontal layout">
+              <p>${_t('environment.Protocol')}</p>
+              <p style="color:blue;">: ${this.deleteAppInfo[1]}</p>
+            </div>
+            <div class="horizontal layout">
+              <p>${_t('environment.Port')}</p>
+              <p style="color:blue;">: ${this.deleteAppInfo[2]}</p>
+            </div>
+          <p>${_t("dialog.ask.DoYouWantToProceed")}</p>
+        </div>
+        <div slot="footer" class="horizontal flex layout">
+          <div class="flex"></div>
+          <mwc-button
+              class="operation"
+              label="${_t("button.Cancel")}"
+              @click="${(e) => {
+                this._hideDialog(e);
+              }}"></mwc-button>
+          <mwc-button
+              unelevated
+              class="operation"
+              label="${_t("button.Okay")}"
+              @click="${() => this._removeRow()}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 
   /**
-   * Remove a row in the environment list.
+   * Remove selected row in the environment list.
    *
-   * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
-  _removeRow(e) {
-    const path = e.composedPath();
-    let i = 0;
-    while (path[i].localName !== "div") i++;
-    path[i].remove();
+  _removeRow() {
+    this.deleteAppRow.remove();
+    this.shadowRoot.querySelector('#delete-app-info-dialog').hide();
+    this.notification.text = _text("environment.AppInfoDeleted");
+    this.notification.show();
   }
 
   /**
@@ -1072,7 +1086,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     button.setAttribute("class", "fg pink");
     button.setAttribute("fab", "");
     button.setAttribute("flat", "");
-    button.addEventListener("click", e => this._removeRow(e));
+    button.addEventListener("click", (e) => this._checkDeleteAppInfo(e));
 
     const icon = document.createElement("wl-icon");
     icon.innerHTML = "remove";
@@ -1084,6 +1098,26 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     div.appendChild(button);
 
     return div;
+  }
+
+  /**
+   * Check whether delete operation will proceed or not.
+   *
+   * @param e - Dispatches from the native input event each time the input changes.
+   */
+  _checkDeleteAppInfo(e) {
+    // htmlCollection should be converted to Array.
+    this.deleteAppRow = e.target.parentNode;
+    let childRow = this.deleteAppRow.children;
+    const textfieldsArray = [...childRow];
+    let appInfo = textfieldsArray.filter(item => item.tagName === 'WL-TEXTFIELD').map(item => item.value);
+    // if every value of the row is empty
+    if (appInfo.filter(item => item === "")?.length === appInfo.length) {
+      this._removeRow();
+    } else {
+      this.deleteAppInfo = appInfo;
+      this.shadowRoot.querySelector('#delete-app-info-dialog').show();
+    }
   }
 
   /**

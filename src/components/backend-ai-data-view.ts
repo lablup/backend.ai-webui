@@ -15,6 +15,8 @@ import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-textfield';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
+import '@material/mwc-icon-button';
+import '@material/mwc-button';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -26,8 +28,6 @@ import 'weightless/tab';
 import 'weightless/title';
 import 'weightless/tab-group';
 import 'weightless/textfield';
-import '@material/mwc-icon-button';
-import '@material/mwc-button';
 
 import '../plastics/lablup-shields/lablup-shields';
 import './backend-ai-dialog';
@@ -238,6 +238,15 @@ export default class BackendAIData extends BackendAIPage {
           margin-left: 10px;
         }
 
+        @media screen and (max-width: 750px) {
+          mwc-tab {
+            --mdc-typography-button-font-size: 10px;
+          }
+
+          mwc-button > span {
+            display: none;
+          }
+        }
       `];
   }
 
@@ -256,7 +265,9 @@ export default class BackendAIData extends BackendAIPage {
                 <mwc-tab title="automount-folder" label="${_t("data.AutomountFolders")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               </mwc-tab-bar>
               <span class="flex"></span>
-              <mwc-button dense raised id="add-folder" icon="add" label="${_t("data.NewFolder")}" @click="${() => this._addFolderDialog()}" style="margin-right:15px;"></mwc-icon-button>
+              <mwc-button dense raised id="add-folder" icon="add" @click="${() => this._addFolderDialog()}" style="margin-right:15px;">
+                <span>${_t("data.NewFolder")}</span>
+              </mwc-button>
             </h3>
             <div id="general-folder-lists" class="tab-content">
               <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
@@ -273,8 +284,8 @@ export default class BackendAIData extends BackendAIPage {
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
         <div slot="content">
-          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="^[\.a-zA-Z0-9_-]+$"
-              auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
+          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" @change="${() => this._validateFolderName()}"
+            required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
           <div class="horizontal layout">
             <mwc-multi-select id="add-folder-host" label="${_t("data.Host")}">
               ${this.vhosts.map((item, idx) => html`
@@ -324,7 +335,7 @@ export default class BackendAIData extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal flex">
           <mwc-button
-              raised
+              unelevated
               id="add-button"
               icon="rowing"
               label="${_t("data.Create")}"
@@ -526,7 +537,6 @@ export default class BackendAIData extends BackendAIPage {
         this.notification.show();
         this._refreshFolderList();
       }).catch(err => {
-        console.log(err);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
@@ -536,6 +546,41 @@ export default class BackendAIData extends BackendAIPage {
       this.closeDialog('add-folder-dialog');
     } else {
       return;
+    }
+  }
+
+  /**
+   * Validate folder name.
+   */
+  _validateFolderName() {
+    const folderName = this.shadowRoot.querySelector('#add-folder-name');
+    folderName.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          folderName.validationMessage = _text('data.FolderNameRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else {
+          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        // custom validation for folder name using regex
+        let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/\s]/gi;
+        let isValid = !regex.test(folderName.value);
+        if (!isValid) {
+          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
     }
   }
 

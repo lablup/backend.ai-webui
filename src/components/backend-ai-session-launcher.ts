@@ -17,6 +17,7 @@ import '@material/mwc-textfield/mwc-textfield';
 
 import 'weightless/checkbox';
 import 'weightless/expansion';
+import 'weightless/icon';
 import 'weightless/label';
 
 import '@material/mwc-linear-progress';
@@ -315,6 +316,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #launch-session {
           width: var(--component-width, auto);
+          height: var(--component-height, 36px);
         }
 
         #launch-session[disabled] {
@@ -322,23 +324,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-theme-on-primary: var(--general-button-color);
         }
 
-        /* #launch-session {
-          height: var(--component-height, auto);
-          width: var(--component-width, auto);
-          --button-color: var(--component-color, var(--paper-red-600));
-          --button-bg: var(--component-bg, var(--paper-red-50));
-          --button-bg-hover: var(--component-bg-hover, var(--paper-red-100));
-          --button-bg-active: var(--component-bg-active, var(--paper-red-600));
-          --button-shadow-color: var(--component-shadow-color, hsla(224, 47%, 38%, 0.2));
+        wl-button > span {
+          margin-left: 5px;
+          font-weight: normal;
         }
 
-        #launch-session[disabled] {
-          --button-color: var(--paper-gray-600);
-          --button-color-disabled: var(--paper-gray-600);
-          --button-bg: var(--paper-gray-50);
-          --button-bg-hover: var(--paper-gray-100);
-          --button-bg-active: var(--paper-gray-600);
-        } */
+        wl-icon {
+          --icon-size: 20px;
+        }
 
         wl-expansion {
           --font-family-serif: var(--general-font-family);
@@ -477,6 +470,24 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         mwc-icon-button.info {
           --mdc-icon-button-size: 30px;
         }
+
+        mwc-icon {
+          --mdc-icon-size: 14px;
+        }
+
+        ul {
+          list-style-type: none;
+        }
+
+        mwc-button > mwc-icon {
+          display: none;
+        }
+
+        @media screen and (max-width: 750px) {
+          mwc-button > mwc-icon {
+            display: inline-block;
+          }
+        }
       `];
   }
 
@@ -558,10 +569,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerSession || 64;
+        this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerSession || 16;
+        this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerSession || 2;
         this.is_connected = true;
         this._enableLaunchButton();
       }, {once: true});
     } else {
+      this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerSession || 64;
+      this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerSession || 16;
+      this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerSession || 2;
       this.is_connected = true;
       this._enableLaunchButton();
     }
@@ -724,6 +741,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         ownershipPanel.style.display = 'none';
       }
       this._updateSelectedScalingGroup();
+      /* To reflect current resource policy */
+      await this._refreshResourcePolicy();
       this.requestUpdate();
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
@@ -908,7 +927,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             appOptions['runtime'] = 'jupyter';
             appOptions['filename'] = this.importFilename;
           }
-          globalThis.appLauncher.showLauncher(appOptions);
+          // only launch app when it has valid service ports
+          if (service_info.length > 0) {
+            globalThis.appLauncher.showLauncher(appOptions);
+          }
         }).catch((err) => {
           // remove redundant error message
         });
@@ -949,10 +971,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, config) {
-    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 10000);
+    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000);
     task.catch((err) => {
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.message);
+        if ('statusCode' in err && err.statusCode === 408) {
+          this.notification.text = _text("session.launcher.sessionStillPreparing");
+        } else {
+          this.notification.text = PainKiller.relieve(err.message);
+        }
         this.notification.detail = err.message;
         this.notification.show(true, err);
       } else if (err && err.title) {
@@ -1264,11 +1290,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (cpu_metric.min >= cpu_metric.max) {
             if (cpu_metric.min > cpu_metric.max) {
               cpu_metric.min = cpu_metric.max;
-              cpu_metric.max = cpu_metric.max + 1;
               disableLaunch = true;
               this.shadowRoot.querySelector('#cpu-resource').disabled = true;
             } else { // min == max
-              cpu_metric.max = cpu_metric.max + 1;
               this.shadowRoot.querySelector('#cpu-resource').disabled = true;
             }
           }
@@ -1785,8 +1809,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <mwc-button raised id="launch-session" label="${_t("session.launcher.Start")}" ?disabled="${!this.enableLaunchButton}" @click="${() => this._launchSessionDialog()}">
-      </mwc-button>
+      <wl-button raised class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}" @click="${() => this._launchSessionDialog()}">
+        <wl-icon>power_settings_new</wl-icon>
+        <span>${_t("session.launcher.Start")}</span>
+      </wl-button>
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>
         <form slot="content" id="launch-session-form" class="centered">
@@ -1846,7 +1872,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <wl-checkbox id="use-gpu-checkbox">${_t("session.launcher.UseGPU")}</wl-checkbox>
           </div>
           <div class="horizontal center layout">
-            <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required naturalMenuWidth
+            <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required
                         @selected="${(e) => this.updateScalingGroup(false, e)}">
               ${this.scaling_groups.map(item => html`
                 <mwc-list-item class="scaling-group-dropdown"
@@ -1865,7 +1891,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
           <wl-expansion name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
-            <span slot="description" style="font-size:12px;color:#646464;">${this.selectedVfolders.toString()}</span>
             <mwc-list fullwidth multi id="vfolder"
               @selected="${this._updateSelectedFolder}">
             ${this.vfolders.length === 0 ? html`
@@ -1876,6 +1901,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             `)}
             </mwc-list>
           </wl-expansion>
+          <ul style="color:#646464;font-size:12px;">
+          ${this.selectedVfolders.map(item => html`
+                <li><mwc-icon>folder_open</mwc-icon>${item}</li>
+              `)}
+          </ul>
           <div class="vertical center layout" style="padding-top:15px;">
             <mwc-select id="resource-templates" label="${_t("session.launcher.ResourceAllocation")}" fullwidth required>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>

@@ -6,6 +6,7 @@ import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import 'weightless/icon';
 import 'weightless/card';
+import '@material/mwc-checkbox';
 import '@material/mwc-button';
 import '@material/mwc-textfield';
 import '@material/mwc-icon-button-toggle';
@@ -85,6 +86,8 @@ export default class BackendAiSignup extends BackendAIPage {
           mwc-textfield {
             width: 100%;
             --mdc-text-field-fill-color: transparent;
+            --mdc-theme-primary: var(--general-textfield-selected-color);
+            --mdc-typography-font-family: var(--general-font-family);
           }
 
           mwc-button.full {
@@ -109,6 +112,10 @@ export default class BackendAiSignup extends BackendAIPage {
             --mdc-button-disabled-ink-color: var(--general-button-background-color);
             --mdc-theme-primary: var(--general-button-background-color);
             --mdc-on-theme-primary: var(--general-button-background-color);
+          }
+
+          mwc-checkbox {
+            --mdc-theme-secondary: var(--general-checkbox-color);
           }
       `];
   }
@@ -193,12 +200,6 @@ export default class BackendAiSignup extends BackendAIPage {
     }
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
-  }
-
   block(message = '') {
     this.errorMsg = message;
     this.blockPanel.show();
@@ -223,7 +224,7 @@ export default class BackendAiSignup extends BackendAIPage {
     inputFields.map((el: string) => {
       this.shadowRoot.querySelector(el).value = "";
     });
-    this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup';
+    this.shadowRoot.querySelector('#signup-button-message').innerHTML = _text('signup.Signup');
   }
 
   _toggleInputField(isActive: boolean) {
@@ -273,7 +274,7 @@ export default class BackendAiSignup extends BackendAIPage {
     let rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
     this.client._wrapWithPromise(rqst).then((response) => {
       this._toggleInputField(false);
-      this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup succeed';
+      this.shadowRoot.querySelector('#signup-button-message').innerHTML = _text('signup.SignupSucceeded');
       this.notification.text = 'Signup succeed.';
       this.notification.show();
       setTimeout(() => {
@@ -445,19 +446,29 @@ export default class BackendAiSignup extends BackendAIPage {
                                     @click="${(e) => this._togglePasswordVisibility(e.target)}">
             </mwc-icon-button-toggle>
           </div>
-          <div style="margin-top:10px;">
-            <wl-checkbox id="approve-terms-of-service">
-            </wl-checkbox>
-             I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">${_t("signup.TermsOfService")}</a> and <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">${_t("signup.PrivacyPolicy")}</a>.
+          <div style="margin-top:10px;" class="horizontal layout center center-justified">
+            <mwc-checkbox id="approve-terms-of-service"></mwc-checkbox>
+            <p style="font-size:12px;">
+              ${_text('signup.PolicyAgreement_1')}
+              <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">
+                ${_t("signup.TermsOfService")}
+              </a>
+              ${_text('signup.PolicyAgreement_2')}
+              <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">
+                ${_t("signup.PrivacyPolicy")}
+              </a>
+              ${_text('signup.PolicyAgreement_3')}
+            </p>
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
+              id="signup-button"
               raised
               class="full"
               icon="check"
               @click="${() => this._signup()}">
-                <span id="signup-button-message">${_t("signup.Signup")}</span>
+                <span id="signup-button-message">${_text("signup.Signup")}</span>
           </mwc-button>
         </div>
       </backend-ai-dialog>

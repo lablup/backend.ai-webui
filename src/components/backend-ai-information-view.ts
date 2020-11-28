@@ -76,12 +76,13 @@ export default class BackendAiInformationView extends BackendAIPage {
         }
 
         div.title {
+          font-size: 14px;
           font-weight: bold;
         }
 
         div.description,
         span.description {
-          font-size: 11px;
+          font-size: 13px;
           margin-top: 5px;
           margin-right: 5px;
         }
@@ -102,7 +103,7 @@ export default class BackendAiInformationView extends BackendAIPage {
         }
 
         .setting-item-bottom-expand {
-          margin: 15px auto 45px auto;
+          margin: 15px auto 49px auto;
         }
 
         .setting-desc {
@@ -112,6 +113,7 @@ export default class BackendAiInformationView extends BackendAIPage {
 
         .setting-desc-shrink {
           width: 100px;
+          margin: 5px 35px 5px 5px;
           margin-right: 35px;
         }
 
@@ -136,19 +138,28 @@ export default class BackendAiInformationView extends BackendAIPage {
         lablup-activity-panel {
           color: #000;
         }
+
+        @media screen and (max-width: 805px) {
+          .setting-desc {
+            width: 60%;
+          }
+
+          .setting-label {
+            width: 35%;
+          }
+        }
       `];
   }
 
   render() {
     // language=HTML
     return html`
-      <!--<wl-card elevation="1">-->
       <div class="horizontal layout flex wrap">
         <div class="vertical layout">
           <lablup-activity-panel title="${_t("information.Core")}" horizontalsize="1x">
             <div slot="message">
               <div class="horizontal flex layout wrap setting-item">
-                <div class="vertical center-justified layout setting-desc-shrink">
+                <div class="vertical center-justified layout setting-desc-shrink" style="margin-right: 65px;">
                   <div class="title">${_t("information.ManagerVersion")}</div>
                 </div>
                 <div class="vertical center-justified layout">
@@ -192,7 +203,7 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
           </lablup-activity-panel>
         </div>
-        <lablup-activity-panel title="${_t("information.Component")}" height="485">
+        <lablup-activity-panel title="${_t("information.Component")}">
           <div slot="message">
             <div class="horizontal flex layout wrap setting-item-bottom-expand">
               <div class="vertical center-justified layout setting-desc">
@@ -293,7 +304,6 @@ export default class BackendAiInformationView extends BackendAIPage {
           </div>
         </div>
       </lablup-activity-panel>
-      <!--</wl-card>-->
     `;
   }
 
