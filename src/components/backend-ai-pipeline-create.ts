@@ -5,7 +5,6 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, customElement, html, property} from 'lit-element';
-import {BackendAIPage} from './backend-ai-page';
 
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select/mwc-select';
@@ -31,7 +30,7 @@ import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
  @element backend-ai-pipeline-create
  */
 @customElement('backend-ai-pipeline-create')
-export default class BackendAIPipelineList extends BackendAIPipelineCommon {
+export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
   // Elements
   @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();

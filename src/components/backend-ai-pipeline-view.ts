@@ -24,6 +24,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-dialog';
+import './backend-ai-pipeline-component-view';
 import './backend-ai-pipeline-create';
 import './backend-ai-pipeline-list';
 import './backend-ai-session-list';
@@ -37,6 +38,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Object}) pipelineCreate = Object();
   @property({type: Object}) pipelineList = Object();
+  @property({type: Object}) pipelineComponent = Object();
 
   @property({type: String}) _status = 'inactive';
   @property({type: String}) componentCreateMode = 'create';
@@ -64,11 +66,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        .pipeline-item,
-        .sidebar-item {
-          max-width: 300px;
-        }
-
         mwc-textfield {
           width: 100%;
           --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0.42);
@@ -105,21 +102,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
           --mdc-on-theme-primary: #38bd73;
         }
 
-        #pipeline-environment {
-          --mdc-menu-item-height: 40px;
-          z-index: 10000;
-          max-height: 300px;
-        }
-
-        #pipeline-environment-tag {
-          --mdc-menu-item-height: 35px;
-        }
-
-        .pipeline-item,
-        .sidebar-item {
-          cursor: pointer;
-        }
-
         #edit-pipeline {
           margin: 5px;
         }
@@ -136,6 +118,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   firstUpdated() {
     this.pipelineCreate = this.shadowRoot.querySelector('backend-ai-pipeline-create');
     this.pipelineList = this.shadowRoot.querySelector('backend-ai-pipeline-list');
+    this.pipelineComponent = this.shadowRoot.querySelector('backend-ai-pipeline-component-view');
 
     const dialog = this.shadowRoot.querySelector('#codemirror-dialog');
     dialog.addEventListener('didShow', () => {
@@ -151,6 +134,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
     });
     this.pipelineCreate.addEventListener('backend-ai-pipeline-deleted', (e) => {
       this.pipelineList.deselectPipeline();
+    });
+    this.pipelineList.addEventListener('backend-ai-pipeline-changed', (e) => {
+      console.log('backend-ai-pipeline-changed')
+      this.pipelineComponent.pipelineSelectedName = e.detail.pipelineSelectedName;
+      this.pipelineComponent.pipelineSelectedConfig = e.detail.pipelineSelectedConfig;
+      this.pipelineComponent.pipelineChanged();
     });
 
     this.notification = globalThis.lablupNotification;
@@ -181,6 +170,11 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this.pipelineCreate._openPipelineDeleteDialog(this.pipelineList.pipelineSelectedName);
   }
 
+
+
+
+
+
   _openComponentAddDialog() {
     if (!this.pipelineFolderName) {
       this.notification.text = 'No pipeline selected';
@@ -197,7 +191,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   async _addComponent() {
-    const id = `pipeline-${window.backendaiclient.generateSessionId(8, true)}`;
+    const id = `component-${window.backendaiclient.generateSessionId(8, true)}`;
     const title = this.shadowRoot.querySelector('#component-title').value;
     const description = this.shadowRoot.querySelector('#component-description').value;
     const path = this.shadowRoot.querySelector('#component-path').value;
@@ -291,23 +285,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.indicator.show();
       await this._uploadFile(vfpath, blob, folderName);
       this.indicator.hide();
-    } catch (err) {
-      console.error(err)
-      this.indicator.hide();
-      this.notification.text = PainKiller.relieve(err.title);
-      this.notification.detail = err.message;
-      this.notification.show(true);
-    }
-  }
-
-  async _downloadPipelineComponents(folder_name) {
-    const vfpath = 'components.json';
-    try {
-      this.indicator.show();
-      const res = await window.backendaiclient.vfolder.download(vfpath, folder_name, false, true);
-      const config = await res.json();
-      this.indicator.hide();
-      return config;
     } catch (err) {
       console.error(err)
       this.indicator.hide();
@@ -627,6 +604,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
             <div class="horizontal wrap layout">
               <backend-ai-pipeline-list ?active="${this.active}"></backend-ai-pipeline-list>
               <backend-ai-pipeline-create ?active="${this.active}"></backend-ai-pipeline-create>
+              <backend-ai-pipeline-component-view ?active="${this.active}"></backend-ai-pipeline-component-view>
 
       <!--
               <div id="exp-lists" class="tab-content" style="margin:0;padding:0;height:calc(100vh - 235px);">

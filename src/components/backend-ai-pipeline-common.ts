@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {customElement, html, property} from 'lit-element';
+import {customElement, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import tus from '../lib/tus';
@@ -18,22 +18,50 @@ import {default as PainKiller} from './backend-ai-painkiller';
   Assumptions on the vFolder structure for storing pipeline configs and data.
 
   /home/work/<vfolder-name>/config.json  # pipeline configuration file which stores following fields
-    - title
-    - description
-    - environment
-    - version
-    - scaling_group
-    - folder_host
+  {
+    "title": "Fashion MNIST!",
+    "description": "Fashion MNIST in TensorFlow",
+    "environment": "index.docker.io/lablup/python-tensorflow",
+    "version": "1.13-py36-cuda10",
+    "scaling_group": "default",
+    "folder_host": "local:volume1"
+  }
+
   /home/work/<vfolder-name>/components.json  # stores whole pipeline components
-    - id
-    - title
-    - description
-    - path  # eg) /home/work/<vfolder-name>/001-load-data/
-            # code is assumed to be stored in `main.py` inside `path`
-    - cpu
-    - mem
-    - gpu
-    - executed
+  {
+    "nodes": [
+      {
+        "id": "component-WhZwnA1j",
+        "title": "01 Data Load!",
+        "label": "01 Data Load!",
+        "description": "Data loader",
+        "path": "01-data-load",  # eg) /home/work/<vfolder-name>/001-load-data/
+                                 # code is assumed to be stored in `main.py` inside `path`
+        "cpu": "1",
+        "mem": "2",
+        "gpu": "0.5",
+        "executed": true
+      },
+      {
+        "id": "component-sYw91hPE",
+        "title": "02 Data Analysis",
+        "description": "Data analysis example",
+        "path": "02-data-analysis",
+        "cpu": "1",
+        "mem": "2",
+        "gpu": "0.1",
+        "executed": false
+      },
+      ...
+    ],
+    "edges": [
+      {
+        {"from": "component-WhZwnA1j", "to": "component-sYw91hPE"},
+        ...
+      }
+    ],
+  }
+
   /home/work/<vfolder-name>/001-load-data/      # root path for each pipeline component
   /home/work/<vfolder-name>/002-validate-data/
   ...
@@ -99,7 +127,7 @@ export class BackendAIPipelineCommon extends BackendAIPage {
               },
               onSuccess: () => {
                 console.log(`${vfpath} uploaded`)
-                resolve();
+                resolve(true);
               }
             });
             uploader.start();

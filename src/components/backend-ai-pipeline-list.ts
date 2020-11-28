@@ -5,7 +5,6 @@
 
 import {translate as _t} from 'lit-translate';
 import {css, customElement, html, property} from 'lit-element';
-import {BackendAIPage} from './backend-ai-page';
 
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select/mwc-select';
@@ -42,8 +41,14 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
   constructor() {
     super();
 
-    this.pipelineSelectedName = localStorage.getItem('backendaiconsole.pipeline.selectedName') || '';
-    this.pipelineSelectedConfig = localStorage.getItem('backendaiconsole.pipeline.selectedConfig') || {};
+    try {
+      this.pipelineSelectedName = localStorage.getItem('backendaiconsole.pipeline.selectedName') || '';
+      this.pipelineSelectedConfig = JSON.parse(localStorage.getItem('backendaiconsole.pipeline.selectedConfig') || '{}');
+    } catch (e) {
+      console.log(e)
+      localStorage.removeItem('backendaiconsole.pipeline.selectedName');
+      localStorage.removeItem('backendaiconsole.pipeline.selectedConfig');
+    }
   }
 
   firstUpdated() {
@@ -75,7 +80,7 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     this.pipelineSelectedConfig = this.pipelineFolders[folderName].config;
     this.shadowRoot.querySelector('#pipeline-selector').selectedText = this.pipelineSelectedConfig.title;
     localStorage.setItem('backendaiconsole.pipeline.selectedName', this.pipelineSelectedName);
-    localStorage.setItem('backendaiconsole.pipeline.selectedConfig', this.pipelineSelectedConfig);
+    localStorage.setItem('backendaiconsole.pipeline.selectedConfig', JSON.stringify(this.pipelineSelectedConfig));
   }
 
   /**
@@ -85,10 +90,9 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     await this._fetchPipelineFolders();
     this.pipelineSelectedName = '';
     this.pipelineSelectedConfig = {};
-    // this.shadowRoot.querySelector('#pipeline-selector').selectedText = '';
     this.shadowRoot.querySelector('#pipeline-selector').select(-1);
-    localStorage.setItem('backendaiconsole.pipeline.selectedName', '');
-    localStorage.setItem('backendaiconsole.pipeline.selectedConfig', {});
+    localStorage.removeItem('backendaiconsole.pipeline.selectedName');
+    localStorage.removeItem('backendaiconsole.pipeline.selectedConfig');
   }
 
   /**
@@ -104,7 +108,17 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     this.pipelineSelectedName = folderName;
     this.pipelineSelectedConfig = this.pipelineFolders[folderName].config;
     localStorage.setItem('backendaiconsole.pipeline.selectedName', this.pipelineSelectedName);
-    localStorage.setItem('backendaiconsole.pipeline.selectedConfig', this.pipelineSelectedConfig);
+    localStorage.setItem('backendaiconsole.pipeline.selectedConfig', JSON.stringify(this.pipelineSelectedConfig));
+
+    const event = new CustomEvent(
+      'backend-ai-pipeline-changed', {
+        'detail': {
+          pipelineSelectedName: this.pipelineSelectedName,
+          pipelineSelectedConfig: this.pipelineSelectedConfig,
+        },
+      },
+    );
+    this.dispatchEvent(event);
   }
 
   /**
