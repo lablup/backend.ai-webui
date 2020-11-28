@@ -40,7 +40,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
   @property({type: String}) _status = 'inactive';
   @property({type: String}) componentCreateMode = 'create';
-  /* Properties for selected pipeline */
+  // Properties for selected pipeline
   @property({type: String}) pipelineFolderName = '';
   @property({type: Object}) pipelineConfig = Object();
   @property({type: Array}) pipelineComponents = Array();
@@ -64,16 +64,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        .indicator {
-          font-family: monospace;
-        }
-
-        #exp-sidebar {
-          weight: 300px;
-          border-right: 1px solid #ccc;
-          height: calc(100vh - 235px);
-        }
-
         .pipeline-item,
         .sidebar-item {
           max-width: 300px;
@@ -159,6 +149,9 @@ export default class BackendAIPipelineView extends BackendAIPage {
       const folderName = e.detail;
       this.pipelineList.changePipeline(folderName);
     });
+    this.pipelineCreate.addEventListener('backend-ai-pipeline-deleted', (e) => {
+      this.pipelineList.deselectPipeline();
+    });
 
     this.notification = globalThis.lablupNotification;
     this.indicator = this.shadowRoot.querySelector('#loading-spinner');
@@ -182,6 +175,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
   _openPipelineUpdateDialog() {
     this.pipelineCreate._openPipelineUpdateDialog(this.pipelineList.pipelineSelectedName);
+  }
+
+  _openPipelineDeleteDialog() {
+    this.pipelineCreate._openPipelineDeleteDialog(this.pipelineList.pipelineSelectedName);
   }
 
   _openComponentAddDialog() {
@@ -616,6 +613,9 @@ export default class BackendAIPipelineView extends BackendAIPage {
                 </mwc-tab>
               </mwc-tab-bar>
               <span class="flex"></span>
+              <mwc-button outlined id="delete-pipeline" icon="delete"
+                  label="${_t('button.Delete')}" @click="${() => this._openPipelineDeleteDialog()}">
+              </mwc-button>
               <mwc-button outlined id="edit-pipeline" icon="edit"
                   label="${_t('button.Edit')}" @click="${() => this._openPipelineUpdateDialog()}">
               </mwc-button>

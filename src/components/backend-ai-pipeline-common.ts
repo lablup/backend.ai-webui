@@ -72,17 +72,6 @@ export class BackendAIPipelineCommon extends BackendAIPage {
   }
 
   /**
-   * Upload pipeline config to a virtual folder.
-   *
-   * @param {String} folderName - virtual folder name to upload pipeline config.
-   * @param {Object} configObj - pipeline config object.
-   * */
-  async _uploadPipelineConfig(folderName, configObj) {
-    const blob = new Blob([JSON.stringify(configObj, null, 2)], {type: 'application/json'});
-    await this._uploadFile(this.pipelineConfigPath, blob, folderName);
-  }
-
-  /**
    * Upload a blob to a virtual folder.
    *
    * @param {String} vfpath - target upload path inside a virtual folder.

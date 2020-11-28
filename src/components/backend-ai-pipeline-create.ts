@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from 'lit-translate';
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -270,6 +270,9 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     }
   }
 
+  /**
+   * Open pipeline create dialog.
+   * */
   _openPipelineCreateDialog() {
     this.selectDefaultLanguage();
     this._fetchResourceGroup();
@@ -293,10 +296,15 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     this.shadowRoot.querySelector('#pipeline-create-dialog').show();
   }
 
+  /**
+   * Open pipeline update dialog.
+   *
+   * @param {String} folderName - virtual folder name to update pipeline config.
+   * */
   async _openPipelineUpdateDialog(folderName) {
     this.pipelineFolderName = folderName;
     if (!this.pipelineFolderName) {
-      this.notification.text = 'No pipeline selected';
+      this.notification.text = _text('pipeline.NoPipelineSelected');
       this.notification.show();
       return;
     }
@@ -309,6 +317,8 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
           this.vhosts = resp.allowed.slice();
           this.vhost = config.folder_host;
           folderHostEl.value = this.vhost;
+          // Ensure version field is updated correctly
+          this._fillPipelineCreateDialogFields(config);
         })
         .catch((err) => {
           console.error(err)
@@ -322,12 +332,39 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     this.shadowRoot.querySelector('#pipeline-create-dialog').show();
   }
 
+  /**
+   * Open pipeline delete dialog.
+   *
+   * @param {String} folderName - virtual folder name to delete.
+   * */
+  _openPipelineDeleteDialog(folderName) {
+    this.pipelineFolderName = folderName;
+    if (!this.pipelineFolderName) {
+      this.notification.text = _text('pipeline.NoPipelineSelected');
+      this.notification.show();
+      return;
+    }
+    this.shadowRoot.querySelector('#pipeline-delete-dialog').show();
+  }
+
+  /**
+   * Hide pipeline create dialog.
+   * */
   _hidePipelineCreateDialog() {
     this.shadowRoot.querySelector('#pipeline-create-dialog').hide();
   }
 
+  /**
+   * Hide pipeline delete dialog.
+   * */
+  _hidePipelineDeleteDialog() {
+    this.shadowRoot.querySelector('#pipeline-delete-dialog').hide();
+  }
+
   _fillPipelineCreateDialogFields(config) {
-    if (!config) config = {};
+    if (!config) {
+      config = {};
+    }
     const dialog = this.shadowRoot.querySelector('#pipeline-create-dialog');
     dialog.querySelector('#pipeline-title').value = config.title || '';
     dialog.querySelector('#pipeline-description').value = config.description || '';
@@ -345,6 +382,9 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     }
   }
 
+  /**
+   * Create a pipeline.
+   * */
   async _createPipeline() {
     const title = this.shadowRoot.querySelector('#pipeline-title').value;
     const description = this.shadowRoot.querySelector('#pipeline-description').value;
@@ -354,7 +394,7 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     const folder_host = this.shadowRoot.querySelector('#pipeline-folder-host').value;
     const sluggedTitle = `pipeline-${window.backendaiclient.slugify(title)}-${window.backendaiclient.generateSessionId(8, true)}`;
     if (!title || !environment || !version || !scaling_group || !folder_host) {
-      this.notification.text = 'Fill all input fields';
+      this.notification.text = _text('pipeline.PipelineDialog.FillAllInputFields');
       this.notification.show();
       return;
     }
@@ -372,7 +412,7 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
         this.dispatchEvent(event);
         this._hidePipelineCreateDialog();
         this.spinner.hide();
-        this.notification.text = 'Pipeline created';
+        this.notification.text = _text('pipeline.PipelineCreated');
         this.notification.show();
       } catch (err) {
         console.error(err)
@@ -402,6 +442,41 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     }
   }
 
+  _deletePipeline() {
+    const job = globalThis.backendaiclient.vfolder.delete(this.pipelineFolderName);
+    job.then((value) => {
+      const event = new CustomEvent('backend-ai-pipeline-deleted', {'detail': this.pipelineFolderName});
+      this.dispatchEvent(event);
+      this._hidePipelineDeleteDialog();
+      this.notification.text = _text('pipeline.PipelineDeleted');
+      this.notification.show();
+    }).catch((err) => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+  }
+
+  /**
+   * Upload pipeline config to a virtual folder.
+   *
+   * @param {String} folderName - virtual folder name to upload pipeline config.
+   * @param {Object} configObj - pipeline config object.
+   * */
+  async _uploadPipelineConfig(folderName, configObj) {
+    const blob = new Blob([JSON.stringify(configObj, null, 2)], {type: 'application/json'});
+    await this._uploadFile(this.pipelineConfigPath, blob, folderName);
+  }
+
+  /**
+   * Upload pipeline components information to a virtual folder.
+   *
+   * @param {String} folderName - virtual folder name to upload components.
+   * @param {Object} cinfo - pipeline component information.
+   * */
   async _uploadPipelineComponents(folderName, cinfo) {
     const vfpath = this.pipelineComponentDetailPath;
     const blob = new Blob([JSON.stringify(cinfo, null, 2)], {type: 'application/json'});
@@ -427,6 +502,9 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
       IronPositioning,
       // language=CSS
       css`
+        .warning {
+          color: red;
+        }
       `
     ];
   }
@@ -489,6 +567,21 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
           <mwc-button unelevated
               label="${this.pipelineCreateMode === 'create' ? _t('button.Create') : _t('button.Update')}"
               @click="${this._createPipeline}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+
+      <backend-ai-dialog id="pipeline-delete-dialog" fixed backdrop>
+        <span slot="title">${_t('pipeline.PipelineDialog.DeleteTitle')}</span>
+        <div slot="content" style="width:100%;">
+          <p class="warning">${_t('dialog.warning.CannotBeUndone')}</p>
+          <div>${_t('pipeline.PipelineDialog.TargetFolder')}: ${this.pipelineFolderName}</div>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <div class="flex"></div>
+          <mwc-button label="${_t("button.Cancel")}" @click="${this._hideDialog}"></mwc-button>
+          <mwc-button unelevated @click="${this._deletePipeline}">
+            ${_t("button.Delete")}
+          </mwc-button>
         </div>
       </backend-ai-dialog>
 

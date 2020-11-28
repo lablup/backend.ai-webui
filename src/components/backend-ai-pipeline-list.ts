@@ -43,7 +43,7 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     super();
 
     this.pipelineSelectedName = localStorage.getItem('backendaiconsole.pipeline.selectedName') || '';
-    this.pipelineSelectedConfig= localStorage.getItem('backendaiconsole.pipeline.selectedConfig') || {};
+    this.pipelineSelectedConfig = localStorage.getItem('backendaiconsole.pipeline.selectedConfig') || {};
   }
 
   firstUpdated() {
@@ -76,6 +76,19 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     this.shadowRoot.querySelector('#pipeline-selector').selectedText = this.pipelineSelectedConfig.title;
     localStorage.setItem('backendaiconsole.pipeline.selectedName', this.pipelineSelectedName);
     localStorage.setItem('backendaiconsole.pipeline.selectedConfig', this.pipelineSelectedConfig);
+  }
+
+  /**
+   * De-select current one.
+   * */
+  async deselectPipeline() {
+    await this._fetchPipelineFolders();
+    this.pipelineSelectedName = '';
+    this.pipelineSelectedConfig = {};
+    // this.shadowRoot.querySelector('#pipeline-selector').selectedText = '';
+    this.shadowRoot.querySelector('#pipeline-selector').select(-1);
+    localStorage.setItem('backendaiconsole.pipeline.selectedName', '');
+    localStorage.setItem('backendaiconsole.pipeline.selectedConfig', {});
   }
 
   /**
@@ -176,6 +189,8 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
           <div id="pipeline-description" class="layout vertical">
             ${this.pipelineSelectedConfig && this.pipelineSelectedConfig.description ? html`
               <span>${this.pipelineSelectedConfig.description}</span>
+            ` : html``}
+            ${this.pipelineSelectedConfig && this.pipelineSelectedConfig.environment ? html`
               <span class="indicator monospace">${this.pipelineSelectedConfig.environment + ':' + this.pipelineSelectedConfig.version}</span>
             ` : html``}
           </div>

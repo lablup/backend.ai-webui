@@ -675,13 +675,20 @@
     "Running": "Running",
     "Finished": "Finished",
     "SelectPipeline": "Select Pipeline",
+    "NoPipelineSelected": "No pipeline selected",
+    "PipelineCreated": "Pipeline created",
+    "PipelineUpdated": "Pipeline updated",
+    "PipelineDeleted": "Pipeline deleted",
     "PipelineDialog": {
       "CreateTitle": "Create pipeline",
       "UpdateTitle": "Update pipeline"
+      "DeleteTitle": "Delete pipeline",
       "Name": "Pipeline Name",
       "Description": "Pipeline description",
       "Environment": "Environment",
-      "Version": "Version"
+      "Version": "Version",
+      "TargetFolder": "Target storage folder",
+      "FillAllInputFields": "Fill all input fields"
     }
   },
   "statistics": {

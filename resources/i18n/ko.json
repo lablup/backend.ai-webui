@@ -670,13 +670,20 @@
     "Running": "실행중",
     "Finished": "종료",
     "SelectPipeline": "파이프라인을 선택하세요",
+    "NoPipelineSelected": "파이프라인이 선택되지 않았습니다",
+    "PipelineCreated": "파이프라인이 생성되었습니다",
+    "PipelineUpdated": "파이프라인이 수정되었습니다",
+    "PipelineDeleted": "파이프라인이 삭제되었습니다",
     "PipelineDialog": {
       "CreateTitle": "파이프라인 만들기",
       "UpdateTitle": "파이프라인 수정",
+      "DeleteTitle": "파이프라인 삭제",
       "Name": "파이프라인 이름",
       "Description": "파이프라인 설명",
       "Environment": "연산 환경",
-      "Version": "버전"
+      "Version": "버전",
+      "TargetFolder": "대상 데이터 폴더",
+      "FillAllInputFields": "모든 필드에 값을 입력하세요"
     }
   },
   "statistics": {
