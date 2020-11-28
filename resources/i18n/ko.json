@@ -665,6 +665,12 @@
     "Recalculating": "재계산중...",
     "RescanImageScanning": "리스캔중..."
   },
+  "pipeline": {
+    "List": "리스트",
+    "Running": "실행중",
+    "Finished": "종료",
+    "SelectPipeline": "파이프라인을 선택하세요"
+  },
   "statistics": {
     "Usage": "사용량",
     "SelectPeriod": "기간을 선택하세요",

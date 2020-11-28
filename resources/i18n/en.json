@@ -670,6 +670,12 @@
     "Recalculating": "Recalculating...",
     "RescanImageScanning": "Scanning..."
   },
+  "pipeline": {
+    "List": "List",
+    "Running": "Running",
+    "Finished": "Finished",
+    "SelectPipeline": "Select Pipeline"
+  },
   "statistics": {
     "Usage": "Usage",
     "SelectPeriod": "Select Period",

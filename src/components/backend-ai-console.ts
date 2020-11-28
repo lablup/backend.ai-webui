@@ -128,7 +128,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Number}) sidepanelWidth = 250;
   @property({type: Object}) supports = Object();
   @property({type: Array}) availablePages = ["summary", "verify-email", "change-password", "job",
-                                             "data", "statistics", "usersettings", "credential",
+                                             "data", "pipeline", "statistics", "usersettings", "credential",
                                              "environment", "agent", "settings", "maintenance",
                                              "information", "github", "import", 'unauthorized'];
   @property({type: Array}) adminOnlyPages = ["experiment", "credential", "environment", "agent",
@@ -812,7 +812,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         break;
       case 'pipeline':
         this.menuTitle = _text("console.menu.Pipeline");
-        // this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'statistics':
         this.menuTitle = _text("console.menu.Statistics");
@@ -1126,6 +1125,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._createPopover("#sessions-menu-icon", _text("console.menu.Sessions"));
     this._createPopover("#data-menu-icon", _text("console.menu.Data&Storage"));
     this._createPopover("#import-menu-icon", _text("console.menu.Import&Run"));
+    this._createPopover("#pipeline-menu-icon", _text("console.menu.Pipeline"));
     this._createPopover("#statistics-menu-icon", _text("console.menu.Statistics"));
     this._createPopover("#usersettings-menu-icon", _text("console.menu.Settings"));
     this._createPopover("backend-ai-help-button", _text("console.menu.Help"));
@@ -1241,7 +1241,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}" ?disabled="${this.blockedMenuitem.includes('pipeline')}">
-              <i class="fas fa-stream" slot="graphic" id="statistics-menu-icon"></i>
+              <i class="fas fa-stream" slot="graphic" id="pipeline-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Pipeline")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}" ?disabled="${this.blockedMenuitem.includes('statistics')}">
