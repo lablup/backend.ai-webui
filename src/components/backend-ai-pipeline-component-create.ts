@@ -65,6 +65,14 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     }
   }
 
+  /**
+   * Set properties for a new component and open dialog.
+   *
+   * @param {String} pipelinName - Virtual folder name to add a new pipeline component.
+   * @param {Array} nodes - current nodes information.
+   * @param {Array} edges - current edge information.
+   * @param {Object} selectedNode - parent component ID (add edges from this node, if exist).
+   * */
   openComponentAddDialog(pipelineName, nodes, edges, selectedNode) {
     if (!pipelineName || pipelineName === '') {
       this.notification.text = _text('pipeline.NoPipelineSelected');
@@ -76,14 +84,34 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     this.componentNodes = nodes;
     this.componentEdges = edges;
     this.selectedNode = selectedNode;
-    this._fillComponentAddDialogFields(null);
     this.shadowRoot.querySelector('#component-add-dialog').show();
   }
 
-  openComponentUpdateDialog(info, idx) {
+  /**
+   * Set properties for updating component and open dialog.
+   *
+   * @param {String} pipelinName - Virtual folder name to update pipeline component.
+   * @param {Array} nodes - current nodes information.
+   * @param {Array} edges - current edge information.
+   * @param {Object} cinfo - detailed information of the component to be updated.
+   * */
+  openComponentUpdateDialog(pipelineName, nodes, edges, cinfo) {
+    if (!pipelineName || pipelineName === '') {
+      this.notification.text = _text('pipeline.NoPipelineSelected');
+      this.notification.show();
+      return;
+    }
+    if (!cinfo) {
+      this.notification.text = _text('pipeline.Component.NoComponentSelected');
+      this.notification.show();
+      return;
+    }
     this.componentCreateMode = 'update';
-    this.selectedComponentIndex = idx;
-    this._fillComponentAddDialogFields(info);
+    this.pipelineSelectedName = pipelineName;
+    this.componentNodes = nodes;
+    this.componentEdges = edges;
+    this.selectedNode = cinfo.id;
+    this._fillComponentAddDialogFields(cinfo);
     this.shadowRoot.querySelector('#component-add-dialog').show();
   }
 
@@ -105,7 +133,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
       info = {};
     }
     const dialog = this.shadowRoot.querySelector('#component-add-dialog');
-    dialog.querySelector('#component-title').value = info.title || '';
+    dialog.querySelector('#component-name').value = info.title || '';
     dialog.querySelector('#component-description').value = info.description || '';
     dialog.querySelector('#component-path').value = info.path || '';
     dialog.querySelector('#component-cpu').value = info.cpu || '1';
@@ -114,8 +142,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
   }
 
   async _addComponent() {
-    const id = `component-${window.backendaiclient.generateSessionId(8, true)}`;
-    const title = this.shadowRoot.querySelector('#component-title').value;
+    const title = this.shadowRoot.querySelector('#component-name').value;
     const description = this.shadowRoot.querySelector('#component-description').value;
     const path = this.shadowRoot.querySelector('#component-path').value;
     if (!title || !path) {
@@ -142,13 +169,15 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     }
 
     const cinfo = {
-      id,
+      id: '',
       title, label: title, description,
       path: sluggedPath,
       cpu, mem, gpu,
       executed: false,
     };
     if (this.componentCreateMode === 'create') {
+      const cid = `component-${window.backendaiclient.generateSessionId(8, true)}`;
+      cinfo.id = cid;
       // Create a component and an edge if there is a selected component (parent).
       this.componentNodes.push(cinfo)
       if (this.selectedNode && this.selectedNode !== '') {
@@ -158,21 +187,20 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
         });
       }
     } else {
-      // if (this.selectedComponentIndex < 0) {
-      //   this.notification.text = 'Invalid component';
-      //   this.notification.show();
-      //   return;
-      // }
-      // this.pipelineComponents[this.selectedComponentIndex] = cinfo;
-      // this.selectedComponentIndex = -1;
+      cinfo.id = this.selectedNode;
+      for (let i = 0; i < this.componentNodes.length; i++) {
+        if (cinfo.id === this.componentNodes[i].id) {
+          this.componentNodes[i] = cinfo;
+          break;
+        }
+      }
     }
 
     this.spinner.show();
     const graph = {nodes: this.componentNodes, edges: this.componentEdges};
-    console.log(this.componentNodes)
-    console.log(this.componentEdges)
     await this._uploadPipelineComponents(this.pipelineSelectedName, graph);
     this._hideComponentAddDialog();
+    this._fillComponentAddDialogFields(null);
     this.spinner.hide();
     const event = new CustomEvent(
       'backend-ai-pipeline-component-created',
@@ -222,7 +250,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
           ${this.componentCreateMode === 'create' ? _t('pipeline.ComponentDialog.CreateTitle') : _t('pipeline.ComponentDialog.UpdateTitle')}
         </span>
         <div slot="content" class="layout verticlal" style="width:450px">
-          <mwc-textfield id="component-title" type="text" autofocus
+          <mwc-textfield id="component-name" type="text" autofocus
               label="${_t('pipeline.ComponentDialog.Name')}" maxLength="30"></mwc-textfield>
           <mwc-textfield id="component-description" type="text"
               label="${_t('pipeline.ComponentDialog.Description')}" maxLength="200"></mwc-textfield>

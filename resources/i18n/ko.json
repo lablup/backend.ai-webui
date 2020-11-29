@@ -686,7 +686,8 @@
       "FillAllInputFields": "모든 필드에 값을 입력하세요"
     },
     "Component": {
-      "Connect": "연결"
+      "Connect": "연결",
+      "NoComponentSelected": "파이프라인 컴포넌트가 선택되지 않았습니다"
     },
     "ComponentDialog": {
       "CreateTitle": "파이프라인 컴포넌트 추가",

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from 'lit-translate';
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, customElement, html, property} from 'lit-element';
 
 import '@material/mwc-button/mwc-button';
@@ -210,6 +210,16 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
   }
 
   _openComponentUpdateDialog() {
+    if (this.componentsSelected.length !== 1) {
+      this.notification.text = _text('pipeline.Component.NoComponentSelected');
+      this.notification.show();
+      return;
+    }
+    const selectedNode = this.componentsSelected[0];
+    const nodeInfo = this.network.body.data.nodes.get(selectedNode);
+    this.componentCreate.openComponentUpdateDialog(
+      this.pipelineSelectedName, this.nodes.slice(), this.edges.slice(), nodeInfo,
+    );
   }
 
   _openComponentDeleteDialog() {

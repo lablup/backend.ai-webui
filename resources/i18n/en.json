@@ -691,7 +691,8 @@
       "FillAllInputFields": "Fill all input fields"
     },
     "Component": {
-      "Connect": "Connect"
+      "Connect": "Connect",
+      "NoComponentSelected": "No pipeline component selected"
     },
     "ComponentDialog": {
       "CreateTitle": "Add pipeline component",
