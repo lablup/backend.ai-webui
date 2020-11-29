@@ -85,6 +85,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
         hierarchical: {
           direction: 'UD',
           levelSeparation: 60,
+          // treeSpacing: 100,
           // nodeSpacing: 50,
           sortMethod: 'directed',
         },
@@ -150,6 +151,12 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
       this.componentsSelected = params.nodes;
     });
 
+    this.network.on('doubleClick', (params) => {
+      if (params.nodes.length === 1) {
+        this._openComponentUpdateDialog();
+      }
+    });
+
     // this.network.on('hoverNode', (e) => {
     //   const node = this.network.getNodeAt(e.pointer.DOM);
     //   const info = this.nodeInfo[e.node];
@@ -200,12 +207,12 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
   }
 
   _openComponentAddDialog() {
-    let selectedNode = null;
-    if (this.componentsSelected.length === 1) {
-      selectedNode = this.componentsSelected[0];
+    let selectedNodes = null;
+    if (this.componentsSelected.length > 0) {
+      selectedNodes = this.componentsSelected;
     }
     this.componentCreate.openComponentAddDialog(
-      this.pipelineSelectedName, this.nodes.slice(), this.edges.slice(), selectedNode,
+      this.pipelineSelectedName, this.nodes.slice(), this.edges.slice(), selectedNodes,
     );
   }
 
@@ -223,6 +230,15 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
   }
 
   _openComponentDeleteDialog() {
+    if (this.componentsSelected.length < 1) {
+      this.notification.text = _text('pipeline.Component.NoComponentSelected');
+      this.notification.show();
+      return;
+    }
+    const selectedNodes = this.componentsSelected.slice();
+    this.componentCreate.openComponentDeleteDialog(
+      this.pipelineSelectedName, this.nodes.slice(), this.edges.slice(), selectedNodes,
+    );
   }
 
   _connectTwoComponents() {

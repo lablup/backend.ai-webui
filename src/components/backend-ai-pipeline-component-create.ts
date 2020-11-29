@@ -42,7 +42,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
   @property({type: String}) componentCreateMode = 'create';
   @property({type: Array}) componentNodes = Array();
   @property({type: Array}) componentEdges = Array();
-  @property({type: String}) selectedNode = '';
+  @property({type: Array}) selectedNodes = Array();  // List of IDs of components
 
   constructor() {
     super();
@@ -71,9 +71,9 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
    * @param {String} pipelinName - Virtual folder name to add a new pipeline component.
    * @param {Array} nodes - current nodes information.
    * @param {Array} edges - current edge information.
-   * @param {Object} selectedNode - parent component ID (add edges from this node, if exist).
+   * @param {Array} selectedNode - parent component IDs (add edges from this node, if exist).
    * */
-  openComponentAddDialog(pipelineName, nodes, edges, selectedNode) {
+  openComponentAddDialog(pipelineName, nodes, edges, selectedNodes) {
     if (!pipelineName || pipelineName === '') {
       this.notification.text = _text('pipeline.NoPipelineSelected');
       this.notification.show();
@@ -83,7 +83,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     this.pipelineSelectedName = pipelineName;
     this.componentNodes = nodes;
     this.componentEdges = edges;
-    this.selectedNode = selectedNode;
+    this.selectedNodes = selectedNodes;
     this.shadowRoot.querySelector('#component-add-dialog').show();
   }
 
@@ -110,13 +110,26 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     this.pipelineSelectedName = pipelineName;
     this.componentNodes = nodes;
     this.componentEdges = edges;
-    this.selectedNode = cinfo.id;
+    this.selectedNodes = [cinfo.id];
     this._fillComponentAddDialogFields(cinfo);
     this.shadowRoot.querySelector('#component-add-dialog').show();
   }
 
-  openComponentDeleteDialog(idx) {
-    this.selectedComponentIndex = idx;
+  openComponentDeleteDialog(pipelineName, nodes, edges, selectedNodes) {
+    if (!pipelineName || pipelineName === '') {
+      this.notification.text = _text('pipeline.NoPipelineSelected');
+      this.notification.show();
+      return;
+    }
+    if (!selectedNodes || selectedNodes.length < 1) {
+      this.notification.text = _text('pipeline.Component.NoComponentSelected');
+      this.notification.show();
+      return;
+    }
+    this.pipelineSelectedName = pipelineName;
+    this.componentNodes = nodes;
+    this.componentEdges = edges;
+    this.selectedNodes = selectedNodes;
     this.shadowRoot.querySelector('#component-delete-dialog').show();
   }
 
@@ -180,14 +193,13 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
       cinfo.id = cid;
       // Create a component and an edge if there is a selected component (parent).
       this.componentNodes.push(cinfo)
-      if (this.selectedNode && this.selectedNode !== '') {
-        this.componentEdges.push({
-          from: this.selectedNode,
-          to: cinfo.id,
+      if (this.selectedNodes && this.selectedNodes.length > 0) {
+        this.selectedNodes.forEach((nid) => {
+          this.componentEdges.push({from: nid, to: cinfo.id});
         });
       }
     } else {
-      cinfo.id = this.selectedNode;
+      cinfo.id = this.selectedNodes[0];
       for (let i = 0; i < this.componentNodes.length; i++) {
         if (cinfo.id === this.componentNodes[i].id) {
           this.componentNodes[i] = cinfo;
@@ -202,8 +214,39 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     this._hideComponentAddDialog();
     this._fillComponentAddDialogFields(null);
     this.spinner.hide();
+    const eventName = this.componentCreateMode === 'create' ? 'backend-ai-pipeline-component-created' : 'backend-ai-pipeline-component-updated';
     const event = new CustomEvent(
-      'backend-ai-pipeline-component-created',
+      eventName, {'detail': {nodes: graph.nodes, edges: graph.edges}},
+    );
+    this.dispatchEvent(event);
+  }
+
+  async _deleteComponent() {
+    this.selectedNodes.forEach((nid) => {
+      for (let i = 0; i < this.componentNodes.length; i++) {
+        if (nid === this.componentNodes[i].id) {
+          this.componentNodes.splice(i, 1);
+          break;
+        }
+      }
+      const indexes = [];
+      for (let i = 0; i < this.componentEdges.length; i++) {
+        if (nid === this.componentEdges[i].from || nid == this.componentEdges[i].to) {
+          indexes.push(i);
+        }
+      }
+      if (indexes.length > 0) {
+        for (let i = indexes.length - 1; i >= 0; i--) {
+          this.componentEdges.splice(indexes[i], 1);
+        }
+      }
+    });
+    const graph = {nodes: this.componentNodes, edges: this.componentEdges};
+    await this._uploadPipelineComponents(this.pipelineSelectedName, graph);
+    this._hideComponentDeleteDialog();
+    this.spinner.hide();
+    const event = new CustomEvent(
+      'backend-ai-pipeline-component-deleted',
       {'detail': {nodes: graph.nodes, edges: graph.edges}},
     );
     this.dispatchEvent(event);
@@ -269,6 +312,22 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
           <mwc-button unelevated
               label="${this.componentCreateMode === 'create' ? _t('button.Add') : _t('button.Update')}"
               @click="${this._addComponent}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+
+      <backend-ai-dialog id="component-delete-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t('pipeline.ComponentDialog.DeleteTitle')}</span>
+        <div slot="content" class="layout vertical">
+          <p>${_t('session.CheckAgainDialog')}</p>
+          <span>${this.selectedNodes && this.selectedNodes.length > 0 ? this.selectedNodes.join(' | ') : ''}</span>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <div class="flex"></div>
+          <mwc-button label="${_t('button.Cancel')}"
+              @click="${this._hideComponentDeleteDialog}"></mwc-button>
+          <mwc-button unelevated
+              label="${_t('button.Delete')}"
+              @click="${this._deleteComponent}"></mwc-button>
         </div>
       </backend-ai-dialog>
 

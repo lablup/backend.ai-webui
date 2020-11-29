@@ -173,17 +173,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
 
 
-  _deleteComponent() {
-    if (this.selectedComponentIndex < 0) {
-      this.notification.text = 'Invalid component';
-      this.notification.show();
-      return;
-    }
-    this.pipelineComponents.splice(this.selectedComponentIndex, 1);
-    this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
-    this.pipelineComponents = this.pipelineComponents.slice();
-    this.shadowRoot.querySelector('#component-delete-dialog').hide();
-  }
 
 
 
@@ -516,44 +505,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
                         ` : ''}
                       </div>
                     </div>
-                    <div id="pipeline-component-list">
-                      ${this.pipelineComponents.map((item, idx) => html`
-                        <wl-list-item data-id="${idx}">
-                          <mwc-icon icon="extension" slot="before"></mwc-icon>
-                          <div slot="after">
-                            <div class="horizontal layout">
-                              <div class="layout horizontal center" style="margin-right:1em;">
-                                  <mwc-icon-button class="fg black" icon="code" @click="${() => this._editCode(idx)}"></mwc-icon-button>
-                                  <mwc-icon-button class="fg ${item.executed ? 'green' : 'black'}" icon="play_arrow" @click="${() => this._runComponent(idx)}"></mwc-icon-button>
-                                  <mwc-icon-button class="fg black" icon="assignment" @click="${() => this._showComponentLogs(idx)}"></mwc-icon-button>
-                                  <mwc-icon-button class="fg black" icon="edit" @click="${() => this._openComponentUpdateDialog(item, idx)}"></mwc-icon-button>
-                                  <mwc-icon-button class="fg black" icon="delete" @click="${() => this._openComponentDeleteDialog(idx)}"></mwc-icon-button>
-                              </div>
-                              <div class="layout vertical start flex" style="width:80px!important;">
-                                <div class="layout horizontal configuration">
-                                  <mwc-icon class="fg blue" icon="developer-board"></mwc-icon>
-                                  <span>${item.cpu}</span>
-                                  <span class="indicator">core</span>
-                                </div>
-                                <div class="layout horizontal configuration">
-                                  <mwc-icon class="fg blue" icon="memory"></mwc-icon>
-                                  <span>${item.mem}</span>
-                                  <span class="indicator">GB</span>
-                                </div>
-                                <div class="layout horizontal configuration">
-                                  <mwc-icon class="fg blue" icon="view-module"></mwc-icon>
-                                  <span>${item.gpu}</span>
-                                  <span class="indicator">GPU</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <wl-title level="4" style="margin: 0">${item.title}</wl-title>
-                          <div style="font-size:11px;max-width:400px;">${item.description}</div>
-                          <div style="font-size:11px;max-width:400px;">${item.path}</div>
-                        </wl-list-item>
-                      `)}
-                    </div>
                     <div class="layout horizontal end-justified" style="margin-bottom:1em">
                       ${this.pipelineComponents.length < 1 ? html`
                         <mwc-list-item>No components.</mwc-list-item>
@@ -568,12 +519,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div id="running-lists" class="tab-content" style="display:none;">
-                <backend-ai-session-list id="running-jobs" condition="running" ?active="${this._status === 'active'}"></backend-ai-session-list>
-              </div>
-              <div id="finished-lists" class="tab-content" style="display:none;">
-                <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
               </div>
             </div> -->
           </div>
@@ -594,21 +539,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
           <mwc-button unelevated
               label="${_t('button.Save')}"
               @click="${this._saveCode}"></mwc-button>
-        </div>
-      </backend-ai-dialog>
-
-      <backend-ai-dialog id="component-delete-dialog" fixed backdrop blockscrolling>
-        <span slot="title">Delete component?</span>
-        <div slot="content" class="layout vertical">
-          <p>This action cannot be undone. Do you want to proceed?</p>
-        </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <div class="flex"></div>
-          <mwc-button label="${_t('button.Cancel')}"
-              @click="${this._hideComponentDeleteDialog}"></mwc-button>
-          <mwc-button unelevated
-              label="${_t('button.Delete')}"
-              @click="${this._deleteComponent}"></mwc-button>
         </div>
       </backend-ai-dialog>
 
