@@ -679,6 +679,7 @@
     "PipelineCreated": "Pipeline created",
     "PipelineUpdated": "Pipeline updated",
     "PipelineDeleted": "Pipeline deleted",
+    "RunPipeline": "Run pipeline",
     "PipelineDialog": {
       "CreateTitle": "Create pipeline",
       "UpdateTitle": "Update pipeline"
@@ -692,7 +693,8 @@
     },
     "Component": {
       "Connect": "Connect",
-      "NoComponentSelected": "No pipeline component selected"
+      "NoComponentSelected": "No pipeline component selected",
+      "SelectTwoComponents": "Select two components"
     },
     "ComponentDialog": {
       "CreateTitle": "Add pipeline component",

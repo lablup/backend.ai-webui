@@ -137,6 +137,9 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     this.componentCreate.addEventListener('backend-ai-pipeline-component-deleted', (e) => {
       _updateNetwork(e);
     });
+    this.componentCreate.addEventListener('backend-ai-pipeline-component-connection-updated', (e) => {
+      _updateNetwork(e);
+    });
   }
 
   _initNetwork() {
@@ -242,6 +245,15 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
   }
 
   _connectTwoComponents() {
+    if (this.componentsSelected.length !== 2) {
+      this.notification.text = _text('pipeline.Component.NoComponentSelected');
+      this.notification.show();
+      return;
+    }
+    const selectedNodes = this.componentsSelected.slice();
+    this.componentCreate.connectTwoNodes(
+      this.pipelineSelectedName, this.nodes.slice(), this.edges.slice(), selectedNodes,
+    );
   }
 
   static get styles() {
@@ -264,7 +276,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     // language=HTML
     return html`
       <div class="card" elevation="0">
-        <div class="layout horizontal center" style="margin:0.2em">
+        <div class="layout horizontal center wrap" style="margin:0.2em">
           <mwc-button dense outlined id="add-component-btn" icon="add"
               label="${_t('button.Add')}" @click="${() => this._openComponentAddDialog()}">
           </mwc-button>
@@ -283,6 +295,10 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
                 label="${_t('pipeline.Component.Connect')}" @click="${() => this._connectTwoComponents()}">
             </mwc-button>
           ` : html``}
+          <span class="flex"></span>
+          <mwc-button dense raised id="run-pipeline-btn" icon="play_arrow"
+              label="${_t('pipeline.RunPipeline')}" @click="${() => this._runPipeline()}">
+          </mwc-button>
         </div>
         <backend-ai-pipeline-component-create ?active="${this.active}"></backend-ai-pipeline-component-create>
         <div id="component-network"></div>

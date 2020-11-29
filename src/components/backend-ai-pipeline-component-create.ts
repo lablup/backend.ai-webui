@@ -71,7 +71,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
    * @param {String} pipelinName - Virtual folder name to add a new pipeline component.
    * @param {Array} nodes - current nodes information.
    * @param {Array} edges - current edge information.
-   * @param {Array} selectedNode - parent component IDs (add edges from this node, if exist).
+   * @param {Array} selectedNodes - parent component IDs (add edges from this node, if exist).
    * */
   openComponentAddDialog(pipelineName, nodes, edges, selectedNodes) {
     if (!pipelineName || pipelineName === '') {
@@ -115,6 +115,14 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     this.shadowRoot.querySelector('#component-add-dialog').show();
   }
 
+  /**
+   * Set properties for deleting component and open dialog
+   *
+   * @param {String} pipelinName - Virtual folder name to delete pipeline component.
+   * @param {Array} nodes - current nodes information.
+   * @param {Array} edges - current edge information.
+   * @param {Array} selectedNodes - component Ids to delete
+   * */
   openComponentDeleteDialog(pipelineName, nodes, edges, selectedNodes) {
     if (!pipelineName || pipelineName === '') {
       this.notification.text = _text('pipeline.NoPipelineSelected');
@@ -139,6 +147,46 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
 
   _hideComponentDeleteDialog() {
     this.shadowRoot.querySelector('#component-delete-dialog').hide();
+  }
+
+  /**
+   * Connect/disconnect two components.
+   *
+   * @param {String} pipelinName - Virtual folder name to delete pipeline component.
+   * @param {Array} nodes - current nodes information.
+   * @param {Array} edges - current edge information.
+   * @param {Array} selectedNodes - component Ids to delete
+   * */
+  async connectTwoNodes(pipelineName, nodes, edges, selectedNodes) {
+    if (selectedNodes.length !== 2) {
+      this.notification.text = _text('pipeline.Component.NoComponentSelected');
+      this.notification.show();
+      return;
+    }
+    let index = -1;
+    const nid0 = selectedNodes[0];
+    const nid1 = selectedNodes[1]
+    for (let i = 0; i < edges.length; i++) {
+      if ((edges[i].from === nid0 && edges[i].to === nid1) ||
+          (edges[i].from === nid1 && edges[i].to === nid0)) {
+        index = i;
+        break;
+      }
+    }
+    if (index > 0) { // already connected. let's disconnect
+      edges.splice(index, 1);
+    } else { // make new connection
+      edges.push({from: nid0, to: nid1});
+    }
+    const graph = {nodes: nodes, edges: edges};
+    this.spinner.show();
+    await this._uploadPipelineComponents(pipelineName, graph);
+    this.spinner.hide();
+    const event = new CustomEvent(
+      'backend-ai-pipeline-component-connection-updated',
+      {'detail': {nodes: graph.nodes, edges: graph.edges}},
+    );
+    this.dispatchEvent(event);
   }
 
   _fillComponentAddDialogFields(info) {
@@ -242,6 +290,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
       }
     });
     const graph = {nodes: this.componentNodes, edges: this.componentEdges};
+    this.spinner.show();
     await this._uploadPipelineComponents(this.pipelineSelectedName, graph);
     this._hideComponentDeleteDialog();
     this.spinner.hide();
