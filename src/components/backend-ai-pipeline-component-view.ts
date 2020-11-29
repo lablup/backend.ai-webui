@@ -8,7 +8,6 @@ import {css, customElement, html, property} from 'lit-element';
 
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-menu/mwc-menu';
 import '@material/mwc-select/mwc-select';
 
 import {Network} from "vis-network/standalone";
@@ -25,6 +24,7 @@ import {
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
 import './backend-ai-pipeline-component-create';
+import './backend-ai-pipeline-runner';
 
 /**
  Backend AI Pipeline Component View
@@ -32,7 +32,7 @@ import './backend-ai-pipeline-component-create';
  `backend-ai-pipeline-component-view` displays and controls pipeline components.
 
  @group Backend.AI Console
- @element backend-ai-pipeline-list
+ @element backend-ai-pipeline-component-view
  */
 @customElement('backend-ai-pipeline-component-view')
 export default class BackendAIPipelineComponentView extends BackendAIPipelineCommon {
@@ -40,6 +40,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
   @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) componentCreate = Object();
+  @property({type: Object}) pipelineRunner = Object();
   // Pipeline components prpoerties
   @property({type: String}) pipelineSelectedName = '';
   @property({type: Object}) pipelineSelectedConfig = Object();
@@ -105,6 +106,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.componentCreate = this.shadowRoot.querySelector('backend-ai-pipeline-component-create');
+    this.pipelineRunner = this.shadowRoot.querySelector('backend-ai-pipeline-runner');
     this._initEventHandlers();
     this._initNetwork();
   }
@@ -156,7 +158,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
 
     this.network.on('doubleClick', (params) => {
       if (params.nodes.length === 1) {
-        this._openComponentUpdateDialog();
+        this._editComponentCode();
       }
     });
 
@@ -256,6 +258,17 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     );
   }
 
+  _editComponentCode() {
+    if (this.componentsSelected.length !== 1) {
+      this.notification.text = _text('pipeline.Component.NoComponentSelected');
+      this.notification.show();
+      return;
+    }
+    const selectedNode = this.componentsSelected[0];
+    const nodeInfo = this.network.body.data.nodes.get(selectedNode);
+    this.pipelineRunner.editCode(this.pipelineSelectedName, nodeInfo);
+  }
+
   static get styles() {
     return [
       BackendAiStyles,
@@ -301,6 +314,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
           </mwc-button>
         </div>
         <backend-ai-pipeline-component-create ?active="${this.active}"></backend-ai-pipeline-component-create>
+        <backend-ai-pipeline-runner ?active="${this.active}"></backend-ai-pipeline-runner>
         <div id="component-network"></div>
       </div>
 

@@ -176,60 +176,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
 
 
-  async _ensureComponentFolder(component) {
-    const folder = `${component.path}`;
-    try {
-      await window.backendaiclient.vfolder.mkdir(folder, this.pipelineFolderName, null, true);
-    } catch (err) {
-      if (err && err.message && err.message.includes('already exists')) {
-        // silently pass if the target folder alrady exists
-      } else {
-        console.error(err)
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true);
-      }
-    }
-  }
-
-  async _ensureComponentMainCode(component) {
-    await this._ensureComponentFolder(component);
-    const filepath = `${component.path}/main.py`; // TODO: hard-coded file name
-    try {
-      const res = await window.backendaiclient.vfolder.download(filepath, this.pipelineFolderName, false, true);
-      return await res.text();
-    } catch (err) {
-      console.error(err)
-      if (err.title && err.title.split(' ')[0] === '404') {
-        // Code file not found. upload empty code.
-        const blob = new Blob([''], {type: 'plain/text'});
-        await this._uploadFile(filepath, blob, this.pipelineFolderName);
-        return '';
-      } else {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true);
-      }
-    }
-  }
-
-  async _editCode(idx) {
-    if (idx < 0) {
-      this.notification.text = 'Invalid component';
-      this.notification.show();
-      return;
-    }
-    this.spinner.show();
-    this.selectedComponentIndex = idx;
-    const component = this.pipelineComponents[idx];
-    const code = await this._ensureComponentMainCode(component);
-    const dialog = this.shadowRoot.querySelector('#codemirror-dialog');
-    const editor = this.shadowRoot.querySelector('#codemirror-editor');
-    editor.setValue(code);
-    dialog.querySelector('span[slot="title"]').textContent = component.title;
-    dialog.show();
-    this.spinner.hide();
-  }
 
   async _saveCode() {
     if (this.selectedComponentIndex < 0) {
