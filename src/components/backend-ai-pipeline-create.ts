@@ -405,7 +405,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
       try {
         await window.backendaiclient.vfolder.create(sluggedTitle,folder_host);
         const uploadPipelineTask = this._uploadPipelineConfig(sluggedTitle, configObj);
-        const uploadComponentsTask = this._uploadPipelineComponents(sluggedTitle, []);
+        const uploadComponentsTask = this._uploadPipelineComponents(sluggedTitle, {});
         await Promise.all([uploadPipelineTask, uploadComponentsTask]);
         const event = new CustomEvent('backend-ai-pipeline-created', {'detail': sluggedTitle});
         this.dispatchEvent(event);

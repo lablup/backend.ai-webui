@@ -689,6 +689,20 @@
       "Version": "Version",
       "TargetFolder": "Target storage folder",
       "FillAllInputFields": "Fill all input fields"
+    },
+    "Component": {
+      "Connect": "Connect"
+    },
+    "ComponentDialog": {
+      "CreateTitle": "Add pipeline component",
+      "UpdateTitle": "Update pipeline component",
+      "DeleteTitle": "Delete pipeline component",
+      "Name": "Component name",
+      "Description": "Component description",
+      "PathInFolder": "Component path in storage folder",
+      "NamePathRequired": "Name and path is required",
+      "CPUNotEnough": "CPU should be at least 1",
+      "MemoryNotEnough": "Memory should be at least 0.1 GiB"
     }
   },
   "statistics": {

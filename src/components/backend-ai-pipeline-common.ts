@@ -45,6 +45,7 @@ import {default as PainKiller} from './backend-ai-painkiller';
       {
         "id": "component-sYw91hPE",
         "title": "02 Data Analysis",
+        "label": "02 Data Analysis",
         "description": "Data analysis example",
         "path": "02-data-analysis",
         "cpu": "1",
@@ -126,7 +127,7 @@ export class BackendAIPipelineCommon extends BackendAIPage {
                 reject(new Error(err));
               },
               onSuccess: () => {
-                console.log(`${vfpath} uploaded`)
+                console.log(`${vfpath} uploaded`);
                 resolve(true);
               }
             });

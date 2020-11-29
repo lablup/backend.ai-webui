@@ -684,6 +684,20 @@
       "Version": "버전",
       "TargetFolder": "대상 데이터 폴더",
       "FillAllInputFields": "모든 필드에 값을 입력하세요"
+    },
+    "Component": {
+      "Connect": "연결"
+    },
+    "ComponentDialog": {
+      "CreateTitle": "파이프라인 컴포넌트 추가",
+      "UpdateTitle": "파이프라인 컴포넌트 수정",
+      "DeleteTitle": "파이프라인 컴포넌트 삭제",
+      "Name": "컴포넌트 이름",
+      "Description": "컴포넌트 설명",
+      "PathInFolder": "저장 폴더 내 컴포넌트 경로",
+      "NamePathRequired": "이름과 경로는 필수 항목입니다",
+      "CPUNotEnough": "CPU는 1 이상이어야 합니다",
+      "MemoryNotEnough": "메모리는 0.1 GiB 이상이어야 합니다"
     }
   },
   "statistics": {
