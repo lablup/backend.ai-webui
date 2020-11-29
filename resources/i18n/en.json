@@ -682,7 +682,7 @@
     "RunPipeline": "Run pipeline",
     "PipelineDialog": {
       "CreateTitle": "Create pipeline",
-      "UpdateTitle": "Update pipeline"
+      "UpdateTitle": "Update pipeline",
       "DeleteTitle": "Delete pipeline",
       "Name": "Pipeline Name",
       "Description": "Pipeline description",
