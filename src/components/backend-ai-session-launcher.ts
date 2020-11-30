@@ -97,13 +97,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'max': '1'
   };
   @property({type: Object}) cluster_metric = {
-    'min' : 0,
-    'max' : 0
+    'min' : 1,
+    'max' : 1
   };
   @property({type: Array}) cluster_mode_list = [
     'single-node', 'multi-node'
   ];
-
+  @property({type: Boolean}) cluster_support = false;
   @property({type: Object}) images;
   @property({type: Object}) total_slot;
   @property({type: Object}) total_resource_group_slot;
@@ -591,6 +591,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerSession || 64;
         this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerSession || 16;
         this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerSession || 2;
+        if (globalThis.backendaiclient.supports('multi-container')) {
+          this.cluster_support = true;
+        }
         this.is_connected = true;
         this._enableLaunchButton();
       }, {once: true});
@@ -598,6 +601,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerSession || 64;
       this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerSession || 16;
       this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerSession || 2;
+      if (globalThis.backendaiclient.supports('multi-container')) {
+        this.cluster_support = true;
+      }
       this.is_connected = true;
       this._enableLaunchButton();
     }
@@ -823,9 +829,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     config['group_name'] = globalThis.backendaiclient.current_group;
     config['domain'] = globalThis.backendaiclient._config.domainName;
     config['scaling_group'] = this.scaling_group;
-    config['cluster_mode'] = this.cluster_mode;
-    config['cluster_size'] = this.cluster_size;
-    config['maxWaitSeconds'] = 10;
+    if (globalThis.backendaiclient.supports('multi-container')) {
+      config['cluster_mode'] = this.cluster_mode;
+      config['cluster_size'] = this.cluster_size;
+    }
+    config['maxWaitSeconds'] = 15;
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     if (ownerEnabled && ownerEnabled.checked) {
       config['group_name'] = this.shadowRoot.querySelector('#owner-group').value;
@@ -1547,8 +1555,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Set Cluster mode between 'single-node' and 'multi-node'
-   * 
-   * @param {Event} e 
+   *
+   * @param {Event} e
    */
   _setClusterMode(e) {
     this.cluster_mode = e.target.value;
@@ -1556,13 +1564,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Set Cluster size when the cluster mode is 'multi-node'
-   * 
+   *
    * @param {Event} e
    */
   _setClusterSize(e) {
     this.cluster_size = e.target.value > 0 ? Math.round(e.target.value) : 0;
     this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
-  } 
+  }
 
   /**
    * Choose resource template
@@ -2074,10 +2082,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </div>
           </div>
         </wl-expansion>
+        ${this.cluster_support ? html`
         <mwc-select id="cluster-mode" label="${_t("session.launcher.ClusterMode")}" fullwidth required
               value="${this.cluster_mode}" @change="${(e) => this._setClusterMode(e)}">
           ${this.cluster_mode_list.map(item => html`
-            <mwc-list-item 
+            <mwc-list-item
                 class="cluster-mode-dropdown"
                 id="${item}"
                 value="${item}"
@@ -2101,7 +2110,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                          value="${this.cluster_size}"
                          @change="${(e) => this._setClusterSize(e)}"></lablup-slider>
           <span class="caption">${_t("session.launcher.Node")}</span>
-        </div>
+        </div>`: html``}
         <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
           <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.SetSessionOwner")}</span>
           <span slot="description"></span>
