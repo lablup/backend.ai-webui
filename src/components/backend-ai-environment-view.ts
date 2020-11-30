@@ -98,6 +98,15 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
               --card-elevation: 0;
           }
 
+          @media screen and (max-width: 805px) {
+            mwc-tab, mwc-button {
+              --mdc-typography-button-font-size: 10px;
+            }
+  
+            wl-tab {
+              width: 5px;
+            }
+          }
       `
     ];
   }

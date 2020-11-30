@@ -241,6 +241,16 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         ::-webkit-scrollbar {
           display: none; /* Chrome and Safari */
         }
+
+        @media screen and (max-width: 750px) {
+          .setting-desc {
+            width: 200px;
+          }
+
+          #language-setting {
+            width: 150px;
+          }
+        }
       `];
   }
 
@@ -793,7 +803,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
         </div>
         <div class="horizontal layout wrap setting-item">
-          <div class="vertical start start-justified layout setting-select-desc">
+          <div class="vertical start start-justified layout setting-select-desc" id="language-setting">
             <div class="title">${_t("usersettings.Language")}</div>
             <div class="description">${_tr("usersettings.DescLanguage")}
             </div>

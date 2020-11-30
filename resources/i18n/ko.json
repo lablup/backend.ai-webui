@@ -12,7 +12,7 @@
       "Administration": "관리",
       "Users": "사용자",
       "Environments": "실행 환경",
-      "Resources": "리소스",
+      "Resources": "자원",
       "Configurations": "환경 설정",
       "Maintenance": "관리",
       "Information": "정보",
@@ -49,7 +49,6 @@
       "Experiments": "실험",
       "Menu": "메뉴",
       "Run": "실행",
-      "Import&Run": "가져오기 & 실행",
       "UserName": "사용자"
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
@@ -108,10 +107,10 @@
       "MY": "나의",
       "Sessions": "세션",
       "Project": "프로젝트",
-      "UserResourceLimit": "사용자 리소스 제한",
-      "ResourceGroup": "리소스 그룹",
-      "CurrentResourceGroup": "현재 리소스 그룹",
-      "SelectResourceGroup": "리소스 그룹 선택",
+      "UserResourceLimit": "사용자 자원 제한",
+      "ResourceGroup": "자원 그룹",
+      "CurrentResourceGroup": "현재 자원 그룹",
+      "SelectResourceGroup": "자원 그룹 선택",
       "StartNewSession": "새 세션 시작",
       "ChooseEnvironment": "환경을 선택하세요",
       "Version": "버전",
@@ -139,7 +138,7 @@
       "SetSessionOwner": "세션 소유자 설정",
       "OwnerAccessKey": "소유자 접근키",
       "OwnerGroup": "소유자 그룹",
-      "OwnerResourceGroup": "소유자 리소스 그룹",
+      "OwnerResourceGroup": "소유자 자원 그룹",
       "LaunchSessionWithAccessKey": "지정한 키로 세션 시작",
       "OwnerEmail": "사용자 E-Mail",
       "DescCPU": "<p>CPU는 명령어로 지정된 기본 산술, 논리, 제어 및 입출력 (I/O) 작업을 수행합니다. </p><p>고성능 컴퓨팅 워크로드의 경우 많은 CPU가 도움이 되지만, 여러 CPU를 사용하도록 프로그램 코드를 작성해야 합니다. (그렇지 않으면 대부분의 CPU는 사용되지 않을 것입니다.)</p>",
@@ -170,7 +169,8 @@
       "StartImportedNotebook": "가져온 노트북 열기",
       "SessionNameAllowCondition": "세션 이름은 공백없이 4글자 이상 영문/숫자만 입력 가능합니다.",
       "NoFolderExists": "폴더가 없습니다",
-      "sessionStillPreparing": "세션이 아직 준비중입니다. 세션이 시작된 후 직접 앱 아이콘을 눌러 앱을 시작해주세요."
+      "sessionStillPreparing": "세션이 아직 준비중입니다. 세션이 시작된 후 직접 앱 아이콘을 눌러 앱을 시작해주세요.",
+      "ResourceMonitorToggle": "자원 모니터 보기"
     },
     "Running": "실행중",
     "Finished": "종료",
@@ -509,8 +509,8 @@
     "MinimumCPUUnit": "CPU 최소 단위: 1 코어",
     "MinimumMemUnit": "메모리 최소 단위: 1 GB",
     "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다.",
-    "RAM(GB)": "메모리 (GB)",
-    "SharedMemory(GB)": "공유메모리 (GB)"
+    "RAM": "메모리 (GB)",
+    "SharedMemory": "공유메모리 (GB)"
   },
   "usersettings": {
     "General": "일반",

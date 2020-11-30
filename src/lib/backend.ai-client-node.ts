@@ -2129,6 +2129,36 @@ class ComputeSession {
   }
 
   /**
+   * Get the number of compute sessions with specific conditions.
+   *
+   * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+   * @param {string} accessKey - access key that is used to start compute sessions.
+   * @param {number} limit - limit number of query items.
+   * @param {number} offset - offset for item query. Useful for pagination.
+   * @param {string} group - project group id to query. Default returns sessions from all groups.
+   */
+  async total_count(status = 'RUNNING', accessKey = '', limit = 1, offset = 0, group = '') {
+    let q, v;
+    q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
+        total_count
+      }
+    }`;
+    v = {
+      'limit': limit,
+      'offset': offset,
+      'status': status
+    };
+    if (accessKey != '') {
+      v['ak'] = accessKey;
+    }
+    if (group != '') {
+      v['group_id'] = group;
+    }
+    return this.client.query(q, v);
+  }
+
+  /**
    * list compute sessions with specific conditions.
    *
    * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].

@@ -15,6 +15,8 @@ import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-textfield';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
+import '@material/mwc-icon-button';
+import '@material/mwc-button';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -26,8 +28,6 @@ import 'weightless/tab';
 import 'weightless/title';
 import 'weightless/tab-group';
 import 'weightless/textfield';
-import '@material/mwc-icon-button';
-import '@material/mwc-button';
 
 import '../plastics/lablup-shields/lablup-shields';
 import './backend-ai-dialog';
@@ -238,6 +238,15 @@ export default class BackendAIData extends BackendAIPage {
           margin-left: 10px;
         }
 
+        @media screen and (max-width: 750px) {
+          mwc-tab {
+            --mdc-typography-button-font-size: 10px;
+          }
+
+          mwc-button > span {
+            display: none;
+          }
+        }
       `];
   }
 
@@ -256,7 +265,9 @@ export default class BackendAIData extends BackendAIPage {
                 <mwc-tab title="automount-folder" label="${_t("data.AutomountFolders")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               </mwc-tab-bar>
               <span class="flex"></span>
-              <mwc-button dense raised id="add-folder" icon="add" label="${_t("data.NewFolder")}" @click="${() => this._addFolderDialog()}" style="margin-right:15px;"></mwc-icon-button>
+              <mwc-button dense raised id="add-folder" icon="add" @click="${() => this._addFolderDialog()}" style="margin-right:15px;">
+                <span>${_t("data.NewFolder")}</span>
+              </mwc-button>
             </h3>
             <div id="general-folder-lists" class="tab-content">
               <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>

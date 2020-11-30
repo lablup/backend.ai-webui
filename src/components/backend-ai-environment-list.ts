@@ -181,7 +181,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
         #modify-app-dialog {
           --component-max-height: 550px;
-          --component-min-width: 600px;
         }
 
         backend-ai-dialog vaadin-grid {
