@@ -9,6 +9,7 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid-column';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid-sort-column';
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -494,6 +495,10 @@ export default class BackendAIAgentList extends BackendAIPage {
       case "openstack":
         color = 'red';
         icon = 'openstack';
+        break;
+      case "dgx":
+        color = 'green';
+        icon = 'local';
         break;
       case "local":
         color = 'yellow';

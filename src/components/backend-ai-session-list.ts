@@ -576,7 +576,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.image);
           const specs = session.image.split('/');
-          console.log(sessions[objectKey]);
           sessions[objectKey].cluster_size = parseInt(sessions[objectKey].cluster_size);
           const tag = specs[specs.length - 1].split(':')[1]
           let tags = tag.split('-');
@@ -1138,7 +1137,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           item.tag = rowData.item.baseversion;
         }
         return html`
-                <lablup-shields app="${item.category === undefined ? '' : item.category}" 
+                <lablup-shields app="${item.category === undefined ? '' : item.category}"
                                 color="${item.color}"
                                 description="${item.tag}"
                                 ui="round"></lablup-shields>
