@@ -14,9 +14,7 @@ import 'weightless/button';
 import 'weightless/card';
 import 'weightless/icon';
 import 'weightless/label';
-import 'weightless/switch';
 import 'weightless/textfield';
-import 'weightless/title';
 
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';

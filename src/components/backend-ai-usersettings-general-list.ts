@@ -14,7 +14,6 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import 'weightless/card';
 import 'weightless/switch';
 import 'weightless/select';
 import 'weightless/icon';
@@ -146,26 +145,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
         #bootstrap-dialog wl-button {
           margin-left: 5px;
-        }
-
-        wl-card > div {
-          padding: 15px;
-        }
-
-        wl-card h3.tab {
-          padding-top: 0;
-          padding-bottom: 0;
-          padding-left: 0;
-        }
-
-        wl-card {
-          margin: 0;
-        }
-
-        wl-card wl-card {
-          margin: 0;
-          padding: 0;
-          --card-elevation: 0;
         }
 
         #bootstrap-dialog, #userconfig-dialog {
@@ -686,7 +665,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       let publicKeyCopyBtn = dialog.querySelector('#copy-current-ssh-public-key-button');
       publicKeyEl.value = resp.ssh_public_key ? resp.ssh_public_key : '';
 
-      // disable textarea and copy button when the user has never generated SSH Keypair. 
+      // disable textarea and copy button when the user has never generated SSH Keypair.
       publicKeyEl.disabled = publicKeyEl.value === '' ? true : false;
       publicKeyCopyBtn.disabled = publicKeyEl.disabled;
 

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {css, customElement, html, LitElement, property, query} from "lit-element";
 import '@material/mwc-slider';
 import 'weightless/textfield';
 
@@ -41,8 +41,8 @@ export default class LablupSlider extends LitElement {
   @property({type: Boolean}) markers = null;
   @property({type: Number}) marker_limit = 30;
   @property({type: Boolean}) disabled = null;
-  @property({type: Object}) slider;
   @property({type: Object}) textfield;
+  @query('#slider', true) slider;
 
   static get styles() {
     return [
@@ -91,7 +91,6 @@ export default class LablupSlider extends LitElement {
   }
 
   firstUpdated() {
-    this.slider = this.shadowRoot.querySelector('#slider');
     if (this.editable) {
       this.textfield = this.shadowRoot.querySelector('#textfield');
       this.textfield.style.display = 'flex';

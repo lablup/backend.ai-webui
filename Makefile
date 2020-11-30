@@ -28,6 +28,7 @@ compile: versiontag
 	npm run build
 compile_wsproxy:
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
+	#cd ./src/wsproxy; rollup -c rollup.config.ts
 all: dep mac win linux
 dep:
 	cd ./src/plastics/weightless && bash ./patch-input-behavior.sh

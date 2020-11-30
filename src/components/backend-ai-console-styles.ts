@@ -8,7 +8,6 @@ export const BackendAiConsoleStyles = [
     .loading-background {
       transition: all 0.3s linear;
       position: fixed;
-      z-index: 10000;
       top: 0;
       left: 0;
       width: 100%;
@@ -174,7 +173,7 @@ export const BackendAiConsoleStyles = [
       --mdc-on-theme-primary: var(--general-button-background-color);
     }
 
-    mwc-button[unelevate--mdc-theme-primaryd] {
+    mwc-button[unelevate--mdc-theme-primary] {
       : var(--general-button-background-color);
       --mdc-on-theme-primary: var(--general-button-background-color);
     }
@@ -355,16 +354,10 @@ export const BackendAiConsoleStyles = [
 
     mwc-textfield {
       width: 100%;
-      --mdc-text-field-fill-color: transparent;
-      --mdc-theme-primary: var(--general-textfield-selected-color);
-      font-family: var(--general-font-family);
     }
 
     mwc-textarea {
       width: 100%;
-      --mdc-text-field-fill-color: transparent;
-      --mdc-theme-primary: var(--general-textfield-selected-color);
-      font-family: var(--general-font-family);
     }
 
     wl-popover-card {
@@ -382,6 +375,8 @@ export const BackendAiConsoleStyles = [
 
     mwc-list-item {
       font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      --mdc-typography-body2-font-family: var(--general-font-family);
       font-weight: 400;
     }
 
@@ -527,7 +522,7 @@ export const BackendAiConsoleStyles = [
         color: var(--general-sidebar-color);
       }
     }
-    
+
     .temporarily-hide {
       display: none !important;
     }

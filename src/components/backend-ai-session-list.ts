@@ -28,6 +28,7 @@ import '@material/mwc-menu';
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
 import '../plastics/lablup-shields/lablup-shields';
+import './lablup-progress-bar';
 import './backend-ai-dialog';
 
 import JsonToCsv from '../lib/json_to_csv';
@@ -183,19 +184,19 @@ export default class BackendAiSessionList extends BackendAIPage {
         @media screen and (max-width: 899px) {
           #work-dialog,
           #work-dialog.mini_ui {
-            --left: 0;
+            left: 0;
             --component-width: 100%;
           }
         }
 
         @media screen and (min-width: 900px) {
           #work-dialog {
-            --left: 100px;
+            left: 100px;
             --component-width: calc(100% - 50px);
           }
 
           #work-dialog.mini_ui {
-            --left: 40px;
+            left: 40px;
             --component-width: calc(100% - 50px);
           }
         }
@@ -203,6 +204,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         #work-area {
           width: 100%;
           padding: 5px;
+          font-size:12px;
+          line-height: 12px;
           height: calc(100vh - 120px);
           background-color: #222222;
           color: #efefef;
@@ -277,6 +280,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--paper-green-600);
+        }
+
+        lablup-progress-bar.usage {
+          --progress-bar-height: 5px;
+          --progress-bar-width: 60px;
+          margin-bottom: 0;
         }
 
         div.filters #access-key-filter {
@@ -494,9 +503,19 @@ export default class BackendAiSessionList extends BackendAIPage {
             const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
             sessions[objectKey].agent = container.agent
             if (liveStat && liveStat.cpu_used) {
-              sessions[objectKey].cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
+              sessions[objectKey].cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.current);
             } else {
               sessions[objectKey].cpu_used_time = this._automaticScaledTime(0);
+            }
+            if (liveStat && liveStat.cpu_util) {
+              sessions[objectKey].cpu_util = liveStat.cpu_util.current;
+            } else {
+              sessions[objectKey].cpu_util = 0;
+            }
+            if (liveStat && liveStat.mem) {
+              sessions[objectKey].mem_current = liveStat.mem.current;
+            } else {
+              sessions[objectKey].mem_current = 0;
             }
             if (liveStat && liveStat.io_read) {
               sessions[objectKey].io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
@@ -507,6 +526,21 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
             } else {
               sessions[objectKey].io_write_bytes_mb = 0;
+            }
+            if (liveStat && liveStat.cuda_util) {
+              sessions[objectKey].cuda_util = liveStat.cuda_util;
+            } else {
+              sessions[objectKey].cuda_util = 0;
+            }
+            if (liveStat && liveStat.rocm_util) {
+              sessions[objectKey].rocm_util = liveStat.rocm_util;
+            } else {
+              sessions[objectKey].rocm_util = 0;
+            }
+            if (liveStat && liveStat.tpu_util) {
+              sessions[objectKey].tpu_util = liveStat.tpu_util;
+            } else {
+              sessions[objectKey].tpu_util = 0;
             }
           }
           let service_info = JSON.parse(sessions[objectKey].service_ports);
@@ -805,7 +839,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = controls['access-key'];
 
-    globalThis.backendaiclient.get_logs(sessionId, accessKey).then((req) => {
+    globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
       const ansi_up = new AnsiUp();
       let logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
@@ -833,7 +867,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const sessionName = this.shadowRoot.querySelector('#work-dialog').sessionName;
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = this.shadowRoot.querySelector('#work-dialog').accessKey;
-    globalThis.backendaiclient.getLogs(sessionId, accessKey).then((req) => {
+    globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
       const ansi_up = new AnsiUp();
       const logs = ansi_up.ansi_to_html(req.result.logs);
       this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
@@ -1279,8 +1313,82 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   usageRenderer(root, column?, rowData?) {
-    render(
-      html`
+    if (this.condition === 'running') {
+      render(
+        // language=HTML
+        html`
+        <div class="vertical start start-justified layout">
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">CPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.cpu_util / (rowData.item.cpu_slot * 100)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">RAM</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.mem_current / (rowData.item.mem_slot * 1000000000)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>
+          ${rowData.item.cuda_gpu_slot && parseInt(rowData.item.cuda_gpu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.cuda_util / rowData.item.cuda_gpu_slot * 100}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          ${rowData.item.cuda_fgpu_slot && parseFloat(rowData.item.cuda_fgpu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.cuda_util / rowData.item.cuda_fgpu_slot * 100}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          ${rowData.item.rocm_gpu_slot && parseFloat(rowData.item.cuda_rocm_gpu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.rocm_util / rowData.item.rocm_gpu_slot * 100}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          ${rowData.item.tpu_slot && parseFloat(rowData.item.tpu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">TPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.tpu_util / rowData.item.tpu_slot * 100}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">I/O</div>
+            <div style="font-size:8px;" class="horizontal start-justified center layout">
+            R: ${rowData.item.io_read_bytes_mb}MB /
+            W: ${rowData.item.io_write_bytes_mb}MB
+            </div>
+          </div>
+       </div>
+        `, root);
+    } else if (this.condition === 'finished') {
+      render(
+        // language=HTML
+        html`
         <div class="layout horizontal center flex">
           <wl-icon class="fg blue indicator" style="margin-right:3px;">developer_board</wl-icon>
           ${rowData.item.cpu_used_time.D ? html`
@@ -1324,7 +1432,8 @@ export default class BackendAiSessionList extends BackendAIPage {
             <span class="indicator">WRITE</span>
           </div>
         </div>`, root
-    );
+      );
+    }
   }
 
   _toggleCheckbox(object) {
@@ -1497,8 +1606,8 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
           const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
           if (liveStat) {
-            if (liveStat.cpu_used && liveStat.cpu_used.capacity) {
-              exportListItem.cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
+            if (liveStat.cpu_used && liveStat.cpu_used.current) {
+              exportListItem.cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.current);
             } else {
               exportListItem.cpu_used_time = 0;
             }
@@ -1611,22 +1720,21 @@ export default class BackendAiSessionList extends BackendAIPage {
         <wl-label style="padding-top: 5px; width:auto; text-align:center;">
         ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</wl-label>
         <mwc-icon-button
-        class="pagination"
-        id="next-page"
-        icon="navigate_next"
-        ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
-        @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
+          class="pagination"
+          id="next-page"
+          icon="navigate_next"
+          ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
+          @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
       </div>
       <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
         <span slot="title" id="work-title"></span>
         <div slot="action">
-          <wl-button fab flat inverted @click="${(e) => this._refreshLogs()}">
-            <wl-icon>refresh</wl-icon>
-          </wl-button>
+          <mwc-icon-button fab flat inverted icon="refresh" @click="${(e) => this._refreshLogs()}">
+          </mwc-icon-button>
         </div>
         <div slot="content" id="work-area" style="overflow:scroll;"></div>
         <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
-                style="border-style: none;width: 100%;"></iframe>
+                style="border-style: none;display: none;width: 100%;"></iframe>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminate-session-dialog" fixed backdrop>
          <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
