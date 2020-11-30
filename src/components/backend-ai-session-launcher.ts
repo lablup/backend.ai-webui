@@ -2176,7 +2176,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       ${this._helpDescriptionIcon == '' ? html`` : html`
         <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
         `}
-        <p style="font-size:14px;">${unsafeHTML(this._helpDescription)}</p>
+        <div style="font-size:14px;">${unsafeHTML(this._helpDescription)}</div>
       </div>
     </backend-ai-dialog>
     <backend-ai-dialog id="launch-confirmation-dialog" warning fixed backdrop>
