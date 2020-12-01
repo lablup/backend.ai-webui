@@ -29,7 +29,6 @@ import '../plastics/lablup-shields/lablup-shields';
 import './lablup-progress-bar';
 import './backend-ai-dialog';
 
-import JsonToCsv from '../lib/json_to_csv';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
@@ -79,13 +78,11 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) terminateSessionDialog = Object();
   @property({type: Object}) terminateSelectedSessionsDialog = Object();
-  @property({type: Object}) exportToCsvDialog = Object();
   @property({type: Boolean}) enableScalingGroup = false;
   @property({type: Object}) spinner = Object();
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) indicator = Object();
-  @property({type: Object}) _defaultFileName = '';
   @property({type: Proxy}) statusColorTable = new Proxy({
     'idle-timeout': 'green',
     'user-requested': 'green',
@@ -238,46 +235,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-bg-active-flat: var(--paper-red-600);
         }
 
-        backend-ai-dialog wl-textfield {
-          padding: 10px 0px;
-          --input-font-family: Roboto, Noto, sans-serif;
-          --input-font-size: 12px;
-          --input-color-disabled: #bbbbbb;
-          --input-label-color-disabled: #222222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #cccccc;
-        }
-
         wl-label {
           width: 100%;
           background-color: color: var(--paper-grey-500);
           min-width: 60px;
           font-size: 12px;
           --label-font-family: Roboto, Noto, sans-serif;
-        }
-
-        wl-label.unlimited {
-          margin: 12px 0px;
-        }
-
-        wl-label.warning {
-          font-size: 10px;
-          --label-color: var(--paper-red-600);
-        }
-
-        wl-checkbox#export-csv-checkbox {
-          margin-right: 5px;
-          --checkbox-size: 10px;
-          --checkbox-border-radius: 2px;
-          --checkbox-bg-checked: var(--paper-green-800);
-          --checkbox-checkmark-stroke-color: var(--paper-lime-100);
-          --checkbox-color-checked: var(--paper-green-800);
-        }
-
-        mwc-textfield {
-          width: 100%;
-          --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-green-600);
         }
 
         lablup-progress-bar.usage {
@@ -340,16 +303,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
-    this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
-
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshWorkDialogUI(e));
     this._refreshWorkDialogUI({"detail": {"mini-ui": globalThis.mini_ui}});
-
-    /* TODO: json to csv file converting */
-    document.addEventListener('backend-ai-csv-file-export-session', () => {
-      this._openExportToCsvDialog();
-    });
   }
 
   async _viewStateChanged(active) {
@@ -1063,11 +1019,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  _openExportToCsvDialog() {
-    this._defaultFileName = this._getDefaultCSVFileName();
-    this.exportToCsvDialog.show();
-  }
-
   /**
    * Create dropdown menu that shows mounted folder names.
    * Added menu to document.body to show at the top.
@@ -1432,20 +1383,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   /**
-   * Toggle dateFrom and dateTo checkbox
-   *
-   * @param {Event} e - click the export-csv-checkbox switch
-   * */
-  _toggleDialogCheckbox(e) {
-    let checkbox = e.target;
-    let dateFrom = this.shadowRoot.querySelector('#date-from');
-    let dateTo = this.shadowRoot.querySelector('#date-to');
-
-    dateFrom.disabled = checkbox.checked;
-    dateTo.disabled = checkbox.checked;
-  }
-
-  /**
    * Render a checkbox
    *
    * @param {Element} root - the row details content DOM element
@@ -1491,148 +1428,6 @@ export default class BackendAiSessionList extends BackendAIPage {
         ` : html``}
       `, root
     );
-  }
-
-  _getFirstDateOfMonth() {
-    let date = new Date();
-    return new Date(date.getFullYear(), date.getMonth(), 2).toISOString().substring(0, 10);
-  }
-
-  _getDefaultCSVFileName() {
-    let date = new Date().toISOString().substring(0, 10);
-    let time = new Date().toTimeString().slice(0, 8).replace(/:/gi, '-');
-    return date + '_' + time;
-  }
-
-  /**
-   * Check date-to < date-from.
-   * */
-  _validateDateRange() {
-    let dateTo = this.shadowRoot.querySelector('#date-to');
-    let dateFrom = this.shadowRoot.querySelector('#date-from');
-
-    if (dateTo.value && dateFrom.value) {
-      let to = new Date(dateTo.value).getTime();
-      let from = new Date(dateFrom.value).getTime();
-      if (to < from) {
-        dateTo.value = dateFrom.value;
-      }
-    }
-  }
-
-  _exportToCSV() {
-    const fileNameEl = this.shadowRoot.querySelector('#export-file-name');
-
-    if (!fileNameEl.validity.valid) {
-      return;
-    }
-    const exportList: any = [];
-
-    // Parameters
-    let status: any = ["RUNNING", "RESTARTING", "TERMINATING",  "PENDING", "PREPARING", "PULLING", "TERMINATED", "CANCELLED", "ERROR"];
-    if (globalThis.backendaiclient.supports('detailed-session-states')) {
-      status = status.join(',');
-    }
-    const fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "access_key"];
-    if (this._connectionMode === "SESSION") {
-      fields.push("user_email");
-    }
-    if (globalThis.backendaiclient.is_superadmin) {
-      fields.push("containers {container_id agent occupied_slots live_stat last_stat}");
-    } else {
-      fields.push("containers {container_id occupied_slots live_stat last_stat}");
-    }
-    const groupId = globalThis.backendaiclient.current_group_id();
-    const limit = 100;
-
-    // Get session list and export to csv file
-    globalThis.backendaiclient.computeSession.listAll(fields, status, this.filterAccessKey, limit, 0, groupId).then((response) => {
-      const sessions = response;
-      if (sessions.length === 0) {
-        this.notification.text = _text("session.NoSession");
-        this.notification.show();
-        this.exportToCsvDialog.hide();
-        return;
-      }
-      sessions.forEach((session) => {
-        const exportListItem: any = {};
-        exportListItem.id = session.id;
-        exportListItem.name = session.name;
-        exportListItem.image = session.image.split('/')[2] || session.image.split('/')[1];
-        exportListItem.status = session.status;
-        exportListItem.status_info = session.status_info;
-        exportListItem.access_key = session.access_key;
-        exportListItem.created_at = session.created_at;
-        exportListItem.terminated_at = session.terminated_at;
-        if (session.containers && session.containers.length > 0) {
-          // Assume a session has only one container (no consideration on multi-container bundling)
-          const container = session.containers[0];
-          exportListItem.container_id = container.container_id;
-          const occupiedSlots = container.occupied_slots ? JSON.parse(container.occupied_slots) : null;
-          if (occupiedSlots) {
-            exportListItem.cpu_slot = parseInt(occupiedSlots.cpu);
-            exportListItem.mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupiedSlots.mem, 'g')).toFixed(2);
-            if (occupiedSlots['cuda.shares']) {
-              exportListItem.cuda_shares = occupiedSlots['cuda.shares'];
-            }
-            if (occupiedSlots['cuda.device']) {
-              exportListItem.cuda_device = occupiedSlots['cuda.device'];
-            }
-            if (occupiedSlots['tpu.device']) {
-              exportListItem.tpu_device = occupiedSlots['tpu.device'];
-            }
-            if (occupiedSlots['rocm.device']) {
-              exportListItem.rocm_device = occupiedSlots['rocm.device'];
-            }
-          }
-          const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
-          if (liveStat) {
-            if (liveStat.cpu_used && liveStat.cpu_used.current) {
-              exportListItem.cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.current);
-            } else {
-              exportListItem.cpu_used_time = 0;
-            }
-            if (liveStat.io_read) {
-              exportListItem.io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
-            } else {
-              exportListItem.io_read_bytes_mb = 0;
-            }
-            if (liveStat.io_write) {
-              exportListItem.io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
-            } else {
-              exportListItem.io_write_bytes_mb = 0;
-            }
-          }
-          if (container.agent) {
-            exportListItem.agent = container.agent;
-          }
-        }
-        exportList.push(exportListItem);
-      });
-
-      JsonToCsv.exportToCsv(fileNameEl.value, exportList);
-      this.notification.text = _text("session.DownloadingCSVFile");
-      this.notification.show();
-      this.exportToCsvDialog.hide();
-    });
-
-    // let isUnlimited = this.shadowRoot.querySelector('#export-csv-checkbox').checked;
-    // if (isUnlimited) {
-    //   globalThis.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
-    //     // let total_count = response.compute_sessions.length;
-    //     let sessions = response.compute_sessions;
-    //     // console.log("total_count : ",total_count);
-    //   JsonToCsv.exportToCsv(fileNameEl.value, sessions);
-    //   });
-    // } else {
-    //   let dateTo = this.shadowRoot.querySelector('#date-to');
-    //   let dateFrom = this.shadowRoot.querySelector('#date-from');
-
-    //   if(dateTo.validity.valid && dateFrom.validity.valid) {
-    //      TODO : new backendaiclient.computeSession query will be added (date range)
-    //     console.log('Session between ' , dateFrom.value, ' ~ ', dateTo.value, " will be downloaded.");
-    //   }
-    // }
   }
 
   render() {
@@ -1736,42 +1531,6 @@ export default class BackendAiSessionList extends BackendAIPage {
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
             <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t("button.Okay")}</wl-button>
          </div>
-      </backend-ai-dialog>
-      <backend-ai-dialog id="export-to-csv" fixed backdrop>
-        <span slot="title">${_t("session.ExportSessionListToCSVFile")}</span>
-        <div slot="content">
-          <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
-                          validationMessage="Allows letters, numbers and -_."
-                          value="${'session_' + this._defaultFileName}" required
-                          style="margin-bottom:10px;"></mwc-textfield>
-          <div class="horizontal center layout" style="display:none;">
-            <wl-textfield id="date-from" label="From" type="date" style="margin-right:10px;"
-                          value="${this._getFirstDateOfMonth()}" required
-                          @change="${this._validateDateRange}">
-              <wl-icon slot="before">date_range</wl-icon>
-            </wl-textfield>
-            <wl-textfield id="date-to" label="To" type="date"
-                          value="${new Date().toISOString().substring(0, 10)}" required
-                          @change="${this._validateDateRange}">
-              <wl-icon slot="before">date_range</wl-icon>
-            </wl-textfield>
-          </div>
-          <div class="horizontal center layout" style="display:none;">
-            <wl-checkbox id="export-csv-checkbox" @change="${(e) => this._toggleDialogCheckbox(e)}"></wl-checkbox>
-            <wl-label class="unlimited" for="export-csv-checkbox">Export All-time data</wl-label>
-          </div>
-          <div class="horizontal center layout" style="margin-bottom:10px;">
-            <wl-icon class="warning">warning</wl-icon>
-            <wl-label class="warning" for="warning">${_t("session.OnlyRecent100SessionExport")}</wl-label>
-          </div>
-          <div class="horizontal center layout">
-            <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
-            @click="${this._exportToCSV}">
-              <wl-icon>get_app</wl-icon>
-              ${_t("session.ExportCSVFile")}
-            </wl-button>
-          </div>
-        </div>
       </backend-ai-dialog>
       `;
   }

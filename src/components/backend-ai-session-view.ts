@@ -3,12 +3,15 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
 import './backend-ai-resource-monitor';
 import './backend-ai-session-list';
 import 'weightless/card';
+import 'weightless/checkbox';
+import 'weightless/icon';
+import 'weightless/textfield';
 
 import '@material/mwc-textfield/mwc-textfield';
 import "@material/mwc-list/mwc-list-item";
@@ -19,6 +22,7 @@ import "@material/mwc-tab/mwc-tab";
 
 import './lablup-activity-panel';
 import './backend-ai-session-launcher';
+import JsonToCsv from '../lib/json_to_csv';
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -47,6 +51,10 @@ export default class BackendAiSessionView extends BackendAIPage {
   @property({type: Boolean}) active = true;
   @property({type: Object}) _lists = Object();
   @property({type: Boolean}) is_admin = false;
+  @property({type: String}) filterAccessKey = '';
+  @property({type: String}) _connectionMode = 'API';
+  @property({type: Object}) _defaultFileName = '';
+  @property({type: Object}) exportToCsvDialog = Object();
 
   constructor() {
     super();
@@ -80,6 +88,34 @@ export default class BackendAiSessionView extends BackendAIPage {
           --button-bg-active:  var(--paper-green-600);
         }
 
+        wl-label.unlimited {
+          margin: 12px 0px;
+        }
+
+        wl-label.warning {
+          font-size: 10px;
+          --label-color: var(--paper-red-600);
+        }
+
+        wl-checkbox#export-csv-checkbox {
+          margin-right: 5px;
+          --checkbox-size: 10px;
+          --checkbox-border-radius: 2px;
+          --checkbox-bg-checked: var(--paper-green-800);
+          --checkbox-checkmark-stroke-color: var(--paper-lime-100);
+          --checkbox-color-checked: var(--paper-green-800);
+        }
+
+        backend-ai-dialog wl-textfield {
+          padding: 10px 0px;
+          --input-font-family: Roboto, Noto, sans-serif;
+          --input-font-size: 12px;
+          --input-color-disabled: #bbbbbb;
+          --input-label-color-disabled: #222222;
+          --input-label-font-size: 12px;
+          --input-border-style-disabled: 1px solid #cccccc;
+        }
+
         mwc-menu {
           --mdc-theme-surface: #f1f1f1;
           --mdc-menu-item-height : auto;
@@ -96,6 +132,12 @@ export default class BackendAiSessionView extends BackendAIPage {
 
         mwc-icon-button#dropdown-menu-button {
           margin-left: 10px;
+        }
+
+        mwc-textfield {
+          width: 100%;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--paper-green-600);
         }
 
         backend-ai-resource-monitor {
@@ -123,9 +165,11 @@ export default class BackendAiSessionView extends BackendAIPage {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = globalThis.backendaiclient.is_admin;
+        this._connectionMode = globalThis.backendaiclient._config._connectionMode;
       }, true);
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
+      this._connectionMode = globalThis.backendaiclient._config._connectionMode;
     }
   }
 
@@ -141,13 +185,22 @@ export default class BackendAiSessionView extends BackendAIPage {
     }
     this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', true);
     this.shadowRoot.querySelector('#running-jobs').setAttribute('active', true);
+    this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
     this._status = 'active';
   }
 
-  _exportToCSV() {
-    console.log("Downloading CSV File...");
-    let event = new CustomEvent("backend-ai-csv-file-export-session", {"detail": globalThis.backendaiclient.current_group});
-    document.dispatchEvent(event);
+    /**
+   * Toggle dateFrom and dateTo checkbox
+   *
+   * @param {Event} e - click the export-csv-checkbox switch
+   * */
+  _toggleDialogCheckbox(e) {
+    let checkbox = e.target;
+    let dateFrom = this.shadowRoot.querySelector('#date-from');
+    let dateTo = this.shadowRoot.querySelector('#date-to');
+
+    dateFrom.disabled = checkbox.checked;
+    dateTo.disabled = checkbox.checked;
   }
 
   _showTab(tab) {
@@ -162,9 +215,204 @@ export default class BackendAiSessionView extends BackendAIPage {
     this.shadowRoot.querySelector('#' + tab.title + '-jobs').setAttribute('active', true);
   }
 
-  _toggleDropdown() {
+  /**
+   * toggle dropdown menu (admin-only)
+   * 
+   * @param e {event}
+   */
+  _toggleDropdown(e) {
     let menu = this.shadowRoot.querySelector("#dropdown-menu");
-    menu.open = !menu.open;
+    let button = e.target;
+    menu.anchor = button;
+    if (!menu.open) {
+      menu.show();
+    }
+  }
+
+  _openExportToCsvDialog() {
+    let menu = this.shadowRoot.querySelector("#dropdown-menu");
+    if (menu.open) {
+      menu.close();
+    }
+    console.log("Downloading CSV File...");
+    this._defaultFileName = this._getDefaultCSVFileName();
+    this.exportToCsvDialog.show();
+  }
+
+  _getFirstDateOfMonth() {
+    let date = new Date();
+    return new Date(date.getFullYear(), date.getMonth(), 2).toISOString().substring(0, 10);
+  }
+
+  _getDefaultCSVFileName() {
+    let date = new Date().toISOString().substring(0, 10);
+    let time = new Date().toTimeString().slice(0, 8).replace(/:/gi, '-');
+    return date + '_' + time;
+  }
+
+  /**
+   * Check date-to < date-from.
+   * */
+  _validateDateRange() {
+    let dateTo = this.shadowRoot.querySelector('#date-to');
+    let dateFrom = this.shadowRoot.querySelector('#date-from');
+
+    if (dateTo.value && dateFrom.value) {
+      let to = new Date(dateTo.value).getTime();
+      let from = new Date(dateFrom.value).getTime();
+      if (to < from) {
+        dateTo.value = dateFrom.value;
+      }
+    }
+  }
+
+  /**
+   * Scale the time in units of D, H, M, S, and MS.
+   *
+   * @param {number} value - time to want to scale
+   * */
+  _automaticScaledTime(value: number) { // number: msec.
+    let result = Object();
+    let unitText = ['D', 'H', 'M', 'S'];
+    let unitLength = [(1000 * 60 * 60 * 24), (1000 * 60 * 60), (1000 * 60), 1000];
+
+    for (let i = 0; i < unitLength.length; i++) {
+      if (Math.floor(value / unitLength[i]) > 0) {
+        result[unitText[i]] = Math.floor(value / unitLength[i]);
+        value = value % unitLength[i];
+      }
+    }
+    if (Object.keys(result).length === 0) { // only prints msec. when time is shorter than 1sec.
+      if (value > 0) {
+        result = {'MS': value};
+      } else { // No data.
+        result = {'NODATA': 1};
+      }
+    }
+    return result;
+  }
+
+  _msecToSec(value) {
+    return Number(value / 1000).toFixed(0);
+  }
+
+  _bytesToMB(value) {
+    return Number(value / (1024 * 1024)).toFixed(1);
+  }
+
+  _exportToCSV() {
+    const fileNameEl = this.shadowRoot.querySelector('#export-file-name');
+
+    if (!fileNameEl.validity.valid) {
+      return;
+    }
+    const exportList: any = [];
+
+    // Parameters
+    let status: any = ["RUNNING", "RESTARTING", "TERMINATING",  "PENDING", "PREPARING", "PULLING", "TERMINATED", "CANCELLED", "ERROR"];
+    if (globalThis.backendaiclient.supports('detailed-session-states')) {
+      status = status.join(',');
+    }
+    const fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "access_key"];
+    if (this._connectionMode === "SESSION") {
+      fields.push("user_email");
+    }
+    if (globalThis.backendaiclient.is_superadmin) {
+      fields.push("containers {container_id agent occupied_slots live_stat last_stat}");
+    } else {
+      fields.push("containers {container_id occupied_slots live_stat last_stat}");
+    }
+    const groupId = globalThis.backendaiclient.current_group_id();
+    const limit = 100;
+
+    // Get session list and export to csv file
+    globalThis.backendaiclient.computeSession.listAll(fields, status, this.filterAccessKey, limit, 0, groupId).then((response) => {
+      const sessions = response;
+      if (sessions.length === 0) {
+        this.notification.text = _text("session.NoSession");
+        this.notification.show();
+        this.exportToCsvDialog.hide();
+        return;
+      }
+      sessions.forEach((session) => {
+        const exportListItem: any = {};
+        exportListItem.id = session.id;
+        exportListItem.name = session.name;
+        exportListItem.image = session.image.split('/')[2] || session.image.split('/')[1];
+        exportListItem.status = session.status;
+        exportListItem.status_info = session.status_info;
+        exportListItem.access_key = session.access_key;
+        exportListItem.created_at = session.created_at;
+        exportListItem.terminated_at = session.terminated_at;
+        if (session.containers && session.containers.length > 0) {
+          // Assume a session has only one container (no consideration on multi-container bundling)
+          const container = session.containers[0];
+          exportListItem.container_id = container.container_id;
+          const occupiedSlots = container.occupied_slots ? JSON.parse(container.occupied_slots) : null;
+          if (occupiedSlots) {
+            exportListItem.cpu_slot = parseInt(occupiedSlots.cpu);
+            exportListItem.mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupiedSlots.mem, 'g')).toFixed(2);
+            if (occupiedSlots['cuda.shares']) {
+              exportListItem.cuda_shares = occupiedSlots['cuda.shares'];
+            }
+            if (occupiedSlots['cuda.device']) {
+              exportListItem.cuda_device = occupiedSlots['cuda.device'];
+            }
+            if (occupiedSlots['tpu.device']) {
+              exportListItem.tpu_device = occupiedSlots['tpu.device'];
+            }
+            if (occupiedSlots['rocm.device']) {
+              exportListItem.rocm_device = occupiedSlots['rocm.device'];
+            }
+          }
+          const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
+          if (liveStat) {
+            if (liveStat.cpu_used && liveStat.cpu_used.current) {
+              exportListItem.cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.current);
+            } else {
+              exportListItem.cpu_used_time = 0;
+            }
+            if (liveStat.io_read) {
+              exportListItem.io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
+            } else {
+              exportListItem.io_read_bytes_mb = 0;
+            }
+            if (liveStat.io_write) {
+              exportListItem.io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
+            } else {
+              exportListItem.io_write_bytes_mb = 0;
+            }
+          }
+          if (container.agent) {
+            exportListItem.agent = container.agent;
+          }
+        }
+        exportList.push(exportListItem);
+      });
+
+      JsonToCsv.exportToCsv(fileNameEl.value, exportList);
+      this.notification.text = _text("session.DownloadingCSVFile");
+      this.notification.show();
+      this.exportToCsvDialog.hide();
+    });
+
+    // let isUnlimited = this.shadowRoot.querySelector('#export-csv-checkbox').checked;
+    // if (isUnlimited) {
+    //   globalThis.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
+    //     // let total_count = response.compute_sessions.length;
+    //     let sessions = response.compute_sessions;
+    //     // console.log("total_count : ",total_count);
+    //   JsonToCsv.exportToCsv(fileNameEl.value, sessions);
+    //   });
+    // } else {
+    //   let dateTo = this.shadowRoot.querySelector('#date-to');
+    //   let dateFrom = this.shadowRoot.querySelector('#date-from');
+
+    //   if(dateTo.validity.valid && dateFrom.validity.valid) {
+    //      TODO : new backendaiclient.computeSession query will be added (date range)
+    //     console.log('Session between ' , dateFrom.value, ' ~ ', dateTo.value, " will be downloaded.");
+    //   }
+    // }
   }
 
   render() {
@@ -189,17 +437,18 @@ export default class BackendAiSessionView extends BackendAIPage {
               <mwc-tab title="others" label="${_t("session.Others")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
             ${this.is_admin ? html`
-              <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
-                                @click="${this._toggleDropdown}">
-                <mwc-menu id="dropdown-menu" absolute x="-50" y="25">
-                  <mwc-list-item>
-                    <a class="horizontal layout start center" @click="${this._exportToCSV}">
-                      <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
-                      ${_t("session.exportCSV")}
-                    </a>
-                  </mwc-list-item>
-                </mwc-menu>
-              </mwc-icon-button>
+              <div style="position: relative;">
+                <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
+                                  @click="${(e) => this._toggleDropdown(e)}"></mwc-icon-button>
+                  <mwc-menu id="dropdown-menu">
+                    <mwc-list-item>
+                      <a class="horizontal layout start center" @click="${() => this._openExportToCsvDialog()}">
+                        <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
+                        ${_t("session.exportCSV")}
+                      </a>
+                    </mwc-list-item>
+                  </mwc-menu>
+                </div>
               ` : html``}
             </div>
             <div class="horizontal layout flex end-justified" style="margin-right:20px;">
@@ -217,7 +466,39 @@ export default class BackendAiSessionView extends BackendAIPage {
           </div>
         </div>
       </lablup-activity-panel>
-`;
+      <backend-ai-dialog id="export-to-csv" fixed backdrop>
+        <span slot="title">${_t("session.ExportSessionListToCSVFile")}</span>
+        <div slot="content">
+          <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
+                          validationMessage="Allows letters, numbers and -_."
+                          value="${'session_' + this._defaultFileName}" required
+                          style="margin-bottom:10px;"></mwc-textfield>
+          <div class="horizontal center layout" style="display:none;">
+            <wl-textfield id="date-from" label="From" type="date" style="margin-right:10px;"
+                          value="${this._getFirstDateOfMonth()}" required
+                          @change="${this._validateDateRange}">
+              <wl-icon slot="before">date_range</wl-icon>
+            </wl-textfield>
+            <wl-textfield id="date-to" label="To" type="date"
+                          value="${new Date().toISOString().substring(0, 10)}" required
+                          @change="${this._validateDateRange}">
+              <wl-icon slot="before">date_range</wl-icon>
+            </wl-textfield>
+          </div>
+          <div class="horizontal center layout" style="display:none;">
+            <wl-checkbox id="export-csv-checkbox" @change="${(e) => this._toggleDialogCheckbox(e)}"></wl-checkbox>
+            <wl-label class="unlimited" for="export-csv-checkbox">Export All-time data</wl-label>
+          </div>
+          <div class="horizontal center layout">
+            <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
+            @click="${this._exportToCSV}">
+              <wl-icon>get_app</wl-icon>
+              ${_t("session.ExportCSVFile")}
+            </wl-button>
+          </div>
+        </div>
+      </backend-ai-dialog>
+    `;
   }
 }
 
