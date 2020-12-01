@@ -1760,10 +1760,6 @@ export default class BackendAiSessionList extends BackendAIPage {
             <wl-checkbox id="export-csv-checkbox" @change="${(e) => this._toggleDialogCheckbox(e)}"></wl-checkbox>
             <wl-label class="unlimited" for="export-csv-checkbox">Export All-time data</wl-label>
           </div>
-          <div class="horizontal center layout" style="margin-bottom:10px;">
-            <wl-icon class="warning">warning</wl-icon>
-            <wl-label class="warning" for="warning">${_t("session.OnlyRecent100SessionExport")}</wl-label>
-          </div>
           <div class="horizontal center layout">
             <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
             @click="${this._exportToCSV}">
