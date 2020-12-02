@@ -1524,9 +1524,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     dndZoneEl.addEventListener('dragover', e => {
       e.stopPropagation();
       e.preventDefault();
+      if (this.isWritable) {
       e.dataTransfer.dropEffect = 'copy';
       dndZonePlaceholderEl.style.display = "flex";
       return false;
+      } else {
+         return true;
+      }
     });
 
     dndZoneEl.addEventListener('drop', e => {
@@ -1552,12 +1556,15 @@ export default class BackendAiStorageList extends BackendAIPage {
             (this.uploadFiles as any).push(file);
           }
         }
+
         for (let i = 0; i < temp.length; i++) {
           this.fileUpload(temp[i]);
           this._clearExplorer();
         }
+      } else {
+        this.notification.text = _text('data.explorer.WritePermissionRequiredInUploadFiles');
+        this.notification.show();
       }
-      // return;
     });
   }
 
