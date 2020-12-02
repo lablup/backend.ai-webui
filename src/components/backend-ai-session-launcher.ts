@@ -176,7 +176,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // language=CSS
       css`
         lablup-slider {
-          width: 210px !important;
+          width: 210px;
           --textfield-width: 50px;
           --slider-width: 135px;
         }
@@ -481,6 +481,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         mwc-button > mwc-icon {
           display: none;
+        }
+
+        @media screen and (max-width: 375px) {
+          lablup-slider {
+            width: 180px;
+            --textfield-width: 50px;
+            --slider-width: 100px;
+          }
+
+          backend-ai-dialog {
+            --component-min-width: 350px;
+          }
         }
 
         @media screen and (max-width: 750px) {
@@ -1959,8 +1971,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <wl-expansion name="resource-group" open style="--expansion-header-padding:16px;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.CustomAllocation")}</span>
             <span slot="description" style="font-size:12px;color:#646464;"></span>
-            <div class="vertical layout">
-              <div class="horizontal center layout">
+            <div class="vertical center layout">
+              <div class="horizontal center layout" style="margin-top:15px;">
                 <div class="resource-type" style="width:70px;">CPU</div>
                 <lablup-slider id="cpu-resource" class="cpu"
                                pin snaps expand editable markers
