@@ -198,7 +198,6 @@
     "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
     "TerminatingSessionDialog": "You are terminating multiple sessions.",
     "ExportSessionListToCSVFile": "Export Session list to CSV File",
-    "OnlyRecent100SessionExport": "Only recent 100 session logs will be exported.",
     "ExportCSVFile": "Export CSV File",
     "ResourceGroup": "Resource Group",
     "NoLogs": "No logs.",

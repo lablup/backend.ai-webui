@@ -404,7 +404,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <vaadin-grid class="folderlist" theme="row-stripes column-borders compact" aria-label="Folder list" .items="${this.folders}">
+      <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t("data.folders.Name")}">
@@ -431,7 +431,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column width="45px" flex-grow="0" resizable header="${_t("data.folders.Type")}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="85px" flex-grow="0" resizable header="${_t("data.folders.Permission")}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t("data.folders.Control")}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column auto-width resizable header="${_t("data.folders.Control")}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
       </vaadin-grid>
 
       <backend-ai-dialog id="rename-folder-dialog" fixed backdrop>
@@ -619,7 +619,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 </div>
               </template>
             </vaadin-grid-column>
-            <vaadin-grid-column resizable flex-grow="2" header="${_t("data.explorer.Actions")}" .renderer="${this._boundControlFileListRenderer}"></vaadin-grid-column>
+            <vaadin-grid-column resizable auto-width header="${_t("data.explorer.Actions")}" .renderer="${this._boundControlFileListRenderer}"></vaadin-grid-column>
           </vaadin-grid>
         </div>
       </backend-ai-dialog>
@@ -875,7 +875,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         <div
           id="controls"
-          class="layout horizontal flex center"
+          class="layout flex center wrap"
           folder-id="${rowData.item.name}"
         >
           <mwc-icon-button
@@ -918,14 +918,16 @@ export default class BackendAiStorageList extends BackendAIPage {
             `
             : html``
           }
-
-          ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd') || (rowData.item.type === 'group' && this.is_admin)
-            ? html`
+          ${rowData.item.is_owner ? 
+            html`
               <mwc-icon-button
                 class="fg blue controls-running"
                 icon="edit"
                 @click="${(e) => this._renameFolderDialog(e)}"
               ></mwc-icon-button>
+          ` : html``}
+          ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd') || (rowData.item.type === 'group' && this.is_admin)
+            ? html`
               <mwc-icon-button
                 class="fg red controls-running"
                 icon="delete"
@@ -950,17 +952,19 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        ${this._isDir(rowData.item) ? html`
-          <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
-              filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e, true)}"></mwc-icon-button>
-        ` : html`
-          <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
-              filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
-        `}
-        <mwc-icon-button id="rename-btn" ?disabled="${!this.isWritable}" class="tiny fg green" icon="edit" required
-            filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
-        <mwc-icon-button id="delete-btn" ?disabled="${!this.isWritable}" class="tiny fg red" icon="delete_forever"
-            filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
+        <div class="flex layout wrap">
+          ${this._isDir(rowData.item) ? html`
+            <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
+                filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e, true)}"></mwc-icon-button>
+          ` : html`
+            <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
+                filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
+          `}
+          <mwc-icon-button id="rename-btn" ?disabled="${!this.isWritable}" class="tiny fg green" icon="edit" required
+              filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
+          <mwc-icon-button id="delete-btn" ?disabled="${!this.isWritable}" class="tiny fg red" icon="delete_forever"
+              filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
+        </div>
        `, root
     );
   }
@@ -1505,9 +1509,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     dndZoneEl.addEventListener('dragover', e => {
       e.stopPropagation();
       e.preventDefault();
+      if (this.isWritable) {
       e.dataTransfer.dropEffect = 'copy';
       dndZonePlaceholderEl.style.display = "flex";
       return false;
+      } else {
+         return true;
+      }
     });
 
     dndZoneEl.addEventListener('drop', e => {
@@ -1515,28 +1523,32 @@ export default class BackendAiStorageList extends BackendAIPage {
       e.preventDefault();
       dndZonePlaceholderEl.style.display = "none";
 
-      let temp: any = [];
-      for (let i = 0; i < e.dataTransfer.files.length; i++) {
-        const file = e.dataTransfer.files[i];
-        /* Drag & Drop file upload size limits to 1 GiB */
-        if (file.size > 2 ** 30) {
-          this.notification.text = _text('data.explorer.DragDropFileUploadSizeLimit');
-          this.notification.show();
-          return;
-        } else {
-          file.progress = 0;
-          file.caption = '';
-          file.error = false;
-          file.complete = false;
-          temp.push(file);
-          (this.uploadFiles as any).push(file);
+      if (this.isWritable) {
+        let temp: any = [];
+        for (let i = 0; i < e.dataTransfer.files.length; i++) {
+          const file = e.dataTransfer.files[i];
+          /* Drag & Drop file upload size limits to 1 GiB */
+          if (file.size > 2 ** 30) {
+            this.notification.text = _text('data.explorer.DragDropFileUploadSizeLimit');
+            this.notification.show();
+            return;
+          } else {
+            file.progress = 0;
+            file.caption = '';
+            file.error = false;
+            file.complete = false;
+            temp.push(file);
+            (this.uploadFiles as any).push(file);
+          }
         }
-      }
-      // return;
 
-      for (let i = 0; i < temp.length; i++) {
-        this.fileUpload(temp[i]);
-        this._clearExplorer();
+        for (let i = 0; i < temp.length; i++) {
+          this.fileUpload(temp[i]);
+          this._clearExplorer();
+        }
+      } else {
+        this.notification.text = _text('data.explorer.WritePermissionRequiredInUploadFiles');
+        this.notification.show();
       }
     });
   }
