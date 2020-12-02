@@ -1505,9 +1505,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     dndZoneEl.addEventListener('dragover', e => {
       e.stopPropagation();
       e.preventDefault();
+      if (this.isWritable) {
       e.dataTransfer.dropEffect = 'copy';
       dndZonePlaceholderEl.style.display = "flex";
       return false;
+      } else {
+         return true;
+      }
     });
 
     dndZoneEl.addEventListener('drop', e => {
@@ -1515,28 +1519,32 @@ export default class BackendAiStorageList extends BackendAIPage {
       e.preventDefault();
       dndZonePlaceholderEl.style.display = "none";
 
-      let temp: any = [];
-      for (let i = 0; i < e.dataTransfer.files.length; i++) {
-        const file = e.dataTransfer.files[i];
-        /* Drag & Drop file upload size limits to 1 GiB */
-        if (file.size > 2 ** 30) {
-          this.notification.text = _text('data.explorer.DragDropFileUploadSizeLimit');
-          this.notification.show();
-          return;
-        } else {
-          file.progress = 0;
-          file.caption = '';
-          file.error = false;
-          file.complete = false;
-          temp.push(file);
-          (this.uploadFiles as any).push(file);
+      if (this.isWritable) {
+        let temp: any = [];
+        for (let i = 0; i < e.dataTransfer.files.length; i++) {
+          const file = e.dataTransfer.files[i];
+          /* Drag & Drop file upload size limits to 1 GiB */
+          if (file.size > 2 ** 30) {
+            this.notification.text = _text('data.explorer.DragDropFileUploadSizeLimit');
+            this.notification.show();
+            return;
+          } else {
+            file.progress = 0;
+            file.caption = '';
+            file.error = false;
+            file.complete = false;
+            temp.push(file);
+            (this.uploadFiles as any).push(file);
+          }
         }
-      }
-      // return;
 
-      for (let i = 0; i < temp.length; i++) {
-        this.fileUpload(temp[i]);
-        this._clearExplorer();
+        for (let i = 0; i < temp.length; i++) {
+          this.fileUpload(temp[i]);
+          this._clearExplorer();
+        }
+      } else {
+        this.notification.text = _text('data.explorer.WritePermissionRequiredInUploadFiles');
+        this.notification.show();
       }
     });
   }
