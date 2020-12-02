@@ -145,7 +145,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Change state to 'ALIVE' when backend.ai client connected.
    *
-   * @param {Booelan} active - The component will work if active is true.
+   * @param {Boolean} active - The component will work if active is true.
    */
   async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
