@@ -187,6 +187,9 @@ export default class BackendAIUserList extends BackendAIPage {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
+    document.addEventListener('user-list-updated', () => {
+      this.refresh();
+    })
   }
 
   /**
@@ -305,6 +308,8 @@ export default class BackendAIUserList extends BackendAIPage {
 
   refresh() {
     this._refreshUserData();
+    // update current grid to new data
+    this.shadowRoot.querySelector('#user-grid').render();
   }
 
   _isActive() {
@@ -453,7 +458,7 @@ export default class BackendAIUserList extends BackendAIPage {
     }
 
     if (password !== confirm) {
-      this.notification.text = "Password and Confirmation do not match.";
+      this.notification.text = _text('environment.PasswordsDoNotMatch');
       this.notification.show();
       return;
     }
@@ -478,10 +483,12 @@ export default class BackendAIUserList extends BackendAIPage {
     if (is_active !== this.userInfo.is_active)
       input.is_active = is_active;
 
+    this.refresh();
+
     if (Object.entries(input).length === 0) {
       this._hideDialog(event);
 
-      this.notification.text = "No Changes Made";
+      this.notification.text = _text('environment.NoChangeMade');
       this.notification.show();
 
       return;
@@ -506,7 +513,6 @@ export default class BackendAIUserList extends BackendAIPage {
         }
         this.notification.show();
       });
-    
   }
 
   render() {
