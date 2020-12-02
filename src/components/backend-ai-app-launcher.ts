@@ -442,6 +442,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this._open_wsproxy(sessionUuid, appName, port)
         .then((response) => {
           if (response.url) {
+
+
             this.indicator.set(100, 'Prepared.');
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
@@ -452,7 +454,26 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         });
     }
   }
+  async _connectToProxyWorker(url, urlPostfix) {
+    const rqst_proxy = {
+      method: 'GET',
+      uri: url + urlPostfix
+    };
+    let count = 0;
+    while (count < 5) {
+      let result = await this.sendRequest(rqst_proxy);
+      if (result.status === 500) {
+        await this._sleep(1000);
+        count = count + 1;
+      } else {
+        count = 6;
+      }
+    }
+  }
 
+  async _sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
   async _runThisAppWithConfirmationIfNeeded(e) {
     const controller = e.target;
     const appName = controller['app-name'];
