@@ -554,7 +554,10 @@
     "ShellEnvironments": "Shell Environments",
     "ConfigFilename": "Config file name",
     "Edit_ShellScriptTitle_1": "Edit ",
-    "Edit_ShellScriptTitle_2": " shell script"
+    "Edit_ShellScriptTitle_2": " shell script",
+    "AutoLogout": "Auto Logout",
+    "DescAutoLogout": "Log out automatically if there's no action occurred over 3 minutes.",
+    "OneMinuteLeftAlert": "Login will be expired in a minute if there is no activity."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
