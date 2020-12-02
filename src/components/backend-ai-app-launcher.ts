@@ -238,7 +238,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
       resp = await fetch(rqst.uri, rqst);
       let contentType = resp.headers.get('Content-Type');
-      if (contentType.startsWith('application/json') ||
+      if (contentType === null) {
+        body = resp.ok;
+      } else if (contentType.startsWith('application/json') ||
         contentType.startsWith('application/problem+json')) {
         body = await resp.json();
       } else if (contentType.startsWith('text/')) {
@@ -440,15 +442,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
       this._open_wsproxy(sessionUuid, appName, port)
-        .then((response) => {
+        .then(async (response) => {
           if (response.url) {
-
-
+            await this._connectToProxyWorker(response.url, urlPostfix);
             this.indicator.set(100, 'Prepared.');
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
-              console.log(appName + " proxy loaded: ");
-              console.log(sessionUuid);
+              //console.log(appName + " proxy loaded: ");
+              //console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -457,12 +458,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   async _connectToProxyWorker(url, urlPostfix) {
     const rqst_proxy = {
       method: 'GET',
-      uri: url + urlPostfix
+      uri: url + urlPostfix,
+      mode: 'no-cors',
+      redirect: 'follow',//'manual'
+      credentials: 'include'
     };
     let count = 0;
     while (count < 5) {
       let result = await this.sendRequest(rqst_proxy);
-      if (result.status === 500) {
+      if (typeof result === 'object' && 'status' in result && [500,501,502].includes(result.status)) {
         await this._sleep(1000);
         count = count + 1;
       } else {
@@ -543,7 +547,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         port = userPort;
       }
       this._open_wsproxy(sessionUuid, appName, port)
-        .then((response) => {
+        .then(async (response) => {
+          await this._connectToProxyWorker(response.url, urlPostfix);
           if (appName === 'sshd') {
             this.indicator.set(100, 'Prepared.');
             this.sshPort = response.port;
@@ -560,8 +565,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, 'Prepared.');
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
-              console.log(appName + " proxy loaded: ");
-              console.log(sessionUuid);
+              //console.log(appName + " proxy loaded: ");
+              //console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -599,14 +604,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
       this.indicator = await globalThis.lablupIndicator.start();
       this._open_wsproxy(sessionUuid, 'ttyd')
-        .then((response) => {
+        .then(async (response) => {
+          await this._connectToProxyWorker(response.url, '');
           if (response.url) {
             this.indicator.set(100, 'Prepared.');
             setTimeout(() => {
               globalThis.open(response.url, '_blank');
               this.indicator.end();
-              console.log("Terminal proxy loaded: ");
-              console.log(sessionUuid);
+              //console.log("Terminal proxy loaded: ");
+              //console.log(sessionUuid);
             }, 1000);
           }
         });
