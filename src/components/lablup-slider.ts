@@ -84,6 +84,7 @@ export default class LablupSlider extends LitElement {
       </mwc-slider>
       <wl-textfield style="display:none" id="textfield" class="${this.id}" type="number"
         value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
+        ?disabled="${this.disabled}"
         @change="${this.syncToSlider}">
       </wl-textfield>
       </div>
@@ -95,21 +96,7 @@ export default class LablupSlider extends LitElement {
       this.textfield = this.shadowRoot.querySelector('#textfield');
       this.textfield.style.display = 'flex';
     }
-
-    // wl-textfield does not provide step property. The default step for number input
-    // is 1, so float numbers will invalidate the wl-textfield, which is a problem.
-    // So, we manually set the step property of wl-textfield's input field here.
-    const textfields = this.shadowRoot.querySelectorAll('wl-textfield');
-    setTimeout(() => {
-      textfields.forEach((el) => {
-        const step = el.getAttribute('step');
-        el.$formElement.step = step;
-      });
-    }, 100);
-    if (this.step) {
-    } else {
-      this.step = 1.0;
-    }
+    this.updateStep();
     this.checkMarkerDisplay();
   }
 
@@ -180,6 +167,23 @@ export default class LablupSlider extends LitElement {
       if (((this.max - this.min) / this.step) > this.marker_limit) {
         this.slider.removeAttribute('markers');
       }
+    }
+    this.updateStep();
+  }
+
+  updateStep() {
+    // wl-textfield does not provide step property. The default step for number input
+    // is 1, so float numbers will invalidate the wl-textfield, which is a problem.
+    // So, we manually set the step property of wl-textfield's input field here.
+    const textfields = this.shadowRoot.querySelectorAll('wl-textfield');
+    setTimeout(() => {
+      textfields.forEach((el) => {
+        const step = el.getAttribute('step');
+        el.$formElement.step = step;
+      });
+    }, 100);
+    if (!this.step) {
+      this.step = 1.0;
     }
     this.slider.setAttribute('step', this.step);
     this.slider.step = this.step;
