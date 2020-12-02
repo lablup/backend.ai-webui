@@ -51,6 +51,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: String}) filter = '';
 
   constructor() {
     super();
@@ -66,7 +67,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 200px);
+          height: var(--list-height, calc(100vh - 200px));
         }
 
         mwc-icon {
