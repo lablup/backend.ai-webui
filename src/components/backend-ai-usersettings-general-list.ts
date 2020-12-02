@@ -329,8 +329,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   toggleAutoLogout(e) {
     if (e.target.checked === false) {
       globalThis.backendaioptions.set('auto_logout', false);
-    let event = new CustomEvent('backend-ai-auto-logout', { detail: false});
-    document.dispatchEvent(event);
+      let event = new CustomEvent('backend-ai-auto-logout', { detail: false});
+      document.dispatchEvent(event);
     } else {
       globalThis.backendaioptions.set('auto_logout', true);
       let event = new CustomEvent('backend-ai-auto-logout', { detail: true});

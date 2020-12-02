@@ -133,6 +133,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                                              "information", "github", "import", 'unauthorized'];
   @property({type: Array}) adminOnlyPages = ["experiment", "credential", "environment", "agent",
                                              "settings", "maintenance", "information"];
+  @property({type: Number}) timeoutSec = 5;
 
   constructor() {
     super();
@@ -186,6 +187,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
+      // If disconnected
       if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
         if (this._page === 'verify-email') {
           const emailVerifyView = this.shadowRoot.querySelector('backend-ai-email-verification-view');
@@ -199,6 +201,31 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           }, 1000);
         } else {
           this.loginPanel.login(false);  // Set showError flag to false for initial login
+        }
+        
+        document.addEventListener('backend-ai-connected', (e) => {
+          if (globalThis.backendaioptions.get('auto_logout')) {
+              // prevent log-out from accidentally closed page (e.g. < 5sec.)
+              let currentTime = new Date().getTime();
+              let lastClosed = globalThis.backendaioptions.get('lastClosed');
+              const msecToSec = 1000;
+              let timediff = Math.round(currentTime - lastClosed / msecToSec);
+              if(!sessionStorage.getItem('pageReloaded') && (timediff > this.timeoutSec)) {
+                this.setAutoLogoutTimeout();
+              }
+            window.addEventListener('beforeunload', () => this.setAutoLogoutTimeout());
+          } else {
+            this.clearAutoLogoutInfo();
+          }
+        }, true);
+      } else { // already connected
+        if (globalThis.backendaioptions.get('auto_logout')) {
+          if(!sessionStorage.getItem('pageReloaded')) {
+            this.setAutoLogoutTimeout();
+          }
+          window.addEventListener('beforeunload', () => this.setAutoLogoutTimeout());
+        } else {
+          this.clearAutoLogoutInfo();
         }
       }
     }).catch(err => {
@@ -214,6 +241,51 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     });
+
+    document.addEventListener('backend-ai-auto-logout', (e: any) => {
+      if(e.detail) {
+        globalThis.backendaioptions.set('auto_logout', true);
+        let lastClosed = globalThis.backendaioptions.get('lastClosed');
+        if (!lastClosed) {
+          let currentTime = new Date().getTime();
+          globalThis.backendaioptions.set('lastClosed', currentTime);
+        }
+        sessionStorage.setItem('pageReloaded', 'true');
+      } else {
+        this.clearAutoLogoutInfo();
+      }
+    });
+  }
+
+  /**
+   * 
+   */
+  clearAutoLogoutInfo() {
+    globalThis.backendaioptions.set('auto_logout', false);
+    globalThis.backendaioptions.delete('lastClosed');
+    if (sessionStorage.getItem('pageReloaded')) {
+      sessionStorage.removeItem('pageReloaded');
+    }
+  }
+
+  /**
+   * 
+   * @param {Event} e - Triggered when the browser closes 
+   */
+  setAutoLogoutTimeout() {
+    let currentTime = new Date().getTime();
+    const msecToSec = 1000;
+    let lastClosed = globalThis.backendaioptions.get('lastClosed');
+    let ispageReloaded = sessionStorage.getItem('pageReloaded');
+    if (lastClosed) {
+      let timediff = Math.floor((currentTime - lastClosed) / msecToSec);
+      if ( !ispageReloaded && timediff > this.timeoutSec) {
+        this.logout();
+      }
+    } else {
+      globalThis.backendaioptions.set('lastClosed', currentTime);
+      sessionStorage.setItem('pageReloaded', 'true');
+    }
   }
 
   async connectedCallback() {

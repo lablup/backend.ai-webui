@@ -550,8 +550,7 @@
     "Edit_ShellScriptTitle_1": " ",
     "Edit_ShellScriptTitle_2": " 셀 스크립트 수정하기",
     "AutoLogout": "자동 로그아웃",
-    "DescAutoLogout": "페이지에서 3분 이상 아무런 활동이 없을 경우 자동으로 로그아웃됩니다.",
-    "OneMinuteLeftAlert": "아무런 활동이 없으면 1분 뒤 자동 로그아웃 됩니다."
+    "DescAutoLogout": "페이지가 닫히고 5초 내에 페이지가 복원되지 않으면 자동으로 로그아웃됩니다."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",

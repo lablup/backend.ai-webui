@@ -315,18 +315,6 @@ export default class BackendAILogin extends BackendAIPage {
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = globalThis.lablupNotification;
     this.endpoints = globalThis.backendaioptions.get("endpoints", []);
-    if (globalThis.backendaioptions.get('auto_logout')) {    
-      document.onkeypress = () => this.setLogoutTimer();
-      document.onmousemove = () => this.setLogoutTimer();
-    }
-    document.addEventListener('backend-ai-auto-logout', (e: any) => {
-      if (e.detail) {
-        this.setLogoutTimer();
-      } else {
-        clearTimeout(this.logoutTimerBeforeOneMin);
-        clearTimeout(this.logoutTimer);
-      }
-    });
   }
 
   /**
@@ -658,8 +646,11 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaioptions.set('login_attempt', loginAttempt + 1, 'general');
     }
 
+    // prevent auto logout after login.
     if (globalThis.backendaioptions.get('auto_logout')) {
-      this.setLogoutTimer();
+      if (!sessionStorage.getItem('pageReloaded')) {
+        sessionStorage.setItem('pageReloaded', 'true');
+      }
     }
 
     this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
@@ -979,28 +970,6 @@ export default class BackendAILogin extends BackendAIPage {
     this.shadowRoot.querySelector('#id_user_id').disabled = false;
     this.shadowRoot.querySelector('#id_password').disabled = false;
     this.shadowRoot.querySelector('#loading-animator').style.display = 'none';
-  }
-
-  /**
-   * 
-   * @param msec - maximum minute to logout automatically. default value is 3.
-   */
-  setLogoutTimer(msec = 3) {
-    const msecToMinute = 60000;
-    let minute = msec * msecToMinute;
-
-    clearTimeout(this.logoutTimerBeforeOneMin);
-    clearTimeout(this.logoutTimer);
-
-    if (globalThis.backendaioptions.get('auto_logout')) {
-      this.logoutTimerBeforeOneMin = setTimeout( () => {
-        alert(_text("usersettings.OneMinuteLeftAlert"));
-      } , minute - msecToMinute);
-      this.logoutTimer = setTimeout( async () => {
-        let event = new CustomEvent("backend-ai-logout", {"detail": ""});
-        document.dispatchEvent(event);
-      } , minute);
-    }
   }
 
   render() {
