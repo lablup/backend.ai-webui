@@ -486,7 +486,8 @@
     "AppInfoDeleted": "App information successfully deleted.",
     "NoChangeMade": "",
     "SuccessfullyModified": "Successfully modified",
-    "ProblemOccurred": "Problem occurred"
+    "ProblemOccurred": "Problem occurred",
+    "PasswordsDoNotMatch": "Password and Confirmation do not match."
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",

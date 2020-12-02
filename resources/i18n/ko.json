@@ -480,7 +480,8 @@
     "AppInfoDeleted": "선택한 앱 정보가 성공적으로 삭제되었습니다.",
     "NoChangeMade": "변경된 내역이 없습니다.",
     "SuccessfullyModified": "성공적으로 수정되었습니다.",
-    "ProblemOccurred": "문제가 발생했습니다."
+    "ProblemOccurred": "문제가 발생했습니다.",
+    "PasswordsDoNotMatch": "변경할 비밀번호와 비밀번호 확인란의 값이 일치해야 합니다."
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
