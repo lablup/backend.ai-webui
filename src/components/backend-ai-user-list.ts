@@ -187,7 +187,7 @@ export default class BackendAIUserList extends BackendAIPage {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
-    document.addEventListener('user-list-updated', () => {
+    this.addEventListener('user-list-updated', () => {
       this.refresh();
     })
   }
@@ -411,8 +411,8 @@ export default class BackendAIUserList extends BackendAIPage {
 
   /**
    * Toggle password visible/invisible mode.
-   * 
-   * @param element 
+   *
+   * @param element
    */
   _togglePasswordVisibility(element) {
     const isVisible = element.__on;
@@ -422,7 +422,7 @@ export default class BackendAIUserList extends BackendAIPage {
 
   /**
    * Toggle password and confirm input field is required or not.
-   * 
+   *
    */
   _togglePasswordInputRequired() {
     const passwordEl = this.shadowRoot.querySelector('#password'),

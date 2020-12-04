@@ -665,7 +665,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
     this.shadowRoot.querySelector('#' + list.value).style.display = 'block';
     let event = new CustomEvent('user-list-updated', {});
-    document.dispatchEvent(event);
+    this.shadowRoot.querySelector('#' + list.value).dispatchEvent(event);
   }
 
   /**
