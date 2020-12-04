@@ -2039,7 +2039,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
         </wl-expansion>
 
-        <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
+        <wl-expansion name="ownership" class="temporarily-hide" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
           <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.SetSessionOwner")}</span>
           <span slot="description"></span>
           <div class="vertical layout">
