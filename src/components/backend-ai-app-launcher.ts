@@ -240,6 +240,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       let contentType = resp.headers.get('Content-Type');
       if (contentType === null) {
         body = resp.ok;
+        if (!resp.ok) {
+          throw new Error(resp);
+        }
       } else if (contentType.startsWith('application/json') ||
         contentType.startsWith('application/problem+json')) {
         body = await resp.json();
@@ -252,6 +255,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         throw body;
       }
     } catch (e) {
+      return resp;
       //console.log(e);
     }
     return body;
