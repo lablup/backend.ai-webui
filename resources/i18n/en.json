@@ -412,7 +412,7 @@
       "TouchToDownload": "Touch to Download file",
       "ValueRequired": "Value is required",
       "ValueShouldBeStarted": "Path should start with .(dot) or letters, numbers only.",
-      "DragDropFileUploadSizeLimit": "File size limit (< 1 GiB)",
+      "FileUploadSizeLimit": "File size exceeds upload size limit.",
       "LessThan10Sec": "Less than 10 seconds",
       "MoreThanADay": "More than a day",
       "WritePermissionRequiredInFolderCreation": "Write permission is required in creating a folder.",
