@@ -95,6 +95,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) _boundPermissionRenderer = Object();
   @property({type: Boolean}) _uploadFlag = true;
   @property({type: Boolean}) isWritable = false;
+  @property({type: Number}) _maxFileUploadSize = -1;
 
   constructor() {
     super();
@@ -889,10 +890,10 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-icon-button
                 class="fg blue controls-running"
                 icon="folder_open"
-                @click="${(e) => 
-                          this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') 
-                                                  || rowData.item.is_owner
-                                                  || (rowData.item.type === 'group' && this.is_admin)))}"
+                @click="${(e) =>
+                  this._folderExplorer(e, (this._hasPermission(rowData.item, 'w')
+                    || rowData.item.is_owner
+                    || (rowData.item.type === 'group' && this.is_admin)))}"
                 .folder-id="${rowData.item.name}"></mwc-icon-button>
             `
             : html``
@@ -1110,12 +1111,14 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+        this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
         this._refreshFolderList();
       }, true);
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+      this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
       this._refreshFolderList();
     }
   }
@@ -1490,6 +1493,22 @@ export default class BackendAiStorageList extends BackendAIPage {
     return file.mode.startsWith("d");
   }
 
+  _byteToMB(value) {
+    return Math.floor(value / 1000000);
+  }
+
+  _humanReadableFileSize(value) {
+    if (value > 1000000000) {
+      return Math.floor(value / 1000000000) + 'GB';
+    } else if (value > 1000000) {
+      return Math.floor(value / 1000000) + 'MB';
+    } else if (value > 1000) {
+      return Math.floor(value / 1000) + 'KB';
+    } else {
+      return Math.floor(value) + 'Bytes';
+    }
+  }
+
   /* File upload and download */
   /**
    * Add eventListener to the dropzone - dragleave, dragover, drop.
@@ -1515,29 +1534,30 @@ export default class BackendAiStorageList extends BackendAIPage {
       e.preventDefault();
       dndZonePlaceholderEl.style.display = "none";
 
-      let temp: any = [];
-      for (let i = 0; i < e.dataTransfer.files.length; i++) {
-        const file = e.dataTransfer.files[i];
-        /* Drag & Drop file upload size limits to 1 GiB */
-        if (file.size > 2 ** 30) {
-          this.notification.text = _text('data.explorer.DragDropFileUploadSizeLimit');
-          this.notification.show();
-          return;
-        } else {
-          file.progress = 0;
-          file.caption = '';
-          file.error = false;
-          file.complete = false;
-          temp.push(file);
-          (this.uploadFiles as any).push(file);
+      if (this.isWritable) {
+        let temp: any = [];
+        for (let i = 0; i < e.dataTransfer.files.length; i++) {
+          const file = e.dataTransfer.files[i];
+          /* Drag & Drop file upload size limits to configuration */
+          if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
+            this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
+            this.notification.show();
+            return;
+          } else {
+            file.progress = 0;
+            file.caption = '';
+            file.error = false;
+            file.complete = false;
+            temp.push(file);
+            (this.uploadFiles as any).push(file);
+          }
+        }
+        for (let i = 0; i < temp.length; i++) {
+          this.fileUpload(temp[i]);
+          this._clearExplorer();
         }
       }
       // return;
-
-      for (let i = 0; i < temp.length; i++) {
-        this.fileUpload(temp[i]);
-        this._clearExplorer();
-      }
     });
   }
 
@@ -1568,13 +1588,19 @@ export default class BackendAiStorageList extends BackendAIPage {
       let text = "";
       let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
       for (let i = 0; i < 5; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-      file.id = text;
-      file.progress = 0;
-      file.caption = '';
-      file.error = false;
-      file.complete = false;
-      (this.uploadFiles as any).push(file);
+      /* File upload size limits to configuration */
+      if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
+        this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
+        this.notification.show();
+        return;
+      } else {
+        file.id = text;
+        file.progress = 0;
+        file.caption = '';
+        file.error = false;
+        file.complete = false;
+        (this.uploadFiles as any).push(file);
+      }
     }
 
     for (let i = 0; i < length; i++) {
