@@ -107,7 +107,7 @@ proxyBaseURL = "[Base URL of websocket proxy,]"
 proxyListenIP = "[Websocket proxy configuration IP.]"
 
 [resources]
-openPortToPublic = true # Show option to choose prefer port for app proxy.
+openPortToPublic = true # Show option to open app proxy port to anyone.
 maxCPUCoresPerSession = 256 # Maximum CPU per session.
 maxCUDADevicesPerSession = 16  # Maximum CUDA devices per session.
 maxShmPerSession = 1 # Maximum shared memory per session.
