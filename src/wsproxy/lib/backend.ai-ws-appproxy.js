@@ -90,7 +90,7 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
     });
 
     this.tcpServer.on("connection", (tcpConn) => {
-      logger.info(`App-proxy server connection established: ${this.ip}:${this.port}.`);
+      logger.info(`App-Proxy server connection established: ${this.ip}:${this.port}.`);
       tcpConn.setTimeout(60000);
       tcpConn.on('timeout', () => {
         logger.debug(`Socket timeout`);
@@ -122,13 +122,13 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
         });
       }
       ws.on('open', () => {
-        logger.debug(`ws bind`);
+        logger.debug(`WebSocket bind`);
         const wsStream = WebSocket.createWebSocketStream(ws);
 
         let bh = bind(wsStream, tcpConn);
       });
       ws.on('close', (code, reason) => {
-        logger.debug(`ws closed - ${code}`);
+        logger.debug(`WebSocket closed - ${code}`);
       });
       ws.on('unexpected-response', (req, res) => {
         logger.warn(`Got non-101 response: ${res.statusCode}`);
@@ -170,7 +170,7 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
         ws.terminate();
       });
       ws.on('error', (err) => {
-        logger.warn(`Websocket fail: ${this.port} - ${err.toString()}`);
+        logger.warn(`WebSocket fail: ${this.port} - ${err.toString()}`);
         if(tcpConn.writable) {
           tcpConn.write("HTTP/1.1 503 Proxy Error\n"+"Connection: Closed\n"+"Content-Type: text/html; charset=UTF-8\n\n");
           tcpConn.write(htmldeco("Server connection failed", "Restart your session or contact your administrator"));

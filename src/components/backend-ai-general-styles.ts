@@ -293,6 +293,12 @@ export const BackendAiStyles = [
       background-color: var(--paper-grey-100);
     }
 
+    mwc-list mwc-list-item {
+      font-size: 14px;
+      font-family: var(--general-font-family);
+      --mdc-typography-font-family: var(--general-font-family);
+    }
+
     mwc-switch {
       --mdc-theme-surface: var(--general-switch-off-color);
       --mdc-theme-on-surface: var(--general-switch-off-color);
