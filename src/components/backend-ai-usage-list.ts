@@ -8,9 +8,6 @@ import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
-import 'weightless/tab-group';
-import 'weightless/tab';
-import 'weightless/select';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
 
@@ -59,6 +56,7 @@ export default class BackendAIUsageList extends BackendAIPage {
   @property({type: Object}) collection = Object();
   @property({type: String}) period = '1D';
   @property({type: Boolean}) updating = false;
+  @property({type: Number}) elapsedDays = 0;
   public data: any;
 
   constructor() {
@@ -75,14 +73,6 @@ export default class BackendAIUsageList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        wl-select {
-          --input-font-family: Roboto, Noto, sans-serif;
-          --input-color-disabled: #222222;
-          --input-label-color-disabled: #222222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #cccccc;
-        }
-
         mwc-select {
           width: 100%;
           font-family: var(--general-font-family);
@@ -140,6 +130,35 @@ export default class BackendAIUsageList extends BackendAIPage {
 
   firstUpdated() {
     //this.init();
+  }
+
+  async _viewStateChanged(active: Boolean) {
+    await this.updateComplete;
+    if (active === false) {
+      return;
+    }
+
+    // If disconnected
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._getUserInfo();
+      }, true);
+    } else { // already connected
+      this._getUserInfo();
+    }
+  }
+
+  _getUserInfo() {
+    const msec_to_sec = 1000;
+    const seconds_to_day = 86400;
+    globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['created_at']).then((response) => {
+      let created_at = response.keypair.created_at;
+      let start_time = new Date(created_at);
+      let current_time = new Date();
+      let seconds = Math.floor((current_time.getTime() - start_time.getTime()) / msec_to_sec);
+      let days = Math.floor(seconds / seconds_to_day);
+      this.elapsedDays = days;
+    });
   }
 
   /**
@@ -258,7 +277,10 @@ export default class BackendAIUsageList extends BackendAIPage {
       this.pulldownChange(e)
     }}">
             <mwc-list-item value="1D" selected>${_t("statistics.1Day")}</mwc-list-item>
-            <mwc-list-item value="1W">${_t("statistics.1Week")}</mwc-list-item>
+            ${this.elapsedDays > 7 ? html`
+              <mwc-list-item value="1W">${_t("statistics.1Week")}</mwc-list-item>
+            ` : html`
+            `}
           </mwc-select>
           <span class="flex"></span>
         </h3>

@@ -7,6 +7,8 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-tree-column';
+import '@vaadin/vaadin-grid/vaadin-grid-tree-toggle';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
@@ -456,7 +458,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     let fields = [
       "id", "name", "image",
       "created_at", "terminated_at", "status", "status_info",
-      "service_ports", "mounts",
+      "service_ports", "mounts", "cluster_size", 'cluster_mode',
       "occupied_slots", "access_key",
     ];
     if (this.enableScalingGroup) {
@@ -497,7 +499,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
           sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
           if (sessions[objectKey].containers && sessions[objectKey].containers.length > 0) {
-            // Assume a session has only one container (no consideration on multi-container bundling)
             const container = sessions[objectKey].containers[0];
             const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
             sessions[objectKey].agent = container.agent
@@ -575,6 +576,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].sessionTags = this._getKernelInfo(session.image);
           const specs = session.image.split('/');
+          sessions[objectKey].cluster_size = parseInt(sessions[objectKey].cluster_size);
           const tag = specs[specs.length - 1].split(':')[1]
           let tags = tag.split('-');
           if (tags[1] !== undefined) {
@@ -1135,7 +1137,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           item.tag = rowData.item.baseversion;
         }
         return html`
-                <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}" ui="round"></lablup-shields>
+                <lablup-shields app="${item.category === undefined ? '' : item.category}"
+                                color="${item.color}"
+                                description="${item.tag}"
+                                ui="round"></lablup-shields>
               `;
       })}
           `) : html``}
@@ -1143,11 +1148,24 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div class="layout horizontal center wrap">
               ${rowData.item.additional_reqs.map((tag) => {
         return html`
-                  <lablup-shields app="" color="green" description="${tag}" ui="round" style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                  <lablup-shields app=""
+                                  color="green"
+                                  description="${tag}"
+                                  ui="round"
+                                  style="margin-top:3px;margin-right:3px;"></lablup-shields>
                 `;
       })}
             </div>
           ` : html``}
+          ${rowData.item.cluster_size > 1 ? html`
+            <div class="layout horizontal center wrap">
+              <lablup-shields app="${rowData.item.cluster_mode === 'single-node' ? 'Multi-container': 'Multi-node'}"
+                              color="blue"
+                              description="${ 'X ' + rowData.item.cluster_size}"
+                              ui="round"
+                              style="margin-top:3px;margin-right:3px;"></lablup-shields>
+            </div>
+          `: html``}
         </div>
       `, root
     );
@@ -1759,10 +1777,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div class="horizontal center layout" style="display:none;">
             <wl-checkbox id="export-csv-checkbox" @change="${(e) => this._toggleDialogCheckbox(e)}"></wl-checkbox>
             <wl-label class="unlimited" for="export-csv-checkbox">Export All-time data</wl-label>
-          </div>
-          <div class="horizontal center layout" style="margin-bottom:10px;">
-            <wl-icon class="warning">warning</wl-icon>
-            <wl-label class="warning" for="warning">${_t("session.OnlyRecent100SessionExport")}</wl-label>
           </div>
           <div class="horizontal center layout">
             <wl-button class="fg green" type="button" inverted outlined style="width:100%;"

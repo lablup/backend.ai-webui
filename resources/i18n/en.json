@@ -129,8 +129,15 @@
       "CustomAllocation": "Custom allocation",
       "Core": "Core",
       "SharedMemory": "Shared Memory",
+      "SingleNode": "Single Node",
+      "MultiNode": "Multi Node",
+      "single-node": "Single Node",
+      "multi-node": "Multi Node",
+      "ClusterMode": "Cluster mode",
+      "ClusterSize": "Cluster size",
+      "Node": "Node",
       "Ownership": "Ownership",
-      "SetSessionOwner": "Set session owner",
+      "SetSessionOwner": "Session owner",
       "OwnerAccessKey": "Owner access key",
       "OwnerGroup": "Owner group",
       "OwnerResourceGroup": "Owner resource group",
@@ -141,6 +148,8 @@
       "DescSharedMemory": "<p>Shared memory is memory that may be simultaneously accessed by multiple programs with an intent to provide communication among them or avoid redundant copies.</p><p>For multi-CPU or multi-threaded workloads, shared memory is important because it is used for inter-thread communication. For deep learning workloads and high performance computing workloads using multi-threaded, we recommend setting this value to 1 GB or higher.</p>",
       "DescGPU": "<p>GPUs are well-suited for the matrix/vector computations involved in machine learning. GPUs speed up training algorithms by orders of magnitude, reducing running times from weeks to days.</p>",
       "DescSession": "<p>A session is a unit of computational environment that is created according to a specified environment and resources.</p><p>If this value is set to a value greater than 1, multiple sessions corresponding to the resource set above are created.</p><p>If there are not enough resources available, requests to create sessions that cannot be created are put on the waiting queue.</p>",
+      "DescSingleNode": "<p>When running a session, the managed node and worker nodes are placed on a single physical node or virtual machine.</p>",
+      "DescMultiNode": "<p>When running a session, one managed node and one or more worker nodes are split across multiple physical nodes or virtual machines.</p>",
       "CPU": "CPU",
       "Memory": "Memory",
       "GPU": "GPU",
@@ -163,7 +172,8 @@
       "SessionNameAllowCondition": "Session name only allows at least 4 characters without any whitespaces.",
       "NoFolderExists": "No Folder Exists",
       "sessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app.",
-      "UnSelectAllVFolders": "UNSELECT ALL"
+      "UnSelectAllVFolders": "UNSELECT ALL",
+      "ResourceMonitorToggle": "See resource monitor"
     },
     "Running": "Running",
     "Finished": "Finished",
@@ -189,7 +199,6 @@
     "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
     "TerminatingSessionDialog": "You are terminating multiple sessions.",
     "ExportSessionListToCSVFile": "Export Session list to CSV File",
-    "OnlyRecent100SessionExport": "Only recent 100 session logs will be exported.",
     "ExportCSVFile": "Export CSV File",
     "ResourceGroup": "Resource Group",
     "NoLogs": "No logs.",
@@ -487,7 +496,8 @@
     "AppInfoDeleted": "App information successfully deleted.",
     "NoChangeMade": "",
     "SuccessfullyModified": "Successfully modified",
-    "ProblemOccurred": "Problem occurred"
+    "ProblemOccurred": "Problem occurred",
+    "PasswordsDoNotMatch": "Password and Confirmation do not match."
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",
@@ -505,7 +515,9 @@
     "Updated": "Resource preset updated",
     "MinimumCPUUnit": "CPU starts with 1 core",
     "MinimumMemUnit": "Memory starts with 1 GB",
-    "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB."
+    "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB.",
+    "RAM": "RAM (GB)",
+    "SharedMemory": "Shared memory (GB)"
   },
   "usersettings": {
     "General": "General",

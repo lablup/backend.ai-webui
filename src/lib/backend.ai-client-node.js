@@ -437,6 +437,8 @@ class Client {
         }
         if (this.isAPIVersionCompatibleWith('v6.20200815')) {
             this._features['change-user-name'] = true;
+            this._features['multi-container'] = true;
+            this._features['multi-node'] = true;
         }
     }
     /**
@@ -610,8 +612,11 @@ class Client {
             if (resources['env']) {
                 config['environ'] = resources['env'];
             }
-            if (resources['clustersize']) {
-                config['clusterSize'] = resources['clustersize'];
+            if (resources['cluster_size']) {
+                params['cluster_size'] = resources['cluster_size'];
+            }
+            if (resources['cluster_mode']) {
+                params['cluster_mode'] = resources['cluster_mode'];
             }
             if (resources['group_name']) {
                 params['group_name'] = resources['group_name'];

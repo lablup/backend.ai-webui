@@ -54,6 +54,12 @@ export default class BackendAIAgentView extends BackendAIPage {
           --mdc-tab-color-default: var(--general-tabbar-background-color);
           --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
         }
+
+        @media screen and (max-width: 805px) {
+          mwc-tab {
+            --mdc-typography-button-font-size: 10px;
+          }
+        }
       `];
   }
 

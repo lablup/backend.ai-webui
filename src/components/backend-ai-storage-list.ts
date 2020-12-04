@@ -190,10 +190,15 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         #folder-explorer-dialog {
+          width: calc(100% - 250px); /* 250px is width for drawer menu */
           --component-height: calc(100vh - 200px); /* calc(100vh - 170px); */
           right: 0;
           top: 0;
           margin: 170px 0 0 0;
+        }
+
+        #folder-explorer-dialog.mini_ui {
+          width: calc(100% - 88px); /* 88px is width for mini-ui icon of drawer menu */
         }
 
         #folder-explorer-dialog vaadin-grid vaadin-grid-column {
@@ -205,24 +210,32 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-icon-button-size: 28px;
         }
 
-        @media screen and (max-width: 899px) {
+        @media screen and (max-width: 700px) {
           #folder-explorer-dialog,
           #folder-explorer-dialog.mini_ui {
-            left: 0;
+            min-width: 410px;
             --component-width: 100%;
             width: 100%;
+            position: absolute;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0px;
+            right: 0px;
+          }
+        }
+
+        @media screen and (max-width: 750px) {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui {
+            --component-width: auto;
           }
         }
 
         @media screen and (min-width: 900px) {
-          #folder-explorer-dialog {
-            left: 250px; /* 190px; */
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui
+           {
             --component-width: calc(100% - 45px); /* calc(100% - 30px); */
-          }
-
-          #folder-explorer-dialog.mini_ui {
-            left: 85px; /* 65px; */
-            --component-width: calc(100% - 45px);
           }
         }
 
@@ -284,6 +297,10 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-button.fullwidth {
           width: 100%;
+        }
+
+        mwc-button#readonly-btn {
+          width: 150px;
         }
 
         div#upload {
@@ -349,12 +366,23 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         #modify-permission-dialog {
-          --dialog-min-width: 600px;
           --component-min-width: 600px;
         }
 
         backend-ai-dialog {
           --component-min-width: 350px;
+        }
+
+        @media screen and (max-width: 750px) {
+          mwc-button {
+            width: auto;
+          }
+          mwc-button > span {
+            display: none;
+          }
+          #modify-permission-dialog {
+            --component-min-width: 100%;
+          }
         }
       `];
   }
@@ -376,7 +404,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <vaadin-grid class="folderlist" theme="row-stripes column-borders compact" aria-label="Folder list" .items="${this.folders}">
+      <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t("data.folders.Name")}">
@@ -403,7 +431,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column width="45px" flex-grow="0" resizable header="${_t("data.folders.Type")}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="85px" flex-grow="0" resizable header="${_t("data.folders.Permission")}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t("data.folders.Control")}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column auto-width resizable header="${_t("data.folders.Control")}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
       </vaadin-grid>
 
       <backend-ai-dialog id="rename-folder-dialog" fixed backdrop>
@@ -479,18 +507,22 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${this.explorer.id}</span>
         <div slot="action" class="horizontal layout flex folder-action-buttons">
           <div class="flex"></div>
-          <mwc-button outlined class="multiple-action-buttons fg red" icon="delete" @click="${() => this._openDeleteMultipleFileDialog()}"
-            label="${_t("data.explorer.Delete")}"
-            style="display:none;">
+          <mwc-button
+              outlined
+              class="multiple-action-buttons fg red"
+              icon="delete"
+              @click="${() => this._openDeleteMultipleFileDialog()}"
+              style="display:none;">
+              <span>${_t("data.explorer.Delete")}</span>
           </mwc-button>
           ${this.isWritable ? html`
           <div id="add-btn-cover">
             <mwc-button
                 id="add-btn"
                 icon="cloud_upload"
-                label="${_t("data.explorer.UploadFiles")}"
                 ?disabled=${!this.isWritable}
                 @click="${(e) => this._uploadFileBtnClick(e)}">
+                <span>${_t("data.explorer.UploadFiles")}</span>
             </mwc-button>
           </div>
           <div id="mkdir-cover">
@@ -498,17 +530,16 @@ export default class BackendAiStorageList extends BackendAIPage {
                 id="mkdir"
                 class="tooltip"
                 icon="create_new_folder"
-                label="${_t("data.explorer.NewFolder")}"
                 ?disabled=${!this.isWritable}
                 @click="${() => this._mkdirDialog()}">
+                <span>${_t("data.explorer.NewFolder")}</span>
             </mwc-button>
           </div>
           ` : html`
           <mwc-button
               id="readonly-btn"
-              style="width:150px;"
-              label="${_t("data.explorer.ReadonlyFolder")}"
               disabled>
+            <span>${_t("data.explorer.ReadonlyFolder")}</span>
           </mwc-button>
           `}
         </div>
@@ -578,7 +609,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             <vaadin-grid-sort-column flex-grow="2" resizable header="${_t("data.explorer.Created")}" path="ctime" .renderer="${this._boundCreatedTimeRenderer}">
             </vaadin-grid-sort-column>
 
-            <vaadin-grid-column flex-grow="1" resizable>
+            <vaadin-grid-column auto-width resizable>
               <template class="header">
                 <vaadin-grid-sorter path="size">${_t("data.explorer.Size")}</vaadin-grid-sorter>
               </template>
@@ -588,7 +619,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 </div>
               </template>
             </vaadin-grid-column>
-            <vaadin-grid-column resizable flex-grow="2" header="${_t("data.explorer.Actions")}" .renderer="${this._boundControlFileListRenderer}"></vaadin-grid-column>
+            <vaadin-grid-column resizable auto-width header="${_t("data.explorer.Actions")}" .renderer="${this._boundControlFileListRenderer}"></vaadin-grid-column>
           </vaadin-grid>
         </div>
       </backend-ai-dialog>
@@ -844,7 +875,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         <div
           id="controls"
-          class="layout horizontal flex center"
+          class="layout flex center wrap"
           folder-id="${rowData.item.name}"
         >
           <mwc-icon-button
@@ -887,14 +918,16 @@ export default class BackendAiStorageList extends BackendAIPage {
             `
             : html``
           }
-
-          ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd') || (rowData.item.type === 'group' && this.is_admin)
-            ? html`
+          ${rowData.item.is_owner ? 
+            html`
               <mwc-icon-button
                 class="fg blue controls-running"
                 icon="edit"
                 @click="${(e) => this._renameFolderDialog(e)}"
               ></mwc-icon-button>
+          ` : html``}
+          ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd') || (rowData.item.type === 'group' && this.is_admin)
+            ? html`
               <mwc-icon-button
                 class="fg red controls-running"
                 icon="delete"
@@ -919,17 +952,19 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        ${this._isDir(rowData.item) ? html`
-          <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
-              filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e, true)}"></mwc-icon-button>
-        ` : html`
-          <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
-              filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
-        `}
-        <mwc-icon-button id="rename-btn" ?disabled="${!this.isWritable}" class="tiny fg green" icon="edit" required
-            filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
-        <mwc-icon-button id="delete-btn" ?disabled="${!this.isWritable}" class="tiny fg red" icon="delete_forever"
-            filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
+        <div class="flex layout wrap">
+          ${this._isDir(rowData.item) ? html`
+            <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
+                filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e, true)}"></mwc-icon-button>
+          ` : html`
+            <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
+                filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
+          `}
+          <mwc-icon-button id="rename-btn" ?disabled="${!this.isWritable}" class="tiny fg green" icon="edit" required
+              filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
+          <mwc-icon-button id="delete-btn" ?disabled="${!this.isWritable}" class="tiny fg red" icon="delete_forever"
+              filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
+        </div>
        `, root
     );
   }
@@ -1474,9 +1509,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     dndZoneEl.addEventListener('dragover', e => {
       e.stopPropagation();
       e.preventDefault();
+      if (this.isWritable) {
       e.dataTransfer.dropEffect = 'copy';
       dndZonePlaceholderEl.style.display = "flex";
       return false;
+      } else {
+         return true;
+      }
     });
 
     dndZoneEl.addEventListener('drop', e => {
@@ -1484,28 +1523,32 @@ export default class BackendAiStorageList extends BackendAIPage {
       e.preventDefault();
       dndZonePlaceholderEl.style.display = "none";
 
-      let temp: any = [];
-      for (let i = 0; i < e.dataTransfer.files.length; i++) {
-        const file = e.dataTransfer.files[i];
-        /* Drag & Drop file upload size limits to 1 GiB */
-        if (file.size > 2 ** 30) {
-          this.notification.text = _text('data.explorer.DragDropFileUploadSizeLimit');
-          this.notification.show();
-          return;
-        } else {
-          file.progress = 0;
-          file.caption = '';
-          file.error = false;
-          file.complete = false;
-          temp.push(file);
-          (this.uploadFiles as any).push(file);
+      if (this.isWritable) {
+        let temp: any = [];
+        for (let i = 0; i < e.dataTransfer.files.length; i++) {
+          const file = e.dataTransfer.files[i];
+          /* Drag & Drop file upload size limits to 1 GiB */
+          if (file.size > 2 ** 30) {
+            this.notification.text = _text('data.explorer.DragDropFileUploadSizeLimit');
+            this.notification.show();
+            return;
+          } else {
+            file.progress = 0;
+            file.caption = '';
+            file.error = false;
+            file.complete = false;
+            temp.push(file);
+            (this.uploadFiles as any).push(file);
+          }
         }
-      }
-      // return;
 
-      for (let i = 0; i < temp.length; i++) {
-        this.fileUpload(temp[i]);
-        this._clearExplorer();
+        for (let i = 0; i < temp.length; i++) {
+          this.fileUpload(temp[i]);
+          this._clearExplorer();
+        }
+      } else {
+        this.notification.text = _text('data.explorer.WritePermissionRequiredInUploadFiles');
+        this.notification.show();
       }
     });
   }

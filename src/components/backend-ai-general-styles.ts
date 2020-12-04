@@ -18,7 +18,7 @@ export const BackendAiStyles = [
       --general-navbar-footer-background-color-r: 255;
       --general-navbar-footer-background-color-g: 255;
       --general-navbar-footer-background-color-b: 255;
-      --general-navbar-footer-background-color: rgba(255, 255, 255, 0.95);
+      --general-navbar-footer-background-color: #2a2c30;
       --general-navbar-footer-background-color-less: rgba(255, 255, 255, 0.6);
       --general-navbar-footer-background-border: rgba(23, 23, 23, 1);
       --general-navbar-footer-background-opacity: 1;
@@ -257,6 +257,11 @@ export const BackendAiStyles = [
       }
     }
 
+    wl-button.primary-action[raised] {
+      background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
+      height: 20px;
+    }
+
     mwc-multi-select {
       --mdc-select-min-width: 100px; /* Fallback to apply width */
     }
@@ -286,6 +291,12 @@ export const BackendAiStyles = [
 
     mwc-icon-button[disabled].pagination {
       background-color: var(--paper-grey-100);
+    }
+
+    mwc-list mwc-list-item {
+      font-size: 14px;
+      font-family: var(--general-font-family);
+      --mdc-typography-font-family: var(--general-font-family);
     }
 
     mwc-switch {
