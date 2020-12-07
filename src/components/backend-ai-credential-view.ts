@@ -651,6 +651,18 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
     this._activeTab = tab.title;
     this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
+    // show inner tab(active) after selecting outer tab
+    switch(this._activeTab) {
+      case "user-lists":
+      case "credential-lists":
+        let tabKeyword = this._activeTab.substring(0, this._activeTab.length - 1); // to remove '-s'.
+        let innerTab = this.shadowRoot.querySelector('wl-tab[value=active-' + tabKeyword + ']');
+        innerTab.checked = true;
+        this._showList(innerTab);
+        break;
+      default:
+        break;
+    }
   }
 
   /**
