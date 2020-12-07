@@ -1441,7 +1441,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         <span slot="title">${_t("console.menu.ChangeUserInformation")}</span>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-name" type="text"
-              label="${_t('console.menu.FullName')}" max-length="30" autofocus
+              label="${_t('console.menu.FullName')}" max-length="64" autofocus
               style="margin-bottom:20px;" value="${this.full_name}">
           </mwc-text-field>
         </div>

@@ -365,7 +365,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           this.shadowRoot.querySelector('#access-key-filter').style.display = 'none';
           this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
         } else {
-          this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
+          this.shadowRoot.querySelector('#access-key-filter').style.display = 'none';
         }
         if (globalThis.backendaiclient.APIMajorVersion < 5) {
           this.sessionNameField = 'sess_id';
@@ -383,7 +383,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         // this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
         this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
       } else {
-        this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
+        this.shadowRoot.querySelector('#access-key-filter').style.display = 'none';
       }
       if (globalThis.backendaiclient.APIMajorVersion < 5) {
         this.sessionNameField = 'sess_id';
@@ -1760,7 +1760,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <wl-checkbox id="export-csv-checkbox" @change="${(e) => this._toggleDialogCheckbox(e)}"></wl-checkbox>
             <wl-label class="unlimited" for="export-csv-checkbox">Export All-time data</wl-label>
           </div>
-          <div class="horizontal center layout" style="margin-bottom:10px;">
+          <div class="horizontal center layout" style="display:none; margin-bottom:10px;">
             <wl-icon class="warning">warning</wl-icon>
             <wl-label class="warning" for="warning">${_t("session.OnlyRecent100SessionExport")}</wl-label>
           </div>
