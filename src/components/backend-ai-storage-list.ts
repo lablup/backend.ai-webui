@@ -647,7 +647,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div class="vertical layout flex" id="textfields">
             <div class="horizontal layout">
               <div style="flex-grow: 2">
-                <mwc-textfield class="share-email" type="email" label="${_t("data.explorer.EnterEmailAddress")}"></mwc-textfield>
+                <mwc-textfield class="share-email" type="email" id="first-email" label="${_t("data.explorer.EnterEmailAddress")}"></mwc-textfield>
               </div>
               <div>
                 <wl-button fab flat @click="${() => this._addTextField()}">
@@ -1897,12 +1897,29 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
+   * 
+   * Initialize share-folder-dialog to the original layout
+   * 
+   */
+  _initializeSharingFolderDialogLayout() {
+    let emailInputList= this.shadowRoot.querySelectorAll('#share-folder-dialog mwc-textfield.share-email');
+    if (emailInputList.length > 1) {
+      Array.prototype.forEach.call(emailInputList, (elem, index) => {
+        if (elem.id !== "first-email") {
+          elem.parentNode.removeChild(elem);
+        }
+      });
+    }
+  }
+
+  /**
    * Open dialog to share folder.
    *
    * @param {Event} e - click the share button
    * */
   _shareFolderDialog(e) {
     this.selectedFolder = this._getControlId(e);
+    this._initializeSharingFolderDialogLayout()
     this.openDialog('share-folder-dialog');
   }
 
