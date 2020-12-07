@@ -169,7 +169,7 @@
       "CustomResourceApplied": "Custom resource is applied",
       "PleaseChooseFoldersToMount": "Please Choose Folders To Mount",
       "StartImportedNotebook": "Start Imported Notebook",
-      "SessionNameAllowCondition": "Session name only allows at least 4 characters without any whitespaces.",
+      "SessionNameAllowCondition": "Session name only allows at least 4 alphabetic character or number without any whitespaces.",
       "NoFolderExists": "No Folder Exists",
       "sessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app.",
       "ResourceMonitorToggle": "See resource monitor"
