@@ -1968,6 +1968,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </mwc-select>
             <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
                            pattern="[a-zA-Z0-9_-]{4,}" fullwidth maxLength="64"
+                           helper="${_t('maxLength.64chars')}"
                            validationMessage="${_t("session.launcher.SessionNameAllowCondition")}"
                            style="margin-left:5px;">
             </mwc-textfield>

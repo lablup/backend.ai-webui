@@ -155,17 +155,16 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
           <div style="margin:20px;">
             <mwc-textfield id="email" label="${_t('data.explorer.EnterEmailAddress')}"
                 autofocus auto-validate validationMessage="${_t('signup.InvalidEmail')}"
-                pattern="^[A-Z0-9a-z#-_]+@.+\\..+$">
+                pattern="^[A-Z0-9a-z#-_]+@.+\\..+$" maxLength="64"
+                placeholder="${_t('maxLength.64chars')}">
             </mwc-textfield>
             <mwc-textfield id="password1" label="${_t('console.menu.NewPassword')}" type="password"
                 auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
-                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                min-length="8">
+                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$" maxLength="64">
             </mwc-textfield>
             <mwc-textfield id="password2" label="${_t('console.menu.NewPasswordAgain')}" type="password"
                 auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
-                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                min-length="8">
+                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$" maxLength="64">
             </mwc-textfield>
             <div style="height:1em"></div>
           </div>

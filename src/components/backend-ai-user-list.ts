@@ -557,20 +557,25 @@ export default class BackendAIUserList extends BackendAIPage {
                   disabled
                   label="${_text("credential.UserID")}"
                   pattern="^[a-zA-Z0-9_-]+$"
-                  value="${this.userInfo.email}"></mwc-textfield>
+                  value="${this.userInfo.email}"
+                  maxLength="64"
+                  helper="${_text('maxLength.64chars')}"></mwc-textfield>
               <mwc-textfield
                   ?disabled=${!this.editMode}
                   label="${_text("credential.UserName")}"
                   id="username"
                   pattern="^[a-zA-Z0-9_ ]*$"
-                  value="${this.userInfo.username}"></mwc-textfield>
+                  value="${this.userInfo.username}"
+                  maxLength="64"
+                  helper="${_text('maxLength.64chars')}"></mwc-textfield>
               <mwc-textfield
                   ?disabled=${!this.editMode}
                   label="${_text("credential.FullName")}"
                   id="full_name"
                   pattern="^[a-zA-Z0-9_ ]*$"
                   value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}"
-                  ></mwc-textfield>
+                  maxLength="64"
+                  helper="${_text('maxLength.64chars')}"></mwc-textfield>
               ${this.editMode ? html`
                 <div class="horizontal layout password-area">
                   <mwc-textfield
@@ -579,7 +584,7 @@ export default class BackendAIUserList extends BackendAIPage {
                       autoValidate
                       validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
                       pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                      min-length="8"
+                      maxLength="64"
                       label="${_text("general.NewPassword")}"
                       @change=${() => this._togglePasswordInputRequired()}></mwc-textfield>
                   <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
@@ -593,7 +598,7 @@ export default class BackendAIUserList extends BackendAIPage {
                       autoValidate
                       validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
                       pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                      min-length="8"
+                      maxLength="64"
                       @change=${() => this._togglePasswordInputRequired()}
                       label="${_text("console.menu.NewPasswordAgain")}"></mwc-textfield>
                   <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
@@ -604,6 +609,7 @@ export default class BackendAIUserList extends BackendAIPage {
                     type="text"
                     id="description"
                     label="${_text("credential.Description")}"
+                    placeholder="${_text('maxLength.500chars')}"
                     id="description"></mwc-textfield>`: html``}
               ${this.editMode ? html`
                 <div class="horizontal layout center" style="margin:10px;">

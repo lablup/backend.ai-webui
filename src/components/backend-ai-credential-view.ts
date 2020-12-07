@@ -1056,6 +1056,8 @@ export default class BackendAICredentialView extends BackendAIPage {
                 label="${_t("credential.UserIDAsEmail")}"
                 validationMessage="${_t('credential.UserIDRequired')}"
                 required
+                maxLength="64"
+                placeholder="${_t('maxLength.64chars')}"
                 autoValidate></mwc-textfield>
 
             <mwc-select outlined id="resource-policy" label="${_t("credential.ResourcePolicy")}" style="width:100%;margin:10px 0;">
@@ -1099,6 +1101,8 @@ export default class BackendAICredentialView extends BackendAIPage {
         <div slot="content">
           <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}" pattern="^[a-zA-Z0-9_-]+$"
                          validationMessage="${_t('data.explorer.ValueRequired')}"
+                         maxLength="64"
+                         placeholder="${_t('maxLength.64chars')}"
                          required></mwc-textfield>
           <h4>${_t("resourcePolicy.ResourcePolicy")}</h4>
           <div class="horizontal center layout distancing">
@@ -1217,13 +1221,17 @@ export default class BackendAICredentialView extends BackendAIPage {
               label="${_t("general.E-Mail")}"
               autoValidate
               required
+              placeholder="${_text('maxLength.64chars')}"
+              maxLength="64"
               validationMessage="${_text('credential.validation.InvalidEmailAddress')}">
           </mwc-textfield>
           <mwc-textfield
               type="text"
               name="user_name"
               id="id_user_name"
-              label="${_t("general.Username")}">
+              label="${_t("general.Username")}"
+              placeholder="${_text('maxLength.64chars')}"
+              maxLength="64">
           </mwc-textfield>
           <div class="horizontal flex layout">
             <mwc-textfield
@@ -1235,7 +1243,8 @@ export default class BackendAICredentialView extends BackendAIPage {
                 required
                 pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
                 validationMessage="${_text('signup.PasswordInvalid')}"
-                @change="${() => this._validatePassword()}">
+                @change="${() => this._validatePassword()}"
+                maxLength="64">
             </mwc-textfield>
             <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
                 @click="${(e) => this._togglePasswordVisibility(e.target)}">
@@ -1251,7 +1260,8 @@ export default class BackendAICredentialView extends BackendAIPage {
                 required
                 pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
                 validationMessage="${_text('signup.PasswordNotMatched')}"
-                @change="${() => this._validatePassword()}">
+                @change="${() => this._validatePassword()}"
+                maxLength="64">
             </mwc-textfield>
             <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
                 @click="${(e) => this._togglePasswordVisibility(e.target)}">
@@ -1267,9 +1277,11 @@ export default class BackendAICredentialView extends BackendAIPage {
         <span slot="title">${_t("credential.ExportCSVFile")} (${this._activeTab})</span>
 
         <div slot="content" class="intro centered login-panel">
-          <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
+          <mwc-textfield id="export-file-name" label="${_text('credential.FileName')}" pattern="^[a-zA-Z0-9_-]+$"
                           validationMessage="${_text('credential.validation.LetterNumber-_dot')}"
                           value="${this._activeTab + '_' + this._defaultFileName}" required
+                          placeholder="${_t('maxLength.255chars')}"
+                          maxLength="255"
           ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">

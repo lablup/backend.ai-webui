@@ -1005,8 +1005,8 @@ export default class BackendAILogin extends BackendAIPage {
               <fieldset>
                 <div class="horizontal layout start-justified center login-input">
                   <mwc-icon>email</mwc-icon>
-                  <input type="email" id="id_user_id" maxlength="50" autocomplete="username"
-                              label="${_t("login.E-mail")}" placeholder="${_t("login.E-mail")}" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></input>
+                  <input type="email" id="id_user_id" maxlength="64" autocomplete="username"
+                              label="${_t("login.E-mail")}" placeholder="${_t("maxLength.64chars")}" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></input>
                 </div>
                 <div class="horizontal layout start-justified center login-input">
                   <mwc-icon>vpn_key</mwc-icon>
@@ -1017,10 +1017,10 @@ export default class BackendAILogin extends BackendAIPage {
             </form>
             <form id="api-login-form" style="${this.connection_mode == 'SESSION' ? `display:none;` : `display:block;`}">
               <fieldset>
-                <mwc-textfield type="text" id="id_api_key" maxlength="30"
+                <mwc-textfield type="text" id="id_api_key" maxLength="20" placeholder="${_text('maxLength.20chars')}"
                             label="${_t("login.APIKey")}" icon="lock" value="${this.api_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
-                <mwc-textfield type="password" id="id_secret_key"
-                            label="${_t("login.SecretKey")}" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                <mwc-textfield type="password" id="id_secret_key" maxLength="40" placeholder="${_text('maxLength.40chars')}"
+                            label="${_t("login.SecretKey")}" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}" ></mwc-textfield>
               </fieldset>
             </form>
             <form>
@@ -1041,11 +1041,11 @@ export default class BackendAILogin extends BackendAIPage {
                       </div>
                     </mwc-list-item>`)}
                   </mwc-menu>
-                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
+                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint" maxLength="2048"
                               style="--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
                               label="${_t("login.Endpoint")}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
                 </div>
-                <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized"
+                <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized" maxLength="2048"
                             style="display:none;--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
                             label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
                 <mwc-button
@@ -1090,9 +1090,10 @@ export default class BackendAILogin extends BackendAIPage {
           <section>
             <div class="warning">${_t("login.DescConfirmLeave")}</div>
           </section>
-          <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
-                       label="E-mail" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
-          <mwc-textfield type="password" name="signout_password" id="id_signout_password"
+          <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxLength="64"
+                       placeholder="${_text('maxLength.64chars')}" label="E-mail"
+                       value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
+          <mwc-textfield type="password" name="signout_password" id="id_signout_password" maxLength="64"
                        label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
@@ -1110,8 +1111,9 @@ export default class BackendAILogin extends BackendAIPage {
           <section>
             <div style="padding:1em">${_t("login.DescChangePasswordEmail")}</div>
           </section>
-          <mwc-textfield type="email" id="password-change-email" maxlength="30"
-              label="E-mail" value="" autofocus auto-validate
+          <mwc-textfield type="email" id="password-change-email" maxLength="64"
+              placeholder="${_text('maxLength.64chars')}" label="E-mail"
+              value="" autofocus auto-validate
               validationMessage="${_t('signup.InvalidEmail')}"
               pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
         </div>
