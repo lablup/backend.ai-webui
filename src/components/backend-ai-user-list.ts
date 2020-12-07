@@ -604,6 +604,7 @@ export default class BackendAIUserList extends BackendAIPage {
                     type="text"
                     id="description"
                     label="${_text("credential.Description")}"
+                    value="${this.userInfo.description}"
                     id="description"></mwc-textfield>`: html``}
               ${this.editMode ? html`
                 <div class="horizontal layout center" style="margin:10px;">
