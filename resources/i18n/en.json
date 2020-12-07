@@ -283,6 +283,7 @@
     "active": "active",
     "concurrentsessions": "Concurrent sessions",
     "RateLimit": "Rate Limit",
+    "RateLimitValidation": "Rate Limit should be greater than zero and below 50000.",
     "RateLimitFor15min": "Rate Limit (for 15 min.)",
     "for900seconds": "for 900 seconds",
     "Users": "Users",

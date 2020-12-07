@@ -278,6 +278,7 @@
     "active": "활성",
     "concurrentsessions": "동시 세션수",
     "RateLimit": "Rate Limit",
+    "RateLimitValidation": "Rate Limit 값은 0보다 크고 50000 이하 여야 합니다.",
     "RateLimitFor15min": "15분 동안 Rate Limiting",
     "for900seconds": "(900초당)",
     "Users": "사용자",

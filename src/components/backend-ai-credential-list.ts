@@ -534,7 +534,12 @@ export default class BackendAICredentialList extends BackendAIPage {
    */
   _saveKeypairModification(e) {
     const resource_policy = this.shadowRoot.querySelector('#policy-list').value;
-    const rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
+    const rate_limit_element = this.shadowRoot.querySelector('#rate-limit');
+    const rate_limit = rate_limit_element.value;
+
+    if (!rate_limit_element.checkValidity()) {
+      return;
+    }
 
     let input = {};
     if (resource_policy !== this.keypairInfo.resource_policy) {
@@ -561,6 +566,21 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
 
     this._hideDialog(e);
+  }
+
+  /**
+   * Adjust Rate Limit value below the maximum value (50000) and also upper than zero.
+   * 
+   */
+  _adjustRateLimit() {
+    const maximum_rate_limit = 50000; // the maximum value of rate limit value
+    let rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
+    if (rate_limit > maximum_rate_limit) {
+      this.shadowRoot.querySelector('#rate-limit').value = maximum_rate_limit;
+    }
+    if (rate_limit <= 0 ) {
+      this.shadowRoot.querySelector('#rate-limit').value = 1;
+    }
   }
 
   render() {
@@ -742,7 +762,10 @@ export default class BackendAICredentialList extends BackendAIPage {
                 type="number"
                 id="rate-limit"
                 min="1"
+                max="50000"
                 label="${_t('credential.RateLimit')}"
+                validationMessage="${_t('credential.RateLimitValidation')}"
+                @change=${() => this._adjustRateLimit()}
                 value="${this.keypairInfo.rate_limit}"></mwc-textfield>
           </div>
         </div>
