@@ -75,6 +75,17 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Object}) exportToCsvDialog = Object();
   @property({type: String}) _defaultFileName = '';
   @property({type: Number}) selectAreaHeight;
+  @property({type: Object}) resourcePolicyLimit = {
+    "cpu-resource": globalThis.backendaiclient._config.maxCPUCoresForResourcePolicy,
+    "ram-resource": globalThis.backendaiclient._config.maxMemoryForResourcePolicy,
+    "gpu-resource": globalThis.backendaiclient._config.maxGPUForResourcePolicy,
+    "fgpu-resource": globalThis.backendaiclient._config.maxfGPUForResourcePolicy,
+    "container-per-session-limit": globalThis.backendaiclient._config.maxContainerPerSessionForResourcePolicy,
+    "idle-timeout": globalThis.backendaiclient._config.maxIdleTimeoutForResourcePolicy,
+    "concurrency-limit": globalThis.backendaiclient._config.maxConcurrentJobsForResourcePolicy,
+    "vfolder-capacity-limit": globalThis.backendaiclient._config.maxVfolderCapacity,
+    "vfolder-count-limit": globalThis.backendaiclient._config.maxVfolderCount
+  }
 
   constructor() {
     super();
@@ -701,12 +712,21 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
 
     if (textfield.value <= 0 ) {
-      // concurrency job limit must be upper than 0.
-      textfield.value = textfield.id === 'concurrency-limit' ? 1 : 0;
+      // concurrency job and container-per-session limit must be upper than 0.
+      textfield.value = ((textfield.id === 'concurrency-limit') || (textfield.id === 'container-per-session-limit')) ? 1 : 0;
     }
 
     if (textfield.className === 'discrete') {
       textfield.value = Math.round(textfield.value);
+    }
+
+    // clamp value to the maximum value and apply unlimited with disabled input if available
+    if (this.resourcePolicyLimit[textfield.id] && textfield.value > this.resourcePolicyLimit[textfield.id] ) {
+      textfield.value = this.resourcePolicyLimit[textfield.id];
+      if (checkbox) {
+        checkbox.checked = true;
+        textfield.disabled = checkbox.checked;
+      }
     }
 
     if (textfield.value === '') {
@@ -1190,7 +1210,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               </div>
               <div class="vertical layout" style="margin-left: 10px;">
                 <wl-label class="folders">${_t("credential.Max#")}</wl-label>
-                <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-textfield class="discrete" id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
               </div>
             </div>
           </div>
