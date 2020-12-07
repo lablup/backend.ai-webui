@@ -82,10 +82,20 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Boolean}) openPortToPublic = false;
-  @property({type: Boolean}) maxCPUCoresPerSession = 64;
-  @property({type: Boolean}) maxCUDADevicesPerSession = 16;
-  @property({type: Boolean}) maxShmPerSession = 2;
-  @property({type: Boolean}) maxFileUploadSize = -1;
+  @property({type: Number}) maxCPUCoresPerSession = 64;
+  @property({type: Number}) maxCUDADevicesPerSession = 16;
+  @property({type: Number}) maxShmPerSession = 2;
+  @property({type: Number}) maxFileUploadSize = -1;
+  @property({type: Number}) maxCPUCoresForResourcePolicy = 1000;
+  @property({type: Number}) maxMemoryForResourcePolicy = 1000;
+  @property({type: Number}) maxGPUForResourcePolicy = 1000;
+  @property({type: Number}) maxfGPUForResourcePolicy = 1000;
+  @property({type: Number}) maxContainerPerSessionForResourcePolicy = 1000;
+  @property({type: Number}) maxIdleTimeoutForResourcePolicy = 1000;
+  @property({type: Number}) maxConcurrentJobsForResourcePolicy = 1000;
+  @property({type: Number}) maxVfolderCapacity = 1000;
+  @property({type: Number}) maxVfolderCount = 1000;
+
   @property({type: Array}) endpoints;
 
   constructor() {
@@ -405,6 +415,51 @@ export default class BackendAILogin extends BackendAIPage {
       this.maxFileUploadSize = -1;
     } else {
       this.maxFileUploadSize = parseInt(config.resources.maxFileUploadSize);
+    }
+    if (typeof config.resource_policy === "undefined" || typeof config.resource_policy.maxCPUCoresForResourcePolicy === "undefined" || config.resource.maxCPUCoresForResourcePolicy === '') {
+      this.maxCPUCoresForResourcePolicy = 1000;
+    } else {
+      this.maxCPUCoresForResourcePolicy = parseInt(config.resource_policy.maxCPUCoresForResourcePolicy);
+    }
+    if (typeof config.resource_policy === "undefined" || typeof config.resource_policy.maxMemoryForResourcePolicy === "undefined" || config.resource.maxMemoryForResourcePolicy === '') {
+      this.maxMemoryForResourcePolicy = 1000;
+    } else {
+      this.maxMemoryForResourcePolicy = parseInt(config.resource_policy.maxMemoryForResourcePolicy);
+    }
+    if (typeof config.resource_policy === "undefined" || typeof config.resource_policy.maxGPUForResourcePolicy === "undefined" || config.resource.maxGPUForResourcePolicy === '') {
+      this.maxGPUForResourcePolicy = 1000;
+    } else {
+      this.maxGPUForResourcePolicy = parseInt(config.resource_policy.maxGPUForResourcePolicy);
+    }
+    if (typeof config.resource_policy === "undefined" || typeof config.resource_policy.maxfGPUForResourcePolicy === "undefined" || config.resource.maxfGPUForResourcePolicy === '') {
+      this.maxfGPUForResourcePolicy = 1000;
+    } else {
+      this.maxfGPUForResourcePolicy = parseInt(config.resource_policy.maxfGPUForResourcePolicy);
+    }
+    if (typeof config.resource_policy === "undefined" || typeof config.resource_policy.maxContainerPerSessionForResourcePolicy === "undefined" || config.resource.maxContainerPerSessionForResourcePolicy === '') {
+      this.maxContainerPerSessionForResourcePolicy = 1000;
+    } else {
+      this.maxContainerPerSessionForResourcePolicy = parseInt(config.resource_policy.maxContainerPerSessionForResourcePolicy);
+    }
+    if (typeof config.resource_policy === "undefined" || typeof config.resource_policy.maxIdleTimeoutForResourcePolicy === "undefined" || config.resource.maxIdleTimeoutForResourcePolicy === '') {
+      this.maxIdleTimeoutForResourcePolicy = 1000000;
+    } else {
+      this.maxIdleTimeoutForResourcePolicy = parseInt(config.resource_policy.maxIdleTimeoutForResourcePolicy);
+    }
+    if (typeof config.resource_policy === "undefined" || typeof config.resource_policy.maxConcurrentJobsForResourcePolicy === "undefined" || config.resource.maxConcurrentJobsForResourcePolicy === '') {
+      this.maxConcurrentJobsForResourcePolicy = 1000;
+    } else {
+      this.maxConcurrentJobsForResourcePolicy = parseInt(config.resource_policy.maxConcurrentJobsForResourcePolicy);
+    }
+    if (typeof config.resource_policy === "undefined" || typeof config.resource_policy.maxVfolderCapacity === "undefined" || config.resource.maxVfolderCapacity === '') {
+      this.maxVfolderCapacity = 1000;
+    } else {
+      this.maxVfolderCapacity = parseInt(config.resource_policy.maxVfolderCapacity);
+    }
+    if (typeof config.resource_policy === "undefined" || typeof config.resource_policy.maxVfolderCount === "undefined" || config.resource.maxVfolderCount === '') {
+      this.maxVfolderCount = 1000;
+    } else {
+      this.maxVfolderCount = parseInt(config.resource_policy.maxVfolderCount);
     }
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
       this.allow_signout = false;
@@ -885,6 +940,15 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.maxCUDADevicesPerSession = this.maxCUDADevicesPerSession;
       globalThis.backendaiclient._config.maxShmPerSession = this.maxShmPerSession;
       globalThis.backendaiclient._config.maxFileUploadSize = this.maxFileUploadSize;
+      globalThis.backendaiclient._config.maxCPUCoresForResourcePolicy = this.maxCPUCoresForResourcePolicy;
+      globalThis.backendaiclient._config.maxMemoryForResourcePolicy = this.maxMemoryForResourcePolicy;
+      globalThis.backendaiclient._config.maxGPUForResourcePolicy = this.maxGPUForResourcePolicy;
+      globalThis.backendaiclient._config.maxfGPUForResourcePolicy = this.maxfGPUForResourcePolicy;
+      globalThis.backendaiclient._config.maxContainerPerSessionForResourcePolicy = this.maxContainerPerSessionForResourcePolicy;
+      globalThis.backendaiclient._config.maxIdleTimeoutForResourcePolicy = this.maxIdleTimeoutForResourcePolicy;
+      globalThis.backendaiclient._config.maxConcurrentJobsForResourcePolicy = this.maxConcurrentJobsForResourcePolicy;
+      globalThis.backendaiclient._config.maxVfolderCapacity = this.maxVfolderCapacity;
+      globalThis.backendaiclient._config.maxVfolderCount = this.maxVfolderCount;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
