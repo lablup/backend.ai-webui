@@ -765,6 +765,7 @@ export default class BackendAICredentialList extends BackendAIPage {
                 max="50000"
                 label="${_t('credential.RateLimit')}"
                 validationMessage="${_t('credential.RateLimitValidation')}"
+                helper="${_t('credential.RateLimitValidation')}"
                 @change=${() => this._adjustRateLimit()}
                 value="${this.keypairInfo.rate_limit}"></mwc-textfield>
           </div>

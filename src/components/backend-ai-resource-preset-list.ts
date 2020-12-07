@@ -287,6 +287,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
             auto-validate
             required
             pattern="[a-zA-Z0-9-_]+"
+            maxLength="255"
+            placeholder="${_t("maxLength.255chars")}"
             error-message="${_t("data.Allowslettersnumbersand-_")}"
           ></mwc-textfield>
           <h4>${_t("resourcePreset.ResourcePreset")}</h4>

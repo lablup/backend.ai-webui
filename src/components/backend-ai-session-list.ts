@@ -300,6 +300,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           padding: 0;
           outline-style: none;
         }
+
+        span#access-key-filter-helper-text {
+          margin-top: 3px;
+          font-size: 10px;
+          color: var(--general-menu-color-2);
+        }
       `];
   }
 
@@ -1665,11 +1671,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           </wl-button>
         </div>
         <span class="flex"></span>
-        <wl-textfield id="access-key-filter" type="search" size=30
-                     label="${_t("general.AccessKey")}" no-label-float .value="${this.filterAccessKey}"
-                     style="display:none;margin-right:50px;"
-                     @change="${(e) => this._updateFilterAccessKey(e)}">
-        </wl-textfield>
+        <div class="vertical layout">
+          <wl-textfield id="access-key-filter" type="search" maxLength="64"
+                      label="${_t("general.AccessKey")}" no-label-float .value="${this.filterAccessKey}"
+                      style="display:none;margin-right:20px;"
+                      @change="${(e) => this._updateFilterAccessKey(e)}">
+          </wl-textfield>
+          <span id="access-key-filter-helper-text">${_t("maxLength.64chars")}</span>
+        </div>
       </div>
 
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
@@ -1758,9 +1767,10 @@ export default class BackendAiSessionList extends BackendAIPage {
       <backend-ai-dialog id="export-to-csv" fixed backdrop>
         <span slot="title">${_t("session.ExportSessionListToCSVFile")}</span>
         <div slot="content">
-          <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
+          <mwc-textfield id="export-file-name" label="${_text('credential.FileName')}" pattern="^[a-zA-Z0-9_-]+$"
                           validationMessage="Allows letters, numbers and -_."
                           value="${'session_' + this._defaultFileName}" required
+                          placeholder="${_t('maxLength.255chars')}"
                           style="margin-bottom:10px;"></mwc-textfield>
           <div class="horizontal center layout" style="display:none;">
             <wl-textfield id="date-from" label="From" type="date" style="margin-right:10px;"

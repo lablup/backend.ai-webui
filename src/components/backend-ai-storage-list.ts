@@ -439,8 +439,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.folders.RenameAFolder')}</span>
         <div slot="content">
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
-           required auto-validate validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"
-           style="width:320px;"
+           required autoValidate validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"
+           style="width:320px;" maxLength="64" placeholder="${_text('maxLength.64chars')}"
            @change="${() => {this._validateFolderName(true)}}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
@@ -454,7 +454,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t("data.folders.DeleteAFolder")}</span>
         <div slot="content" style="width:100%;">
           <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
-          <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"></mwc-textfield>
+          <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
+                         maxLength="64" placeholder="${_text('maxLength.64chars')}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button unelevated class="fullwidth red button" type="submit" icon="close" id="delete-button" @click="${() => this._deleteFolderWithCheck()}">
@@ -631,6 +632,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                          label="${_t("data.explorer.Foldername")}"
                          @change="${() => this._validatePathName()}"
                          required
+                         maxLength="255" placeholder="${_text('maxLength.255chars')}"
                          validationMessage="${_text("data.explorer.ValueRequired")}"></mwc-textfield>
           <br/>
         </div>
@@ -647,7 +649,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div class="vertical layout flex" id="textfields">
             <div class="horizontal layout">
               <div style="flex-grow: 2">
-                <mwc-textfield class="share-email" type="email" label="${_t("data.explorer.EnterEmailAddress")}"></mwc-textfield>
+                <mwc-textfield class="share-email" type="email" label="${_t("data.explorer.EnterEmailAddress")}"
+                               maxLength="64" placeholder="${_text('maxLength.64chars')}"></mwc-textfield>
               </div>
               <div>
                 <wl-button fab flat @click="${() => this._addTextField()}">
@@ -720,7 +723,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.explorer.RenameAFile')}</span>
         <div slot="content">
           <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"
-          required @change="${() => this._validateExistingFileName()}" auto-validate style="width:320px;"></mwc-textfield>
+          required @change="${() => this._validateExistingFileName()}" auto-validate style="width:320px;"
+          maxLength="255" placeholder="${_text('maxLength.255chars')}"></mwc-textfield>
           <div id="old-file-name" style="padding-left:15px;height:2.5em;"></div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
