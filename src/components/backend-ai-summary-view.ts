@@ -476,11 +476,11 @@ export default class BackendAISummary extends BackendAIPage {
                 ${this.is_admin ? html`
                   <a href="/credential" class="vertical center center-justified layout start-menu-items" style="border-left:1px solid #ccc;">
                     <i class="fas fa-key fa-2x"></i>
-                    <span>${_t('summary.CreateANewKeypair')}</span>
+                    <span>${_t('credential.Users')}</span>
                   </a>
-                  <a href="/credential" class="vertical center center-justified layout start-menu-items" style="border-left:1px solid #ccc;">
+                  <a href="/maintenance" class="vertical center center-justified layout start-menu-items" style="border-left:1px solid #ccc;">
                     <i class="fas fa-cogs fa-2x"></i>
-                    <span>${_t('summary.MaintainKeypairs')}</span>
+                    <span>${_t('console.menu.Maintenance')}</span>
                   </a>
                 ` : html``}
               </div>
@@ -592,7 +592,7 @@ export default class BackendAISummary extends BackendAIPage {
                         </a>
                     </div>
                   </lablup-activity-panel>` : html``}
-                    
+
                     <lablup-activity-panel class="footer-menu" noheader autowidth style="display:none">
                       <div slot="message" class="layout horizontal center center-justified flex upper-space">
                           <a href="/maintenance">
