@@ -62,6 +62,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: String}) rcfile = '';
   @property({type: String}) prevRcfile = '';
   @property({type: String}) preferredSSHPort = '';
+  @property({type: String}) publicSSHkey = '';
 
   constructor() {
     super();
@@ -679,8 +680,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       publicKeyEl.disabled = publicKeyEl.value === '' ? true : false;
       publicKeyCopyBtn.disabled = publicKeyEl.disabled;
 
-      // show information text for SSH generation
-      publicKeyEl.value = _text('usersettings.NoExistingSSHKeypair');
+      // show information text for SSH generation if the user has never generated SSH Keypair.
+      this.publicSSHkey = publicKeyEl.value ? publicKeyEl.value : _text('usersettings.NoExistingSSHKeypair');
+
       dialog.show();
     });
   }
@@ -694,6 +696,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     if (updatedSSHPublicKey !== "") {
       const dialog = this.shadowRoot.querySelector('#ssh-keypair-management-dialog');
       dialog.querySelector('#current-ssh-public-key').value = updatedSSHPublicKey;
+      dialog.querySelector('#copy-current-ssh-public-key-button').disabled = false;
     }
   }
 
@@ -983,7 +986,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <span slot="title">${_t("usersettings.SSHKeypairManagement")}</span>
         <div slot="content" style="max-width:500px">
           <span slot="title"> ${_t("usersettings.CurrentSSHPublicKey")}</span>
-          <mwc-textarea class="ssh-keypair" style="width:435px; height:270px;" id="current-ssh-public-key" outlined readonly></mwc-textarea>
+          <mwc-textarea
+              outlined
+              readonly
+              class="ssh-keypair"
+              id="current-ssh-public-key"
+              style="width:430px; height:270px;"
+              value="${this.publicSSHkey}"></mwc-textarea>
           <mwc-icon-button
               id="copy-current-ssh-public-key-button"
               icon="content_copy"
@@ -1008,14 +1017,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <mwc-textarea class="ssh-keypair" id="ssh-public-key" outlined readonly></mwc-textarea>
               <mwc-icon-button
               icon="content_copy"
-              @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+              @click="${() => this._copySSHKey("#ssh-public-key")}"></mwc-icon-button>
             </div>
             <span slot="title">${_t("usersettings.PrivateKey")}</span>
             <div class="horizontal layout flex">
               <mwc-textarea class="ssh-keypair" id="ssh-private-key" outlined readonly></mwc-textarea>
               <mwc-icon-button
                   icon="content_copy"
-                  @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+                  @click="${() => this._copySSHKey("#ssh-private-key")}"></mwc-icon-button>
             </div>
             <div style="color:crimson">${_t("usersettings.SSHKeypairGenerationWarning")}</div>
           </div>
