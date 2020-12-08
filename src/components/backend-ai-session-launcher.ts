@@ -756,7 +756,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.gpu_modes = this.resourceBroker.gpu_modes;
       this.updateResourceAllocationPane('refresh resource policy');
     }).catch((err) => {
-      console.log(err);
+      //console.log(err);
       this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -1002,9 +1002,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._updateSelectedFolder(true);
     }).catch((err) => {
       // this.metadata_updating = false;
+      //console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.detail = err.message;
+        if (err.description) {
+          this.notification.text = PainKiller.relieve(err.description);
+        } else {
+          this.notification.detail = err.message;
+        }
         this.notification.show(true, err);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -1038,11 +1043,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _createKernel(kernelName, sessionName, config) {
     const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000);
     task.catch((err) => {
+      //console.log(err);
       if (err && err.message) {
         if ('statusCode' in err && err.statusCode === 408) {
           this.notification.text = _text("session.launcher.sessionStillPreparing");
         } else {
-          this.notification.text = PainKiller.relieve(err.message);
+          if (err.description) {
+            this.notification.text = PainKiller.relieve(err.description);
+          } else {
+            this.notification.text = PainKiller.relieve(err.message);
+          }
         }
         this.notification.detail = err.message;
         this.notification.show(true, err);
@@ -1230,8 +1240,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return Promise.resolve(true);
     }).catch(err => {
       if (err && err.message) {
-        console.log(err);
-        this.notification.text = PainKiller.relieve(err.title);
+        if (err.description) {
+          this.notification.text = PainKiller.relieve(err.description);
+        } else {
+          this.notification.text = PainKiller.relieve(err.title);
+        }
         this.notification.detail = err.message;
         this.notification.show(true, err);
       }
