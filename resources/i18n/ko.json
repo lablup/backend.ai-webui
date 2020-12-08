@@ -117,7 +117,7 @@
       "Base": "기본환경",
       "Requirements": "요구사항",
       "UseGPU": "GPU 사용",
-      "SessionNameOptional": "세션 이름 (64자 이하)",
+      "SessionNameOptional": "세션 이름 (<65자)",
       "Environments": "실행 환경",
       "Start": "시작",
       "FolderToMount": "마운트할 폴더",
