@@ -7,8 +7,7 @@ import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import 'weightless/card';
-import {BackendAiStyles} from './backend-ai-general-styles';
+import 'weightless/card'; import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
 
 import {
@@ -142,9 +141,17 @@ export default class BackendAIUsageList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._getUserInfo();
+        setTimeout(() => {
+          const periodSelector = this.shadowRoot.querySelector('#period-selector');
+          periodSelector.selectedText = periodSelector.selected.textContent.trim();
+        }, 100);
       }, true);
     } else { // already connected
       this._getUserInfo();
+      setTimeout(() => {
+        const periodSelector = this.shadowRoot.querySelector('#period-selector');
+        periodSelector.selectedText = periodSelector.selected.textContent.trim();
+      }, 100);
     }
   }
 
@@ -273,34 +280,33 @@ export default class BackendAIUsageList extends BackendAIPage {
     return html`
       <div class="card" elevation="0">
         <h3 class="horizontal center layout">
-          <mwc-select outlined label="${_t("statistics.SelectPeriod")}" style="width: 130px;" @change="${(e) => {
-      this.pulldownChange(e)
-    }}">
-            <mwc-list-item value="1D" selected>${_t("statistics.1Day")}</mwc-list-item>
+          <mwc-select label="${_t('statistics.SelectPeriod')}"
+              id="period-selector" style="width:130px; border:1px solid #ccc;"
+              @change="${(e) => {this.pulldownChange(e)}}">
+            <mwc-list-item value="1D" selected>${_t('statistics.1Day')}</mwc-list-item>
             ${this.elapsedDays > 7 ? html`
-              <mwc-list-item value="1W">${_t("statistics.1Week")}</mwc-list-item>
-            ` : html`
-            `}
+              <mwc-list-item value="1W">${_t('statistics.1Week')}</mwc-list-item>
+            ` : html``}
           </mwc-select>
           <span class="flex"></span>
         </h3>
         ${Object.keys(this.collection).length > 0 ?
-      Object.keys(this._map).map((key, idx) =>
-        html`
-          <div class="card">
-            <h3 class="horizontal center layout">
-              <span>${this._map[key]}</span>
-              <span class="flex"></span>
-            </h3>
-            </div>
-            <div style="width:100%;min-height:180px;">
-              <backend-ai-chart
-                idx=${idx}
-                .collection=${this.collection[this.period][key]}
-              ></backend-ai-chart>
-            </div>
-          </div>
-            `) : html``}
+          Object.keys(this._map).map((key, idx) =>
+            html`
+              <div class="card">
+                <h3 class="horizontal center layout">
+                  <span>${this._map[key]}</span>
+                  <span class="flex"></span>
+                </h3>
+              </div>
+              <div style="width:100%;min-height:180px;">
+                <backend-ai-chart
+                  idx=${idx}
+                  .collection=${this.collection[this.period][key]}
+                ></backend-ai-chart>
+              </div>
+            `
+          ) : html``}
       </div>
     `;
   }
