@@ -543,7 +543,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.default_language = '';
     this.concurrency_used = 0;
     this.concurrency_max = 0;
-    this.concurrency_limit = 0;
+    this.concurrency_limit = 1;
     this._status = 'inactive';
     this.cpu_request = 1;
     this.mem_request = 1;
