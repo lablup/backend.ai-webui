@@ -678,8 +678,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Update selected folders.
-   * If selectedFolderItems are not empty and forceInitialize is true, unselect the selected items 
-   * 
+   * If selectedFolderItems are not empty and forceInitialize is true, unselect the selected items
+   *
    * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
   _updateSelectedFolder(forceInitialize = false) {
@@ -999,7 +999,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
       // initialize vfolder and shrink vfolder selecting part
       this.shadowRoot.querySelector('#vfolder-select-expansion').checked = false;
-      this._updateSelectedFolder(true);
+      this._updateSelectedFolder(false);
     }).catch((err) => {
       // this.metadata_updating = false;
       //console.log(err);
