@@ -282,7 +282,7 @@
     "RateLimitFor15min": "15분 동안 Rate Limiting",
     "for900seconds": "(900초당)",
     "Users": "사용자",
-    "exportCSV": "CSV 내보내기",
+    "exportCSV": "CSV로 내보내기",
     "CreateUser": "사용자 추가",
     "AddCredential": "자격증명 추가",
     "Active": "활성",
