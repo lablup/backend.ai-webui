@@ -169,6 +169,7 @@
       "CustomResourceApplied": "Custom resource is applied",
       "PleaseChooseFoldersToMount": "Please Choose Folders To Mount",
       "StartImportedNotebook": "Start Imported Notebook",
+      "DuplicatedSessionName": "Duplicated session name not allowed",
       "SessionNameAllowCondition": "Session name should have 4-64 alphabets/numbers without any whitespaces.",
       "NoFolderExists": "No Folder Exists",
       "sessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app.",

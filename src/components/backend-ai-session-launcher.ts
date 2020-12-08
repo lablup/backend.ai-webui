@@ -825,7 +825,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.session_request = this.shadowRoot.querySelector('#session-resource').value;
     this.num_sessions = this.session_request;
     if (this.sessions_list.includes(sessionName)) {
-      this.notification.text = "Duplicate session name not allowed.";
+      this.notification.text = _text('session.launcher.DuplicatedSessionName');
       this.notification.show();
       return;
     }
@@ -1969,7 +1969,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `)}
             </mwc-select>
             <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
-                           pattern="[a-zA-Z0-9_-]{4,}" fullwidth
+                           pattern="[a-zA-Z0-9_-]{4,64}" fullwidth
                            validationMessage="${_t("session.launcher.SessionNameAllowCondition")}"
                            style="margin-left:5px;">
             </mwc-textfield>

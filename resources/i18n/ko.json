@@ -167,7 +167,8 @@
       "CustomResourceApplied": "사용자 설정 자원이 할당됨",
       "PleaseChooseFoldersToMount": "마운트할 폴더들을 선택하세요",
       "StartImportedNotebook": "가져온 노트북 열기",
-      "SessionNameAllowCondition": "세션 이름은 공백없이 4-64  사이의 영문/숫자만 입력 가능합니다.",
+      "DuplicatedSessionName": "동일한 이름의 연산 세션이 있습니다",
+      "SessionNameAllowCondition": "공백없이 4-64자  사이의 영문/숫자만 입력 가능합니다.",
       "NoFolderExists": "폴더가 없습니다",
       "sessionStillPreparing": "세션이 아직 준비중입니다. 세션이 시작된 후 직접 앱 아이콘을 눌러 앱을 시작해주세요.",
       "ResourceMonitorToggle": "자원 모니터 보기"
