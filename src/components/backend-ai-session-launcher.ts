@@ -1899,7 +1899,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <wl-icon>power_settings_new</wl-icon>
         <span>${_t("session.launcher.Start")}</span>
       </wl-button>
-      <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
+      <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent>
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>
         <form slot="content" id="launch-session-form" class="centered">
           <div class="vertical center layout" style="padding-top:15px;">
