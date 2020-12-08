@@ -1017,14 +1017,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <mwc-textarea class="ssh-keypair" id="ssh-public-key" outlined readonly></mwc-textarea>
               <mwc-icon-button
               icon="content_copy"
-              @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+              @click="${() => this._copySSHKey("#ssh-public-key")}"></mwc-icon-button>
             </div>
             <span slot="title">${_t("usersettings.PrivateKey")}</span>
             <div class="horizontal layout flex">
               <mwc-textarea class="ssh-keypair" id="ssh-private-key" outlined readonly></mwc-textarea>
               <mwc-icon-button
                   icon="content_copy"
-                  @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+                  @click="${() => this._copySSHKey("#ssh-private-key")}"></mwc-icon-button>
             </div>
             <div style="color:crimson">${_t("usersettings.SSHKeypairGenerationWarning")}</div>
           </div>
