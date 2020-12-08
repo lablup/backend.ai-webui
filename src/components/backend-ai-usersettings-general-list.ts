@@ -348,8 +348,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         lang = globalThis.navigator.language.split('-')[0];
       }
       globalThis.backendaioptions.set('language', e.target.selected.value);
-      globalThis.backendaioptions.set('current_language', lang;
+      globalThis.backendaioptions.set('current_language', lang);
       setLanguage(lang);
+      setTimeout(() => {
+        const langEl = this.shadowRoot.querySelector('#ui-language');
+        langEl.selectedText = langEl.selected.textContent.trim();
+      }, 100);
     }
   }
 
