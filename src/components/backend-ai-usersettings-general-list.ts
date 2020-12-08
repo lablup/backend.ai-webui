@@ -403,7 +403,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     const editor = this.shadowRoot.querySelector('#bootstrap-dialog #bootstrap-editor');
     const script = editor.getValue();
     if (this.lastSavedBootstrapScript === script) {
-      this.notification.text = 'No changes';
+      this.notification.text = _text('usersettings.NoChanges');
       this.notification.show();
       return;
     }
@@ -512,7 +512,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
       } else { // if rcfile already exists
         if (this.rcfiles[idx]['data'] === script) {
-          this.notification.text = 'No changes';
+          this.notification.text = _text('usersettings.NoChanges');
           this.notification.show();
           return;
         } else if (script === '') {

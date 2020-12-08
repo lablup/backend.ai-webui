@@ -335,6 +335,7 @@
     "SecretKeyOptional": "Secret Key (optional)",
     "UserAccountCreated": "User account is successfully created",
     "UserAccountCreatedError": "This account has already been registered.",
+    "TooLongValue": "Email and username length should not exceed 64 characters",
     "KeypairCreated": "Keypair successfully created.",
     "UserNotFound": "Credential creation failed, since the following user ID could't be found : ",
     "UserIDRequired": "User ID is required."
@@ -535,6 +536,7 @@
     "DescNoBetaFeatures": "No beta feature available now. :)",
     "EditBootstrapScript": "Edit Bootstrap Script",
     "EditUserConfigScript": "Edit User Config Script",
+    "NoChanges": "No changes",
     "PackageInstallation": "Package Installation",
     "BootstrapScript": "Bootstrap Script",
     "DialogSaveToSpecificFile": "Save the changes you made to File?",

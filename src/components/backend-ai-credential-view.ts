@@ -564,6 +564,12 @@ export default class BackendAICredentialView extends BackendAIPage {
     if (!emailEl.checkValidity() || !passwordEl.checkValidity() || !confirmEl.checkValidity()) {
       return;
     }
+    // GS: do not send values too long
+    if (email.length > 64 || name.length > 64) {
+      this.notification.text = _text('credential.TooLongValue');
+      this.notification.show();
+      return;
+    }
 
     // all values except 'username', and 'password' are arbitrarily designated default values
     const input = {
@@ -586,7 +592,6 @@ export default class BackendAICredentialView extends BackendAIPage {
         this.shadowRoot.querySelector('#new-user-dialog').hide();
         if (res['create_user'].ok) {
           this.notification.text = _text('credential.UserAccountCreated');
-
           this.shadowRoot.querySelector('#active-user-list').refresh();
         } else {
           // console.error(res['create_user'].msg);

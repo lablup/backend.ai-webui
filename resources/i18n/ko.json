@@ -330,6 +330,7 @@
     "SecretKeyOptional": "비밀 키 (선택)",
     "UserAccountCreated": "사용자 계정이 성공적으로 생성되었습니다.",
     "UserAccountCreatedError": "이미 가입한 이력이 있는 사용자 입니다.",
+    "TooLongValue": "이메일과 사용자 이름은 64자를 넘을 수 없습니다.",
     "KeypairCreated": "키페어가 성공적으로 생성되었습니다.",
     "UserNotFound": "다음 사용자 계정을 찾을 수 없어 자격 증명 생성에 실패하였습니다. : ",
     "UserIDRequired": "사용자 계정(email)은 필수 입력입니다."
@@ -529,6 +530,7 @@
     "DescNoBetaFeatures": "사용 가능한 베타 기능이 없습니다. :)",
     "EditBootstrapScript": "부트스트랩 스크립트 수정",
     "EditUserConfigScript": "사용자 환경 스크립트 수정",
+    "NoChanges": "변경 사항이 없습니다",
     "PackageInstallation": "패키지 설치",
     "BootstrapScript": "부트스트랩 스크립트",
     "DialogSaveToSpecificFile": "수정한 내용을 File 에 저장하시겠습니까?",
