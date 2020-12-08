@@ -2112,10 +2112,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </div>
           </div>
         </wl-expansion>
-<<<<<<< HEAD
-
-        <wl-expansion name="ownership" class="temporarily-hide" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
-=======
         ${this.cluster_support ? html`
         <mwc-select id="cluster-mode" label="${_t("session.launcher.ClusterMode")}" fullwidth required
               value="${this.cluster_mode}" @change="${(e) => this._setClusterMode(e)}">
@@ -2145,8 +2141,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                          @change="${(e) => this._setClusterSize(e)}"></lablup-slider>
           <span class="caption">${_t("session.launcher.Node")}</span>
         </div>`: html``}
-        <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
->>>>>>> b36825cb... feat: support multi-node multi-gpu on gui (#791)
+        <wl-expansion name="ownership" class="temporarily-hide" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
           <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.SetSessionOwner")}</span>
           <span slot="description"></span>
           <div class="vertical layout">

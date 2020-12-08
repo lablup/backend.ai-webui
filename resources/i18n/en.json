@@ -119,7 +119,7 @@
       "Base": "Base",
       "Requirements": "Requirements",
       "UseGPU": "Use GPU",
-      "SessionNameOptional": "Session name (optional)",
+      "SessionNameOptional": "Session name (up to 64 chars)",
       "Environments": "Environments",
       "Start": "Start",
       "FolderToMount": "Folder to mount",
