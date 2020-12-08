@@ -66,11 +66,12 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: String}) renameFolderId = '';
   @property({type: String}) deleteFolderId = '';
   @property({type: Object}) explorer = Object();
-  @property({type: Array}) explorerFiles = [];
+  @property({type: Array}) explorerFiles = Array();
+  @property({type: String}) existingFile = '';
   @property({type: Array}) invitees = [];
   @property({type: String}) selectedFolder = '';
   @property({type: String}) downloadURL = '';
-  @property({type: Array}) uploadFiles = [];
+  @property({type: Array}) uploadFiles = Array();
   @property({type: Array}) fileUploadQueue = [];
   @property({type: Number}) fileUploadCount = 0;
   @property({type: Number}) concurrentFileUploadLimit = 2;
@@ -730,26 +731,26 @@ export default class BackendAiStorageList extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-file-dialog" fixed backdrop>
-         <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
-         <div slot="content">
-            <p>${_t("dialog.warning.CannotBeUndone")}
-            ${_t("dialog.ask.DoYouWantToProceed")}</p>
-         </div>
-         <div slot="footer" class="horizontal end-justified flex layout">
-            <mwc-button outlined @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</mwc-button>
-            <mwc-button raised @click="${(e) => this._deleteFileWithCheck(e)}">${_t("button.Okay")}</mwc-button>
-         </div>
+        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
+        <div slot="content">
+          <p>${_t("dialog.warning.CannotBeUndone")}
+          ${_t("dialog.ask.DoYouWantToProceed")}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button outlined @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</mwc-button>
+          <mwc-button raised @click="${(e) => this._deleteFileWithCheck(e)}">${_t("button.Okay")}</mwc-button>
+        </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="download-file-dialog" fixed backdrop>
-         <span slot="title">${_t("data.explorer.DownloadFile")}</span>
-         <div slot="content">
-            <a href="${this.downloadURL}">
-              <wl-button outlined>${_t("data.explorer.TouchToDownload")}</wl-button>
-            </a>
-         </div>
-         <div slot="footer" class="horizontal center-justified flex layout distancing">
-            <mwc-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</mwc-button>
-         </div>
+        <span slot="title">${_t("data.explorer.DownloadFile")}</span>
+        <div slot="content">
+          <a href="${this.downloadURL}">
+            <wl-button outlined>${_t("data.explorer.TouchToDownload")}</wl-button>
+          </a>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout distancing">
+          <mwc-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</mwc-button>
+        </div>
       </backend-ai-dialog>
     `;
   }
@@ -1592,7 +1593,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - add file to the input element
    * */
   _uploadFileChange(e) {
-    const length = e.target.files.length;
+    let length = e.target.files.length;
+    let abortedFileCount = 0;
     for (let i = 0; i < length; i++) {
       const file = e.target.files[i];
 
@@ -1605,20 +1607,40 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.show();
         return;
       } else {
-        file.id = text;
-        file.progress = 0;
-        file.caption = '';
-        file.error = false;
-        file.complete = false;
-        (this.uploadFiles as any).push(file);
+        let reUploadFile = this.explorerFiles.find( elem => elem.filename === file.name);
+        if (reUploadFile) {
+          // plain javascript modal to confirm whether proceed to overwrite operation or not
+          /*
+           *  TODO: replace confirm operation with customized dialog
+           */
+          let confirmed = window.confirm(`${_text("data.explorer.FileAlreadyExists")}\n${file.name}\n${_text("data.explorer.DoYouWantToOverwrite")}`);
+          if (confirmed) {
+            file.id = text;
+            file.progress = 0;
+            file.caption = '';
+            file.error = false;
+            file.complete = false;
+            (this.uploadFiles as any).push(file);
+          } else {
+            abortedFileCount++;
+          }
+        } 
+        else {
+          // let result = await this.shadowRoot.querySelector('#reupload-confirmation-dialog').show();
+          file.id = text;
+          file.progress = 0;
+          file.caption = '';
+          file.error = false;
+          file.complete = false;
+          (this.uploadFiles as any).push(file);
+        }
       }
     }
-
+    length = (length - abortedFileCount) >= 0 ? length - abortedFileCount : 0;
     for (let i = 0; i < length; i++) {
       this.fileUpload(this.uploadFiles[i]);
     }
-
-    this.shadowRoot.querySelector('#fileInput').value = '';
+    this.shadowRoot.querySelector('#fileInput').value = ''; 
   }
 
   /**
