@@ -172,6 +172,7 @@
       "SessionNameAllowCondition": "Session name only allows at least 4 characters without any whitespaces.",
       "NoFolderExists": "No Folder Exists",
       "sessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app.",
+      "UnSelectAllVFolders": "UNSELECT ALL",
       "ResourceMonitorToggle": "See resource monitor"
     },
     "Running": "Running",

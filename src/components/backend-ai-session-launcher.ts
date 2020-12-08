@@ -677,18 +677,36 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * Update selected folders
+   * Update selected folders.
+   * If selectedFolderItems are not empty and forceInitialize is true, unselect the selected items
+   *
+   * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
-  _updateSelectedFolder() {
+  _updateSelectedFolder(forceInitialize = false) {
     let folders = this.shadowRoot.querySelector('#vfolder');
     let selectedFolderItems = folders.selected;
     let selectedFolders: String[] = [];
     if (selectedFolderItems.length > 0) {
       selectedFolders = selectedFolderItems.map(item => item.value);
-    } else {
-      selectedFolders = [];
+
+      if (forceInitialize) {
+        this._unselectAllSelectedFolder();
+      }
     }
     this.selectedVfolders = selectedFolders;
+  }
+
+  _unselectAllSelectedFolder() {
+    let folders = this.shadowRoot.querySelector('#vfolder');
+    if (folders.selected) {
+      folders.items.forEach((item, index) => {
+        if (item.selected) {
+          folders.toggle(index, true);
+          item.selected = false;
+        }
+      });
+      this.selectedVfolders = [];
+    }
   }
 
   /**
@@ -978,6 +996,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           // remove redundant error message
         });
       }
+
+      // initialize vfolder and shrink vfolder selecting part
+      this.shadowRoot.querySelector('#vfolder-select-expansion').checked = false;
+      this._updateSelectedFolder(false);
     }).catch((err) => {
       // this.metadata_updating = false;
       //console.log(err);
@@ -1976,10 +1998,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </mwc-textfield>
           </div>
 
-          <wl-expansion name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
+          <wl-expansion id="vfolder-select-expansion" name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
             <mwc-list fullwidth multi id="vfolder"
-              @selected="${this._updateSelectedFolder}">
+              @selected="${() => this._updateSelectedFolder()}">
             ${this.vfolders.length === 0 ? html`
               <mwc-list-item value="" disabled="true">${_t("session.launcher.NoFolderExists")}</mwc-list-item>
             `:html``}
@@ -1993,6 +2015,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <li><mwc-icon>folder_open</mwc-icon>${item}</li>
               `)}
           </ul>
+          ${this.selectedVfolders.length > 0 ? html`
+            <div class="horizontal layout end-justified">
+              <mwc-button
+                  outlined
+                  label="${_t("session.launcher.UnSelectAllVFolders")}"
+                  style="width:auto;margin-right:10px;"
+                  @click=${() => this._unselectAllSelectedFolder()}></mwc-button>
+            </div>
+          ` : html``}
           <div class="vertical center layout" style="padding-top:15px;">
             <mwc-select id="resource-templates" label="${_t("session.launcher.ResourceAllocation")}" fullwidth required>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
