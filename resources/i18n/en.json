@@ -911,7 +911,11 @@
     "ReachedResourceLimit": "Reached your resource limit. Check resources and sessions.",
     "AuthenticationFailed": "Authentication failed. Check information and manager status.",
     "NetworkConnectionFailed": "Network connection failed. Check network status.",
-    "TooManyLoginFailures": "There have been too many login failures in a short time. Login is blocked for a while."
+    "TooManyLoginFailures": "There have been too many login failures in a short time. Login is blocked for a while.",
+    "ResourcePolicyAlreadyExist": "A resource policy with the same name already exists.",
+    "ScalingGroupAlreadyExist": "A scaling group with the same name already exists.",
+    "ResourceLimitExceed": "Resource limit exceed. Check your free resources.",
+    "SmallerResourceThenImageRequires": "Your resource request is smaller than the minimum required by the image. Try more resources."
   },
   "maxLength" : {
     "20chars": "(maximum 20 chars)",

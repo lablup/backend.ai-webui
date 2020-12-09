@@ -940,7 +940,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
         <span slot="title">${_t("usersettings.Edit_ShellScriptTitle_1")} ${this.rcfile} ${_t("usersettings.Edit_ShellScriptTitle_2")}</span>
-        <div slot="action" class="vertical layout">
+        <div slot="action" class="vertical layout" style="margin-left:1em;">
           <mwc-select id="select-rcfile-type"
                       label="${_t("usersettings.ConfigFilename")}"
                       required

@@ -907,7 +907,11 @@
     "ReachedResourceLimit": "리소스 제한에 도달했습니다. 리소스 할당량을 확인하세요.",
     "AuthenticationFailed": "API 인증 실패. 사용자 정보나 Manager 상태를 확인하세요.",
     "NetworkConnectionFailed": "네트워크 연결 실패. 네트워크 상태를 확인하세요.",
-    "TooManyLoginFailures": "너무 많은 로그인 시도.  시간이 지난 후에 다시 시도해보세요."
+    "TooManyLoginFailures": "너무 많은 로그인 시도.  시간이 지난 후에 다시 시도해보세요.",
+    "ResourcePolicyAlreadyExist": "같은 이름의 리소스 정책이 이미 있습니다.",
+    "ScalingGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다.",
+    "ResourceLimitExceed": "리소스 제한을 초과했습니다. 가용 자원량을 확인하세요.",
+    "SmallerResourceThenImageRequires": "요청한 리소스가 이미지가 요구하는 리소스보다 적습니다. 리소스를 보다 크게 해서 시도해보세요."
   },
   "maxLength" : {
     "20chars": "(최대 길이 20자)",
