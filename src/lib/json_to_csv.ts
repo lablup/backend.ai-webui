@@ -16,16 +16,14 @@ export default class JsonToCsv {
       objs.map(obj => {
         keys.map((k) => {
           let cell = (obj[k] === null || obj[k] === undefined) ? '' : obj[k].toString();
-          if (cell === '[object Object]') {
+          if (typeof cell === 'string' && cell.startsWith('[object Object]')) {
             cell = JSON.stringify(obj[k]);
           }
           if (cell.search(/("|,|\n)/g) >= 0) {
             if (cell[0] === '[') { // Array of Objects
               let subJson = JSON.parse(cell);
               if (k === 'groups') { // groups key in users
-                subJson.map((key) => {
-                  obj[k + '.' + 'name'] = key.name;
-                })
+                obj[k + '.' + 'name'] = subJson.map((key) => key.name).join(';');
               } else {
                 subJson.map((key) => {
                   obj[k + '.' + key] = key;
@@ -35,7 +33,7 @@ export default class JsonToCsv {
             } else if (cell[0] === '{') {
               let subJson = JSON.parse(cell);
               Object.keys(subJson).map((key) => {
-                subJson[key] = (['cpu', 'mem', 'cuda_shares','cuda_device'].includes(key) 
+                subJson[key] = (['cpu', 'mem', 'cuda_shares','cuda_device'].includes(key)
                                && typeof subJson[key] === 'string' ) ? '' : subJson[key];
                 obj[k +'.'+ key] = subJson[key];
               });
@@ -59,9 +57,9 @@ export default class JsonToCsv {
       JsonToCsv.flatten(rows);
       const separator = ',';
       const keys = Object.keys(rows[0]);
-      const csvContent = 
+      const csvContent =
         keys.join(separator) +
-          '\n' + 
+          '\n' +
           rows.map(row => {
             return keys.map(k => {
               let cell = '';

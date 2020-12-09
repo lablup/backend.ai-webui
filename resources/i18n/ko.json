@@ -20,6 +20,7 @@
       "ChangeUserInformation": "사용자 정보 변경",
       "ChangeUserInfo": "사용자 정보 변경",
       "FullName": "사용자 이름",
+      "FullNameInvalid": "사용자 이름은 64자 이하로 입력하십시오",
       "ChangePassword": "비밀번호 변경",
       "Preferences": "설정",
       "LogsErrors": "로그 / 에러기록",
@@ -280,6 +281,7 @@
     "active": "활성",
     "concurrentsessions": "동시 세션수",
     "RateLimit": "Rate Limit",
+    "RateLimitValidation": "Rate Limit 값은 0보다 크고 50000 이하 여야 합니다.",
     "RateLimitFor15min": "15분 동안 Rate Limiting",
     "for900seconds": "(900초당)",
     "Users": "사용자",
@@ -317,6 +319,7 @@
     "Description": "소개",
     "Days": "일",
     "NoChanges": "변경 사항이 없습니다.",
+    "FileName": "파일 명",
     "validation": {
       "InvalidEmailAddress": "잘못된 이메일 주소 형식입니다.",
       "PolicyName": "정책 이름이 필요합니다.",
@@ -799,7 +802,7 @@
     "ConnectingToCluster": "Backend.AI 클러스터에 연결중...",
     "ForgotPassword": "비밀번호를 잊어버렸습니까?",
     "ChangeUserInformation": "계정 정보 변경",
-    "Username": "Username",
+    "Username": "사용자명",
     "ChangePassword": "비밀번호 변경",
     "SendChangePasswordEmail": "비밀번호 변경 이메일 보내기",
     "DescChangePasswordEmail": "비밀번호 변경을 위한 이메일을 보내기 위해 이메일을 입력하고 보내기 버튼을 눌러주세요.",
@@ -838,7 +841,7 @@
     "EmailVerificationFailed": "이메일 인증에 실패했습니다",
     "EmailVerificationFailedMessage": "이메일을 인증할 수 없습니다. 인증 토큰에 문제가 있거나 만료되었을 가능성이 있습니다. 이메일을 입력하고 버튼을 클릭하면 새로운 인증 링크를 받을 수 있습니다.",
     "EmailInputRequired": "이메일 주소는 필수 입력입니다.",
-    "InvalidEmail": "정상적인 이메일 주소가 아닙니다",
+    "InvalidEmail": "정상적인 이메일 주소가 아닙니다.",
     "SendEmail": "인증 메일 전송",
     "EmailSent": "이메일을 보냈습니다",
     "EmailNotSent": "이메일을 보내는 데 실패했습니다"
@@ -897,5 +900,14 @@
   },
   "error": {
     "APINotSupported": "지원하지 않는 API입니다. 최신 버전의 Backend.AI 매니저가 필요합니다."
+  },
+  "maxLength" : {
+    "20chars": "(최대 길이 20자)",
+    "40chars": "(최대 길이 40자)",
+    "64chars": "(최대 길이 64자)",
+    "255chars": "(최대 길이 255자)",
+    "500chars": "(최대 길이 500자)",
+    "512chars": "(최대 길이 512자)",
+    "2048chars": "(최대 길이 2048자)"
   }
 }

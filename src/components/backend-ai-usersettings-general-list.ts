@@ -865,7 +865,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
           <div class="vertical center-justified layout setting-text">
             <mwc-textfield pattern="[0-9]*" @change="${(e) => this.changePreferredSSHPort(e)}"
-                value="${this.preferredSSHPort}" validationMessage="Allows numbers only" auto-validate></mwc-textfield>
+                value="${this.preferredSSHPort}" validationMessage="Allows numbers only" auto-validate maxLength="5"></mwc-textfield>
           </div>
         </div>
         ` : html``}

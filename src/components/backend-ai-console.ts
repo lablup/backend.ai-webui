@@ -452,12 +452,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         globalThis.history.pushState({}, '', '/unauthorized');
         store.dispatch(navigate(decodeURIComponent(this._page)));
       }
-    } else {
-      if (this._page === 'unauthorized') {
-        this._page = 'summary';
-        globalThis.history.pushState({}, '', '/summary');
-        store.dispatch(navigate(decodeURIComponent(this._page)));
-      }
     }
   }
 
@@ -769,6 +763,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    */
   async _updateFullname() {
     const newFullname = this.shadowRoot.querySelector('#pref-original-name').value;
+    if (newFullname.length > 64) {
+      this.notification.text = _text('console.menu.FullNameInvalid');
+      this.notification.show();
+      return;
+    }
     // if user input in full name is not null and not same as the original full name, then it updates.
     if (globalThis.backendaiclient.supports('change-user-name')) {
       if (newFullname && (newFullname !== this.full_name)) {
@@ -864,11 +863,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
         if (typeof modified_view != 'undefined') {
           view = modified_view;
-        }
-      }
-      if (this.adminOnlyPages.includes(view)) {
-        if (!this.is_admin || !this.is_superadmin) {
-          view = 'unauthorized';
         }
       }
       this._page = view;
@@ -1530,18 +1524,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         <span slot="title">${_t("console.menu.ChangeUserInformation")}</span>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-name" type="text"
-              label="${_t('console.menu.FullName')}" max-length="30" autofocus
-              style="margin-bottom:20px;" value="${this.full_name}">
+              label="${_t('console.menu.FullName')}" maxLength="64" autofocus
+              style="margin-bottom:20px;" value="${this.full_name}"
+              helper="${_t('maxLength.64chars')}">
           </mwc-text-field>
         </div>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-password" type="password"
-              label="${_t('console.menu.OriginalPassword')}" max-length="30"
+              label="${_t('console.menu.OriginalPassword')}" maxLength="64"
               style="margin-bottom:20px;">
           </mwc-textfield>
           <div class="horizontal flex layout">
             <mwc-textfield id="pref-new-password" label="${_t('console.menu.NewPassword')}"
-                type="password" min-length="8" max-length="30"
+                type="password" maxLength="64"
                 auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
                 pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                 @change="${this._validatePassword}">
@@ -1552,7 +1547,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           </div>
           <div class="horizontal flex layout">
             <mwc-textfield id="pref-new-password2" label="${_t('console.menu.NewPasswordAgain')}"
-                type="password" min-length="8" max-length="30"
+                type="password" maxLength="64"
                 @change="${this._validatePassword}">
             </mwc-textfield>
             <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"

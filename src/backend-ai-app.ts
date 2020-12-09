@@ -37,9 +37,8 @@ export const navigate = (path: any, params: Object = {}) => (dispatch: any) => {
   // you can do here
   if (['agent', 'resource', 'user', 'credential', 'environment', 'settings',
   'maintenance', 'information'].includes(page)) {
-    console.log(globalThis.backendaiclient);
-      // page = 'summary';
-      // globalThis.history.pushState({}, '', '/summary');
+    // page = 'summary';
+    // globalThis.history.pushState({}, '', '/summary');
   }
   dispatch(loadPage(page, params));
 

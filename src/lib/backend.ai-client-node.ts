@@ -516,9 +516,9 @@ class Client {
       this._features['group-folder'] = true;
       this._features['system-images'] = true;
       this._features['detailed-session-states'] = true;
+      this._features['change-user-name'] = true;
     }
     if (this.isAPIVersionCompatibleWith('v6.20200815')) {
-      this._features['change-user-name'] = true;
       this._features['multi-container'] = true;
       this._features['multi-node'] = true;
     }
@@ -593,10 +593,17 @@ class Client {
         }
       }
     } catch (err) { // Manager / console server down.
-      throw {
-        "title": "No manager found at API Endpoint.",
-        "message": "Authentication failed. Check information and manager status."
-      };
+      if ('statusCode' in err && err.statusCode === 429) {
+        throw {
+          "title": err.description,
+          "message": "Too many failed login attempts."
+        };
+      } else {
+        throw {
+          "title": "No manager found at API Endpoint.",
+          "message": "Authentication failed. Check information and manager status."
+        };
+      }
       //console.log(err);
       //return false;
     }
