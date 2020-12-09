@@ -902,7 +902,17 @@
     "OpenSource": "Open Source"
   },
   "error": {
-    "APINotSupported": "API not supported. Requires latest version of Backend.AI manager."
+    "APINotSupported": "API not supported. Requires latest version of Backend.AI manager.",
+    "UserHasNoGroup": "User has no group. Please contact administrator to fix it.",
+    "WrongAPIServerAddress": "Wrong API server address.",
+    "LoginFailed": "Login failed. Check login information.",
+    "VirtualFolderAlreadyExist": "A virtual folder with the same name already exists. Delete your own folder or decline the invitation.",
+    "MaximumVfolderCreation": "You cannot create more vfolders due to resource policy",
+    "LoginInformationMismatch": "Login information mismatch. Check your information",
+    "ReachedResourceLimit": "Reached your resource limit. Check resources and sessions.",
+    "AuthenticationFailed": "Authentication failed. Check information and manager status.",
+    "NetworkConnectionFailed": "Network connection failed. Check network status.",
+    "TooManyLoginFailures": "There have been too many login failures in a short time. Login is blocked for a while."
   },
   "maxLength" : {
     "20chars": "(maximum 20 chars)",
