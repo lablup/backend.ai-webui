@@ -571,7 +571,7 @@
     "Edit_ShellScriptTitle_1": "Edit ",
     "Edit_ShellScriptTitle_2": " shell script",
     "AutoLogout": "Auto Logout",
-    "DescAutoLogout": "Log out automatically if page is closed and no page restoring in 5 seconds."
+    "DescAutoLogout": "Log out automatically if all logined pages are closed except session originated pages for apps(e.g. jupyter notebook, web terminal, etc.)"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
