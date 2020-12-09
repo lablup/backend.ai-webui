@@ -45,19 +45,20 @@ export default class ChartJs extends LitElement {
           margin: 0 auto;
           padding: 5px;
           overflow: hidden;
-          width: 70vw;
-          height: 25vh;
+          width: auto;
+          height: 200px;
         }
 
-        .chart-sub-container {
+        .chart-top-container > .chart-sub-container {
           position: relative;
-          width: 100%;
-          height: 100%
+          width: 65vw;
+          max-width: 70vw;
+          height: 200px;
         }
 
         @media only screen and (max-width: 1015px) {
-          .chart-sub-container {
-            width: 90%;
+          .chart-top-container > .chart-sub-container {
+            max-width: 55vw;
           }
         }
       `
@@ -73,7 +74,7 @@ export default class ChartJs extends LitElement {
   public render(): void | TemplateResult {
     return html`
       <div class="chart-top-container" style="display:grid;place-items:center;">
-        <div class="chart-shell chart-sub-container">
+        <div class="chart-sub-container">
           <canvas></canvas>
         </div>
       </div>
