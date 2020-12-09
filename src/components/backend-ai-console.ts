@@ -1005,26 +1005,22 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * Display the ToS(terms of service) agreement.
    */
   showTOSAgreement() {
-    if (this.TOSdialog.show === false) {
-      this.TOSdialog.tosContent = "";
-      this.TOSdialog.tosLanguage = this.lang;
-      this.TOSdialog.title = _text("console.menu.TermsOfService");
-      this.TOSdialog.tosEntry = 'terms-of-service';
-      this.TOSdialog.open();
-    }
+    this.TOSdialog.tosContent = "";
+    this.TOSdialog.tosLanguage = this.lang;
+    this.TOSdialog.title = _text("console.menu.TermsOfService");
+    this.TOSdialog.tosEntry = 'terms-of-service';
+    this.TOSdialog.open();
   }
 
   /**
    * Display the PP(privacy policy) agreement.
    */
   showPPAgreement() {
-    if (this.TOSdialog.show === false) {
-      this.TOSdialog.tosContent = "";
-      this.TOSdialog.tosLanguage = this.lang;
-      this.TOSdialog.title = _text("console.menu.PrivacyPolicy");
-      this.TOSdialog.tosEntry = 'privacy-policy';
-      this.TOSdialog.open();
-    }
+    this.TOSdialog.tosContent = "";
+    this.TOSdialog.tosLanguage = this.lang;
+    this.TOSdialog.title = _text("console.menu.PrivacyPolicy");
+    this.TOSdialog.tosEntry = 'privacy-policy';
+    this.TOSdialog.open();
   }
 
   /**
