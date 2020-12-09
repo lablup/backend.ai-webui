@@ -21,6 +21,7 @@
       "ChangeUserInformation": "Change User Information",
       "ChangeUserInfo": "Change User Info",
       "FullName": "Full Name (up to 64 chars)",
+      "FullNameInvalid": "Full name should not exceed 64 characters",
       "ChangePassword": "Change Password",
       "Preferences": "Preferences",
       "LogsErrors": "Logs / Errors",

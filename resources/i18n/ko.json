@@ -20,6 +20,7 @@
       "ChangeUserInformation": "사용자 정보 변경",
       "ChangeUserInfo": "사용자 정보 변경",
       "FullName": "사용자 이름 (64자 이하)",
+      "FullNameInvalid": "사용자 이름은 64자 이하로 입력하십시오",
       "ChangePassword": "비밀번호 변경",
       "Preferences": "설정",
       "LogsErrors": "로그 / 에러기록",

@@ -681,6 +681,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    */
   async _updateFullname() {
     const newFullname = this.shadowRoot.querySelector('#pref-original-name').value;
+    if (newFullname.length > 64) {
+      this.notification.text = _text('console.menu.FullNameInvalid');
+      this.notification.show();
+      return;
+    }
     // if user input in full name is not null and not same as the original full name, then it updates.
     if (globalThis.backendaiclient.supports('change-user-name')) {
       if (newFullname && (newFullname !== this.full_name)) {
