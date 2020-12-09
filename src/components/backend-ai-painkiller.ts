@@ -37,12 +37,13 @@ export default class BackendAIPainKiller {
     // Resource
     "server responded failure: 412 Precondition Failed - You have reached your resource limit.": "error.ReachedResourceLimit",
     // User
-    "Cannot read property 'split' of undefined": "error.UserHasNoGroup"
+    "Cannot read property 'split' of undefined": "error.UserHasNoGroup",
   };
   static regexTable = {
-    'integrity error: duplicate key value violates unique constraint "pk_resource_presets"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A resource policy with the same name already exists.',
-    'integrity error: duplicate key value violates unique constraint "pk_scaling_groups"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'A scaling group with the same name already exists.',
-    'server responded failure: 400 Bad Request - Missing or invalid API parameters. (Your resource quota is exceeded. (cpu=24 mem=512g cuda.shares=80))': 'Resource limit exceed. Check your free resources.'
+    'integrity error: duplicate key value violates unique constraint "pk_resource_presets"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'error.ResourcePolicyAlreadyExist',
+    'integrity error: duplicate key value violates unique constraint "pk_scaling_groups"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'error.ScalingGroupAlreadyExist',
+    'server responded failure: 400 Bad Request - Missing or invalid API parameters. (Your resource quota is exceeded. (cpu=24 mem=512g cuda.shares=80))': 'error.ResourceLimitExceed',
+    'Your resource request is smaller than the minimum required by the image. (\\w*)': 'error.SmallerResourceThenImageRequires',
   };
   public errorMessageTable: any;
   public regexTable: any;
@@ -63,7 +64,7 @@ export default class BackendAIPainKiller {
     } else {
       for (const regex of Object.keys(this.regexTable)) {
         if (RegExp(regex).test(msg)) {
-          return this.regexTable[regex];
+          return _text(this.regexTable[regex]);
         }
       }
       return msg; // Bypass message. It will log on log panel
