@@ -1565,39 +1565,6 @@ export default class BackendAiSessionList extends BackendAIPage {
             <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t("button.Okay")}</wl-button>
          </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="export-to-csv" fixed backdrop>
-        <span slot="title">${_t("session.ExportSessionListToCSVFile")}</span>
-        <div slot="content">
-          <mwc-textfield id="export-file-name" label="${_text('credential.FileName')}" pattern="^[a-zA-Z0-9_-]+$"
-                          validationMessage="Allows letters, numbers and -_."
-                          value="${'session_' + this._defaultFileName}" required
-                          placeholder="${_t('maxLength.255chars')}"
-                          style="margin-bottom:10px;"></mwc-textfield>
-          <div class="horizontal center layout" style="display:none;">
-            <wl-textfield id="date-from" label="From" type="date" style="margin-right:10px;"
-                          value="${this._getFirstDateOfMonth()}" required
-                          @change="${this._validateDateRange}">
-              <wl-icon slot="before">date_range</wl-icon>
-            </wl-textfield>
-            <wl-textfield id="date-to" label="To" type="date"
-                          value="${new Date().toISOString().substring(0, 10)}" required
-                          @change="${this._validateDateRange}">
-              <wl-icon slot="before">date_range</wl-icon>
-            </wl-textfield>
-          </div>
-          <div class="horizontal center layout" style="display:none;">
-            <wl-checkbox id="export-csv-checkbox" @change="${(e) => this._toggleDialogCheckbox(e)}"></wl-checkbox>
-            <wl-label class="unlimited" for="export-csv-checkbox">Export All-time data</wl-label>
-          </div>
-          <div class="horizontal center layout">
-            <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
-            @click="${this._exportToCSV}">
-              <wl-icon>get_app</wl-icon>
-              ${_t("session.ExportCSVFile")}
-            </wl-button>
-          </div>
-        </div>
-      </backend-ai-dialog>
       `;
   }
 
