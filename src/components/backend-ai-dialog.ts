@@ -118,7 +118,7 @@ export default class BackendAiDialog extends LitElement {
   firstUpdated() {
     this.open = this.dialog.open;
     if (this.persistent) {
-      this.dialog.scrimClickAction = 'persistent';
+      this.dialog.scrimClickAction = '';
     }
     this.dialog.addEventListener('opened', () => {
       this.open = this.dialog.open;

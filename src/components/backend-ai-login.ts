@@ -85,6 +85,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) maxCPUCoresPerSession = 64;
   @property({type: Boolean}) maxCUDADevicesPerSession = 16;
   @property({type: Boolean}) maxShmPerSession = 2;
+  @property({type: Boolean}) maxFileUploadSize = -1;
   @property({type: Array}) endpoints;
   @property({type: Object}) logoutTimerBeforeOneMin;
   @property({type: Object}) logoutTimer;
@@ -402,7 +403,11 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       this.maxShmPerSession = parseFloat(config.resources.maxShmPerSession);
     }
-
+    if (typeof config.resources === "undefined" || typeof config.resources.maxFileUploadSize === "undefined" || config.resources.maxFileUploadSize === '') {
+      this.maxFileUploadSize = -1;
+    } else {
+      this.maxFileUploadSize = parseInt(config.resources.maxFileUploadSize);
+    }
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
       this.allow_signout = false;
     } else {
@@ -888,6 +893,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.maxCPUCoresPerSession = this.maxCPUCoresPerSession;
       globalThis.backendaiclient._config.maxCUDADevicesPerSession = this.maxCUDADevicesPerSession;
       globalThis.backendaiclient._config.maxShmPerSession = this.maxShmPerSession;
+      globalThis.backendaiclient._config.maxFileUploadSize = this.maxFileUploadSize;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);

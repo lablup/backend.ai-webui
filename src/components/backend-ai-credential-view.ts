@@ -315,12 +315,12 @@ export default class BackendAICredentialView extends BackendAIPage {
     await this.updateComplete;
     if (active === false) {
       this.shadowRoot.querySelector('#resource-policy-list').active = false;
-      this.shadowRoot.querySelector('#user-list').active = false;
+      this.shadowRoot.querySelector('#active-user-list').active = false;
       this._status = 'inactive';
       return;
     }
     this.shadowRoot.querySelector('#resource-policy-list').active = true;
-    this.shadowRoot.querySelector('#user-list').active = true;
+    this.shadowRoot.querySelector('#active-user-list').active = true;
     this._status = 'active';
   }
 
@@ -330,7 +330,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   async _launchKeyPairDialog() {
     await this._getResourcePolicies();
     this.shadowRoot.querySelector('#new-keypair-dialog').show();
-    
+
     // initialize user_id
     this.shadowRoot.querySelector('#id_new_user_id').value = '';
   }
@@ -446,7 +446,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             this.notification.text = _text('dialog.ErrorOccurred');
             this.notification.show();
           }
-      
+
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -587,7 +587,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         if (res['create_user'].ok) {
           this.notification.text = _text('credential.UserAccountCreated');
 
-          this.shadowRoot.querySelector('#user-list').refresh();
+          this.shadowRoot.querySelector('#active-user-list').refresh();
         } else {
           // console.error(res['create_user'].msg);
           this.notification.text = _text('credential.UserAccountCreatedError');
@@ -651,6 +651,18 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
     this._activeTab = tab.title;
     this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
+    // show inner tab(active) after selecting outer tab
+    switch(this._activeTab) {
+      case "user-lists":
+      case "credential-lists":
+        let tabKeyword = this._activeTab.substring(0, this._activeTab.length - 1); // to remove '-s'.
+        let innerTab = this.shadowRoot.querySelector('wl-tab[value=active-' + tabKeyword + ']');
+        innerTab.checked = true;
+        this._showList(innerTab);
+        break;
+      default:
+        break;
+    }
   }
 
   /**
@@ -664,6 +676,8 @@ export default class BackendAICredentialView extends BackendAIPage {
       els[x].style.display = 'none';
     }
     this.shadowRoot.querySelector('#' + list.value).style.display = 'block';
+    let event = new CustomEvent('user-list-updated', {});
+    this.shadowRoot.querySelector('#' + list.value).dispatchEvent(event);
   }
 
   /**
@@ -823,7 +837,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
     switch(this._activeTab) {
       case 'user-lists':
-        let users = this.shadowRoot.querySelector('#user-list')['users'];
+        let users = this.shadowRoot.querySelector('#active-user-list')['users'];
         users.map((obj) => { // filtering unnecessary key
           ['password', 'need_password_change'].forEach(key => delete obj[key]);
         });
@@ -1004,13 +1018,17 @@ export default class BackendAICredentialView extends BackendAIPage {
           </h3>
           <div id="user-lists" class="admin item tab-content card">
             <h4 class="horizontal flex center center-justified layout">
-              <span>${_t("credential.Users")}</span>
+              <wl-tab-group style="margin-bottom:-8px;">
+                <wl-tab value="active-user-list" checked @click="${(e) => this._showList(e.target)}">${_t("credential.Active")}</wl-tab>
+                <wl-tab value="inactive-user-list" @click="${(e) => this._showList(e.target)}">${_t("credential.Inactive")}</wl-tab>
+              </wl-tab-group>
               <span class="flex"></span>
               <mwc-button raised id="add-user" icon="add" label="${_t("credential.CreateUser")}"
                   @click="${this._launchUserAddDialog}"></mwc-button>
             </h4>
             <div>
-              <backend-ai-user-list id="user-list" ?active="${this._status === 'active'}"></backend-ai-user-list>
+              <backend-ai-user-list class="list-content" id="active-user-list" condition="active" ?active="${this._activeTab === 'user-lists'}"></backend-ai-user-list>
+              <backend-ai-user-list class="list-content" id="inactive-user-list"  style="display:none;"  condition="inactive" ?active="${this._activeTab === 'user-lists'}"></backend-ai-user-list>
             </div>
           </div>
           <div id="credential-lists" class="item tab-content card" style="display:none;">

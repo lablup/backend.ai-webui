@@ -576,6 +576,10 @@ export default class BackendAIData extends BackendAIPage {
         if (!isValid) {
           folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
         }
+        if (folderName.value.length > 64) {
+          isValid = false;
+          folderName.validationMessage = _text('data.FolderNameTooLong');
+        }
         return {
           valid: isValid,
           customError: !isValid

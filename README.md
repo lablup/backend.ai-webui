@@ -70,7 +70,7 @@ Backend.AI console focuses to
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
     * Needs backend.ai-wsproxy package
  * Service information
-    * Component compatibility 
+    * Component compatibility
     * Security check
     * License information
  * Work with console server (github/lablup/backend.ai-console-server)
@@ -106,14 +106,22 @@ proxyURL = "[Proxy URL]"
 proxyBaseURL = "[Base URL of websocket proxy,]"
 proxyListenIP = "[Websocket proxy configuration IP.]"
 
+[resources]
+openPortToPublic = true # Show option to open app proxy port to anyone.
+maxCPUCoresPerSession = 256 # Maximum CPU per session.
+maxCUDADevicesPerSession = 16  # Maximum CUDA devices per session.
+maxShmPerSession = 1 # Maximum shared memory per session.
+maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
+
 [server]
 consoleServerURL = "[Console server website URL. App will use the site instead of local app.]"
                    # Uses websocket proxy in the app
 
-[plugins]
+[plugin]
 # Reserved to load plugins
-# login = "login-test.js"
-# sidebar = "sidebar-test.js"
+#login = "signup-cloud.js"
+#page = "test-plugin1,test-plugin2"
+
 ```
 
 

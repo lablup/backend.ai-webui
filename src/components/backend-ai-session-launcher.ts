@@ -97,6 +97,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'min': '1',
     'max': '1'
   };
+  @property({type: Object}) cluster_metric = {
+    'min' : 1,
+    'max' : 1
+  };
+  @property({type: Array}) cluster_mode_list = [
+    'single-node', 'multi-node'
+  ];
+  @property({type: Boolean}) cluster_support = false;
   @property({type: Object}) images;
   @property({type: Object}) total_slot;
   @property({type: Object}) total_resource_group_slot;
@@ -149,7 +157,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) max_cuda_device_per_session = 16;
   @property({type: Number}) max_shm_per_session = 2;
   @property({type: Object}) resourceBroker;
-
+  @property({type: Number}) cluster_size = 0;
+  @property({type: String}) cluster_mode;
 
   constructor() {
     super();
@@ -176,9 +185,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // language=CSS
       css`
         lablup-slider {
-          width: 210px !important;
+          width: 200px !important;
           --textfield-width: 50px;
-          --slider-width: 135px;
+          --slider-width: 120px;
         }
 
         lablup-slider.mem,
@@ -196,6 +205,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         lablup-slider.session {
           --slider-color: var(--paper-pink-400);
+        }
+
+        lablup-slider.cluster {
+          --slider-color: var(--paper-blue-500);
         }
 
         mwc-linear-progress {
@@ -242,6 +255,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           display: block;
           font-size: 12px;
           padding-left: 10px;
+          font-weight: 300;
         }
 
         div.caption {
@@ -257,6 +271,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         div.resource-type {
           font-size: 14px;
           width: 70px;
+          margin-right: 10px;
         }
 
         .resources.horizontal .monitor.session {
@@ -406,6 +421,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-select-min-width: 190px;
         }
 
+        mwc-select > mwc-list-item.cluster-mode-dropdown {
+          --mdc-list-side-padding: auto 0px;
+        }
+
         mwc-textfield {
           width: 100%;
           --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0.42);
@@ -483,6 +502,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           display: none;
         }
 
+        @media screen and (max-width: 375px) {
+          lablup-slider {
+            width: 180px;
+            --textfield-width: 50px;
+            --slider-width: 100px;
+          }
+
+          backend-ai-dialog {
+            --component-min-width: 350px;
+          }
+        }
+
         @media screen and (max-width: 750px) {
           mwc-button > mwc-icon {
             display: inline-block;
@@ -512,7 +543,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.default_language = '';
     this.concurrency_used = 0;
     this.concurrency_max = 0;
-    this.concurrency_limit = 0;
+    this.concurrency_limit = 1;
     this._status = 'inactive';
     this.cpu_request = 1;
     this.mem_request = 1;
@@ -525,6 +556,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
+    this.cluster_size = 0;
+    this.cluster_mode = 'single-node';
     /* Parameters required to launch a session on behalf of other user */
     this.ownerFeatureInitialized = false;
     this.ownerDomain = '';
@@ -572,6 +605,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerSession || 64;
         this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerSession || 16;
         this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerSession || 2;
+        if (globalThis.backendaiclient.supports('multi-container')) {
+          this.cluster_support = true;
+        }
         this.is_connected = true;
         this._enableLaunchButton();
       }, {once: true});
@@ -579,6 +615,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerSession || 64;
       this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerSession || 16;
       this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerSession || 2;
+      if (globalThis.backendaiclient.supports('multi-container')) {
+        this.cluster_support = true;
+      }
       this.is_connected = true;
       this._enableLaunchButton();
     }
@@ -638,18 +677,36 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * Update selected folders
+   * Update selected folders.
+   * If selectedFolderItems are not empty and forceInitialize is true, unselect the selected items
+   *
+   * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
-  _updateSelectedFolder() {
+  _updateSelectedFolder(forceInitialize = false) {
     let folders = this.shadowRoot.querySelector('#vfolder');
     let selectedFolderItems = folders.selected;
     let selectedFolders: String[] = [];
     if (selectedFolderItems.length > 0) {
       selectedFolders = selectedFolderItems.map(item => item.value);
-    } else {
-      selectedFolders = [];
+
+      if (forceInitialize) {
+        this._unselectAllSelectedFolder();
+      }
     }
     this.selectedVfolders = selectedFolders;
+  }
+
+  _unselectAllSelectedFolder() {
+    let folders = this.shadowRoot.querySelector('#vfolder');
+    if (folders.selected) {
+      folders.items.forEach((item, index) => {
+        if (item.selected) {
+          folders.toggle(index, true);
+          item.selected = false;
+        }
+      });
+      this.selectedVfolders = [];
+    }
   }
 
   /**
@@ -699,7 +756,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.gpu_modes = this.resourceBroker.gpu_modes;
       this.updateResourceAllocationPane('refresh resource policy');
     }).catch((err) => {
-      console.log(err);
+      //console.log(err);
       this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -786,7 +843,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.session_request = this.shadowRoot.querySelector('#session-resource').value;
     this.num_sessions = this.session_request;
     if (this.sessions_list.includes(sessionName)) {
-      this.notification.text = "Duplicate session name not allowed.";
+      this.notification.text = _text('session.launcher.DuplicatedSessionName');
       this.notification.show();
       return;
     }
@@ -806,7 +863,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     config['group_name'] = globalThis.backendaiclient.current_group;
     config['domain'] = globalThis.backendaiclient._config.domainName;
     config['scaling_group'] = this.scaling_group;
-    config['maxWaitSeconds'] = 10;
+    if (globalThis.backendaiclient.supports('multi-container')) {
+      config['cluster_mode'] = this.cluster_mode;
+      config['cluster_size'] = this.cluster_size;
+    }
+    config['maxWaitSeconds'] = 15;
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     if (ownerEnabled && ownerEnabled.checked) {
       config['group_name'] = this.shadowRoot.querySelector('#owner-group').value;
@@ -935,11 +996,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           // remove redundant error message
         });
       }
+
+      // initialize vfolder and shrink vfolder selecting part
+      this.shadowRoot.querySelector('#vfolder-select-expansion').checked = false;
+      this._updateSelectedFolder(false);
     }).catch((err) => {
       // this.metadata_updating = false;
+      //console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
-        this.notification.detail = err.message;
+        if (err.description) {
+          this.notification.text = PainKiller.relieve(err.description);
+        } else {
+          this.notification.detail = err.message;
+        }
         this.notification.show(true, err);
       } else if (err && err.title) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -973,11 +1043,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _createKernel(kernelName, sessionName, config) {
     const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000);
     task.catch((err) => {
+      //console.log(err);
       if (err && err.message) {
         if ('statusCode' in err && err.statusCode === 408) {
           this.notification.text = _text("session.launcher.sessionStillPreparing");
         } else {
-          this.notification.text = PainKiller.relieve(err.message);
+          if (err.description) {
+            this.notification.text = PainKiller.relieve(err.description);
+          } else {
+            this.notification.text = PainKiller.relieve(err.message);
+          }
         }
         this.notification.detail = err.message;
         this.notification.show(true, err);
@@ -1165,8 +1240,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return Promise.resolve(true);
     }).catch(err => {
       if (err && err.message) {
-        console.log(err);
-        this.notification.text = PainKiller.relieve(err.title);
+        if (err.description) {
+          this.notification.text = PainKiller.relieve(err.description);
+        } else {
+          this.notification.text = PainKiller.relieve(err.title);
+        }
         this.notification.detail = err.message;
         this.notification.show(true, err);
       }
@@ -1280,12 +1358,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             } else {
               cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu'], this.max_cpu_core_per_session);
             }
+            // monkeypatch for cluster_metric max size
+            this.cluster_metric.max = cpu_metric.max;
           } else {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
               cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu'], this.max_cpu_core_per_session);
             } else {
               cpu_metric.max = Math.min(this.available_slot['cpu'], this.max_cpu_core_per_session);
             }
+            // monkeypatch for cluster_metric max size
+            this.cluster_metric.max = cpu_metric.max;
           }
           if (cpu_metric.min >= cpu_metric.max) {
             if (cpu_metric.min > cpu_metric.max) {
@@ -1523,6 +1605,25 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Set Cluster mode between 'single-node' and 'multi-node'
+   *
+   * @param {Event} e
+   */
+  _setClusterMode(e) {
+    this.cluster_mode = e.target.value;
+  }
+
+  /**
+   * Set Cluster size when the cluster mode is 'multi-node'
+   *
+   * @param {Event} e
+   */
+  _setClusterSize(e) {
+    this.cluster_size = e.target.value > 0 ? Math.round(e.target.value) : 0;
+    this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
+  }
+
+  /**
    * Choose resource template
    * - cpu, mem, cuda_device, cuda_shares, rocm_device, tpu_device, shmem
    *
@@ -1731,6 +1832,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       'session': {
         'name': _text("session.launcher.TitleSession"),
         'desc': _text("session.launcher.DescSession")
+      },
+      'single-node': {
+        'name': _text("session.launcher.SingleNode"),
+        'desc': _text("session.launcher.DescSingleNode")
+      },
+      'multi-node': {
+        'name': _text("session.launcher.MultiNode"),
+        'desc': _text("session.launcher.DescMultiNode")
       }
     };
     if (item in resource_description) {
@@ -1813,7 +1922,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <wl-icon>power_settings_new</wl-icon>
         <span>${_t("session.launcher.Start")}</span>
       </wl-button>
-      <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
+      <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent>
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>
         <form slot="content" id="launch-session-form" class="centered">
           <div class="vertical center layout" style="padding-top:15px;">
@@ -1883,16 +1992,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `)}
             </mwc-select>
             <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
-                           pattern="[a-zA-Z0-9_-]{4,}" fullwidth
+                           pattern="[a-zA-Z0-9_-]{4,64}" fullwidth
                            validationMessage="${_t("session.launcher.SessionNameAllowCondition")}"
                            style="margin-left:5px;">
             </mwc-textfield>
           </div>
 
-          <wl-expansion name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
+          <wl-expansion id="vfolder-select-expansion" name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
             <mwc-list fullwidth multi id="vfolder"
-              @selected="${this._updateSelectedFolder}">
+              @selected="${() => this._updateSelectedFolder()}">
             ${this.vfolders.length === 0 ? html`
               <mwc-list-item value="" disabled="true">${_t("session.launcher.NoFolderExists")}</mwc-list-item>
             `:html``}
@@ -1906,6 +2015,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <li><mwc-icon>folder_open</mwc-icon>${item}</li>
               `)}
           </ul>
+          ${this.selectedVfolders.length > 0 ? html`
+            <div class="horizontal layout end-justified">
+              <mwc-button
+                  outlined
+                  label="${_t("session.launcher.UnSelectAllVFolders")}"
+                  style="width:auto;margin-right:10px;"
+                  @click=${() => this._unselectAllSelectedFolder()}></mwc-button>
+            </div>
+          ` : html``}
           <div class="vertical center layout" style="padding-top:15px;">
             <mwc-select id="resource-templates" label="${_t("session.launcher.ResourceAllocation")}" fullwidth required>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
@@ -1960,8 +2078,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <wl-expansion name="resource-group" open style="--expansion-header-padding:16px;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.CustomAllocation")}</span>
             <span slot="description" style="font-size:12px;color:#646464;"></span>
-            <div class="vertical layout">
-              <div class="horizontal center layout">
+            <div class="vertical center layout">
+              <div class="horizontal center layout" style="margin-top:15px;">
                 <div class="resource-type" style="width:70px;">CPU</div>
                 <lablup-slider id="cpu-resource" class="cpu"
                                pin snaps expand editable markers
@@ -1975,7 +2093,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
-              <div class="resource-type" style="width:70px;">RAM</div>
+              <div class="resource-type">RAM</div>
               <lablup-slider id="mem-resource" class="mem"
                              pin snaps step=0.05 editable markers
                              @click="${this._resourceTemplateToCustom}"
@@ -1988,7 +2106,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
-              <div class="resource-type" style="width:70px;">${_t("session.launcher.SharedMemory")}</div>
+              <div class="resource-type">${_t("session.launcher.SharedMemory")}</div>
               <lablup-slider id="shmem-resource" class="mem"
                              pin snaps step="0.0025" editable markers
                              @click="${this._resourceTemplateToCustom}"
@@ -2001,7 +2119,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
-              <div class="resource-type" style="width:70px;">GPU</div>
+              <div class="resource-type">GPU</div>
               <lablup-slider id="gpu-resource" class="gpu"
                              pin snaps editable markers step="${this.gpu_step}"
                              @click="${this._resourceTemplateToCustom}"
@@ -2013,7 +2131,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
-              <div class="resource-type" style="width:70px;">Sessions</div>
+              <div class="resource-type">${_t("console.menu.Sessions")}</div>
               <lablup-slider id="session-resource" class="session"
                              pin snaps editable markers step="1"
                              @click="${this._resourceTemplateToCustom}"
@@ -2026,7 +2144,35 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </div>
           </div>
         </wl-expansion>
-
+        ${this.cluster_support ? html`
+        <mwc-select id="cluster-mode" label="${_t("session.launcher.ClusterMode")}" fullwidth required
+              value="${this.cluster_mode}" @change="${(e) => this._setClusterMode(e)}">
+          ${this.cluster_mode_list.map(item => html`
+            <mwc-list-item
+                class="cluster-mode-dropdown"
+                id="${item}"
+                value="${item}"
+                ?disabled="${item === 'multi-node'}">
+              <div class="horizontal layout center" style="width:100%;">
+                <p style="width:300px;margin-left:21px;">${_t('session.launcher.'+ item)}</p>
+                <mwc-icon-button
+                    icon="info"
+                    @click="${(e) => this._showResourceDescription(e, item)}">
+                </mwc-icon-button>
+              </div>
+            </mwc-list-item>
+          `)}
+        </mwc-select>
+        <div class="horizontal layout center" style="padding:0 24px 24px 24px;">
+          <div class="resource-type">${_t("session.launcher.ClusterSize")}</div>
+          <lablup-slider id="cluster-size" class="cluster"
+                         pin snaps expand editable markers
+                         marker_limit="${this.marker_limit}"
+                         min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
+                         value="${this.cluster_size}"
+                         @change="${(e) => this._setClusterSize(e)}"></lablup-slider>
+          <span class="caption">${_t("session.launcher.Node")}</span>
+        </div>`: html``}
         <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
           <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.SetSessionOwner")}</span>
           <span slot="description"></span>
@@ -2092,7 +2238,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       ${this._helpDescriptionIcon == '' ? html`` : html`
         <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
         `}
-        <p style="font-size:14px;">${unsafeHTML(this._helpDescription)}</p>
+        <div style="font-size:14px;">${unsafeHTML(this._helpDescription)}</div>
       </div>
     </backend-ai-dialog>
     <backend-ai-dialog id="launch-confirmation-dialog" warning fixed backdrop>

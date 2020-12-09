@@ -291,8 +291,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   async connectedCallback() {
     super.connectedCallback();
     document.addEventListener('backend-ai-connected', () => this.refreshPage());
-    if (globalThis.backendaioptions.get('language') === "default" && this.supportLanguageCodes.includes(globalThis.navigator.language)) { // Language is not set and
-      this.lang = globalThis.navigator.language;
+    const defaultLang = globalThis.navigator.language.split('-')[0];
+    if (globalThis.backendaioptions.get('language') === "default" && this.supportLanguageCodes.includes(defaultLang)) {
+      this.lang = defaultLang;
     } else if (this.supportLanguageCodes.includes(globalThis.backendaioptions.get('language'))) {
       this.lang = globalThis.backendaioptions.get('language');
     } else {
