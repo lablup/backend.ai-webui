@@ -63,7 +63,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) blockType = '';
   @property({type: String}) blockMessage = '';
   @property({type: String}) connection_mode = 'SESSION';
-  @property({type: Number}) login_attempt_limit = 5;
+  @property({type: Number}) login_attempt_limit = 500;
   @property({type: Number}) login_block_time = 180;
   @property({type: String}) user;
   @property({type: String}) email;
@@ -719,6 +719,7 @@ export default class BackendAILogin extends BackendAIPage {
           }
         }).catch((err) => {   // Connection failed
           this.free();
+          console.log(err);
           if (showError) {
             if (this.loginPanel.open !== true) {
               if (typeof err.message !== "undefined") {

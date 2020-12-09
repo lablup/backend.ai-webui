@@ -593,10 +593,17 @@ class Client {
         }
       }
     } catch (err) { // Manager / console server down.
-      throw {
-        "title": "No manager found at API Endpoint.",
-        "message": "Authentication failed. Check information and manager status."
-      };
+      if ('statusCode' in err && err.statusCode === 429) {
+        throw {
+          "title": err.description,
+          "message": "Too many failed login attempts."
+        };
+      } else {
+        throw {
+          "title": "No manager found at API Endpoint.",
+          "message": "Authentication failed. Check information and manager status."
+        };
+      }
       //console.log(err);
       //return false;
     }
