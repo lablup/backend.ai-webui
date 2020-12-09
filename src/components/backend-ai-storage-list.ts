@@ -761,7 +761,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this._addEventListenerDropZone();
+    // this._addEventListenerDropZone(); // disable upload by drag & drop for this branch
     this._mkdir = this._mkdir.bind(this);
 
     this.renameFileDialog = this.shadowRoot.querySelector('#rename-file-dialog');
