@@ -263,8 +263,8 @@
     "SecretKey": "Secret Key",
     "Advanced": "Advanced",
     "Add": "Add",
-    "E-Mail": "E-Mail (up to 64 chars)",
-    "Username": "Username (up to 64 chars)",
+    "E-Mail": "E-Mail",
+    "Username": "Username",
     "Password": "Password",
     "ConfirmPassword": "Confirm Password",
     "Create": "Create",
@@ -285,6 +285,7 @@
     "active": "active",
     "concurrentsessions": "Concurrent sessions",
     "RateLimit": "Rate Limit",
+    "RateLimitValidation": "Rate Limit should be greater than zero and below 50000.",
     "RateLimitFor15min": "Rate Limit (for 15 min.)",
     "for900seconds": "for 900 seconds",
     "Users": "Users",
@@ -317,11 +318,12 @@
     "Role": "Role",
     "Groups": "Groups",
     "DescActiveUser": "Active user?",
-    "UserName": "User Name (up to 64 chars)",
-    "FullName": "Full Name (up to 64 chars)",
+    "UserName": "User Name",
+    "FullName": "Full Name",
     "Description": "Description (up to 500 chars)",
     "Days": "Days",
     "NoChanges": "No changes were made",
+    "FileName": "File name",
     "validation": {
       "InvalidEmailAddress": "Invalid Email Address.",
       "PolicyName": "Policy name Required.",
@@ -901,5 +903,14 @@
   },
   "error": {
     "APINotSupported": "API not supported. Requires latest version of Backend.AI manager."
+  },
+  "maxLength" : {
+    "20chars": "(maximum 20 chars)",
+    "40chars": "(maximum 40 chars)",
+    "64chars": "(maximum 64 chars)",
+    "255chars": "(maximum 255 chars)",
+    "500chars": "(maximum 500 chars)",
+    "512chars": "(maximum 512 chars)",
+    "2048chars": "(maximum 2048 chars)"
   }
 }

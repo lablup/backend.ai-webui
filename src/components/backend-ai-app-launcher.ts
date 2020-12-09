@@ -675,6 +675,25 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   /**
+   * Adjust port number in range of the starting number of port to the last number of the port.
+   * 
+   * @param {Event} e - 
+   */
+  _adjustPreferredAppPortNumber(e) {
+    const preferredPortNumber = e.target.value;
+    const defaultPreferredPortNumber = 10250;
+    const minPortNumber = 1025;
+    const maxPortNumber = 65534;
+    if (preferredPortNumber) {
+      if (preferredPortNumber < minPortNumber || preferredPortNumber > maxPortNumber) {
+        this.shadowRoot.querySelector('#app-port').value = defaultPreferredPortNumber;
+      }
+    } else {
+      this.shadowRoot.querySelector('#app-port').value = defaultPreferredPortNumber;
+    }
+  }
+
+  /**
    * Dynamically add Web Terminal Guide Carousel
    */
   _createTerminalGuide() {
@@ -752,7 +771,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em"></mwc-checkbox>
               ${_t("session.TryPreferredPort")}
               <mwc-textfield id="app-port" type="number" no-label-float value="10250" outlined
-                  min="1025" max="65534" style="margin-left:1em; width:90px"></mwc-textfield>
+                  min="1025" max="65534" style="margin-left:1em; width:90px" @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
             </div>
           </div>
         </div>

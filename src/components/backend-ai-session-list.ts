@@ -263,6 +263,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           padding: 0;
           outline-style: none;
         }
+
+        span#access-key-filter-helper-text {
+          margin-top: 3px;
+          font-size: 10px;
+          color: var(--general-menu-color-2);
+        }
       `];
   }
 
@@ -414,7 +420,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     let fields = [
       "id", "name", "image",
       "created_at", "terminated_at", "status", "status_info",
-      "service_ports", "mounts", 
+      "service_ports", "mounts",
       "occupied_slots", "access_key",
     ];
     if (globalThis.backendaiclient.supports('multi-container')) {
@@ -1466,11 +1472,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           </wl-button>
         </div>
         <span class="flex"></span>
-        <wl-textfield id="access-key-filter" type="search" size=30
-                     label="${_t("general.AccessKey")}" no-label-float .value="${this.filterAccessKey}"
-                     style="display:none;margin-right:50px;"
-                     @change="${(e) => this._updateFilterAccessKey(e)}">
-        </wl-textfield>
+        <div class="vertical layout">
+          <wl-textfield id="access-key-filter" type="search" maxLength="64"
+                      label="${_t("general.AccessKey")}" no-label-float .value="${this.filterAccessKey}"
+                      style="display:none;margin-right:20px;"
+                      @change="${(e) => this._updateFilterAccessKey(e)}">
+          </wl-textfield>
+          <span id="access-key-filter-helper-text">${_t("maxLength.64chars")}</span>
+        </div>
       </div>
 
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"

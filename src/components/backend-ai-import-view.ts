@@ -371,7 +371,8 @@ export default class BackendAIImport extends BackendAIPage {
       <lablup-activity-panel title="${_t('import.ImportNotebook')}" elevation="1" horizontalsize="2x">
         <div slot="message">
           <div class="horizontal wrap layout center">
-            <mwc-textfield id="notebook-url" label="${_t('import.NotebookURL')}"></mwc-textfield>
+            <mwc-textfield id="notebook-url" label="${_t('import.NotebookURL')}"
+                           maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
             <mwc-button icon="cloud_download" @click="${() => this.getNotebookFromURL()}">
               <span>${_t('import.GetAndRunNotebook')}</span>
             </mwc-button>
@@ -393,7 +394,8 @@ export default class BackendAIImport extends BackendAIPage {
             <div class="vertical wrap layout center description">
               ${_t('import.YouCanCreateNotebookCode')}
               <img src="/resources/badge.svg" style="margin-top:5px;margin-bottom:5px;"/>
-              <mwc-textfield id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"></mwc-textfield>
+              <mwc-textfield id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"
+                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
               <mwc-button style="width:100%;" @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
               <mwc-textarea id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
               <mwc-textarea id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
@@ -408,7 +410,8 @@ export default class BackendAIImport extends BackendAIPage {
               <p>${_t('import.RepoWillBeFolder')}</p>
             </div>
             <div class="horizontal wrap layout center">
-              <mwc-textfield id="github-repo-url" label="${_t('import.GitHubURL')}"></mwc-textfield>
+              <mwc-textfield id="github-repo-url" label="${_t('import.GitHubURL')}"
+                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
               <mwc-button icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
