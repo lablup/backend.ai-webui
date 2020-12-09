@@ -327,6 +327,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         if (!globalThis.backendaiclient.is_admin) {
           // this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
           this.shadowRoot.querySelector('#access-key-filter').style.display = 'none';
+          this.shadowRoot.querySelector('#access-key-filter-helper-text').style.display = 'none';
           this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
         } else {
           this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
@@ -344,10 +345,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     } else { // already connected
       if (!globalThis.backendaiclient.is_admin) {
         this.shadowRoot.querySelector('#access-key-filter').style.display = 'none';
+        this.shadowRoot.querySelector('#access-key-filter-helper-text').style.display = 'none';
         // this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
         this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
       } else {
         this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
+        this.shadowRoot.querySelector('#access-key-filter-helper-text').style.display = 'block';
       }
       if (globalThis.backendaiclient.APIMajorVersion < 5) {
         this.sessionNameField = 'sess_id';
