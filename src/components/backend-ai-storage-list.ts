@@ -1544,7 +1544,6 @@ export default class BackendAiStorageList extends BackendAIPage {
       dndZonePlaceholderEl.style.display = "none";
 
       if (this.isWritable) {
-        let temp: any = [];
         for (let i = 0; i < e.dataTransfer.files.length; i++) {
           const file = e.dataTransfer.files[i];
           /* Drag & Drop file upload size limits to configuration */
@@ -1553,17 +1552,33 @@ export default class BackendAiStorageList extends BackendAIPage {
             this.notification.show();
             return;
           } else {
-            file.progress = 0;
-            file.caption = '';
-            file.error = false;
-            file.complete = false;
-            temp.push(file);
-            (this.uploadFiles as any).push(file);
+            let reUploadFile = this.explorerFiles.find( elem => elem.filename === file.name);
+            if (reUploadFile) {
+              // plain javascript modal to confirm whether proceed to overwrite operation or not
+              /*
+               *  TODO: replace confirm operation with customized dialog
+               */
+              let confirmed = window.confirm(`${_text("data.explorer.FileAlreadyExists")}\n${file.name}\n${_text("data.explorer.DoYouWantToOverwrite")}`);
+              if (confirmed) {
+                file.progress = 0;
+                file.caption = '';
+                file.error = false;
+                file.complete = false;
+                (this.uploadFiles as any).push(file);
+              }
+            } 
+            else {
+              file.progress = 0;
+              file.caption = '';
+              file.error = false;
+              file.complete = false;
+              (this.uploadFiles as any).push(file);
+            }
           }
         }
 
-        for (let i = 0; i < temp.length; i++) {
-          this.fileUpload(temp[i]);
+        for (let i = 0; i < this.uploadFiles.length; i++) {
+          this.fileUpload(this.uploadFiles[i]);
           this._clearExplorer();
         }
       } else {
@@ -1594,7 +1609,6 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _uploadFileChange(e) {
     let length = e.target.files.length;
-    let abortedFileCount = 0;
     for (let i = 0; i < length; i++) {
       const file = e.target.files[i];
 
@@ -1621,12 +1635,9 @@ export default class BackendAiStorageList extends BackendAIPage {
             file.error = false;
             file.complete = false;
             (this.uploadFiles as any).push(file);
-          } else {
-            abortedFileCount++;
           }
         } 
         else {
-          // let result = await this.shadowRoot.querySelector('#reupload-confirmation-dialog').show();
           file.id = text;
           file.progress = 0;
           file.caption = '';
@@ -1636,8 +1647,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
       }
     }
-    length = (length - abortedFileCount) >= 0 ? length - abortedFileCount : 0;
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < this.uploadFiles.length; i++) {
       this.fileUpload(this.uploadFiles[i]);
     }
     this.shadowRoot.querySelector('#fileInput').value = ''; 
