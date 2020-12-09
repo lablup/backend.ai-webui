@@ -43,6 +43,7 @@ import './backend-ai-resource-broker';
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 
 import '../lib/backend.ai-client-es6';
+import {default as TabCount} from '../lib/TabCounter';
 
 import {
   IronFlex,
@@ -202,37 +203,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         } else {
           this.loginPanel.login(false);  // Set showError flag to false for initial login
         }
+        const tabcount = new TabCount();
         
         document.addEventListener('backend-ai-connected', (e) => {
-          if (globalThis.backendaioptions.get('auto_logout')) {
-              // prevent log-out from accidentally closed page (e.g. < 5sec.)
-              let currentTime = new Date().getTime();
-              let lastClosed = globalThis.backendaioptions.get('lastClosed');
-              const msecToSec = 1000;
-              let timediff = Math.round(currentTime - lastClosed / msecToSec);
-              if (!sessionStorage.getItem('pageReloaded') && (timediff > this.timeoutSec)) {
-                const pageAccessedByReload = (
-                  (window.performance.navigation && window.performance.navigation.type === 1) ||
-                    window.performance
-                      .getEntriesByType('navigation')
-                      .map((nav: any) => nav.type)
-                      .includes('reload')
-                );
-                if (!pageAccessedByReload) {
-                  this.setAutoLogoutTimeout();
-                }
-              }
-          } else {
-            this.clearAutoLogoutInfo();
-          }
-        }, true);
-      } else { // already connected
-        if (globalThis.backendaioptions.get('auto_logout')) {
-          let currentTime = new Date().getTime();
-          let lastClosed = globalThis.backendaioptions.get('lastClosed');
-          const msecToSec = 1000;
-          let timediff = Math.round(currentTime - lastClosed / msecToSec);
-          if (!sessionStorage.getItem('pageReloaded') && (timediff > this.timeoutSec)) {
+          tabcount.onTabChange(() => {
+            // window.addEventListener('beforeunload', (e) => {
+            //   e.preventDefault();
             const pageAccessedByReload = (
               (window.performance.navigation && window.performance.navigation.type === 1) ||
                 window.performance
@@ -241,12 +217,24 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   .includes('reload')
             );
             if (!pageAccessedByReload) {
-              this.setAutoLogoutTimeout();
+              let currentTime = new Date().getTime();
+              let lastClosed = globalThis.backendaioptions.get('lastClosed');
+              if (!lastClosed) {
+                globalThis.backendaioptions.set('lastClosed', currentTime);
+              }
+              const msecToSec = 1000;
+              let timediff = Math.round(currentTime - lastClosed / msecToSec);
+              if (globalThis.backendaioptions.get('auto_logout')) {
+                if ( (tabcount.tabsCounter <= 1) && (timediff >= this.timeoutSec) ) {
+                  this.logout();
+                }
+              } else {
+                globalThis.backendaioptions.set('lastClosed', currentTime);
+              }
             }
-          }
-        } else {
-          this.clearAutoLogoutInfo();
-        }
+            // });
+          }, true);
+        }, true);
       }
     }).catch(err => {
       console.log("Initialization failed.");
@@ -267,47 +255,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         let input = e.detail;
         this._updateFullname(input.full_name);
       }
-    })
-    document.addEventListener('backend-ai-auto-logout', (e: any) => {
-      if(e.detail) {
-        globalThis.backendaioptions.set('auto_logout', true);
-        let lastClosed = globalThis.backendaioptions.get('lastClosed');
-        if (!lastClosed) {
-          let currentTime = new Date().getTime();
-          globalThis.backendaioptions.set('lastClosed', currentTime);
-        }
-        sessionStorage.setItem('pageReloaded', 'true');
-      } else {
-        this.clearAutoLogoutInfo();
-      }
     });
-  }
-
-  /**
-   * 
-   */
-  clearAutoLogoutInfo() {
-    globalThis.backendaioptions.set('auto_logout', false);
-    globalThis.backendaioptions.delete('lastClosed');
-    if (sessionStorage.getItem('pageReloaded')) {
-      sessionStorage.removeItem('pageReloaded');
-    }
-  }
-
-  /**
-   * 
-   * @param {Event} e - Triggered when the browser closes 
-   */
-  setAutoLogoutTimeout() {
-    let currentTime = new Date().getTime();
-    let lastClosed = globalThis.backendaioptions.get('lastClosed');
-    let ispageReloaded = sessionStorage.getItem('pageReloaded');
-    if (lastClosed && !ispageReloaded) {
-      this.logout();
-    } else {
-      globalThis.backendaioptions.set('lastClosed', currentTime);
-      sessionStorage.setItem('pageReloaded', 'true');
-    }
   }
 
   async connectedCallback() {
