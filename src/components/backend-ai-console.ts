@@ -261,7 +261,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     });
-
+    // apply update name when user info changed via users page
+    document.addEventListener('current-user-info-changed',  (e: any) => {
+      if (globalThis.backendaiclient.supports('change-user-name')) {
+        let input = e.detail;
+        this._updateFullname(input.full_name);
+      }
+    })
     document.addEventListener('backend-ai-auto-logout', (e: any) => {
       if(e.detail) {
         globalThis.backendaioptions.set('auto_logout', true);
@@ -662,7 +668,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   /**
    * Open the user preference dialog.
    */
-  _openUserPrefDialog() {
+  async _openUserPrefDialog() {
+    let fields = ['email', 'username', 'password', 'full_name'];
+    let currentUserInfo = await globalThis.backendaiclient.user.get(this.user_id, fields);
     const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
     dialog.show();
   }
@@ -761,8 +769,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   /**
    * Update the full_name of user information
    */
-  async _updateFullname() {
-    const newFullname = this.shadowRoot.querySelector('#pref-original-name').value;
+  async _updateFullname(newFullname = '') {
+    newFullname = newFullname === '' ? this.shadowRoot.querySelector('#pref-original-name').value : newFullname;
     if (newFullname.length > 64) {
       this.notification.text = _text('console.menu.FullNameInvalid');
       this.notification.show();
