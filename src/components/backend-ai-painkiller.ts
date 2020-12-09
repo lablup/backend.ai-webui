@@ -28,7 +28,7 @@ export default class BackendAIPainKiller {
     "server responded failure: 401 Unauthorized - Credential/signature mismatch. (Access key not found)": "error.LoginInformationMismatch",
     "server responded failure: 401 Unauthorized - Credential/signature mismatch.": "error.LoginInformationMismatch",
     "Authentication failed. Check information and manager status.": "error.AuthenticationFailed",
-    "Too many failed login attempts": "error.TooManyAttempt"
+    "Too many failed login attempts": "error.TooManyLoginFailures"
     // virtual folders
     "server responded failure: 400 Bad Request - The virtual folder already exists with the same name.": "error.VirtualFolderAlreadyExist",
     "400 Bad Request - The virtual folder already exists with the same name.": "error.VirtualFolderAlreadyExist",
