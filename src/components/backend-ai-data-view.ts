@@ -539,7 +539,7 @@ export default class BackendAIData extends BackendAIPage {
         this._refreshFolderList();
       }).catch(err => {
         if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.text = PainKiller.relieve(err.message);
           this.notification.detail = err.message;
           this.notification.show(true, err);
         }

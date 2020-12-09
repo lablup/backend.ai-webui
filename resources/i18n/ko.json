@@ -897,7 +897,17 @@
     "OpenSource": "오픈소스"
   },
   "error": {
-    "APINotSupported": "지원하지 않는 API입니다. 최신 버전의 Backend.AI 매니저가 필요합니다."
+    "APINotSupported": "지원하지 않는 API입니다. 최신 버전의 Backend.AI 매니저가 필요합니다.",
+    "UserHasNoGroup": "사용자가 어떤 그룹에도 속해있지 않습니다. 관리자에게 문의하세요.",
+    "WrongAPIServerAddress": "잘못된 API 서버 주소",
+    "LoginFailed": "로그인 실패. 로그인 정보를 확인하세요.",
+    "VirtualFolderAlreadyExist": "같은 이름의 폴더가 이미 존재합니다. 폴더를 삭제하거나 초대를 거절하세요.",
+    "MaximumVfolderCreation": "리소스 정책에 따라 더 이상의 폴더를 만들 수 없습니다.",
+    "LoginInformationMismatch": "로그인 실패. 로그인 정보를 확인하세요.",
+    "ReachedResourceLimit": "리소스 제한에 도달했습니다. 리소스 할당량을 확인하세요.",
+    "AuthenticationFailed": "API 인증 실패. 사용자 정보나 Manager 상태를 확인하세요.",
+    "NetworkConnectionFailed": "네트워크 연결 실패. 네트워크 상태를 확인하세요.",
+    "TooManyLoginFailures": "너무 많은 로그인 시도.  시간이 지난 후에 다시 시도해보세요."
   },
   "maxLength" : {
     "20chars": "(최대 길이 20자)",
