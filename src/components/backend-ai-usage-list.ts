@@ -141,6 +141,7 @@ export default class BackendAIUsageList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._getUserInfo();
+        this.init();
         setTimeout(() => {
           const periodSelector = this.shadowRoot.querySelector('#period-selector');
           periodSelector.selectedText = periodSelector.selected.textContent.trim();
@@ -148,6 +149,7 @@ export default class BackendAIUsageList extends BackendAIPage {
       }, true);
     } else { // already connected
       this._getUserInfo();
+      this.init();
       setTimeout(() => {
         const periodSelector = this.shadowRoot.querySelector('#period-selector');
         periodSelector.selectedText = periodSelector.selected.textContent.trim();
