@@ -513,6 +513,12 @@ export default class BackendAIUserList extends BackendAIPage {
         }
         this.notification.show();
       });
+    
+    // if updated user info is current user, then apply it right away
+    if (this.userInfo.email === globalThis.backendaiclient.email) {
+      let event = new CustomEvent('current-user-info-changed', {detail: input});
+      document.dispatchEvent(event);
+    }
   }
 
   render() {
