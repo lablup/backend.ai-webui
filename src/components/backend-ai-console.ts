@@ -210,20 +210,40 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               let lastClosed = globalThis.backendaioptions.get('lastClosed');
               const msecToSec = 1000;
               let timediff = Math.round(currentTime - lastClosed / msecToSec);
-              if(!sessionStorage.getItem('pageReloaded') && (timediff > this.timeoutSec)) {
-                this.setAutoLogoutTimeout();
+              if (!sessionStorage.getItem('pageReloaded') && (timediff > this.timeoutSec)) {
+                const pageAccessedByReload = (
+                  (window.performance.navigation && window.performance.navigation.type === 1) ||
+                    window.performance
+                      .getEntriesByType('navigation')
+                      .map((nav: any) => nav.type)
+                      .includes('reload')
+                );
+                if (!pageAccessedByReload) {
+                  this.setAutoLogoutTimeout();
+                }
               }
-            window.addEventListener('beforeunload', () => this.setAutoLogoutTimeout());
           } else {
             this.clearAutoLogoutInfo();
           }
         }, true);
       } else { // already connected
         if (globalThis.backendaioptions.get('auto_logout')) {
-          if(!sessionStorage.getItem('pageReloaded')) {
-            this.setAutoLogoutTimeout();
+          let currentTime = new Date().getTime();
+          let lastClosed = globalThis.backendaioptions.get('lastClosed');
+          const msecToSec = 1000;
+          let timediff = Math.round(currentTime - lastClosed / msecToSec);
+          if (!sessionStorage.getItem('pageReloaded') && (timediff > this.timeoutSec)) {
+            const pageAccessedByReload = (
+              (window.performance.navigation && window.performance.navigation.type === 1) ||
+                window.performance
+                  .getEntriesByType('navigation')
+                  .map((nav: any) => nav.type)
+                  .includes('reload')
+            );
+            if (!pageAccessedByReload) {
+              this.setAutoLogoutTimeout();
+            }
           }
-          window.addEventListener('beforeunload', () => this.setAutoLogoutTimeout());
         } else {
           this.clearAutoLogoutInfo();
         }
@@ -274,14 +294,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    */
   setAutoLogoutTimeout() {
     let currentTime = new Date().getTime();
-    const msecToSec = 1000;
     let lastClosed = globalThis.backendaioptions.get('lastClosed');
     let ispageReloaded = sessionStorage.getItem('pageReloaded');
-    if (lastClosed) {
-      let timediff = Math.floor((currentTime - lastClosed) / msecToSec);
-      if ( !ispageReloaded && timediff > this.timeoutSec) {
-        this.logout();
-      }
+    if (lastClosed && !ispageReloaded) {
+      this.logout();
     } else {
       globalThis.backendaioptions.set('lastClosed', currentTime);
       sessionStorage.setItem('pageReloaded', 'true');
