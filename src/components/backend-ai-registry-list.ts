@@ -20,7 +20,6 @@ import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-switch/mwc-switch';
-import '@material/mwc-textfield/mwc-textfield';
 
 import './backend-ai-dialog';
 import {default as PainKiller} from "./backend-ai-painkiller";

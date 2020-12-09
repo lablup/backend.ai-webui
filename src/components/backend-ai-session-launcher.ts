@@ -374,11 +374,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 40px;
         }
 
-        mwc-textfield {
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-        }
-
         mwc-select {
           width: 100%;
           font-family: var(--general-font-family);
@@ -427,6 +422,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
+          font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
           --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0.42);
           --mdc-text-field-hover-line-color: rgba(255, 0, 0, 0.87);
           --mdc-text-field-fill-color: transparent;
@@ -1992,7 +1989,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `)}
             </mwc-select>
             <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
-                           pattern="[a-zA-Z0-9_-]{4,64}" fullwidth
+                           pattern="[a-zA-Z0-9_-]{4,}" fullwidth maxLength="64"
+                           helper="${_t('maxLength.64chars')}"
                            validationMessage="${_t("session.launcher.SessionNameAllowCondition")}"
                            style="margin-left:5px;">
             </mwc-textfield>

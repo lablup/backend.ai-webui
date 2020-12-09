@@ -163,7 +163,8 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
           <div style="margin:20px;">
             <mwc-textfield id="email" label="${_t('data.explorer.EnterEmailAddress')}"
                 autofocus auto-validate validationMessage="${_t('signup.InvalidEmail')}"
-                pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
+                pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"
+                maxLength="64" placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
             <div style="height:1em"></div>
           </div>
         </div>
