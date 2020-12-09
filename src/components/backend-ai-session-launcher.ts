@@ -540,7 +540,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.default_language = '';
     this.concurrency_used = 0;
     this.concurrency_max = 0;
-    this.concurrency_limit = 0;
+    this.concurrency_limit = 1;
     this._status = 'inactive';
     this.cpu_request = 1;
     this.mem_request = 1;
@@ -674,18 +674,36 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * Update selected folders
+   * Update selected folders.
+   * If selectedFolderItems are not empty and forceInitialize is true, unselect the selected items
+   *
+   * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
-  _updateSelectedFolder() {
+  _updateSelectedFolder(forceInitialize = false) {
     let folders = this.shadowRoot.querySelector('#vfolder');
     let selectedFolderItems = folders.selected;
     let selectedFolders: String[] = [];
     if (selectedFolderItems.length > 0) {
       selectedFolders = selectedFolderItems.map(item => item.value);
-    } else {
-      selectedFolders = [];
+
+      if (forceInitialize) {
+        this._unselectAllSelectedFolder();
+      }
     }
     this.selectedVfolders = selectedFolders;
+  }
+
+  _unselectAllSelectedFolder() {
+    let folders = this.shadowRoot.querySelector('#vfolder');
+    if (folders.selected) {
+      folders.items.forEach((item, index) => {
+        if (item.selected) {
+          folders.toggle(index, true);
+          item.selected = false;
+        }
+      });
+      this.selectedVfolders = [];
+    }
   }
 
   /**
@@ -822,7 +840,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.session_request = this.shadowRoot.querySelector('#session-resource').value;
     this.num_sessions = this.session_request;
     if (this.sessions_list.includes(sessionName)) {
-      this.notification.text = "Duplicate session name not allowed.";
+      this.notification.text = _text('session.launcher.DuplicatedSessionName');
       this.notification.show();
       return;
     }
@@ -975,6 +993,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           // remove redundant error message
         });
       }
+
+      // initialize vfolder and shrink vfolder selecting part
+      this.shadowRoot.querySelector('#vfolder-select-expansion').checked = false;
+      this._updateSelectedFolder(false);
     }).catch((err) => {
       // this.metadata_updating = false;
       //console.log(err);
@@ -1897,7 +1919,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <wl-icon>power_settings_new</wl-icon>
         <span>${_t("session.launcher.Start")}</span>
       </wl-button>
-      <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop>
+      <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent>
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>
         <form slot="content" id="launch-session-form" class="centered">
           <div class="vertical center layout" style="padding-top:15px;">
@@ -1974,10 +1996,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </mwc-textfield>
           </div>
 
-          <wl-expansion name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
+          <wl-expansion id="vfolder-select-expansion" name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
             <mwc-list fullwidth multi id="vfolder"
-              @selected="${this._updateSelectedFolder}">
+              @selected="${() => this._updateSelectedFolder()}">
             ${this.vfolders.length === 0 ? html`
               <mwc-list-item value="" disabled="true">${_t("session.launcher.NoFolderExists")}</mwc-list-item>
             `:html``}
@@ -1991,6 +2013,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <li><mwc-icon>folder_open</mwc-icon>${item}</li>
               `)}
           </ul>
+          ${this.selectedVfolders.length > 0 ? html`
+            <div class="horizontal layout end-justified">
+              <mwc-button
+                  outlined
+                  label="${_t("session.launcher.UnSelectAllVFolders")}"
+                  style="width:auto;margin-right:10px;"
+                  @click=${() => this._unselectAllSelectedFolder()}></mwc-button>
+            </div>
+          ` : html``}
           <div class="vertical center layout" style="padding-top:15px;">
             <mwc-select id="resource-templates" label="${_t("session.launcher.ResourceAllocation")}" fullwidth required>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>

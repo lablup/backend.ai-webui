@@ -219,8 +219,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   async connectedCallback() {
     super.connectedCallback();
     document.addEventListener('backend-ai-connected', () => this.refreshPage());
-    if (globalThis.backendaioptions.get('language') === "default" && this.supportLanguageCodes.includes(globalThis.navigator.language)) { // Language is not set and
-      this.lang = globalThis.navigator.language;
+    const defaultLang = globalThis.navigator.language.split('-')[0];
+    if (globalThis.backendaioptions.get('language') === "default" && this.supportLanguageCodes.includes(defaultLang)) {
+      this.lang = defaultLang;
     } else if (this.supportLanguageCodes.includes(globalThis.backendaioptions.get('language'))) {
       this.lang = globalThis.backendaioptions.get('language');
     } else {
@@ -361,12 +362,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (this.adminOnlyPages.includes(this._page) || this._page === 'unauthorized') {
         this._page = 'unauthorized';
         globalThis.history.pushState({}, '', '/unauthorized');
-        store.dispatch(navigate(decodeURIComponent(this._page)));
-      }
-    } else {
-      if (this._page === 'unauthorized') {
-        this._page = 'summary';
-        globalThis.history.pushState({}, '', '/summary');
         store.dispatch(navigate(decodeURIComponent(this._page)));
       }
     }
@@ -680,6 +675,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    */
   async _updateFullname() {
     const newFullname = this.shadowRoot.querySelector('#pref-original-name').value;
+    if (newFullname.length > 64) {
+      this.notification.text = _text('console.menu.FullNameInvalid');
+      this.notification.show();
+      return;
+    }
     // if user input in full name is not null and not same as the original full name, then it updates.
     if (globalThis.backendaiclient.supports('change-user-name')) {
       if (newFullname && (newFullname !== this.full_name)) {
@@ -775,11 +775,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
         if (typeof modified_view != 'undefined') {
           view = modified_view;
-        }
-      }
-      if (this.adminOnlyPages.includes(view)) {
-        if (!this.is_admin || !this.is_superadmin) {
-          view = 'unauthorized';
         }
       }
       this._page = view;
