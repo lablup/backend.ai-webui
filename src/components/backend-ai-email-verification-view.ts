@@ -108,7 +108,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         this.successDialog.show();
       } catch (e) {
         console.error(e);
-        this.notification.text = e.message || 'Verification Error';
+        this.notification.text = e.message || _text('signup.VerificationError');
         this.notification.show();
         window.setTimeout(() => this.failDialog.show(), 100);
       }
@@ -129,7 +129,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
       this.notification.show();
     } catch (e) {
       console.error(e);
-      this.notification.text = e.message || 'Send error';
+      this.notification.text = e.message || _text('signup.SendError');
       this.notification.show();
     }
   }

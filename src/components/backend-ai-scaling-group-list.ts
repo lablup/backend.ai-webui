@@ -265,7 +265,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       domain = this.shadowRoot.querySelector("#scaling-group-domain").value;
 
     if (scalingGroup === "") {
-      this.notification.text = "Enter valid Resource group name";
+      this.notification.text = _text("resourceGroup.EnterValidResourceGroupName");
       this.notification.show();
       this._hideDialogById("#create-scaling-group-dialog");
       return;

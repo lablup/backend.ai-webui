@@ -51,7 +51,6 @@
       "Experiments": "Experiments",
       "Menu": "Menu",
       "Run": "Run",
-      "Import&Run": "Import & Run",
       "UserName": "User Name"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
@@ -60,7 +59,9 @@
     "NOTFOUND": "<p>Oops!<br/>Page not Found...</p>",
     "DescNOTFOUND": "Sorry, the page you are looking for could not be found.",
     "UNAUTHORIZEDACCESS":"Unauthorized Access",
-    "AdminOnlyPage": "You don't have permission to access this page.<br />Click the button below to redirect to summary page."
+    "AdminOnlyPage": "You don't have permission to access this page.<br />Click the button below to redirect to summary page.",
+    "CleanUpLoginSession": "Clean up login session...",
+    "CleanUpNow": "Clean up now..."
   },
   "summary": {
     "Dashboard": "Dashboard",
@@ -175,8 +176,16 @@
       "NoFolderExists": "No Folder Exists",
       "sessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app.",
       "UnSelectAllVFolders": "UNSELECT ALL",
-      "ResourceMonitorToggle": "See resource monitor"
+      "ResourceMonitorToggle": "See resource monitor",
+      "SharedMemorySettingIsReduced": "Shared memory setting is reduced to below the allocated memory.",
+      "NoActiveKeypair": "No Active Keypair",
+      "ProxyNotReady": "Proxy is not ready yet. Check proxy settings for detail.",
+      "ProxyConfiguratorNotResponding": "Proxy configurator is not responding.",
+      "SettingUpProxyForApp": "Setting up proxy for the app...",
+      "AddingKernelToSocketQueue": "Adding kernel to socket queue..."
     },
+    "Preparing": "Preparing...",
+    "PreparingSession": "Preparing session...",
     "Running": "Running",
     "Finished": "Finished",
     "Others": "Others",
@@ -328,6 +337,8 @@
     "validation": {
       "InvalidEmailAddress": "Invalid Email Address.",
       "PolicyName": "Policy name Required.",
+      "NumbersOnly": "Allows numbers only",
+      "PleaseSelectOption": "Please select one option",
       "LetterNumber-_dot": "Allows letters, numbers and -_.",
       "NameAlreadyExists": "Policy Name Already Exists!"
     },
@@ -543,6 +554,7 @@
     "EditUserConfigScript": "Edit User Config Script",
     "PackageInstallation": "Package Installation",
     "BootstrapScript": "Bootstrap Script",
+    "BootstrapScriptUpdated": "Bootstrap script updated.",
     "DialogSaveToSpecificFile": "Save the changes you made to File?",
     "DialogNoSaveNoPreserve": "Your changes will be lost if you don't save them.",
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
@@ -591,7 +603,8 @@
     "Method": "Method",
     "RequestUrl": "Request Url",
     "Parameters": "Parameters",
-    "ErrorType": "Error Type"
+    "ErrorType": "Error Type",
+    "LogMessageRemoved": "Log Messages have been removed."
   },
   "resourcePolicy": {
     "Resources": "Resources",
@@ -612,6 +625,7 @@
     "AllowedHosts": "Allowed hosts",
     "PleaseInputValue": "Please input value or check unlimited.",
     "CannotCreateResourcePolicy": "Cannot create Resource Policy. Please check input values.",
+    "SuccessfullyCreated": "Resource policy successfully created.",
     "SuccessfullyUpdated": "Resource policy successfully updated.",
     "SuccessfullyDeleted": "Resource policy successfully deleted.",
     "PolicyNameEmpty": "Policy name should not be empty.",
@@ -668,7 +682,8 @@
     "ResourceGroupNameNotMatch": "Resource group name does not match!",
     "ResourceGroupCreated": "Resource group succesfully created",
     "ResourceGroupModified": "Resource group successfully modified",
-    "ResourceGroupDeleted": "Resource group successfully deleted"
+    "ResourceGroupDeleted": "Resource group successfully deleted",
+    "EnterValidResourceGroupName": "Enter valid Resource group name"
   },
   "maintenance": {
     "General": "General",
@@ -684,7 +699,13 @@
     "RescanImageList": "Rescan image list from repository",
     "DescRescanImageList": "Rescan image list from registered repositories.<br />It may take a long time, so please wait after execution.",
     "Recalculating": "Recalculating...",
-    "RescanImageScanning": "Scanning..."
+    "RecalculationFinished": "Recalculation finished",
+    "RecalculationFailed": "Recalculation failed",
+    "Scanning": "Scanning...",
+    "RescanImageStarted": "Rescanning image started",
+    "RescanImageScanning": "Rescanning...",
+    "RescanImageFinished": "Rescanning image finished.",
+    "RescanFailed": "Rescan failed"
   },
   "statistics": {
     "Usage": "Usage",
@@ -743,7 +764,8 @@
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",
     "Visit": "Visit",
-    "SeeDetail": "See Detail"
+    "SeeDetail": "See Detail",
+    "Initializing": "Initializing..."
   },
   "information": {
     "System": "System",
@@ -830,6 +852,7 @@
     "PasswordNotMatched": "Those passwords didn't match. Try it again.",
     "Signup": "Signup",
     "SignupSucceeded": "Successfully signed up.",
+    "Processing": "Processing...",
     "InvitationToken": "Invitation Token",
     "TokenInputRequired": "Token is required.",
     "PolicyAgreement_1":"I have read and agree to the ",
@@ -847,8 +870,10 @@
     "EmailInputRequired": "Email address is required.",
     "InvalidEmail": "Invalid email address",
     "SendEmail": "Send verification email",
+    "SendError": "Error occurred during email sending",
     "EmailSent": "Email sent",
-    "EmailNotSent": "Unable to send email"
+    "EmailNotSent": "Unable to send email",
+    "VerificationError" : "Verification error occurred"
   },
   "update": {
     "NewConsoleVersionAvailable": "New version is available:"
@@ -903,6 +928,8 @@
     "OpenSource": "Open Source"
   },
   "error": {
+    "UpdateError": "Update error",
+    "APIEndpointIsEmpty": "API Endpoint is empty. Please specify Backend.AI API endpoint to signup.",
     "APINotSupported": "API not supported. Requires latest version of Backend.AI manager.",
     "UserHasNoGroup": "User has no group. Please contact administrator to fix it.",
     "WrongAPIServerAddress": "Wrong API server address.",
@@ -917,7 +944,8 @@
     "ResourcePolicyAlreadyExist": "A resource policy with the same name already exists.",
     "ScalingGroupAlreadyExist": "A scaling group with the same name already exists.",
     "ResourceLimitExceed": "Resource limit exceed. Check your free resources.",
-    "SmallerResourceThenImageRequires": "Your resource request is smaller than the minimum required by the image. Try more resources."
+    "SmallerResourceThenImageRequires": "Your resource request is smaller than the minimum required by the image. Try more resources.",
+    "LoginSucceededManagerNotResponding":  "Login succeed but manager is not responding."
   },
   "maxLength" : {
     "20chars": "(maximum 20 chars)",

@@ -429,14 +429,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     const editor = this.shadowRoot.querySelector('#bootstrap-dialog #bootstrap-editor');
     const script = editor.getValue();
     if (this.lastSavedBootstrapScript === script) {
-      this.notification.text = 'No changes';
+      this.notification.text = _text('resourceGroup.NochangesMade');
       this.notification.show();
       return;
     }
     this.spinner.show();
     globalThis.backendaiclient.userConfig.update_bootstrap_script(script)
       .then(res => {
-        this.notification.text = 'Bootstrap script updated.';
+        this.notification.text = _text("usersettings.BootstrapScriptUpdated");
         this.notification.show();
         this.spinner.hide();
       });
@@ -538,7 +538,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
       } else { // if rcfile already exists
         if (this.rcfiles[idx]['data'] === script) {
-          this.notification.text = 'No changes';
+          this.notification.text = _text('resourceGroup.NochangesMade');
           this.notification.show();
           return;
         } else if (script === '') {
@@ -865,7 +865,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
           <div class="vertical center-justified layout setting-text">
             <mwc-textfield pattern="[0-9]*" @change="${(e) => this.changePreferredSSHPort(e)}"
-                value="${this.preferredSSHPort}" validationMessage="Allows numbers only" auto-validate maxLength="5"></mwc-textfield>
+                value="${this.preferredSSHPort}" validationMessage="${_t("credential.validation.NumbersOnly")}" auto-validate maxLength="5"></mwc-textfield>
           </div>
         </div>
         ` : html``}
@@ -973,7 +973,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                       label="${_t("usersettings.ConfigFilename")}"
                       required
                       outlined
-                      validationMessage="Please select one option."
+                      validationMessage="${_t("credential.validation.PleaseSelectOption")}"
                       @selected="${() => this._toggleRcFileName()}"
                       helper=${_t("dialog.warning.WillBeAppliedToNewSessions")}>
             ${this.rcfiles.map(item => html`

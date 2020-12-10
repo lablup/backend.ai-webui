@@ -904,7 +904,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     if (this.shmem_request > this.mem_request) { // To prevent overflow of shared memory
       this.shmem_request = this.mem_request;
-      this.notification.text = 'Shared memory setting is reduced to below the allocated memory.';
+      this.notification.text = _text("session.launcher.SharedMemorySettingIsReduced");
       this.notification.show();
     }
     if (this.mem_request > 4 && this.shmem_request < 1) { // Automatically increase shared memory to 1GB
@@ -931,8 +931,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     const kernelName: string = this._generateKernelIndex(kernel, version);
     this.shadowRoot.querySelector('#launch-button').disabled = true;
-    this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Preparing...';
-    this.notification.text = 'Preparing session...';
+    this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.Preparing');
+    this.notification.text =  _text('session.PreparingSession');
     this.notification.show();
 
     let sessions: any = [];
@@ -1726,7 +1726,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const ownerEmail = this.shadowRoot.querySelector('#owner-email');
     const email = ownerEmail.value;
     if (!ownerEmail.checkValidity()) {
-      this.notification.text = 'Invalid email address';
+      this.notification.text = _text("credential.validation.InvalidEmailAddress");
       this.notification.show();
       this.ownerKeypairs = [];
       this.ownerGroups = [];
@@ -1737,7 +1737,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const keypairs = await globalThis.backendaiclient.keypair.list(email, ['access_key']);
     this.ownerKeypairs = keypairs.keypairs;
     if (this.ownerKeypairs.length < 1) {
-      this.notification.text = 'No active keypair';
+      this.notification.text = _text("session.launcher.NoActiveKeypair")
       this.notification.show();
       this.ownerKeypairs = [];
       this.ownerGroups = [];

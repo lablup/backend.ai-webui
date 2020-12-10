@@ -439,6 +439,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.folders.RenameAFolder')}</span>
         <div slot="content">
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
+           pattern="^[a-zA-Z0-9.-_]*$"
            required autoValidate validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"
            style="width:320px;" maxLength="64" placeholder="${_text('maxLength.64chars')}"
            @change="${() => {this._validateFolderName(true)}}"></mwc-textfield>
