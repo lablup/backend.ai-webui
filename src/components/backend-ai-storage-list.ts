@@ -509,34 +509,34 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${this.explorer.id}</span>
         <div slot="action" class="horizontal layout flex folder-action-buttons">
           <div class="flex"></div>
-          <mwc-button
-              outlined
-              class="multiple-action-buttons fg red"
-              icon="delete"
-              @click="${() => this._openDeleteMultipleFileDialog()}"
-              style="display:none;">
-              <span>${_t("data.explorer.Delete")}</span>
-          </mwc-button>
           ${this.isWritable ? html`
-          <div id="add-btn-cover">
             <mwc-button
-                id="add-btn"
-                icon="cloud_upload"
-                ?disabled=${!this.isWritable}
-                @click="${(e) => this._uploadFileBtnClick(e)}">
-                <span>${_t("data.explorer.UploadFiles")}</span>
+                outlined
+                class="multiple-action-buttons fg red"
+                icon="delete"
+                @click="${() => this._openDeleteMultipleFileDialog()}"
+                style="display:none;">
+                <span>${_t("data.explorer.Delete")}</span>
             </mwc-button>
-          </div>
-          <div id="mkdir-cover">
-            <mwc-button
-                id="mkdir"
-                class="tooltip"
-                icon="create_new_folder"
-                ?disabled=${!this.isWritable}
-                @click="${() => this._mkdirDialog()}">
-                <span>${_t("data.explorer.NewFolder")}</span>
-            </mwc-button>
-          </div>
+            <div id="add-btn-cover">
+              <mwc-button
+                  id="add-btn"
+                  icon="cloud_upload"
+                  ?disabled=${!this.isWritable}
+                  @click="${(e) => this._uploadFileBtnClick(e)}">
+                  <span>${_t("data.explorer.UploadFiles")}</span>
+              </mwc-button>
+            </div>
+            <div id="mkdir-cover">
+              <mwc-button
+                  id="mkdir"
+                  class="tooltip"
+                  icon="create_new_folder"
+                  ?disabled=${!this.isWritable}
+                  @click="${() => this._mkdirDialog()}">
+                  <span>${_t("data.explorer.NewFolder")}</span>
+              </mwc-button>
+            </div>
           ` : html`
           <mwc-button
               id="readonly-btn"
