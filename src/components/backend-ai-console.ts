@@ -186,6 +186,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       configPath = '../../config.toml';
       document.addEventListener('backend-ai-logout', () => this.logout(false));
     }
+    globalThis.addEventListener("beforeunload", function (event) {
+      globalThis.backendaioptions.set('last_window_close_time', new Date().getTime() / 1000);
+    });
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
       // If disconnected
@@ -211,9 +214,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           );
           tabcount.tabsCount(true);
           if(tabcount.tabsCounter === 1 && !isPageReloaded && globalThis.backendaioptions.get('auto_logout', false) === true) {
-            this.loginPanel.check_login().then((result)=>{
-              if (result === true) { //currently login.
-                this.loginPanel._logoutSession().then(()=>{
+            this.loginPanel.check_login().then((result)=> {
+              let current_time = new Date().getTime() / 1000;
+              if (result === true && current_time - globalThis.backendaioptions.get('last_window_close_time', 0) > 2) { //currently login.
+                this.loginPanel._logoutSession().then(() => {
                   this.loginPanel.open();
                 });
               } else {
