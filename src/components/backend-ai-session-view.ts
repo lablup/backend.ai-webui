@@ -469,8 +469,8 @@ export default class BackendAiSessionView extends BackendAIPage {
       <backend-ai-dialog id="export-to-csv" fixed backdrop>
         <span slot="title">${_t("session.ExportSessionListToCSVFile")}</span>
         <div slot="content">
-          <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
-                          validationMessage="Allows letters, numbers and -_."
+          <mwc-textfield id="export-file-name" label="File name"
+                          validationMessage="${_t('data.explorer.ValueRequired')}"
                           value="${'session_' + this._defaultFileName}" required
                           style="margin-bottom:10px;"></mwc-textfield>
           <div class="horizontal center layout" style="display:none;">
