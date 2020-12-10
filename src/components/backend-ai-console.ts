@@ -207,8 +207,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         
         document.addEventListener('backend-ai-connected', (e) => {
           tabcount.onTabChange(() => {
-            // window.addEventListener('beforeunload', (e) => {
-            //   e.preventDefault();
             const pageAccessedByReload = (
               (window.performance.navigation && window.performance.navigation.type === 1) ||
                 window.performance
@@ -216,23 +214,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   .map((nav: any) => nav.type)
                   .includes('reload')
             );
+            let ispageReloaded = sessionStorage.getItem('pageReloaded') ? true : false;
             if (!pageAccessedByReload) {
-              let currentTime = new Date().getTime();
-              let lastClosed = globalThis.backendaioptions.get('lastClosed');
-              if (!lastClosed) {
-                globalThis.backendaioptions.set('lastClosed', currentTime);
-              }
-              const msecToSec = 1000;
-              let timediff = Math.round(currentTime - lastClosed / msecToSec);
               if (globalThis.backendaioptions.get('auto_logout')) {
-                if ( (tabcount.tabsCounter <= 1) && (timediff >= this.timeoutSec) ) {
+                if ((tabcount.tabsCounter <= 1) && !ispageReloaded) {
                   this.logout();
                 }
-              } else {
-                globalThis.backendaioptions.set('lastClosed', currentTime);
+                if (ispageReloaded) {
+                  sessionStorage.removeItem('pageReloaded');
+                }
+              } 
+            } else {
+              if (!ispageReloaded) {
+                sessionStorage.setItem('pageReloaded', 'true');
               }
             }
-            // });
           }, true);
         }, true);
       }
