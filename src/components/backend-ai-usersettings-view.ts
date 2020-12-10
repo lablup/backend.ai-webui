@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 import {store} from '../store';
@@ -297,7 +297,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     document.dispatchEvent(event);
     localStorage.getItem('backendaiconsole.logs');
     this.clearLogsDialog.hide();
-    this.notification.text = 'Log Messages have been removed.';
+    this.notification.text = _text('logs.LogMessageRemoved');
     this.notification.show();
     this.spinner.hide();
   }

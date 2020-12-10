@@ -528,7 +528,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       let input = this._readResourcePolicyInput();
       globalThis.backendaiclient.resourcePolicy.add(name, input).then(response => {
         this.shadowRoot.querySelector('#new-policy-dialog').hide();
-        this.notification.text = "Resource policy successfully created.";
+        this.notification.text = _text("resourcePolicy.SuccessfullyCreated");
         this.notification.show();
         this.shadowRoot.querySelector('#resource-policy-list').refresh();
       }).catch(err => {
@@ -901,11 +901,12 @@ export default class BackendAICredentialView extends BackendAIPage {
   /**
    * Control a dropdown menu's open state.
    */
-  _toggleDropdown() {
+  _toggleDropdown(e) {
     let menu = this.shadowRoot.querySelector("#dropdown-menu");
-    menu.open = !menu.open;
-    if(this.exportToCsvDialog.open) {
-      menu.open = false;
+    let button = e.target;
+    menu.anchor = button;
+    if (!menu.open) {
+      menu.show();
     }
   }
 
@@ -1014,17 +1015,18 @@ export default class BackendAICredentialView extends BackendAIPage {
            </mwc-tab-bar>
             ${this.isAdmin ? html`
                 <span class="flex"></span>
-                <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
-                                @click="${this._toggleDropdown}">
-                  <mwc-menu id="dropdown-menu" absolute x="-50" y="25">
-                    <mwc-list-item>
-                      <a class="horizontal layout start center" @click="${this._openExportToCsvDialog}">
-                        <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
-                        ${_t("credential.exportCSV")}
-                      </a>
-                    </mwc-list-item>
-                  </mwc-menu>
-                </mwc-icon-button>
+                <div style="position: relative;">
+                  <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
+                                  @click="${(e) => this._toggleDropdown(e)}"></mwc-icon-button>
+                  <mwc-menu id="dropdown-menu">
+                      <mwc-list-item>
+                        <a class="horizontal layout start center" @click="${this._openExportToCsvDialog}">
+                          <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
+                          ${_t("credential.exportCSV")}
+                        </a>
+                      </mwc-list-item>
+                    </mwc-menu>
+                </div>
               ` : html``}
           </h3>
           <div id="user-lists" class="admin item tab-content card">
@@ -1122,7 +1124,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       <backend-ai-dialog id="new-policy-dialog" fixed backdrop blockscrolling narrowLayout>
         <span slot="title">${_t("credential.CreateResourcePolicy")}</span>
         <div slot="content">
-          <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}" pattern="^[a-zA-Z0-9_-]+$"
+          <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}"
                          validationMessage="${_t('data.explorer.ValueRequired')}"
                          maxLength="64"
                          placeholder="${_t('maxLength.64chars')}"
@@ -1305,7 +1307,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         <span slot="title">${_t("credential.ExportCSVFile")} (${this._activeTab})</span>
 
         <div slot="content" class="intro centered login-panel">
-          <mwc-textfield id="export-file-name" label="${_text('credential.FileName')}" pattern="^[a-zA-Z0-9_-]+$"
+          <mwc-textfield id="export-file-name" label="${_text('credential.FileName')}"
                           validationMessage="${_text('credential.validation.LetterNumber-_dot')}"
                           value="${this._activeTab + '_' + this._defaultFileName}" required
                           placeholder="${_t('maxLength.255chars')}"

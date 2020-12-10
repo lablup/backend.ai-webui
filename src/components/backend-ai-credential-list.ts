@@ -556,7 +556,11 @@ export default class BackendAICredentialList extends BackendAIPage {
       globalThis.backendaiclient.keypair.mutate(this.keypairInfo.access_key, input)
         .then(res => {
           if (res.modify_keypair.ok) {
-            this.notification.text = _text('environment.SuccessfullyModified');
+            if (this.keypairInfo.resource_policy === resource_policy && this.keypairInfo.rate_limit === parseInt(rate_limit)) {
+              this.notification.text = _text('credential.NoChanges');
+            } else {
+              this.notification.text = _text('environment.SuccessfullyModified');
+            }
             this.refresh();
           } else {
             this.notification.text = _text('dialog.ErrorOccurred');

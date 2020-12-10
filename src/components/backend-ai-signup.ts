@@ -262,7 +262,7 @@ export default class BackendAiSignup extends BackendAIPage {
     const user_email = (this.shadowRoot.querySelector('#id_user_email') as HTMLInputElement).value;
     const user_name = (this.shadowRoot.querySelector('#id_user_name') as HTMLInputElement).value;
     const password = (this.shadowRoot.querySelector('#id_password1') as HTMLInputElement).value;
-    this.notification.text = 'Processing...';
+    this.notification.text = _text("signup.Processing");
     this.notification.show();
     const body = {
       'email': user_email,
@@ -275,7 +275,7 @@ export default class BackendAiSignup extends BackendAIPage {
     this.client._wrapWithPromise(rqst).then((response) => {
       this._toggleInputField(false);
       this.shadowRoot.querySelector('#signup-button-message').innerHTML = _text('signup.SignupSucceeded');
-      this.notification.text = 'Signup succeed.';
+      this.notification.text = _text("signup.SignupSucceeded");;
       this.notification.show();
       setTimeout(() => {
         this.signupPanel.hide();

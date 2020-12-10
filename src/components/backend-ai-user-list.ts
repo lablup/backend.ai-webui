@@ -570,7 +570,6 @@ export default class BackendAIUserList extends BackendAIPage {
                   ?disabled=${!this.editMode}
                   label="${_text("credential.UserName")}"
                   id="username"
-                  pattern="^[a-zA-Z0-9_ ]*$"
                   value="${this.userInfo.username}"
                   maxLength="64"
                   helper="${_text('maxLength.64chars')}"></mwc-textfield>
@@ -578,7 +577,6 @@ export default class BackendAIUserList extends BackendAIPage {
                   ?disabled=${!this.editMode}
                   label="${_text("credential.FullName")}"
                   id="full_name"
-                  pattern="^[a-zA-Z0-9_ ]*$"
                   value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}"
                   maxLength="64"
                   helper="${_text('maxLength.64chars')}"></mwc-textfield>

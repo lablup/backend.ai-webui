@@ -58,7 +58,9 @@
     "NOTFOUND": "<p>요청하신 페이지를 찾을 수 없습니다.</p>",
     "DescNOTFOUND": "요청하신 페이지가 사라졌거나, 잘못된 경로를 입력하였습니다.",
     "UNAUTHORIZEDACCESS":"허가되지 않은 접근입니다.",
-    "AdminOnlyPage": "접근하려는 페이지는 관리자 권한이 필요합니다.<br /> 아래 버튼을 클릭하면 요약 페이지로 돌아갑니다."
+    "AdminOnlyPage": "접근하려는 페이지는 관리자 권한이 필요합니다.<br /> 아래 버튼을 클릭하면 요약 페이지로 돌아갑니다.",
+    "CleanUpLoginSession": "로그인 된 세션을 종료합니다...",
+    "CleanUpNow": "종료합니다..."
   },
   "summary": {
     "Dashboard": "대시보드",
@@ -172,8 +174,17 @@
       "SessionNameAllowCondition": "세션 이름은 공백없이 4-64자  사이의 영문/숫자만 입력 가능합니다.",
       "NoFolderExists": "폴더가 없습니다",
       "sessionStillPreparing": "세션이 아직 준비중입니다. 세션이 시작된 후 직접 앱 아이콘을 눌러 앱을 시작해주세요.",
-      "ResourceMonitorToggle": "자원 모니터 보기"
+      "UnSelectAllVFolders": "모두 선택 해제",
+      "ResourceMonitorToggle": "자원 모니터 보기",
+      "SharedMemorySettingIsReduced": "공유 메모리 값이 할당된 메모리보다 적게 설정되었습니다.",
+      "NoActiveKeypair": "활성화 된 키페어 없음",
+      "ProxyNotReady": "프록시 서버가 아직 준비되지 않았습니다. 프록시 설정을 확인하십시오",
+      "ProxyConfiguratorNotResponding": "프록시 구성자가 응답하지 않습니다.",
+      "SettingUpProxyForApp": "애플리케이션을 위한 프록시를 설정합니다...",
+      "AddingKernelToSocketQueue": "커널을 소켓 큐에 추가합니다..."
     },
+    "Preparing": "준비중...",
+    "PreparingSession": "세션 준비중...",
     "Running": "실행중",
     "Finished": "종료",
     "Others": "기타",
@@ -322,6 +333,8 @@
     "validation": {
       "InvalidEmailAddress": "잘못된 이메일 주소 형식입니다.",
       "PolicyName": "정책 이름이 필요합니다.",
+      "NumbersOnly": "숫자만 입력 가능합니다.",
+      "PleaseSelectOption": "옵션 선택은 필수 입니다.",
       "LetterNumber-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
       "NameAlreadyExists": "그 이름은 이미 사용중입니다."
     },
@@ -538,6 +551,7 @@
     "NoChanges": "변경 사항이 없습니다",
     "PackageInstallation": "패키지 설치",
     "BootstrapScript": "부트스트랩 스크립트",
+    "BootstrapScriptUpdated": "부트스트랩 스크립트가 갱신되었습니다.",
     "DialogSaveToSpecificFile": "수정한 내용을 File 에 저장하시겠습니까?",
     "DialogNoSaveNoPreserve": "저장하지 않은 내용은 삭제됩니다.",
     "DescScriptUpdated": "사용자 스크립트를 수정했습니다. 이 스크립트는 이후 새로 생성하는 세션부터 적용됩니다.",
@@ -586,7 +600,8 @@
     "Method": "요청방법",
     "RequestUrl": "요청 주소",
     "Parameters": "파라미터",
-    "ErrorType": "에러 종류"
+    "ErrorType": "에러 종류",
+    "LogMessageRemoved": "로그 메시지가 삭제되었습니다."
   },
   "resourcePolicy": {
     "Resources": "자원",
@@ -607,6 +622,7 @@
     "AllowedHosts": "허용된 호스트",
     "PleaseInputValue": "값을 입력하거나 무제한 사용에 체크해주세요.",
     "CannotCreateResourcePolicy": "자원 정책 생성에 실패했습니다. 입력 값을 확인해주세요.",
+    "SuccessfullyCreated": "자원 정책이 성공적으로 생성되었습니다.",
     "SuccessfullyUpdated": "자원 정책이 성공적으로 갱신되었습니다.",
     "SuccessfullyDeleted": "자원 정책이 성공적으로 삭제되었습니다.",
     "PolicyNameEmpty": "자원 정책명은 필수 입력입니다.",
@@ -659,11 +675,12 @@
     "ResourceGroupName": "자원 그룹 이름",
     "Active": "활성",
     "SelectScheduler": "스케쥴러 선택",
+    "NochangesMade": "변경사항이 없습니다",
     "ResourceGroupNameNotMatch": "자원 그룹명이 일치하지 않습니다.",
     "ResourceGroupCreated": "자원 그룹이 성공적으로 수정되었습니다.",
     "ResourceGroupModified": "자원 그룹이 성공적으로 수정되었습니다.",
     "ResourceGroupDeleted": "자원 그룹이 성공적으로 삭제되었습니다.",
-    "NochangesMade": "변경사항이 없습니다"
+    "EnterValidResourceGroupName": "올바른 자원 그룹 명을 입력해주세요."
   },
   "maintenance": {
     "General": "일반",
@@ -679,7 +696,13 @@
     "RescanImageList": "저장소로부터 이미지 목록 새로 읽기",
     "DescRescanImageList": "등록된 컨테이너 이미지 저장소로부터 이미지 목록을 새로 읽습니다.<br />오랜 시간이 걸리므로, 실행 후 종료시까지 기다려주시기 바랍니다.",
     "Recalculating": "재계산중...",
-    "RescanImageScanning": "리스캔중..."
+    "RecalculationFinished": "재계산 작업이 완료되었습니다.",
+    "RecalculationFailed": "재계산 작업이 실패하였습니다.",
+    "Scanning": "스캐닝 작업중...",
+    "RescanImageStarted": "이미지 리스캔 작업이 시작되었습니다.",
+    "RescanImageScanning": "리스캔중...",
+    "RescanImageFinished": "이미지 리스캔 작업이 완료되었습니다.",
+    "RescanFailed": "리스캔 작업이 실패하였습니다."
   },
   "statistics": {
     "Usage": "사용량",
@@ -738,7 +761,8 @@
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",
     "Visit": "방문",
-    "SeeDetail": "상세보기"
+    "SeeDetail": "상세보기",
+    "Initializing": "초기화 중..."
   },
   "information": {
     "System": "시스템",
@@ -827,6 +851,7 @@
     "PasswordNotMatched": "비밀번호가 불일치합니다. 다시 입력해주세요.",
     "Signup": "가입",
     "SignupSucceeded": "가입 완료",
+    "Processing": "진행 중",
     "InvitationToken": "초대 토큰",
     "TokenInputRequired": "토큰은 필수 입력입니다.",
     "PolicyAgreement_1":"나는 다음 ",
@@ -844,8 +869,10 @@
     "EmailInputRequired": "이메일 주소는 필수 입력입니다.",
     "InvalidEmail": "정상적인 이메일 주소가 아닙니다.",
     "SendEmail": "인증 메일 전송",
+    "SendError": "메일 전송 과정에서 에러가 발생하였습니다.",
     "EmailSent": "이메일을 보냈습니다",
-    "EmailNotSent": "이메일을 보내는 데 실패했습니다"
+    "EmailNotSent": "이메일을 보내는 데 실패했습니다",
+    "VerificationError": "인증 에러가 발생하였습니다."
   },
   "update": {
     "NewConsoleVersionAvailable": "새 버전이 출시되었습니다:"
@@ -900,6 +927,8 @@
     "OpenSource": "오픈소스"
   },
   "error": {
+    "UpdateError": "업데이트 에러",
+    "APIEndpointIsEmpty": "API 엔드포인트가 비어있습니다. 회원 가입하시려면 Backend.AI API 엔드포인트를 입력해주세요.",
     "APINotSupported": "지원하지 않는 API입니다. 최신 버전의 Backend.AI 매니저가 필요합니다.",
     "UserHasNoGroup": "사용자가 어떤 그룹에도 속해있지 않습니다. 관리자에게 문의하세요.",
     "WrongAPIServerAddress": "잘못된 API 서버 주소",
@@ -914,7 +943,8 @@
     "ResourcePolicyAlreadyExist": "같은 이름의 리소스 정책이 이미 있습니다.",
     "ScalingGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다.",
     "ResourceLimitExceed": "리소스 제한을 초과했습니다. 가용 자원량을 확인하세요.",
-    "SmallerResourceThenImageRequires": "요청한 리소스가 이미지가 요구하는 리소스보다 적습니다. 리소스를 보다 크게 해서 시도해보세요."
+    "SmallerResourceThenImageRequires": "요청한 리소스가 이미지가 요구하는 리소스보다 적습니다. 리소스를 보다 크게 해서 시도해보세요.",
+    "LoginSucceededManagerNotResponding": "로그인은 성공하였으나 매니저 서버가 응답하지 않습니다."
   },
   "maxLength" : {
     "20chars": "(최대 길이 20자)",

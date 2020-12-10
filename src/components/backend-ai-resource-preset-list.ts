@@ -242,7 +242,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
               <mwc-textfield type="text" name="preset_name" class="modify" id="id-preset-name"
                           label="${_t("resourcePreset.PresetName")}"
                           auto-validate required
-                          pattern="[a-zA-Z0-9_-]+"
                           disabled
                           error-message="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
               <h4>${_t("resourcePreset.ResourcePreset")}</h4>
@@ -286,7 +285,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
             label="Preset Name"
             auto-validate
             required
-            pattern="[a-zA-Z0-9-_]+"
             maxLength="255"
             placeholder="${_t("maxLength.255chars")}"
             error-message="${_t("data.Allowslettersnumbersand-_")}"
