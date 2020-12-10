@@ -209,7 +209,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 .map((nav: any) => nav.type)
                 .includes('reload')
           );
-          if(tabcount.tabsCount() === 1 && !isPageReloaded && globalThis.backendaioptions.get('auto_logout', false) === true) {
+          tabcount.tabsCount(true);
+          if(tabcount.tabsCounter === 1 && !isPageReloaded && globalThis.backendaioptions.get('auto_logout', false) === true) {
             this.loginPanel.check_login().then((result)=>{
               if (result === true) { //currently login.
                 this.loginPanel._logoutSession().then(()=>{
@@ -605,8 +606,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * Open the user preference dialog.
    */
   async _openUserPrefDialog() {
-    let fields = ['email', 'username', 'password', 'full_name'];
-    let currentUserInfo = await globalThis.backendaiclient.user.get(this.user_id, fields);
     const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
     dialog.show();
   }
@@ -931,7 +930,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   async logout(performClose = false) {
     console.log('also close the app:', performClose);
     this._deleteRecentProjectGroupInfo();
-    alert("asd");
     if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
       this.notification.text = 'Clean up now...';
       this.notification.show();
