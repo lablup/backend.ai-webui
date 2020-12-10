@@ -612,8 +612,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * Open the user preference dialog.
    */
   async _openUserPrefDialog() {
-    let fields = ['email', 'username', 'password', 'full_name'];
-    await globalThis.backendaiclient.user.get(this.user_id, fields);
     const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
     dialog.show();
   }
