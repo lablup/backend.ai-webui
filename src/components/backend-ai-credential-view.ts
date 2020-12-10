@@ -528,7 +528,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       let input = this._readResourcePolicyInput();
       globalThis.backendaiclient.resourcePolicy.add(name, input).then(response => {
         this.shadowRoot.querySelector('#new-policy-dialog').hide();
-        this.notification.text = "Resource policy successfully created.";
+        this.notification.text = _text("resourcePolicy.SuccessfullyCreated");
         this.notification.show();
         this.shadowRoot.querySelector('#resource-policy-list').refresh();
       }).catch(err => {

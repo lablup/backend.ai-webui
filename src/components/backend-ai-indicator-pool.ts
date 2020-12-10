@@ -3,6 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 import {customElement, html, LitElement, property} from "lit-element";
+import {get as _text, translate as _t} from "lit-translate";
 
 import 'weightless/dialog';
 import 'weightless/banner';
@@ -59,7 +60,7 @@ export default class BackendAIIndicatorPool extends LitElement {
     this.gc();
     let indicator = document.createElement('backend-ai-indicator');
     indicator.value = 0;
-    indicator.text = 'Initializing...';
+    indicator.text = _text('notification.Initializing');
     indicator.mode = mode;
     indicator.style.bottom = (20 + 90 * this.step) + 'px';
     document.body.appendChild(indicator);

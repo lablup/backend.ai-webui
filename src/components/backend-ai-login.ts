@@ -551,7 +551,7 @@ export default class BackendAILogin extends BackendAIPage {
   _showSignupDialog() {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.api_endpoint === '') {
-      this.notification.text = 'API Endpoint is empty. Please specify Backend.AI API endpoint to signup.';
+      this.notification.text = _text("error.APIEndpointIsEmpty");
       this.notification.show();
       return;
     }
@@ -581,7 +581,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.notification.show();
     } catch (e) {
       console.error(e);
-      this.notification.text = e.message || 'Send error';
+      this.notification.text = e.message || _text('signup.SendError');
       this.notification.show();
     }
   }
@@ -796,7 +796,7 @@ export default class BackendAILogin extends BackendAIPage {
         if (this.loginPanel.open !== true) {
           if (typeof err.message !== "undefined") {
             if (err.status === 408) { // Failed while loading getManagerVersion
-              this.notification.text = "Login succeed but manager is not responding.";
+              this.notification.text = _text("error.LoginSucceededManagerNotResponding");
               this.notification.detail = err.message;
             } else {
               this.notification.text = PainKiller.relieve(err.title);

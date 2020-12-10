@@ -420,10 +420,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this.notification.text = _text('environment.InstallingImage') + imageName + _text('environment.TakesTime');
       this.notification.show();
       let indicator = await this.indicator.start('indeterminate');
-      indicator.set(10, 'Downloading...');
+      indicator.set(10, _text('import.Downloading'));
 
       globalThis.backendaiclient.image.install(imageName, imageResource).then((response) => {
-        indicator.set(100, 'Install finished.');
+        indicator.set(100, _text('import.Installed'));
         indicator.end(1000);
 
         // change installing -> installed

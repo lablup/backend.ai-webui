@@ -376,7 +376,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
     if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
       this.indicator.end();
-      this.notification.text = 'Proxy is not ready yet. Check proxy settings for detail.';
+      this.notification.text = _text('session.launcher.ProxyNotReady');;
       this.notification.show();
       return Promise.resolve(false);
     }
@@ -389,12 +389,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       },
       uri: this._getProxyURL() + 'conf'
     };
-    this.indicator.set(20, 'Setting up proxy for the app...');
+    this.indicator.set(20, _text('session.launcher.SettingUpProxyForApp'));
     try {
       const response = await this.sendRequest(rqst);
       if (response === undefined) {
         this.indicator.end();
-        this.notification.text = 'Proxy configurator is not responding.';
+        this.notification.text = _text('session.launcher.ProxyConfiguratorNotResponding');
         this.notification.show();
         return Promise.resolve(false);
       }
@@ -406,7 +406,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       if (openToPublic) {
         uri += '&open_to_public=true';
       }
-      this.indicator.set(50, 'Adding kernel to socket queue...');
+      this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
       const rqst_proxy = {
         method: 'GET',
         app: app,

@@ -136,7 +136,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
       }, 2000);
     } catch (e) {
       console.error(e);
-      this.notification.text = e.message || 'Update error';
+      this.notification.text = e.message || _text('error.UpdateError');
       this.notification.show();
       this.failDialog.show();
     }

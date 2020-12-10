@@ -881,7 +881,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    */
   async close_app_window(performClose = false) {
     if (globalThis.backendaioptions.get('preserve_login') === false) { // Delete login information.
-      this.notification.text = 'Clean up login session...';
+      this.notification.text = _text("console.CleanUpLoginSession");
       this.notification.show();
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
@@ -910,7 +910,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     console.log('also close the app:', performClose);
     this._deleteRecentProjectGroupInfo();
     if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
-      this.notification.text = 'Clean up now...';
+      this.notification.text = _text("console.CleanUpNow");
       this.notification.show();
       if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
         await globalThis.backendaiclient.logout();
