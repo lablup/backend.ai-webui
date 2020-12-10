@@ -324,7 +324,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   /**
    * Toggle auto logout.
-   * 
+   *
    * @param {Event} e  - click the auto-logout-switch
    */
   toggleAutoLogout(e) {
@@ -911,22 +911,23 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       </div>
       ` : html``}
       <div class="horizontal layout wrap setting-item">
-          <div class="vertical start start-justified layout setting-desc">
-            <div class="title">${_t("usersettings.AutoLogout")}</div>
-            <div class="description">${_tr("usersettings.DescAutoLogout")}
-            </div>
-          </div>
-          <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="auto-logout-switch" @change="${(e) => this.toggleAutoLogout(e)}" ?checked="${globalThis.backendaioptions.get('auto_logout')}"></mwc-switch>
+        <div class="vertical start start-justified layout setting-desc">
+          <div class="title">${_t("usersettings.AutoLogout")}</div>
+          <div class="description">${_tr("usersettings.DescAutoLogout")}
           </div>
         </div>
+        <div class="vertical center-justified layout setting-button flex end">
+          <mwc-switch id="auto-logout-switch" @change="${(e) => this.toggleAutoLogout(e)}"
+                      ?checked="${globalThis.backendaioptions.get('auto_logout', true)}"></mwc-switch>
+        </div>
+      </div>
       ${this.shell_script_edit ? html`
-      <h3 class="horizontal center layout">
-        <span>${_t('usersettings.ShellEnvironments')}</span>
-        <span class="flex"></span>
-      </h3>
-      <div class="horizontal wrap layout setting-item">
-        <mwc-button
+        <h3 class="horizontal center layout">
+          <span>${_t('usersettings.ShellEnvironments')}</span>
+          <span class="flex"></span>
+        </h3>
+        <div class="horizontal wrap layout setting-item">
+          <mwc-button
             icon="edit"
             outlined
             label="${_t("usersettings.EditBootstrapScript")}"
