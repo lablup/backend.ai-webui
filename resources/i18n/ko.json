@@ -299,7 +299,7 @@
     "ConcurrentJobs": "동시 세션 실행 수",
     "Folders": "폴더",
     "Capacity(GB)": "용량 (GB)",
-    "Max#": "최대 ",
+    "Max#": "최대 폴더 개수",
     "Create": "생성",
     "ExportCSVFile": "CSV 파일 내보내기",
     "Credentials": "자격 증명",
