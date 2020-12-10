@@ -87,6 +87,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) maxShmPerSession = 2;
   @property({type: Boolean}) maxFileUploadSize = -1;
   @property({type: Array}) endpoints;
+  @property({type: Object}) logoutTimerBeforeOneMin;
+  @property({type: Object}) logoutTimer;
 
   constructor() {
     super();
@@ -539,6 +541,53 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       this.open();
     }
+  }
+
+  async check_login(showError: boolean = true) {
+    if (this.api_endpoint === '') {
+      let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
+      if (api_endpoint != null) {
+        this.api_endpoint = api_endpoint.replace(/^\"+|\"+$/g, '');
+      }
+    }
+    this.api_endpoint = this.api_endpoint.trim();
+    if (this.connection_mode === 'SESSION') {
+      return this._checkLoginUsingSession();
+    } else if (this.connection_mode === 'API') {
+      return Promise.resolve(false);
+    } else {
+      return Promise.resolve(false);
+    }
+  }
+
+  /**
+   * Check login status when SESSION mode.
+   * */
+  async _checkLoginUsingSession(showError: boolean = true) {
+    if (this.api_endpoint === '') {
+      return Promise.resolve(false);
+    }
+    this.clientConfig = new ai.backend.ClientConfig(
+      this.user_id,
+      this.password,
+      this.api_endpoint,
+      'SESSION'
+    );
+    this.client = new ai.backend.Client(
+      this.clientConfig,
+      `Backend.AI Console.`,
+    );
+    return this.client.get_manager_version().then(async ()=>{
+      let isLogon = await this.client.check_login();
+      return Promise.resolve(isLogon);
+    });
+  }
+
+  /**
+   * Logout current session.
+   * */
+  async _logoutSession(showError: boolean = true) {
+    return this.client.logout();
   }
 
   signout() {

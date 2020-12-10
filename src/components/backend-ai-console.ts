@@ -43,6 +43,7 @@ import './backend-ai-resource-broker';
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 
 import '../lib/backend.ai-client-es6';
+import {default as TabCount} from '../lib/TabCounter';
 
 import {
   IronFlex,
@@ -133,6 +134,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                                              "information", "github", "import", 'unauthorized'];
   @property({type: Array}) adminOnlyPages = ["experiment", "credential", "environment", "agent",
                                              "settings", "maintenance", "information"];
+  @property({type: Number}) timeoutSec = 5;
 
   constructor() {
     super();
@@ -184,8 +186,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       configPath = '../../config.toml';
       document.addEventListener('backend-ai-logout', () => this.logout(false));
     }
+    globalThis.addEventListener("beforeunload", function (event) {
+      globalThis.backendaioptions.set('last_window_close_time', new Date().getTime() / 1000);
+    });
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
+      // If disconnected
       if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
         if (this._page === 'verify-email') {
           const emailVerifyView = this.shadowRoot.querySelector('backend-ai-email-verification-view');
@@ -198,7 +204,31 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             changePasswordView.open(this.loginPanel.api_endpoint);
           }, 1000);
         } else {
-          this.loginPanel.login(false);  // Set showError flag to false for initial login
+          const tabcount = new TabCount();
+          const isPageReloaded = (
+            (window.performance.navigation && window.performance.navigation.type === 1) ||
+              window.performance
+                .getEntriesByType('navigation')
+                .map((nav: any) => nav.type)
+                .includes('reload')
+          );
+          tabcount.tabsCount(true);
+          if (tabcount.tabsCounter === 1 && !isPageReloaded && globalThis.backendaioptions.get('auto_logout', true) === true) {
+            this.loginPanel.check_login().then((result) => {
+              let current_time: number = new Date().getTime() / 1000;
+              if (result === true && (current_time - globalThis.backendaioptions.get('last_window_close_time', current_time) > 2.0)) { //currently login.
+                this.loginPanel._logoutSession().then(() => {
+                  this.loginPanel.open();
+                });
+              } else if (result === true) {
+                this.loginPanel.login(false);
+              } else {
+                this.loginPanel.open();
+              }
+            });
+          } else {
+            this.loginPanel.login(false);
+          }
         }
       }
     }).catch(err => {
@@ -214,14 +244,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     });
-
     // apply update name when user info changed via users page
     document.addEventListener('current-user-info-changed',  (e: any) => {
       if (globalThis.backendaiclient.supports('change-user-name')) {
         let input = e.detail;
         this._updateFullname(input.full_name);
       }
-    })
+    });
   }
 
   async connectedCallback() {
