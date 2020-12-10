@@ -201,36 +201,28 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             changePasswordView.open(this.loginPanel.api_endpoint);
           }, 1000);
         } else {
-          this.loginPanel.login(false);  // Set showError flag to false for initial login
-        }
-        const tabcount = new TabCount();
-        
-        document.addEventListener('backend-ai-connected', (e) => {
-          tabcount.onTabChange(() => {
-            const pageAccessedByReload = (
-              (window.performance.navigation && window.performance.navigation.type === 1) ||
-                window.performance
-                  .getEntriesByType('navigation')
-                  .map((nav: any) => nav.type)
-                  .includes('reload')
-            );
-            let ispageReloaded = sessionStorage.getItem('pageReloaded') ? true : false;
-            if (!pageAccessedByReload) {
-              if (globalThis.backendaioptions.get('auto_logout')) {
-                if ((tabcount.tabsCounter <= 1) && !ispageReloaded) {
-                  this.logout();
-                }
-                if (ispageReloaded) {
-                  sessionStorage.removeItem('pageReloaded');
-                }
-              } 
-            } else {
-              if (!ispageReloaded) {
-                sessionStorage.setItem('pageReloaded', 'true');
+          const tabcount = new TabCount();
+          const isPageReloaded = (
+            (window.performance.navigation && window.performance.navigation.type === 1) ||
+              window.performance
+                .getEntriesByType('navigation')
+                .map((nav: any) => nav.type)
+                .includes('reload')
+          );
+          if(tabcount.tabsCount() === 1 && !isPageReloaded && globalThis.backendaioptions.get('auto_logout', false) === true) {
+            this.loginPanel.check_login().then((result)=>{
+              if (result === true) { //currently login.
+                this.loginPanel._logoutSession().then(()=>{
+                  this.loginPanel.open();
+                });
+              } else {
+                this.loginPanel.open();
               }
-            }
-          }, true);
-        }, true);
+            });
+          } else {
+            this.loginPanel.login(false);
+          }
+        }
       }
     }).catch(err => {
       console.log("Initialization failed.");
@@ -939,6 +931,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   async logout(performClose = false) {
     console.log('also close the app:', performClose);
     this._deleteRecentProjectGroupInfo();
+    alert("asd");
     if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
       this.notification.text = 'Clean up now...';
       this.notification.show();
