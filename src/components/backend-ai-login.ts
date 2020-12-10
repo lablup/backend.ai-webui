@@ -698,13 +698,6 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaioptions.set('login_attempt', loginAttempt + 1, 'general');
     }
 
-    // prevent auto logout after login.
-    if (globalThis.backendaioptions.get('auto_logout')) {
-      if (!sessionStorage.getItem('pageReloaded')) {
-        sessionStorage.setItem('pageReloaded', 'true');
-      }
-    }
-
     this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, "");
     if (this.api_endpoint === '') {
