@@ -305,7 +305,7 @@
     "ConcurrentJobs": "Concurrent jobs",
     "Folders": "Folders",
     "Capacity(GB)": "Capacity (GB)",
-    "Max#": "Max. #",
+    "Max#": "Max. # of folders",
     "Create": "Create",
     "ExportCSVFile": "Export CSV File",
     "Credentials": "Credentials",
