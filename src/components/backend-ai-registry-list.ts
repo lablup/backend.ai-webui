@@ -185,11 +185,11 @@ class BackendAIRegistryList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this._registryType = ['docker', 'harbor'];
+        this._registryType = ['docker', 'harbor', 'harbor2'];
       }, true);
     } else { // already connected
       this._refreshRegistryList();
-      this._registryType = ['docker', 'harbor'];
+      this._registryType = ['docker', 'harbor', 'harbor2'];
     }
   }
 
@@ -243,7 +243,7 @@ class BackendAIRegistryList extends BackendAIPage {
     }
 
     input['type'] = registerType;
-    if (registerType === 'harbor') {
+    if (['harbor', 'harbor2'].includes(registerType)) {
       if (projectName && projectName !== '') {
         input['project'] = projectName;
       } else {
@@ -262,7 +262,7 @@ class BackendAIRegistryList extends BackendAIPage {
       .then(({result}) => {
         if (result === "ok") {
           this.notification.text = _text('registry.RegistrySuccessfullyAdded');
-          // add 
+          // add
           this.hostnames.push(hostname);
           this._refreshRegistryList();
         } else {
@@ -342,7 +342,7 @@ class BackendAIRegistryList extends BackendAIPage {
   _toggleProjectNameInput() {
     let select = this.shadowRoot.querySelector('#select-registry-type');
     let projectTextEl = this.shadowRoot.querySelector('#add-project-name');
-    projectTextEl.disabled = !(select.value && select.value === 'harbor');
+    projectTextEl.disabled = !(select.value && ['harbor', 'harbor2'].includes(select.value));
     this.shadowRoot.querySelector('#project-name-validation').style.display = 'block';
     if (projectTextEl.disabled) {
       this.shadowRoot.querySelector('#project-name-validation').textContent = _text("registry.ForHarborOnly");
