@@ -45,6 +45,7 @@ class BackendAIRegistryList extends BackendAIPage {
   @property({type: Array}) _registryType = Array();
   @property({type: Array}) allowed_registries = Array();
   @property({type: Array}) hostnames = Array();
+  @property({type: String}) projectName = 'docker';
 
   constructor() {
     super();
@@ -368,7 +369,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _validateProjectName() {
-    let projectName = this.shadowRoot.querySelector('#add-project-name').value;
+    let projectName = this.projectName;
     let validationMessage = this.shadowRoot.querySelector('#project-name-validation');
     if (projectName && projectName !== '') {
       validationMessage.style.display = 'none';
@@ -583,7 +584,7 @@ class BackendAIRegistryList extends BackendAIPage {
          </div>
          <mwc-select id="select-registry-type" label="${_t("registry.RegistryType")}"
                       @change=${this._toggleProjectNameInput} required
-                      validationMessage="Please select one option.">
+                      validationMessage="${_t('registry.PleaseSelectOption')}" value="${this.projectName}">
             ${this._registryType.map(item => html`
               <mwc-list-item value="${item}" ?selected="${item === 'docker'}">${item}</mwc-list-item>
             `)}
@@ -595,6 +596,7 @@ class BackendAIRegistryList extends BackendAIPage {
               type="text"
               label="${_t("registry.ProjectName")}"
               required
+              ?disabled="${this.projectName === 'docker'}"
               @change=${this._validateProjectName}
               ></wl-textfield>
               <wl-label class="helper-text" id="project-name-validation" style="display:block;">${_t("registry.ForHarborOnly")}</wl-label>
