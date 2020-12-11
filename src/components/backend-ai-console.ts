@@ -216,7 +216,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           if (tabcount.tabsCounter === 1 && !isPageReloaded && globalThis.backendaioptions.get('auto_logout', true) === true) {
             this.loginPanel.check_login().then((result) => {
               let current_time: number = new Date().getTime() / 1000;
-              if (result === true && (current_time - globalThis.backendaioptions.get('last_window_close_time', current_time) > 2.0)) { //currently login.
+              if (result === true && (current_time - globalThis.backendaioptions.get('last_window_close_time', current_time) > 3.0)) { //currently login.
                 this.loginPanel._logoutSession().then(() => {
                   this.loginPanel.open();
                 });
