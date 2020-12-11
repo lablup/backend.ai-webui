@@ -342,7 +342,7 @@
       "PleaseSelectOption": "Please select one option",
       "LetterNumber-_dot": "Allows letters, numbers and -_.",
       "NameAlreadyExists": "Policy Name Already Exists!",
-      "ValidationFailed": "Validation failed",
+      "ValidationFailed": "Validation failed"
     },
     "ProjectAndGroup": "Projects & Groups",
     "ModifyKeypairResourcePolicy": "Modify keypair resource policy",
