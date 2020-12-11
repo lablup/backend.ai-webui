@@ -23,6 +23,7 @@ export default class BackendAIPainKiller {
   static errorMessageTable = {
     "Cannot read property 'map' of null": "error.APINotSupported",
     "TypeError: NetworkError when attempting to fetch resource.": "error.NetworkConnectionFailed",
+    "401 Unauthorized - Unauthorized access": "error.UnauthorizedAccess",
     // Login
     "Login failed. Check login information.": "error.LoginFailed",
     "server responded failure: 401 Unauthorized - Credential/signature mismatch. (Access key not found)": "error.LoginInformationMismatch",
