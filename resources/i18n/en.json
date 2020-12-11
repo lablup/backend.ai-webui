@@ -953,7 +953,9 @@
     "ScalingGroupAlreadyExist": "A scaling group with the same name already exists.",
     "ResourceLimitExceed": "Resource limit exceed. Check your free resources.",
     "SmallerResourceThenImageRequires": "Your resource request is smaller than the minimum required by the image. Try more resources.",
-    "LoginSucceededManagerNotResponding":  "Login succeed but manager is not responding."
+    "LoginSucceededManagerNotResponding":  "Login succeed but manager is not responding.",
+    "UserNameAlreadyExist":  "Username already exists. It cannot be duplicated.",
+    "ResourcePolicyStillReferenced": "There exist keypairs which reference this resource policy."
   },
   "maxLength" : {
     "20chars": "(maximum 20 chars)",

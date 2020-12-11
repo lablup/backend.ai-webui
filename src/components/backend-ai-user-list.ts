@@ -506,14 +506,13 @@ export default class BackendAIUserList extends BackendAIPage {
           this.shadowRoot.querySelector("#password").value = "";
           this.shadowRoot.querySelector("#confirm").value = "";
         } else {
-          this.notification.text = res.modify_user.msg ? `${ _text('logs.errorMessage') + ':  ' + res.modify_user.msg}` : _text('dialog.ErrorOccurred');
-
+          this.notification.text = PainKiller.relieve(res.modify_user.msg);
           this.shadowRoot.querySelector("#username").value = this.userInfo.username;
           this.shadowRoot.querySelector("#description").value = this.userInfo.description;
         }
         this.notification.show();
       });
-    
+
     // if updated user info is current user, then apply it right away
     if (this.userInfo.email === globalThis.backendaiclient.email) {
       let event = new CustomEvent('current-user-info-changed', {detail: input});

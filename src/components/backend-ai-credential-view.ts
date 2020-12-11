@@ -358,7 +358,8 @@ export default class BackendAICredentialView extends BackendAIPage {
   /**
    * Launch a resouce policy dialog.
    */
-  _launchResourcePolicyDialog() {
+  async _launchResourcePolicyDialog() {
+    await this._getResourcePolicies();
     this._readVFolderHostInfo();
     this.shadowRoot.querySelector('#id_new_policy_name').mdcFoundation.setValid(true);
     this.shadowRoot.querySelector('#id_new_policy_name').isUiValid = true;
