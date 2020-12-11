@@ -900,6 +900,16 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <mwc-switch id="beta-feature-switch" @change="${(e) => this.toggleBetaFeature(e)}" ?checked="${globalThis.backendaioptions.get('beta_feature')}"></mwc-switch>
           </div>
         </div>
+        <div class="horizontal layout wrap setting-item">
+          <div class="vertical start start-justified layout setting-desc">
+            <div class="title">${_t("usersettings.AutoLogout")}</div>
+            <div class="description">${_tr("usersettings.DescAutoLogout")}
+          </div>
+        </div>
+        <div class="vertical center-justified layout setting-button flex end">
+          <mwc-switch id="auto-logout-switch" @change="${(e) => this.toggleAutoLogout(e)}"
+                      ?checked="${globalThis.backendaioptions.get('auto_logout', true)}"></mwc-switch>
+        </div>
       </div>
       ${this.beta_feature_panel ? html`
       <h3 class="horizontal center layout">
@@ -910,16 +920,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         ${_t("usersettings.DescNoBetaFeatures")}
       </div>
       ` : html``}
-      <div class="horizontal layout wrap setting-item">
-        <div class="vertical start start-justified layout setting-desc">
-          <div class="title">${_t("usersettings.AutoLogout")}</div>
-          <div class="description">${_tr("usersettings.DescAutoLogout")}
-          </div>
-        </div>
-        <div class="vertical center-justified layout setting-button flex end">
-          <mwc-switch id="auto-logout-switch" @change="${(e) => this.toggleAutoLogout(e)}"
-                      ?checked="${globalThis.backendaioptions.get('auto_logout', true)}"></mwc-switch>
-        </div>
       </div>
       ${this.shell_script_edit ? html`
         <h3 class="horizontal center layout">
