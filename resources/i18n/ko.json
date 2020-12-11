@@ -432,7 +432,10 @@
       "MoreThanADay": "최소 1일 이상 소요",
       "WritePermissionRequiredInFolderCreation": "폴더를 만들기 위해서는 쓰기(write) 권한이 필요합니다.",
       "WritePermissionRequiredInUploadFiles": "파일을 업로드하기 위해서는 쓰기(write) 권한이 필요합니다.",
-      "ReadonlyFolder": "읽기 전용 폴더"
+      "ReadonlyFolder": "읽기 전용 폴더",
+      "FileAlreadyExists": "다음 파일은 이미 존재합니다.",
+      "DoYouWantToOverwrite": "덮어쓰시겠습니까?"
+
     },
     "invitation": {
       "EnterEmail": "이메일을 입력하세요",
