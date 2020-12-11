@@ -72,6 +72,9 @@ export default class JsonToCsv {
               } else {
                 cell = row[k] === null || row[k] === undefined ? '' : row[k].toString();
               }
+              if (cell === '∞') {
+                cell = 'unlimited';
+              }
               return cell;
             }).join(separator);
           }).join('\n');
