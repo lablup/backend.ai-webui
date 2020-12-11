@@ -159,6 +159,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           width: 140px;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-size: 11px;
           --mdc-theme-primary: var(--general-sidebar-color);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
