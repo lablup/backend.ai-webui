@@ -217,7 +217,8 @@
     "applauncher": {
       "AppMustBeRun": "Start only when the app is already running",
       "AppMustBeRunDialog": "This app can only be accessed and used if it is already running through the terminal. If not, you will be directed to an error page that occurs when the app is not running.",
-      "ConfirmAndRun": "I checked and I'll start"
+      "ConfirmAndRun": "I checked and I'll start",
+      "Prepared": "Prepared"
     },
     "SessionTerminated": "Session terminated.",
     "SessionsTerminated": "Sessions terminated.",

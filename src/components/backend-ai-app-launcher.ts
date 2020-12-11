@@ -449,7 +449,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         .then(async (response) => {
           if (response.url) {
             await this._connectToProxyWorker(response.url, urlPostfix);
-            this.indicator.set(100, 'Prepared.');
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
               //console.log(appName + " proxy loaded: ");
@@ -554,7 +554,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         .then(async (response) => {
           await this._connectToProxyWorker(response.url, urlPostfix);
           if (appName === 'sshd') {
-            this.indicator.set(100, 'Prepared.');
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             this.sshPort = response.port;
             this._readSSHKey(sessionUuid);
             this._openSSHDialog();
@@ -562,11 +562,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               this.indicator.end();
             }, 1000);
           } else if (appName === 'vnc') {
-            this.indicator.set(100, 'Prepared.');
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             this.vncPort = response.port;
             this._openVNCDialog();
           } else if (response.url) {
-            this.indicator.set(100, 'Prepared.');
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
               //console.log(appName + " proxy loaded: ");
@@ -611,7 +611,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         .then(async (response) => {
           await this._connectToProxyWorker(response.url, '');
           if (response.url) {
-            this.indicator.set(100, 'Prepared.');
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url, '_blank');
               this.indicator.end();
@@ -676,8 +676,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
   /**
    * Adjust port number in range of the starting number of port to the last number of the port.
-   * 
-   * @param {Event} e - 
+   *
+   * @param {Event} e -
    */
   _adjustPreferredAppPortNumber(e) {
     const preferredPortNumber = e.target.value;
