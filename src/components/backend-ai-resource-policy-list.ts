@@ -640,7 +640,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             this.refresh();
           } else if (modify_keypair_resource_policy.msg) {
             this.shadowRoot.querySelector('#modify-policy-dialog').hide();
-            this.notification.text = modify_keypair_resource_policy.msg;
+            this.notification.text = PainKiller.relieve(res.modify_keypair_resource_policy.msg);
             this.notification.show();
             this.refresh();
           }
@@ -670,7 +670,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         this.refresh();
       } else if (delete_keypair_resource_policy.msg) {
         this.shadowRoot.querySelector('#delete-policy-dialog').hide();
-        this.notification.text = delete_keypair_resource_policy.msg;
+        this.notification.text = PainKiller.relieve(delete_keypair_resource_policy.msg);
         this.notification.show();
         this.refresh();
       }
