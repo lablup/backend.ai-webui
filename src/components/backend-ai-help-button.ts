@@ -95,7 +95,15 @@ export default class BackendAiHelpButton extends BackendAIPage {
    */
   showOnlineHelpPage(postfix: string) {
     // window.open(`https://console.docs.backend.ai/${this.lang}/latest/` + postfix, '_blank');
-    window.open(`https://console.docs.backend.ai/${this.lang}/docs-essential-guide-r2/`, '_blank');
+    let lang;
+    if (this.lang === 'ko') {
+      lang = 'ko';
+    } else if (this.lang === 'en') {
+      lang = 'en';
+    } else {
+      lang = 'ko';
+    }
+    window.open(`https://console.docs.backend.ai/${lang}/docs-essential-guide-r2/`, '_blank');
   }
 
   render() {
