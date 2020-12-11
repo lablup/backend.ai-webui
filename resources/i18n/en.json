@@ -438,7 +438,9 @@
       "MoreThanADay": "More than a day",
       "WritePermissionRequiredInFolderCreation": "Write permission is required in creating a folder.",
       "WritePermissionRequiredInUploadFiles": "Write permission is required in uploading file(s).",
-      "ReadonlyFolder": "Read-only Folder"
+      "ReadonlyFolder": "Read-only Folder",
+      "FileAlreadyExists": "The file about to be uploaded already exists.",
+      "DoYouWantToOverwrite": "Do you want to overwrite?"
     },
     "invitation": {
       "EnterEmail": "Enter email address",
