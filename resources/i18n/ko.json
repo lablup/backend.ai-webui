@@ -337,7 +337,8 @@
       "NumbersOnly": "숫자만 입력 가능합니다.",
       "PleaseSelectOption": "옵션 선택은 필수 입니다.",
       "LetterNumber-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
-      "NameAlreadyExists": "그 이름은 이미 사용중입니다."
+      "NameAlreadyExists": "그 이름은 이미 사용중입니다.",
+      "ValidationFailed": "인증에 실패하였습니다."
     },
     "ProjectAndGroup": "프로젝트 및 그룹",
     "ModifyKeypairResourcePolicy": "키페어 자원 정책 수정",
@@ -424,6 +425,7 @@
       "DownloadFile": "파일 다운로드",
       "TouchToDownload": "터치하여 다운로드하세요",
       "ValueRequired": "값을 입력해주세요",
+      "InputTooShort": "입력한 값이 너무 짧습니다.",
       "ValueShouldBeStarted": "경로는 .(점), 문자 또는 숫자만 포함해야 합니다",
       "FileUploadSizeLimit": "업로드 가능한 단일 파일 사이즈 제한을 초과하였습니다.",
       "LessThan10Sec": "10초 이하의 시간 소요",
@@ -656,7 +658,8 @@
     "UpdatingRegistryInfo": "레지스트리 정보를 갱신하는 중입니다...",
     "RegistryUpdateFinished": "레지스트리 업데이트가 완료되었습니다.",
     "RegistryUpdateFailed": "레지스트리 업데이트가 실패하였습니다.",
-    "RescanFailed": "리스캔 작업이 실패하였습니다."
+    "RescanFailed": "리스캔 작업이 실패하였습니다.",
+    "PleaseSelectOption": "옵션 선택은 필수입니다."
   },
   "resourceGroup": {
     "ResourceGroups": "자원 그룹",

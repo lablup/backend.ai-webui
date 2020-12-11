@@ -341,7 +341,8 @@
       "NumbersOnly": "Allows numbers only",
       "PleaseSelectOption": "Please select one option",
       "LetterNumber-_dot": "Allows letters, numbers and -_.",
-      "NameAlreadyExists": "Policy Name Already Exists!"
+      "NameAlreadyExists": "Policy Name Already Exists!",
+      "ValidationFailed": "Validation failed",
     },
     "ProjectAndGroup": "Projects & Groups",
     "ModifyKeypairResourcePolicy": "Modify keypair resource policy",
@@ -429,6 +430,7 @@
       "DownloadFile": "Download File",
       "TouchToDownload": "Touch to Download file",
       "ValueRequired": "Value is required",
+      "InputTooShort": "Input value is too short",
       "ValueShouldBeStarted": "Path should start with .(dot) or letters, numbers only.",
       "FileUploadSizeLimit": "File size exceeds upload size limit.",
       "LessThan10Sec": "Less than 10 seconds",
@@ -661,7 +663,8 @@
     "UpdatingRegistryInfo": "Updating registry information...",
     "RegistryUpdateFinished": "Registry update finished.",
     "RegistryUpdateFailed": "Registry update failed.",
-    "RescanFailed": "Rescan Failed."
+    "RescanFailed": "Rescan Failed.",
+    "PleaseSelectOption": "Please select one option."
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",
