@@ -23,6 +23,7 @@ Backend.AI console focuses to
 ## User Features
  * Session management
     * Set default resources for runs
+    * Monitor current resources sessions using
     * Choose and run environment-supported apps
     * Web-based Terminal for each session
     * Fully-featured VSCode editor and environments
