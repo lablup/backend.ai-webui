@@ -25,8 +25,7 @@ export default class BackendAIPainKiller {
     "TypeError: NetworkError when attempting to fetch resource.": "error.NetworkConnectionFailed",
     // Login
     "Login failed. Check login information.": "error.LoginFailed",
-    "server responded failure: 401 Unauthorized - Credential/signature mismatch. (Access key not found)": "error.LoginInformationMismatch",
-    "server responded failure: 401 Unauthorized - Credential/signature mismatch.": "error.LoginInformationMismatch",
+    "User credential mismatch.": "error.LoginFailed",
     "Authentication failed. Check information and manager status.": "error.AuthenticationFailed",
     "Too many failed login attempts": "error.TooManyLoginFailures",
     // virtual folders
@@ -40,6 +39,8 @@ export default class BackendAIPainKiller {
     "Cannot read property 'split' of undefined": "error.UserHasNoGroup",
   };
   static regexTable = {
+    '\\w*Access key not found\\w*': "error.LoginInformationMismatch",
+    '\\w*401 Unauthorized - Credential/signature mismatch\\w*': "error.LoginInformationMismatch",
     'integrity error: duplicate key value violates unique constraint "pk_resource_presets"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'error.ResourcePolicyAlreadyExist',
     'integrity error: duplicate key value violates unique constraint "pk_scaling_groups"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'error.ScalingGroupAlreadyExist',
     'integrity error: duplicate key value violates unique constraint "uq_users_username"[\\n]DETAIL:  Key \\(username\\)=\\([\\w]+\\) already exists.[\\n]': 'error.UserNameAlreadyExist',

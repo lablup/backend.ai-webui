@@ -969,6 +969,8 @@ export default class BackendAILogin extends BackendAIPage {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
         this.notification.show(true);
       }
+      this._enableUserInput();
+      this.client.logout();
     });
   }
 
