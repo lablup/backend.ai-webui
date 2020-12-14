@@ -374,6 +374,10 @@
     "Type": "종류",
     "UsageMode": "사용 방식",
     "Permission": "권한",
+    "StorageStatus": "저장소 상태",
+    "Created": "생성됨",
+    "Invited": "공유받음",
+    "Capacity": "생성가능 갯수",
     "folders": {
       "Name": "이름",
       "Location": "위치",
