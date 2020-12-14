@@ -387,6 +387,7 @@
       "Location": "Location",
       "Type": "Type",
       "Permission": "Permission",
+      "Owner": "Owner",
       "Control": "Control",
       "Name": "Name",
       "DeleteAFolder": "Delete a folder",

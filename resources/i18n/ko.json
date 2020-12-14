@@ -383,6 +383,7 @@
       "Location": "위치",
       "Type": "종류",
       "Permission": "권한",
+      "Owner": "소유자 여부",
       "Control": "제어",
       "DeleteAFolder": "폴더 삭제",
       "TypeFolderNameToDelete": "삭제 확인을 위해 폴더 이름을 입력하세요",
