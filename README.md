@@ -38,6 +38,9 @@ Backend.AI console focuses to
     * Upload  / download files (with upload progress)
     * Integrated SSH/SFTP server (app mode only)
     * Share folders with friends / groups
+ * Node management
+    * See calculation nodes in Backend.AI cluster
+	* Live statistics of bare-metal / VM nodes
  * Statistics
     * User resource statistics
     * Session statistics
