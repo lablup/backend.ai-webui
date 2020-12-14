@@ -1069,6 +1069,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   refreshFolderList() {
+    this._triggerFolderListChanged();
     return this._refreshFolderList();
   }
 
@@ -1101,7 +1102,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         }, 10000);
       };
     });
-
   }
 
   _refreshFolderUI(e) {
@@ -1288,7 +1288,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     job.then((value) => {
       this.notification.text = _text('data.folders.FolderDeleted');
       this.notification.show();
-      this._refreshFolderList();
+      this.refreshFolderList();
+      this._triggerFolderListChanged();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -1297,6 +1298,15 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+  }
+
+  /**
+   * dispatch backend-ai-folder-list-changed event
+   * 
+   */
+  _triggerFolderListChanged() {
+    let event = new CustomEvent('backend-ai-folder-list-changed');
+    document.dispatchEvent(event);
   }
 
   /**
