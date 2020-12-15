@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {css, customElement, html, property, query} from "lit-element";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -49,6 +49,7 @@ import {
 
 @customElement("backend-ai-session-launcher")
 export default class BackendAiSessionLauncher extends BackendAIPage {
+  @query('#image-name') manualImageName;
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
   @property({type: Boolean}) hideLaunchButton = false;
@@ -159,6 +160,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) resourceBroker;
   @property({type: Number}) cluster_size = 0;
   @property({type: String}) cluster_mode;
+  @property({type: Boolean}) _debug = false;
 
   constructor() {
     super();
@@ -606,6 +608,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.cluster_support = true;
         }
         this.is_connected = true;
+        this._debug = globalThis.backendaiconsole.debug;
         this._enableLaunchButton();
       }, {once: true});
     } else {
@@ -616,6 +619,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.cluster_support = true;
       }
       this.is_connected = true;
+      this._debug = globalThis.backendaiconsole.debug;
       this._enableLaunchButton();
     }
   }
@@ -928,8 +932,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.mode === 'import' && this.importScript !== '') {
       config['bootstrap_script'] = this.importScript;
     }
-
-    const kernelName: string = this._generateKernelIndex(kernel, version);
+    let kernelName: string;
+    if (this._debug) {
+      kernelName = this.manualImageName.value;
+    } else {
+      kernelName = this._generateKernelIndex(kernel, version);
+    }
     this.shadowRoot.querySelector('#launch-button').disabled = true;
     this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.Preparing');
     this.notification.text =  _text('session.PreparingSession');
@@ -1973,6 +1981,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               </mwc-list-item>
             `)}
             </mwc-select>
+            ${this._debug ? html`
+            <mwc-textfield id="image-name" type="text" class="flex" value=""
+              label="${_t("session.launcher.ManualImageName")}"></mwc-textfield>
+            `:html``}
           </div>
           <div style="display:none;">
             <wl-checkbox id="use-gpu-checkbox">${_t("session.launcher.UseGPU")}</wl-checkbox>

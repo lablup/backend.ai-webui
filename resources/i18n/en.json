@@ -58,7 +58,7 @@
     "YouAreOnline": "You are now online",
     "NOTFOUND": "<p>Oops!<br/>Page not Found...</p>",
     "DescNOTFOUND": "Sorry, the page you are looking for could not be found.",
-    "UNAUTHORIZEDACCESS":"Unauthorized Access",
+    "UNAUTHORIZEDACCESS": "Unauthorized Access",
     "AdminOnlyPage": "You don't have permission to access this page.<br />Click the button below to redirect to summary page.",
     "CleanUpLoginSession": "Clean up login session...",
     "CleanUpNow": "Clean up now..."
@@ -182,7 +182,8 @@
       "ProxyNotReady": "Proxy is not ready yet. Check proxy settings for detail.",
       "ProxyConfiguratorNotResponding": "Proxy configurator is not responding.",
       "SettingUpProxyForApp": "Setting up proxy for the app...",
-      "AddingKernelToSocketQueue": "Adding kernel to socket queue..."
+      "AddingKernelToSocketQueue": "Adding kernel to socket queue...",
+      "ManualImageName": "Image Name (Manual)"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -252,7 +253,6 @@
     "Generate": "Generate",
     "Continue": "Continue",
     "GoBackToSummaryPage": "Go back to Summary page"
-
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -368,7 +368,7 @@
     "DialogFolderStartingWithDotAutomount": "Folders starting with a .(dot) are automatically mounted when a new session is started.",
     "User": "User",
     "Create": "Create",
-    "FolderNameRequired":"Folder name is required",
+    "FolderNameRequired": "Folder name is required",
     "FileandFoldernameRequired": "File/Folder name is required",
     "Allowslettersnumbersand-_dot": "Allows letters, numbers and -_.",
     "Allowslettersnumbersand-_": "Allows letters, numbers and -_",
@@ -635,7 +635,6 @@
     "SuccessfullyDeleted": "Resource policy successfully deleted.",
     "PolicyNameEmpty": "Policy name should not be empty.",
     "AboutToDeleteResourcePolicy": "You are about to delete this resource policy: "
-
   },
   "registry": {
     "Hostname": "Hostname",
@@ -861,9 +860,9 @@
     "Processing": "Processing...",
     "InvitationToken": "Invitation Token",
     "TokenInputRequired": "Token is required.",
-    "PolicyAgreement_1":"I have read and agree to the ",
-    "PolicyAgreement_2":" and ",
-    "PolicyAgreement_3":".",
+    "PolicyAgreement_1": "I have read and agree to the ",
+    "PolicyAgreement_2": " and ",
+    "PolicyAgreement_3": ".",
     "TermsOfService": "Terms of service",
     "RequestAgreementTermsOfService": "Please read and agree with the terms of service to proceed.",
     "PrivacyPolicy": "Privacy Policy",
@@ -879,7 +878,7 @@
     "SendError": "Error occurred during email sending",
     "EmailSent": "Email sent",
     "EmailNotSent": "Unable to send email",
-    "VerificationError" : "Verification error occurred"
+    "VerificationError": "Verification error occurred"
   },
   "update": {
     "NewConsoleVersionAvailable": "New version is available:"
@@ -925,7 +924,8 @@
     "ImportFinished": "Import finished.",
     "FolderName": "Imported folder name: ",
     "NotebookBadgeCodeHTML": "Notebook Badge Code (HTML)",
-    "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)"
+    "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)",
+    "Installed": "Installed"
   },
   "DownloadSSHKey": "Download SSH Key",
   "license": {
@@ -951,11 +951,11 @@
     "ScalingGroupAlreadyExist": "A scaling group with the same name already exists.",
     "ResourceLimitExceed": "Resource limit exceed. Check your free resources.",
     "SmallerResourceThenImageRequires": "Your resource request is smaller than the minimum required by the image. Try more resources.",
-    "LoginSucceededManagerNotResponding":  "Login succeed but manager is not responding.",
-    "UserNameAlreadyExist":  "Username already exists. It cannot be duplicated.",
+    "LoginSucceededManagerNotResponding": "Login succeed but manager is not responding.",
+    "UserNameAlreadyExist": "Username already exists. It cannot be duplicated.",
     "ResourcePolicyStillReferenced": "There exist keypairs which reference this resource policy."
   },
-  "maxLength" : {
+  "maxLength": {
     "20chars": "(maximum 20 chars)",
     "40chars": "(maximum 40 chars)",
     "64chars": "(maximum 64 chars)",
@@ -974,5 +974,9 @@
     "512": "(<= 512)",
     "1024": "(<= 1024)",
     "2048": "(<= 2048)"
+  },
+  "explorer": {
+    "ValueRequired": "ValueRequired",
+    "InputTooShort": "InputTooShort"
   }
 }
