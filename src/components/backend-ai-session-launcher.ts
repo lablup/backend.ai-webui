@@ -1363,20 +1363,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             } else {
               cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu'], this.max_cpu_core_per_session);
             }
-            // monkeypatch for cluster_metric max size
-            this.cluster_metric.max = cpu_metric.max;
+
           } else {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
               cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu'], this.max_cpu_core_per_session);
             } else {
               cpu_metric.max = Math.min(this.available_slot['cpu'], this.max_cpu_core_per_session);
             }
-            // monkeypatch for cluster_metric max size
-            this.cluster_metric.max = cpu_metric.max;
           }
           if (cpu_metric.min >= cpu_metric.max) {
             if (cpu_metric.min > cpu_metric.max) {
               cpu_metric.min = cpu_metric.max;
+              cpu_metric.max = cpu_metric.max + 1;
               disableLaunch = true;
               this.shadowRoot.querySelector('#cpu-resource').disabled = true;
             } else { // min == max
@@ -1384,6 +1382,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             }
           }
           this.cpu_metric = cpu_metric;
+          // monkeypatch for cluster_metric max size
+          this.cluster_metric.max = cpu_metric.max;
         }
         if (item.key === 'cuda.device' && this.gpu_mode == 'cuda.device') {
           let cuda_device_metric = {...item};
@@ -1404,6 +1404,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (cuda_device_metric.min >= cuda_device_metric.max) {
             if (cuda_device_metric.min > cuda_device_metric.max) {
               cuda_device_metric.min = cuda_device_metric.max;
+              cuda_device_metric.max = cuda_device_metric.max + 1;
               disableLaunch = true;
               this.shadowRoot.querySelector('#gpu-resource').disabled = true
             } else {
@@ -1432,6 +1433,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (cuda_shares_metric.min >= cuda_shares_metric.max) {
             if (cuda_shares_metric.min > cuda_shares_metric.max) {
               cuda_shares_metric.min = cuda_shares_metric.max;
+              cuda_shares_metric.max = cuda_shares_metric.max + 1;
               disableLaunch = true;
               this.shadowRoot.querySelector('#gpu-resource').disabled = true
             } else {
@@ -1571,8 +1573,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.shadowRoot.querySelector('#mem-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
         this.shadowRoot.querySelector('#session-resource').disabled = true;
+        this.shadowRoot.querySelector('#shmem-resource').disabled = true;
         this.shadowRoot.querySelector('#launch-button').disabled = true;
-        this.shadowRoot.querySelector('#launch-button-msg').textContent = 'Not enough resource';
+        this.shadowRoot.querySelector('#cluster-size').disabled = true;
+        this.shadowRoot.querySelector('#launch-button-msg').textContent = _text("session.launcher.NotEnoughResource");
+      } else {
+        this.shadowRoot.querySelector('#cpu-resource').disabled = false;
+        this.shadowRoot.querySelector('#mem-resource').disabled = false;
+        this.shadowRoot.querySelector('#gpu-resource').disabled = false;
+        this.shadowRoot.querySelector('#session-resource').disabled = false;
+        this.shadowRoot.querySelector('#shmem-resource').disabled = false;
+        this.shadowRoot.querySelector('#launch-button').disabled = false;
+        this.shadowRoot.querySelector('#cluster-size').disabled = false;
       }
       if (this.cuda_device_metric.min == this.cuda_device_metric.max) {
         this.shadowRoot.querySelector('#gpu-resource').max = this.cuda_device_metric.max + 1;

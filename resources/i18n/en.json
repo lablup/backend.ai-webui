@@ -2,6 +2,7 @@
   "console": {
     "menu": {
       "WelcomeMessage": "Welcome, ",
+      "WelcomeMessage_2": " .",
       "Summary": "Summary",
       "Sessions": "Sessions",
       "Import&Run": "Import & Run",
@@ -183,7 +184,8 @@
       "ProxyConfiguratorNotResponding": "Proxy configurator is not responding.",
       "SettingUpProxyForApp": "Setting up proxy for the app...",
       "AddingKernelToSocketQueue": "Adding kernel to socket queue...",
-      "ManualImageName": "Image Name (Manual)"
+      "ManualImageName": "Image Name (Manual)",
+      "NotEnoughResource": "Not enough resource"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

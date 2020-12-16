@@ -153,6 +153,7 @@ export default class LablupSlider extends LitElement {
     if (this.textfield.value < this.min) {
       this.textfield.value = this.min;
     }
+    this.max = (this.min >= this.max) ? this.max + 1 : this.max;
     this.value = this.textfield.value;
     this.slider.value = this.textfield.value;
     this.slider.step = this.step;
