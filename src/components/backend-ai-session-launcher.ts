@@ -933,7 +933,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['bootstrap_script'] = this.importScript;
     }
     let kernelName: string;
-    if (this._debug) {
+    if (this._debug && this.manualImageName.value !== "") {
       kernelName = this.manualImageName.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
