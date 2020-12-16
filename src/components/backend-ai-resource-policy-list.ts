@@ -640,7 +640,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             this.refresh();
           } else if (modify_keypair_resource_policy.msg) {
             this.shadowRoot.querySelector('#modify-policy-dialog').hide();
-            this.notification.text = PainKiller.relieve(res.modify_keypair_resource_policy.msg);
+            this.notification.text = PainKiller.relieve(modify_keypair_resource_policy.msg);
             this.notification.show();
             this.refresh();
           }

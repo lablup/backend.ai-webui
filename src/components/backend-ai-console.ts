@@ -1355,7 +1355,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <div slot="navigationIcon" class="vertical-line" style="height:35px;"></div>
                 <div class="horizontal layout" slot="title" style="font-size:12px;margin-left:10px;padding-top:10px;">
                   <p>${_t("console.menu.WelcomeMessage")}</p>
-                  <p>&nbsp;${this._getUsername() + "."}</p>
+                  <p>&nbsp;${this._getUsername()}${_t("console.menu.WelcomeMessage_2")}</p>
                 </div>
                 <div slot="actionItems" style="margin:0px;">
                   <div class="horizontal flex center layout">

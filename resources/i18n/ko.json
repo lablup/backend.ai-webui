@@ -2,6 +2,7 @@
   "console": {
     "menu": {
       "WelcomeMessage": "환영합니다. ",
+      "WelcomeMessage_2": "님",
       "Summary": "요약",
       "Sessions": "세션",
       "Import&Run": "가져오기 & 실행",
@@ -182,7 +183,8 @@
       "ProxyConfiguratorNotResponding": "프록시 구성자가 응답하지 않습니다.",
       "SettingUpProxyForApp": "애플리케이션을 위한 프록시를 설정합니다...",
       "AddingKernelToSocketQueue": "커널을 소켓 큐에 추가합니다...",
-      "ManualImageName": "환경 이름 (수동)"
+      "ManualImageName": "환경 이름 (수동)",
+      "NotEnoughResource": "할당 가능한 자원 부족"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
