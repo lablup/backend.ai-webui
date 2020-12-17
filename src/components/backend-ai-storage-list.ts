@@ -91,6 +91,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) _boundControlFolderListRenderer = Object();
   @property({type: Object}) _boundControlFileListRenderer = Object();
   @property({type: Object}) _boundPermissionViewRenderer = Object();
+  @property({type: Object}) _boundOwnerRenderer = Object();
   @property({type: Object}) _boundFileNameRenderer = Object();
   @property({type: Object}) _boundCreatedTimeRenderer = Object();
   @property({type: Object}) _boundPermissionRenderer = Object();
@@ -105,6 +106,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
     this._boundControlFileListRenderer = this.controlFileListRenderer.bind(this);
     this._boundPermissionViewRenderer = this.permissionViewRenderer.bind(this);
+    this._boundOwnerRenderer = this.OwnerRenderer.bind(this);
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
@@ -433,6 +435,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column width="45px" flex-grow="0" resizable header="${_t("data.folders.Type")}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="85px" flex-grow="0" resizable header="${_t("data.folders.Permission")}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t("data.folders.Owner")}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
         <vaadin-grid-column auto-width resizable header="${_t("data.folders.Control")}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
       </vaadin-grid>
 
@@ -1031,6 +1034,25 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
+   * Render whether owner of the vfolder or not using icon
+   * 
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  OwnerRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        ${rowData.item.is_owner ? html`
+          <div class="horizontal center-justified center layout">
+            <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
+          </div>`: html``}
+        `, root
+     );
+  }
+
+  /**
    * Render created time.
    *
    * @param {Element} root - the row details content DOM element
@@ -1069,6 +1091,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   refreshFolderList() {
+    this._triggerFolderListChanged();
     return this._refreshFolderList();
   }
 
@@ -1101,7 +1124,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         }, 10000);
       };
     });
-
   }
 
   _refreshFolderUI(e) {
@@ -1288,7 +1310,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     job.then((value) => {
       this.notification.text = _text('data.folders.FolderDeleted');
       this.notification.show();
-      this._refreshFolderList();
+      this.refreshFolderList();
+      this._triggerFolderListChanged();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -1297,6 +1320,15 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+  }
+
+  /**
+   * dispatch backend-ai-folder-list-changed event
+   * 
+   */
+  _triggerFolderListChanged() {
+    let event = new CustomEvent('backend-ai-folder-list-changed');
+    document.dispatchEvent(event);
   }
 
   /**
