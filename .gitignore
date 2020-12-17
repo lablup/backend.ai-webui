@@ -117,3 +117,5 @@ backend.ai-app/
 # ctags-generated file
 tags
 
+# git submodules
+.gitmodules
