@@ -969,6 +969,13 @@ export default class BackendAILogin extends BackendAIPage {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
         this.notification.show(true);
       }
+      if (err.statusCode === 401) {
+        // When authorization failed, it is highly likely that session cookie
+        // is used which tried to use non-existent API keypairs
+        console.log('automatic logout ...');
+        this.client.logout();
+      }
+      this._enableUserInput();
     });
   }
 
