@@ -147,6 +147,10 @@ export default class LablupSlider extends LitElement {
       }
       return decimal_places.toString().split(".")[1].length || 0;
       })(this.step));
+    
+    //monkeypatch: force adjusting min value if min value exceeds max value
+    this.min = (this.min > this.max) ? this.max : this.min;
+    
     if (this.textfield.value > this.max) {
       this.textfield.value = this.max;
     }
