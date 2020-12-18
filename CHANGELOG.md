@@ -1,7 +1,14 @@
 # Changelog
 
-## v20.12.0 (18/12/2020)
+## v20.12.1 (18/12/2020)
 
+#### Enhancements:
+
+- [**UI / UX**][**minor**] Set default auto logout to false [#851](https://github.com/lablup/backend.ai-console/issues/851)
+- [**UI / UX**][**enhancement**][**enterprise**][**minor**] System setting for auto logout enable / disable feature [#865](https://github.com/lablup/backend.ai-console/issues/865)
+
+
+## v20.12.0 (18/12/2020)
 
 #### Enhancements:
 
