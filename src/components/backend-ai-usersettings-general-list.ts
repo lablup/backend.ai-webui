@@ -905,21 +905,21 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <div class="vertical start start-justified layout setting-desc">
             <div class="title">${_t("usersettings.AutoLogout")}</div>
             <div class="description">${_tr("usersettings.DescAutoLogout")}
+            </div>
+          </div>
+          <div class="vertical center-justified layout setting-button flex end">
+            <mwc-switch id="auto-logout-switch" @change="${(e) => this.toggleAutoLogout(e)}"
+                        ?checked="${globalThis.backendaioptions.get('auto_logout', false)}"></mwc-switch>
           </div>
         </div>
-        <div class="vertical center-justified layout setting-button flex end">
-          <mwc-switch id="auto-logout-switch" @change="${(e) => this.toggleAutoLogout(e)}"
-                      ?checked="${globalThis.backendaioptions.get('auto_logout', true)}"></mwc-switch>
-        </div>
-      </div>
-      ${this.beta_feature_panel ? html`
-      <h3 class="horizontal center layout">
-        <span>${_t("usersettings.BetaFeatures")}</span>
-        <span class="flex"></span>
-      </h3>
-      <div class="description">
-        ${_t("usersettings.DescNoBetaFeatures")}
-      </div>
+        ${this.beta_feature_panel ? html`
+          <h3 class="horizontal center layout">
+            <span>${_t("usersettings.BetaFeatures")}</span>
+            <span class="flex"></span>
+          </h3>
+          <div class="description">
+            ${_t("usersettings.DescNoBetaFeatures")}
+          </div>
       ` : html``}
       </div>
       ${this.shell_script_edit ? html`
