@@ -77,6 +77,7 @@ export const BackendAiConsoleStyles = [
       background-color: transparent;
       color: var(--general-sidebar-topbar-color);
       height: 80px;
+      max-width: 250px; /* prevent sidebar from expanding over its width limit */
     }
 
     .drawer-menu h3 {
