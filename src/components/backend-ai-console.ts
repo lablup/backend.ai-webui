@@ -1230,7 +1230,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
                 <div class="site-name"><span class="bold">Backend</span>.AI</div>
                 ${this.siteDescription ? html`
-                  <div class="site-name" style="font-size:13px;text-align:right;">
+                  <div class="site-name" style="font-size:13px;text-align:left;">
                     ${this.siteDescription}
                   </div>` : html``}
               </div>

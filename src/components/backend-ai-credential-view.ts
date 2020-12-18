@@ -214,6 +214,12 @@ export default class BackendAICredentialView extends BackendAIPage {
           --mdc-menu-item-height : auto;
         }
 
+        mwc-menu#dropdown-menu {
+          position: relative;
+          left: -10px;
+          top: 50px;
+        }
+
         mwc-list-item {
           font-size : 14px;
         }
