@@ -431,6 +431,7 @@ export const BackendAiConsoleStyles = [
     .portrait-canvas {
       margin-left: 18px;
       border-radius: 8px;
+      min-width: 48px; /* only apply this style feature if it's Backend.AI logo */
       width: 48px;
       height: 48px;
       background-color: #ffffff;
