@@ -93,24 +93,12 @@ export default class LablupNotification extends LitElement {
     if ("Notification" in window) {
       //console.log(Notification.permission);
 
-      /**
-       * check whether userAgent is safari or not.
-       * NOTE: safari browser only allows callback function instead of Promise
-       */
-      let is_safari = navigator.userAgent.indexOf("Safari") > -1;
-      if (is_safari) {
-        if (["default", "granted", "denied"].includes(Notification.permission)) {
-          Notification.requestPermission(() => {
-            this.supportDesktopNotification = true;
-          });
+      // works on all browsers without promise error including Safari
+      Promise.resolve(Notification.requestPermission()).then((permission) => {
+        if (["default", "granted", "denied"].includes(permission)) {
+          this.supportDesktopNotification = true;
         }
-      } else {
-        if (["default", "granted", "denied"].includes(Notification.permission)) {
-          Notification.requestPermission().then(() => {
-            this.supportDesktopNotification = true;
-          });
-        }
-      }
+      });
     }
     this._readUserSetting('desktop_notification', true);
     if (this.options['desktop_notification'] === false) {
