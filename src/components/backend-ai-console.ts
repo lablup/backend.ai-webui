@@ -121,6 +121,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) sidebarMenu;
   @property({type: Object}) TOSdialog = Object();
   @property({type: Boolean}) mini_ui = false;
+  @property({type: Boolean}) auto_logout = false;
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ["en", "ko"];
   @property({type: Array}) blockedMenuitem;
@@ -213,7 +214,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 .includes('reload')
           );
           tabcount.tabsCount(true);
-          if (tabcount.tabsCounter === 1 && !isPageReloaded && globalThis.backendaioptions.get('auto_logout', false) === true) {
+          if (this.auto_logout === true && tabcount.tabsCounter === 1 && !isPageReloaded && globalThis.backendaioptions.get('auto_logout', false) === true) {
             this.loginPanel.check_login().then((result) => {
               let current_time: number = new Date().getTime() / 1000;
               if (result === true && (current_time - globalThis.backendaioptions.get('last_window_close_time', current_time) > 3.0)) { //currently login.
@@ -294,6 +295,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (typeof config.general !== "undefined" && 'connectionServer' in config.general) {
       this.connection_server = config.general.connectionServer;
       //console.log(this.connection_server);
+    }
+    if (typeof config.general !== "undefined" && 'autoLogout' in config.general) {
+      this.auto_logout = config.general.autoLogout;
     }
     if (typeof config.license !== "undefined" && 'edition' in config.license) {
       this.edition = config.license.edition;

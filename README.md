@@ -103,6 +103,7 @@ signupSupport = false # Enable / disable signup feature support. Manager plugin 
 allowSignout = false # Let users signout from service. Signup plugin is required.
 allowAnonymousChangePassword = false # Enable / disable anonymous user can send change password email. Manager plugin is required.
 allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
+autoLogout = false # If true, user will be automatically logout when they close all Backend.AI tab / window.
 debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
 
 [wsproxy]
