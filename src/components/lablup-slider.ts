@@ -58,7 +58,7 @@ export default class LablupSlider extends LitElement {
         }
 
         wl-textfield {
-          --input-state-color-invalid :  var(--input-state-color-inactive,hsl(var(--shade-400,var(--shade-hue,200),var(--shade-saturation,4%),var(--shade-lightness,65%))));
+          --input-state-color-invalid: var(--input-state-color-inactive, hsl(var(--shade-400, var(--shade-hue, 200), var(--shade-saturation, 4%), var(--shade-lightness, 65%))));
           width: var(--textfield-min-width, 65px);
           margin-left: 10px;
         }
@@ -75,18 +75,18 @@ export default class LablupSlider extends LitElement {
     // language=HTML
     return html`
       <div class="horizontal center layout">
-      <mwc-slider id="slider" class="${this.id}" value="${this.value}"
-          min="${this.min}" max="${this.max}"
-          ?pin="${this.pin}"
-          ?disabled="${this.disabled}"
-          ?markers="${this.markers}"
-          @change="${this.syncToText}">
-      </mwc-slider>
-      <wl-textfield style="display:none" id="textfield" class="${this.id}" type="number"
-        value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
-        ?disabled="${this.disabled}"
-        @change="${()=>this.syncToSlider()}">
-      </wl-textfield>
+        <mwc-slider id="slider" class="${this.id}" value="${this.value}"
+                    min="${this.min}" max="${this.max}"
+                    ?pin="${this.pin}"
+                    ?disabled="${this.disabled}"
+                    ?markers="${this.markers}"
+                    @change="${this.syncToText}">
+        </mwc-slider>
+        <wl-textfield style="display:none" id="textfield" class="${this.id}" type="number"
+                      value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
+                      ?disabled="${this.disabled}"
+                      @change="${() => this.syncToSlider()}">
+        </wl-textfield>
       </div>
     `;
   }
@@ -116,7 +116,7 @@ export default class LablupSlider extends LitElement {
   updated(changedProperties) {
     changedProperties.forEach((oldVal, propName) => {
       if (propName === 'value') {
-        setTimeout(()=>{
+        setTimeout(() => {
           if (this.editable) {
             this.syncToSlider();
           }
@@ -152,7 +152,7 @@ export default class LablupSlider extends LitElement {
         return 0;
       }
       return decimal_places.toString().split(".")[1].length || 0;
-      })(this.step));
+    })(this.step));
 
     //monkeypatch: force adjusting min value if min value exceeds max value
     this.min = (this.min > this.max) ? this.max : this.min;
