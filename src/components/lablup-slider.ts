@@ -85,7 +85,7 @@ export default class LablupSlider extends LitElement {
       <wl-textfield style="display:none" id="textfield" class="${this.id}" type="number"
         value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
         ?disabled="${this.disabled}"
-        @change="${this.syncToSlider}">
+        @change="${()=>this.syncToSlider()}">
       </wl-textfield>
       </div>
     `;
@@ -120,7 +120,7 @@ export default class LablupSlider extends LitElement {
         const event = new CustomEvent('value-changed', {'detail': {}});
         this.dispatchEvent(event);
       }
-      if (['min', 'max'].includes(propName)) {
+      if (['min', 'max', 'step'].includes(propName)) {
         this.checkMarkerDisplay();
       }
     });
@@ -140,6 +140,7 @@ export default class LablupSlider extends LitElement {
    * Setting value, slider value, and slider step to synchronize with slider.
    * */
   syncToSlider() {
+    this.textfield.step = this.step;
     let rounded = Math.round(this.textfield.value / this.step) * this.step;
     this.textfield.value = rounded.toFixed(((decimal_places: number) => {
       if (Math.floor(decimal_places) === decimal_places) {
@@ -147,10 +148,10 @@ export default class LablupSlider extends LitElement {
       }
       return decimal_places.toString().split(".")[1].length || 0;
       })(this.step));
-    
+
     //monkeypatch: force adjusting min value if min value exceeds max value
     this.min = (this.min > this.max) ? this.max : this.min;
-    
+
     if (this.textfield.value > this.max) {
       this.textfield.value = this.max;
     }

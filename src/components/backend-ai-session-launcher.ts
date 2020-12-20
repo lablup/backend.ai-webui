@@ -71,7 +71,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) marker_limit = 25;
   @property({type: String}) gpu_mode;
   @property({type: Array}) gpu_modes = [];
-  @property({type: Number}) gpu_step = 0.01;
+  @property({type: Number}) gpu_step = 0.05;
   @property({type: Object}) cpu_metric = {
     'min': '1',
     'max': '1'
@@ -1333,7 +1333,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.gpu_mode = this.resourceBroker.gpu_mode;
       this.gpu_step = this.resourceBroker.gpu_step;
       this.gpu_modes = this.resourceBroker.gpu_modes;
-
+      if (globalThis.backendaiclient.supports('multi-container')) {
+        if (this.cluster_size > 1) {
+          this.gpu_step = 1;
+        }
+      }
       let available_slot = this.resourceBroker.available_slot;
 
       // Post-UI markup to disable unchangeable values
@@ -1385,7 +1389,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             if (this.cluster_metric.min > this.cluster_metric.max) {
               this.cluster_metric.min = this.cluster_metric.max;
             } else {
-              this.cluster_metric.min = cpu_metric.min; 
+              this.cluster_metric.min = cpu_metric.min;
             }
           }
         }
@@ -1628,6 +1632,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _setClusterSize(e) {
     this.cluster_size = e.target.value > 0 ? Math.round(e.target.value) : 0;
     this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
+    if (globalThis.backendaiclient.supports('multi-container')) {
+      if (this.cluster_size > 1) {
+        this.gpu_step = 1;
+      } else {
+        this.gpu_step = this.resourceBroker.gpu_step;
+      }
+    }
   }
 
   /**

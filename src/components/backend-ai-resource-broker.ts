@@ -26,7 +26,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   // Resource occupation information
   @property({type: String}) gpu_mode;
   @property({type: Array}) gpu_modes = [];
-  @property({type: Number}) gpu_step = 0.05;
+  @property({type: Number}) gpu_step = 0.1;
 
   // Resource slot information
   @property({type: Object}) total_slot;
@@ -322,7 +322,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             this.gpu_mode = item;
             (this.gpu_modes as Array<string>).push(item);
             if (item === 'cuda.shares') {
-              this.gpu_step = 0.05;
+              this.gpu_step = 0.1;
             } else {
               this.gpu_step = 1;
             }
