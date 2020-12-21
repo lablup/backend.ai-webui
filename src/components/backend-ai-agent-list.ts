@@ -279,53 +279,68 @@ export default class BackendAIAgentList extends BackendAIPage {
           }
           if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_util' in agents[objectKey].live_stat.devices) {
             let cuda_util: Array<any> = [];
+            let i: number = 1;
             Object.entries(agents[objectKey].live_stat.devices.cuda_util).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
+              let agentInfo = Object.assign({}, v, {num: k, idx: i});
+              i = i + 1;
               cuda_util.push(agentInfo);
             });
             agents[objectKey].cuda_util_live = cuda_util;
           }
           if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_mem' in agents[objectKey].live_stat.devices) {
             let cuda_mem: Array<any> = [];
+            let i: number = 1;
             Object.entries(agents[objectKey].live_stat.devices.cuda_mem).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
+              let agentInfo = Object.assign({}, v, {num: k, idx: i});
+              i = i + 1;
               cuda_mem.push(agentInfo);
             });
             agents[objectKey].cuda_mem_live = cuda_mem;
           }
           if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_util' in agents[objectKey].live_stat.devices) {
             let rocm_util: Array<any> = [];
+            let i: number = 1;
             Object.entries(agents[objectKey].live_stat.devices.rocm_util).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
+              let agentInfo = Object.assign({}, v, {num: k, idx: i});
+              i = i + 1;
               rocm_util.push(agentInfo);
             });
             agents[objectKey].rocm_util_live = rocm_util;
           }
           if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_mem' in agents[objectKey].live_stat.devices) {
             let rocm_mem: Array<any> = [];
+            let i: number = 1;
             Object.entries(agents[objectKey].live_stat.devices.rocm_mem).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
+              let agentInfo = Object.assign({}, v, {num: k, idx: i});
+              i = i + 1;
               rocm_mem.push(agentInfo);
             });
             agents[objectKey].rocm_mem_live = rocm_mem;
           }
           if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_util' in agents[objectKey].live_stat.devices) {
             let tpu_util: Array<any> = [];
+            let i: number = 1;
             Object.entries(agents[objectKey].live_stat.devices.tpu_util).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
+              let agentInfo = Object.assign({}, v, {num: k, idx: i});
+              i = i + 1;
               tpu_util.push(agentInfo);
             });
             agents[objectKey].tpu_util_live = tpu_util;
           }
           if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_mem' in agents[objectKey].live_stat.devices) {
             let tpu_mem: Array<any> = [];
+            let i: number = 1;
             Object.entries(agents[objectKey].live_stat.devices.tpu_mem).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
+              let agentInfo = Object.assign({}, v, {num: k, idx: i});
+              i = i + 1;
               tpu_mem.push(agentInfo);
             });
             agents[objectKey].tpu_mem_live = tpu_mem;
           }
-
+          if ('hardware_metadata' in agent) {
+            let hardware_metadata: object = JSON.parse(agent.hardware_metadata);
+            agents[objectKey].hardware_metadata = hardware_metadata;
+          }
           this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
         });
       }
@@ -810,22 +825,22 @@ export default class BackendAIAgentList extends BackendAIPage {
               <h4>Utilization</h4>
             ${this.agentDetail.cuda_util_live.map(item => html`
               <div class="horizontal start-justified center layout">
-                <div style="font-size:8px;width:35px;">CUDA${item.num}</div>
+                <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
                 <div class="horizontal start-justified center layout">
                   <lablup-progress-bar class="cuda"
-                    progress="${item.pct / 100.0}"
-                    description=""
+                                       progress="${item.pct / 100.0}"
+                                       description=""
                   ></lablup-progress-bar>
                 </div>
               </div>`)}
               <h4>Memory</h4>
             ${this.agentDetail.cuda_mem_live.map(item => html`
               <div class="horizontal start-justified center layout">
-                <div style="font-size:8px;width:35px;">CUDA${item.num}</div>
+                <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
                 <div class="horizontal start-justified center layout">
                   <lablup-progress-bar class="cuda"
-                    progress="${item.pct / 100.0}"
-                    description=""
+                                       progress="${item.pct / 100.0}"
+                                       description=""
                   ></lablup-progress-bar>
                 </div>
               </div>`)}
