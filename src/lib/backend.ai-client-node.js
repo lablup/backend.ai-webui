@@ -439,6 +439,7 @@ class Client {
         if (this.isAPIVersionCompatibleWith('v6.20200815')) {
             this._features['multi-container'] = true;
             this._features['multi-node'] = true;
+            this._features['hardware-metadata'] = true;
         }
     }
     /**

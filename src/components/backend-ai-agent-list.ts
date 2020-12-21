@@ -193,6 +193,10 @@ export default class BackendAIAgentList extends BackendAIPage {
         fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
           'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     }
+    if (globalThis.backendaiclient.supports('hardware-metadata')) {
+      fields.push('hardware_metadata');
+    }
+
     globalThis.backendaiclient.agent.list(status, fields).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
