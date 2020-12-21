@@ -33,6 +33,7 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
 @customElement("backend-ai-agent-view")
 export default class BackendAIAgentView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
+  @property({type: String}) _tab = 'running-lists';
 
   constructor() {
     super();
@@ -98,6 +99,7 @@ export default class BackendAIAgentView extends BackendAIPage {
       els[x].style.display = 'none';
     }
     this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
+    this._tab = tab.title;
   }
 
   render() {
@@ -121,16 +123,16 @@ export default class BackendAIAgentView extends BackendAIPage {
             <div class="flex"></div>
           </h3>
           <div id="running-lists" class="tab-content">
-            <backend-ai-agent-list id="running-agents" condition="running" ?active="${this._status === 'active'}"></backend-ai-agent-list>
+            <backend-ai-agent-list id="running-agents" condition="running" ?active="${this._status === 'active' && this._tab === 'running-lists'}"></backend-ai-agent-list>
           </div>
           <div id="terminated-lists" class="tab-content" style="display:none;">
-            <backend-ai-agent-list id="terminated-agents" condition="terminated" ?active="${this._status === 'active'}"></backend-ai-agent-list>
+            <backend-ai-agent-list id="terminated-agents" condition="terminated" ?active="${this._status === 'active' && this._tab === 'terminated-lists'}"></backend-ai-agent-list>
           </div>
           <div id="storage-proxy-lists" class="tab-content" style="display:none;">
-            <backend-ai-storage-proxy-list id="storage-proxies" ?active="${this._status === 'active'}"></backend-ai-storage-proxy-list>
+            <backend-ai-storage-proxy-list id="storage-proxies" ?active="${this._status === 'active' && this._tab === 'storage-proxy-lists'}"></backend-ai-storage-proxy-list>
           </div>
           <div id="scaling-group-lists" class="tab-content" style="display:none;">
-            <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active'}"> </backend-ai-scaling-group-list>
+            <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active' && this._tab === 'scaling-group-lists'}"> </backend-ai-scaling-group-list>
           </div>
         </div>
       </lablup-activity-panel>
