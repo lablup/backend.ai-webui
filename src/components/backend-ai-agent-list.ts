@@ -201,146 +201,152 @@ export default class BackendAIAgentList extends BackendAIPage {
     globalThis.backendaiclient.agent.list(status, fields).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
+        let filter;
+        if (this.filter !== '') {
+          filter = this.filter.split(":");
+        }
         Object.keys(agents).map((objectKey, index) => {
-          let agent = agents[objectKey];
-          let occupied_slots = JSON.parse(agent.occupied_slots);
-          let available_slots = JSON.parse(agent.available_slots);
-          let compute_plugins = JSON.parse(agent.compute_plugins);
-          ['cpu', 'mem'].forEach((slot) => { // Fallback routine when occupied slots are not present
-            if (slot in occupied_slots === false) {
-              occupied_slots[slot] = "0";
+          let agent: any = agents[objectKey];
+          if (this.filter === '' || (filter[0] in agent && agent[filter[0]] === filter[1])) {
+            let occupied_slots = JSON.parse(agent.occupied_slots);
+            let available_slots = JSON.parse(agent.available_slots);
+            let compute_plugins = JSON.parse(agent.compute_plugins);
+            ['cpu', 'mem'].forEach((slot) => { // Fallback routine when occupied slots are not present
+              if (slot in occupied_slots === false) {
+                occupied_slots[slot] = "0";
+              }
+            });
+            if ('live_stat' in agent) {
+              agents[objectKey].live_stat = JSON.parse(agent.live_stat);
             }
-          });
-          if ('live_stat' in agent) {
-            agents[objectKey].live_stat = JSON.parse(agent.live_stat);
-          }
-          agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
-          agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
+            agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
+            agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
 
-          if (agent.cpu_cur_pct !== null) {
-            agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
-            agents[objectKey].cpu_total_usage_ratio = agents[objectKey].used_cpu_slots / agents[objectKey].cpu_slots;
-            agents[objectKey].cpu_current_usage_ratio = (agents[objectKey].current_cpu_percent / agents[objectKey].cpu_slots) / 100.0;
-            agents[objectKey].current_cpu_percent = agents[objectKey].current_cpu_percent.toFixed(2);
-          } else {
-            agents[objectKey].current_cpu_percent = 0;
-            agents[objectKey].cpu_total_usage_ratio = 0;
-            agents[objectKey].cpu_current_usage_ratio = 0;
-          }
-          if (agent.mem_cur_bytes !== null) {
-            agents[objectKey].current_mem_bytes = agent.mem_cur_bytes;
-          } else {
-            agents[objectKey].current_mem_bytes = 0;
-          }
-          agents[objectKey].current_mem = globalThis.backendaiclient.utils.changeBinaryUnit(agent.current_mem_bytes, 'g');
-          agents[objectKey].mem_slots = parseInt(globalThis.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
-          agents[objectKey].used_mem_slots = parseInt(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
-          agents[objectKey].mem_total_usage_ratio = agents[objectKey].used_mem_slots / agents[objectKey].mem_slots;
-          agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots;
-          agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);
-          if ('cuda.device' in available_slots) {
-            agents[objectKey].cuda_gpu_slots = parseInt(available_slots['cuda.device']);
-            if ('cuda.device' in occupied_slots) {
-              agents[objectKey].used_cuda_gpu_slots = parseInt(occupied_slots['cuda.device']);
+            if (agent.cpu_cur_pct !== null) {
+              agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
+              agents[objectKey].cpu_total_usage_ratio = agents[objectKey].used_cpu_slots / agents[objectKey].cpu_slots;
+              agents[objectKey].cpu_current_usage_ratio = (agents[objectKey].current_cpu_percent / agents[objectKey].cpu_slots) / 100.0;
+              agents[objectKey].current_cpu_percent = agents[objectKey].current_cpu_percent.toFixed(2);
             } else {
-              agents[objectKey].used_cuda_gpu_slots = 0;
+              agents[objectKey].current_cpu_percent = 0;
+              agents[objectKey].cpu_total_usage_ratio = 0;
+              agents[objectKey].cpu_current_usage_ratio = 0;
             }
-            agents[objectKey].used_cuda_gpu_slots_ratio = agents[objectKey].used_cuda_gpu_slots / agents[objectKey].cuda_gpu_slots;
-          }
-          if ('cuda.shares' in available_slots) {
-            agents[objectKey].cuda_fgpu_slots = parseInt(available_slots['cuda.shares']);
-            if ('cuda.shares' in occupied_slots) {
-              agents[objectKey].used_cuda_fgpu_slots = parseInt(occupied_slots['cuda.shares']);
+            if (agent.mem_cur_bytes !== null) {
+              agents[objectKey].current_mem_bytes = agent.mem_cur_bytes;
             } else {
-              agents[objectKey].used_cuda_fgpu_slots = 0;
+              agents[objectKey].current_mem_bytes = 0;
             }
-            agents[objectKey].used_cuda_fgpu_slots_ratio = agents[objectKey].used_cuda_fgpu_slots / agents[objectKey].cuda_fgpu_slots;
-          }
-          if ('rocm.device' in available_slots) {
-            agents[objectKey].rocm_gpu_slots = parseInt(available_slots['rocm.device']);
-            if ('rocm.device' in occupied_slots) {
-              agents[objectKey].used_rocm_gpu_slots = parseInt(occupied_slots['rocm.device']);
-            } else {
-              agents[objectKey].used_rocm_gpu_slots = 0;
+            agents[objectKey].current_mem = globalThis.backendaiclient.utils.changeBinaryUnit(agent.current_mem_bytes, 'g');
+            agents[objectKey].mem_slots = parseInt(globalThis.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
+            agents[objectKey].used_mem_slots = parseInt(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
+            agents[objectKey].mem_total_usage_ratio = agents[objectKey].used_mem_slots / agents[objectKey].mem_slots;
+            agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots;
+            agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);
+            if ('cuda.device' in available_slots) {
+              agents[objectKey].cuda_gpu_slots = parseInt(available_slots['cuda.device']);
+              if ('cuda.device' in occupied_slots) {
+                agents[objectKey].used_cuda_gpu_slots = parseInt(occupied_slots['cuda.device']);
+              } else {
+                agents[objectKey].used_cuda_gpu_slots = 0;
+              }
+              agents[objectKey].used_cuda_gpu_slots_ratio = agents[objectKey].used_cuda_gpu_slots / agents[objectKey].cuda_gpu_slots;
             }
-            agents[objectKey].used_rocm_gpu_slots_ratio = agents[objectKey].used_rocm_gpu_slots / agents[objectKey].rocm_gpu_slots;
+            if ('cuda.shares' in available_slots) {
+              agents[objectKey].cuda_fgpu_slots = parseInt(available_slots['cuda.shares']);
+              if ('cuda.shares' in occupied_slots) {
+                agents[objectKey].used_cuda_fgpu_slots = parseInt(occupied_slots['cuda.shares']);
+              } else {
+                agents[objectKey].used_cuda_fgpu_slots = 0;
+              }
+              agents[objectKey].used_cuda_fgpu_slots_ratio = agents[objectKey].used_cuda_fgpu_slots / agents[objectKey].cuda_fgpu_slots;
+            }
+            if ('rocm.device' in available_slots) {
+              agents[objectKey].rocm_gpu_slots = parseInt(available_slots['rocm.device']);
+              if ('rocm.device' in occupied_slots) {
+                agents[objectKey].used_rocm_gpu_slots = parseInt(occupied_slots['rocm.device']);
+              } else {
+                agents[objectKey].used_rocm_gpu_slots = 0;
+              }
+              agents[objectKey].used_rocm_gpu_slots_ratio = agents[objectKey].used_rocm_gpu_slots / agents[objectKey].rocm_gpu_slots;
+            }
+            if ('cuda' in compute_plugins) {
+              let cuda_plugin = compute_plugins['cuda'];
+              agents[objectKey].cuda_plugin = cuda_plugin;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cpu_util' in agents[objectKey].live_stat.devices) {
+              let cpu_util: Array<any> = [];
+              Object.entries(agents[objectKey].live_stat.devices.cpu_util).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k});
+                cpu_util.push(agentInfo);
+              });
+              agents[objectKey].cpu_util_live = cpu_util;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_util' in agents[objectKey].live_stat.devices) {
+              let cuda_util: Array<any> = [];
+              let i: number = 1;
+              Object.entries(agents[objectKey].live_stat.devices.cuda_util).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                cuda_util.push(agentInfo);
+              });
+              agents[objectKey].cuda_util_live = cuda_util;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_mem' in agents[objectKey].live_stat.devices) {
+              let cuda_mem: Array<any> = [];
+              let i: number = 1;
+              Object.entries(agents[objectKey].live_stat.devices.cuda_mem).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                cuda_mem.push(agentInfo);
+              });
+              agents[objectKey].cuda_mem_live = cuda_mem;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_util' in agents[objectKey].live_stat.devices) {
+              let rocm_util: Array<any> = [];
+              let i: number = 1;
+              Object.entries(agents[objectKey].live_stat.devices.rocm_util).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                rocm_util.push(agentInfo);
+              });
+              agents[objectKey].rocm_util_live = rocm_util;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_mem' in agents[objectKey].live_stat.devices) {
+              let rocm_mem: Array<any> = [];
+              let i: number = 1;
+              Object.entries(agents[objectKey].live_stat.devices.rocm_mem).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                rocm_mem.push(agentInfo);
+              });
+              agents[objectKey].rocm_mem_live = rocm_mem;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_util' in agents[objectKey].live_stat.devices) {
+              let tpu_util: Array<any> = [];
+              let i: number = 1;
+              Object.entries(agents[objectKey].live_stat.devices.tpu_util).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                tpu_util.push(agentInfo);
+              });
+              agents[objectKey].tpu_util_live = tpu_util;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_mem' in agents[objectKey].live_stat.devices) {
+              let tpu_mem: Array<any> = [];
+              let i: number = 1;
+              Object.entries(agents[objectKey].live_stat.devices.tpu_mem).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                tpu_mem.push(agentInfo);
+              });
+              agents[objectKey].tpu_mem_live = tpu_mem;
+            }
+            if ('hardware_metadata' in agent) {
+              agents[objectKey].hardware_metadata = JSON.parse(agent.hardware_metadata);
+            }
+            this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
           }
-          if ('cuda' in compute_plugins) {
-            let cuda_plugin = compute_plugins['cuda'];
-            agents[objectKey].cuda_plugin = cuda_plugin;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cpu_util' in agents[objectKey].live_stat.devices) {
-            let cpu_util: Array<any> = [];
-            Object.entries(agents[objectKey].live_stat.devices.cpu_util).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
-              cpu_util.push(agentInfo);
-            });
-            agents[objectKey].cpu_util_live = cpu_util;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_util' in agents[objectKey].live_stat.devices) {
-            let cuda_util: Array<any> = [];
-            let i: number = 1;
-            Object.entries(agents[objectKey].live_stat.devices.cuda_util).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k, idx: i});
-              i = i + 1;
-              cuda_util.push(agentInfo);
-            });
-            agents[objectKey].cuda_util_live = cuda_util;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_mem' in agents[objectKey].live_stat.devices) {
-            let cuda_mem: Array<any> = [];
-            let i: number = 1;
-            Object.entries(agents[objectKey].live_stat.devices.cuda_mem).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k, idx: i});
-              i = i + 1;
-              cuda_mem.push(agentInfo);
-            });
-            agents[objectKey].cuda_mem_live = cuda_mem;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_util' in agents[objectKey].live_stat.devices) {
-            let rocm_util: Array<any> = [];
-            let i: number = 1;
-            Object.entries(agents[objectKey].live_stat.devices.rocm_util).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k, idx: i});
-              i = i + 1;
-              rocm_util.push(agentInfo);
-            });
-            agents[objectKey].rocm_util_live = rocm_util;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_mem' in agents[objectKey].live_stat.devices) {
-            let rocm_mem: Array<any> = [];
-            let i: number = 1;
-            Object.entries(agents[objectKey].live_stat.devices.rocm_mem).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k, idx: i});
-              i = i + 1;
-              rocm_mem.push(agentInfo);
-            });
-            agents[objectKey].rocm_mem_live = rocm_mem;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_util' in agents[objectKey].live_stat.devices) {
-            let tpu_util: Array<any> = [];
-            let i: number = 1;
-            Object.entries(agents[objectKey].live_stat.devices.tpu_util).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k, idx: i});
-              i = i + 1;
-              tpu_util.push(agentInfo);
-            });
-            agents[objectKey].tpu_util_live = tpu_util;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_mem' in agents[objectKey].live_stat.devices) {
-            let tpu_mem: Array<any> = [];
-            let i: number = 1;
-            Object.entries(agents[objectKey].live_stat.devices.tpu_mem).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k, idx: i});
-              i = i + 1;
-              tpu_mem.push(agentInfo);
-            });
-            agents[objectKey].tpu_mem_live = tpu_mem;
-          }
-          if ('hardware_metadata' in agent) {
-            agents[objectKey].hardware_metadata = JSON.parse(agent.hardware_metadata);
-          }
-          this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
         });
       }
       this.agents = agents;

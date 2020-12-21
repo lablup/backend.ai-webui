@@ -157,52 +157,40 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        let status = 'ALIVE';
-        this._loadAgentList(status);
+        this._loadAgentList();
       }, true);
     } else { // already connected
-      let status = 'ALIVE';
-      this._loadAgentList(status);
+      this._loadAgentList();
     }
   }
 
   /**
-   * Load an agents list with agent's backend.ai information.
+   * Load an storage proxy informations.
    *
    * @param {string} status - The agent's backend.ai client status.
    */
-  _loadAgentList(status: string = 'running') {
+  _loadAgentList() {
     if (this.active !== true) {
       return;
     }
-    let fields: Array<String>;
-    switch (this.condition) {
-      case 'running':
-        status = 'ALIVE';
-        fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
-          'lost_at', 'status_changed', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
-        break;
-      case 'terminated':
-        status = 'TERMINATED';
-        fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
-          'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
-        break;
-      case 'archived':
-      default:
-        status = 'ALIVE';
-        fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
-          'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
-    }
-    if (globalThis.backendaiclient.supports('hardware-metadata')) {
-      fields.push('hardware_metadata');
-    }
-    globalThis.backendaiclient.storageproxy.list().then(response => {
-      let agents = response.storage_volume_list.items;
-      console.log(agents);
+    globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric']).then(response => {
+      let storage_volumes = response.storage_volume_list.items;
+      let agents: Array<any> = [];
+      if (storage_volumes !== undefined && storage_volumes.length != 0) {
+        Object.keys(storage_volumes).map((objectKey, index) => {
+          let agent: any = storage_volumes[objectKey];
+          if (this.filter !== '') {
+            let filter = this.filter.split(":");
+            if (filter[0] in agent && agent[filter[0]] === filter[1]) {
+              agents.push(agent);
+            }
+          }
+        });
+      }
       this.agents = agents;
       if (this.active === true) {
         setTimeout(() => {
-          this._loadAgentList(status)
+          this._loadAgentList()
         }, 15000);
       }
     }).catch(err => {
@@ -289,7 +277,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       // language=HTML
       html`
         <div>${rowData.item.id}</div>
-        <div class="indicator monospace">${rowData.item.addr}</div>
+        <div class="indicator monospace">${rowData.item.path}</div>
       `, root
     );
   }
@@ -340,7 +328,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
           <lablup-shields app="Backend" color="${color}"
                           description="${rowData.item.backend}" ui="round"></lablup-shields>
         </div>
-    `, root
+      `, root
     );
   }
 
@@ -374,8 +362,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
             </div>
             <span class="flex"></span>
             <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
-                            buffer="${rowData.item.cpu_total_usage_ratio}"
-                            description="${rowData.item.current_cpu_percent}%"></lablup-progress-bar>
+                                 buffer="${rowData.item.cpu_total_usage_ratio}"
+                                 description="${rowData.item.current_cpu_percent}%"></lablup-progress-bar>
           </div>
           <div class="layout horizontal center flex">
             <div class="layout horizontal start resource-indicator">
@@ -385,8 +373,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
             </div>
             <span class="flex"></span>
             <lablup-progress-bar id="mem-usage-bar" progress="${rowData.item.mem_current_usage_ratio}"
-                            buffer="${rowData.item.mem_total_usage_ratio}"
-                            description="${rowData.item.current_mem}GB"></lablup-progress-bar>
+                                 buffer="${rowData.item.mem_total_usage_ratio}"
+                                 description="${rowData.item.current_mem}GB"></lablup-progress-bar>
 
           </div>
 
@@ -406,10 +394,10 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       // language=HTML
       html`
         <div class="layout vertical start justified wrap">
-          ${rowData.item.capabilities ? rowData.item.capabilities.map(item=>html`
-          <lablup-shields app="" color="blue"
-                          description="${item}" ui="round"></lablup-shields>
-          `):html``}
+          ${rowData.item.capabilities ? rowData.item.capabilities.map(item => html`
+            <lablup-shields app="" color="blue"
+                            description="${item}" ui="round"></lablup-shields>
+          `) : html``}
 
         </div>`, root
     );
@@ -440,7 +428,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment" @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
+          <mwc-icon-button class="fg blue controls-running" icon="assignment"
+                           @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
         </div>`, root
     );
   }
@@ -473,43 +462,44 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         <span slot="title">${_t("agent.DetailedInformation")}</span>
         <div slot="content">
           <div class="horizontal start start-justified layout">
-          ${'cpu_util_live' in this.agentDetail ?
-      html`<div>
-              <h3>CPU</h3>
-              <div class="horizontal wrap layout" style="max-width:600px;">
-            ${this.agentDetail.cpu_util_live.map(item => html`
-              <div class="horizontal start-justified center layout" style="padding:0 5px;">
-                <div style="font-size:8px;width:35px;">CPU${item.num}</div>
-                <lablup-progress-bar class="cpu"
-                  progress="${item.pct / 100.0}"
-                  description=""
-                ></lablup-progress-bar>
-              </div>`)}
-              </div>
-            </div>` : html``}
+            ${'cpu_util_live' in this.agentDetail ?
+              html`
+                <div>
+                  <h3>CPU</h3>
+                  <div class="horizontal wrap layout" style="max-width:600px;">
+                    ${this.agentDetail.cpu_util_live.map(item => html`
+                      <div class="horizontal start-justified center layout" style="padding:0 5px;">
+                        <div style="font-size:8px;width:35px;">CPU${item.num}</div>
+                        <lablup-progress-bar class="cpu"
+                                             progress="${item.pct / 100.0}"
+                                             description=""
+                        ></lablup-progress-bar>
+                      </div>`)}
+                  </div>
+                </div>` : html``}
             <div style="margin-left:10px;">
               <h3>Memory</h3>
               <div>
                 <lablup-progress-bar class="mem"
-                  progress="${this.agentDetail.mem_current_usage_ratio}"
-                  description="${this.agentDetail.current_mem}GB/${this.agentDetail.mem_slots}GB"
+                                     progress="${this.agentDetail.mem_current_usage_ratio}"
+                                     description="${this.agentDetail.current_mem}GB/${this.agentDetail.mem_slots}GB"
                 ></lablup-progress-bar>
               </div>
               <h3>Network</h3>
               ${'live_stat' in this.agentDetail && 'node' in this.agentDetail.live_stat ? html`
-              <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
-              <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
+                <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
+                <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
               ` : html``}
             </div>
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-              unelevated
-              id="close-button"
-              icon="check"
-              label="${_t("button.Close")}"
-              @click="${(e) => this._hideDialog(e)}"></mwc-button>
+            unelevated
+            id="close-button"
+            icon="check"
+            label="${_t("button.Close")}"
+            @click="${(e) => this._hideDialog(e)}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;
