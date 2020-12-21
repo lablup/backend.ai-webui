@@ -13,6 +13,7 @@ import '@material/mwc-tab';
 
 import './lablup-activity-panel';
 import './backend-ai-agent-list';
+import './backend-ai-storage-proxy-list';
 import './backend-ai-scaling-group-list';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 
@@ -112,6 +113,8 @@ export default class BackendAIAgentView extends BackendAIPage {
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               <!--<mwc-tab title="maintenance-lists" label="${_t("agent.Maintaining")}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>-->
+              <mwc-tab title="storage-proxy-lists" label="${_t("general.StorageProxies")}"
+                  @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               <mwc-tab title="scaling-group-lists" label="${_t("general.ResourceGroup")}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
@@ -122,6 +125,9 @@ export default class BackendAIAgentView extends BackendAIPage {
           </div>
           <div id="terminated-lists" class="tab-content" style="display:none;">
             <backend-ai-agent-list id="terminated-agents" condition="terminated" ?active="${this._status === 'active'}"></backend-ai-agent-list>
+          </div>
+          <div id="storage-proxy-lists" class="tab-content" style="display:none;">
+            <backend-ai-storage-proxy-list id="storage-proxies" ?active="${this._status === 'active'}"></backend-ai-storage-proxy-list>
           </div>
           <div id="scaling-group-lists" class="tab-content" style="display:none;">
             <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active'}"> </backend-ai-scaling-group-list>
