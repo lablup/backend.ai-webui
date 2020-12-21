@@ -184,6 +184,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
             if (filter[0] in agent && agent[filter[0]] === filter[1]) {
               agents.push(agent);
             }
+          } else {
+            agents.push(agent);
           }
         });
       }
