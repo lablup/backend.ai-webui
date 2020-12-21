@@ -1670,7 +1670,7 @@ class StorageProxy {
    * @param {string} host - Virtual folder host.
    * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'capabilities'.
    */
-  async detail(host :string = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities', 'hardware_metadata']) {
+  async detail(host :string = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities']) {
     let q = `query($vfolder_host: String!) {` +
       `  storage_volume(id: $vfolder_host) {` +
       `     ${fields.join(" ")}` +

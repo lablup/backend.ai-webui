@@ -298,7 +298,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     switch (platform) {
       case "xfs":
         color = 'blue';
-        icon = 'xfs';
+        icon = 'local';
         break;
       case "ceph":
       case "cephfs":
@@ -412,9 +412,11 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
    * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
-  showAgentDetailDialog(agentId) {
-    this.agentDetail = this.agentsObject[agentId];
-    this.agentDetailDialog.show();
+  showStorageProxyDetailDialog(agentId) {
+    let event = new CustomEvent("backend-ai-selected-storage-proxy", {"detail": agentId});
+    document.dispatchEvent(event);
+    //this.agentDetail = this.agentsObject[agentId];
+    //this.agentDetailDialog.show();
     return;
   }
 
@@ -429,9 +431,9 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
+        <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.id}">
           <mwc-icon-button class="fg blue controls-running" icon="assignment"
-                           @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
+                           @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
         </div>`, root
     );
   }
