@@ -338,8 +338,7 @@ export default class BackendAIAgentList extends BackendAIPage {
             agents[objectKey].tpu_mem_live = tpu_mem;
           }
           if ('hardware_metadata' in agent) {
-            let hardware_metadata: object = JSON.parse(agent.hardware_metadata);
-            agents[objectKey].hardware_metadata = hardware_metadata;
+            agents[objectKey].hardware_metadata = JSON.parse(agent.hardware_metadata);
           }
           this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
         });
