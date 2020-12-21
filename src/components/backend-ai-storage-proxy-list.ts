@@ -308,7 +308,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       case "vfs":
       case "nfs":
         color = 'green';
-        icon = 'nfs';
+        icon = 'local';
         break;
       case "purestorage":
         color = 'red';
