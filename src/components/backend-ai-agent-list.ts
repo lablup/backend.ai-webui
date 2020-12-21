@@ -46,6 +46,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) agentDetailDialog = Object();
+  @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
@@ -458,6 +459,24 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
+   * Render endpoint with IP and name.
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  endpointRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div>${rowData.item.id}</div>
+        <div class="indicator monospace">${rowData.item.addr}</div>
+      `, root
+    );
+  }
+
+
+  /**
    * Render regions by platforms and locations.
    *
    * @param {DOMelement} root
@@ -732,28 +751,26 @@ export default class BackendAIAgentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="80px">
-          <template class="header">${_t("agent.Endpoint")}</template>
-          <template>
-            <div>[[item.id]]</div>
-            <div class="indicator monospace">[[item.addr]]</div>
-          </template>
+      <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
+                   .items="${this.agents}">
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
+                            .renderer="${this._indexRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="80px" header="${_t("agent.Endpoint")}" .renderer="${this._boundEndpointRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="100px" resizable .renderer="${this._boundRegionRenderer}">
-          <template class="header">${_t("agent.Region")}</template>
+        <vaadin-grid-column width="100px" resizable header="${_t("agent.Region")}"
+                            .renderer="${this._boundRegionRenderer}">
         </vaadin-grid-column>
-
-        <vaadin-grid-column resizable .renderer="${this._boundContactDateRenderer}">
-          <template class="header">${_t("agent.Starts")}</template>
+        <vaadin-grid-column resizable header="${_t("agent.Starts")}" .renderer="${this._boundContactDateRenderer}">
         </vaadin-grid-column>
-
-        <vaadin-grid-column resizable width="140px" header="${_t("agent.Resources")}" .renderer="${this._boundResourceRenderer}">
+        <vaadin-grid-column resizable width="140px" header="${_t("agent.Resources")}"
+                            .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-sort-column width="100px" resizable path="scaling_group" header="${_t("general.ResourceGroup")}"></vaadin-grid-sort-column>
-        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-sort-column width="100px" resizable path="scaling_group"
+                                 header="${_t("general.ResourceGroup")}"></vaadin-grid-sort-column>
+        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}"
+                            .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column resizable header="${_t("general.Control")}"
+                            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t("agent.DetailedInformation")}</span>
