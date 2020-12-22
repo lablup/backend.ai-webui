@@ -190,6 +190,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         });
       }
       this.agents = agents;
+      let event = new CustomEvent("backend-ai-storage-proxy-updated", {});
+      this.dispatchEvent(event);
       if (this.active === true) {
         setTimeout(() => {
           this._loadAgentList()
