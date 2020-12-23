@@ -1,5 +1,16 @@
 # Changelog
 
+## v20.12.2 (23/12/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**library / SDK**] Support hardware metadata queries [#869](https://github.com/lablup/backend.ai-console/issues/869)
+- [**UI / UX**][**enhancement**][**enterprise**][**library / SDK**] Set fractional GPU to multiple of integer when using multi-node / multi-container [#868](https://github.com/lablup/backend.ai-console/issues/868)
+- [**UI / UX**][**enhancement**][**minor**] Session creation UI should allow manual input of image reference [#825](https://github.com/lablup/backend.ai-console/issues/825)
+- [**UI / UX**][**enhancement**] Resource usage gauge per session [#771](https://github.com/lablup/backend.ai-console/issues/771)
+- [**UI / UX**][**easy**][**enhancement**][**minor**] Limit maximum height of statistics graph [#703](https://github.com/lablup/backend.ai-console/issues/703)
+
+
 ## v20.12.1 (18/12/2020)
 
 #### Enhancements:
