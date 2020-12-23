@@ -330,7 +330,7 @@ export default class BackendAIData extends BackendAIPage {
         <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
         <div slot="content">
           <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}"
-          @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9.-_]*$"
+          @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
             required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}" maxLength="64"
             placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
           <div class="horizontal layout">
