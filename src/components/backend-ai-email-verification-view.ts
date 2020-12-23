@@ -8,7 +8,6 @@ import {css, customElement, html, property} from "lit-element";
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
 import './backend-ai-dialog';
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
