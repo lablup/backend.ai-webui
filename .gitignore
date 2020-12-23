@@ -119,3 +119,6 @@ tags
 
 # git submodules
 .gitmodules
+
+#plugins
+src/plugins
