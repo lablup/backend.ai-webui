@@ -264,7 +264,9 @@
     "Maintaining": "보수중",
     "Status": "상태",
     "DetailedInformation": "상세 정보",
-    "Running": "실행중"
+    "Running": "실행중",
+    "BackendType": "백엔드",
+    "Capabilities": "지원기능"
   },
   "general": {
     "cores": "코어",
@@ -280,7 +282,8 @@
     "ConfirmPassword": "비밀번호 (확인)",
     "Control": "제어",
     "NewPassword": "새 비밀번호",
-    "Enabled": "활성화됨"
+    "Enabled": "활성화됨",
+    "StorageProxies": "스토리지"
   },
   "credential": {
     "Permission": "권한",

@@ -266,7 +266,9 @@
     "Maintaining": "Maintaining",
     "Status": "Status",
     "DetailedInformation": "Detailed Information",
-    "Running": "Running"
+    "Running": "Running",
+    "BackendType": "Backend Type",
+    "Capabilities": "Capabilities"
   },
   "general": {
     "cores": "cores",
@@ -283,7 +285,8 @@
     "Create": "Create",
     "Control": "Control",
     "NewPassword": "New Password",
-    "Enabled": "Enabled"
+    "Enabled": "Enabled",
+    "StorageProxies": "Storages"
   },
   "credential": {
     "Permission": "Permission",

@@ -133,6 +133,7 @@ class Client {
         this.group = new Group(this);
         this.domain = new Domain(this);
         this.resources = new Resources(this);
+        this.storageproxy = new StorageProxy(this);
         this.maintenance = new Maintenance(this);
         this.scalingGroup = new ScalingGroup(this);
         this.registry = new Registry(this);
@@ -439,6 +440,7 @@ class Client {
         if (this.isAPIVersionCompatibleWith('v6.20200815')) {
             this._features['multi-container'] = true;
             this._features['multi-node'] = true;
+            this._features['hardware-metadata'] = true;
         }
     }
     /**
@@ -613,6 +615,9 @@ class Client {
             }
             if (resources['cuda.shares']) { // Generalized device information from 20.03
                 config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
+            }
+            if (resources['rocm']) {
+                config['rocm.device'] = resources['rocm'];
             }
             if (resources['tpu']) {
                 config['tpu.device'] = resources['tpu'];
@@ -1485,6 +1490,51 @@ class Agent {
             `  }` +
             `}`;
         let v = { 'status': status };
+        return this.client.query(q, v);
+    }
+}
+class StorageProxy {
+    /**
+     * Agent API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+    }
+    /**
+     * List storage proxies and its volumes.
+     *
+     * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'capabilities'.
+     * @param {number} limit - limit number of query items.
+     * @param {number} offset - offset for item query. Useful for pagination.
+     */
+    async list(fields = ['id', 'backend', 'capabilities'], limit = 20, offset = 0) {
+        let q = `query($offset:Int!, $limit:Int!) {` +
+            `  storage_volume_list(limit:$limit, offset:$offset) {` +
+            `     items { ${fields.join(' ')} }` +
+            `     total_count` +
+            `  }` +
+            `}`;
+        let v = {
+            'limit': limit,
+            'offset': offset
+        };
+        return this.client.query(q, v);
+    }
+    /**
+     * Detail of specific storage proxy / volume.
+     *
+     * @param {string} host - Virtual folder host.
+     * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'capabilities'.
+     */
+    async detail(host = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities', 'hardware_metadata']) {
+        let q = `query($vfolder_host: String!) {` +
+            `  storage_volume(id: $vfolder_host) {` +
+            `     ${fields.join(" ")}` +
+            `  }` +
+            `}`;
+        let v = { 'vfolder_host': host };
         return this.client.query(q, v);
     }
 }
