@@ -13,6 +13,7 @@ import '@material/mwc-icon-button-toggle';
 import './lablup-terms-of-service';
 import './backend-ai-dialog';
 
+import {default as PainKiller} from "./backend-ai-painkiller";
 import '../lib/backend.ai-client-es6';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
@@ -284,7 +285,7 @@ export default class BackendAiSignup extends BackendAIPage {
       }, 1000);
     }).catch((e) => {
       if (e.message) {
-        this.notification.text = e.message;
+        this.notification.text = PainKiller.relieve(e.message);
         this.notification.show(true, e);
       }
       console.log(e);

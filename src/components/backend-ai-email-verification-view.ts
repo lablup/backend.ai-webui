@@ -8,6 +8,7 @@ import {css, customElement, html, property} from "lit-element";
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
 
+import {default as PainKiller} from "./backend-ai-painkiller";
 import './backend-ai-dialog';
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -108,7 +109,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         this.successDialog.show();
       } catch (e) {
         console.error(e);
-        this.notification.text = e.message || _text('signup.VerificationError');
+        this.notification.text = _text('signup.VerificationError');
         this.notification.show();
         window.setTimeout(() => this.failDialog.show(), 100);
       }
@@ -168,7 +169,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
             <div style="height:1em"></div>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
               label="${_t("signup.SendEmail")}"

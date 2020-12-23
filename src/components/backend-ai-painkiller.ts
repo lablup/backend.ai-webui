@@ -39,6 +39,7 @@ export default class BackendAIPainKiller {
     "Cannot read property 'split' of undefined": "error.UserHasNoGroup",
   };
   static regexTable = {
+    '\\w*not found matched token with email\\w*': 'error.InvalidSignupToken',
     '\\w*Access key not found\\w*': "error.LoginInformationMismatch",
     '\\w*401 Unauthorized - Credential/signature mismatch\\w*': "error.LoginInformationMismatch",
     'integrity error: duplicate key value violates unique constraint "pk_resource_presets"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'error.ResourcePolicyAlreadyExist',
