@@ -1237,7 +1237,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.used_resource_group_slot = this.resourceBroker.used_resource_group_slot;
       this.used_project_slot = this.resourceBroker.used_project_slot;
       this.used_project_slot_percent = this.resourceBroker.used_project_slot_percent;
-      this.concurrency_limit = this.resourceBroker.concurrency_limit;
+      this.concurrency_limit = this.resourceBroker.concurrency_limit ? this.resourceBroker.concurrency_limit : 1;
       this.available_slot = this.resourceBroker.available_slot;
       this.used_slot_percent = this.resourceBroker.used_slot_percent;
       this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
@@ -1584,7 +1584,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (this.cuda_device_metric.min == this.cuda_device_metric.max) {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
-      if (this.concurrency_limit == 1) {
+      if (this.concurrency_limit <= 1) {
         this.shadowRoot.querySelector('#session-resource').max = 2;
         this.shadowRoot.querySelector('#session-resource').value = 1;
         this.shadowRoot.querySelector('#session-resource').disabled = true;
