@@ -13,6 +13,7 @@ import '@material/mwc-icon-button-toggle';
 import './lablup-terms-of-service';
 import './backend-ai-dialog';
 
+import {default as PainKiller} from "./backend-ai-painkiller";
 import '../lib/backend.ai-client-es6';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
@@ -262,7 +263,7 @@ export default class BackendAiSignup extends BackendAIPage {
     const user_email = (this.shadowRoot.querySelector('#id_user_email') as HTMLInputElement).value;
     const user_name = (this.shadowRoot.querySelector('#id_user_name') as HTMLInputElement).value;
     const password = (this.shadowRoot.querySelector('#id_password1') as HTMLInputElement).value;
-    this.notification.text = 'Processing...';
+    this.notification.text = _text("signup.Processing");
     this.notification.show();
     const body = {
       'email': user_email,
@@ -275,7 +276,7 @@ export default class BackendAiSignup extends BackendAIPage {
     this.client._wrapWithPromise(rqst).then((response) => {
       this._toggleInputField(false);
       this.shadowRoot.querySelector('#signup-button-message').innerHTML = _text('signup.SignupSucceeded');
-      this.notification.text = 'Signup succeed.';
+      this.notification.text = _text("signup.SignupSucceeded");;
       this.notification.show();
       setTimeout(() => {
         this.signupPanel.hide();
@@ -284,7 +285,7 @@ export default class BackendAiSignup extends BackendAIPage {
       }, 1000);
     }).catch((e) => {
       if (e.message) {
-        this.notification.text = e.message;
+        this.notification.text = PainKiller.relieve(e.message);
         this.notification.show(true, e);
       }
       console.log(e);
@@ -413,12 +414,14 @@ export default class BackendAiSignup extends BackendAIPage {
       <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <span slot="title">${_t("signup.SignupBETA")}</span>
         <div slot="content">
-          <mwc-textfield type="email" name="user_email" id="id_user_email" maxlength="50" autofocus
+          <mwc-textfield type="email" name="user_email" id="id_user_email" autofocus
+                       maxlength="64" placeholder="${_text('maxLength.64chars')}"
                        label="${_t("signup.E-mail")}" validateOnInitialRender
                        @change="${this._validateEmail}"
                        validationMessage="${_t("signup.EmailInputRequired")}"
                        value="${this.user_email}" required></mwc-textfield>
-          <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
+          <mwc-textfield type="text" name="user_name" id="id_user_name"
+                       maxlength="64" placeholder="${_text('maxLength.64chars')}"
                        label="${_t("signup.UserName")}" value="${this.user_name}"
                        validationMessage="${_t("signup.UserNameInputRequired")}"></mwc-textfield>
           <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
@@ -426,7 +429,7 @@ export default class BackendAiSignup extends BackendAIPage {
                        validationMessage="${_t("signup.TokenInputRequired")}" required></mwc-textfield>
           <div class="horizontal flex layout">
             <mwc-textfield type="password" name="password1" id="id_password1"
-                        label="${_t("signup.Password")}" minlength="8"
+                        label="${_t("signup.Password")}" maxLength="64"
                         pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                         validationMessage="${_t("signup.PasswordInputRequired")}"
                         @change="${this._validatePassword}"
@@ -437,7 +440,7 @@ export default class BackendAiSignup extends BackendAIPage {
           </div>
           <div class="horizontal flex layout">
             <mwc-textfield type="password" name="password2" id="id_password2"
-                        label="${_t("signup.PasswordAgain")}" minlength="8"
+                        label="${_t("signup.PasswordAgain")}" maxLength="64"
                         pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                         validationMessage="${_t("signup.PasswordInputRequired")}"
                         @change="${this._validatePassword}"

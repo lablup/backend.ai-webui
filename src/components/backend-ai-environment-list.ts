@@ -181,7 +181,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
         #modify-app-dialog {
           --component-max-height: 550px;
-          --component-min-width: 600px;
         }
 
         backend-ai-dialog vaadin-grid {
@@ -421,10 +420,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this.notification.text = _text('environment.InstallingImage') + imageName + _text('environment.TakesTime');
       this.notification.show();
       let indicator = await this.indicator.start('indeterminate');
-      indicator.set(10, 'Downloading...');
+      indicator.set(10, _text('import.Downloading'));
 
       globalThis.backendaiclient.image.install(imageName, imageResource).then((response) => {
-        indicator.set(100, 'Install finished.');
+        indicator.set(100, _text('import.Installed'));
         indicator.end(1000);
 
         // change installing -> installed
@@ -474,8 +473,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Render requirments such as cpu limit, memoty limit
    * cuda share limit, rocm device limit and tpu limit.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   requirementsRenderer(root, column?, rowData?) {
@@ -697,8 +696,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   /**
    * Render controllers.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   controlsRenderer(root, column, rowData) {
@@ -737,8 +736,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 /**
  * Render an installed tag for each image.
  *
- * @param {DOM element} root
- * @param {<vaadin-grid-column> element} column
+ * @param {DOMelement} root
+ * @param {object} column (<vaadin-grid-column> element)
  * @param {object} rowData
  */
   installRenderer(root, column, rowData) {
@@ -1103,8 +1102,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Check whether delete operation will proceed or not.
-   * 
-   * @param e - Dispatches from the native input event each time the input changes. 
+   *
+   * @param e - Dispatches from the native input event each time the input changes.
    */
   _checkDeleteAppInfo(e) {
     // htmlCollection should be converted to Array.

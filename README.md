@@ -23,6 +23,7 @@ Backend.AI console focuses to
 ## User Features
  * Session management
     * Set default resources for runs
+    * Monitor current resources sessions using
     * Choose and run environment-supported apps
     * Web-based Terminal for each session
     * Fully-featured VSCode editor and environments
@@ -37,6 +38,9 @@ Backend.AI console focuses to
     * Upload  / download files (with upload progress)
     * Integrated SSH/SFTP server (app mode only)
     * Share folders with friends / groups
+ * Node management
+    * See calculation nodes in Backend.AI cluster
+	* Live statistics of bare-metal / VM nodes
  * Statistics
     * User resource statistics
     * Session statistics
@@ -70,7 +74,7 @@ Backend.AI console focuses to
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
     * Needs backend.ai-wsproxy package
  * Service information
-    * Component compatibility 
+    * Component compatibility
     * Security check
     * License information
  * Work with console server (github/lablup/backend.ai-console-server)
@@ -99,6 +103,7 @@ signupSupport = false # Enable / disable signup feature support. Manager plugin 
 allowSignout = false # Let users signout from service. Signup plugin is required.
 allowAnonymousChangePassword = false # Enable / disable anonymous user can send change password email. Manager plugin is required.
 allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
+autoLogout = false # If true, user will be automatically logout when they close all Backend.AI tab / window.
 debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
 
 [wsproxy]
@@ -106,14 +111,22 @@ proxyURL = "[Proxy URL]"
 proxyBaseURL = "[Base URL of websocket proxy,]"
 proxyListenIP = "[Websocket proxy configuration IP.]"
 
+[resources]
+openPortToPublic = true # Show option to open app proxy port to anyone.
+maxCPUCoresPerSession = 256 # Maximum CPU per session.
+maxCUDADevicesPerSession = 16  # Maximum CUDA devices per session.
+maxShmPerSession = 1 # Maximum shared memory per session.
+maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
+
 [server]
 consoleServerURL = "[Console server website URL. App will use the site instead of local app.]"
                    # Uses websocket proxy in the app
 
-[plugins]
+[plugin]
 # Reserved to load plugins
-# login = "login-test.js"
-# sidebar = "sidebar-test.js"
+#login = "signup-cloud.js"
+#page = "test-plugin1,test-plugin2"
+
 ```
 
 

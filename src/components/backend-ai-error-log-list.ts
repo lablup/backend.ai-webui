@@ -190,7 +190,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    */
   _humanReadableTime(d: any) {
     d = new Date(d);
-    return d.toLocaleString();
+    let option = { hour12: false };
+    return d.toLocaleString("en-US", option);
   }
 
   /**

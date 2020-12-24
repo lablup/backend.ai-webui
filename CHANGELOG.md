@@ -1,6 +1,81 @@
 # Changelog
 
-## v20.11.2 (16/11/2020)
+## v20.12.2 (23/12/2020)
+
+#### Enhancements:
+
+- [**enhancement**][**library / SDK**] Support hardware metadata queries [#869](https://github.com/lablup/backend.ai-console/issues/869)
+- [**UI / UX**][**enhancement**][**enterprise**][**library / SDK**] Set fractional GPU to multiple of integer when using multi-node / multi-container [#868](https://github.com/lablup/backend.ai-console/issues/868)
+- [**UI / UX**][**enhancement**][**minor**] Session creation UI should allow manual input of image reference [#825](https://github.com/lablup/backend.ai-console/issues/825)
+- [**UI / UX**][**enhancement**] Resource usage gauge per session [#771](https://github.com/lablup/backend.ai-console/issues/771)
+- [**UI / UX**][**easy**][**enhancement**][**minor**] Limit maximum height of statistics graph [#703](https://github.com/lablup/backend.ai-console/issues/703)
+
+
+## v20.12.1 (18/12/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**minor**] Set default auto logout to false [#851](https://github.com/lablup/backend.ai-console/issues/851)
+- [**UI / UX**][**enhancement**][**enterprise**][**minor**] System setting for auto logout enable / disable feature [#865](https://github.com/lablup/backend.ai-console/issues/865)
+
+
+## v20.12.0 (18/12/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**] Let's show current invited vfolders and created vfolders. [#858](https://github.com/lablup/backend.ai-console/issues/858)
+- [**enhancement**] Support harbor v2 [#856](https://github.com/lablup/backend.ai-console/issues/856)
+- [**blocker**][**enhancement**][**urgency**] Let's show a warning and confirmation dialog if the user tries to re-upload same file at same directory in Vfolder [#836](https://github.com/lablup/backend.ai-console/issues/836)
+- [**UI / UX**][**blocker**][**easy**][**enhancement**][**urgency**] Let's initialize those adding / deleting input fields after applying or closing the dialog. [#835](https://github.com/lablup/backend.ai-console/issues/835)
+- [**UI / UX**][**blocker**][**enhancement**][**urgency**] When the value of input exceeds the maximum, let's automatically apply each check box to be checked (unlimited) in the Create/Modify Resource Policy dialog. [#834](https://github.com/lablup/backend.ai-console/issues/834)
+- [**UI / UX**][**blocker**][**enhancement**][**urgency**] Let's limit all the input field to prevent from malicious input [#832](https://github.com/lablup/backend.ai-console/issues/832)
+- [**bug**][**enhancement**][**minor**] Option to change upload file size [#830](https://github.com/lablup/backend.ai-console/issues/830)
+- [**app**][**blocker**][**bug**][**enhancement**][**major**] Stablize websocket proxy connection with proxy node health check [#828](https://github.com/lablup/backend.ai-console/issues/828)
+- [**enhancement**] Inactive user list / control panel for superadmin [#826](https://github.com/lablup/backend.ai-console/issues/826)
+- [**UI / UX**][**blocker**][**enhancement**][**urgency**] Let's hide per week option in the statistics for the users that assigned less than a week. [#812](https://github.com/lablup/backend.ai-console/issues/812)
+- [**UI / UX**][**enhancement**][**minor**] Change dialog element to handle long list [#792](https://github.com/lablup/backend.ai-console/issues/792)
+- [**enhancement**] Configurable max cores, devices, and shared memory per session [#788](https://github.com/lablup/backend.ai-console/issues/788)
+- [**UI / UX**][**enhancement**] Provide responsive design for Backend.AI GUI console [#786](https://github.com/lablup/backend.ai-console/issues/786)
+- [**UI / UX**][**cloud**][**enhancement**][**major**] Force service worker update without waiting for 24 hours [#765](https://github.com/lablup/backend.ai-console/issues/765)
+- [**UI / UX**][**enhancement**][**enterprise**][**hard**][**library / SDK**][**major**] Support multi-node multi-GPU on GUI [#710](https://github.com/lablup/backend.ai-console/issues/710)
+- [**UI / UX**][**enhancement**] Reimplement editor for TF.js [#649](https://github.com/lablup/backend.ai-console/issues/649)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Migrate TF.js test module for statistics insight model [#648](https://github.com/lablup/backend.ai-console/issues/648)
+- [**enhancement**][**library / SDK**][**major**] Match node.js SDK naming schema with python SDK [#604](https://github.com/lablup/backend.ai-console/issues/604)
+- [**UI / UX**][**enhancement**][**library / SDK**] Manage inactive users in console [#557](https://github.com/lablup/backend.ai-console/issues/557)
+- [**enhancement**][**library / SDK**][**major**] Adopt V5 API specification [#515](https://github.com/lablup/backend.ai-console/issues/515)
+- [**UI / UX**][**enhancement**][**library / SDK**] Plugin architecture for menus [#315](https://github.com/lablup/backend.ai-console/issues/315)
+- [**enhancement**][**library / SDK**] Modular structure to make child projects [#285](https://github.com/lablup/backend.ai-console/issues/285)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**] User cannot login due to previous session cookie [#860](https://github.com/lablup/backend.ai-console/issues/860)
+- [**UI / UX**][**blocker**][**bug**][**easy**][**urgency**] sometimes some charts in Statistics breaks the layout [#849](https://github.com/lablup/backend.ai-console/issues/849)
+- [**bug**] Default Language in the user settings page not working [#840](https://github.com/lablup/backend.ai-console/issues/840)
+- [**UI / UX**][**blocker**][**bug**][**urgency**] Let's make user information update operation applied right after completion [#839](https://github.com/lablup/backend.ai-console/issues/839)
+- [**UI / UX**][**blocker**][**bug**][**easy**][**urgency**] Description of each user shows same after changing. [#833](https://github.com/lablup/backend.ai-console/issues/833)
+- [**UI / UX**][**blocker**][**bug**][**urgency**] Let's allow vfolder renaming option only for the owner of the folder. [#822](https://github.com/lablup/backend.ai-console/issues/822)
+- [**UI / UX**][**blocker**][**bug**][**urgency**] Sometimes mouse click doesn't work after clicking exporting csv menu. [#815](https://github.com/lablup/backend.ai-console/issues/815)
+- [**UI / UX**][**blocker**][**bug**][**easy**][**good first issue**] Let's delete unnecessary warning message at csv exporting dialog in the session list [#814](https://github.com/lablup/backend.ai-console/issues/814)
+- [**UI / UX**][**blocker**][**bug**][**easy**][**urgency**] Control panel should support scrollbar when the screen width is narrow. [#813](https://github.com/lablup/backend.ai-console/issues/813)
+- [**UI / UX**][**blocker**][**bug**][**urgency**] Resource Group and resource statistics don't sync each other. [#811](https://github.com/lablup/backend.ai-console/issues/811)
+- [**UI / UX**][**blocker**][**bug**][**urgency**] Let's disable file dropzone when the permission of the Vfolder is read-only [#810](https://github.com/lablup/backend.ai-console/issues/810)
+- [**blocker**][**bug**][**urgency**] GPU resource in the session launcher value doesn't get changed. [#809](https://github.com/lablup/backend.ai-console/issues/809)
+- [**UI / UX**][**blocker**][**bug**][**urgency**] Vfolder selection in session launcher dialog doesn't get initialized after session creation completed. [#807](https://github.com/lablup/backend.ai-console/issues/807)
+- [**UI / UX**][**blocker**][**bug**][**urgency**] enable file operation in group type Vfolder for admin and super-admin user only. [#804](https://github.com/lablup/backend.ai-console/issues/804)
+- [**blocker**][**bug**][**urgency**] Updated resource policy assigned to user doesn't applied immediately in the session launcher. [#799](https://github.com/lablup/backend.ai-console/issues/799)
+- [**blocker**][**bug**][**urgency**] Keypair can be created even though the user not exists. [#798](https://github.com/lablup/backend.ai-console/issues/798)
+- [**blocker**][**bug**][**urgency**] User detail doesn't change after modification. [#797](https://github.com/lablup/backend.ai-console/issues/797)
+- [**UI / UX**][**bug**][**easy**] Resource Policy name in modification should be disabled. [#789](https://github.com/lablup/backend.ai-console/issues/789)
+- [**UI / UX**][**bug**][**minor**] some administration pages is accessible to every user [#769](https://github.com/lablup/backend.ai-console/issues/769)
+- [**UI / UX**][**bug**][**minor**] No error messages when session creation failed due to insufficient resources [#678](https://github.com/lablup/backend.ai-console/issues/678)
+
+#### UI / UX:
+
+- [**UI / UX**][**minor**] Make session launch dialog not close by clicking outside [#842](https://github.com/lablup/backend.ai-console/issues/842)
+- [**UI / UX**][**good first issue**][**library / SDK**] Add user name registration / modification UI [#693](https://github.com/lablup/backend.ai-console/issues/693)
+
+
+## v20.11.2 / v20.11.3 (16/11/2020)
 
 #### Enhancements:
 

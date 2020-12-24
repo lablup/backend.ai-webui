@@ -63,7 +63,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) blockType = '';
   @property({type: String}) blockMessage = '';
   @property({type: String}) connection_mode = 'SESSION';
-  @property({type: Number}) login_attempt_limit = 5;
+  @property({type: Number}) login_attempt_limit = 500;
   @property({type: Number}) login_block_time = 180;
   @property({type: String}) user;
   @property({type: String}) email;
@@ -82,7 +82,13 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Boolean}) openPortToPublic = false;
+  @property({type: Boolean}) maxCPUCoresPerSession = 64;
+  @property({type: Boolean}) maxCUDADevicesPerSession = 16;
+  @property({type: Boolean}) maxShmPerSession = 2;
+  @property({type: Boolean}) maxFileUploadSize = -1;
   @property({type: Array}) endpoints;
+  @property({type: Object}) logoutTimerBeforeOneMin;
+  @property({type: Object}) logoutTimer;
 
   constructor() {
     super();
@@ -169,12 +175,6 @@ export default class BackendAILogin extends BackendAIPage {
           --mdc-button-disabled-ink-color: var(--general-button-background-color);
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-on-theme-primary: var(--general-button-background-color);
-        }
-
-        #login-panel {
-          --dialog-width: 400px;
-          --backdrop-bg: transparent;
-          --dialog-elevation: 0px 0px 5px 5px rgba(0, 0, 0, 0.1);
         }
 
         h3 small {
@@ -382,12 +382,32 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       this.allow_project_resource_monitor = true;
     }
-    if (typeof config.general === "undefined" || typeof config.general.openPortToPublic === "undefined" || config.general.openPortToPublic === '' || config.general.openPortToPublic == false) {
+
+    if (typeof config.resources === "undefined" || typeof config.resources.openPortToPublic === "undefined" || config.resources.openPortToPublic === '' || config.resources.openPortToPublic == false) {
       this.openPortToPublic = false;
     } else {
       this.openPortToPublic = true;
     }
-
+    if (typeof config.resources === "undefined" || typeof config.resources.maxCPUCoresPerSession === "undefined" || isNaN(parseInt(config.resources.maxCPUCoresPerSession))) {
+      this.maxCPUCoresPerSession = 64;
+    } else {
+      this.maxCPUCoresPerSession = parseInt(config.resources.maxCPUCoresPerSession);
+    }
+    if (typeof config.resources === "undefined" || typeof config.resources.maxCUDADevicesPerSession === "undefined" || isNaN(parseInt(config.resources.maxCUDADevicesPerSession))) {
+      this.maxCUDADevicesPerSession = 16;
+    } else {
+      this.maxCUDADevicesPerSession = parseInt(config.resources.maxCUDADevicesPerSession);
+    }
+    if (typeof config.resources === "undefined" || typeof config.resources.maxShmPerSession === "undefined" || isNaN(parseFloat(config.resources.maxShmPerSession))) {
+      this.maxShmPerSession = 2;
+    } else {
+      this.maxShmPerSession = parseFloat(config.resources.maxShmPerSession);
+    }
+    if (typeof config.resources === "undefined" || typeof config.resources.maxFileUploadSize === "undefined" || config.resources.maxFileUploadSize === '') {
+      this.maxFileUploadSize = -1;
+    } else {
+      this.maxFileUploadSize = parseInt(config.resources.maxFileUploadSize);
+    }
     if (typeof config.general === "undefined" || typeof config.general.allowSignout === "undefined" || config.general.allowSignout === '' || config.general.allowSignout == false) {
       this.allow_signout = false;
     } else {
@@ -523,6 +543,53 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
+  async check_login(showError: boolean = true) {
+    if (this.api_endpoint === '') {
+      let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
+      if (api_endpoint != null) {
+        this.api_endpoint = api_endpoint.replace(/^\"+|\"+$/g, '');
+      }
+    }
+    this.api_endpoint = this.api_endpoint.trim();
+    if (this.connection_mode === 'SESSION') {
+      return this._checkLoginUsingSession();
+    } else if (this.connection_mode === 'API') {
+      return Promise.resolve(false);
+    } else {
+      return Promise.resolve(false);
+    }
+  }
+
+  /**
+   * Check login status when SESSION mode.
+   * */
+  async _checkLoginUsingSession(showError: boolean = true) {
+    if (this.api_endpoint === '') {
+      return Promise.resolve(false);
+    }
+    this.clientConfig = new ai.backend.ClientConfig(
+      this.user_id,
+      this.password,
+      this.api_endpoint,
+      'SESSION'
+    );
+    this.client = new ai.backend.Client(
+      this.clientConfig,
+      `Backend.AI Console.`,
+    );
+    return this.client.get_manager_version().then(async ()=>{
+      let isLogon = await this.client.check_login();
+      return Promise.resolve(isLogon);
+    });
+  }
+
+  /**
+   * Logout current session.
+   * */
+  async _logoutSession(showError: boolean = true) {
+    return this.client.logout();
+  }
+
   signout() {
     this.signoutPanel.show();
   }
@@ -533,7 +600,7 @@ export default class BackendAILogin extends BackendAIPage {
   _showSignupDialog() {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.api_endpoint === '') {
-      this.notification.text = 'API Endpoint is empty. Please specify Backend.AI API endpoint to signup.';
+      this.notification.text = _text("error.APIEndpointIsEmpty");
       this.notification.show();
       return;
     }
@@ -563,7 +630,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.notification.show();
     } catch (e) {
       console.error(e);
-      this.notification.text = e.message || 'Send error';
+      this.notification.text = e.message || _text('signup.SendError');
       this.notification.show();
     }
   }
@@ -701,6 +768,7 @@ export default class BackendAILogin extends BackendAIPage {
           }
         }).catch((err) => {   // Connection failed
           this.free();
+          console.log(err);
           if (showError) {
             if (this.loginPanel.open !== true) {
               if (typeof err.message !== "undefined") {
@@ -777,7 +845,7 @@ export default class BackendAILogin extends BackendAIPage {
         if (this.loginPanel.open !== true) {
           if (typeof err.message !== "undefined") {
             if (err.status === 408) { // Failed while loading getManagerVersion
-              this.notification.text = "Login succeed but manager is not responding.";
+              this.notification.text = _text("error.LoginSucceededManagerNotResponding");
               this.notification.detail = err.message;
             } else {
               this.notification.text = PainKiller.relieve(err.title);
@@ -863,6 +931,10 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
       globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
+      globalThis.backendaiclient._config.maxCPUCoresPerSession = this.maxCPUCoresPerSession;
+      globalThis.backendaiclient._config.maxCUDADevicesPerSession = this.maxCUDADevicesPerSession;
+      globalThis.backendaiclient._config.maxShmPerSession = this.maxShmPerSession;
+      globalThis.backendaiclient._config.maxFileUploadSize = this.maxFileUploadSize;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
@@ -897,6 +969,13 @@ export default class BackendAILogin extends BackendAIPage {
         this.notification.text = PainKiller.relieve('Login failed. Check login information.');
         this.notification.show(true);
       }
+      if (err.statusCode === 401) {
+        // When authorization failed, it is highly likely that session cookie
+        // is used which tried to use non-existent API keypairs
+        console.log('automatic logout ...');
+        this.client.logout();
+      }
+      this._enableUserInput();
     });
   }
 
@@ -983,7 +1062,7 @@ export default class BackendAILogin extends BackendAIPage {
               <fieldset>
                 <div class="horizontal layout start-justified center login-input">
                   <mwc-icon>email</mwc-icon>
-                  <input type="email" id="id_user_id" maxlength="50" autocomplete="username"
+                  <input type="email" id="id_user_id" maxlength="64" autocomplete="username"
                               label="${_t("login.E-mail")}" placeholder="${_t("login.E-mail")}" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></input>
                 </div>
                 <div class="horizontal layout start-justified center login-input">
@@ -995,10 +1074,10 @@ export default class BackendAILogin extends BackendAIPage {
             </form>
             <form id="api-login-form" style="${this.connection_mode == 'SESSION' ? `display:none;` : `display:block;`}">
               <fieldset>
-                <mwc-textfield type="text" id="id_api_key" maxlength="30"
+                <mwc-textfield type="text" id="id_api_key" maxLength="20"
                             label="${_t("login.APIKey")}" icon="lock" value="${this.api_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
-                <mwc-textfield type="password" id="id_secret_key"
-                            label="${_t("login.SecretKey")}" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                <mwc-textfield type="password" id="id_secret_key" maxLength="40"
+                            label="${_t("login.SecretKey")}" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}" ></mwc-textfield>
               </fieldset>
             </form>
             <form>
@@ -1019,11 +1098,11 @@ export default class BackendAILogin extends BackendAIPage {
                       </div>
                     </mwc-list-item>`)}
                   </mwc-menu>
-                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
+                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint" maxLength="2048"
                               style="--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
                               label="${_t("login.Endpoint")}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
                 </div>
-                <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized"
+                <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized" maxLength="2048"
                             style="display:none;--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
                             label="${_t("login.Endpoint")}" icon="cloud" value=""></mwc-textfield>
                 <mwc-button
@@ -1068,10 +1147,10 @@ export default class BackendAILogin extends BackendAIPage {
           <section>
             <div class="warning">${_t("login.DescConfirmLeave")}</div>
           </section>
-          <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxlength="30"
-                       label="E-mail" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
-          <mwc-textfield type="password" name="signout_password" id="id_signout_password"
-                       label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
+          <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxLength="64"
+              label="E-mail" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
+          <mwc-textfield type="password" name="signout_password" id="id_signout_password" maxLength="64"
+              label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
@@ -1088,7 +1167,7 @@ export default class BackendAILogin extends BackendAIPage {
           <section>
             <div style="padding:1em">${_t("login.DescChangePasswordEmail")}</div>
           </section>
-          <mwc-textfield type="email" id="password-change-email" maxlength="30"
+          <mwc-textfield type="email" id="password-change-email" maxLength="64"
               label="E-mail" value="" autofocus auto-validate
               validationMessage="${_t('signup.InvalidEmail')}"
               pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>

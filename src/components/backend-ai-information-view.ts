@@ -138,6 +138,16 @@ export default class BackendAiInformationView extends BackendAIPage {
         lablup-activity-panel {
           color: #000;
         }
+
+        @media screen and (max-width: 805px) {
+          .setting-desc {
+            width: 60%;
+          }
+
+          .setting-label {
+            width: 35%;
+          }
+        }
       `];
   }
 

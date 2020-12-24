@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage, translateUnsafeHTML as _tr} from "lit-translate";
-import {customElement, html, css, LitElement, property} from "lit-element";
+import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import {css, customElement, html, LitElement, property} from "lit-element";
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
 import {installOfflineWatcher} from 'pwa-helpers/network';
@@ -17,6 +17,7 @@ import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
+import '@material/mwc-icon-button-toggle';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu';
@@ -42,6 +43,7 @@ import './backend-ai-resource-broker';
 import {BackendAiConsoleStyles} from './backend-ai-console-styles';
 
 import '../lib/backend.ai-client-es6';
+import {default as TabCount} from '../lib/TabCounter';
 
 import {
   IronFlex,
@@ -102,6 +104,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) splash = Object();
   @property({type: Object}) loginPanel = Object();
   @property({type: String}) _page = '';
+  @property({type: String}) _lazyPage = '';
   @property({type: Object}) _pageParams = {};
   @property({type: String}) _sidepanel = '';
   @property({type: Boolean}) _drawerOpened = false;
@@ -118,12 +121,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Object}) sidebarMenu;
   @property({type: Object}) TOSdialog = Object();
   @property({type: Boolean}) mini_ui = false;
+  @property({type: Boolean}) auto_logout = false;
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ["en", "ko"];
   @property({type: Array}) blockedMenuitem;
   @property({type: Number}) minibarWidth = 88;
   @property({type: Number}) sidebarWidth = 250;
   @property({type: Number}) sidepanelWidth = 250;
+  @property({type: Object}) supports = Object();
+  @property({type: Array}) availablePages = ["summary", "verify-email", "change-password", "job",
+                                             "data", "statistics", "usersettings", "credential",
+                                             "environment", "agent", "settings", "maintenance",
+                                             "information", "github", "import", 'unauthorized'];
+  @property({type: Array}) adminOnlyPages = ["experiment", "credential", "environment", "agent",
+                                             "settings", "maintenance", "information"];
+  @property({type: Number}) timeoutSec = 5;
 
   constructor() {
     super();
@@ -150,6 +162,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
     this.appBody = this.shadowRoot.querySelector('#app-body');
+    this.appPage = this.shadowRoot.querySelector('#app-page');
     this.contentBody = this.shadowRoot.querySelector('#content-body');
     this.contentBody.type = 'dismissible';
     this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
@@ -174,8 +187,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       configPath = '../../config.toml';
       document.addEventListener('backend-ai-logout', () => this.logout(false));
     }
+    globalThis.addEventListener("beforeunload", function (event) {
+      globalThis.backendaioptions.set('last_window_close_time', new Date().getTime() / 1000);
+    });
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
+      // If disconnected
       if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
         if (this._page === 'verify-email') {
           const emailVerifyView = this.shadowRoot.querySelector('backend-ai-email-verification-view');
@@ -188,7 +205,31 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             changePasswordView.open(this.loginPanel.api_endpoint);
           }, 1000);
         } else {
-          this.loginPanel.login(false);  // Set showError flag to false for initial login
+          const tabcount = new TabCount();
+          const isPageReloaded = (
+            (window.performance.navigation && window.performance.navigation.type === 1) ||
+              window.performance
+                .getEntriesByType('navigation')
+                .map((nav: any) => nav.type)
+                .includes('reload')
+          );
+          tabcount.tabsCount(true);
+          if (this.auto_logout === true && tabcount.tabsCounter === 1 && !isPageReloaded && globalThis.backendaioptions.get('auto_logout', false) === true) {
+            this.loginPanel.check_login().then((result) => {
+              let current_time: number = new Date().getTime() / 1000;
+              if (result === true && (current_time - globalThis.backendaioptions.get('last_window_close_time', current_time) > 3.0)) { //currently login.
+                this.loginPanel._logoutSession().then(() => {
+                  this.loginPanel.open();
+                });
+              } else if (result === true) {
+                this.loginPanel.login(false);
+              } else {
+                this.loginPanel.open();
+              }
+            });
+          } else {
+            this.loginPanel.login(false);
+          }
         }
       }
     }).catch(err => {
@@ -204,13 +245,21 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.addEventListener("resize", (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     });
+    // apply update name when user info changed via users page
+    document.addEventListener('current-user-info-changed',  (e: any) => {
+      if (globalThis.backendaiclient.supports('change-user-name')) {
+        let input = e.detail;
+        this._updateFullname(input.full_name);
+      }
+    });
   }
 
   async connectedCallback() {
     super.connectedCallback();
     document.addEventListener('backend-ai-connected', () => this.refreshPage());
-    if (globalThis.backendaioptions.get('language') === "default" && this.supportLanguageCodes.includes(globalThis.navigator.language)) { // Language is not set and
-      this.lang = globalThis.navigator.language;
+    const defaultLang = globalThis.navigator.language.split('-')[0];
+    if (globalThis.backendaioptions.get('language') === "default" && this.supportLanguageCodes.includes(defaultLang)) {
+      this.lang = defaultLang;
     } else if (this.supportLanguageCodes.includes(globalThis.backendaioptions.get('language'))) {
       this.lang = globalThis.backendaioptions.get('language');
     } else {
@@ -219,6 +268,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.backendaioptions.set('current_language', this.lang);
     await setLanguage(this.lang);
     this.hasLoadedStrings = true;
+    // this._initClient();
   }
 
   disconnectedCallback() {
@@ -246,6 +296,9 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       this.connection_server = config.general.connectionServer;
       //console.log(this.connection_server);
     }
+    if (typeof config.general !== "undefined" && 'autoLogout' in config.general) {
+      this.auto_logout = config.general.autoLogout;
+    }
     if (typeof config.license !== "undefined" && 'edition' in config.license) {
       this.edition = config.license.edition;
     }
@@ -269,15 +322,46 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.plugins['login'] = config.plugin.login;
       }
       if ('page' in config.plugin) {
-        //for (let [key, item] of Object.entries(config.plugin.page)) {
-        //  console.log(key, item);
-        //}
-        this.plugins['page'] = config.plugin.page;
-        globalThis.backendaiPages = config.plugin.page;
-      }
-      if ('sidebar' in config.plugin) {
-        // TODO : multiple sidebar plugins
-        this.plugins['sidebar'] = config.plugin.sidebar;
+        this.plugins['page'] = [];
+        this.plugins['menuitem'] = [];
+        this.plugins['menuitem-user'] = [];
+        this.plugins['menuitem-admin'] = [];
+        this.plugins['menuitem-superadmin'] = [];
+        const pluginLoaderQueue = [] as any;
+        for (let page of config.plugin.page.split(',')) {
+          pluginLoaderQueue.push(import('../plugins/' + page + '.js').then((module) => {
+              let pageItem = document.createElement(page) as any;
+              pageItem.classList.add("page");
+              pageItem.setAttribute('name', page);
+              this.appPage.appendChild(pageItem);
+            this.plugins['menuitem'].push(page);
+            this.availablePages.push(page);
+              switch (pageItem.permission) {
+                case 'superadmin':
+                  this.plugins['menuitem-superadmin'].push(page);
+                  this.adminOnlyPages.push(page);
+                  break;
+                case 'admin':
+                  this.plugins['menuitem-admin'].push(page);
+                  this.adminOnlyPages.push(page);
+                  break;
+                default:
+                  this.plugins['menuitem-user'].push(page);
+              }
+              this.plugins['page'].push({
+                'name': page,
+                'url': page,
+                'menuitem': pageItem.menuitem
+              });
+              return Promise.resolve(true);
+            }));
+        }
+        Promise.all(pluginLoaderQueue).then((v)=>{
+          globalThis.backendaiPages = this.plugins['page'];
+          let event: CustomEvent = new CustomEvent("backend-ai-plugin-loaded", {"detail": true});
+          document.dispatchEvent(event);
+          this.requestUpdate();
+        });
       }
     }
     this.loginPanel.refreshWithConfig(config);
@@ -302,6 +386,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this._writeRecentProjectGroup(this.current_group);
     document.body.style.backgroundImage = 'none';
     this.appBody.style.visibility = 'visible';
+
     let curtain: HTMLElement = this.shadowRoot.getElementById('loading-curtain');
     curtain.classList.add('visuallyhidden');
     curtain.addEventListener('transitionend', () => {
@@ -314,6 +399,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     });
     this.addTooltips();
     this.sidebarMenu.style.minHeight = (this.is_admin || this.is_superadmin) ? '600px' : '250px';
+    if (!this.is_admin || !this.is_superadmin) {
+      if (this.adminOnlyPages.includes(this._page) || this._page === 'unauthorized') {
+        this._page = 'unauthorized';
+        globalThis.history.pushState({}, '', '/unauthorized');
+        store.dispatch(navigate(decodeURIComponent(this._page)));
+      }
+    }
   }
 
   showUpdateNotifier(): void {
@@ -341,6 +433,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * Display the toggle sidebar when this.mini_ui is true.
    */
   toggleSidebarUI(): void {
+    if (this.contentBody.open === true) {
+      this._sidepanel = '';
+      this.toggleSidePanelUI();
+    }
     if (!this.mini_ui) {
       this.mini_ui = true;
     } else {
@@ -391,6 +487,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * @param {string} panel
    */
   _openSidePanel(panel): void {
+    if (document.body.clientWidth < 750) {
+      this.mini_ui = true;
+      this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight, true);
+    }
+
     if (this.contentBody.open === true) {
       if (panel != this._sidepanel) { // change panel only.
         this._sidepanel = panel;
@@ -409,10 +510,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    *
    * @param {number} width
    * @param {number} height
+   * @param {boolean} applyMiniui
    */
-  _changeDrawerLayout(width, height): void {
+  _changeDrawerLayout(width, height, applyMiniui = false): void {
     this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
-    if (width < 700) {  // Close drawer
+    if (width < 700 && !applyMiniui) {  // Close drawer
       this.appBody.style.setProperty('--mdc-drawer-width', this.sidebarWidth + 'px');
       this.appBody.type = 'modal';
       this.appBody.open = false;
@@ -422,6 +524,10 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       if (this.mini_ui) {
         this.mini_ui = false;
         globalThis.mini_ui = this.mini_ui;
+      }
+      /* close opened sidepanel immediately */
+      if(this.contentBody.open) {
+        this.contentBody.open = false;
       }
     } else { // Open drawer
       if (this.mini_ui) {
@@ -509,7 +615,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   /**
    * Open the user preference dialog.
    */
-  _openUserPrefDialog() {
+  async _openUserPrefDialog() {
     const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
     dialog.show();
   }
@@ -521,43 +627,180 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     this.shadowRoot.querySelector('#user-preference-dialog').hide();
   }
 
+  _togglePasswordVisibility(element) {
+    const isVisible = element.__on;
+    const password = element.closest('div').querySelector('mwc-textfield');
+    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+  }
+
+  _validatePassword1() {
+    const passwordInput = this.shadowRoot.querySelector('#pref-new-password');
+    const password2Input = this.shadowRoot.querySelector('#pref-new-password2');
+    password2Input.reportValidity();
+    passwordInput.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          passwordInput.validationMessage = _text('signup.PasswordInputRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        } else {
+          passwordInput.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        }
+      } else {
+        return {
+          valid: nativeValidity.valid,
+          customError: !nativeValidity.valid
+        }
+      }
+    }
+  }
+
+  _validatePassword2() {
+    const password2Input = this.shadowRoot.querySelector('#pref-new-password2');
+    password2Input.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          password2Input.validationMessage = _text('signup.PasswordInputRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        } else {
+          password2Input.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          }
+        }
+      } else {
+        // custom validation for password input match
+        const passwordInput = this.shadowRoot.querySelector('#pref-new-password');
+        let isMatched = (passwordInput.value === password2Input.value);
+        if (!isMatched) {
+          password2Input.validationMessage = _text('signup.PasswordNotMatched');
+        }
+        return {
+          valid: isMatched,
+          customError: !isMatched
+        }
+      }
+    }
+  }
+
+  /**
+   * Validate User input in password automatically, and show error message if any input error occurs.
+   */
+  _validatePassword() {
+    this._validatePassword1();
+    this._validatePassword2();
+  }
+
+  /**
+   * Update the user information including full_name of user and password
+   */
+  _updateUserInformation() {
+    if (globalThis.backendaiclient.supports('change-user-name')) {
+      this._updateFullname();
+    }
+    this._updateUserPassword();
+  }
+
+  /**
+   * Update the full_name of user information
+   */
+  async _updateFullname(newFullname = '') {
+    newFullname = newFullname === '' ? this.shadowRoot.querySelector('#pref-original-name').value : newFullname;
+    if (newFullname.length > 64) {
+      this.notification.text = _text('console.menu.FullNameInvalid');
+      this.notification.show();
+      return;
+    }
+    // if user input in full name is not null and not same as the original full name, then it updates.
+    if (globalThis.backendaiclient.supports('change-user-name')) {
+      if (newFullname && (newFullname !== this.full_name)) {
+        globalThis.backendaiclient.user.update(this.user_id, {'full_name': newFullname}).then((resp) => {
+          this.notification.text = _text('console.menu.FullnameUpdated');
+          this.notification.show();
+          this.full_name = globalThis.backendaiclient.full_name = newFullname;
+          this.shadowRoot.querySelector('#pref-original-name').value = this.full_name;
+        }).catch((err) => {
+          if (err && err.message) {
+            this.notification.text = err.message;
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+            return;
+          } else if (err && err.title) {
+            this.notification.text = err.title;
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+            return;
+          }
+        });
+      }
+    } else {
+      this.notification.text = _text('error.APINotSupported');
+      this.notification.show();
+    }
+  }
+
   /**
    * Update the user password.
    */
-  _updateUserPassword() {
+  async _updateUserPassword() {
     const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
     const oldPassword = dialog.querySelector('#pref-original-password').value;
     const newPassword1El = dialog.querySelector('#pref-new-password');
     const newPassword2El = dialog.querySelector('#pref-new-password2');
+
+    // no update in user's password
+    if (!oldPassword && !newPassword1El.value && !newPassword2El.value) {
+      this._hideUserPrefDialog();
+      return;
+    }
+
     if (!oldPassword) {
-      this.notification.text = 'Enter old password';
+      this.notification.text = _text('console.menu.InputOriginalPassword');
       this.notification.show();
       return;
     }
     if (!newPassword1El.value || !newPassword1El.validity.valid) {
-      this.notification.text = 'Invalid new password';
+      this.notification.text = _text('console.menu.InvalidPasswordMessage');
       this.notification.show();
       return;
     }
     if (newPassword1El.value !== newPassword2El.value) {
-      this.notification.text = 'Two new passwords do not match';
+      this.notification.text = _text('console.menu.NewPasswordMismatch');
       this.notification.show();
       return;
     }
     const p = globalThis.backendaiclient.update_password(oldPassword, newPassword1El.value, newPassword2El.value);
     p.then((resp) => {
-      this.notification.text = 'Password updated';
+      this.notification.text = _text('console.menu.PasswordUpdated');
       this.notification.show();
       this._hideUserPrefDialog();
-      this.shadowRoot.querySelector('#prefj-original-password').value = '';
-      this.shadowRoot.querySelector('#prefj-new-password').value = '';
-      this.shadowRoot.querySelector('#prefj-new-password2').value = '';
     }).catch((err) => {
-      if (err && err.title) {
+      if (err && err.message) {
+        this.notification.text = err.message;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+        return;
+      }
+      else if (err && err.title) {
         this.notification.text = err.title;
         this.notification.detail = err.message;
         this.notification.show(true, err);
+        return;
       }
+    }).finally(() => { // remove input value again
+      this.shadowRoot.querySelector('#pref-original-password').value = '';
+      this.shadowRoot.querySelector('#pref-new-password').value = '';
+      this.shadowRoot.querySelector('#pref-new-password2').value = '';
     });
   }
 
@@ -569,15 +812,13 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (changedProps.has('_page')) {
       let view: string = this._page;
       // load data for view
-      if (['summary', 'job', 'agent', 'credential', 'data', 'usersettings', 'environment', 'settings', 'maintenance', 'information', 'statistics', 'github', 'import'].includes(view) !== true) { // Fallback for Windows OS
+      if (this.availablePages.includes(view) !== true) { // Fallback for Windows OS
         let modified_view: (string | undefined) = view.split(/[\/]+/).pop();
         if (typeof modified_view != 'undefined') {
           view = modified_view;
-        } else {
-          view = 'summary';
         }
-        this._page = view;
       }
+      this._page = view;
       this._updateSidebar(view);
     }
   }
@@ -592,69 +833,75 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       case 'summary':
       case 'verify-email':
         this.menuTitle = _text("console.menu.Summary");
-        // this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'change-password':
         this.menuTitle = _text("console.menu.Summary") + this.user_id;
-        // this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'job':
         this.menuTitle = _text("console.menu.Sessions");
-        // this.updateTitleColor('var(--paper-red-800)', '#efefef');
         break;
       case 'experiment':
         this.menuTitle = _text("console.menu.Experiments");
-        // this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'data':
         this.menuTitle = _text("console.menu.Data&Storage");
-        // this.updateTitleColor('var(--paper-orange-800)', '#efefef');
         break;
       case 'statistics':
         this.menuTitle = _text("console.menu.Statistics");
-        // this.updateTitleColor('var(--paper-cyan-800)', '#efefef');
         break;
       case 'usersettings':
         this.menuTitle = _text("console.menu.Settings&Logs");
-        // this.updateTitleColor('var(--paper-teal-800)', '#efefef');
         break;
       case 'credential':
         this.menuTitle = _text("console.menu.UserCredentials&Policies");
-        // this.updateTitleColor('var(--paper-lime-800)', '#efefef');
         break;
       case 'environment':
         this.menuTitle = _text("console.menu.Environments&Presets");
-        // this.updateTitleColor('var(--paper-yellow-800)', '#efefef');
         break;
       case 'agent':
         this.menuTitle = _text("console.menu.ComputationResources");
-        // this.updateTitleColor('var(--paper-light-blue-800)', '#efefef');
         break;
       case 'settings':
         this.menuTitle = _text("console.menu.Configurations");
-        // this.updateTitleColor('var(--paper-green-800)', '#efefef');
         break;
       case 'maintenance':
         this.menuTitle = _text("console.menu.Maintenance");
-        // this.updateTitleColor('var(--paper-pink-800)', '#efefef');
         break;
       case 'information':
         this.menuTitle = _text("console.menu.Information");
-        // this.updateTitleColor('var(--paper-purple-800)', '#efefef');
         break;
       case 'logs':
         this.menuTitle = _text("console.menu.Logs");
-        // this.updateTitleColor('var(--paper-deep-orange-800)', '#efefef');
         break;
       case 'github':
       case 'import':
         this.menuTitle = _text("console.menu.Import&Run");
-        // this.updateTitleColor('var(--paper-blue-800)', '#efefef');
         break;
       default:
+        if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(view)) {
+          this.menuTitle = view;
+          break;
+        } else {
+          if (this._page !== 'error') {
+            this._lazyPage = this._page;
+          }
+          document.addEventListener('backend-ai-plugin-loaded', () => {
+            this._page = this._lazyPage;
+            if (this.availablePages.includes(this._page) !== true) {
+              this._page = 'error';
+            }
+            if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(this._page)) {
+              let component = this.shadowRoot.querySelector(this._page);
+              component.active = true;
+              component.setAttribute('active', true);
+              component.render();
+            }
+          });
+          break;
+        }
+        console.log("set to error");
         this._page = 'error';
         this.menuTitle = _text("console.NOTFOUND");
-      // this.updateTitleColor('var(--paper-grey-800)', '#efefef');
     }
   }
 
@@ -665,7 +912,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    */
   async close_app_window(performClose = false) {
     if (globalThis.backendaioptions.get('preserve_login') === false) { // Delete login information.
-      this.notification.text = 'Clean up login session...';
+      this.notification.text = _text("console.CleanUpLoginSession");
       this.notification.show();
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
@@ -694,7 +941,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     console.log('also close the app:', performClose);
     this._deleteRecentProjectGroupInfo();
     if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
-      this.notification.text = 'Clean up now...';
+      this.notification.text = _text("console.CleanUpNow");
       this.notification.show();
       if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
         await globalThis.backendaiclient.logout();
@@ -720,7 +967,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this._page = 'summary';
         globalThis.history.pushState({}, '', '/summary');
         store.dispatch(navigate(decodeURIComponent('/')));
-        this.loginPanel.login();
+        //globalThis.location.reload();
+        document.body.style.backgroundImage = 'url("/resources/images/loading-background-large.jpg")';
+        this.appBody.style.visibility = 'hidden';
+        let curtain: HTMLElement = this.shadowRoot.getElementById('loading-curtain');
+        curtain.classList.remove('visuallyhidden');
+        curtain.addEventListener('transitionend', () => {
+          curtain.classList.remove('hidden');
+        }, {
+          capture: false,
+          once: true,
+          passive: false
+        });
+        this.loginPanel.open();
       } else {
         globalThis.location.reload();
       }
@@ -747,7 +1006,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     globalThis.backendaiclient.current_group = e.target.value;
     this.current_group = globalThis.backendaiclient.current_group;
     this._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
-    let event = new CustomEvent("backend-ai-group-changed", {"detail": globalThis.backendaiclient.current_group});
+    let event: CustomEvent = new CustomEvent("backend-ai-group-changed", {"detail": globalThis.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
 
@@ -768,7 +1027,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    */
   _toggleDropdown() {
     let menu = this.shadowRoot.querySelector("#dropdown-menu");
-    let menu_icon = this.shadowRoot.querySelector('#dropdown-button');
+    let menu_icon = this._dropdownMenuIcon;
     menu.anchor = menu_icon;
     menu.open = !menu.open;
   }
@@ -777,26 +1036,22 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * Display the ToS(terms of service) agreement.
    */
   showTOSAgreement() {
-    if (this.TOSdialog.show === false) {
-      this.TOSdialog.tosContent = "";
-      this.TOSdialog.tosLanguage = this.lang;
-      this.TOSdialog.title = _text("console.menu.TermsOfService");
-      this.TOSdialog.tosEntry = 'terms-of-service';
-      this.TOSdialog.open();
-    }
+    this.TOSdialog.tosContent = "";
+    this.TOSdialog.tosLanguage = this.lang;
+    this.TOSdialog.title = _text("console.menu.TermsOfService");
+    this.TOSdialog.tosEntry = 'terms-of-service';
+    this.TOSdialog.open();
   }
 
   /**
    * Display the PP(privacy policy) agreement.
    */
   showPPAgreement() {
-    if (this.TOSdialog.show === false) {
-      this.TOSdialog.tosContent = "";
-      this.TOSdialog.tosLanguage = this.lang;
-      this.TOSdialog.title = _text("console.menu.PrivacyPolicy");
-      this.TOSdialog.tosEntry = 'privacy-policy';
-      this.TOSdialog.open();
-    }
+    this.TOSdialog.tosContent = "";
+    this.TOSdialog.tosLanguage = this.lang;
+    this.TOSdialog.title = _text("console.menu.PrivacyPolicy");
+    this.TOSdialog.tosEntry = 'privacy-policy';
+    this.TOSdialog.open();
   }
 
   /**
@@ -805,8 +1060,29 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * @param {string} url
    */
   _moveTo(url) {
+    let page = url.split('/')[1];
+    if (!this.availablePages.includes(page) && (this.is_admin && !this.adminOnlyPages.includes(page))) {
+      store.dispatch(navigate(decodeURIComponent("/error")));
+      this._page = 'error';
+      return;
+    }
     globalThis.history.pushState({}, '', url);
     store.dispatch(navigate(decodeURIComponent(url), {}));
+    if ('menuitem' in this.plugins) {
+      for (let item of this.plugins.menuitem) {
+        if (item !== this._page) {
+          let component = this.shadowRoot.querySelector(item);
+          component.active = false;
+          component.removeAttribute('active');
+        }
+      }
+      if (this.plugins['menuitem'].includes(this._page)) {
+        let component = this.shadowRoot.querySelector(this._page);
+        component.active = true;
+        component.setAttribute('active', true);
+        component.render();
+      }
+    }
   }
 
   /**
@@ -948,6 +1224,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
+      <link rel="stylesheet" href="resources/custom.css">
       <div id="loading-curtain" class="loading-background"></div>
       <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="visibility:hidden;">
         <div class="drawer-menu" style="height:100vh;">
@@ -957,7 +1234,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <div class="vertical start-justified layout full-menu" style="margin-left:10px;margin-right:10px;">
                 <div class="site-name"><span class="bold">Backend</span>.AI</div>
                 ${this.siteDescription ? html`
-                  <div class="site-name" style="font-size:13px;text-align:right;">
+                  <div class="site-name" style="font-size:13px;text-align:left;">
                     ${this.siteDescription}
                   </div>` : html``}
               </div>
@@ -996,6 +1273,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Statistics")}</span>
             </mwc-list-item>
+            ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-user'].includes(item.url))).map(item => html`
+            <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
+              <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
+              <span class="full-menu">${item.menuitem}</span>
+            </mwc-list-item>
+            `) : html``}
             ${this.is_admin ?
               html`
                 <h3 class="full-menu">${_t("console.menu.Administration")}</h3>
@@ -1007,6 +1290,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                   <i class="fas fa-microchip" slot="graphic" id="environments-menu-icon"></i>
                   <span class="full-menu">${_t("console.menu.Environments")}</span>
                 </mwc-list-item>` : html``}
+                ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-admin'].includes(item.url))).map(item => html`
+                <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
+                  <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
+                  <span class="full-menu">${item.menuitem}</span>
+                </mwc-list-item>
+                `) : html``}
             ${this.is_superadmin ?
               html`
                 <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
@@ -1024,7 +1313,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 <mwc-list-item graphic="icon" ?selected="${this._page === 'information'}" @click="${() => this._moveTo('/information')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-info-circle" slot="graphic" id="information-menu-icon"></i>
                   <span class="full-menu">${_t("console.menu.Information")}</span>
-                </mwc-list-item>` : html``}
+                </mwc-list-item>
+                ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-superadmin'].includes(item.url))).map(item => html`
+                <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
+                  <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
+                  <span class="full-menu">${item.menuitem}</span>
+                </mwc-list-item>
+                `) : html``}
+            ` : html``}
           </mwc-list>
           <footer class="full-menu">
             <div class="terms-of-use" style="margin-bottom:10px;">
@@ -1042,7 +1338,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address>
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">20.11.3.201116</small>
+              <small class="sidebar-footer" style="font-size:9px;">20.12.2.201223</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1059,19 +1355,18 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <div slot="appContent">
               <mwc-top-app-bar-fixed id="main-toolbar" class="draggable">
                 <div class="horizontal layout center" id="drawer-toggle-button" slot="navigationIcon" style="margin:auto 20px;" @click="${() => this.toggleDrawer()}">
-                  <i class="fas fa-angle-left" style="display:block;color:#747474;margin-right:0.5em;"></i>
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
                 </div>
                 <div slot="navigationIcon" class="vertical-line" style="height:35px;"></div>
                 <div class="horizontal layout" slot="title" style="font-size:12px;margin-left:10px;padding-top:10px;">
                   <p>${_t("console.menu.WelcomeMessage")}</p>
-                  <p>&nbsp;${this._getUsername() + "."}</p>
+                  <p>&nbsp;${this._getUsername()}${_t("console.menu.WelcomeMessage_2")}</p>
                 </div>
                 <div slot="actionItems" style="margin:0px;">
                   <div class="horizontal flex center layout">
                     <div id="group-select-box" style="height:48px;"></div>
                     <div class="vertical-line" style="height:35px;"></div>
-                    <div class="horizontal center layout" id="dropdown-button">
+                    <div class="horizontal center layout">
                       <div class="vertical layout center" style="position:relative;padding-top:10px;">
                         <span class="email" style="color:#8c8484;font-size:12px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;margin:auto 10px;">
                           ${_t("console.menu.UserName")}
@@ -1091,7 +1386,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                               <mwc-icon class="dropdown-menu">lock</mwc-icon>
-                              ${_t("console.menu.ChangePassword")}
+                              ${_t("console.menu.ChangeUserInfo")}
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
                               <mwc-icon class="dropdown-menu">drag_indicator</mwc-icon>
@@ -1110,7 +1405,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                       <span class="full_name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0px auto 10px; padding-top:10px;">
                         ${this.full_name}
                       </span>
-                      <mwc-icon-button @click="${() => this._toggleDropdown()}" style="font-size: 0.5rem;">
+                      <mwc-icon-button id="dropdown-button" @click="${() => this._toggleDropdown()}" style="font-size: 0.5rem;">
                         <i class="fas fa-user-alt fa-xs" style="color:#8c8484;"></i>
                       </mwc-icon-button>
                       <div class="vertical-line" style="height:35px;"></div>
@@ -1134,7 +1429,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                     <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
                     <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
                     <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
-                    <backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>
+                    <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
                     <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
                     <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
@@ -1147,6 +1442,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                     <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
                     <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${this._page === 'change-password'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>
                     <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view>
+                    <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${this._page === 'unauthorized'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view>
                   </div>
                 </section>
               </div>
@@ -1175,20 +1471,39 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
       <backend-ai-dialog id="user-preference-dialog" fixed backdrop>
-        <span slot="title">${_t("console.menu.ChangePassword")}</span>
+        <span slot="title">${_t("console.menu.ChangeUserInformation")}</span>
+        <div slot="content" class="layout vertical" style="width:300px;">
+          <mwc-textfield id="pref-original-name" type="text"
+              label="${_t('console.menu.FullName')}" maxLength="64" autofocus
+              style="margin-bottom:20px;" value="${this.full_name}"
+              helper="${_t('maxLength.64chars')}">
+          </mwc-text-field>
+        </div>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-password" type="password"
-              label="${_t('console.menu.OriginalPassword')}" max-length="30" autofocus
-              style="margin-bottom:20px">
+              label="${_t('console.menu.OriginalPassword')}" maxLength="64"
+              style="margin-bottom:20px;">
           </mwc-textfield>
-          <mwc-textfield id="pref-new-password" label="${_t('console.menu.NewPassword')}"
-              type="password" min-length="8" max-length="30"
-              auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
-              pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$">
-          </mwc-textfield>
-          <mwc-textfield id="pref-new-password2" label="${_t('console.menu.NewPasswordAgain')}"
-              type="password" min-length="8" max-length="30">
-          </mwc-textfield>
+          <div class="horizontal flex layout">
+            <mwc-textfield id="pref-new-password" label="${_t('console.menu.NewPassword')}"
+                type="password" maxLength="64"
+                auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
+                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                @change="${this._validatePassword}">
+            </mwc-textfield>
+            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                                      @click="${(e) => this._togglePasswordVisibility(e.target)}">
+            </mwc-icon-button-toggle>
+          </div>
+          <div class="horizontal flex layout">
+            <mwc-textfield id="pref-new-password2" label="${_t('console.menu.NewPasswordAgain')}"
+                type="password" maxLength="64"
+                @change="${this._validatePassword}">
+            </mwc-textfield>
+            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                                      @click="${(e) => this._togglePasswordVisibility(e.target)}">
+              </mwc-icon-button-toggle>
+          </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
@@ -1198,7 +1513,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <mwc-button
               unelevated
               label="${_t("console.menu.Update")}"
-              @click="${this._updateUserPassword}"></mwc-button>
+              @click="${this._updateUserInformation}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>

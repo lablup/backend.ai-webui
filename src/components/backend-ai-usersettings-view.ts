@@ -3,7 +3,7 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 import {store} from '../store';
@@ -161,6 +161,15 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         .outer-space {
           margin: 20px;
         }
+
+        @media screen and (max-width: 750px) {
+          mwc-button {
+            width: auto;
+          }
+          mwc-button > span {
+            display: none;
+          }
+        }
       `];
   }
 
@@ -190,14 +199,16 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
                   class="log"
                   icon="refresh"
                   outlined
-                  label="${_t("button.Refresh")}"
-                  @click="${() => this._refreshLogs()}"></mwc-button>
+                  @click="${() => this._refreshLogs()}">
+                <span>${_t("button.Refresh")}</span>
+              </mwc-button>
               <mwc-button
                   class="log"
                   icon="delete"
                   outlined
-                  label="${_t("button.ClearLogs")}"
-                  @click="${() => this._showClearLogsDialog()}"></mwc-button>
+                  @click="${() => this._showClearLogsDialog()}">
+                <span>${_t("button.ClearLogs")}</span>
+              </mwc-button>
             </h3>
             <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
           </div>
@@ -286,7 +297,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     document.dispatchEvent(event);
     localStorage.getItem('backendaiconsole.logs');
     this.clearLogsDialog.hide();
-    this.notification.text = 'Log Messages have been removed.';
+    this.notification.text = _text('logs.LogMessageRemoved');
     this.notification.show();
     this.spinner.hide();
   }

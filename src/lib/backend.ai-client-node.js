@@ -133,6 +133,7 @@ class Client {
         this.group = new Group(this);
         this.domain = new Domain(this);
         this.resources = new Resources(this);
+        this.storageproxy = new StorageProxy(this);
         this.maintenance = new Maintenance(this);
         this.scalingGroup = new ScalingGroup(this);
         this.registry = new Registry(this);
@@ -175,6 +176,7 @@ class Client {
         let errorType = Client.ERR_REQUEST;
         let errorTitle = '';
         let errorMsg;
+        let errorDesc = '';
         let resp, body, requestTimer;
         try {
             if (rqst.method == 'GET') {
@@ -250,16 +252,19 @@ class Client {
                     if (navigator.onLine) {
                         errorTitle = error_message;
                         errorMsg = `sending request has failed: ${error_message}`;
+                        errorDesc = error_message;
                     }
                     else {
                         errorTitle = "Network disconnected.";
                         errorMsg = `sending request has failed: Network disconnected`;
+                        errorDesc = 'Network disconnected';
                     }
                     break;
                 case Client.ERR_RESPONSE:
                     errorType = 'https://api.backend.ai/probs/client-response-error';
                     errorTitle = error_message;
                     errorMsg = `reading response has failed: ${error_message}`;
+                    errorDesc = error_message;
                     break;
                 case Client.ERR_SERVER:
                     errorType = 'https://api.backend.ai/probs/server-error';
@@ -267,15 +272,18 @@ class Client {
                     errorMsg = 'server responded failure: ';
                     if (body.msg) {
                         errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.msg}`;
+                        errorDesc = body.msg;
                     }
                     else {
                         errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.title}`;
+                        errorDesc = body.title;
                     }
                     break;
                 case Client.ERR_ABORT:
                     errorType = 'https://api.backend.ai/probs/request-abort-error';
                     errorTitle = `Request aborted`;
                     errorMsg = 'Request aborted by user';
+                    errorDesc = errorMsg;
                     resp.status = 408;
                     resp.statusText = 'Request aborted by user';
                     break;
@@ -283,6 +291,7 @@ class Client {
                     errorType = 'https://api.backend.ai/probs/request-timeout-error';
                     errorTitle = `Request timeout`;
                     errorMsg = 'No response returned during the timeout period';
+                    errorDesc = errorMsg;
                     resp.status = 408;
                     resp.statusText = 'Timeout exceeded';
                     break;
@@ -299,6 +308,9 @@ class Client {
                     }
                     errorMsg = 'server responded failure: '
                         + `${resp.status} ${resp.statusText} - ${body.title}`;
+                    if (body.title !== '') {
+                        errorDesc = body.title;
+                    }
             }
             throw {
                 isError: true,
@@ -311,6 +323,7 @@ class Client {
                 statusText: resp.statusText,
                 title: errorTitle,
                 message: errorMsg,
+                description: errorDesc
             };
         }
         let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
@@ -422,6 +435,12 @@ class Client {
             this._features['group-folder'] = true;
             this._features['system-images'] = true;
             this._features['detailed-session-states'] = true;
+            this._features['change-user-name'] = true;
+        }
+        if (this.isAPIVersionCompatibleWith('v6.20200815')) {
+            this._features['multi-container'] = true;
+            this._features['multi-node'] = true;
+            this._features['hardware-metadata'] = true;
         }
     }
     /**
@@ -495,10 +514,18 @@ class Client {
             }
         }
         catch (err) { // Manager / console server down.
-            throw {
-                "title": "No manager found at API Endpoint.",
-                "message": "Authentication failed. Check information and manager status."
-            };
+            if ('statusCode' in err && err.statusCode === 429) {
+                throw {
+                    "title": err.description,
+                    "message": "Too many failed login attempts."
+                };
+            }
+            else {
+                throw {
+                    "title": "No manager found at API Endpoint.",
+                    "message": "Authentication failed. Check information and manager status."
+                };
+            }
             //console.log(err);
             //return false;
         }
@@ -589,14 +616,20 @@ class Client {
             if (resources['cuda.shares']) { // Generalized device information from 20.03
                 config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
             }
+            if (resources['rocm']) {
+                config['rocm.device'] = resources['rocm'];
+            }
             if (resources['tpu']) {
                 config['tpu.device'] = resources['tpu'];
             }
             if (resources['env']) {
                 config['environ'] = resources['env'];
             }
-            if (resources['clustersize']) {
-                config['clusterSize'] = resources['clustersize'];
+            if (resources['cluster_size']) {
+                params['cluster_size'] = resources['cluster_size'];
+            }
+            if (resources['cluster_mode']) {
+                params['cluster_mode'] = resources['cluster_mode'];
             }
             if (resources['group_name']) {
                 params['group_name'] = resources['group_name'];
@@ -666,14 +699,15 @@ class Client {
      *
      * @param {string} sessionId - the sessionId given when created
      * @param {string | null} ownerKey - owner key to access
+     * @param {number} timeout - timeout to wait log query. Set to 0 to use default value.
      */
-    async get_logs(sessionId, ownerKey = null) {
+    async get_logs(sessionId, ownerKey = null, timeout = 0) {
         let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
         if (ownerKey != null) {
             queryString = `${queryString}?owner_access_key=${ownerKey}`;
         }
         let rqst = this.newSignedRequest('GET', queryString, null);
-        return this._wrapWithPromise(rqst);
+        return this._wrapWithPromise(rqst, false, null, timeout);
     }
     /**
      * Terminate and destroy the kernel session.
@@ -1459,6 +1493,51 @@ class Agent {
         return this.client.query(q, v);
     }
 }
+class StorageProxy {
+    /**
+     * Agent API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+    }
+    /**
+     * List storage proxies and its volumes.
+     *
+     * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'capabilities'.
+     * @param {number} limit - limit number of query items.
+     * @param {number} offset - offset for item query. Useful for pagination.
+     */
+    async list(fields = ['id', 'backend', 'capabilities'], limit = 20, offset = 0) {
+        let q = `query($offset:Int!, $limit:Int!) {` +
+            `  storage_volume_list(limit:$limit, offset:$offset) {` +
+            `     items { ${fields.join(' ')} }` +
+            `     total_count` +
+            `  }` +
+            `}`;
+        let v = {
+            'limit': limit,
+            'offset': offset
+        };
+        return this.client.query(q, v);
+    }
+    /**
+     * Detail of specific storage proxy / volume.
+     *
+     * @param {string} host - Virtual folder host.
+     * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'capabilities'.
+     */
+    async detail(host = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities', 'hardware_metadata']) {
+        let q = `query($vfolder_host: String!) {` +
+            `  storage_volume(id: $vfolder_host) {` +
+            `     ${fields.join(" ")}` +
+            `  }` +
+            `}`;
+        let v = { 'vfolder_host': host };
+        return this.client.query(q, v);
+    }
+}
 class Keypair {
     /**
      * Keypair API wrapper.
@@ -1752,7 +1831,7 @@ class ResourcePolicy {
     /**
      * mutate specified resource policy with given name with new values.
      *
-     * @param {string} name - resource policy name to mutate.
+     * @param {string} name - resource policy name to mutate. (READ-ONLY)
      * @param {json} input - resource policy specification and data. Required fields are:
      * {
      *   {string} 'default_for_unspecified': 'UNLIMITED', // default resource policy when resource slot is not given. 'UNLIMITED' or 'LIMITED'.
@@ -1775,6 +1854,27 @@ class ResourcePolicy {
             let v = {
                 'name': name,
                 'input': input
+            };
+            return this.client.query(q, v);
+        }
+        else {
+            return Promise.resolve(false);
+        }
+    }
+    /**
+     * delete specified resource policy that exists in policy list.
+     *
+     * @param {string} name - resource policy name to delete. (READ-ONLY)
+     */
+    async delete(name = null) {
+        if (this.client.is_superadmin === true && name !== null) {
+            let q = `mutation($name: String!) {` +
+                ` delete_keypair_resource_policy(name: $name) {` +
+                `   ok msg ` +
+                ` }` +
+                `}`;
+            let v = {
+                'name': name
             };
             return this.client.query(q, v);
         }
@@ -1923,6 +2023,35 @@ class ComputeSession {
      */
     constructor(client) {
         this.client = client;
+    }
+    /**
+     * Get the number of compute sessions with specific conditions.
+     *
+     * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+     * @param {string} accessKey - access key that is used to start compute sessions.
+     * @param {number} limit - limit number of query items.
+     * @param {number} offset - offset for item query. Useful for pagination.
+     * @param {string} group - project group id to query. Default returns sessions from all groups.
+     */
+    async total_count(status = 'RUNNING', accessKey = '', limit = 1, offset = 0, group = '') {
+        let q, v;
+        q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
+        total_count
+      }
+    }`;
+        v = {
+            'limit': limit,
+            'offset': offset,
+            'status': status
+        };
+        if (accessKey != '') {
+            v['ak'] = accessKey;
+        }
+        if (group != '') {
+            v['group_id'] = group;
+        }
+        return this.client.query(q, v);
     }
     /**
      * list compute sessions with specific conditions.

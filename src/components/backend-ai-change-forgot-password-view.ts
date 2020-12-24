@@ -7,7 +7,6 @@ import {css, customElement, html, property} from "lit-element";
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
-import 'weightless/card';
 
 import './backend-ai-dialog';
 import {BackendAIPage} from './backend-ai-page';
@@ -137,7 +136,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
       }, 2000);
     } catch (e) {
       console.error(e);
-      this.notification.text = e.message || 'Update error';
+      this.notification.text = e.message || _text('error.UpdateError');
       this.notification.show();
       this.failDialog.show();
     }
@@ -156,17 +155,16 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
           <div style="margin:20px;">
             <mwc-textfield id="email" label="${_t('data.explorer.EnterEmailAddress')}"
                 autofocus auto-validate validationMessage="${_t('signup.InvalidEmail')}"
-                pattern="^[A-Z0-9a-z#-_]+@.+\\..+$">
+                pattern="^[A-Z0-9a-z#-_]+@.+\\..+$" maxLength="64"
+                placeholder="${_t('maxLength.64chars')}">
             </mwc-textfield>
             <mwc-textfield id="password1" label="${_t('console.menu.NewPassword')}" type="password"
                 auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
-                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                min-length="8">
+                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$" maxLength="64">
             </mwc-textfield>
             <mwc-textfield id="password2" label="${_t('console.menu.NewPasswordAgain')}" type="password"
                 auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
-                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                min-length="8">
+                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$" maxLength="64">
             </mwc-textfield>
             <div style="height:1em"></div>
           </div>
@@ -187,7 +185,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
             <span>${_t("login.InvalidChangePasswordToken")}</span>
           </h3>
           <div class="horizontal layout center" style="margin:10px;">
-            <p style="width:350;">${_t("login.InvalidChangePasswordTokenMessage")}</p>
+            <p style="width:350px;">${_t("login.InvalidChangePasswordTokenMessage")}</p>
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">

@@ -132,7 +132,7 @@ export default class LablupTermsOfService extends LitElement {
             <div class="flex"></div>
             <mwc-button
                 unelevated
-                id="dismis-button"
+                id="dismiss-button"
                 label=${_t("button.Dismiss")}
                 @click="${() => {
                   this.close();

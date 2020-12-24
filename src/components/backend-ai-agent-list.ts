@@ -9,16 +9,15 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid-column';
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid-sort-column';
 import '../plastics/lablup-shields/lablup-shields';
-
-import 'weightless/button';
 
 import '@material/mwc-linear-progress';
 import '@material/mwc-icon-button';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-icon';
+import '@material/mwc-icon/mwc-icon';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -47,11 +46,13 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) agentDetailDialog = Object();
+  @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: String}) filter = '';
 
   constructor() {
     super();
@@ -67,21 +68,11 @@ export default class BackendAIAgentList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 200px);
+          height: var(--list-height, calc(100vh - 200px));
         }
 
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
-
-        wl-icon {
-          width: 16px;
-          height: 16px;
-          --icon-size: 16px;
-          min-width: 16px;
-          min-height: 16px;
-          padding: 0;
+        mwc-icon {
+          --mdc-icon-size: 16px;
         }
 
         img.indicator-icon {
@@ -104,6 +95,10 @@ export default class BackendAIAgentList extends BackendAIPage {
         span.indicator {
           font-size: 9px;
           margin-right: 5px;
+        }
+
+        #agent-detail {
+          --component-max-width: 90%;
         }
 
         lablup-progress-bar {
@@ -130,19 +125,14 @@ export default class BackendAIAgentList extends BackendAIPage {
           margin-bottom: 0;
         }
 
+        lablup-shields {
+          margin: 1px;
+        }
+
         .resource-indicator {
           width: 100px !important;
         }
 
-        .date-indicator {
-          font-size: 12px;
-        }
-
-        .asic-indicator {
-          border-top: 1px solid #cccccc;
-          margin-top: 3px;
-          padding-top: 3px;
-        }
       `];
   }
 
@@ -158,7 +148,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Change state to 'ALIVE' when backend.ai client connected.
    *
-   * @param {Booelan} active - The component will work if active is true.
+   * @param {Boolean} active - The component will work if active is true.
    */
   async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
@@ -204,135 +194,159 @@ export default class BackendAIAgentList extends BackendAIPage {
         fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
           'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     }
+    if (globalThis.backendaiclient.supports('hardware-metadata')) {
+      fields.push('hardware_metadata');
+    }
+
     globalThis.backendaiclient.agent.list(status, fields).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
+        let filter;
+        if (this.filter !== '') {
+          filter = this.filter.split(":");
+        }
         Object.keys(agents).map((objectKey, index) => {
-          let agent = agents[objectKey];
-          let occupied_slots = JSON.parse(agent.occupied_slots);
-          let available_slots = JSON.parse(agent.available_slots);
-          let compute_plugins = JSON.parse(agent.compute_plugins);
-          ['cpu', 'mem'].forEach((slot) => { // Fallback routine when occupied slots are not present
-            if (slot in occupied_slots === false) {
-              occupied_slots[slot] = "0";
+          let agent: any = agents[objectKey];
+          if (this.filter === '' || (filter[0] in agent && agent[filter[0]] === filter[1])) {
+            let occupied_slots = JSON.parse(agent.occupied_slots);
+            let available_slots = JSON.parse(agent.available_slots);
+            let compute_plugins = JSON.parse(agent.compute_plugins);
+            ['cpu', 'mem'].forEach((slot) => { // Fallback routine when occupied slots are not present
+              if (slot in occupied_slots === false) {
+                occupied_slots[slot] = "0";
+              }
+            });
+            if ('live_stat' in agent) {
+              agents[objectKey].live_stat = JSON.parse(agent.live_stat);
             }
-          });
-          if ('live_stat' in agent) {
-            agents[objectKey].live_stat = JSON.parse(agent.live_stat);
-          }
-          agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
-          agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
+            agents[objectKey].cpu_slots = parseInt(available_slots.cpu);
+            agents[objectKey].used_cpu_slots = parseInt(occupied_slots.cpu);
 
-          if (agent.cpu_cur_pct !== null) {
-            agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
-            agents[objectKey].cpu_total_usage_ratio = agents[objectKey].used_cpu_slots / agents[objectKey].cpu_slots;
-            agents[objectKey].cpu_current_usage_ratio = (agents[objectKey].current_cpu_percent / agents[objectKey].cpu_slots) / 100.0;
-            agents[objectKey].current_cpu_percent = agents[objectKey].current_cpu_percent.toFixed(2);
-          } else {
-            agents[objectKey].current_cpu_percent = 0;
-            agents[objectKey].cpu_total_usage_ratio = 0;
-            agents[objectKey].cpu_current_usage_ratio = 0;
-          }
-          if (agent.mem_cur_bytes !== null) {
-            agents[objectKey].current_mem_bytes = agent.mem_cur_bytes;
-          } else {
-            agents[objectKey].current_mem_bytes = 0;
-          }
-          agents[objectKey].current_mem = globalThis.backendaiclient.utils.changeBinaryUnit(agent.current_mem_bytes, 'g');
-          agents[objectKey].mem_slots = parseInt(globalThis.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
-          agents[objectKey].used_mem_slots = parseInt(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
-          agents[objectKey].mem_total_usage_ratio = agents[objectKey].used_mem_slots / agents[objectKey].mem_slots;
-          agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots;
-          agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);
-          if ('cuda.device' in available_slots) {
-            agents[objectKey].cuda_gpu_slots = parseInt(available_slots['cuda.device']);
-            if ('cuda.device' in occupied_slots) {
-              agents[objectKey].used_cuda_gpu_slots = parseInt(occupied_slots['cuda.device']);
+            if (agent.cpu_cur_pct !== null) {
+              agents[objectKey].current_cpu_percent = agent.cpu_cur_pct;
+              agents[objectKey].cpu_total_usage_ratio = agents[objectKey].used_cpu_slots / agents[objectKey].cpu_slots;
+              agents[objectKey].cpu_current_usage_ratio = (agents[objectKey].current_cpu_percent / agents[objectKey].cpu_slots) / 100.0;
+              agents[objectKey].current_cpu_percent = agents[objectKey].current_cpu_percent.toFixed(2);
             } else {
-              agents[objectKey].used_cuda_gpu_slots = 0;
+              agents[objectKey].current_cpu_percent = 0;
+              agents[objectKey].cpu_total_usage_ratio = 0;
+              agents[objectKey].cpu_current_usage_ratio = 0;
             }
-            agents[objectKey].used_cuda_gpu_slots_ratio = agents[objectKey].used_cuda_gpu_slots / agents[objectKey].cuda_gpu_slots;
-          }
-          if ('cuda.shares' in available_slots) {
-            agents[objectKey].cuda_fgpu_slots = parseInt(available_slots['cuda.shares']);
-            if ('cuda.shares' in occupied_slots) {
-              agents[objectKey].used_cuda_fgpu_slots = parseInt(occupied_slots['cuda.shares']);
+            if (agent.mem_cur_bytes !== null) {
+              agents[objectKey].current_mem_bytes = agent.mem_cur_bytes;
             } else {
-              agents[objectKey].used_cuda_fgpu_slots = 0;
+              agents[objectKey].current_mem_bytes = 0;
             }
-            agents[objectKey].used_cuda_fgpu_slots_ratio = agents[objectKey].used_cuda_fgpu_slots / agents[objectKey].cuda_fgpu_slots;
-          }
-          if ('rocm.device' in available_slots) {
-            agents[objectKey].rocm_gpu_slots = parseInt(available_slots['rocm.device']);
-            if ('rocm.device' in occupied_slots) {
-              agents[objectKey].used_rocm_gpu_slots = parseInt(occupied_slots['rocm.device']);
-            } else {
-              agents[objectKey].used_rocm_gpu_slots = 0;
+            agents[objectKey].current_mem = globalThis.backendaiclient.utils.changeBinaryUnit(agent.current_mem_bytes, 'g');
+            agents[objectKey].mem_slots = parseInt(globalThis.backendaiclient.utils.changeBinaryUnit(available_slots.mem, 'g'));
+            agents[objectKey].used_mem_slots = parseInt(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
+            agents[objectKey].mem_total_usage_ratio = agents[objectKey].used_mem_slots / agents[objectKey].mem_slots;
+            agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots;
+            agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);
+            if ('cuda.device' in available_slots) {
+              agents[objectKey].cuda_gpu_slots = parseInt(available_slots['cuda.device']);
+              if ('cuda.device' in occupied_slots) {
+                agents[objectKey].used_cuda_gpu_slots = parseInt(occupied_slots['cuda.device']);
+              } else {
+                agents[objectKey].used_cuda_gpu_slots = 0;
+              }
+              agents[objectKey].used_cuda_gpu_slots_ratio = agents[objectKey].used_cuda_gpu_slots / agents[objectKey].cuda_gpu_slots;
             }
-            agents[objectKey].used_rocm_gpu_slots_ratio = agents[objectKey].used_rocm_gpu_slots / agents[objectKey].rocm_gpu_slots;
+            if ('cuda.shares' in available_slots) {
+              agents[objectKey].cuda_fgpu_slots = parseInt(available_slots['cuda.shares']);
+              if ('cuda.shares' in occupied_slots) {
+                agents[objectKey].used_cuda_fgpu_slots = parseInt(occupied_slots['cuda.shares']);
+              } else {
+                agents[objectKey].used_cuda_fgpu_slots = 0;
+              }
+              agents[objectKey].used_cuda_fgpu_slots_ratio = agents[objectKey].used_cuda_fgpu_slots / agents[objectKey].cuda_fgpu_slots;
+            }
+            if ('rocm.device' in available_slots) {
+              agents[objectKey].rocm_gpu_slots = parseInt(available_slots['rocm.device']);
+              if ('rocm.device' in occupied_slots) {
+                agents[objectKey].used_rocm_gpu_slots = parseInt(occupied_slots['rocm.device']);
+              } else {
+                agents[objectKey].used_rocm_gpu_slots = 0;
+              }
+              agents[objectKey].used_rocm_gpu_slots_ratio = agents[objectKey].used_rocm_gpu_slots / agents[objectKey].rocm_gpu_slots;
+            }
+            if ('cuda' in compute_plugins) {
+              let cuda_plugin = compute_plugins['cuda'];
+              agents[objectKey].cuda_plugin = cuda_plugin;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cpu_util' in agents[objectKey].live_stat.devices) {
+              let cpu_util: Array<any> = [];
+              Object.entries(agents[objectKey].live_stat.devices.cpu_util).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k});
+                cpu_util.push(agentInfo);
+              });
+              agents[objectKey].cpu_util_live = cpu_util;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_util' in agents[objectKey].live_stat.devices) {
+              let cuda_util: Array<any> = [];
+              let i: number = 1;
+              Object.entries(agents[objectKey].live_stat.devices.cuda_util).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                cuda_util.push(agentInfo);
+              });
+              agents[objectKey].cuda_util_live = cuda_util;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_mem' in agents[objectKey].live_stat.devices) {
+              let cuda_mem: Array<any> = [];
+              let i: number = 1;
+              Object.entries(agents[objectKey].live_stat.devices.cuda_mem).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                cuda_mem.push(agentInfo);
+              });
+              agents[objectKey].cuda_mem_live = cuda_mem;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_util' in agents[objectKey].live_stat.devices) {
+              let rocm_util: Array<any> = [];
+              let i: number = 1;
+              Object.entries(agents[objectKey].live_stat.devices.rocm_util).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                rocm_util.push(agentInfo);
+              });
+              agents[objectKey].rocm_util_live = rocm_util;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_mem' in agents[objectKey].live_stat.devices) {
+              let rocm_mem: Array<any> = [];
+              let i: number = 1;
+              Object.entries(agents[objectKey].live_stat.devices.rocm_mem).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                rocm_mem.push(agentInfo);
+              });
+              agents[objectKey].rocm_mem_live = rocm_mem;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_util' in agents[objectKey].live_stat.devices) {
+              let tpu_util: Array<any> = [];
+              let i: number = 1;
+              Object.entries(agents[objectKey].live_stat.devices.tpu_util).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                tpu_util.push(agentInfo);
+              });
+              agents[objectKey].tpu_util_live = tpu_util;
+            }
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_mem' in agents[objectKey].live_stat.devices) {
+              let tpu_mem: Array<any> = [];
+              let i: number = 1;
+              Object.entries(agents[objectKey].live_stat.devices.tpu_mem).forEach(([k, v]) => {
+                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                tpu_mem.push(agentInfo);
+              });
+              agents[objectKey].tpu_mem_live = tpu_mem;
+            }
+            if ('hardware_metadata' in agent) {
+              agents[objectKey].hardware_metadata = JSON.parse(agent.hardware_metadata);
+            }
+            this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
           }
-          if ('cuda' in compute_plugins) {
-            let cuda_plugin = compute_plugins['cuda'];
-            agents[objectKey].cuda_plugin = cuda_plugin;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cpu_util' in agents[objectKey].live_stat.devices) {
-            let cpu_util: Array<any> = [];
-            Object.entries(agents[objectKey].live_stat.devices.cpu_util).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
-              cpu_util.push(agentInfo);
-            });
-            agents[objectKey].cpu_util_live = cpu_util;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_util' in agents[objectKey].live_stat.devices) {
-            let cuda_util: Array<any> = [];
-            Object.entries(agents[objectKey].live_stat.devices.cuda_util).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
-              cuda_util.push(agentInfo);
-            });
-            agents[objectKey].cuda_util_live = cuda_util;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_mem' in agents[objectKey].live_stat.devices) {
-            let cuda_mem: Array<any> = [];
-            Object.entries(agents[objectKey].live_stat.devices.cuda_mem).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
-              cuda_mem.push(agentInfo);
-            });
-            agents[objectKey].cuda_mem_live = cuda_mem;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_util' in agents[objectKey].live_stat.devices) {
-            let rocm_util: Array<any> = [];
-            Object.entries(agents[objectKey].live_stat.devices.rocm_util).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
-              rocm_util.push(agentInfo);
-            });
-            agents[objectKey].rocm_util_live = rocm_util;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_mem' in agents[objectKey].live_stat.devices) {
-            let rocm_mem: Array<any> = [];
-            Object.entries(agents[objectKey].live_stat.devices.rocm_mem).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
-              rocm_mem.push(agentInfo);
-            });
-            agents[objectKey].rocm_mem_live = rocm_mem;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_util' in agents[objectKey].live_stat.devices) {
-            let tpu_util: Array<any> = [];
-            Object.entries(agents[objectKey].live_stat.devices.tpu_util).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
-              tpu_util.push(agentInfo);
-            });
-            agents[objectKey].tpu_util_live = tpu_util;
-          }
-          if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_mem' in agents[objectKey].live_stat.devices) {
-            let tpu_mem: Array<any> = [];
-            Object.entries(agents[objectKey].live_stat.devices.tpu_mem).forEach(([k, v]) => {
-              let agentInfo = Object.assign({}, v, {num: k});
-              tpu_mem.push(agentInfo);
-            });
-            agents[objectKey].tpu_mem_live = tpu_mem;
-          }
-
-          this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
         });
       }
       this.agents = agents;
@@ -450,8 +464,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render an index.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   _indexRenderer(root, column, rowData) {
@@ -465,10 +479,28 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
+   * Render endpoint with IP and name.
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  endpointRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div>${rowData.item.id}</div>
+        <div class="indicator monospace">${rowData.item.addr}</div>
+      `, root
+    );
+  }
+
+
+  /**
    * Render regions by platforms and locations.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   regionRenderer(root, column?, rowData?) {
@@ -508,6 +540,10 @@ export default class BackendAIAgentList extends BackendAIPage {
         color = 'red';
         icon = 'openstack';
         break;
+      case "dgx":
+        color = 'green';
+        icon = 'local';
+        break;
       case "local":
         color = 'yellow';
         icon = 'local';
@@ -522,7 +558,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         <div class="horizontal start-justified center layout">
           <img src="/resources/icons/${icon}.png" style="width:32px;height:32px;"/>
           <lablup-shields app="${location}" color="${color}"
-                          description="${platform}" ui="flat"></lablup-shields>
+                          description="${platform}" ui="round"></lablup-shields>
         </div>
     `, root
     );
@@ -541,8 +577,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render a first contact date.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   contactDateRenderer(root, column?, rowData?) {
@@ -555,7 +591,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <div class="layout vertical">
             <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
             <lablup-shields app="${_t('agent.Terminated')}" color="yellow"
-                            description="${elapsed}" ui="flat"></lablup-shields>
+                            description="${elapsed}" ui="round"></lablup-shields>
 
           </div>`, root
       );
@@ -567,7 +603,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <div class="layout vertical">
             <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
             <lablup-shields app="${_t('agent.Running')}" color="darkgreen"
-                            description="${elapsed}" ui="flat"></lablup-shields>
+                            description="${elapsed}" ui="round"></lablup-shields>
 
           </div>`, root
       );
@@ -577,8 +613,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render a resource.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   resourceRenderer(root, column?, rowData?) {
@@ -588,7 +624,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         <div class="layout flex">
           <div class="layout horizontal center flex">
             <div class="layout horizontal start resource-indicator">
-              <wl-icon class="fg green">developer_board</wl-icon>
+              <mwc-icon class="fg green">developer_board</mwc-icon>
               <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
               <span class="indicator">${_t("general.cores")}</span>
             </div>
@@ -599,7 +635,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           </div>
           <div class="layout horizontal center flex">
             <div class="layout horizontal start resource-indicator">
-              <wl-icon class="fg green">memory</wl-icon>
+              <mwc-icon class="fg green">memory</mwc-icon>
               <span style="padding-left:5px;">${rowData.item.mem_slots}</span>
               <span class="indicator">GB</span>
             </div>
@@ -664,8 +700,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render a heartbeat status.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   statusRenderer(root, column?, rowData?) {
@@ -674,17 +710,17 @@ export default class BackendAIAgentList extends BackendAIPage {
       html`
         <div class="layout vertical start justified wrap">
           <lablup-shields app="Agent" color="${this._heartbeatColor(rowData.item.status)}"
-                          description="${rowData.item.version}" ui="flat"></lablup-shields>
+                          description="${rowData.item.version}" ui="round"></lablup-shields>
           ${rowData.item.cuda_plugin ? html`
           <lablup-shields app="CUDA Plugin" color="blue"
-                          description="${rowData.item.cuda_plugin['version']}" ui="flat"></lablup-shields>
+                          description="${rowData.item.cuda_plugin['version']}" ui="round"></lablup-shields>
         ${rowData.item.cuda_fgpu_slots ? html`
           <lablup-shields app="" color="blue"
-                          description="Fractional GPU™" ui="flat"></lablup-shields>
+                          description="Fractional GPU™" ui="round"></lablup-shields>
         ` : html``}
           ${'cuda_version' in rowData.item.cuda_plugin ? html`
           <lablup-shields app="CUDA" color="green"
-                          description="${rowData.item.cuda_plugin['cuda_version']}" ui="flat"></lablup-shields>`
+                          description="${rowData.item.cuda_plugin['cuda_version']}" ui="round"></lablup-shields>`
         : html`          <lablup-shields app="CUDA Disabled" color="green"
                           description="" ui="flat"></lablup-shields>`}` : html``}
 
@@ -695,8 +731,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Show detailed agent information as dialog form.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   showAgentDetailDialog(agentId) {
@@ -708,8 +744,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Render control buttons such as assignment, build, add an alarm, pause and delete.
    *
-   * @param {DOM element} root
-   * @param {<vaadin-grid-column> element} column
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
   controlRenderer(root, column?, rowData?) {
@@ -735,28 +771,26 @@ export default class BackendAIAgentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.agents}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="80px">
-          <template class="header">${_t("agent.Endpoint")}</template>
-          <template>
-            <div>[[item.id]]</div>
-            <div class="indicator monospace">[[item.addr]]</div>
-          </template>
+      <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
+                   .items="${this.agents}">
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
+                            .renderer="${this._indexRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="80px" header="${_t("agent.Endpoint")}" .renderer="${this._boundEndpointRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="100px" resizable .renderer="${this._boundRegionRenderer}">
-          <template class="header">${_t("agent.Region")}</template>
+        <vaadin-grid-column width="100px" resizable header="${_t("agent.Region")}"
+                            .renderer="${this._boundRegionRenderer}">
         </vaadin-grid-column>
-
-        <vaadin-grid-column resizable .renderer="${this._boundContactDateRenderer}">
-          <template class="header">${_t("agent.Starts")}</template>
+        <vaadin-grid-column resizable header="${_t("agent.Starts")}" .renderer="${this._boundContactDateRenderer}">
         </vaadin-grid-column>
-
-        <vaadin-grid-column resizable width="140px" header="${_t("agent.Resources")}" .renderer="${this._boundResourceRenderer}">
+        <vaadin-grid-column resizable width="140px" header="${_t("agent.Resources")}"
+                            .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-sort-column width="100px" resizable path="scaling_group" header="${_t("general.ResourceGroup")}"></vaadin-grid-sort-column>
-        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}" .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-sort-column width="100px" resizable path="scaling_group"
+                                 header="${_t("general.ResourceGroup")}"></vaadin-grid-sort-column>
+        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}"
+                            .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column resizable header="${_t("general.Control")}"
+                            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t("agent.DetailedInformation")}</span>
@@ -765,14 +799,16 @@ export default class BackendAIAgentList extends BackendAIPage {
           ${'cpu_util_live' in this.agentDetail ?
       html`<div>
               <h3>CPU</h3>
+              <div class="horizontal wrap layout" style="max-width:600px;">
             ${this.agentDetail.cpu_util_live.map(item => html`
-              <div class="horizontal start-justified center layout">
+              <div class="horizontal start-justified center layout" style="padding:0 5px;">
                 <div style="font-size:8px;width:35px;">CPU${item.num}</div>
                 <lablup-progress-bar class="cpu"
                   progress="${item.pct / 100.0}"
                   description=""
                 ></lablup-progress-bar>
               </div>`)}
+              </div>
             </div>` : html``}
             <div style="margin-left:10px;">
               <h3>Memory</h3>
@@ -794,22 +830,22 @@ export default class BackendAIAgentList extends BackendAIPage {
               <h4>Utilization</h4>
             ${this.agentDetail.cuda_util_live.map(item => html`
               <div class="horizontal start-justified center layout">
-                <div style="font-size:8px;width:35px;">CUDA${item.num}</div>
+                <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
                 <div class="horizontal start-justified center layout">
                   <lablup-progress-bar class="cuda"
-                    progress="${item.pct / 100.0}"
-                    description=""
+                                       progress="${item.pct / 100.0}"
+                                       description=""
                   ></lablup-progress-bar>
                 </div>
               </div>`)}
               <h4>Memory</h4>
             ${this.agentDetail.cuda_mem_live.map(item => html`
               <div class="horizontal start-justified center layout">
-                <div style="font-size:8px;width:35px;">CUDA${item.num}</div>
+                <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
                 <div class="horizontal start-justified center layout">
                   <lablup-progress-bar class="cuda"
-                    progress="${item.pct / 100.0}"
-                    description=""
+                                       progress="${item.pct / 100.0}"
+                                       description=""
                   ></lablup-progress-bar>
                 </div>
               </div>`)}

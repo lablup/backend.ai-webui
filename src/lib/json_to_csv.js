@@ -1,4 +1,4 @@
-'use babel';
+//'use babel';
 /*
 Backend.AI API : JSON to CSV Converter
 ======================================
@@ -15,16 +15,14 @@ export default class JsonToCsv {
         objs.map(obj => {
             keys.map((k) => {
                 let cell = (obj[k] === null || obj[k] === undefined) ? '' : obj[k].toString();
-                if (cell === '[object Object]') {
+                if (typeof cell === 'string' && cell.startsWith('[object Object]')) {
                     cell = JSON.stringify(obj[k]);
                 }
                 if (cell.search(/("|,|\n)/g) >= 0) {
                     if (cell[0] === '[') { // Array of Objects
                         let subJson = JSON.parse(cell);
                         if (k === 'groups') { // groups key in users
-                            subJson.map((key) => {
-                                obj[k + '.' + 'name'] = key.name;
-                            });
+                            obj[k + '.' + 'name'] = subJson.map((key) => key.name).join(';');
                         }
                         else {
                             subJson.map((key) => {

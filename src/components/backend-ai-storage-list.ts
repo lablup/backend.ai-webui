@@ -66,11 +66,12 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: String}) renameFolderId = '';
   @property({type: String}) deleteFolderId = '';
   @property({type: Object}) explorer = Object();
-  @property({type: Array}) explorerFiles = [];
+  @property({type: Array}) explorerFiles = Array();
+  @property({type: String}) existingFile = '';
   @property({type: Array}) invitees = [];
   @property({type: String}) selectedFolder = '';
   @property({type: String}) downloadURL = '';
-  @property({type: Array}) uploadFiles = [];
+  @property({type: Array}) uploadFiles = Array();
   @property({type: Array}) fileUploadQueue = [];
   @property({type: Number}) fileUploadCount = 0;
   @property({type: Number}) concurrentFileUploadLimit = 2;
@@ -90,11 +91,13 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) _boundControlFolderListRenderer = Object();
   @property({type: Object}) _boundControlFileListRenderer = Object();
   @property({type: Object}) _boundPermissionViewRenderer = Object();
+  @property({type: Object}) _boundOwnerRenderer = Object();
   @property({type: Object}) _boundFileNameRenderer = Object();
   @property({type: Object}) _boundCreatedTimeRenderer = Object();
   @property({type: Object}) _boundPermissionRenderer = Object();
   @property({type: Boolean}) _uploadFlag = true;
   @property({type: Boolean}) isWritable = false;
+  @property({type: Number}) _maxFileUploadSize = -1;
 
   constructor() {
     super();
@@ -103,6 +106,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
     this._boundControlFileListRenderer = this.controlFileListRenderer.bind(this);
     this._boundPermissionViewRenderer = this.permissionViewRenderer.bind(this);
+    this._boundOwnerRenderer = this.OwnerRenderer.bind(this);
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
@@ -123,7 +127,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         vaadin-grid.folderlist {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 210px);
+          height: calc(100vh - 230px);
         }
 
         vaadin-grid.explorer {
@@ -153,6 +157,8 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         div.big.indicator {
           font-size: 48px;
+          margin-top:10px;
+          margin-bottom: 10px;
         }
 
         .folder-action-buttons wl-button {
@@ -188,11 +194,15 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         #folder-explorer-dialog {
+          width: calc(100% - 250px); /* 250px is width for drawer menu */
           --component-height: calc(100vh - 200px); /* calc(100vh - 170px); */
           right: 0;
           top: 0;
-          position: fixed;
           margin: 170px 0 0 0;
+        }
+
+        #folder-explorer-dialog.mini_ui {
+          width: calc(100% - 88px); /* 88px is width for mini-ui icon of drawer menu */
         }
 
         #folder-explorer-dialog vaadin-grid vaadin-grid-column {
@@ -204,24 +214,32 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-icon-button-size: 28px;
         }
 
-        @media screen and (max-width: 899px) {
+        @media screen and (max-width: 700px) {
           #folder-explorer-dialog,
           #folder-explorer-dialog.mini_ui {
-            left: 0;
+            min-width: 410px;
             --component-width: 100%;
             width: 100%;
+            position: absolute;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0px;
+            right: 0px;
+          }
+        }
+
+        @media screen and (max-width: 750px) {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui {
+            --component-width: auto;
           }
         }
 
         @media screen and (min-width: 900px) {
-          #folder-explorer-dialog {
-            left: 250px; /* 190px; */
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui
+           {
             --component-width: calc(100% - 45px); /* calc(100% - 30px); */
-          }
-
-          #folder-explorer-dialog.mini_ui {
-            left: 85px; /* 65px; */
-            --component-width: calc(100% - 45px);
           }
         }
 
@@ -283,6 +301,10 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-button.fullwidth {
           width: 100%;
+        }
+
+        mwc-button#readonly-btn {
+          width: 150px;
         }
 
         div#upload {
@@ -348,12 +370,23 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         #modify-permission-dialog {
-          --dialog-min-width: 600px;
           --component-min-width: 600px;
         }
 
         backend-ai-dialog {
           --component-min-width: 350px;
+        }
+
+        @media screen and (max-width: 750px) {
+          mwc-button {
+            width: auto;
+          }
+          mwc-button > span {
+            display: none;
+          }
+          #modify-permission-dialog {
+            --component-min-width: 100%;
+          }
         }
       `];
   }
@@ -375,7 +408,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <vaadin-grid class="folderlist" theme="row-stripes column-borders compact" aria-label="Folder list" .items="${this.folders}">
+      <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t("data.folders.Name")}">
@@ -402,18 +435,20 @@ export default class BackendAiStorageList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column width="45px" flex-grow="0" resizable header="${_t("data.folders.Type")}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="85px" flex-grow="0" resizable header="${_t("data.folders.Permission")}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t("data.folders.Control")}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t("data.folders.Owner")}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column auto-width resizable header="${_t("data.folders.Control")}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
       </vaadin-grid>
 
       <backend-ai-dialog id="rename-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.folders.RenameAFolder')}</span>
         <div slot="content">
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
-           required auto-validate validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"
-           style="width:320px;"
+           pattern="^[a-zA-Z0-9\._-]*$"
+           required autoValidate validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"
+           style="width:320px;" maxLength="64" placeholder="${_text('maxLength.64chars')}"
            @change="${() => {this._validateFolderName(true)}}"></mwc-textfield>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button unelevated class="fullwidth bg-blue button" type="submit" icon="edit" id="rename-button" outlined @click="${() => this._renameFolder()}">
             ${_t('data.folders.Rename')}
           </mwc-button>
@@ -424,9 +459,10 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t("data.folders.DeleteAFolder")}</span>
         <div slot="content" style="width:100%;">
           <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
-          <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"></mwc-textfield>
+          <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
+                         maxLength="64" placeholder="${_text('maxLength.64chars')}"></mwc-textfield>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button unelevated class="fullwidth red button" type="submit" icon="close" id="delete-button" @click="${() => this._deleteFolderWithCheck()}">
             ${_t("data.folders.Delete")}
           </mwc-button>
@@ -435,7 +471,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="info-folder-dialog" fixed backdrop>
         <span slot="title">${this.folderInfo.name}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;">
-          <div class="horizontal justified layout wrap">
+          <div class="horizontal justified layout wrap" style="margin-top:15px;">
               <div class="vertical layout center info-indicator">
                 <div class="big indicator">${this.folderInfo.host}</div>
                 <span>${_t("data.folders.Location")}</span>
@@ -478,36 +514,39 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${this.explorer.id}</span>
         <div slot="action" class="horizontal layout flex folder-action-buttons">
           <div class="flex"></div>
-          <mwc-button outlined class="multiple-action-buttons fg red" icon="delete" @click="${() => this._openDeleteMultipleFileDialog()}"
-            label="${_t("data.explorer.Delete")}"
-            style="display:none;">
-          </mwc-button>
           ${this.isWritable ? html`
-          <div id="add-btn-cover">
             <mwc-button
-                id="add-btn"
-                icon="cloud_upload"
-                label="${_t("data.explorer.UploadFiles")}"
-                ?disabled=${!this.isWritable}
-                @click="${(e) => this._uploadFileBtnClick(e)}">
+                outlined
+                class="multiple-action-buttons fg red"
+                icon="delete"
+                @click="${() => this._openDeleteMultipleFileDialog()}"
+                style="display:none;">
+                <span>${_t("data.explorer.Delete")}</span>
             </mwc-button>
-          </div>
-          <div id="mkdir-cover">
-            <mwc-button
-                id="mkdir"
-                class="tooltip"
-                icon="create_new_folder"
-                label="${_t("data.explorer.NewFolder")}"
-                ?disabled=${!this.isWritable}
-                @click="${() => this._mkdirDialog()}">
-            </mwc-button>
-          </div>
+            <div id="add-btn-cover">
+              <mwc-button
+                  id="add-btn"
+                  icon="cloud_upload"
+                  ?disabled=${!this.isWritable}
+                  @click="${(e) => this._uploadFileBtnClick(e)}">
+                  <span>${_t("data.explorer.UploadFiles")}</span>
+              </mwc-button>
+            </div>
+            <div id="mkdir-cover">
+              <mwc-button
+                  id="mkdir"
+                  class="tooltip"
+                  icon="create_new_folder"
+                  ?disabled=${!this.isWritable}
+                  @click="${() => this._mkdirDialog()}">
+                  <span>${_t("data.explorer.NewFolder")}</span>
+              </mwc-button>
+            </div>
           ` : html`
           <mwc-button
               id="readonly-btn"
-              style="width:150px;"
-              label="${_t("data.explorer.ReadonlyFolder")}"
               disabled>
+            <span>${_t("data.explorer.ReadonlyFolder")}</span>
           </mwc-button>
           `}
         </div>
@@ -577,7 +616,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             <vaadin-grid-sort-column flex-grow="2" resizable header="${_t("data.explorer.Created")}" path="ctime" .renderer="${this._boundCreatedTimeRenderer}">
             </vaadin-grid-sort-column>
 
-            <vaadin-grid-column flex-grow="1" resizable>
+            <vaadin-grid-column auto-width resizable>
               <template class="header">
                 <vaadin-grid-sorter path="size">${_t("data.explorer.Size")}</vaadin-grid-sorter>
               </template>
@@ -587,7 +626,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 </div>
               </template>
             </vaadin-grid-column>
-            <vaadin-grid-column resizable flex-grow="2" header="${_t("data.explorer.Actions")}" .renderer="${this._boundControlFileListRenderer}"></vaadin-grid-column>
+            <vaadin-grid-column resizable auto-width header="${_t("data.explorer.Actions")}" .renderer="${this._boundControlFileListRenderer}"></vaadin-grid-column>
           </vaadin-grid>
         </div>
       </backend-ai-dialog>
@@ -598,6 +637,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                          label="${_t("data.explorer.Foldername")}"
                          @change="${() => this._validatePathName()}"
                          required
+                         maxLength="255" placeholder="${_text('maxLength.255chars')}"
                          validationMessage="${_text("data.explorer.ValueRequired")}"></mwc-textfield>
           <br/>
         </div>
@@ -607,14 +647,17 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="share-folder-dialog" fixed backdrop>
+      <backend-ai-dialog id="share-folder-dialog" fixed backdrop persistent>
         <span slot="title">${_t("data.explorer.ShareFolder")}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;" >
           <div style="margin: 10px 0px">${_t("data.explorer.People")}</div>
           <div class="vertical layout flex" id="textfields">
             <div class="horizontal layout">
               <div style="flex-grow: 2">
-                <mwc-textfield class="share-email" type="email" label="${_t("data.explorer.EnterEmailAddress")}"></mwc-textfield>
+                <mwc-textfield class="share-email" type="email" id="first-email"
+                    label="${_t("data.explorer.EnterEmailAddress")}"
+                    maxLength="64" placeholder="${_text('maxLength.64chars')}">
+                </mwc-textfield>
               </div>
               <div>
                 <wl-button fab flat @click="${() => this._addTextField()}">
@@ -638,7 +681,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             </wl-label>
           </div>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
             icon="share"
             type="button"
@@ -671,7 +714,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             </vaadin-grid-column>
           </vaadin-grid>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
             icon="check"
             type="button"
@@ -687,36 +730,37 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.explorer.RenameAFile')}</span>
         <div slot="content">
           <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"
-          required @change="${() => this._validateExistingFileName()}" auto-validate style="width:320px;"></mwc-textfield>
+          required @change="${() => this._validateExistingFileName()}" auto-validate style="width:320px;"
+          maxLength="255" placeholder="${_text('maxLength.255chars')}"></mwc-textfield>
           <div id="old-file-name" style="padding-left:15px;height:2.5em;"></div>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" unelevated @click="${(e) => this._renameFile(e)}">
             ${_t('data.explorer.RenameAFile')}
           </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-file-dialog" fixed backdrop>
-         <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
-         <div slot="content">
-            <p>${_t("dialog.warning.CannotBeUndone")}
-            ${_t("dialog.ask.DoYouWantToProceed")}</p>
-         </div>
-         <div slot="footer" class="horizontal end-justified flex layout distancing">
-            <mwc-button outlined @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</mwc-button>
-            <mwc-button raised @click="${(e) => this._deleteFileWithCheck(e)}">${_t("button.Okay")}</mwc-button>
-         </div>
+        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
+        <div slot="content">
+          <p>${_t("dialog.warning.CannotBeUndone")}
+          ${_t("dialog.ask.DoYouWantToProceed")}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button outlined @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</mwc-button>
+          <mwc-button raised @click="${(e) => this._deleteFileWithCheck(e)}">${_t("button.Okay")}</mwc-button>
+        </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="download-file-dialog" fixed backdrop>
-         <span slot="title">${_t("data.explorer.DownloadFile")}</span>
-         <div slot="content">
-            <a href="${this.downloadURL}">
-              <wl-button outlined>${_t("data.explorer.TouchToDownload")}</wl-button>
-            </a>
-         </div>
-         <div slot="footer" class="horizontal center-justified flex layout distancing">
-            <mwc-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</mwc-button>
-         </div>
+        <span slot="title">${_t("data.explorer.DownloadFile")}</span>
+        <div slot="content">
+          <a href="${this.downloadURL}">
+            <wl-button outlined>${_t("data.explorer.TouchToDownload")}</wl-button>
+          </a>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout distancing">
+          <mwc-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</mwc-button>
+        </div>
       </backend-ai-dialog>
     `;
   }
@@ -739,9 +783,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._addInputValidator(textfield);
     }
     if (this.storageType === 'automount') {
-      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 210px)';
+      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 230px)';
     } else {
-      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 165px)';
+      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 185px)';
     }
 
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
@@ -843,7 +887,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         <div
           id="controls"
-          class="layout horizontal flex center"
+          class="layout flex center wrap"
           folder-id="${rowData.item.name}"
         >
           <mwc-icon-button
@@ -857,13 +901,14 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-icon-button
                 class="fg blue controls-running"
                 icon="folder_open"
-                @click="${(e) => this._folderExplorer(e, this._hasPermission(rowData.item, 'w'))}" .folder-id="${rowData.item.name}"
-              ></mwc-icon-button>
+                @click="${(e) =>
+                  this._folderExplorer(e, (this._hasPermission(rowData.item, 'w')
+                    || rowData.item.is_owner
+                    || (rowData.item.type === 'group' && this.is_admin)))}"
+                .folder-id="${rowData.item.name}"></mwc-icon-button>
             `
             : html``
           }
-
-          ${this._hasPermission(rowData.item, 'w') ? html`` : html``}
           ${rowData.item.is_owner && rowData.item.type == 'user'
             ? html`
               <mwc-icon-button
@@ -885,14 +930,16 @@ export default class BackendAiStorageList extends BackendAIPage {
             `
             : html``
           }
-
-          ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd')
-            ? html`
+          ${rowData.item.is_owner ?
+            html`
               <mwc-icon-button
                 class="fg blue controls-running"
                 icon="edit"
                 @click="${(e) => this._renameFolderDialog(e)}"
               ></mwc-icon-button>
+            ` : html``}
+          ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd') || (rowData.item.type === 'group' && this.is_admin)
+            ? html`
               <mwc-icon-button
                 class="fg red controls-running"
                 icon="delete"
@@ -917,17 +964,19 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        ${this._isDir(rowData.item) ? html`
-          <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
-              filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e, true)}"></mwc-icon-button>
-        ` : html`
-          <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
-              filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
-        `}
-        <mwc-icon-button id="rename-btn" ?disabled="${!this.isWritable}" class="tiny fg green" icon="edit" required
-            filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
-        <mwc-icon-button id="delete-btn" ?disabled="${!this.isWritable}" class="tiny fg red" icon="delete_forever"
-            filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
+        <div class="flex layout wrap">
+          ${this._isDir(rowData.item) ? html`
+            <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
+                filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e, true)}"></mwc-icon-button>
+          ` : html`
+            <mwc-icon-button id="download-btn" class="tiny fg blue" icon="cloud_download"
+                filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
+          `}
+          <mwc-icon-button id="rename-btn" ?disabled="${!this.isWritable}" class="tiny fg green" icon="edit" required
+              filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
+          <mwc-icon-button id="delete-btn" ?disabled="${!this.isWritable}" class="tiny fg red" icon="delete_forever"
+              filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
+        </div>
        `, root
     );
   }
@@ -985,6 +1034,25 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
+   * Render whether owner of the vfolder or not using icon
+   * 
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  OwnerRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        ${rowData.item.is_owner ? html`
+          <div class="horizontal center-justified center layout">
+            <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
+          </div>`: html``}
+        `, root
+     );
+  }
+
+  /**
    * Render created time.
    *
    * @param {Element} root - the row details content DOM element
@@ -1023,6 +1091,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   refreshFolderList() {
+    this._triggerFolderListChanged();
     return this._refreshFolderList();
   }
 
@@ -1055,7 +1124,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         }, 10000);
       };
     });
-
   }
 
   _refreshFolderUI(e) {
@@ -1077,12 +1145,14 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+        this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
         this._refreshFolderList();
       }, true);
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+      this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
       this._refreshFolderList();
     }
   }
@@ -1240,7 +1310,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     job.then((value) => {
       this.notification.text = _text('data.folders.FolderDeleted');
       this.notification.show();
-      this._refreshFolderList();
+      this.refreshFolderList();
+      this._triggerFolderListChanged();
     }).catch(err => {
       console.log(err);
       if (err && err.message) {
@@ -1249,6 +1320,15 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+  }
+
+  /**
+   * dispatch backend-ai-folder-list-changed event
+   * 
+   */
+  _triggerFolderListChanged() {
+    let event = new CustomEvent('backend-ai-folder-list-changed');
+    document.dispatchEvent(event);
   }
 
   /**
@@ -1384,6 +1464,10 @@ export default class BackendAiStorageList extends BackendAIPage {
       id: folderId,
       breadcrumb: ['.'],
     };
+
+    /**
+     * NOTICE: If it's admin user and the folder type is group, It will have write permission.
+     */
     this.isWritable = isWritable;
     this.explorer = explorer;
     this._clearExplorer(explorer.breadcrumb.join('/'), explorer.id, true);
@@ -1453,6 +1537,22 @@ export default class BackendAiStorageList extends BackendAIPage {
     return file.mode.startsWith("d");
   }
 
+  _byteToMB(value) {
+    return Math.floor(value / 1000000);
+  }
+
+  _humanReadableFileSize(value) {
+    if (value > 1000000000) {
+      return Math.floor(value / 1000000000) + 'GB';
+    } else if (value > 1000000) {
+      return Math.floor(value / 1000000) + 'MB';
+    } else if (value > 1000) {
+      return Math.floor(value / 1000) + 'KB';
+    } else {
+      return Math.floor(value) + 'Bytes';
+    }
+  }
+
   /* File upload and download */
   /**
    * Add eventListener to the dropzone - dragleave, dragover, drop.
@@ -1468,9 +1568,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     dndZoneEl.addEventListener('dragover', e => {
       e.stopPropagation();
       e.preventDefault();
+      if (this.isWritable) {
       e.dataTransfer.dropEffect = 'copy';
       dndZonePlaceholderEl.style.display = "flex";
       return false;
+      } else {
+         return true;
+      }
     });
 
     dndZoneEl.addEventListener('drop', e => {
@@ -1478,28 +1582,47 @@ export default class BackendAiStorageList extends BackendAIPage {
       e.preventDefault();
       dndZonePlaceholderEl.style.display = "none";
 
-      let temp: any = [];
-      for (let i = 0; i < e.dataTransfer.files.length; i++) {
-        const file = e.dataTransfer.files[i];
-        /* Drag & Drop file upload size limits to 1 GiB */
-        if (file.size > 2 ** 30) {
-          this.notification.text = _text('data.explorer.DragDropFileUploadSizeLimit');
-          this.notification.show();
-          return;
-        } else {
-          file.progress = 0;
-          file.caption = '';
-          file.error = false;
-          file.complete = false;
-          temp.push(file);
-          (this.uploadFiles as any).push(file);
+      if (this.isWritable) {
+        for (let i = 0; i < e.dataTransfer.files.length; i++) {
+          const file = e.dataTransfer.files[i];
+          /* Drag & Drop file upload size limits to configuration */
+          if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
+            this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
+            this.notification.show();
+            return;
+          } else {
+            let reUploadFile = this.explorerFiles.find( elem => elem.filename === file.name);
+            if (reUploadFile) {
+              // plain javascript modal to confirm whether proceed to overwrite operation or not
+              /*
+               *  TODO: replace confirm operation with customized dialog
+               */
+              let confirmed = window.confirm(`${_text("data.explorer.FileAlreadyExists")}\n${file.name}\n${_text("data.explorer.DoYouWantToOverwrite")}`);
+              if (confirmed) {
+                file.progress = 0;
+                file.caption = '';
+                file.error = false;
+                file.complete = false;
+                (this.uploadFiles as any).push(file);
+              }
+            } 
+            else {
+              file.progress = 0;
+              file.caption = '';
+              file.error = false;
+              file.complete = false;
+              (this.uploadFiles as any).push(file);
+            }
+          }
         }
-      }
-      // return;
 
-      for (let i = 0; i < temp.length; i++) {
-        this.fileUpload(temp[i]);
-        this._clearExplorer();
+        for (let i = 0; i < this.uploadFiles.length; i++) {
+          this.fileUpload(this.uploadFiles[i]);
+          this._clearExplorer();
+        }
+      } else {
+        this.notification.text = _text('data.explorer.WritePermissionRequiredInUploadFiles');
+        this.notification.show();
       }
     });
   }
@@ -1524,27 +1647,49 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - add file to the input element
    * */
   _uploadFileChange(e) {
-    const length = e.target.files.length;
+    let length = e.target.files.length;
     for (let i = 0; i < length; i++) {
       const file = e.target.files[i];
 
       let text = "";
       let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
       for (let i = 0; i < 5; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-      file.id = text;
-      file.progress = 0;
-      file.caption = '';
-      file.error = false;
-      file.complete = false;
-      (this.uploadFiles as any).push(file);
+      /* File upload size limits to configuration */
+      if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
+        this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
+        this.notification.show();
+        return;
+      } else {
+        let reUploadFile = this.explorerFiles.find( elem => elem.filename === file.name);
+        if (reUploadFile) {
+          // plain javascript modal to confirm whether proceed to overwrite operation or not
+          /*
+           *  TODO: replace confirm operation with customized dialog
+           */
+          let confirmed = window.confirm(`${_text("data.explorer.FileAlreadyExists")}\n${file.name}\n${_text("data.explorer.DoYouWantToOverwrite")}`);
+          if (confirmed) {
+            file.id = text;
+            file.progress = 0;
+            file.caption = '';
+            file.error = false;
+            file.complete = false;
+            (this.uploadFiles as any).push(file);
+          }
+        } 
+        else {
+          file.id = text;
+          file.progress = 0;
+          file.caption = '';
+          file.error = false;
+          file.complete = false;
+          (this.uploadFiles as any).push(file);
+        }
+      }
     }
-
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < this.uploadFiles.length; i++) {
       this.fileUpload(this.uploadFiles[i]);
     }
-
-    this.shadowRoot.querySelector('#fileInput').value = '';
+    this.shadowRoot.querySelector('#fileInput').value = ''; 
   }
 
   /**
@@ -1823,12 +1968,29 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
+   *
+   * Initialize share-folder-dialog to the original layout
+   *
+   */
+  _initializeSharingFolderDialogLayout() {
+    let emailInputList= this.shadowRoot.querySelectorAll('#share-folder-dialog mwc-textfield.share-email');
+    if (emailInputList.length > 1) {
+      Array.prototype.forEach.call(emailInputList, (elem, index) => {
+        if (elem.id !== "first-email") {
+          elem.parentNode.removeChild(elem);
+        }
+      });
+    }
+  }
+
+  /**
    * Open dialog to share folder.
    *
    * @param {Event} e - click the share button
    * */
   _shareFolderDialog(e) {
     this.selectedFolder = this._getControlId(e);
+    this._initializeSharingFolderDialogLayout()
     this.openDialog('share-folder-dialog');
   }
 

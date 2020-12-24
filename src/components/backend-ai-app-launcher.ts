@@ -5,15 +5,10 @@
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/checkbox';
-import 'weightless/icon';
-import 'weightless/label';
-import 'weightless/textfield';
-import 'weightless/title';
-import '@material/mwc-icon-button';
 import '@material/mwc-button';
+import '@material/mwc-checkbox';
+import '@material/mwc-icon-button';
+import '@material/mwc-textfield';
 import 'macro-carousel';
 
 import './lablup-loading-spinner';
@@ -74,12 +69,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           padding: 3px;
         }
 
-        #app-dialog {
-          --component-width: 330px;
-          --component-width: auto;
-          --component-max-width: 70%;
-        }
-
         #ssh-dialog {
           --component-width: 330px;
         }
@@ -102,15 +91,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           --component-font-size: 14px;
         }
 
-        wl-button.app-launch-confirmation-button {
-          width: 335px;
-          --button-bg: var(--paper-red-50);
-          --button-bg-active: var(--paper-red-300);
-          --button-bg-hover: var(--paper-red-300);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-color: var(--paper-red-600);
-          --button-color-active: red;
-          --button-color-hover: red;
+        mwc-textfield {
+          --mdc-shape-small: 14px;
         }
 
         macro-carousel {
@@ -151,11 +133,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           --macro-carousel-pagination-size-dot: 10px;
         }
 
-        wl-label {
-          font-family: 'Ubuntu', 'Quicksand', Roboto, sans-serif;
-        }
-
-        wl-label.keyboard {
+        span.keyboard {
           font-family: Menlo, Courier, "Courier New";
           padding: 20px;
           background-color: var(--paper-grey-200);
@@ -163,19 +141,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           margin: 0px 10px;
         }
 
-        wl-label.invert {
+        span.invert {
           font-size: 26px;
           color: var(--paper-grey-200);
           background-color: transparent;
           margin: 0px 10px;
         }
 
-        wl-label.one-key {
+        span.one-key {
           text-align: center;
           width: 24px;
         }
 
-        wl-checkbox#hide-guide {
+        mwc-checkbox#hide-guide {
           margin-right: 10px;
         }
 
@@ -188,7 +166,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           -moz-background-clip: padding;
           -webkit-background-clip: padding-box;
           background-clip: padding-box;
-          border: 1px solid #ccc;
+          border: 1px solid #cccccc;
           background-color: #f9f9f9;
           padding: 0px 3px;
           display: inline-block;
@@ -260,7 +238,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
       resp = await fetch(rqst.uri, rqst);
       let contentType = resp.headers.get('Content-Type');
-      if (contentType.startsWith('application/json') ||
+      if (contentType === null) {
+        body = resp.ok;
+        if (!resp.ok) {
+          throw new Error(resp);
+        }
+      } else if (contentType.startsWith('application/json') ||
         contentType.startsWith('application/problem+json')) {
         body = await resp.json();
       } else if (contentType.startsWith('text/')) {
@@ -272,6 +255,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         throw body;
       }
     } catch (e) {
+      return resp;
       //console.log(e);
     }
     return body;
@@ -392,7 +376,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
     if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
       this.indicator.end();
-      this.notification.text = 'Proxy is not ready yet. Check proxy settings for detail.';
+      this.notification.text = _text('session.launcher.ProxyNotReady');;
       this.notification.show();
       return Promise.resolve(false);
     }
@@ -405,12 +389,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       },
       uri: this._getProxyURL() + 'conf'
     };
-    this.indicator.set(20, 'Setting up proxy for the app...');
+    this.indicator.set(20, _text('session.launcher.SettingUpProxyForApp'));
     try {
       const response = await this.sendRequest(rqst);
       if (response === undefined) {
         this.indicator.end();
-        this.notification.text = 'Proxy configurator is not responding.';
+        this.notification.text = _text('session.launcher.ProxyConfiguratorNotResponding');
         this.notification.show();
         return Promise.resolve(false);
       }
@@ -422,7 +406,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       if (openToPublic) {
         uri += '&open_to_public=true';
       }
-      this.indicator.set(50, 'Adding kernel to socket queue...');
+      this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
       const rqst_proxy = {
         method: 'GET',
         app: app,
@@ -462,19 +446,42 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
       this._open_wsproxy(sessionUuid, appName, port)
-        .then((response) => {
+        .then(async (response) => {
           if (response.url) {
-            this.indicator.set(100, 'Prepared.');
+            await this._connectToProxyWorker(response.url, urlPostfix);
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
-              console.log(appName + " proxy loaded: ");
-              console.log(sessionUuid);
+              //console.log(appName + " proxy loaded: ");
+              //console.log(sessionUuid);
             }, 1000);
           }
         });
     }
   }
+  async _connectToProxyWorker(url, urlPostfix) {
+    const rqst_proxy = {
+      method: 'GET',
+      uri: url + urlPostfix,
+      mode: 'no-cors',
+      redirect: 'follow',//'manual'
+      credentials: 'include'
+    };
+    let count = 0;
+    while (count < 5) {
+      let result = await this.sendRequest(rqst_proxy);
+      if (typeof result === 'object' && 'status' in result && [500,501,502].includes(result.status)) {
+        await this._sleep(1000);
+        count = count + 1;
+      } else {
+        count = 6;
+      }
+    }
+  }
 
+  async _sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
   async _runThisAppWithConfirmationIfNeeded(e) {
     const controller = e.target;
     const appName = controller['app-name'];
@@ -544,9 +551,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         port = userPort;
       }
       this._open_wsproxy(sessionUuid, appName, port)
-        .then((response) => {
+        .then(async (response) => {
+          await this._connectToProxyWorker(response.url, urlPostfix);
           if (appName === 'sshd') {
-            this.indicator.set(100, 'Prepared.');
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             this.sshPort = response.port;
             this._readSSHKey(sessionUuid);
             this._openSSHDialog();
@@ -554,15 +562,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               this.indicator.end();
             }, 1000);
           } else if (appName === 'vnc') {
-            this.indicator.set(100, 'Prepared.');
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             this.vncPort = response.port;
             this._openVNCDialog();
           } else if (response.url) {
-            this.indicator.set(100, 'Prepared.');
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
-              console.log(appName + " proxy loaded: ");
-              console.log(sessionUuid);
+              //console.log(appName + " proxy loaded: ");
+              //console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -600,14 +608,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
       this.indicator = await globalThis.lablupIndicator.start();
       this._open_wsproxy(sessionUuid, 'ttyd')
-        .then((response) => {
+        .then(async (response) => {
+          await this._connectToProxyWorker(response.url, '');
           if (response.url) {
-            this.indicator.set(100, 'Prepared.');
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url, '_blank');
               this.indicator.end();
-              console.log("Terminal proxy loaded: ");
-              console.log(sessionUuid);
+              //console.log("Terminal proxy loaded: ");
+              //console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -655,14 +664,33 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const div: HTMLElement = document.createElement('div');
     div.setAttribute('class', 'horizontal layout flex');
 
-    const checkbox = document.createElement('wl-checkbox');
+    const checkbox = document.createElement('mwc-checkbox');
     checkbox.setAttribute("id", "hide-guide");
-    const checkboxMsg = document.createElement('wl-label');
+    const checkboxMsg = document.createElement('span');
     checkboxMsg.innerHTML = `${_text("dialog.hide.DonotShowThisAgain")}`;
 
     div.appendChild(checkbox);
     div.appendChild(checkboxMsg);
     lastChild.appendChild(div);
+  }
+
+  /**
+   * Adjust port number in range of the starting number of port to the last number of the port.
+   *
+   * @param {Event} e -
+   */
+  _adjustPreferredAppPortNumber(e) {
+    const preferredPortNumber = e.target.value;
+    const defaultPreferredPortNumber = 10250;
+    const minPortNumber = 1025;
+    const maxPortNumber = 65534;
+    if (preferredPortNumber) {
+      if (preferredPortNumber < minPortNumber || preferredPortNumber > maxPortNumber) {
+        this.shadowRoot.querySelector('#app-port').value = defaultPreferredPortNumber;
+      }
+    } else {
+      this.shadowRoot.querySelector('#app-port').value = defaultPreferredPortNumber;
+    }
   }
 
   /**
@@ -682,9 +710,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <macro-carousel pagination navigation selected="0" auto-focus reduced-motion disable-drag>
         <article class="slide vertical layout center">
           <span class="flex" style="background-image:url(/resources/images/web-terminal-guide-1.png); border:auto;">
-            <wl-label class="keyboard">Ctrl</wl-label>
-            <wl-label class="keyboard invert">+</wl-label>
-            <wl-label class="keyboard one-key">B</wl-label>
+            <span class="keyboard">Ctrl</span>
+            <span class="keyboard invert">+</span>
+            <span class="keyboard one-key">B</span>
           </span>
           <p>${_text("webTerminalUsageGuide.CopyGuideOne")}</p>
         </article>
@@ -698,9 +726,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         </article>
         <article class="slide vertical layout center">
           <span style="background-image:url(/resources/images/web-terminal-guide-4.png);">
-            <wl-label class="keyboard">Ctrl</wl-label>
-            <wl-label class="keyboard invert">+</wl-label>
-            <wl-label class="keyboard one-key">B</wl-label>
+            <span class="keyboard">Ctrl</span>
+            <span class="keyboard invert">+</span>
+            <span class="keyboard one-key">B</span>
           </span>
           <div class="flex layout center-justified vertical center">
             <p>${_text("webTerminalUsageGuide.CopyGuideFour")}</p>
@@ -735,15 +763,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div style="padding:10px 20px 0 20px">
             ${globalThis.isElectron || !this.openPortToPublic ? `` : html`
               <div class="horizontal layout center">
-                <wl-checkbox id="chk-open-to-public" style="margin-right:0.5em"></wl-checkbox>
+                <mwc-checkbox id="chk-open-to-public" style="margin-right:0.5em"></mwc-checkbox>
                 ${_t("session.OpenToPublic")}
               </div>
             `}
             <div class="horizontal layout center">
-              <wl-checkbox id="chk-preferred-port" style="margin-right:0.5em"></wl-checkbox>
+              <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em"></mwc-checkbox>
               ${_t("session.TryPreferredPort")}
-              <wl-textfield id="app-port" type="number" no-label-float value="10250"
-                  min="1025" max="65534" style="margin-left:1em; width:70px"></wl-textfield>
+              <mwc-textfield id="app-port" type="number" no-label-float value="10250" outlined
+                  min="1025" max="65534" style="margin-left:1em; width:90px" @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
             </div>
           </div>
         </div>
