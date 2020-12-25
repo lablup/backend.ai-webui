@@ -1,3 +1,0 @@
-[submodule "src/plugins"]
-	path = src/plugins
-	url = git@github.com:lablup/backend.ai-console-enterprise-plugins.git
