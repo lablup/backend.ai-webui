@@ -1,5 +1,12 @@
 # Changelog
 
+## v20.12.3 (25/12/2020)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**] Update virtual folder naming validation pattern [#873](https://github.com/lablup/backend.ai-console/issues/873)
+
+
 ## v20.12.2 (23/12/2020)
 
 #### Enhancements:
