@@ -39,6 +39,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Number}) concurrency_used;
   @property({type: Number}) concurrency_max;
   @property({type: Number}) concurrency_limit;
+  @property({type: Number}) max_containers_per_session;
   @property({type: Array}) vfolders;
   // Percentage data for views
   @property({type: Object}) used_slot_percent;
@@ -304,6 +305,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       let resource_policy = response.keypair_resource_policy;
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
+      this.max_containers_per_session = resource_policy.max_containers_per_session;
       //this._refreshResourceTemplate('refresh-resource-policy');
       return this._updateGPUMode();
     }).catch((err) => {

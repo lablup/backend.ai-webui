@@ -117,6 +117,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) concurrency_used;
   @property({type: Number}) concurrency_max;
   @property({type: Number}) concurrency_limit;
+  @property({type: Number}) max_containers_per_session;
   @property({type: Array}) vfolders;
   @property({type: Array}) selectedVfolders;
   @property({type: Object}) used_slot_percent;
@@ -543,6 +544,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.concurrency_used = 0;
     this.concurrency_max = 0;
     this.concurrency_limit = 1;
+    this.max_containers_per_session = 1;
     this._status = 'inactive';
     this.cpu_request = 1;
     this.mem_request = 1;
@@ -752,6 +754,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.concurrency_used = this.resourceBroker.concurrency_used;
       this.userResourceLimit = this.resourceBroker.userResourceLimit;
       this.concurrency_max = this.resourceBroker.concurrency_max;
+      this.max_containers_per_session = this.resourceBroker.max_containers_per_session;
       this.gpu_mode = this.resourceBroker.gpu_mode;
       this.gpu_step = this.resourceBroker.gpu_step;
       this.gpu_modes = this.resourceBroker.gpu_modes;
@@ -1385,7 +1388,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.cpu_metric = cpu_metric;
           // monkeypatch for cluster_metric max size
           if (this.cluster_support && this.cluster_mode === 'single-node') {
-            this.cluster_metric.max = cpu_metric.max;
+            this.cluster_metric.max = Math.min(cpu_metric.max , this.max_containers_per_session);
             if (this.cluster_metric.min > this.cluster_metric.max) {
               this.cluster_metric.min = this.cluster_metric.max;
             } else {
