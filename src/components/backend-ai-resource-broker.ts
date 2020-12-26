@@ -102,6 +102,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Boolean}) _GPUmodeUpdated = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Boolean}) support_CUDA_MIG_mode = true; // temporally true for testing
+  @property({type: Array}) support_CUDA_MIG_slots  = ['1g.5gb', '2g.10gb']; // temporally added for testing.
   @property({type: Array}) disableLaunch;
   // Custom information
   @property({type: Number}) max_cpu_core_per_session = 64;
@@ -489,6 +490,16 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       let project_resource_using = response.group_using;
       let device_list = {
         'cuda.device': 'cuda_device',
+        /*'cuda.device:1g.5gb': 'cuda_device:7g.80gb',
+        'cuda.device:2g.10gb': 'cuda_device:7g.80gb',
+        'cuda.device:3g.20gb': 'cuda_device:7g.80gb',
+        'cuda.device:4g.20gb': 'cuda_device:7g.80gb',
+        'cuda.device:7g.40gb': 'cuda_device:7g.80gb', // A100-40G
+        'cuda.device:1g.10gb': 'cuda_device:7g.80gb',
+        'cuda.device:2g.20gb': 'cuda_device:7g.80gb',
+        'cuda.device:3g.40gb': 'cuda_device:7g.80gb',
+        'cuda.device:4g.40gb': 'cuda_device:7g.80gb',
+        'cuda.device:7g.80gb': 'cuda_device:7g.80gb', // A100-80G*/
         'cuda.shares': 'cuda_shares',
         'rocm.device': 'rocm_device',
         'tpu.device': 'tpu_device'
