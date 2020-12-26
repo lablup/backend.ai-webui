@@ -802,6 +802,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     return humanizedName;
   }
 
+  _cap(text) {
+    text = text.replace(/^./, text[0].toUpperCase());
+    return text;
+  }
+
   _updateEnvironment() {
     const langs = Object.keys(this.supports);
     if (langs === undefined) return;
@@ -843,9 +848,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       if (kernelName in this.tags) {
         tags = tags.concat(this.tags[kernelName]);
       }
-      if (prefix != '' && prefix != 'lablup') {
+      if (prefix != '' && !['lablup', 'cloud', 'stable'].includes(prefix)) {
         tags.push({
-          tag: prefix,
+          tag: this._cap(prefix),
           color: 'purple'
         });
       }
