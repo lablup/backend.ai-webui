@@ -101,6 +101,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Boolean}) _default_version_updated = false;
   @property({type: Boolean}) _GPUmodeUpdated = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
+  @property({type: Boolean}) support_CUDA_MIG_mode = true; // temporally true for testing
   @property({type: Array}) disableLaunch;
   // Custom information
   @property({type: Number}) max_cpu_core_per_session = 64;

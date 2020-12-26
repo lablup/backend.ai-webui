@@ -185,7 +185,10 @@
       "SettingUpProxyForApp": "Setting up proxy for the app...",
       "AddingKernelToSocketQueue": "Adding kernel to socket queue...",
       "ManualImageName": "Image Name (Manual)",
-      "NotEnoughResource": "Not enough resource"
+      "NotEnoughResource": "Not enough resource",
+      "UseCUDAMIG": "Use CUDA MIG",
+      "MIGSlot": "MIG Slot",
+      "chooseMIGSlot": "Choose One MIG Slot"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
