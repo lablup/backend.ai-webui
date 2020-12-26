@@ -888,24 +888,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
     }
     config['cpu'] = this.cpu_request;
-    switch (this.gpu_request_type) {
-      case 'cuda.shares':
-        config['cuda.shares'] = this.gpu_request;
-        break;
-      case 'cuda.device':
-        config['cuda.device'] = this.gpu_request;
-        break;
-      case 'rocm.device':
-        config['rocm.device'] = this.gpu_request;
-        break;
-      case 'tpu.device':
-        config['tpu.device'] = this.gpu_request;
-        break;
-      default:
-        // Fallback to current gpu mode if there is a gpu request, but without gpu type.
-        if (this.gpu_request > 0 && this.gpu_mode) {
-          config[this.gpu_mode] = this.gpu_request;
-        }
+    if (this.use_cuda_mig) { // CUDA MIG does not allow working with other device types.
+      let mig_device = this.shadowRoot.querySelector('#mig-slot-type').value;
+      config[mig_device] = 1;
+    } else {
+      switch (this.gpu_request_type) {
+        case 'cuda.shares':
+          config['cuda.shares'] = this.gpu_request;
+          break;
+        case 'cuda.device':
+          config['cuda.device'] = this.gpu_request;
+          break;
+        case 'rocm.device':
+          config['rocm.device'] = this.gpu_request;
+          break;
+        case 'tpu.device':
+          config['tpu.device'] = this.gpu_request;
+          break;
+        default:
+          // Fallback to current gpu mode if there is a gpu request, but without gpu type.
+          if (this.gpu_request > 0 && this.gpu_mode) {
+            config[this.gpu_mode] = this.gpu_request;
+          }
+      }
     }
     if (String(this.shadowRoot.querySelector('#mem-resource').value) === "Infinity") {
       config['mem'] = String(this.shadowRoot.querySelector('#mem-resource').value);
@@ -2135,7 +2140,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ${['1g.5gb', '2g.10gb'].map(item => html`
                 <mwc-list-item class="mig-slot-dropdown"
                                id="${item}"
-                               value="${item}">
+                               value="cuda.device:${item}">
                   ${item}
                 </mwc-list-item>
               `)}
