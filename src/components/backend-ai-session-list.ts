@@ -308,7 +308,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           if ("icon" in this.imageInfo[key]) {
             this.kernel_icons[key] = this.imageInfo[key].icon;
           } else {
-            this.kernel_icons[key] = 'default.png';
+            this.kernel_icons[key] = '';
           }
         }
       }
@@ -665,7 +665,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (name in this.kernel_icons) {
       return this.kernel_icons[name];
     } else {
-      return 'default.png';
+      return '';
     }
   }
 
