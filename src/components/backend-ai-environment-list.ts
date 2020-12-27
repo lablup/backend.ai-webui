@@ -634,8 +634,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this.servicePortsMsg = _text('environment.AppNameMustNotBeEmpty');
         return false;
       }
-      if (!["http", "tcp", "pty"].includes(protocol)) {
-        this.servicePortsMsg = _text('environment.ProtocolMustBeOneOfHttpTcpPty');
+      if (!["http", "tcp", "pty", "preopen"].includes(protocol)) {
+        this.servicePortsMsg = _text('environment.ProtocolMustBeOneOfSupported');
         return false;
       }
       if (ports.has(port)) {

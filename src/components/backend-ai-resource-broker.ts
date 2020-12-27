@@ -39,6 +39,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Number}) concurrency_used;
   @property({type: Number}) concurrency_max;
   @property({type: Number}) concurrency_limit;
+  @property({type: Number}) max_containers_per_session;
   @property({type: Array}) vfolders;
   // Percentage data for views
   @property({type: Object}) used_slot_percent;
@@ -304,6 +305,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       let resource_policy = response.keypair_resource_policy;
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
+      this.max_containers_per_session = resource_policy.max_containers_per_session;
       //this._refreshResourceTemplate('refresh-resource-policy');
       return this._updateGPUMode();
     }).catch((err) => {
@@ -768,11 +770,15 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     return humanizedName;
   }
 
+  _cap(text) {
+    text = text.replace(/^./, text[0].toUpperCase());
+    return text;
+  }
+
   _updateEnvironment() {
     const langs = Object.keys(this.supports);
     if (langs === undefined) return;
     langs.sort((a, b) => (this.supportImages[a].group > this.supportImages[b].group) ? 1 : -1); // TODO: fix this to rearrange kernels
-    // TODO: add category indicator between groups
     let interCategory: string = '';
     this.languages = [];
     langs.forEach((item, index) => {
@@ -809,9 +815,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       if (kernelName in this.tags) {
         tags = tags.concat(this.tags[kernelName]);
       }
-      if (prefix != '' && prefix != 'lablup') {
+      if (prefix != '' && !['lablup', 'cloud', 'stable'].includes(prefix)) {
         tags.push({
-          tag: prefix,
+          tag: this._cap(prefix),
           color: 'purple'
         });
       }
