@@ -48,9 +48,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
-  @property({type: Array}) appLaunchBeforeTunneling = ['nniboard'];
+  @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
   @property({type: Object}) appController = Object();
   @property({type: Object}) openPortToPublic = false;
+  @property({type: Array}) appOrder;
+  @property({type: Array}) appSupportWithCategory = [];
 
   constructor() {
     super();
@@ -74,7 +76,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
 
         .app-icon {
-          margin-left: 5px;
+          margin-left: 15px;
           margin-right: 5px;
         }
 
@@ -82,6 +84,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           display: block;
           width: 80px;
           text-align: center;
+          line-height: 15px;
           height: 25px;
           font-size: 13px;
         }
@@ -89,6 +92,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         #app-launch-confirmation-dialog {
           --component-width: 400px;
           --component-font-size: 14px;
+        }
+
+        #app-dialog {
+          --component-width: 400px;
         }
 
         mwc-textfield {
@@ -221,6 +228,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     ).then(
       json => {
         this.appTemplate = json.appTemplate;
+        const apps = Object.keys(this.appTemplate);
+        apps.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
+        this.appOrder = apps;
       }
     );
   }
@@ -304,15 +314,30 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return this._runAppWithParameters(param);
     }
     this.appSupportList = [];
-    this.appSupportList.push({ // Force push terminal
-      'name': 'ttyd',
-      'title': 'Console',
-      'redirect': "",
-      'src': './resources/icons/terminal.svg'
-    });
+    if (!appServices.includes('ttyd')) {
+      this.appSupportList.push({ // Force push terminal
+        'name': 'ttyd',
+        'title': 'Console',
+        'category': '0.Default',
+        'redirect': "",
+        'src': './resources/icons/terminal.svg'
+      });
+    }
+    appServices.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
+    let interText = '';
     appServices.forEach((elm) => {
       if (elm in this.appTemplate) {
         if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
+          if (interText !== this.appTemplate[elm][0].category) {
+            this.appSupportList.push({
+              "name": this.appTemplate[elm][0].category.substring(2),
+              "title": this.appTemplate[elm][0].category.substring(2),
+              "category": 'divider',
+              "redirect": "",
+              "src": ""
+            });
+            interText = this.appTemplate[elm][0].category;
+          }
           this.appTemplate[elm].forEach((app) => {
             this.appSupportList.push(app);
           });
@@ -322,6 +347,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           this.appSupportList.push({
             'name': elm,
             'title': elm,
+            'category': 'Default',
             'redirect': "",
             'src': './resources/icons/default_app.svg'
           });
@@ -376,7 +402,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
     if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
       this.indicator.end();
-      this.notification.text = _text('session.launcher.ProxyNotReady');;
+      this.notification.text = _text('session.launcher.ProxyNotReady');
+      ;
       this.notification.show();
       return Promise.resolve(false);
     }
@@ -459,6 +486,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         });
     }
   }
+
   async _connectToProxyWorker(url, urlPostfix) {
     const rqst_proxy = {
       method: 'GET',
@@ -470,7 +498,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let count = 0;
     while (count < 5) {
       let result = await this.sendRequest(rqst_proxy);
-      if (typeof result === 'object' && 'status' in result && [500,501,502].includes(result.status)) {
+      if (typeof result === 'object' && 'status' in result && [500, 501, 502].includes(result.status)) {
         await this._sleep(1000);
         count = count + 1;
       } else {
@@ -482,6 +510,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   async _sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
   async _runThisAppWithConfirmationIfNeeded(e) {
     const controller = e.target;
     const appName = controller['app-name'];
@@ -745,22 +774,27 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="app-dialog" fixed backdrop>
-        <span slot="title">App</span>
+      <backend-ai-dialog id="app-dialog" fixed backdrop narrowLayout>
+        <div slot="title" class="horizontal layout center">
+          <span>App</span>
+        </div>
         <div slot="content">
-          <div style="padding:15px;" class="horizontal layout wrap center start-justified">
+          <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
             ${this.appSupportList.map(item => html`
+              ${item.category === 'divider' ? html`
+              <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${item.title}</h3>
+              `:html`
               <div class="vertical layout center center-justified app-icon">
                 <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
                                  .url-postfix="${item.redirect}"
                                  @click="${(e) => this._runThisAppWithConfirmationIfNeeded(e)}">
-                  <img src="${item.src}" />
+                  <img src="${item.src}"/>
                 </mwc-icon-button>
                 <span class="label">${item.title}</span>
-              </div>
+              </div>`}
             `)}
           </div>
-          <div style="padding:10px 20px 0 20px">
+          <div style="padding:10px 20px 15px 20px">
             ${globalThis.isElectron || !this.openPortToPublic ? `` : html`
               <div class="horizontal layout center">
                 <mwc-checkbox id="chk-open-to-public" style="margin-right:0.5em"></mwc-checkbox>
@@ -770,8 +804,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <div class="horizontal layout center">
               <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em"></mwc-checkbox>
               ${_t("session.TryPreferredPort")}
-              <mwc-textfield id="app-port" type="number" no-label-float value="10250" outlined
-                  min="1025" max="65534" style="margin-left:1em; width:90px" @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
+              <mwc-textfield id="app-port" type="number" no-label-float value="10250"
+                             min="1025" max="65534" style="margin-left:1em; width:90px"
+                             @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
             </div>
           </div>
         </div>
@@ -779,11 +814,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <backend-ai-dialog id="ssh-dialog" fixed backdrop>
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content" style="padding:15px;">
-          <div style="padding:15px 0;" >${_t("session.SFTPDescription")}</div>
+          <div style="padding:15px 0;">${_t("session.SFTPDescription")}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t("session.ConnectionInformation")}</h4>
-            <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a></div>
-            <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
+            <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a>
+            </div>
+            <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a>
+            </div>
             <div><span>Port:</span> ${this.sshPort}</div>
             <a id="sshkey-download-link" style="margin-top:15px;" href="">
               <mwc-button class="fg apps green">${_t("DownloadSSHKey")}</mwc-button>
@@ -797,7 +834,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div style="padding:15px 0;">${_t("session.UseYourFavoriteSSHApp")}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t("session.ConnectionInformation")}</h4>
-            <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a></div>
+            <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a>
+            </div>
           </section>
         </div>
       </backend-ai-dialog>
@@ -807,14 +845,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <p>${_t('session.applauncher.AppMustBeRunDialog')}</p>
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
-        <div slot="footer" style="padding-top:0;margin:0 5px;">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
-          raised
-          id="app-launch-confirmation-button"
-          icon="rowing"
-          label="${_t('session.applauncher.ConfirmAndRun')}"
-          style="width:100%;"
-          @click="${() => this._runApp(this.appController)}">
+            raised
+            id="app-launch-confirmation-button"
+            icon="rowing"
+            label="${_t('session.applauncher.ConfirmAndRun')}"
+            style="width:100%;"
+            @click="${() => this._runApp(this.appController)}">
           </mwc-button>
         </div>
       </backend-ai-dialog>
@@ -823,7 +861,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         <div slot="content"></div>
         <div slot="footer"></div>
       </backend-ai-dialog>
-      `;
+    `;
   }
 }
 

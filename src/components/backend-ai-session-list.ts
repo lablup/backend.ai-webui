@@ -84,6 +84,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) spinner = Object();
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
+  @property({type: Object}) kernel_icons = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Proxy}) statusColorTable = new Proxy({
     'idle-timeout': 'green',
@@ -291,7 +292,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this._grid = this.shadowRoot.querySelector('#list-grid');
-    this._initializeAppTemplate();
     this.refreshTimer = null;
     fetch('resources/image_metadata.json').then(
       response => response.json()
@@ -304,6 +304,11 @@ export default class BackendAiSessionList extends BackendAIPage {
             this.kernel_labels[key] = this.imageInfo[key].label;
           } else {
             this.kernel_labels[key] = [];
+          }
+          if ("icon" in this.imageInfo[key]) {
+            this.kernel_icons[key] = this.imageInfo[key].icon;
+          } else {
+            this.kernel_icons[key] = 'default.png';
           }
         }
       }
@@ -362,16 +367,6 @@ export default class BackendAiSessionList extends BackendAIPage {
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._refreshJobData();
     }
-  }
-
-  _initializeAppTemplate() {
-    fetch('resources/app_template.json').then(
-      response => response.json()
-    ).then(
-      json => {
-        this.appTemplate = json.appTemplate;
-      }
-    );
   }
 
   /**
@@ -545,6 +540,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             sessions[objectKey].cuda_fgpu_slot = parseFloat(occupied_slots['cuda.shares']).toFixed(2);
           }
           sessions[objectKey].kernel_image = kernelImage;
+          sessions[objectKey].icon = this._getKernelIcon(session.image);
           sessions[objectKey].sessionTags = this._getKernelInfo(session.image);
           const specs = session.image.split('/');
           sessions[objectKey].cluster_size = parseInt(sessions[objectKey].cluster_size);
@@ -655,6 +651,22 @@ export default class BackendAiSessionList extends BackendAIPage {
       ]);
     }
     return tags;
+  }
+
+  /**
+   * Get kernel icon
+   *
+   * @param {string} lang - session language
+   * */
+  _getKernelIcon(lang) {
+    if (lang === undefined) return [];
+    const specs = lang.split('/');
+    let name = (specs[2] || specs[1]).split(':')[0];
+    if (name in this.kernel_icons) {
+      return this.kernel_icons[name];
+    } else {
+      return 'default.png';
+    }
   }
 
   _byteToMB(value) {
@@ -1094,22 +1106,30 @@ export default class BackendAiSessionList extends BackendAIPage {
       html`
         <div class="layout vertical start">
           <div>${rowData.item[this.sessionNameField]}</div>
-          ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
-            ${item.map(item => {
-        if (item.category === 'Env') {
-          item.category = item.tag;
-        }
-        if (item.category && rowData.item.baseversion) {
-          item.tag = rowData.item.baseversion;
-        }
-        return html`
+          <div class="horizontal center center-justified layout">
+          ${rowData.item.icon ? html`
+            <img src="resources/icons/${rowData.item.icon}" style="width:32px;height:32px;margin-right:10px;" />
+          `: html`
+          `}
+            <div class="vertical start layout">
+              ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
+              <div class="horizontal center layout">
+                ${item.map(item => {
+                  if (item.category === 'Env') {
+                    item.category = item.tag;
+                  }
+                  if (item.category && rowData.item.baseversion) {
+                    item.tag = rowData.item.baseversion;
+                  }
+                  return html`
                 <lablup-shields app="${item.category === undefined ? '' : item.category}"
                                 color="${item.color}"
                                 description="${item.tag}"
-                                ui="round"></lablup-shields>
-              `;
-      })}
-          `) : html``}
+                                ui="round"
+                                style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                    `;
+                })}
+              </div>`) : html``}
           ${rowData.item.additional_reqs ? html`
             <div class="layout horizontal center wrap">
               ${rowData.item.additional_reqs.map((tag) => {
@@ -1132,6 +1152,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                               style="margin-top:3px;margin-right:3px;"></lablup-shields>
             </div>
           `: html``}
+          </div>
         </div>
       `, root
     );
