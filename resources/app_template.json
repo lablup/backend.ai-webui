@@ -4,6 +4,7 @@
       {
         "name": "jupyter",
         "title": "Jupyter Notebook",
+        "category": "Development",
         "redirect": "&redirect=/tree",
         "src": "./resources/icons/jupyter.png"
       }
@@ -12,6 +13,7 @@
       {
         "name": "jupyter",
         "title": "Jupyter Extension",
+        "category": "Development",
         "redirect": "&redirect=/nbextensions",
         "src": "./resources/icons/jupyter.png",
         "icon": "vaadin:clipboard-pulse"
@@ -21,6 +23,7 @@
       {
         "name": "jupyterlab",
         "title": "JupyterLab",
+        "category": "Development",
         "redirect": "&redirect=/lab",
         "src": "./resources/icons/jupyterlab.png",
         "icon": "vaadin:flask"
@@ -30,6 +33,7 @@
       {
         "name": "tensorboard",
         "title": "TensorBoard",
+        "category": "Machine Learning Tools",
         "redirect": "&redirect=/",
         "src": "./resources/icons/tensorflow.png"
       }
@@ -38,6 +42,7 @@
       {
         "name": "digits",
         "title": "DIGITS",
+        "category": "Machine Learning Tools",
         "redirect": "&redirect=/",
         "src": "./resources/icons/nvidia.png"
       }
@@ -46,6 +51,7 @@
       {
         "name": "h2o-dai",
         "title": "H2O driverless AI",
+        "category": "Machine Learning Tools",
         "redirect": "",
         "src": "./resources/icons/h2o.png"
       }
@@ -54,6 +60,7 @@
       {
         "name": "vscode",
         "title": "Visual Studio Code",
+        "category": "Development",
         "redirect": "",
         "src": "./resources/icons/vscode.svg"
       }
@@ -62,6 +69,7 @@
       {
         "name": "nniboard",
         "title": "NNI Board",
+        "category": "AutoML",
         "redirect": "",
         "src": "./resources/icons/nni.png"
       }
@@ -70,6 +78,7 @@
       {
         "name": "mlflow-ui",
         "title": "MLFlow UI",
+        "category": "AutoML",
         "redirect": "",
         "src": "./resources/icons/mlflow.png"
       }
@@ -78,6 +87,7 @@
       {
         "name": "vnc",
         "title": "VNC",
+        "category": "Desktop Environment",
         "redirect": "",
         "src": "./resources/icons/novnc.svg"
       }
@@ -86,6 +96,7 @@
       {
         "name": "vnc-web",
         "title": "VNC (Web)",
+        "category": "Desktop Environment",
         "redirect": "/vnc.html?host=<proxy-host>&port=<port-number>&password=backendai&autoconnect=true",
         "src": "./resources/icons/novnc.svg"
       }
@@ -94,15 +105,8 @@
       {
         "name": "novnc",
         "title": "VNC (Web)",
+        "category": "Desktop Environment",
         "redirect": "/vnc.html?autoconnect=true&amp;password=backendai",
-        "src": "./resources/icons/default_app.svg"
-      }
-    ],
-    "novnc": [
-      {
-        "name": "novnc",
-        "title": "VNC (Web)",
-        "redirect": "",
         "src": "./resources/icons/novnc.svg"
       }
     ],
@@ -110,6 +114,7 @@
       {
         "name": "xfce",
         "title": "XFCE",
+        "category": "Desktop Environment",
         "redirect": "",
         "src": "./resources/icons/xfce.png"
       }
@@ -118,6 +123,7 @@
       {
         "name": "gnome",
         "title": "GNOME Desktop",
+        "category": "Desktop Environment",
         "redirect": "",
         "src": "./resources/icons/gnome.svg"
       }
@@ -126,6 +132,7 @@
       {
         "name": "kde",
         "title": "KDE",
+        "category": "Desktop Environment",
         "redirect": "",
         "src": "./resources/icons/kde.svg"
       }
@@ -134,6 +141,7 @@
       {
         "name": "matlab",
         "title": "MATLAB",
+        "category": "Scientific Computing",
         "redirect": "",
         "src": "./resources/icons/matlab.png"
       }
@@ -142,6 +150,7 @@
       {
         "name": "spectravis",
         "title": "SpectraVIS",
+        "category": "Scientific Computing",
         "redirect": "",
         "src": "./resources/icons/default_app.svg"
       }
@@ -150,6 +159,7 @@
       {
         "name": "sftp",
         "title": "SFTP",
+        "category": "Utilities",
         "redirect": "",
         "src": "./resources/icons/sftp.png"
       }
@@ -158,6 +168,7 @@
       {
         "name": "sshd",
         "title": "SSH / SFTP",
+        "category": "Utilities",
         "redirect": "",
         "src": "./resources/icons/sftp.png"
       }
