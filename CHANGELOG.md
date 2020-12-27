@@ -1,5 +1,12 @@
 # Changelog
 
+## v20.12.4 (27/12/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**app**][**cloud**][**enhancement**][**enterprise**][**major**] App category support [#872](https://github.com/lablup/backend.ai-console/issues/872)
+
+
 ## v20.12.3 (25/12/2020)
 
 #### Bug Fixes:
