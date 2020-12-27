@@ -779,7 +779,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     const langs = Object.keys(this.supports);
     if (langs === undefined) return;
     langs.sort((a, b) => (this.supportImages[a].group > this.supportImages[b].group) ? 1 : -1); // TODO: fix this to rearrange kernels
-    // TODO: add category indicator between groups
     let interCategory: string = '';
     this.languages = [];
     langs.forEach((item, index) => {
