@@ -1,5 +1,17 @@
 # Changelog
 
+## v20.12.5 (29/12/2020)
+
+#### Enhancements:
+
+- [**UI / UX**][**cloud**][**enhancement**][**enterprise**][**library / SDK**][**minor**] Option to change kernel to use import feature [#876](https://github.com/lablup/backend.ai-console/issues/876)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**minor**] User setting button / help button is missing when mini sidebar is enabled. [#878](https://github.com/lablup/backend.ai-console/issues/878)
+- [**bug**][**urgency**] Directory is displays as a normal file in vfolder explorer on vfolder host of purestorage type [#874](https://github.com/lablup/backend.ai-console/issues/874)
+
+
 ## v20.12.4 (27/12/2020)
 
 #### Enhancements:
