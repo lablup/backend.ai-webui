@@ -451,7 +451,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.default_session_environment = config.general.defaultSessionEnvironment;
     }
     if (typeof config.general === "undefined" || typeof config.general.defaultImportEnvironment === "undefined" || config.general.defaultImportEnvironment === '') {
-      this.default_import_environment = '';
+      this.default_import_environment = 'index.docker.io/lablup/python:3.8-ubuntu18.04';
     } else {
       this.default_import_environment = config.general.defaultImportEnvironment;
     }
