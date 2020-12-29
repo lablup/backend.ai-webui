@@ -92,6 +92,14 @@ export const BackendAiConsoleStyles = [
       border-bottom: var(--general-sidebar-h3-border-color);
     }
 
+    #sidebar-menu {
+      height:calc(100vh - 280px);
+    }
+
+    .mini-ui #sidebar-menu {
+      height:calc(100vh - 226px)!important;
+    }
+
     mwc-list.sidebar {
       cursor: pointer;
       color: var(--general-sidebar-color, #949494);
