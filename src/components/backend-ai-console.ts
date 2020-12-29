@@ -1247,7 +1247,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
-          <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}" style="height:calc(100vh - 280px);">
+          <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}">
               <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
               <span class="full-menu">${_t("console.menu.Summary")}</span>
@@ -1322,8 +1322,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 `) : html``}
             ` : html``}
           </mwc-list>
-          <footer class="full-menu">
-            <div class="terms-of-use" style="margin-bottom:10px;">
+          <footer>
+            <div class="terms-of-use full-menu" style="margin-bottom:10px;">
               <small style="font-size:11px;">
                 <a @click="${() => this.showTOSAgreement()}">${_t("console.menu.TermsOfService")}</a>
                 ·
@@ -1336,7 +1336,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 ` : html``}
               </small>
             </div>
-            <address>
+            <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
               <small class="sidebar-footer" style="font-size:9px;">20.12.4.201229</small>
             </address>
