@@ -60,6 +60,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) api_endpoint = '';
   @property({type: String}) domain_name = '';
   @property({type: String}) default_session_environment = '';
+  @property({type: String}) default_import_environment = '';
   @property({type: String}) blockType = '';
   @property({type: String}) blockMessage = '';
   @property({type: String}) connection_mode = 'SESSION';
@@ -448,6 +449,11 @@ export default class BackendAILogin extends BackendAIPage {
       this.default_session_environment = '';
     } else {
       this.default_session_environment = config.general.defaultSessionEnvironment;
+    }
+    if (typeof config.general === "undefined" || typeof config.general.defaultImportEnvironment === "undefined" || config.general.defaultImportEnvironment === '') {
+      this.default_import_environment = '';
+    } else {
+      this.default_import_environment = config.general.defaultImportEnvironment;
     }
     let connection_mode: string | null = localStorage.getItem('backendaiconsole.connection_mode');
     if (globalThis.isElectron && connection_mode !== null && connection_mode != '' && connection_mode != '""') {
@@ -929,6 +935,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config._proxyURL = this.proxy_url;
       globalThis.backendaiclient._config.domainName = this.domain_name;
       globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
+      globalThis.backendaiclient._config.default_import_environment = this.default_import_environment;
       globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
       globalThis.backendaiclient._config.maxCPUCoresPerSession = this.maxCPUCoresPerSession;

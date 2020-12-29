@@ -96,6 +96,7 @@ These are options in `config.toml`.
 apiEndpoint = "[Default API Endpoint. If blank, user input field will be shown.]"
 apiEndpointText = "[Placeholder text instead of API endpoint input field.]"
 defaultSessionEnvironment = "[Default session kernel. If blank, alphabetically first kernel will be default.]"
+defaultImportEnvironment = "[Default kernel to use import features. If blank, index.docker.io/lablup/python:3.8-ubuntu18.04 will be used.]"
 siteDescription = "[Site description placeholder. It will be at the bottom of 'Backend.AI' at the top left corner.]"
 connectionMode = "[Connection mode. Default is API. Currenly supports API and SESSION]"
 allowChangeSigninMode = false # Allows user to change signin mode between `API` and `SESSION`

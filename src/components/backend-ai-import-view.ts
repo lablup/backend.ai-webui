@@ -232,7 +232,7 @@ export default class BackendAIImport extends BackendAIPage {
     return globalThis.backendaiclient.get_resource_slots().then((response) => {
       //let results = response;
       indicator.set(50, _text('import.Downloading'));
-      return globalThis.backendaiclient.createIfNotExists('index.docker.io/lablup/python:3.8-ubuntu18.04', null, imageResource, 60000);
+      return globalThis.backendaiclient.createIfNotExists(globalThis.backendaiclient._config.default_import_environment, null, imageResource, 60000);
     }).then(async (response) => {
       indicator.set(80, _text('import.CleanUpImportTask'));
       await globalThis.backendaiclient.destroy(response.sessionId);
