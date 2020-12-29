@@ -1035,7 +1035,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Render whether owner of the vfolder or not using icon
-   * 
+   *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
@@ -1324,7 +1324,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * dispatch backend-ai-folder-list-changed event
-   * 
+   *
    */
   _triggerFolderListChanged() {
     let event = new CustomEvent('backend-ai-folder-list-changed');
@@ -1444,7 +1444,24 @@ export default class BackendAiStorageList extends BackendAIPage {
     let job = globalThis.backendaiclient.vfolder.list_files(path, id);
     return job.then(value => {
       this.shadowRoot.querySelector('#fileList-grid').selectedItems = [];
-      this.explorer.files = JSON.parse(value.files);
+      const fileInfo = JSON.parse(value.files);
+      fileInfo.forEach((info, cnt) => {
+        let ftype = 'FILE';
+        if (info.filename === value.items[cnt].name) {
+          // value.files and value.items have same order
+          ftype = value.items[cnt].type;
+        } else {
+          // In case the order is mixed
+          for (let i = 0; i < value.items.length; i++) {
+            if (info.filename === value.items[i].name) {
+              ftype = value.items[i].type;
+              break;
+            }
+          }
+        }
+        info.type = ftype;
+      });
+      this.explorer.files = fileInfo;
       this.explorerFiles = this.explorer.files;
       if (dialog) {
         this.openDialog('folder-explorer-dialog');
@@ -1534,7 +1551,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _isDir(file) {
-    return file.mode.startsWith("d");
+    return file.type === 'DIRECTORY';
   }
 
   _byteToMB(value) {
@@ -1605,7 +1622,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 file.complete = false;
                 (this.uploadFiles as any).push(file);
               }
-            } 
+            }
             else {
               file.progress = 0;
               file.caption = '';
@@ -1675,7 +1692,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             file.complete = false;
             (this.uploadFiles as any).push(file);
           }
-        } 
+        }
         else {
           file.id = text;
           file.progress = 0;
@@ -1689,7 +1706,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     for (let i = 0; i < this.uploadFiles.length; i++) {
       this.fileUpload(this.uploadFiles[i]);
     }
-    this.shadowRoot.querySelector('#fileInput').value = ''; 
+    this.shadowRoot.querySelector('#fileInput').value = '';
   }
 
   /**
