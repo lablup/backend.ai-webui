@@ -840,11 +840,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     let isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
     let vfolder = this.selectedVfolders;
-    this.cpu_request = this.shadowRoot.querySelector('#cpu-resource').value;
-    this.mem_request = this.shadowRoot.querySelector('#mem-resource').value;
-    this.shmem_request = this.shadowRoot.querySelector('#shmem-resource').value;
-    this.gpu_request = this.shadowRoot.querySelector('#gpu-resource').value;
-    this.session_request = this.shadowRoot.querySelector('#session-resource').value;
+    this.cpu_request = parseInt(this.shadowRoot.querySelector('#cpu-resource').value);
+    this.mem_request = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
+    this.shmem_request = parseFloat(this.shadowRoot.querySelector('#shmem-resource').value);
+    this.gpu_request = parseFloat(this.shadowRoot.querySelector('#gpu-resource').value);
+    this.session_request = parseInt(this.shadowRoot.querySelector('#session-resource').value);
     this.num_sessions = this.session_request;
     if (this.sessions_list.includes(sessionName)) {
       this.notification.text = _text('session.launcher.DuplicatedSessionName');
@@ -1682,8 +1682,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       gpu_type = 'none';
       gpu_value = 0;
     }
-    const shmem = button.shmem;
-    this.shmem_request = shmem ? shmem : 0.0625; // 64MB as default. Enough for single core CPU.
+    const shmem = (button.shmem) ? button.shmem : this.shmem_metric;
+    
+    // if resource preset is initially selected
+    if (typeof shmem !== 'number') {
+      this.shmem_request = shmem.preferred;
+    } else {
+      this.shmem_request = shmem ? shmem : 0.0625;  // 64MB as default. Enough for single core CPU.
+      // this.shmem_metric.preferred = this.shmem_request;
+    }
+    this.shmem_metric.max = button.mem; // resource preset value of shared memory must be smaller than memory
     this._updateResourceIndicator(cpu, mem, gpu_type, gpu_value);
   }
 
@@ -1876,6 +1884,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.shadowRoot.querySelector('#resource-templates').selectedText = _text('session.launcher.CustomResourceApplied');
   }
 
+  _updateShmemLimit() {
+    let shmemEl = this.shadowRoot.querySelector('#shmem-resource');
+    let shmem_value = shmemEl.value;
+    this.shmem_metric.max = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
+    // clamp the max value to the smaller of the current memory value or the configuration file value.
+    this.shadowRoot.querySelector('#shmem-resource').max = Math.min(this.max_shm_per_session, this.shmem_metric.max);
+    if (parseFloat(shmem_value) > this.shmem_metric.max) {
+      shmem_value = this.shmem_metric.max;
+      shmemEl.syncToSlider(); // explicitly call method of the slider component to avoid value mismatching
+    }
+  }
+
   /**
    * Get version information - Version, Language, Additional information.
    *
@@ -2064,8 +2084,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <mwc-list-item value="${item.name}"
                            id="${item.name}-button"
                            @click="${(e) => {
-      this._chooseResourceTemplate(e);
-    }}"
+                             this._chooseResourceTemplate(e);
+                            }}"
                            .cpu="${item.cpu}"
                            .mem="${item.mem}"
                            .cuda_device="${item.cuda_device}"
@@ -2122,7 +2142,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="resource-type">RAM</div>
               <lablup-slider id="mem-resource" class="mem"
                              pin snaps step=0.05 editable markers
-                             @click="${this._resourceTemplateToCustom}"
+                              @click="${() => {
+                                this._resourceTemplateToCustom();
+                              }}"
+                              @changed="${() => {
+                                this._updateShmemLimit();
+                              }}"
                              marker_limit="${this.marker_limit}"
                              min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                              value="${this.mem_request}"></lablup-slider>
@@ -2177,8 +2202,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <mwc-list-item
                 class="cluster-mode-dropdown"
                 id="${item}"
-                value="${item}"
-                ?disabled="${item === 'multi-node'}">
+                value="${item}">
               <div class="horizontal layout center" style="width:100%;">
                 <p style="width:300px;margin-left:21px;">${_t('session.launcher.'+ item)}</p>
                 <mwc-icon-button

@@ -41,6 +41,7 @@ import './lablup-progress-bar';
 @customElement("backend-ai-agent-list")
 export default class BackendAIAgentList extends BackendAIPage {
   @property({type: String}) condition = 'running';
+  @property({type: Boolean}) useHardwareMetadata = false;
   @property({type: Array}) agents = Array();
   @property({type: Object}) agentsObject = Object();
   @property({type: Object}) agentDetail = Object();
@@ -194,7 +195,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
           'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     }
-    if (globalThis.backendaiclient.supports('hardware-metadata')) {
+    if (this.useHardwareMetadata && globalThis.backendaiclient.supports('hardware-metadata')) {
       fields.push('hardware_metadata');
     }
 

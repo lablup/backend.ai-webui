@@ -419,13 +419,16 @@ export default class BackendAiSessionList extends BackendAIPage {
       "id", "name", "image",
       "created_at", "terminated_at", "status", "status_info",
       "service_ports", "mounts",
-      "occupied_slots", "access_key",
+      "occupied_slots", "access_key"
     ];
     if (globalThis.backendaiclient.supports('multi-container')) {
       fields.push("cluster_size");
     }
     if (globalThis.backendaiclient.supports('multi-node')) {
       fields.push("cluster_mode");
+    }
+    if (globalThis.backendaiclient.supports('session-detail-status')) {
+      fields.push("status_data");
     }
     if (this.enableScalingGroup) {
       fields.push("scaling_group");

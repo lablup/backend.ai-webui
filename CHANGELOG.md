@@ -1,5 +1,12 @@
 # Changelog
 
+## v20.12.6 (30/12/2020)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**urgency**] Value and the maximum value of shared memory in session launcher does not updated by selected resource preset [#880](https://github.com/lablup/backend.ai-console/issues/880)
+
+
 ## v20.12.5 (29/12/2020)
 
 #### Enhancements:
