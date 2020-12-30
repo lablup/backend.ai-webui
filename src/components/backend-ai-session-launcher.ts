@@ -1888,10 +1888,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let shmemEl = this.shadowRoot.querySelector('#shmem-resource');
     let shmem_value = shmemEl.value;
     this.shmem_metric.max = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
-    this.shadowRoot.querySelector('#shmem-resource').max = this.shmem_metric.max;
+    // clamp the max value to the smaller of the current memory value or the configuration file value.
+    this.shadowRoot.querySelector('#shmem-resource').max = Math.min(this.max_shm_per_session, this.shmem_metric.max);
     if (parseFloat(shmem_value) > this.shmem_metric.max) {
       shmem_value = this.shmem_metric.max;
-      shmemEl.syncToSlider(); // explicitly call to avoid value mismatching
+      shmemEl.syncToSlider(); // explicitly call method of the slider component to avoid value mismatching
     }
   }
 
