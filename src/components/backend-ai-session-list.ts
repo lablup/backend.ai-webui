@@ -450,6 +450,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.total_session_count = 1;
       }
       let sessions = response.compute_session_list.items;
+      //console.log(sessions);
       if (sessions !== undefined && sessions.length != 0) {
         const previousSessions = this.compute_sessions;
 
@@ -497,7 +498,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].io_write_bytes_mb = 0;
             }
             if (liveStat && liveStat.cuda_util) {
-              sessions[objectKey].cuda_util = liveStat.cuda_util;
+              sessions[objectKey].cuda_util = liveStat.cuda_util.current;
             } else {
               sessions[objectKey].cuda_util = 0;
             }
