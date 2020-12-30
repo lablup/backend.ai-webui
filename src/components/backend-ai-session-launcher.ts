@@ -2202,8 +2202,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <mwc-list-item
                 class="cluster-mode-dropdown"
                 id="${item}"
-                value="${item}"
-                ?disabled="${item === 'multi-node'}">
+                value="${item}">
               <div class="horizontal layout center" style="width:100%;">
                 <p style="width:300px;margin-left:21px;">${_t('session.launcher.'+ item)}</p>
                 <mwc-icon-button
