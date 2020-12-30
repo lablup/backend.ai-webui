@@ -80,7 +80,7 @@ export default class LablupSlider extends LitElement {
                     ?pin="${this.pin}"
                     ?disabled="${this.disabled}"
                     ?markers="${this.markers}"
-                    @change="${this.syncToText}">
+                    @change="${() => this.syncToText()}">
         </mwc-slider>
         <wl-textfield style="display:none" id="textfield" class="${this.id}" type="number"
                       value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
@@ -153,7 +153,6 @@ export default class LablupSlider extends LitElement {
       }
       return decimal_places.toString().split(".")[1].length || 0;
     })(this.step));
-
 
     if (this.textfield.value > this.max) {
       this.textfield.value = this.max;
