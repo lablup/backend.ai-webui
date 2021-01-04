@@ -410,7 +410,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
 
     // redirect to unauthorize page when admin user tries to access superadmin only page
-    if (this.is_admin && this.superAdminOnlyPages.includes(this._page)) {
+    if (!this.is_superadmin && this.superAdminOnlyPages.includes(this._page)) {
       this._page = 'unauthorized';
       globalThis.history.pushState({}, '', '/unauthorized');
       store.dispatch(navigate(decodeURIComponent(this._page)));
