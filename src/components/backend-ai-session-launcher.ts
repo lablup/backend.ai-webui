@@ -1683,7 +1683,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       gpu_value = 0;
     }
     const shmem = (button.shmem) ? button.shmem : this.shmem_metric;
-    
+
     // if resource preset is initially selected
     if (typeof shmem !== 'number') {
       this.shmem_request = shmem.preferred;
