@@ -156,16 +156,19 @@ export const BackendAiConsoleStyles = [
       display: none;
     }
 
-    .drawer-menu footer {
+    .drawer-menu footer,
+    footer#short-height {
       bottom: 0;
       color: var(--general-sidebar-footer-color, #aaaaaa);
       background-color: var(--general-sidebar-background-color);
       margin: 0;
       padding-bottom: 5px;
+      line-height: 1;
       font-size: 10px;
     }
 
-    .drawer-menu footer a {
+    .drawer-menu footer a,
+    footer#short-height a {
       color: var(--general-sidebar-footer-color, #aaaaaa) !important;
     }
 
@@ -270,7 +273,8 @@ export const BackendAiConsoleStyles = [
       -webkit-app-region: drag !important;
     }
 
-    .drawer-menu footer {
+    .drawer-menu footer,
+    footer#short-height {
       width: 250px;
     }
 
@@ -458,6 +462,10 @@ export const BackendAiConsoleStyles = [
       display: none !important;
     }
 
+    footer#short-height {
+      display: none;
+    }
+
     #portrait-bar {
       height: 64px;
       padding-top: 15px;
@@ -551,6 +559,16 @@ export const BackendAiConsoleStyles = [
       #sidebar-navbar-footer {
         background-color: var(--general-sidebar-background-color);
         color: var(--general-sidebar-color);
+      }
+    }
+
+    @media screen and (max-height: 953px) {
+      footer#short-height {
+        display: block;
+      }
+
+      footer {
+        display: none;
       }
     }
 
