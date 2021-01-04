@@ -57,6 +57,49 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
         width: auto;
       }
 
+      img#unauthorized-access {
+        width: 400px;
+        margin: 20px;
+      }
+
+      div.page-layout {
+        display: flex;
+        -ms-flex-direction: row;
+        -webkit-flex-direction: row;
+        flex-direction: row;
+        align-items: center;
+        margin: 20px;
+      }
+
+      div.desc {
+        width: 100%;
+      }
+
+      @media screen and (max-width: 1015px) {
+        div.page-layout {
+          -ms-flex-direction: column;
+          -webkit-flex-direction: column;
+          flex-direction: column;
+          align-content: center;
+        }
+
+        div.desc {
+          align-items: center;
+        }
+      }
+
+      @media screen and (max-width: 440px) {
+        img#unauthorized-access {
+          width: 330px;
+          margin: 20px;
+        }
+
+        div.desc > p.description {
+          max-width: 330px;
+          font-size: 13px;
+        }
+      }
+
       `
     ];
   }
@@ -84,9 +127,9 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-    <div class="horizontal center flex layout center-justified" style="margin:20px;">
-      <img src="/resources/images/401_unauthorized_access.svg" style="width:400px;margin:20px;"/>
-      <div class="vertical layout" style="width:100%;">
+    <div class="page-layout">
+      <img id="unauthorized-access" src="/resources/images/401_unauthorized_access.svg" />
+      <div class="vertical layout desc">
         <div class="title">${_tr('console.UNAUTHORIZEDACCESS')}</div>
         <p class="description">${_tr('console.AdminOnlyPage')}</p>
         <div style="width:auto;">
