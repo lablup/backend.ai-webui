@@ -70,6 +70,7 @@ export const BackendAiConsoleStyles = [
       -ms-overflow-style: none;
       will-change: transform;
       background-color: var(--general-sidebar-background-color, #fafafa);
+      scrollbar-width: none;
     }
 
     .drawer-menu .portrait-bar {
@@ -460,6 +461,9 @@ export const BackendAiConsoleStyles = [
 
     .drawer-menu::-webkit-scrollbar {
       display: none !important;
+      -webkit-appearance: none;
+      width: 0 !important;
+      height: 0;
     }
 
     footer#short-height {
