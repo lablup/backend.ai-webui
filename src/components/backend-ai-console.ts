@@ -135,6 +135,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                                              "information", "github", "import", 'unauthorized'];
   @property({type: Array}) adminOnlyPages = ["experiment", "credential", "environment", "agent",
                                              "settings", "maintenance", "information"];
+  @property({type: Array}) superAdminOnlyPages = ["agent", "settings", "maintenance", "information"];
   @property({type: Number}) timeoutSec = 5;
 
   constructor() {
@@ -399,12 +400,20 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     });
     this.addTooltips();
     this.sidebarMenu.style.minHeight = (this.is_admin || this.is_superadmin) ? '600px' : '250px';
-    if (!this.is_admin || !this.is_superadmin) {
+    // redirect to unauthorized page when user's role is neither admin nor superadmin
+    if (!this.is_admin && !this.is_superadmin) {
       if (this.adminOnlyPages.includes(this._page) || this._page === 'unauthorized') {
         this._page = 'unauthorized';
         globalThis.history.pushState({}, '', '/unauthorized');
         store.dispatch(navigate(decodeURIComponent(this._page)));
       }
+    }
+
+    // redirect to unauthorize page when admin user tries to access superadmin only page
+    if (!this.is_superadmin && this.superAdminOnlyPages.includes(this._page)) {
+      this._page = 'unauthorized';
+      globalThis.history.pushState({}, '', '/unauthorized');
+      store.dispatch(navigate(decodeURIComponent(this._page)));
     }
   }
 
@@ -1321,6 +1330,29 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 </mwc-list-item>
                 `) : html``}
             ` : html``}
+            <footer id="short-height">
+              <div class="terms-of-use full-menu" style="margin-bottom:10px;">
+                <small style="font-size:11px;">
+                  <a @click="${() => this.showTOSAgreement()}">${_t("console.menu.TermsOfService")}</a>
+                  ·
+                  <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">${_t("console.menu.PrivacyPolicy")}</a>
+                  ·
+                  <a @click="${() => this.splash.show()}">${_t("console.menu.AboutBackendAI")}</a>
+                  ${this.allow_signout === true ? html`
+                  ·
+                  <a @click="${() => this.loginPanel.signout()}">${_t("console.menu.LeaveService")}</a>
+                  ` : html``}
+                </small>
+              </div>
+              <address class="full-menu">
+                <small class="sidebar-footer">Lablup Inc.</small>
+                <small class="sidebar-footer" style="font-size:9px;">20.12.6.201230</small>
+              </address>
+              <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
+                <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
+                <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
+              </div>
+            </footer>
           </mwc-list>
           <footer>
             <div class="terms-of-use full-menu" style="margin-bottom:10px;">

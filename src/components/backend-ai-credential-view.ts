@@ -163,7 +163,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         wl-label {
           width: 100%;
           min-width: 60px;
-          font-size: 11px;
+          font-size: 10px; // 11px;
           --label-font-family: Roboto, Noto, sans-serif;
         }
 
@@ -203,6 +203,10 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         mwc-textfield#export-file-name {
           margin-bottom: 10px;
+        }
+
+        mwc-textfield#id_user_name {
+          margin-bottom: 18px;
         }
 
         #new-user-dialog wl-textfield {
@@ -256,7 +260,6 @@ export default class BackendAICredentialView extends BackendAIPage {
             width: 5px;
           }
         }
-
       `];
   }
 

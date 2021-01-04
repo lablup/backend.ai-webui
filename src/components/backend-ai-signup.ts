@@ -91,6 +91,10 @@ export default class BackendAiSignup extends BackendAIPage {
             --mdc-typography-font-family: var(--general-font-family);
           }
 
+          mwc-textfield#id_user_name {
+            margin-bottom: 18px;
+          }
+
           mwc-button.full {
             width: 335px;
           }
@@ -422,8 +426,7 @@ export default class BackendAiSignup extends BackendAIPage {
                        value="${this.user_email}" required></mwc-textfield>
           <mwc-textfield type="text" name="user_name" id="id_user_name"
                        maxlength="64" placeholder="${_text('maxLength.64chars')}"
-                       label="${_t("signup.UserName")}" value="${this.user_name}"
-                       validationMessage="${_t("signup.UserNameInputRequired")}"></mwc-textfield>
+                       label="${_t("signup.UserName")}" value="${this.user_name}"></mwc-textfield>
           <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
                        label="${_t("signup.InvitationToken")}"
                        validationMessage="${_t("signup.TokenInputRequired")}" required></mwc-textfield>
