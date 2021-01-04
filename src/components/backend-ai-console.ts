@@ -135,6 +135,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                                              "information", "github", "import", 'unauthorized'];
   @property({type: Array}) adminOnlyPages = ["experiment", "credential", "environment", "agent",
                                              "settings", "maintenance", "information"];
+  @property({type: Array}) superAdminOnlyPages = ["agent", "settings", "maintenance", "information"];
   @property({type: Number}) timeoutSec = 5;
 
   constructor() {
@@ -399,12 +400,20 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     });
     this.addTooltips();
     this.sidebarMenu.style.minHeight = (this.is_admin || this.is_superadmin) ? '600px' : '250px';
-    if (!this.is_admin || !this.is_superadmin) {
+    // redirect to unauthorized page when user's role is neither admin nor superadmin
+    if (!this.is_admin && !this.is_superadmin) {
       if (this.adminOnlyPages.includes(this._page) || this._page === 'unauthorized') {
         this._page = 'unauthorized';
         globalThis.history.pushState({}, '', '/unauthorized');
         store.dispatch(navigate(decodeURIComponent(this._page)));
       }
+    }
+
+    // redirect to unauthorize page when admin user tries to access superadmin only page
+    if (this.is_admin && this.superAdminOnlyPages.includes(this._page)) {
+      this._page = 'unauthorized';
+      globalThis.history.pushState({}, '', '/unauthorized');
+      store.dispatch(navigate(decodeURIComponent(this._page)));
     }
   }
 
