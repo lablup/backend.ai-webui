@@ -691,7 +691,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let dialog = this.shadowRoot.querySelector('#terminal-guide');
     const lastChild = dialog.children[dialog.children.length - 1];
     const div: HTMLElement = document.createElement('div');
-    div.setAttribute('class', 'horizontal layout flex');
+    div.setAttribute('class', 'horizontal layout flex center');
 
     const checkbox = document.createElement('mwc-checkbox');
     checkbox.setAttribute("id", "hide-guide");
