@@ -205,6 +205,10 @@ export default class BackendAICredentialView extends BackendAIPage {
           margin-bottom: 10px;
         }
 
+        mwc-textfield#id_user_name {
+          margin-bottom: 18px;
+        }
+
         #new-user-dialog wl-textfield {
           margin-bottom: 15px;
         }
@@ -256,7 +260,6 @@ export default class BackendAICredentialView extends BackendAIPage {
             width: 5px;
           }
         }
-
       `];
   }
 

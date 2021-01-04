@@ -91,6 +91,10 @@ export default class BackendAiSignup extends BackendAIPage {
             --mdc-typography-font-family: var(--general-font-family);
           }
 
+          mwc-textfield#id_user_name {
+            margin-bottom: 18px;
+          }
+
           mwc-button.full {
             width: 335px;
           }
