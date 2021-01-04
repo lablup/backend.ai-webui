@@ -1,5 +1,12 @@
 # Changelog
 
+## v21.01.0 (04/01/2021)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bugfix**] Rearrange layout (#883)
+
+
 ## v20.12.6 (30/12/2020)
 
 #### Bug Fixes:
