@@ -403,7 +403,7 @@
       "FolderCreated": "Folder created",
       "Rename": "Rename",
       "FolderRenamed": "Folder renamed",
-      "FolderNameMismatched": "Folder name mismmatched. Please Check whether space character in the input field or not.",
+      "FolderNameMismatched": "Folder name mismatched. Please Check whether space character in the input field or not.",
       "FolderDeleted": "Folder deleted",
       "FileRenamed": "File Renamed",
       "FileDeleted": "File Deleted",
@@ -449,7 +449,10 @@
       "WritePermissionRequiredInUploadFiles": "Write permission is required in uploading file(s).",
       "ReadonlyFolder": "Read-only Folder",
       "FileAlreadyExists": "The file about to be uploaded already exists.",
-      "DoYouWantToOverwrite": "Do you want to overwrite?"
+      "DoYouWantToOverwrite": "Do you want to overwrite?",
+      "FileExtensionChanged": "Would you like to change the file extension?",
+      "KeepFileExtension": "Keep ",
+      "UseNewFileExtension": "Use "
     },
     "invitation": {
       "EnterEmail": "Enter email address",
