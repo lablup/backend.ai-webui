@@ -199,7 +199,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       fields.push('hardware_metadata');
     }
 
-    globalThis.backendaiclient.agent.list(status, fields).then(response => {
+    globalThis.backendaiclient.agent.list(status, fields, 10*1000).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
         let filter;

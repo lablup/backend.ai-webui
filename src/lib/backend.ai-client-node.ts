@@ -1617,8 +1617,9 @@ class Agent {
    *
    * @param {string} status - Status to query. Should be one of 'ALIVE', 'PREPARING', 'TERMINATING' and 'TERMINATED'.
    * @param {array} fields - Fields to query. Queryable fields are:  'id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'.
+   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots']) {
+  async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'], timeout:number = 0) {
     if (['ALIVE', 'TERMINATED'].includes(status) === false) {
       return Promise.resolve(false);
     }
@@ -1628,7 +1629,7 @@ class Agent {
       `  }` +
       `}`;
     let v = {'status': status};
-    return this.client.query(q, v);
+    return this.client.query(q, v, null, timeout);
   }
 }
 
@@ -2231,9 +2232,10 @@ class ComputeSession {
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {string} group - project group id to query. Default returns sessions from all groups.
+   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
   async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"],
-             status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
+             status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout: number = 0) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
@@ -2253,7 +2255,7 @@ class ComputeSession {
     if (group != '') {
       v['group_id'] = group;
     }
-    return this.client.query(q, v);
+    return this.client.query(q, v, null, timeout);
   }
 
   /**
@@ -2265,10 +2267,11 @@ class ComputeSession {
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {string} group - project group id to query. Default returns sessions from all groups.
+   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
   async listAll(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"],
                 status = "RUNNING,RESTARTING,TERMINATING,PENDING,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR",
-                accessKey = '', limit = 100, offset = 0, group = '') {
+                accessKey = '', limit = 100, offset = 0, group = '', timeout:number = 0) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
     let q, v;
     const sessions: any = [];
@@ -2289,7 +2292,7 @@ class ComputeSession {
       if (group != '') {
         v.group_id = group;
       }
-      const session = await this.client.query(q, v);
+      const session = await this.client.query(q, v, null, timeout);
       console.log(session.compute_session_list.total_count)
       sessions.push(...session.compute_session_list.items);
       if (offset >= session.compute_session_list.total_count) {

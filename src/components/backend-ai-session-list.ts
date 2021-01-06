@@ -444,7 +444,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     let group_id = globalThis.backendaiclient.current_group_id();
 
-    globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
+    globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id, 10 * 1000).then((response) => {
       this.spinner.hide();
       this.total_session_count = response.compute_session_list.total_count;
       if (this.total_session_count === 0) {
@@ -1103,7 +1103,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     console.log(item)
     const menuButton: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as any;
-    
+
     menu.anchor = menuButton;
     menu.className = 'dropdown-menu-status-detail';
     menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
