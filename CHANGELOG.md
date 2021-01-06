@@ -1,5 +1,12 @@
 # Changelog
 
+## v21.01.1 (/01/2021)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bugfix**] Hide storage proxy features on Backend.AI 20.03/APIv5 (#869)
+
+
 ## v21.01.0 (04/01/2021)
 
 #### Bug Fixes:
