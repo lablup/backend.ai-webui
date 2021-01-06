@@ -13,7 +13,6 @@ import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
-import '@material/mwc-textfield/mwc-textfield';
 
 import {default as AnsiUp} from '../lib/ansiup';
 import 'weightless/button';
@@ -24,6 +23,7 @@ import 'weightless/textfield';
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu';
+import '@material/mwc-textfield/mwc-textfield';
 
 import {default as PainKiller} from "./backend-ai-painkiller";
 import './lablup-loading-spinner';
@@ -258,7 +258,8 @@ export default class BackendAiSessionList extends BackendAIPage {
           --input-font-family: Roboto, Noto, sans-serif;
         }
 
-        .mount-button {
+        .mount-button,
+        .status-button {
           border: none;
           background: none;
           padding: 0;
@@ -1098,6 +1099,35 @@ export default class BackendAiSessionList extends BackendAIPage {
     while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
   }
 
+  _createStatusDetailDropdown(e, item) {
+    console.log(item)
+    const menuButton: HTMLElement = e.target;
+    const menu = document.createElement('mwc-menu') as any;
+    
+    menu.anchor = menuButton;
+    menu.className = 'dropdown-menu-status-detail';
+    menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
+    menu.setAttribute('open', '');
+    menu.setAttribute('fixed', '');
+    menu.setAttribute('x', 10);
+    menu.setAttribute('y', 15);
+
+    let statusDetailItem = document.createElement('mwc-list-item');
+    statusDetailItem.innerHTML = item.status_info;
+    statusDetailItem.style.height = '25px';
+    statusDetailItem.style.fontWeight = '400';
+    statusDetailItem.style.fontStyle = 'oblique';
+    statusDetailItem.style.fontSize = '14px';
+    statusDetailItem.style.fontFamily = 'var(--general-font-family)';
+    menu.appendChild(statusDetailItem);
+
+    document.body.appendChild(menu);
+  }
+
+  _removeStatusDetailDropdown() {
+    const menu = document.getElementsByClassName('dropdown-menu-status-detail') as any;
+    while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
+  }
   /**
    * Render session information - category, color, description, etc.
    *
@@ -1482,7 +1512,12 @@ export default class BackendAiSessionList extends BackendAIPage {
         <span style="font-size: 12px;">${rowData.item.status}</span>
         ${rowData.item.status_info ? html`
         <br />
-        <lablup-shields app="" color="${this.statusColorTable[rowData.item.status_info]}" description="${rowData.item.status_info}" ui="round"></lablup-shields>
+        <div class="layout horizontal">
+        <lablup-shields id="${rowData.item.name}" app="" color="${this.statusColorTable[rowData.item.status_info]}"
+              description="${rowData.item.status_info}" ui="round"
+              @mouseenter="${(e) => this._createStatusDetailDropdown(e, rowData.item)}"
+              @mouseleave="${() => this._removeStatusDetailDropdown()}"></lablup-shields>
+        </div>
         ` : html``}
       `, root
     );
