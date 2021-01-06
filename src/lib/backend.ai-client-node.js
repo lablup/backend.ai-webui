@@ -440,6 +440,7 @@ class Client {
         if (this.isAPIVersionCompatibleWith('v6.20200815')) {
             this._features['multi-container'] = true;
             this._features['multi-node'] = true;
+            this._features['storage-proxy'] = true;
             this._features['hardware-metadata'] = true;
         }
     }
@@ -1528,7 +1529,7 @@ class StorageProxy {
      * @param {string} host - Virtual folder host.
      * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'capabilities'.
      */
-    async detail(host = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities', 'hardware_metadata']) {
+    async detail(host = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities']) {
         let q = `query($vfolder_host: String!) {` +
             `  storage_volume(id: $vfolder_host) {` +
             `     ${fields.join(" ")}` +

@@ -34,6 +34,7 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
 export default class BackendAIAgentView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
   @property({type: String}) _tab = 'running-lists';
+  @property({type: Boolean}) enableStorageProxy = false;
 
   constructor() {
     super();
@@ -66,6 +67,13 @@ export default class BackendAIAgentView extends BackendAIPage {
   }
 
   firstUpdated() {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
+      }, true);
+    } else {
+      this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
+    }
   }
 
   /**
@@ -115,8 +123,9 @@ export default class BackendAIAgentView extends BackendAIPage {
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               <!--<mwc-tab title="maintenance-lists" label="${_t("agent.Maintaining")}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>-->
+              ${this.enableStorageProxy ? html`
               <mwc-tab title="storage-proxy-lists" label="${_t("general.StorageProxies")}"
-                  @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  @click="${(e) => this._showTab(e.target)}"></mwc-tab>`:html``}
               <mwc-tab title="scaling-group-lists" label="${_t("general.ResourceGroup")}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
@@ -128,9 +137,10 @@ export default class BackendAIAgentView extends BackendAIPage {
           <div id="terminated-lists" class="tab-content" style="display:none;">
             <backend-ai-agent-list id="terminated-agents" condition="terminated" ?active="${this._status === 'active' && this._tab === 'terminated-lists'}"></backend-ai-agent-list>
           </div>
+          ${this.enableStorageProxy ? html`
           <div id="storage-proxy-lists" class="tab-content" style="display:none;">
             <backend-ai-storage-proxy-list id="storage-proxies" ?active="${this._status === 'active' && this._tab === 'storage-proxy-lists'}"></backend-ai-storage-proxy-list>
-          </div>
+          </div>`:html``}
           <div id="scaling-group-lists" class="tab-content" style="display:none;">
             <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active' && this._tab === 'scaling-group-lists'}"> </backend-ai-scaling-group-list>
           </div>
