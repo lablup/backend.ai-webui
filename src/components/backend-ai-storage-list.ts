@@ -1444,24 +1444,29 @@ export default class BackendAiStorageList extends BackendAIPage {
     let job = globalThis.backendaiclient.vfolder.list_files(path, id);
     return job.then(value => {
       this.shadowRoot.querySelector('#fileList-grid').selectedItems = [];
-      const fileInfo = JSON.parse(value.files);
-      fileInfo.forEach((info, cnt) => {
-        let ftype = 'FILE';
-        if (info.filename === value.items[cnt].name) {
-          // value.files and value.items have same order
-          ftype = value.items[cnt].type;
-        } else {
-          // In case the order is mixed
-          for (let i = 0; i < value.items.length; i++) {
-            if (info.filename === value.items[i].name) {
-              ftype = value.items[i].type;
-              break;
+      if (this._APIMajorVersion < 6) {
+        this.explorer.files = JSON.parse(value.files);
+      } else { // to support dedicated storage vendors such as FlashBlade
+        const fileInfo = JSON.parse(value.files);
+        fileInfo.forEach((info, cnt) => {
+          let ftype = 'FILE';
+          console.log(info)
+          if (info.filename === value.items[cnt].name) {
+            // value.files and value.items have same order
+            ftype = value.items[cnt].type;
+          } else {
+            // In case the order is mixed
+            for (let i = 0; i < value.items.length; i++) {
+              if (info.filename === value.items[i].name) {
+                ftype = value.items[i].type;
+                break;
+              }
             }
           }
-        }
-        info.type = ftype;
-      });
-      this.explorer.files = fileInfo;
+          info.type = ftype;
+        });
+        this.explorer.files = fileInfo;
+      }
       this.explorerFiles = this.explorer.files;
       if (dialog) {
         this.openDialog('folder-explorer-dialog');
@@ -1551,7 +1556,16 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _isDir(file) {
-    return file.type === 'DIRECTORY';
+    if (this._APIMajorVersion < 6) {
+      return file.mode.startsWith("d");
+    } else{
+      // For some vendor-specific storage APIs, we cannot discern file and
+      // directory by just looking at the first letter of file mode. For
+      // example, FlashBlade API returns file's mode as a pure number.
+      // So, we have to rely on the explicit file's type property to support
+      // vendor-specific APIs.
+      return file.type === 'DIRECTORY';
+    }
   }
 
   _byteToMB(value) {
