@@ -358,6 +358,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       // language=HTML
       html`
         <div class="layout flex">
+          ${rowData.item.cpu_slots ? html`
           <div class="layout horizontal center flex">
             <div class="layout horizontal start resource-indicator">
               <mwc-icon class="fg green">developer_board</mwc-icon>
@@ -368,7 +369,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
             <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
                                  buffer="${rowData.item.cpu_total_usage_ratio}"
                                  description="${rowData.item.current_cpu_percent}%"></lablup-progress-bar>
-          </div>
+          </div>`: html``}
+          ${rowData.item.mem_slots ? html`
           <div class="layout horizontal center flex">
             <div class="layout horizontal start resource-indicator">
               <mwc-icon class="fg green">memory</mwc-icon>
@@ -380,7 +382,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
                                  buffer="${rowData.item.mem_total_usage_ratio}"
                                  description="${rowData.item.current_mem}GB"></lablup-progress-bar>
 
-          </div>
+          </div>`:html``}
 
         </div>`, root
     );
