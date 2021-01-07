@@ -1401,6 +1401,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'anaconda2018.12': 'Anaconda 2018.12',
       'anaconda2019.12': 'Anaconda 2019.12',
       'alpine3.8': 'Alpine Linux 3.8',
+      'alpine3.12': 'Alpine Linux 3.12',
       'ngc': 'NVidia GPU Cloud',
       'ff': 'Research Env.',
     };
