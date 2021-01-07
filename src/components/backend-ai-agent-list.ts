@@ -199,7 +199,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       fields.push('hardware_metadata');
     }
 
-    globalThis.backendaiclient.agent.list(status, fields, 10*1000).then(response => {
+    globalThis.backendaiclient.agent.list(status, fields, 10 * 1000).then(response => {
       let agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
         let filter;
@@ -561,7 +561,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <lablup-shields app="${location}" color="${color}"
                           description="${platform}" ui="round"></lablup-shields>
         </div>
-    `, root
+      `, root
     );
   }
 
@@ -624,77 +624,77 @@ export default class BackendAIAgentList extends BackendAIPage {
       html`
         <div class="layout flex">
           ${rowData.item.cpu_slots ? html`
-          <div class="layout horizontal center flex">
-            <div class="layout horizontal start resource-indicator">
-              <mwc-icon class="fg green">developer_board</mwc-icon>
-              <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
-              <span class="indicator">${_t("general.cores")}</span>
-            </div>
-            <span class="flex"></span>
-            <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
-                            buffer="${rowData.item.cpu_total_usage_ratio}"
-                            description="${rowData.item.current_cpu_percent}%"></lablup-progress-bar>
-          </div>`: html``}
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal start resource-indicator">
+                <mwc-icon class="fg green">developer_board</mwc-icon>
+                <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
+                <span class="indicator">${_t("general.cores")}</span>
+              </div>
+              <span class="flex"></span>
+              <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
+                                   buffer="${rowData.item.cpu_total_usage_ratio}"
+                                   description="${rowData.item.current_cpu_percent}%"></lablup-progress-bar>
+            </div>` : html``}
           ${rowData.item.mem_slots ? html`
-          <div class="layout horizontal center flex">
-            <div class="layout horizontal start resource-indicator">
-              <mwc-icon class="fg green">memory</mwc-icon>
-              <span style="padding-left:5px;">${rowData.item.mem_slots}</span>
-              <span class="indicator">GB</span>
-            </div>
-            <span class="flex"></span>
-            <lablup-progress-bar id="mem-usage-bar" progress="${rowData.item.mem_current_usage_ratio}"
-                            buffer="${rowData.item.mem_total_usage_ratio}"
-                            description="${rowData.item.current_mem}GB"></lablup-progress-bar>
-          </div>`: html``}
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal start resource-indicator">
+                <mwc-icon class="fg green">memory</mwc-icon>
+                <span style="padding-left:5px;">${rowData.item.mem_slots}</span>
+                <span class="indicator">GB</span>
+              </div>
+              <span class="flex"></span>
+              <lablup-progress-bar id="mem-usage-bar" progress="${rowData.item.mem_current_usage_ratio}"
+                                   buffer="${rowData.item.mem_total_usage_ratio}"
+                                   description="${rowData.item.current_mem}GB"></lablup-progress-bar>
+            </div>` : html``}
           ${rowData.item.cuda_gpu_slots ? html`
             <div class="layout horizontal center flex">
               <div class="layout horizontal start resource-indicator">
-                <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg"/>
                 <span style="padding-left:5px;">${rowData.item.cuda_gpu_slots}</span>
                 <span class="indicator">GPU</span>
               </div>
               <span class="flex"></span>
               <lablup-progress-bar id="gpu-bar" progress="${rowData.item.used_cuda_gpu_slots_ratio}"
-                              description="${rowData.item.used_cuda_gpu_slots}"></lablup-progress-bar>
+                                   description="${rowData.item.used_cuda_gpu_slots}"></lablup-progress-bar>
             </div>
-            ` : html``}
+          ` : html``}
           ${rowData.item.cuda_fgpu_slots ? html`
             <div class="layout horizontal center flex">
               <div class="layout horizontal start resource-indicator">
-                <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg"/>
                 <span style="padding-left:5px;">${rowData.item.cuda_fgpu_slots}</span>
                 <span class="indicator">fGPU</span>
               </div>
               <span class="flex"></span>
               <lablup-progress-bar id="vgpu-bar" progress="${rowData.item.used_cuda_fgpu_slots_ratio}"
-                              description="${rowData.item.used_cuda_fgpu_slots}"></lablup-progress-bar>
-\            </div>
-            ` : html``}
+                                   description="${rowData.item.used_cuda_fgpu_slots}"></lablup-progress-bar>
+            </div>
+          ` : html``}
           ${rowData.item.rocm_gpu_slots ? html`
             <div class="layout horizontal center flex">
               <div class="layout horizontal start resource-indicator">
-                <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
+                <img class="indicator-icon fg green" src="/resources/icons/ROCm.png"/>
                 <span style="padding-left:5px;">${rowData.item.rocm_gpu_slots}</span>
                 <span class="indicator">ROCm</span>
               </div>
               <span class="flex"></span>
               <lablup-progress-bar id="rocm-gpu-bar" progress="${rowData.item.used_rocm_gpu_slots_ratio}"
-                                description="${rowData.item.used_rocm_gpu_slots}"></lablup-progress-bar>
+                                   description="${rowData.item.used_rocm_gpu_slots}"></lablup-progress-bar>
             </div>
-            ` : html``}
+          ` : html``}
           ${rowData.item.tpu_slots ? html`
             <div class="layout horizontal center flex">
               <div class="layout horizontal start resource-indicator">
-                <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
+                <img class="indicator-icon fg green" src="/resources/icons/tpu.svg"/>
                 <span style="padding-left:5px;">${rowData.item.tpu_slots}</span>
                 <span class="indicator">TPU</span>
               </div>
               <span class="flex"></span>
               <lablup-progress-bar id="tpu-bar" progress="${rowData.item.used_tpu_slots_ratio}"
-                                description="${rowData.item.used_tpu_slots}"></lablup-progress-bar>
+                                   description="${rowData.item.used_tpu_slots}"></lablup-progress-bar>
             </div>
-            ` : html``}
+          ` : html``}
         </div>`, root
     );
   }
@@ -714,17 +714,18 @@ export default class BackendAIAgentList extends BackendAIPage {
           <lablup-shields app="Agent" color="${this._heartbeatColor(rowData.item.status)}"
                           description="${rowData.item.version}" ui="round"></lablup-shields>
           ${rowData.item.cuda_plugin ? html`
-          <lablup-shields app="CUDA Plugin" color="blue"
-                          description="${rowData.item.cuda_plugin['version']}" ui="round"></lablup-shields>
-        ${rowData.item.cuda_fgpu_slots ? html`
-          <lablup-shields app="" color="blue"
-                          description="Fractional GPU™" ui="round"></lablup-shields>
-        ` : html``}
-          ${'cuda_version' in rowData.item.cuda_plugin ? html`
-          <lablup-shields app="CUDA" color="green"
-                          description="${rowData.item.cuda_plugin['cuda_version']}" ui="round"></lablup-shields>`
-        : html`          <lablup-shields app="CUDA Disabled" color="green"
-                          description="" ui="flat"></lablup-shields>`}` : html``}
+            <lablup-shields app="CUDA Plugin" color="blue"
+                            description="${rowData.item.cuda_plugin['version']}" ui="round"></lablup-shields>
+            ${rowData.item.cuda_fgpu_slots ? html`
+              <lablup-shields app="" color="blue"
+                              description="Fractional GPU™" ui="round"></lablup-shields>
+            ` : html``}
+            ${'cuda_version' in rowData.item.cuda_plugin ? html`
+                <lablup-shields app="CUDA" color="green"
+                                description="${rowData.item.cuda_plugin['cuda_version']}" ui="round"></lablup-shields>`
+              : html`
+                <lablup-shields app="CUDA Disabled" color="green"
+                                description="" ui="flat"></lablup-shields>`}` : html``}
 
         </div>`, root
     );
@@ -755,14 +756,19 @@ export default class BackendAIAgentList extends BackendAIPage {
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment" @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
+          <mwc-icon-button class="fg blue controls-running" icon="assignment"
+                           @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
-            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running" icon="build"></mwc-icon-button>
-            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running" icon="alarm"></mwc-icon-button>
-            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running" icon="pause"></mwc-icon-button>
-            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running" icon="delete"></mwc-icon-button>
+            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running"
+                             icon="build"></mwc-icon-button>
+            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running"
+                             icon="alarm"></mwc-icon-button>
+            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running"
+                             icon="pause"></mwc-icon-button>
+            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running"
+                             icon="delete"></mwc-icon-button>
           ` : html``}
-    </div>`, root
+        </div>`, root
     );
   }
 
@@ -798,124 +804,128 @@ export default class BackendAIAgentList extends BackendAIPage {
         <span slot="title">${_t("agent.DetailedInformation")}</span>
         <div slot="content">
           <div class="horizontal start start-justified layout">
-          ${'cpu_util_live' in this.agentDetail ?
-      html`<div>
-              <h3>CPU</h3>
-              <div class="horizontal wrap layout" style="max-width:600px;">
-            ${this.agentDetail.cpu_util_live.map(item => html`
-              <div class="horizontal start-justified center layout" style="padding:0 5px;">
-                <div style="font-size:8px;width:35px;">CPU${item.num}</div>
-                <lablup-progress-bar class="cpu"
-                  progress="${item.pct / 100.0}"
-                  description=""
-                ></lablup-progress-bar>
-              </div>`)}
-              </div>
-            </div>` : html``}
+            ${'cpu_util_live' in this.agentDetail ?
+              html`
+                <div>
+                  <h3>CPU</h3>
+                  <div class="horizontal wrap layout" style="max-width:600px;">
+                    ${this.agentDetail.cpu_util_live.map(item => html`
+                      <div class="horizontal start-justified center layout" style="padding:0 5px;">
+                        <div style="font-size:8px;width:35px;">CPU${item.num}</div>
+                        <lablup-progress-bar class="cpu"
+                                             progress="${item.pct / 100.0}"
+                                             description=""
+                        ></lablup-progress-bar>
+                      </div>`)}
+                  </div>
+                </div>` : html``}
             <div style="margin-left:10px;">
               <h3>Memory</h3>
               <div>
                 <lablup-progress-bar class="mem"
-                  progress="${this.agentDetail.mem_current_usage_ratio}"
-                  description="${this.agentDetail.current_mem}GB/${this.agentDetail.mem_slots}GB"
+                                     progress="${this.agentDetail.mem_current_usage_ratio}"
+                                     description="${this.agentDetail.current_mem}GB/${this.agentDetail.mem_slots}GB"
                 ></lablup-progress-bar>
               </div>
               <h3>Network</h3>
               ${'live_stat' in this.agentDetail && 'node' in this.agentDetail.live_stat ? html`
-              <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
-              <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
+                <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
+                <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
               ` : html``}
             </div>
-          ${'cuda_util_live' in this.agentDetail ?
-      html`<div style="margin-left:10px;">
-              <h3>CUDA Devices</h3>
-              <h4>Utilization</h4>
-            ${this.agentDetail.cuda_util_live.map(item => html`
-              <div class="horizontal start-justified center layout">
-                <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
-                <div class="horizontal start-justified center layout">
-                  <lablup-progress-bar class="cuda"
-                                       progress="${item.pct / 100.0}"
-                                       description=""
-                  ></lablup-progress-bar>
-                </div>
-              </div>`)}
-              <h4>Memory</h4>
-            ${this.agentDetail.cuda_mem_live.map(item => html`
-              <div class="horizontal start-justified center layout">
-                <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
-                <div class="horizontal start-justified center layout">
-                  <lablup-progress-bar class="cuda"
-                                       progress="${item.pct / 100.0}"
-                                       description=""
-                  ></lablup-progress-bar>
-                </div>
-              </div>`)}
+            ${'cuda_util_live' in this.agentDetail ?
+              html`
+                <div style="margin-left:10px;">
+                  <h3>CUDA Devices</h3>
+                  <h4>Utilization</h4>
+                  ${this.agentDetail.cuda_util_live.map(item => html`
+                    <div class="horizontal start-justified center layout">
+                      <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
+                      <div class="horizontal start-justified center layout">
+                        <lablup-progress-bar class="cuda"
+                                             progress="${item.pct / 100.0}"
+                                             description=""
+                        ></lablup-progress-bar>
+                      </div>
+                    </div>`)}
+                  <h4>Memory</h4>
+                  ${this.agentDetail.cuda_mem_live.map(item => html`
+                    <div class="horizontal start-justified center layout">
+                      <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
+                      <div class="horizontal start-justified center layout">
+                        <lablup-progress-bar class="cuda"
+                                             progress="${item.pct / 100.0}"
+                                             description=""
+                        ></lablup-progress-bar>
+                      </div>
+                    </div>`)}
 
-            </div>` : html``}
-          ${'rocm_util_live' in this.agentDetail ?
-      html`<div style="margin-left:10px;">
-              <h3>ROCm Devices</h3>
-              <h4>Utilization</h4>
-            ${this.agentDetail.rocm_util_live.map(item => html`
-              <div class="horizontal start-justified center layout">
-                <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
-                <div class="horizontal start-justified center layout">
-                  <lablup-progress-bar class="cuda"
-                    progress="${item.pct / 100.0}"
-                    description=""
-                  ></lablup-progress-bar>
-                </div>
-              </div>`)}
-              <h4>Memory</h4>
-            ${this.agentDetail.rocm_mem_live.map(item => html`
-              <div class="horizontal start-justified center layout">
-                <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
-                <div class="horizontal start-justified center layout">
-                  <lablup-progress-bar class="cuda"
-                    progress="${item.pct / 100.0}"
-                    description=""
-                  ></lablup-progress-bar>
-                </div>
-              </div>`)}
+                </div>` : html``}
+            ${'rocm_util_live' in this.agentDetail ?
+              html`
+                <div style="margin-left:10px;">
+                  <h3>ROCm Devices</h3>
+                  <h4>Utilization</h4>
+                  ${this.agentDetail.rocm_util_live.map(item => html`
+                    <div class="horizontal start-justified center layout">
+                      <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
+                      <div class="horizontal start-justified center layout">
+                        <lablup-progress-bar class="cuda"
+                                             progress="${item.pct / 100.0}"
+                                             description=""
+                        ></lablup-progress-bar>
+                      </div>
+                    </div>`)}
+                  <h4>Memory</h4>
+                  ${this.agentDetail.rocm_mem_live.map(item => html`
+                    <div class="horizontal start-justified center layout">
+                      <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
+                      <div class="horizontal start-justified center layout">
+                        <lablup-progress-bar class="cuda"
+                                             progress="${item.pct / 100.0}"
+                                             description=""
+                        ></lablup-progress-bar>
+                      </div>
+                    </div>`)}
 
-            </div>` : html``}
-          ${'tpu_util_live' in this.agentDetail ?
-      html`<div style="margin-left:10px;">
-              <h3>TPU Devices</h3>
-              <h4>Utilization</h4>
-            ${this.agentDetail.tpu_util_live.map(item => html`
-              <div class="horizontal start-justified center layout">
-                <div style="font-size:8px;width:35px;">TPU${item.num}</div>
-                <div class="horizontal start-justified center layout">
-                  <lablup-progress-bar class="cuda"
-                    progress="${item.pct / 100.0}"
-                    description=""
-                  ></lablup-progress-bar>
-                </div>
-              </div>`)}
-              <h4>Memory</h4>
-            ${this.agentDetail.tpu_mem_live.map(item => html`
-              <div class="horizontal start-justified center layout">
-                <div style="font-size:8px;width:35px;">TPU${item.num}</div>
-                <div class="horizontal start-justified center layout">
-                  <lablup-progress-bar class="cuda"
-                    progress="${item.pct / 100.0}"
-                    description=""
-                  ></lablup-progress-bar>
-                </div>
-              </div>`)}
+                </div>` : html``}
+            ${'tpu_util_live' in this.agentDetail ?
+              html`
+                <div style="margin-left:10px;">
+                  <h3>TPU Devices</h3>
+                  <h4>Utilization</h4>
+                  ${this.agentDetail.tpu_util_live.map(item => html`
+                    <div class="horizontal start-justified center layout">
+                      <div style="font-size:8px;width:35px;">TPU${item.num}</div>
+                      <div class="horizontal start-justified center layout">
+                        <lablup-progress-bar class="cuda"
+                                             progress="${item.pct / 100.0}"
+                                             description=""
+                        ></lablup-progress-bar>
+                      </div>
+                    </div>`)}
+                  <h4>Memory</h4>
+                  ${this.agentDetail.tpu_mem_live.map(item => html`
+                    <div class="horizontal start-justified center layout">
+                      <div style="font-size:8px;width:35px;">TPU${item.num}</div>
+                      <div class="horizontal start-justified center layout">
+                        <lablup-progress-bar class="cuda"
+                                             progress="${item.pct / 100.0}"
+                                             description=""
+                        ></lablup-progress-bar>
+                      </div>
+                    </div>`)}
 
-            </div>` : html``}
+                </div>` : html``}
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-              unelevated
-              id="close-button"
-              icon="check"
-              label="${_t("button.Close")}"
-              @click="${(e) => this._hideDialog(e)}"></mwc-button>
+            unelevated
+            id="close-button"
+            icon="check"
+            label="${_t("button.Close")}"
+            @click="${(e) => this._hideDialog(e)}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

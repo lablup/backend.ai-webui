@@ -359,32 +359,32 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       html`
         <div class="layout flex">
           ${rowData.item.cpu_slots ? html`
-          <div class="layout horizontal center flex">
-            <div class="layout horizontal start resource-indicator">
-              <mwc-icon class="fg green">developer_board</mwc-icon>
-              <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
-              <span class="indicator">${_t("general.cores")}</span>
-            </div>
-            <span class="flex"></span>
-            <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
-                                 buffer="${rowData.item.cpu_total_usage_ratio}"
-                                 description="${rowData.item.current_cpu_percent}%"></lablup-progress-bar>
-          </div>`: html``}
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal start resource-indicator">
+                <mwc-icon class="fg green">developer_board</mwc-icon>
+                <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
+                <span class="indicator">${_t("general.cores")}</span>
+              </div>
+              <span class="flex"></span>
+              <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
+                                   buffer="${rowData.item.cpu_total_usage_ratio}"
+                                   description="${rowData.item.current_cpu_percent}%"></lablup-progress-bar>
+            </div>` : html``}
           ${rowData.item.mem_slots ? html`
-          <div class="layout horizontal center flex">
-            <div class="layout horizontal start resource-indicator">
-              <mwc-icon class="fg green">memory</mwc-icon>
-              <span style="padding-left:5px;">${rowData.item.mem_slots}</span>
-              <span class="indicator">GB</span>
-            </div>
-            <span class="flex"></span>
-            <lablup-progress-bar id="mem-usage-bar" progress="${rowData.item.mem_current_usage_ratio}"
-                                 buffer="${rowData.item.mem_total_usage_ratio}"
-                                 description="${rowData.item.current_mem}GB"></lablup-progress-bar>
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal start resource-indicator">
+                <mwc-icon class="fg green">memory</mwc-icon>
+                <span style="padding-left:5px;">${rowData.item.mem_slots}</span>
+                <span class="indicator">GB</span>
+              </div>
+              <span class="flex"></span>
+              <lablup-progress-bar id="mem-usage-bar" progress="${rowData.item.mem_current_usage_ratio}"
+                                   buffer="${rowData.item.mem_total_usage_ratio}"
+                                   description="${rowData.item.current_mem}GB"></lablup-progress-bar>
 
-          </div>`:html``}
-
-        </div>`, root
+            </div>` : html``}
+        </div>
+      `, root
     );
   }
 
@@ -404,7 +404,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
             <lablup-shields app="" color="blue"
                             description="${item}" ui="round"></lablup-shields>
           `) : html``}
-
         </div>`, root
     );
   }
