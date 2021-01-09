@@ -53,6 +53,8 @@ Backend.AI console focuses to
     * Console logs / errors
  * License
     * Check current license information (for enterprise only)
+ * Help & manuals
+
 
 ## Management Features
 
