@@ -805,7 +805,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.concurrency_used = this.resourceBroker.concurrency_used;
       this.userResourceLimit = this.resourceBroker.userResourceLimit;
       this.concurrency_max = this.resourceBroker.concurrency_max;
-      this.max_containers_per_session = this.resourceBroker.max_containers_per_session + 2;
+      this.max_containers_per_session = this.resourceBroker.max_containers_per_session;
       this.gpu_mode = this.resourceBroker.gpu_mode;
       this.gpu_step = this.resourceBroker.gpu_step;
       this.gpu_modes = this.resourceBroker.gpu_modes;
