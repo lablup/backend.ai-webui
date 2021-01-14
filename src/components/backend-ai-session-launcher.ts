@@ -303,6 +303,57 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-size: 14px;
         }
 
+        .resource-allocated {
+          width: 50px;
+          height: 50px;
+          font-size: 16px;
+          margin: 5px;
+        }
+
+        .resource-allocated > p {
+          margin: 0px auto;
+          font-size: 8px;
+        }
+
+        .cluster-allocated {
+          width: 40px;
+          height: 40px;
+          border-radius: 20px;
+          font-size: 1rem;
+          margin: 5px;
+          position: absolute;
+          top: -20px;
+          right: 20px;
+          background-color: var(--general-button-background-color);
+          color: white;
+          box-shadow: 
+            0 1px 1px rgba(0,0,0,0.12), 
+            0 2px 2px rgba(0,0,0,0.12), 
+            0 4px 4px rgba(0,0,0,0.12), 
+            0 8px 8px rgba(0,0,0,0.12),
+            0 16px 16px rgba(0,0,0,0.12);
+        }
+
+        .cluster-allocated > p {
+          font-size: 1.2rem;
+        }
+
+        .resource-allocated > span,
+        .cluster-allocated > span {
+          font-weight: bolder;
+        }
+
+        .allocation-check {
+          position: relative;
+          margin-bottom: 10px;
+        }
+
+        .allocation-check > .resource-allocated-box {
+          background-color: var(--paper-grey-300);
+          border-radius: 5px;
+          margin-right: 25px;
+        }
+
         #new-session-dialog {
           --component-width: 400px;
           z-index: 100;
@@ -557,7 +608,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
-    this.cluster_size = 0;
+    this.cluster_size = 1; // cluster_size must be equal or greater than 1.
     this.cluster_mode = 'single-node';
     /* Parameters required to launch a session on behalf of other user */
     this.ownerFeatureInitialized = false;
@@ -754,7 +805,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.concurrency_used = this.resourceBroker.concurrency_used;
       this.userResourceLimit = this.resourceBroker.userResourceLimit;
       this.concurrency_max = this.resourceBroker.concurrency_max;
-      this.max_containers_per_session = this.resourceBroker.max_containers_per_session;
+      this.max_containers_per_session = this.resourceBroker.max_containers_per_session + 2;
       this.gpu_mode = this.resourceBroker.gpu_mode;
       this.gpu_step = this.resourceBroker.gpu_step;
       this.gpu_modes = this.resourceBroker.gpu_modes;
@@ -1572,6 +1623,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.shadowRoot.querySelector('#session-resource').disabled = true;
         this.shadowRoot.querySelector('#shmem-resource').disabled = true;
         this.shadowRoot.querySelector('#launch-button').disabled = true;
+        this.shadowRoot.querySelector('.allocation-check').display = 'none';
         if (this.cluster_support) {
           this.shadowRoot.querySelector('#cluster-size').disabled = true;
         }
@@ -1583,6 +1635,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.shadowRoot.querySelector('#session-resource').disabled = false;
         this.shadowRoot.querySelector('#shmem-resource').disabled = false;
         this.shadowRoot.querySelector('#launch-button').disabled = false;
+        this.shadowRoot.querySelector('.allocation-check').display = 'block';
         if (this.cluster_support) {
           this.shadowRoot.querySelector('#cluster-size').disabled = false;
         }
@@ -1887,6 +1940,40 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.shadowRoot.querySelector('#resource-templates').selectedText = _text('session.launcher.CustomResourceApplied');
   }
 
+  /**
+   * 
+   * @param e 
+   */
+  _applyResourceValueChanges(e, isResourceClicked = true) {
+    let value = e.target.value;
+    let id =  e.target.id.split('-')[0];
+    switch(id) {
+      case 'cpu':
+        this.cpu_request = value;
+        break;
+      case 'mem':
+        this.mem_request = value;
+        break;
+      case 'shmem':
+        this.shmem_request = value;
+        break;
+      case 'gpu':
+        this.gpu_request = value;
+        break;
+      case 'session':
+        this.session_request = value;
+        break;
+      default:
+        break;
+    }
+    this.requestUpdate();
+    if (isResourceClicked) { // resource allocation
+      this._resourceTemplateToCustom();
+    } else { // cluster mode
+      this._setClusterSize(e);
+    }
+  }
+
   _updateShmemLimit() {
     let shmemEl = this.shadowRoot.querySelector('#shmem-resource');
     let shmem_value = shmemEl.value;
@@ -1895,6 +1982,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.shadowRoot.querySelector('#shmem-resource').max = Math.min(this.max_shm_per_session, this.shmem_metric.max);
     if (parseFloat(shmem_value) > this.shmem_metric.max) {
       shmem_value = this.shmem_metric.max;
+      this.shmem_request = shmem_value;
       shmemEl.syncToSlider(); // explicitly call method of the slider component to avoid value mismatching
     }
   }
@@ -2046,7 +2134,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            style="margin-left:5px;">
             </mwc-textfield>
           </div>
-
           <wl-expansion id="vfolder-select-expansion" name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
             <mwc-list fullwidth multi id="vfolder"
@@ -2132,7 +2219,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <div class="resource-type" style="width:70px;">CPU</div>
                 <lablup-slider id="cpu-resource" class="cpu"
                                pin snaps expand editable markers
-                               @click="${this._resourceTemplateToCustom}"
+                               @click="${(e) => this._applyResourceValueChanges(e)}"
+                               @focusout="${(e) => this._applyResourceValueChanges(e)}"
                                marker_limit="${this.marker_limit}"
                                min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                                value="${this.cpu_request}"></lablup-slider>
@@ -2144,13 +2232,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <div class="horizontal center layout">
               <div class="resource-type">RAM</div>
               <lablup-slider id="mem-resource" class="mem"
-                             pin snaps step=0.05 editable markers
-                              @click="${() => {
-                                this._resourceTemplateToCustom();
-                              }}"
-                              @changed="${() => {
-                                this._updateShmemLimit();
-                              }}"
+                             pin snaps step="0.05" editable markers
+                              @click="${(e) => this._applyResourceValueChanges(e)}"
+                              @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                              @changed="${() => this._updateShmemLimit()}"
                              marker_limit="${this.marker_limit}"
                              min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                              value="${this.mem_request}"></lablup-slider>
@@ -2163,7 +2248,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="resource-type">${_t("session.launcher.SharedMemory")}</div>
               <lablup-slider id="shmem-resource" class="mem"
                              pin snaps step="0.0025" editable markers
-                             @click="${this._resourceTemplateToCustom}"
+                             @click="${(e) => this._applyResourceValueChanges(e)}"
+                             @focusout="${(e) => this._applyResourceValueChanges(e)}"
                              marker_limit="${this.marker_limit}"
                              min="0.0625" max="${this.shmem_metric.max}"
                              value="${this.shmem_request}"></lablup-slider>
@@ -2176,7 +2262,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="resource-type">GPU</div>
               <lablup-slider id="gpu-resource" class="gpu"
                              pin snaps editable markers step="${this.gpu_step}"
-                             @click="${this._resourceTemplateToCustom}"
+                             @click="${(e) => this._applyResourceValueChanges(e)}"
+                             @focusout="${(e) => this._applyResourceValueChanges(e)}"
                              marker_limit="${this.marker_limit}"
                              min="0.0" max="${this.cuda_device_metric.max}" value="${this.gpu_request}"></lablup-slider>
               <span class="caption">GPU</span>
@@ -2188,7 +2275,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="resource-type">${_t("console.menu.Sessions")}</div>
               <lablup-slider id="session-resource" class="session"
                              pin snaps editable markers step="1"
-                             @click="${this._resourceTemplateToCustom}"
+                             @click="${(e) => this._applyResourceValueChanges(e)}"
+                             @focusout="${(e) => this._applyResourceValueChanges(e)}"
                              marker_limit="${this.marker_limit}"
                              min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
               <span class="caption">#</span>
@@ -2223,9 +2311,40 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                          marker_limit="${this.marker_limit}"
                          min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
                          value="${this.cluster_size}"
-                         @change="${(e) => this._setClusterSize(e)}"></lablup-slider>
+                         @click="${(e) => this._applyResourceValueChanges(e, false)}"
+                         @focusout="${(e) => this._applyResourceValueChanges(e, false)}"></lablup-slider>
           <span class="caption">${_t("session.launcher.Node")}</span>
-        </div>`: html``}
+        </div>
+        <h3 style="padding: 10px 20px;">Total allocation</h3>
+        <div class="horizontal layout center center-justified allocation-check">
+          <div class="horizontal layout resource-allocated-box">
+            <div class="vertical layout center center-justified resource-allocated">
+                <span>${this.cpu_request}</span>
+                <p>Core</p>
+            </div>
+            <div class="vertical layout center center-justified resource-allocated">
+              <span>${this.mem_request}</span>
+              <p>GB</p>
+            </div>
+            <div class="vertical layout center center-justified resource-allocated">
+              <span>${this.shmem_request}</span>
+              <p>GB</p>
+            </div>
+            <div class="vertical layout center center-justified resource-allocated">
+              <span>${this.gpu_request}</span>
+              <p>GPU</p>
+            </div>
+            <div class="vertical layout center center-justified resource-allocated">
+              <span>${this.cpu_request ? this.session_request : 0}</span>
+              <p>Sess.</p>
+            </div>
+          </div>
+          <div class="horizontal layout center center-justified cluster-allocated">
+            <p>×</p>
+            <span>${this.cluster_size}</span>
+          </div>
+        </div>
+        `: html``}
         <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
           <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.SetSessionOwner")}</span>
           <span slot="description"></span>
