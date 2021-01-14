@@ -155,6 +155,15 @@
         "src": "./resources/icons/default_app.svg"
       }
     ],
+    "triton-server": [
+      {
+        "name": "triton-server",
+        "title": "Triton Server",
+        "category": "3.Machine Learning Tools",
+        "redirect": "",
+        "src": "./resources/icons/terminal.svg"
+      }
+    ],
     "sftp": [
       {
         "name": "sftp",
