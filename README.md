@@ -116,9 +116,9 @@ proxyListenIP = "[Websocket proxy configuration IP.]"
 
 [resources]
 openPortToPublic = true # Show option to open app proxy port to anyone.
-maxCPUCoresPerSession = 256 # Maximum CPU per session.
-maxCUDADevicesPerSession = 16  # Maximum CUDA devices per session.
-maxShmPerSession = 1 # Maximum shared memory per session.
+maxCPUCoresPerContainer = 256 # Maximum CPU per container.
+maxCUDADevicesPerContainer = 16  # Maximum CUDA devices per container.
+maxShmPerContainer = 1 # Maximum shared memory per container.
 maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
 
 [server]

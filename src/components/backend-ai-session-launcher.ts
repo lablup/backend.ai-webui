@@ -603,9 +603,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerSession || 64;
-        this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerSession || 16;
-        this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerSession || 2;
+        this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
+        this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
+        this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerContainer || 2;
         if (globalThis.backendaiclient.supports('multi-container')) {
           this.cluster_support = true;
         }
@@ -614,9 +614,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this._enableLaunchButton();
       }, {once: true});
     } else {
-      this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerSession || 64;
-      this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerSession || 16;
-      this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerSession || 2;
+      this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
+      this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
+      this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerContainer || 2;
       if (globalThis.backendaiclient.supports('multi-container')) {
         this.cluster_support = true;
       }
