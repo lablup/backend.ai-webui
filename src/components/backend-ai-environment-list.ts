@@ -1358,6 +1358,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'base': 'Base',
       'cntk': 'CNTK',
       'h2o': 'H2O.AI',
+      'triton-server': 'Triton Server',
       'digits': 'DIGITS',
       'ubuntu-linux': 'Ubuntu Linux',
       'tf1': 'TensorFlow 1',
