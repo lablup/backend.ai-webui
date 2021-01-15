@@ -139,6 +139,7 @@
       "ClusterMode": "Cluster mode",
       "ClusterSize": "Cluster size",
       "Node": "Node",
+      "Container": "Container",
       "Ownership": "Ownership",
       "SetSessionOwner": "Session owner",
       "OwnerAccessKey": "Owner access key",

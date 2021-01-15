@@ -138,6 +138,7 @@
       "ClusterMode": "클러스터 모드 설정",
       "ClusterSize": "클러스터 크기",
       "Node": "노드",
+      "Container": "컨테이너",
       "Ownership": "소유자",
       "SetSessionOwner": "세션 소유자 설정",
       "OwnerAccessKey": "소유자 접근키",
