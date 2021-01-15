@@ -493,7 +493,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         this.indicator = await globalThis.lablupIndicator.start();
         try {
           if (this.isPathConfigured) {
-            //await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
+            await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
           }
         } catch (err) {
           console.log("error", err);
@@ -617,7 +617,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       document.addEventListener('tensorboard-path-completed', async () => {
         this.indicator = await globalThis.lablupIndicator.start();
         if (this.isPathConfigured) {
-          //await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
+          await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
         }
         this.isPathConfigured = false;
         this.indicator.set(100, 'Prepared.');

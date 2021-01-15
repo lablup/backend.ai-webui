@@ -777,7 +777,7 @@ class Client {
             'service_name': service_name
         };
         const q = querystring.stringify(params);
-        let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/shutdown_service?${q}`, null);
+        let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/shutdown-service?${q}`, null);
         return this._wrapWithPromise(rqst, true);
     }
     async upload(sessionId, path, fs) {
