@@ -1716,9 +1716,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Set session count limit to value
-   * 
+   *
    * @param {Number} maxValue - max value to limit session in multi-container mode
-   * 
+   *
    */
   _setSessionLimit(maxValue = 1) {
     let sessionSlider = this.shadowRoot.querySelector('#session-resource');
@@ -1973,8 +1973,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * 
-   * @param e 
+   *
+   * @param e
    */
   _applyResourceValueChanges(e, isResourceClicked = true) {
     let value = e.target.value;
@@ -2166,16 +2166,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            style="margin-left:5px;">
             </mwc-textfield>
           </div>
-          <wl-expansion id="vfolder-select-expansion" name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
-            <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
+          <wl-expansion id="vfolder-select-expansion" name="vfolder-group"
+                        style="--expansion-header-padding:16px;--expansion-content-padding:0;">
+            <span slot="title"
+                  style="font-size:12px;font-weight:400;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
             <mwc-list fullwidth multi id="vfolder"
-              @selected="${() => this._updateSelectedFolder()}">
-            ${this.vfolders.length === 0 ? html`
-              <mwc-list-item value="" disabled="true">${_t("session.launcher.NoFolderExists")}</mwc-list-item>
-            `:html``}
-            ${this.vfolders.map(item => html`
-              <mwc-check-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}</mwc-check-list-item>
-            `)}
+                      @selected="${() => this._updateSelectedFolder()}">
+              ${this.vfolders.length === 0 ? html`
+                <mwc-list-item value="" disabled="true">${_t("session.launcher.NoFolderExists")}</mwc-list-item>
+              ` : html``}
+              ${this.vfolders.map(item => html`
+                <mwc-check-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}
+                </mwc-check-list-item>
+              `)}
             </mwc-list>
           </wl-expansion>
           <ul style="color:#646464;font-size:12px;">
@@ -2186,22 +2189,79 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           ${this.selectedVfolders.length > 0 ? html`
             <div class="horizontal layout end-justified">
               <mwc-button
-                  outlined
-                  label="${_t("session.launcher.UnSelectAllVFolders")}"
-                  style="width:auto;margin-right:10px;"
-                  @click=${() => this._unselectAllSelectedFolder()}></mwc-button>
+                outlined
+                label="${_t("session.launcher.UnSelectAllVFolders")}"
+                style="width:auto;margin-right:10px;"
+                @click=${() => this._unselectAllSelectedFolder()}></mwc-button>
             </div>
           ` : html``}
+          <p class="title" style="font-weight:400;">${_t("session.launcher.TotalAllocation")}</p>
+          <div class="horizontal layout center center-justified allocation-check">
+            <div class="horizontal layout resource-allocated-box">
+              <div class="vertical layout center center-justified resource-allocated">
+                <span>${this.cpu_request}</span>
+                <p>Core</p>
+              </div>
+              <div class="vertical layout center center-justified resource-allocated">
+                <span>${this.mem_request}</span>
+                <p>GB</p>
+              </div>
+              <div class="vertical layout center center-justified resource-allocated">
+                <span>${this.shmem_request}</span>
+                <p>GB</p>
+              </div>
+              <div class="vertical layout center center-justified resource-allocated">
+                <span>${this.gpu_request}</span>
+                <p>GPU</p>
+              </div>
+            </div>
+            <div class="vertical layout center center-justified cluster-allocated">
+              <div class="horizontal layout">
+                <p>×</p>
+                <span>${this.cluster_size <= 1 ? this.session_request : this.cluster_size}</span>
+              </div>
+              <p class="small">${_t("session.launcher.Container")}</p>
+            </div>
+            <div class="vertical layout center center-justified cluster-allocated">
+              <div class="horizontal layout">
+                <p>${this.cluster_mode === 'single-node' ? '×' : ''}</p>
+                <span>${this.cluster_mode === 'single-node' ? 1 : 'multi'}</span>
+              </div>
+              <p class="small">${_t("session.launcher.Node")}</p>
+            </div>
+          </div>
+          <div class="horizontal layout center center-justified allocation-check">
+            <div style="font-size:22px;">=</div>
+            <div class="horizontal layout resource-allocated-box">
+              <div class="vertical layout center center-justified resource-allocated">
+                <span>${this.cpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
+                <p>Core</p>
+              </div>
+              <div class="vertical layout center center-justified resource-allocated">
+                <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
+                <p>GB</p>
+              </div>
+              <div class="vertical layout center center-justified resource-allocated">
+                <span>${this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
+                <p>GB</p>
+              </div>
+              <div class="vertical layout center center-justified resource-allocated">
+                <span>${this.gpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
+                <p>GPU</p>
+              </div>
+            </div>
+          </div>
           <div class="vertical center layout" style="padding-top:15px;">
             <mwc-select id="resource-templates" label="${_t("session.launcher.ResourceAllocation")}" fullwidth required>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
-                <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout center">
-                  <div style="width:110px;">Name</div>
-                  <div style="width:50px;text-align:right;">CPU</div>
-                  <div style="width:50px;text-align:right;">RAM</div>
-                  <div style="width:50px;text-align:right;">${_t("session.launcher.SharedMemory")}</div>
-                  <div style="width:90px;text-align:right;">${_t("session.launcher.Accelerator")}</div>
-                </h5>
+              <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;"
+                  role="separator" disabled="true" class="horizontal layout center">
+                <div style="width:110px;">Name</div>
+                <div style="width:50px;text-align:right;">CPU</div>
+                <div style="width:50px;text-align:right;">RAM</div>
+                <div style="width:50px;text-align:right;">${_t("session.launcher.SharedMemory")}</div>
+                <div style="width:90px;text-align:right;">${_t("session.launcher.Accelerator")}</div>
+              </h5>
             ${this.resource_templates_filtered.map(item => html`
               <mwc-list-item value="${item.name}"
                            id="${item.name}-button"
@@ -2233,18 +2293,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             `)}
             ${this.isEmpty(this.resource_templates_filtered) ? html`
               <mwc-list-item class="resource-button vertical center start layout" role="option"
-                         style="height:140px;width:350px;" type="button"
-                         flat inverted outlined disabled>
+                             style="height:140px;width:350px;" type="button"
+                             flat inverted outlined disabled>
                 <div>
                   <h4>${_t("session.launcher.NoSuitablePreset")}</h4>
                   <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
                 </div>
               </mwc-list-item>
-              ` : html``}
+            ` : html``}
             </mwc-select>
           </div>
-          <wl-expansion name="resource-group" open style="--expansion-header-padding:16px;">
-            <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.CustomAllocation")}</span>
+          <wl-expansion name="resource-group" style="--expansion-header-padding:16px;">
+            <span slot="title"
+                  style="font-size:12px;font-weight:400;color:#404040;">${_t("session.launcher.CustomAllocation")}</span>
             <span slot="description" style="font-size:12px;color:#646464;"></span>
             <div class="vertical center layout">
               <div class="horizontal center layout" style="margin-top:15px;">
@@ -2339,66 +2400,32 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <div class="horizontal layout center" style="padding:0 24px 24px 24px;">
             <div class="resource-type">${_t("session.launcher.ClusterSize")}</div>
             <lablup-slider id="cluster-size" class="cluster"
-                          pin snaps expand editable markers
-                          marker_limit="${this.marker_limit}"
-                          min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
-                          value="${this.cluster_size}"
-                          @click="${(e) => this._applyResourceValueChanges(e, false)}"
-                          @focusout="${(e) => this._applyResourceValueChanges(e, false)}"></lablup-slider>
+                           pin snaps expand editable markers
+                           marker_limit="${this.marker_limit}"
+                           min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
+                           value="${this.cluster_size}"
+                           @click="${(e) => this._applyResourceValueChanges(e, false)}"
+                           @focusout="${(e) => this._applyResourceValueChanges(e, false)}"></lablup-slider>
             ${this.cluster_mode === 'single-node' ? html`
               <span class="caption">${_t("session.launcher.Container")}</span>
             ` : html`
               <span class="caption">${_t("session.launcher.Node")}</span>
             `}
           </div>
-          <p class="title">${_t("session.launcher.TotalAllocation")}</p>
-          <div class="horizontal layout center center-justified allocation-check">
-            <div class="horizontal layout resource-allocated-box">
-              <div class="vertical layout center center-justified resource-allocated">
-                  <span>${this.cpu_request}</span>
-                  <p>Core</p>
+        ` : html``}
+          <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
+            <span slot="title"
+                  style="font-size:12px;font-weight:400;color:#404040;">${_t("session.launcher.SetSessionOwner")}</span>
+            <span slot="description"></span>
+            <div class="vertical layout">
+              <div class="horizontal center layout">
+                <mwc-textfield id="owner-email" type="email" class="flex" value=""
+                               pattern="^.+@.+\..+$"
+                               label="${_t("session.launcher.OwnerEmail")}" size="40"></mwc-textfield>
+                <mwc-icon-button icon="refresh" class="blue"
+                                 @click="${() => this._fetchSessionOwnerGroups()}">
+                </mwc-icon-button>
               </div>
-              <div class="vertical layout center center-justified resource-allocated">
-                <span>${this.mem_request}</span>
-                <p>GB</p>
-              </div>
-              <div class="vertical layout center center-justified resource-allocated">
-                <span>${this.shmem_request}</span>
-                <p>GB</p>
-              </div>
-              <div class="vertical layout center center-justified resource-allocated">
-                <span>${this.gpu_request}</span>
-                <p>GPU</p>
-              </div>
-            </div>
-            <div class="vertical layout center center-justified cluster-allocated">
-              <div class="horizontal layout">
-                <p>×</p>
-                <span>${this.cluster_size <= 1 ? this.session_request : this.cluster_size}</span>
-              </div>
-              <p class="small">${_t("session.launcher.Container")}</p>
-            </div>
-            <div class="vertical layout center center-justified cluster-allocated">
-              <div class="horizontal layout">
-                <p>${this.cluster_mode === 'single-node' ? '×' : ''}</p>
-                <span>${this.cluster_mode === 'single-node' ? 1 : 'multi'}</span>
-              </div>
-              <p class="small">${_t("session.launcher.Node")}</p>
-            </div>
-          </div>
-        `: html``}
-        <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
-          <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.SetSessionOwner")}</span>
-          <span slot="description"></span>
-          <div class="vertical layout">
-            <div class="horizontal center layout">
-              <mwc-textfield id="owner-email" type="email" class="flex" value=""
-                pattern="^.+@.+\..+$"
-                label="${_t("session.launcher.OwnerEmail")}" size="40"></mwc-textfield>
-              <mwc-icon-button icon="refresh" class="blue"
-                @click="${() => this._fetchSessionOwnerGroups()}">
-              </mwc-icon-button>
-            </div>
             <mwc-select id="owner-accesskey" label="${_t("session.launcher.OwnerAccessKey")}">
               ${this.ownerKeypairs.map(item => html`
                 <mwc-list-item class="owner-group-dropdown"
