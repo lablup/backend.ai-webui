@@ -9,12 +9,21 @@ signupSupport = false
 allowSignout = false
 allowAnonymousChangePassword = false
 allowProjectResourceMonitor = true
+#loginAttemptLimit = 5
+#loginBlockTime = 180
 debug = true
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
 #proxyBaseURL = ""
 disableCertCheck = false
+
+[resources]
+openPortToPublic = true
+maxCPUCoresPerSession = 256
+maxCUDADevicesPerSession = 16
+maxShmPerSession = 1
+maxFileUploadSize = 4294967296 # 4GB. 4294967296
 
 [server]
 consoleServerURL =

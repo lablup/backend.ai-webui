@@ -3,7 +3,7 @@
 
  @group Backend.AI Console
  */
-import {registerTranslateConfig} from "lit-translate";
+import {get as _text, registerTranslateConfig} from "lit-translate";
 import {LitElement, property} from 'lit-element';
 
 /**
@@ -73,6 +73,16 @@ export class BackendAIPage extends LitElement {
     }
     super.attributeChangedCallback(name, oldval, newval);
   }
+  /**
+   * Hide the backend.ai dialog.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
+  _hideDialog(e) {
+    let hideButton = e.target;
+    let dialog = hideButton.closest('backend-ai-dialog');
+    dialog.hide();
+  }
 
   // Compatibility layer from here.
   _addInputValidator(obj) {
@@ -86,7 +96,7 @@ export class BackendAIPage extends LitElement {
       } else if (obj.getAttribute('validationMessage')) { // Support standard attribute
         validationMessage = obj.getAttribute('validationMessage');
       } else {
-        validationMessage = 'Validation failed.';
+        validationMessage = _text('credential.validation.ValidationFailed');
       }
       obj.validityTransform = (value, nativeValidity) => {
         if (!nativeValidity.valid) {
@@ -97,13 +107,13 @@ export class BackendAIPage extends LitElement {
               patternMismatch: !nativeValidity.valid
             };
           } else if (nativeValidity.valueMissing) {
-            obj.validationMessage = "Value required.";
+            obj.validationMessage = _text('explorer.ValueRequired');
             return {
               valid: nativeValidity.valid,
               valueMissing: !nativeValidity.valid
             }
           } else if (nativeValidity.tooShort) {
-            obj.validationMessage = "Input too short.";
+            obj.validationMessage = _text('explorer.InputTooShort');
             return {
               valid: nativeValidity.valid,
               valueMissing: !nativeValidity.valid

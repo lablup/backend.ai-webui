@@ -23,12 +23,13 @@ Backend.AI console focuses to
 ## User Features
  * Session management
     * Set default resources for runs
+    * Monitor current resources sessions using
     * Choose and run environment-supported apps
     * Web-based Terminal for each session
     * Fully-featured VSCode editor and environments
  * Pipeline
-    * Experiments (with SACRED / MLFlow)
-    * AutoML (with Microsoft NNI / MLFlow)
+    * Experiments (with SACRED / Microsoft NNI / Apache MLFlow)
+    * AutoML (with Microsoft NNI / Apache MLFlow)
     * Manages container streams with pipeline vfolders
     * Storage proxy for fast data I/O between backend.ai cluster and user
     * Checks queue and scheduled jobs
@@ -37,17 +38,23 @@ Backend.AI console focuses to
     * Upload  / download files (with upload progress)
     * Integrated SSH/SFTP server (app mode only)
     * Share folders with friends / groups
+ * Node management
+    * See calculation nodes in Backend.AI cluster
+	* Live statistics of bare-metal / VM nodes
  * Statistics
     * User resource statistics
     * Session statistics
     * Workload statistics
+    * Per-node statistics
     * Insight (working)
  * Configurations
     * User-specific web / app configurations
     * Beta features
     * Console logs / errors
  * License
-    * Check current license information
+    * Check current license information (for enterprise only)
+ * Help & manuals
+
 
 ## Management Features
 
@@ -69,7 +76,7 @@ Backend.AI console focuses to
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
     * Needs backend.ai-wsproxy package
  * Service information
-    * Component compatibility 
+    * Component compatibility
     * Security check
     * License information
  * Work with console server (github/lablup/backend.ai-console-server)
@@ -91,6 +98,7 @@ These are options in `config.toml`.
 apiEndpoint = "[Default API Endpoint. If blank, user input field will be shown.]"
 apiEndpointText = "[Placeholder text instead of API endpoint input field.]"
 defaultSessionEnvironment = "[Default session kernel. If blank, alphabetically first kernel will be default.]"
+defaultImportEnvironment = "[Default kernel to use import features. If blank, index.docker.io/lablup/python:3.8-ubuntu18.04 will be used.]"
 siteDescription = "[Site description placeholder. It will be at the bottom of 'Backend.AI' at the top left corner.]"
 connectionMode = "[Connection mode. Default is API. Currenly supports API and SESSION]"
 allowChangeSigninMode = false # Allows user to change signin mode between `API` and `SESSION`
@@ -98,6 +106,7 @@ signupSupport = false # Enable / disable signup feature support. Manager plugin 
 allowSignout = false # Let users signout from service. Signup plugin is required.
 allowAnonymousChangePassword = false # Enable / disable anonymous user can send change password email. Manager plugin is required.
 allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
+autoLogout = false # If true, user will be automatically logout when they close all Backend.AI tab / window.
 debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
 
 [wsproxy]
@@ -105,14 +114,22 @@ proxyURL = "[Proxy URL]"
 proxyBaseURL = "[Base URL of websocket proxy,]"
 proxyListenIP = "[Websocket proxy configuration IP.]"
 
+[resources]
+openPortToPublic = true # Show option to open app proxy port to anyone.
+maxCPUCoresPerContainer = 256 # Maximum CPU per container.
+maxCUDADevicesPerContainer = 16  # Maximum CUDA devices per container.
+maxShmPerContainer = 1 # Maximum shared memory per container.
+maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
+
 [server]
 consoleServerURL = "[Console server website URL. App will use the site instead of local app.]"
                    # Uses websocket proxy in the app
 
-[plugins]
+[plugin]
 # Reserved to load plugins
-# login = "login-test.js"
-# sidebar = "sidebar-test.js"
+#login = "signup-cloud.js"
+#page = "test-plugin1,test-plugin2"
+
 ```
 
 

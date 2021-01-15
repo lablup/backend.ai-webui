@@ -18,7 +18,7 @@ export const BackendAiStyles = [
       --general-navbar-footer-background-color-r: 255;
       --general-navbar-footer-background-color-g: 255;
       --general-navbar-footer-background-color-b: 255;
-      --general-navbar-footer-background-color: rgba(255, 255, 255, 0.95);
+      --general-navbar-footer-background-color: #2a2c30;
       --general-navbar-footer-background-color-less: rgba(255, 255, 255, 0.6);
       --general-navbar-footer-background-border: rgba(23, 23, 23, 1);
       --general-navbar-footer-background-opacity: 1;
@@ -51,8 +51,13 @@ export const BackendAiStyles = [
       --general-tabbar-tab-disabled-color: var(--general-sidebar-color);
       --general-tabbar-button-color: var(--general-sidebar-selected-color);
       --general-textfield-selected-color: #27824F;
+      --general-textfield-idle-color: #27824F;
       --general-dropdown-color: var(--general-sidebar-color);
       --general-checkbox-color: var(--general-textfield-selected-color);
+      --general-textarea-color: var(--general-textfield-selected-color);
+      --general-textarea-idle-color: var(--general-textfield-selected-color);
+      --general-select-color: var(--general-textfield-selected-color);
+      --general-select-idle-color: var(--general-textfield-selected-color);
       --general-button-background-color: #27824F;
       --general-button-color: #ffffff;
       --general-switch-off-color: #AAA;
@@ -198,7 +203,8 @@ export const BackendAiStyles = [
       --icon-size: 12px;
     }
 
-    wl-card {
+    wl-card,
+    div.card {
       display: block;
       background: white;
       box-sizing: border-box;
@@ -210,32 +216,35 @@ export const BackendAiStyles = [
       color: #000000;
     }
 
-    #content > wl-card {
+    #content > wl-card,
+    #content > div.card {
       max-width: var(--general-content-container-width, 980px);
     }
 
     @media screen and (max-width: 399px) {
-      wl-card {
+      wl-card, div.card {
         margin-left: 0;
         margin-right: 0;
       }
     }
 
     @media screen and (max-width: 449px) {
-      #content > wl-card {
+      #content > wl-card, #content > div.card {
         width: 100%;
       }
     }
 
     @media screen and (min-width: 450px) {
       #content > wl-card,
-      #content > div {
+      #content > div,
+      #content > div.card {
         width: 100%;
         --card-elevation: 0;
         --card-padding: 0;
       }
 
-      #content > wl-card {
+      #content > wl-card,
+      #content > div.card {
         margin: 0 !important;
       }
     }
@@ -248,14 +257,19 @@ export const BackendAiStyles = [
       }
     }
 
+    wl-button.primary-action[raised] {
+      background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
+      height: 20px;
+    }
+
     mwc-multi-select {
       --mdc-select-min-width: 100px; /* Fallback to apply width */
     }
 
-    mwc-button,
-    mwc-button[outlined],
-    mwc-button[raised],
-    mwc-button[unelevated] {
+    mwc-button.primary-action,
+    mwc-button.primary-action[outlined],
+    mwc-button.primary-action[raised],
+    mwc-button.primary-action[unelevated] {
       border-radius: 5px;
       background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
       --mdc-theme-primary: transparent; /* gradient-color doesn't work in mwc-button styling */
@@ -279,31 +293,42 @@ export const BackendAiStyles = [
       background-color: var(--paper-grey-100);
     }
 
+    mwc-list mwc-list-item {
+      font-size: 14px;
+      font-family: var(--general-font-family);
+      --mdc-typography-font-family: var(--general-font-family);
+    }
+
     mwc-switch {
       --mdc-theme-surface: var(--general-switch-off-color);
       --mdc-theme-on-surface: var(--general-switch-off-color);
       --mdc-theme-secondary: var(--general-switch-on-color);
     }
 
-    wl-card p {
+    wl-card p,
+    div.card p {
       padding: 10px;
     }
 
-    wl-card > .entry > p {
+    wl-card > .entry > p,
+    div.card > .entry > p {
       padding: 5px;
     }
 
-    wl-card .commands {
+    wl-card .commands,
+    div.card .commands {
       margin: 0;
       border-top: 1px solid #dddddd;
       text-align: left;
     }
 
-    wl-card.item div.items {
+    wl-card.item div.items,
+    div.card.item div.items {
       padding-bottom: 10px;
     }
 
-    wl-card .commands.float {
+    wl-card .commands.float,
+    div.card .commands.float {
       border-top: none;
       position: fixed;
       right: 0;
@@ -312,6 +337,7 @@ export const BackendAiStyles = [
     }
 
     .panels wl-card,
+    .panels div.card,
     .panels div {
       width: var(--general-panel-width);
     }
@@ -320,7 +346,8 @@ export const BackendAiStyles = [
       margin: 0 0 10px 0;
     }
 
-    .wide-panels wl-card {
+    .wide-panels wl-card,
+    .wide-panels div.card {
       width: 100%;
       margin: 0 0 16px 0;
     }
@@ -357,7 +384,8 @@ export const BackendAiStyles = [
       margin-bottom: 10px;
     }
 
-    wl-card > h3 {
+    wl-card > h3,
+    div.card > h3 {
       font-size: 20px;
       font-weight: 400;
       padding: 10px 20px;
@@ -366,7 +394,8 @@ export const BackendAiStyles = [
       border-bottom: 1px solid #dddddd;
     }
 
-    wl-card > h3 > .date {
+    wl-card > h3 > .date,
+    div.card > h3 > .date {
       font-size: 12px;
       text-align: right;
       color: #888888;
@@ -374,43 +403,58 @@ export const BackendAiStyles = [
     }
 
     wl-card > h3.blue,
-    wl-card > h4.blue {
+    wl-card > h4.blue,
+    div.card > h3.blue,
+    div.card > h4.blue {
       border-left: 3px solid var(--paper-light-blue-400);
     }
 
     wl-card > h3.red,
-    wl-card > h4.red {
+    wl-card > h4.red,
+    div.card > h3.red,
+    div.card > h4.red {
       border-left: 3px solid var(--paper-red-400);
     }
 
     wl-card > h3.green,
-    wl-card > h4.green {
+    wl-card > h4.green,
+    div.card > h3.green,
+    div.card > h4.green {
       border-left: 3px solid var(--paper-green-400);
     }
 
     wl-card > h3.orange,
-    wl-card > h4.orange {
+    wl-card > h4.orange,
+    div.card > h3.orange,
+    div.card > h4.orange {
 
       border-left: 3px solid var(--paper-orange-400);
     }
 
     wl-card > h3.cyan,
-    wl-card > h4.cyan {
+    wl-card > h4.cyan,
+    div.card > h3.cyan,
+    div.card > h4.cyan {
 
       border-left: 3px solid var(--paper-cyan-400);
     }
 
     wl-card > h3.lime,
-    wl-card > h4.lime {
+    wl-card > h4.lime,
+    div.card > h3.lime,
+    div.card > h4.lime {
       border-left: 3px solid var(--paper-lime-400);
     }
 
     wl-card > h3.pink,
-    wl-card > h4.pink {
+    wl-card > h4.pink,
+    div.card > h3.pink,
+    div.card > h4.pink {
       border-left: 3px solid var(--paper-pink-400);
     }
 
-    wl-card > h4 {
+    wl-card > h4,
+    div.card > h4 {
       font-size: 14px;
       padding: 5px 15px 5px 20px;
       margin: 0 0 10px 0;
@@ -421,11 +465,13 @@ export const BackendAiStyles = [
       justify-content: space-between;
     }
 
-    wl-card .flex {
+    wl-card .flex
+    div.card .flex {
       display: flex;
     }
 
-    wl-card.entries > div {
+    wl-card.entries > div,
+    div.card.entries > div {
       margin: 20px;
     }
 
@@ -437,53 +483,108 @@ export const BackendAiStyles = [
     paper-toolbar {
       --paper-toolbar-sm-height: 45px;
     }
+
     mwc-button, mwc-button[unelevated] {
       background-image: none;
       --mdc-theme-primary: var(--general-button-background-color);
       --mdc-on-theme-primary: var(--general-button-background-color);
       --mdc-typography-font-family: var(--general-font-family);
     }
-    mwc-textfield, mwc-textarea {
+
+    mwc-textfield {
+      --mdc-text-field-fill-color: transparent;
+      --mdc-theme-primary: var(--general-textfield-selected-color);
       --mdc-text-field-hover-line-color: transparent;
-      --mdc-text-field-idle-line-color: transparent;
-      --mdc-text-field-fill-color: var(--general-background-color, #fafafa);
+      --mdc-text-field-idle-line-color: var(--general-textfield-idle-color);
+      --mdc-text-field-fill-color: rgb(250, 250, 250);
+      font-family: var(--general-font-family);
+      --mdc-typography-font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-size: 14px;
+      --mdc-typography-subtitle1-font-color: black;
+      --mdc-typography-subtitle1-font-weight: 400;
+      --mdc-typography-subtitle1-line-height: 16px;
+    }
+
+    mwc-textarea {
+      --mdc-text-field-fill-color: transparent;
+      --mdc-theme-primary: var(--general-textarea-color);
+      --mdc-text-area-outlined-idle-border-color: var(--general-textarea-idle-color);
+      font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-size: 14px;
+      --mdc-typography-subtitle1-font-color: black;
+      --mdc-typography-subtitle1-font-weight: 400;
+      --mdc-typography-subtitle1-line-height: 16px;
+    }
+
+    mwc-select {
+      font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-size: 14px;
+      --mdc-typography-subtitle1-font-color: black;
+      --mdc-typography-subtitle1-font-weight: 400;
+      --mdc-typography-subtitle1-line-height: 16px;
+      --mdc-theme-primary: var(--general-select-color);
+      --mdc-select-idle-line-color: var(--general-select-idle-color);
+      --mdc-select-hover-line-color: var(--general-select-color);
+      --mdc-select-outlined-idle-border-color: var(--general-select-idle-color);
+      --mdc-select-outlined-hover-border-color: var(--general-select-color);
+      --mdc-select-outlined-disabled-border-color: rgba(255, 255, 255, 0.87);
+      --mdc-select-fill-color: transparent;
+      --mdc-select-disabled-fill-color: transparent;
+      --mdc-select-ink-color: black;
+      --mdc-select-label-ink-color: black;
+      --mdc-select-focused-label-color: rgba(24, 24, 24, 1.0);
+      --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
+      --mdc-select-dropdown-icon-color: #747474;
+      --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
+      --mdc-select-disabled-dropdown-icon-color: #747474;
     }
 
     .bg-blue {
       background-color: var(--paper-light-blue-400);
+      --mdc-theme-primary: var(--paper-light-blue-400);
     }
 
     .bg-red {
       background-color: var(--paper-red-400);
+      --mdc-theme-primary: var(--paper-red-400);
     }
 
     .bg-yellow {
       background-color: var(--paper-yellow-400);
+      --mdc-theme-primary: var(--paper-yellow-400);
     }
 
     .bg-orange {
       background-color: var(--paper-amber-400);
+      --mdc-theme-primary: var(--paper-amber-400);
     }
 
     .bg-green {
       background-color: var(--paper-green-400);
+      --mdc-theme-primary: var(--paper-green-400);
     }
 
     .bg-cyan {
       background-color: var(--paper-cyan-400);
+      --mdc-theme-primary: var(--paper-cyan-400);
     }
 
     .bg-lime {
       background-color: var(--paper-lime-400);
+      --mdc-theme-primary: var(--paper-lime-400);
     }
 
     .bg-pink {
       background-color: var(--paper-pink-a200);
+      --mdc-theme-primary: var(--paper-pink-a200);
     }
 
     .bg-purple {
       background-color: var(--paper-purple-400);
+      --mdc-theme-primary: var(--paper-purple-400);
     }
 
     .white {
@@ -500,42 +601,52 @@ export const BackendAiStyles = [
 
     .fg.blue {
       color: var(--paper-light-blue-400) !important;
+      --mdc-theme-on-primary: var(--paper-light-blue-400) !important;
     }
 
     .fg.red {
       color: var(--paper-red-400) !important;
+      --mdc-theme-on-primary: var(--paper-red-400) !important;
     }
 
     .fg.yellow {
       color: var(--paper-yellow-400) !important;
+      --mdc-theme-on-primary: var(--paper-yellow-400) !important;
     }
 
     .fg.orange {
       color: var(--paper-amber-400) !important;
+      --mdc-theme-on-primary: var(--paper-amber-400) !important;
     }
 
     .fg.green {
       color: var(--paper-green-400) !important;
+      --mdc-theme-on-primary: var(--paper-green-400) !important;
     }
 
     .fg.teal {
       color: var(--paper-teal-400) !important;
+      --mdc-theme-on-primary: var(--paper-teal-400) !important;
     }
 
     .fg.cyan {
       color: var(--paper-cyan-400) !important;
+      --mdc-theme-on-primary: var(--paper-cyan-400) !important;
     }
 
     .fg.lime {
       color: var(--paper-lime-400) !important;
+      --mdc-theme-on-primary: var(--paper-lime-400) !important;
     }
 
     .fg.pink {
       color: var(--paper-pink-a200) !important;
+      --mdc-theme-on-primary: var(--paper-pink-a200) !important;
     }
 
     .fg.purple {
       color: var(--paper-purple-400) !important;
+      --mdc-theme-on-primary: var(--paper-purple-400) !important;
     }
 
     /* Layout */
@@ -554,10 +665,11 @@ export const BackendAiStyles = [
     }
 
     .distancing {
-      margin:15px;
+      margin: 15px;
     }
 
-    wl-card > h4 {
+    wl-card > h4,
+    div.card > h4 {
       font-weight: 200;
     }
 
@@ -572,7 +684,8 @@ export const BackendAiStyles = [
     }
 
     /* Tab on head */
-    wl-card h3.tab {
+    wl-card h3.tab,
+    div.card h3.tab {
       padding-top: 0;
       padding-bottom: 0;
       padding-left: 0;
@@ -711,4 +824,7 @@ export const BackendAiStyles = [
       --component-shadow-color: #37c995;
     }
 
+    .temporarily-hide {
+      display: none !important;
+    }
   `];

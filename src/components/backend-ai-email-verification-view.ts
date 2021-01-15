@@ -51,6 +51,9 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
       css`
         mwc-textfield {
           width: 100%;
+          --mdc-text-field-fill-color: var(--general-menu-color);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
         }
       `
     ];
@@ -73,6 +76,12 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
       this.clientConfig,
       'Backend.AI Console.',
     );
+    this.successDialog.addEventListener('didHide', () => {
+      this._redirectToLoginPage();
+      });
+    this.failDialog.addEventListener('didHide', () => {
+      this._redirectToLoginPage();
+      });
   }
 
   /**
@@ -99,7 +108,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         this.successDialog.show();
       } catch (e) {
         console.error(e);
-        this.notification.text = e.message || 'Verification Error';
+        this.notification.text = _text('signup.VerificationError');
         this.notification.show();
         window.setTimeout(() => this.failDialog.show(), 100);
       }
@@ -120,7 +129,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
       this.notification.show();
     } catch (e) {
       console.error(e);
-      this.notification.text = e.message || 'Send error';
+      this.notification.text = e.message || _text('signup.SendError');
       this.notification.show();
     }
   }
@@ -138,7 +147,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-              raised
+              unelevated
               label="${_t("login.Login")}"
               @click="${() => this._redirectToLoginPage()}"></mwc-button>
         </div>
@@ -154,11 +163,12 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
           <div style="margin:20px;">
             <mwc-textfield id="email" label="${_t('data.explorer.EnterEmailAddress')}"
                 autofocus auto-validate validationMessage="${_t('signup.InvalidEmail')}"
-                pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
+                pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"
+                maxLength="64" placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
             <div style="height:1em"></div>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
               label="${_t("signup.SendEmail")}"

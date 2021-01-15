@@ -265,7 +265,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       domain = this.shadowRoot.querySelector("#scaling-group-domain").value;
 
     if (scalingGroup === "") {
-      this.notification.text = "Enter valid Resource group name";
+      this.notification.text = _text("resourceGroup.EnterValidResourceGroupName");
       this.notification.show();
       this._hideDialogById("#create-scaling-group-dialog");
       return;
@@ -442,11 +442,15 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             type="text"
             id="scaling-group-name"
             label="${_t("resourceGroup.ResourceGroupName")}"
+            maxLength="64"
+            placeholder="${_t("maxLength.64chars")}"
           ></mwc-textfield>
           <mwc-textarea
             name="description"
             id="scaling-group-description"
             label="${_t("resourceGroup.Description")}"
+            maxLength="512"
+            placeholder="${_t("maxLength.512chars")}"
           ></mwc-textarea>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
@@ -501,6 +505,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             id="delete-scaling-group"
             type="text"
             label="${_t("resourceGroup.TypeResourceGroupNameToDelete")}"
+            maxLength="64"
+            placeholder="${_t("maxLength.64chars")}"
           ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">

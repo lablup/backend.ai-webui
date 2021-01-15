@@ -33,7 +33,8 @@ export default class BackendAiHelpButton extends BackendAIPage {
     'credential': 'admin_user_keypair_management/admin_user_keypair_management.html',
     'environment': 'admin_user_keypair_management/admin_user_keypair_management.html#manage-images',
     'agent': 'admin_user_keypair_management/admin_user_keypair_management.html#query-agent-nodes',
-    'settings': 'admin_user_keypair_management/admin_user_keypair_management.html#system-settings'
+    'settings': 'admin_user_keypair_management/admin_user_keypair_management.html#system-settings',
+    'usersettings': 'user_settings/user_settings.html'
   };
 
   constructor() {
@@ -71,7 +72,7 @@ export default class BackendAiHelpButton extends BackendAIPage {
    */
   showHelpPage() {
     let postfix: string = '';
-    if (this.manualURL != '') {
+    if (this.manualURL !== '') {
       postfix = this.manualURL;
     } else {
       if (this.currentPage in this.URLmatchingTable) {

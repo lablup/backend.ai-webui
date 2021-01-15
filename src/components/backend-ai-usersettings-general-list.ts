@@ -14,7 +14,6 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import 'weightless/card';
 import 'weightless/switch';
 import 'weightless/select';
 import 'weightless/icon';
@@ -53,9 +52,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: Object}) userconfigDialog = Object();
   @property({type: Object}) notification;
   @property({type: Array}) supportLanguages = [
-    {name: _text("language.OSDefault"), code: "default"},
-    {name: _text("language.English"), code: "en"},
-    {name: _text("language.Korean"), code: "ko"}
+    {name: _t("language.OSDefault"), code: "default"},
+    {name: _t("language.English"), code: "en"},
+    {name: _t("language.Korean"), code: "ko"}
   ];
   @property({type: Boolean}) beta_feature_panel = false;
   @property({type: Boolean}) shell_script_edit = false;
@@ -63,6 +62,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: String}) rcfile = '';
   @property({type: String}) prevRcfile = '';
   @property({type: String}) preferredSSHPort = '';
+  @property({type: String}) publicSSHkey = '';
 
   constructor() {
     super();
@@ -148,26 +148,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           margin-left: 5px;
         }
 
-        wl-card > div {
-          padding: 15px;
-        }
-
-        wl-card h3.tab {
-          padding-top: 0;
-          padding-bottom: 0;
-          padding-left: 0;
-        }
-
-        wl-card {
-          margin: 0;
-        }
-
-        wl-card wl-card {
-          margin: 0;
-          padding: 0;
-          --card-elevation: 0;
-        }
-
         #bootstrap-dialog, #userconfig-dialog {
           --dialog-min-width: calc(100vw - 200px);
           --dialog-max-width: calc(100vw - 200px);
@@ -179,6 +159,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           width: 140px;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-size: 11px;
           --mdc-theme-primary: var(--general-sidebar-color);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
@@ -262,6 +243,16 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         ::-webkit-scrollbar {
           display: none; /* Chrome and Safari */
         }
+
+        @media screen and (max-width: 750px) {
+          .setting-desc {
+            width: 200px;
+          }
+
+          #language-setting {
+            width: 150px;
+          }
+        }
       `];
   }
 
@@ -288,7 +279,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         this.rcfile = '.bashrc';
       }
     }
-    this.beta_feature_panel = !this.shadowRoot.querySelector('#beta-feature-switch').disabled;
+    // this.beta_feature_panel = !this.shadowRoot.querySelector('#beta-feature-switch').disabled;
   }
 
   /**
@@ -333,6 +324,23 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   /**
+   * Toggle auto logout.
+   *
+   * @param {Event} e  - click the auto-logout-switch
+   */
+  toggleAutoLogout(e) {
+    if (e.target.checked === false) {
+      globalThis.backendaioptions.set('auto_logout', false);
+      let event = new CustomEvent('backend-ai-auto-logout', { detail: false });
+      document.dispatchEvent(event);
+    } else {
+      globalThis.backendaioptions.set('auto_logout', true);
+      let event = new CustomEvent('backend-ai-auto-logout', { detail: true });
+      document.dispatchEvent(event);
+    }
+  }
+
+  /**
    * Toggle automatic_update_check. If automatic_update_check is true, set automatic_update_count_trial to 0.
    *
    * @param {Event} e - click the automatic-update-check-switch
@@ -353,9 +361,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * */
   setUserLanguage(e) {
     if (e.target.selected.value !== globalThis.backendaioptions.get('language')) {
+      let lang = e.target.selected.value;
+      if (lang === 'default') {
+        lang = globalThis.navigator.language.split('-')[0];
+      }
       globalThis.backendaioptions.set('language', e.target.selected.value);
-      globalThis.backendaioptions.set('current_language', e.target.selected.value);
-      setLanguage(e.target.selected.value);
+      globalThis.backendaioptions.set('current_language', lang);
+      setLanguage(lang);
+      setTimeout(() => {
+        const langEl = this.shadowRoot.querySelector('#ui-language');
+        langEl.selectedText = langEl.selected.textContent.trim();
+      }, 100);
     }
   }
 
@@ -414,14 +430,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     const editor = this.shadowRoot.querySelector('#bootstrap-dialog #bootstrap-editor');
     const script = editor.getValue();
     if (this.lastSavedBootstrapScript === script) {
-      this.notification.text = 'No changes';
+      this.notification.text = _text('resourceGroup.NochangesMade');
       this.notification.show();
       return;
     }
     this.spinner.show();
     globalThis.backendaiclient.userConfig.update_bootstrap_script(script)
       .then(res => {
-        this.notification.text = 'Bootstrap script updated.';
+        this.notification.text = _text("usersettings.BootstrapScriptUpdated");
         this.notification.show();
         this.spinner.hide();
       });
@@ -523,7 +539,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
       } else { // if rcfile already exists
         if (this.rcfiles[idx]['data'] === script) {
-          this.notification.text = 'No changes';
+          this.notification.text = _text('resourceGroup.NochangesMade');
           this.notification.show();
           return;
         } else if (script === '') {
@@ -682,11 +698,20 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   async _openSSHKeypairRefreshDialog() {
     globalThis.backendaiclient.fetchSSHKeypair().then((resp) => {
       const dialog = this.shadowRoot.querySelector('#ssh-keypair-management-dialog');
-      dialog.querySelector('#current-ssh-public-key').value = resp.ssh_public_key;
+      let publicKeyEl = dialog.querySelector('#current-ssh-public-key');
+      let publicKeyCopyBtn = dialog.querySelector('#copy-current-ssh-public-key-button');
+      publicKeyEl.value = resp.ssh_public_key ? resp.ssh_public_key : '';
+
+      // disable textarea and copy button when the user has never generated SSH Keypair.
+      publicKeyEl.disabled = publicKeyEl.value === '' ? true : false;
+      publicKeyCopyBtn.disabled = publicKeyEl.disabled;
+
+      // show information text for SSH generation if the user has never generated SSH Keypair.
+      this.publicSSHkey = publicKeyEl.value ? publicKeyEl.value : _text('usersettings.NoExistingSSHKeypair');
+
       dialog.show();
     });
   }
-
   _openSSHKeypairClearDialog() {
     this.shadowRoot.querySelector('#clear-ssh-keypair-dialog').show();
   }
@@ -697,6 +722,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     if (updatedSSHPublicKey !== "") {
       const dialog = this.shadowRoot.querySelector('#ssh-keypair-management-dialog');
       dialog.querySelector('#current-ssh-public-key').value = updatedSSHPublicKey;
+      dialog.querySelector('#copy-current-ssh-public-key-button').disabled = false;
     }
   }
 
@@ -806,7 +832,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
         </div>
         <div class="horizontal layout wrap setting-item">
-          <div class="vertical start start-justified layout setting-select-desc">
+          <div class="vertical start start-justified layout setting-select-desc" id="language-setting">
             <div class="title">${_t("usersettings.Language")}</div>
             <div class="description">${_tr("usersettings.DescLanguage")}
             </div>
@@ -840,7 +866,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
           <div class="vertical center-justified layout setting-text">
             <mwc-textfield pattern="[0-9]*" @change="${(e) => this.changePreferredSSHPort(e)}"
-                value="${this.preferredSSHPort}" validationMessage="Allows numbers only" auto-validate></mwc-textfield>
+                value="${this.preferredSSHPort}" validationMessage="${_t("credential.validation.NumbersOnly")}" auto-validate maxLength="5"></mwc-textfield>
           </div>
         </div>
         ` : html``}
@@ -856,9 +882,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                 @click="${this._openSSHKeypairRefreshDialog}">
             </mwc-icon-button>
           </div>
-          <!--<wl-button id="ssh-keypair-details" fab inverted flat @click="${this._openSSHKeypairRefreshDialog}">
-            <wl-icon id="ssh-keypair-icon">more</wl-icon>
-          </wl-button>-->
         </div>
         <div class="horizontal layout wrap setting-item">
           <div class="vertical start start-justified layout setting-desc">
@@ -869,7 +892,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <mwc-switch id="automatic-update-check-switch" @change="${(e) => this.toggleAutomaticUploadCheck(e)}" ?checked="${globalThis.backendaioptions.get('automatic_update_check')}"></mwc-switch>
           </div>
         </div>
-        <div class="horizontal layout wrap setting-item">
+        <div class="horizontal layout wrap setting-item" style="display:none;">
           <div class="vertical start start-justified layout setting-desc">
             <div class="title">${_t("usersettings.BetaFeatures")}</div>
             <div class="description">${_tr("usersettings.DescBetaFeatures")}</div>
@@ -878,23 +901,34 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <mwc-switch id="beta-feature-switch" @change="${(e) => this.toggleBetaFeature(e)}" ?checked="${globalThis.backendaioptions.get('beta_feature')}"></mwc-switch>
           </div>
         </div>
-      </div>
-      ${this.beta_feature_panel ? html`
-      <h3 class="horizontal center layout">
-        <span>${_t("usersettings.BetaFeatures")}</span>
-        <span class="flex"></span>
-      </h3>
-      <div class="description">
-        ${_t("usersettings.DescNoBetaFeatures")}
-      </div>
+        <div class="horizontal layout wrap setting-item">
+          <div class="vertical start start-justified layout setting-desc">
+            <div class="title">${_t("usersettings.AutoLogout")}</div>
+            <div class="description">${_tr("usersettings.DescAutoLogout")}
+            </div>
+          </div>
+          <div class="vertical center-justified layout setting-button flex end">
+            <mwc-switch id="auto-logout-switch" @change="${(e) => this.toggleAutoLogout(e)}"
+                        ?checked="${globalThis.backendaioptions.get('auto_logout', false)}"></mwc-switch>
+          </div>
+        </div>
+        ${this.beta_feature_panel ? html`
+          <h3 class="horizontal center layout">
+            <span>${_t("usersettings.BetaFeatures")}</span>
+            <span class="flex"></span>
+          </h3>
+          <div class="description">
+            ${_t("usersettings.DescNoBetaFeatures")}
+          </div>
       ` : html``}
+      </div>
       ${this.shell_script_edit ? html`
-      <h3 class="horizontal center layout">
-        <span>${_text('usersettings.ShellEnvironments')}</span>
-        <span class="flex"></span>
-      </h3>
-      <div class="horizontal wrap layout setting-item">
-        <mwc-button
+        <h3 class="horizontal center layout">
+          <span>${_t('usersettings.ShellEnvironments')}</span>
+          <span class="flex"></span>
+        </h3>
+        <div class="horizontal wrap layout setting-item">
+          <mwc-button
             icon="edit"
             outlined
             label="${_t("usersettings.EditBootstrapScript")}"
@@ -905,14 +939,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             outlined
             label="${_t("usersettings.EditUserConfigScript")}"
             @click="${() => this._launchUserConfigDialog()}"></mwc-button>
-        <!--<wl-button class="fg teal" outlined @click="${() => this._editBootstrapScript()}" style="margin-right:20px; background: none; display: none;">
-          <wl-icon>edit</wl-icon>
-          ${_t("usersettings.EditBootstrapScript")}
-        </wl-button>
-        <wl-button class="fg green" outlined @click="${() => this._launchUserConfigDialog()}" style="background: none;">
-          <wl-icon>edit</wl-icon>
-          ${_t("usersettings.EditUserConfigScript")}
-        </wl-button>-->
       </div>
       <h3 class="horizontal center layout" style="display:none;">
         <span>${_t("usersettings.PackageInstallation")}</span>
@@ -942,13 +968,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
-        <span slot="title">Edit ${this.rcfile} shell script</span>
-        <div slot="action" class="vertical layout">
+        <span slot="title">${_t("usersettings.Edit_ShellScriptTitle_1")} ${this.rcfile} ${_t("usersettings.Edit_ShellScriptTitle_2")}</span>
+        <div slot="action" class="vertical layout" style="margin-left:1em;">
           <mwc-select id="select-rcfile-type"
-                      label="config file name"
+                      label="${_t("usersettings.ConfigFilename")}"
                       required
                       outlined
-                      validationMessage="Please select one option."
+                      validationMessage="${_t("credential.validation.PleaseSelectOption")}"
                       @selected="${() => this._toggleRcFileName()}"
                       helper=${_t("dialog.warning.WillBeAppliedToNewSessions")}>
             ${this.rcfiles.map(item => html`
@@ -966,10 +992,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <mwc-button unelevated id="save-code-and-close" label="${_t("button.SaveAndClose")}" @click="${() => this._saveUserConfigScriptAndCloseDialog()}"></mwc-button>
           <mwc-button unelevated id="delete-rcfile" label="${_t("button.Delete")}" @click="${() => this._deleteRcFile()}"></mwc-button>
 
-          <!--<wl-button inverted flat id="discard-code" @click="${() => this._hideUserConfigScriptDialog()}">${_t("button.Cancel")}</wl-button>
-          <wl-button style="margin-left:10px;" id="save-code" class="button" @click="${() => this._saveUserConfigScript()}">${_t("button.Save")}</wl-button>
-          <wl-button style="margin-left:10px;" id="save-code-and-close" @click="${() => this._saveUserConfigScriptAndCloseDialog()}">${_t("button.SaveAndClose")}</wl-button>
-          <wl-button style="margin-left:10px;" id="delete-rcfile" @click="${() => this._deleteRcFile()}" style="display:none;">${_t("button.Delete")}</wl-button>-->
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
@@ -988,12 +1010,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <mwc-button
               unelevated
               id="discard-editor-data"
-              label="${_t("button.No")}"
+              label="${_t("button.Yes")}"
               @click="${() => this._discardCurrentEditorChange()}"></mwc-button>
           <mwc-button
               unelevated
               id="save-editor-data"
-              label="${_t("button.No")}"
+              label="${_t("button.SaveAndClose")}"
               @click="${() => this._saveCurrentEditorChange()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -1001,8 +1023,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <span slot="title">${_t("usersettings.SSHKeypairManagement")}</span>
         <div slot="content" style="max-width:500px">
           <span slot="title"> ${_t("usersettings.CurrentSSHPublicKey")}</span>
-          <mwc-textarea class="ssh-keypair" style="width:435px; height:270px;" id="current-ssh-public-key" outlined readonly></mwc-textarea>
+          <mwc-textarea
+              outlined
+              readonly
+              class="ssh-keypair"
+              id="current-ssh-public-key"
+              style="width:430px; height:270px;"
+              value="${this.publicSSHkey}"></mwc-textarea>
           <mwc-icon-button
+              id="copy-current-ssh-public-key-button"
               icon="content_copy"
               @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
         </div>
@@ -1025,14 +1054,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <mwc-textarea class="ssh-keypair" id="ssh-public-key" outlined readonly></mwc-textarea>
               <mwc-icon-button
               icon="content_copy"
-              @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+              @click="${() => this._copySSHKey("#ssh-public-key")}"></mwc-icon-button>
             </div>
             <span slot="title">${_t("usersettings.PrivateKey")}</span>
             <div class="horizontal layout flex">
               <mwc-textarea class="ssh-keypair" id="ssh-private-key" outlined readonly></mwc-textarea>
               <mwc-icon-button
                   icon="content_copy"
-                  @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+                  @click="${() => this._copySSHKey("#ssh-private-key")}"></mwc-icon-button>
             </div>
             <div style="color:crimson">${_t("usersettings.SSHKeypairGenerationWarning")}</div>
           </div>

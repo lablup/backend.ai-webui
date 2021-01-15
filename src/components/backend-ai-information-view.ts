@@ -138,13 +138,22 @@ export default class BackendAiInformationView extends BackendAIPage {
         lablup-activity-panel {
           color: #000;
         }
+
+        @media screen and (max-width: 805px) {
+          .setting-desc {
+            width: 60%;
+          }
+
+          .setting-label {
+            width: 35%;
+          }
+        }
       `];
   }
 
   render() {
     // language=HTML
     return html`
-      <!--<wl-card elevation="1">-->
       <div class="horizontal layout flex wrap">
         <div class="vertical layout">
           <lablup-activity-panel title="${_t("information.Core")}" horizontalsize="1x">
@@ -295,7 +304,6 @@ export default class BackendAiInformationView extends BackendAIPage {
           </div>
         </div>
       </lablup-activity-panel>
-      <!--</wl-card>-->
     `;
   }
 

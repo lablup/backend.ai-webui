@@ -154,7 +154,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
                   @click="${() => this.rescan_images()}">
               </mwc-button>
             </div>
-            <div class="horizontal flex layout wrap setting-item">
+            <div class="horizontal flex layout wrap setting-item temporarily-hide">
               <div class="vertical center-justified layout setting-desc">
                 <div class="title">${_t("maintenance.CleanupOldImages")}</div>
                 <div class="description">${_t("maintenance.DescCleanupOldImages")}
@@ -200,18 +200,18 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     //this.notification.text = 'Rescan image started.';
     //this.notification.show();
     let indicator = await this.indicator.start('indeterminate');
-    indicator.set(10, 'Scanning...');
+    indicator.set(10, _text('maintenance.Scanning'));
     globalThis.tasker.add(
       _text("maintenance.RescanImages"),
       globalThis.backendaiclient.maintenance.rescan_images().then((response) => {
         this.shadowRoot.querySelector('#rescan-image-button-desc').label = _text("maintenance.RescanImages");
         this.scanning = false;
-        indicator.set(100, 'Rescan image finished.');
+        indicator.set(100, _text('maintenance.RescanImageFinished'));
       }).catch(err => {
         this.scanning = false;
         this.shadowRoot.querySelector('#rescan-image-button-desc').label = _text("maintenance.RescanImages");
         console.log(err);
-        indicator.set(50, 'Rescan failed.');
+        indicator.set(50, _text('maintenance.RescanFailed'));
         indicator.end(1000);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);
@@ -228,18 +228,18 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     this.shadowRoot.querySelector('#recalculate_usage-button-desc').label = _text('maintenance.Recalculating');
     this.recalculating = true;
     let indicator = await this.indicator.start('indeterminate');
-    indicator.set(10, 'Recalculating...');
+    indicator.set(10, _text('maintenance.Recalculating'));
     this.tasker.add(
       _text('maintenance.RecalculateUsage'),
       globalThis.backendaiclient.maintenance.recalculate_usage().then((response) => {
         this.shadowRoot.querySelector('#recalculate_usage-button-desc').label = _text('maintenance.RecalculateUsage');
         this.recalculating = false;
-        indicator.set(100, 'Recalculation finished.');
+        indicator.set(100, _text('maintenance.RecalculationFinished'));
       }).catch(err => {
         this.recalculating = false;
         this.shadowRoot.querySelector('#recalculate_usage-button-desc').label = _text('maintenance.RecalculateUsage');
         console.log(err);
-        indicator.set(50, 'Recalculation failed.');
+        indicator.set(50, _text('maintenance.RecalculationFailed'));
         indicator.end(1000);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);

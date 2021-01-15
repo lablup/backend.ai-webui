@@ -6,12 +6,14 @@ import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import 'weightless/icon';
 import 'weightless/card';
+import '@material/mwc-checkbox';
 import '@material/mwc-button';
 import '@material/mwc-textfield';
 import '@material/mwc-icon-button-toggle';
 import './lablup-terms-of-service';
 import './backend-ai-dialog';
 
+import {default as PainKiller} from "./backend-ai-painkiller";
 import '../lib/backend.ai-client-es6';
 import {BackendAiStyles} from "./backend-ai-general-styles";
 import {
@@ -85,6 +87,12 @@ export default class BackendAiSignup extends BackendAIPage {
           mwc-textfield {
             width: 100%;
             --mdc-text-field-fill-color: transparent;
+            --mdc-theme-primary: var(--general-textfield-selected-color);
+            --mdc-typography-font-family: var(--general-font-family);
+          }
+
+          mwc-textfield#id_user_name {
+            margin-bottom: 18px;
           }
 
           mwc-button.full {
@@ -109,6 +117,10 @@ export default class BackendAiSignup extends BackendAIPage {
             --mdc-button-disabled-ink-color: var(--general-button-background-color);
             --mdc-theme-primary: var(--general-button-background-color);
             --mdc-on-theme-primary: var(--general-button-background-color);
+          }
+
+          mwc-checkbox {
+            --mdc-theme-secondary: var(--general-checkbox-color);
           }
       `];
   }
@@ -193,12 +205,6 @@ export default class BackendAiSignup extends BackendAIPage {
     }
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
-  }
-
   block(message = '') {
     this.errorMsg = message;
     this.blockPanel.show();
@@ -223,7 +229,7 @@ export default class BackendAiSignup extends BackendAIPage {
     inputFields.map((el: string) => {
       this.shadowRoot.querySelector(el).value = "";
     });
-    this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup';
+    this.shadowRoot.querySelector('#signup-button-message').innerHTML = _text('signup.Signup');
   }
 
   _toggleInputField(isActive: boolean) {
@@ -261,7 +267,7 @@ export default class BackendAiSignup extends BackendAIPage {
     const user_email = (this.shadowRoot.querySelector('#id_user_email') as HTMLInputElement).value;
     const user_name = (this.shadowRoot.querySelector('#id_user_name') as HTMLInputElement).value;
     const password = (this.shadowRoot.querySelector('#id_password1') as HTMLInputElement).value;
-    this.notification.text = 'Processing...';
+    this.notification.text = _text("signup.Processing");
     this.notification.show();
     const body = {
       'email': user_email,
@@ -273,8 +279,8 @@ export default class BackendAiSignup extends BackendAIPage {
     let rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
     this.client._wrapWithPromise(rqst).then((response) => {
       this._toggleInputField(false);
-      this.shadowRoot.querySelector('#signup-button-message').textContent = 'Signup succeed';
-      this.notification.text = 'Signup succeed.';
+      this.shadowRoot.querySelector('#signup-button-message').innerHTML = _text('signup.SignupSucceeded');
+      this.notification.text = _text("signup.SignupSucceeded");;
       this.notification.show();
       setTimeout(() => {
         this.signupPanel.hide();
@@ -283,7 +289,7 @@ export default class BackendAiSignup extends BackendAIPage {
       }, 1000);
     }).catch((e) => {
       if (e.message) {
-        this.notification.text = e.message;
+        this.notification.text = PainKiller.relieve(e.message);
         this.notification.show(true, e);
       }
       console.log(e);
@@ -412,20 +418,21 @@ export default class BackendAiSignup extends BackendAIPage {
       <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <span slot="title">${_t("signup.SignupBETA")}</span>
         <div slot="content">
-          <mwc-textfield type="email" name="user_email" id="id_user_email" maxlength="50" autofocus
+          <mwc-textfield type="email" name="user_email" id="id_user_email" autofocus
+                       maxlength="64" placeholder="${_text('maxLength.64chars')}"
                        label="${_t("signup.E-mail")}" validateOnInitialRender
                        @change="${this._validateEmail}"
                        validationMessage="${_t("signup.EmailInputRequired")}"
                        value="${this.user_email}" required></mwc-textfield>
-          <mwc-textfield type="text" name="user_name" id="id_user_name" maxlength="30"
-                       label="${_t("signup.UserName")}" value="${this.user_name}"
-                       validationMessage="${_t("signup.UserNameInputRequired")}"></mwc-textfield>
+          <mwc-textfield type="text" name="user_name" id="id_user_name"
+                       maxlength="64" placeholder="${_text('maxLength.64chars')}"
+                       label="${_t("signup.UserName")}" value="${this.user_name}"></mwc-textfield>
           <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
                        label="${_t("signup.InvitationToken")}"
                        validationMessage="${_t("signup.TokenInputRequired")}" required></mwc-textfield>
           <div class="horizontal flex layout">
             <mwc-textfield type="password" name="password1" id="id_password1"
-                        label="${_t("signup.Password")}" minlength="8"
+                        label="${_t("signup.Password")}" maxLength="64"
                         pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                         validationMessage="${_t("signup.PasswordInputRequired")}"
                         @change="${this._validatePassword}"
@@ -436,7 +443,7 @@ export default class BackendAiSignup extends BackendAIPage {
           </div>
           <div class="horizontal flex layout">
             <mwc-textfield type="password" name="password2" id="id_password2"
-                        label="${_t("signup.PasswordAgain")}" minlength="8"
+                        label="${_t("signup.PasswordAgain")}" maxLength="64"
                         pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                         validationMessage="${_t("signup.PasswordInputRequired")}"
                         @change="${this._validatePassword}"
@@ -445,19 +452,29 @@ export default class BackendAiSignup extends BackendAIPage {
                                     @click="${(e) => this._togglePasswordVisibility(e.target)}">
             </mwc-icon-button-toggle>
           </div>
-          <div style="margin-top:10px;">
-            <wl-checkbox id="approve-terms-of-service">
-            </wl-checkbox>
-             I have read and agree to the <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">${_t("signup.TermsOfService")}</a> and <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">${_t("signup.PrivacyPolicy")}</a>.
+          <div style="margin-top:10px;" class="horizontal layout center center-justified">
+            <mwc-checkbox id="approve-terms-of-service"></mwc-checkbox>
+            <p style="font-size:12px;">
+              ${_text('signup.PolicyAgreement_1')}
+              <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">
+                ${_t("signup.TermsOfService")}
+              </a>
+              ${_text('signup.PolicyAgreement_2')}
+              <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">
+                ${_t("signup.PrivacyPolicy")}
+              </a>
+              ${_text('signup.PolicyAgreement_3')}
+            </p>
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
+              id="signup-button"
               raised
               class="full"
               icon="check"
               @click="${() => this._signup()}">
-                <span id="signup-button-message">${_t("signup.Signup")}</span>
+                <span id="signup-button-message">${_text("signup.Signup")}</span>
           </mwc-button>
         </div>
       </backend-ai-dialog>
