@@ -1408,6 +1408,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.shadowRoot.querySelector('#cpu-resource').disabled = false;
       this.shadowRoot.querySelector('#mem-resource').disabled = false;
       this.shadowRoot.querySelector('#gpu-resource').disabled = false;
+      if (globalThis.backendaiclient.supports('multi-container')) { // initialize cluster_size
+        this.cluster_size = 1;
+        this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
+      }
       this.shadowRoot.querySelector('#session-resource').disabled = false;
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
@@ -2366,17 +2370,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <span>${this.gpu_request}</span>
                 <p>GPU</p>
               </div>
-              ${this.cluster_size > 1 ? html`` : html`
-              <div class="vertical layout center center-justified resource-allocated">
-                <span>${this.session_request}</span>
-                <p>Sess.</p>
-              </div>
-              `}
             </div>
             <div class="vertical layout center center-justified cluster-allocated">
               <div class="horizontal layout">
                 <p>×</p>
-                <span>${this.cluster_size}</span>
+                <span>${this.cluster_size <= 1 ? this.session_request : this.cluster_size}</span>
               </div>
               <p class="small">${_t("session.launcher.Container")}</p>
             </div>
