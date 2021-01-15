@@ -304,7 +304,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .resource-allocated {
-          width: 50px;
+          width: 40px;
           height: 50px;
           font-size: 16px;
           margin: 5px;
@@ -316,42 +316,41 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .cluster-allocated {
-          width: 40px;
-          height: 40px;
-          border-radius: 20px;
+          min-width: 40px;
+          min-height: 40px;
+          width: auto;
+          height: 60px;
+          border-radius: 5px;
           font-size: 1rem;
           margin: 5px;
-          position: absolute;
-          top: -20px;
-          right: 20px;
+          padding: 0px 5px;
           background-color: var(--general-button-background-color);
           color: white;
-          box-shadow: 
-            0 1px 1px rgba(0,0,0,0.12), 
-            0 2px 2px rgba(0,0,0,0.12), 
-            0 4px 4px rgba(0,0,0,0.12), 
-            0 8px 8px rgba(0,0,0,0.12),
-            0 16px 16px rgba(0,0,0,0.12);
         }
 
-        .cluster-allocated > p {
-          font-size: 1.2rem;
+        .cluster-allocated > div.horizontal > p {
+          font-size: 1rem;
+          margin: 0px;
+        }
+
+        .cluster-allocated > p.small {
+          font-size: 8px;
+          margin: 0px;
         }
 
         .resource-allocated > span,
-        .cluster-allocated > span {
+        .cluster-allocated > div.horizontal > span {
           font-weight: bolder;
         }
 
         .allocation-check {
-          position: relative;
           margin-bottom: 10px;
         }
 
         .allocation-check > .resource-allocated-box {
           background-color: var(--paper-grey-300);
           border-radius: 5px;
-          margin-right: 25px;
+          margin: 5px;
         }
 
         #new-session-dialog {
@@ -2288,63 +2287,77 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
         </wl-expansion>
         ${this.cluster_support ? html`
-        <mwc-select id="cluster-mode" label="${_t("session.launcher.ClusterMode")}" fullwidth required
-              value="${this.cluster_mode}" @change="${(e) => this._setClusterMode(e)}">
-          ${this.cluster_mode_list.map(item => html`
-            <mwc-list-item
-                class="cluster-mode-dropdown"
-                id="${item}"
-                value="${item}">
-              <div class="horizontal layout center" style="width:100%;">
-                <p style="width:300px;margin-left:21px;">${_t('session.launcher.'+ item)}</p>
-                <mwc-icon-button
-                    icon="info"
-                    @click="${(e) => this._showResourceDescription(e, item)}">
-                </mwc-icon-button>
+          <mwc-select id="cluster-mode" label="${_t("session.launcher.ClusterMode")}" fullwidth required
+                value="${this.cluster_mode}" @change="${(e) => this._setClusterMode(e)}">
+            ${this.cluster_mode_list.map(item => html`
+              <mwc-list-item
+                  class="cluster-mode-dropdown"
+                  id="${item}"
+                  value="${item}">
+                <div class="horizontal layout center" style="width:100%;">
+                  <p style="width:300px;margin-left:21px;">${_t('session.launcher.'+ item)}</p>
+                  <mwc-icon-button
+                      icon="info"
+                      @click="${(e) => this._showResourceDescription(e, item)}">
+                  </mwc-icon-button>
+                </div>
+              </mwc-list-item>
+            `)}
+          </mwc-select>
+          <div class="horizontal layout center" style="padding:0 24px 24px 24px;">
+            <div class="resource-type">${_t("session.launcher.ClusterSize")}</div>
+            <lablup-slider id="cluster-size" class="cluster"
+                          pin snaps expand editable markers
+                          marker_limit="${this.marker_limit}"
+                          min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
+                          value="${this.cluster_size}"
+                          @click="${(e) => this._applyResourceValueChanges(e, false)}"
+                          @focusout="${(e) => this._applyResourceValueChanges(e, false)}"></lablup-slider>
+            ${this.cluster_mode === 'single-node' ? html`
+              <span class="caption">${_t("session.launcher.Container")}</span>
+            ` : html`
+              <span class="caption">${_t("session.launcher.Node")}</span>
+            `}
+          </div>
+          <h3 style="padding: 10px 20px;">Total allocation</h3>
+          <div class="horizontal layout center center-justified allocation-check">
+            <div class="horizontal layout resource-allocated-box">
+              <div class="vertical layout center center-justified resource-allocated">
+                  <span>${this.cpu_request}</span>
+                  <p>Core</p>
               </div>
-            </mwc-list-item>
-          `)}
-        </mwc-select>
-        <div class="horizontal layout center" style="padding:0 24px 24px 24px;">
-          <div class="resource-type">${_t("session.launcher.ClusterSize")}</div>
-          <lablup-slider id="cluster-size" class="cluster"
-                         pin snaps expand editable markers
-                         marker_limit="${this.marker_limit}"
-                         min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
-                         value="${this.cluster_size}"
-                         @click="${(e) => this._applyResourceValueChanges(e, false)}"
-                         @focusout="${(e) => this._applyResourceValueChanges(e, false)}"></lablup-slider>
-          <span class="caption">${_t("session.launcher.Node")}</span>
-        </div>
-        <h3 style="padding: 10px 20px;">Total allocation</h3>
-        <div class="horizontal layout center center-justified allocation-check">
-          <div class="horizontal layout resource-allocated-box">
-            <div class="vertical layout center center-justified resource-allocated">
-                <span>${this.cpu_request}</span>
-                <p>Core</p>
+              <div class="vertical layout center center-justified resource-allocated">
+                <span>${this.mem_request}</span>
+                <p>GB</p>
+              </div>
+              <div class="vertical layout center center-justified resource-allocated">
+                <span>${this.shmem_request}</span>
+                <p>GB</p>
+              </div>
+              <div class="vertical layout center center-justified resource-allocated">
+                <span>${this.gpu_request}</span>
+                <p>GPU</p>
+              </div>
+              <div class="vertical layout center center-justified resource-allocated">
+                <span>${this.cpu_request ? this.session_request : 0}</span>
+                <p>Sess.</p>
+              </div>
             </div>
-            <div class="vertical layout center center-justified resource-allocated">
-              <span>${this.mem_request}</span>
-              <p>GB</p>
+            <div class="vertical layout center center-justified cluster-allocated">
+              <div class="horizontal layout">
+                <p>×</p>
+                <span>${this.cluster_size}</span>
+              </div>
+              <p class="small">${_t("session.launcher.Container")}</p>
             </div>
-            <div class="vertical layout center center-justified resource-allocated">
-              <span>${this.shmem_request}</span>
-              <p>GB</p>
-            </div>
-            <div class="vertical layout center center-justified resource-allocated">
-              <span>${this.gpu_request}</span>
-              <p>GPU</p>
-            </div>
-            <div class="vertical layout center center-justified resource-allocated">
-              <span>${this.cpu_request ? this.session_request : 0}</span>
-              <p>Sess.</p>
+            <div class="vertical layout center center-justified cluster-allocated">
+              <div class="horizontal layout">
+                <p>${this.cluster_mode === 'single-node' ? '×' : ''}</p>
+                <span>${this.cluster_mode === 'single-node' ? 1 : 'multi'}</span>
+              </div>
+              <p class="small">${_t("session.launcher.Node")}</p>
             </div>
           </div>
-          <div class="horizontal layout center center-justified cluster-allocated">
-            <p>×</p>
-            <span>${this.cluster_size}</span>
-          </div>
-        </div>
         `: html``}
         <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
           <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.SetSessionOwner")}</span>
