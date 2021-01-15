@@ -4,7 +4,7 @@
  */
 
 import {css, customElement, html, LitElement, property, query} from "lit-element";
-import '@material/mwc-slider';
+import '../plastics/mwc/mwc-slider';
 import 'weightless/textfield';
 
 import {
