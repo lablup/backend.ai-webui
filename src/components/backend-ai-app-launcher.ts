@@ -37,6 +37,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
   @property({type: Array}) appSupportList = Array();
+  @property({type: Array}) appSupportOption = Array();
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Array}) _selected_items = Array();
@@ -321,6 +322,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const sessionUuid = controls['session-uuid'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
+    const appServicesOption = controls['app-services-option'];
     if ('runtime' in controls) {
       let param: Object = {};
       param['session-uuid'] = sessionUuid;
@@ -342,9 +344,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'src': './resources/icons/terminal.svg'
       });
     }
-    console.log(appServices);
     appServices.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
     let interText = '';
+    if (Object.keys(appServicesOption).length > 0) {
+      this.appSupportOption = appServicesOption;
+    }
     appServices.forEach((elm) => {
       if (elm in this.appTemplate) {
         if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
@@ -943,6 +947,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button style="width:100%;" class="fg apps green" @click="${this._addTensorboardPath}">
             ${_t("session.UseThisPath")}
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="argument-dialog" fixed>
+        <span slot="title">${_t("session.Arguments")}</span>
+        <div slot="content" class="vertical layout" style="padding:15px 10px;">
+          <div>${_t('session.ModifyArguments')}</div>
+          <mwc-textfield value=""></mwc-textfield>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button style="width:100%;" class="fg apps green" @click="${this._addTensorboardPath}">
+            ${_t("session.UseThisArguments")}
           </mwc-button>
         </div>
       </backend-ai-dialog>
