@@ -187,7 +187,8 @@
       "SettingUpProxyForApp": "Setting up proxy for the app...",
       "AddingKernelToSocketQueue": "Adding kernel to socket queue...",
       "ManualImageName": "Image Name (Manual)",
-      "NotEnoughResource": "Not enough resource"
+      "NotEnoughResource": "Not enough resource",
+      "ResourceAllocationTemplate": "Resource Allocation Template"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

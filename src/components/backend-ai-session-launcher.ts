@@ -305,7 +305,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .resource-allocated {
           width: 40px;
-          height: 50px;
+          height: 60px;
           font-size: 16px;
           margin: 5px;
         }
@@ -319,7 +319,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           min-width: 40px;
           min-height: 40px;
           width: auto;
-          height: 60px;
+          height: 70px;
           border-radius: 5px;
           font-size: 1rem;
           margin: 5px;
@@ -2199,20 +2199,24 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <div class="horizontal layout center center-justified allocation-check">
             <div class="horizontal layout resource-allocated-box">
               <div class="vertical layout center center-justified resource-allocated">
+                <p>CPU</p>
                 <span>${this.cpu_request}</span>
                 <p>Core</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
+                <p>Memory</p>
                 <span>${this.mem_request}</span>
                 <p>GB</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
+                <p>SHMEM</p>
                 <span>${this.shmem_request}</span>
                 <p>GB</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
-                <span>${this.gpu_request}</span>
                 <p>GPU</p>
+                <span>${this.gpu_request}</span>
+                <p>Node</p>
               </div>
             </div>
             <div class="vertical layout center center-justified cluster-allocated">
@@ -2224,35 +2228,39 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </div>
             <div class="vertical layout center center-justified cluster-allocated">
               <div class="horizontal layout">
-                <p>${this.cluster_mode === 'single-node' ? '×' : ''}</p>
-                <span>${this.cluster_mode === 'single-node' ? 1 : 'multi'}</span>
+                <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
+                <span>${this.cluster_mode === 'single-node' ? 'Single' : 'multi'}</span>
               </div>
               <p class="small">${_t("session.launcher.Node")}</p>
             </div>
           </div>
-          <div class="horizontal layout center center-justified allocation-check">
+          <div style="display:none;" class="horizontal layout center center-justified allocation-check">
             <div style="font-size:22px;">=</div>
             <div class="horizontal layout resource-allocated-box">
               <div class="vertical layout center center-justified resource-allocated">
+                <p>CPU</p>
                 <span>${this.cpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                 <p>Core</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
+                <p>Memory</p>
                 <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                 <p>GB</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
+                <p>SHMEM</p>
                 <span>${this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                 <p>GB</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
-                <span>${this.gpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                 <p>GPU</p>
+                <span>${this.gpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
+                <p>Node</p>
               </div>
             </div>
           </div>
           <div class="vertical center layout" style="padding-top:15px;">
-            <mwc-select id="resource-templates" label="${_t("session.launcher.ResourceAllocation")}" fullwidth required>
+            <mwc-select id="resource-templates" label="${_t("session.launcher.ResourceAllocationTemplate")}" fullwidth required>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
               <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;"
                   role="separator" disabled="true" class="horizontal layout center">
