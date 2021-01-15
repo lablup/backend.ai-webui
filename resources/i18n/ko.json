@@ -227,7 +227,8 @@
     "SessionTerminated": "세선을 중지했습니다.",
     "SessionsTerminated": "세션들을 중지했습니다.",
     "NoSession": "세션이 없습니다.",
-    "DownloadingCSVFile": "CSV 파일을 내려받습니다."
+    "DownloadingCSVFile": "CSV 파일을 내려받습니다.",
+    "UseThisPath": "이 경로 사용"
   },
   "button": {
     "Cancel": "취소",

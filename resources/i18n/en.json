@@ -229,7 +229,8 @@
     "SessionTerminated": "Session terminated.",
     "SessionsTerminated": "Sessions terminated.",
     "NoSession": "No session.",
-    "DownloadingCSVFile": "Downloading CSV file..."
+    "DownloadingCSVFile": "Downloading CSV file...",
+    "UseThisPath": "Use"
   },
   "button": {
     "Cancel": "Cancel",
