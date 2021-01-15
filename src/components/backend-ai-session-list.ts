@@ -517,8 +517,15 @@ export default class BackendAiSessionList extends BackendAIPage {
           let service_info = JSON.parse(sessions[objectKey].service_ports);
           if (Array.isArray(service_info) === true) {
             sessions[objectKey].app_services = service_info.map(a => a.name);
+            sessions[objectKey].app_services_option = {};
+            service_info.forEach(elm => {
+              if ('allowed_arguments' in elm) {
+                sessions[objectKey].app_services_option[elm.name] = elm.allowed_arguments;
+              }
+            });
           } else {
             sessions[objectKey].app_services = [];
+            sessions[objectKey].app_services_option = {};
           }
           if (sessions[objectKey].app_services.length === 0 || this.condition != 'running') {
             sessions[objectKey].appSupport = false;
@@ -1207,16 +1214,19 @@ export default class BackendAiSessionList extends BackendAIPage {
              .session-name="${rowData.item[this.sessionNameField]}"
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
-             .app-services="${rowData.item.app_services}">
+             .app-services="${rowData.item.app_services}"
+             .app-services-option="${rowData.item.app_services_option}">
           ${rowData.item.appSupport ? html`
             <mwc-icon-button class="fg controls-running green"
-                               @click="${(e) => this._showAppLauncher(e)}"
-                               icon="apps"></mwc-icon-button>
+                             @click="${(e) => this._showAppLauncher(e)}"
+                             icon="apps"></mwc-icon-button>
             <mwc-icon-button class="fg controls-running"
-                               @click="${(e) => this._runTerminal(e)}">
-              <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                 width="471.362px" height="471.362px" viewBox="0 0 471.362 471.362" style="enable-background:new 0 0 471.362 471.362;"
-                 xml:space="preserve">
+                             @click="${(e) => this._runTerminal(e)}">
+              <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                   xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                   width="471.362px" height="471.362px" viewBox="0 0 471.362 471.362"
+                   style="enable-background:new 0 0 471.362 471.362;"
+                   xml:space="preserve">
               <g>
                 <g>
                   <path d="M468.794,355.171c-1.707-1.718-3.897-2.57-6.563-2.57H188.145c-2.664,0-4.854,0.853-6.567,2.57
