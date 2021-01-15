@@ -552,6 +552,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           display: none;
         }
 
+        p.title {
+          padding: 10px 15px;
+          font-size: 12px;
+          font-weight: 200;
+          color: #404040;
+        }
+
         @media screen and (max-width: 375px) {
           lablup-slider {
             width: 180px;
@@ -1691,12 +1698,33 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _setClusterSize(e) {
     this.cluster_size = e.target.value > 0 ? Math.round(e.target.value) : 0;
     this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
+    let maxSessionCount = 1;
     if (globalThis.backendaiclient.supports('multi-container')) {
       if (this.cluster_size > 1) {
         this.gpu_step = 1;
       } else {
+        maxSessionCount = 0;
         this.gpu_step = this.resourceBroker.gpu_step;
       }
+      this._setSessionLimit(maxSessionCount);
+    }
+  }
+
+  /**
+   * Set session count limit to value
+   * 
+   * @param {Number} maxValue - max value to limit session in multi-container mode
+   * 
+   */
+  _setSessionLimit(maxValue = 1) {
+    let sessionSlider = this.shadowRoot.querySelector('#session-resource');
+    if (maxValue > 0) {
+      sessionSlider.value = maxValue;
+      this.session_request = maxValue;
+      sessionSlider.disabled = true;
+    } else {
+      sessionSlider.max = this.concurrency_limit;
+      sessionSlider.disabled = false;
     }
   }
 
@@ -2319,7 +2347,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <span class="caption">${_t("session.launcher.Node")}</span>
             `}
           </div>
-          <h3 style="padding: 10px 20px;">Total allocation</h3>
+          <p class="title">${_t("session.launcher.TotalAllocation")}</p>
           <div class="horizontal layout center center-justified allocation-check">
             <div class="horizontal layout resource-allocated-box">
               <div class="vertical layout center center-justified resource-allocated">
@@ -2338,10 +2366,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <span>${this.gpu_request}</span>
                 <p>GPU</p>
               </div>
+              ${this.cluster_size > 1 ? html`` : html`
               <div class="vertical layout center center-justified resource-allocated">
-                <span>${this.cpu_request ? this.session_request : 0}</span>
+                <span>${this.session_request}</span>
                 <p>Sess.</p>
               </div>
+              `}
             </div>
             <div class="vertical layout center center-justified cluster-allocated">
               <div class="horizontal layout">
