@@ -2199,24 +2199,24 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <div class="horizontal layout center center-justified allocation-check">
             <div class="horizontal layout resource-allocated-box">
               <div class="vertical layout center center-justified resource-allocated">
-                <p>CPU</p>
+                <p>${_t("session.launcher.CPU")}</p>
                 <span>${this.cpu_request}</span>
                 <p>Core</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
-                <p>Memory</p>
+                <p>${_t("session.launcher.Memory")}</p>
                 <span>${this.mem_request}</span>
                 <p>GB</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
-                <p>SHMEM</p>
+                <p>${_t("session.launcher.SharedMemory")}</p>
                 <span>${this.shmem_request}</span>
                 <p>GB</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
-                <p>GPU</p>
+                <p>${_t("session.launcher.Accelerator")}</p>
                 <span>${this.gpu_request}</span>
-                <p>Node</p>
+                <p>${_t("session.launcher.GPU")}</p>
               </div>
             </div>
             <div class="vertical layout center center-justified cluster-allocated">
@@ -2238,24 +2238,24 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <div style="font-size:22px;">=</div>
             <div class="horizontal layout resource-allocated-box">
               <div class="vertical layout center center-justified resource-allocated">
-                <p>CPU</p>
+                <p>${_t("session.launcher.CPU")}</p>
                 <span>${this.cpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                 <p>Core</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
-                <p>Memory</p>
+                <p>${_t("session.launcher.Memory")}</p>
                 <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                 <p>GB</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
-                <p>SHMEM</p>
+                <p>${_t("session.launcher.SharedMemory")}</p>
                 <span>${this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                 <p>GB</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
-                <p>GPU</p>
+                <p>${_t("session.launcher.Accelerator")}</p>
                 <span>${this.gpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                <p>Node</p>
+                <p>${_t("session.launcher.GPU")}</p>
               </div>
             </div>
           </div>
