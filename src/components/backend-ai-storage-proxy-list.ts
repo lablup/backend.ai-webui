@@ -173,7 +173,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     if (this.active !== true) {
       return;
     }
-    globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric', 'statistics']).then(response => {
+    globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric', 'usage']).then(response => {
       let storage_volumes = response.storage_volume_list.items;
       let agents: Array<any> = [];
       if (storage_volumes !== undefined && storage_volumes.length != 0) {
@@ -354,27 +354,24 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
    * @param {object} rowData
    */
   resourceRenderer(root, column?, rowData?) {
-    let platform: string = rowData.item.backend;
-    let statistics = JSON.parse(rowData.item.statistics);
-    let usageRatio = (statistics.capacity_bytes > 0) ? statistics.used_bytes / statistics.capacity_bytes : 0 ;
+    let usage = JSON.parse(rowData.item.usage);
+    let usageRatio = (usage.capacity_bytes > 0) ? usage.used_bytes / usage.capacity_bytes : 0 ;
     let usagePercent = (usageRatio * 100).toFixed(3);
     const totalBuffer = 100;
     render(
       // language=HTML
       html`
         <div class="layout flex">
-          ${platform === "purestorage" ? html`
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal start resource-indicator">
-                <mwc-icon class="fg green">data_usage</mwc-icon>
-                <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
-                <span class="indicator">${_t("session.Usage")}</span>
-              </div>
-              <span class="flex"></span>
-              <lablup-progress-bar id="volume-usage-bar" progress="${usageRatio}"
-                                   buffer="${totalBuffer}"
-                                   description="${usagePercent}%"></lablup-progress-bar>
-            </div>` : html``}
+          <div class="layout horizontal center flex">
+            <div class="layout horizontal start resource-indicator">
+              <mwc-icon class="fg green">data_usage</mwc-icon>
+              <span class="indicator" style="padding-left:5px;">${_t("session.Usage")}</span>
+            </div>
+            <span class="flex"></span>
+            <lablup-progress-bar id="volume-usage-bar" progress="${usageRatio}"
+                                 buffer="${totalBuffer}"
+                                 description="${usagePercent}%"></lablup-progress-bar>
+          </div>
         </div>
       `, root
     );
