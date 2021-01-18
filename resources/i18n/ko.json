@@ -187,7 +187,8 @@
       "AddingKernelToSocketQueue": "커널을 소켓 큐에 추가합니다...",
       "ManualImageName": "환경 이름 (수동)",
       "NotEnoughResource": "할당 가능한 자원 부족",
-      "ResourceAllocationTemplate": "자원 할당 템플릿"
+      "ResourceAllocationTemplate": "자원 할당 템플릿",
+      "AllocateNode": "배치"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

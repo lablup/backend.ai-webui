@@ -188,7 +188,8 @@
       "AddingKernelToSocketQueue": "Adding kernel to socket queue...",
       "ManualImageName": "Image Name (Manual)",
       "NotEnoughResource": "Not enough resource",
-      "ResourceAllocationTemplate": "Resource Allocation Template"
+      "ResourceAllocationTemplate": "Resource Allocation Template",
+      "AllocateNode": "On"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
