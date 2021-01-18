@@ -173,7 +173,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     if (this.active !== true) {
       return;
     }
-    globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric']).then(response => {
+    globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric', 'statistics']).then(response => {
       let storage_volumes = response.storage_volume_list.items;
       let agents: Array<any> = [];
       if (storage_volumes !== undefined && storage_volumes.length != 0) {
@@ -354,34 +354,26 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
    * @param {object} rowData
    */
   resourceRenderer(root, column?, rowData?) {
+    let platform: string = rowData.item.backend;
+    let statistics = JSON.parse(rowData.item.statistics);
+    let usageRatio = (statistics.capacity_bytes > 0) ? statistics.used_bytes / statistics.capacity_bytes : 0 ;
+    let usagePercent = (usageRatio * 100).toFixed(3);
+    const totalBuffer = 100;
     render(
       // language=HTML
       html`
         <div class="layout flex">
-          ${rowData.item.cpu_slots ? html`
+          ${platform === "purestorage" ? html`
             <div class="layout horizontal center flex">
               <div class="layout horizontal start resource-indicator">
-                <mwc-icon class="fg green">developer_board</mwc-icon>
+                <mwc-icon class="fg green">data_usage</mwc-icon>
                 <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
-                <span class="indicator">${_t("general.cores")}</span>
+                <span class="indicator">${_t("session.Usage")}</span>
               </div>
               <span class="flex"></span>
-              <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
-                                   buffer="${rowData.item.cpu_total_usage_ratio}"
-                                   description="${rowData.item.current_cpu_percent}%"></lablup-progress-bar>
-            </div>` : html``}
-          ${rowData.item.mem_slots ? html`
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal start resource-indicator">
-                <mwc-icon class="fg green">memory</mwc-icon>
-                <span style="padding-left:5px;">${rowData.item.mem_slots}</span>
-                <span class="indicator">GB</span>
-              </div>
-              <span class="flex"></span>
-              <lablup-progress-bar id="mem-usage-bar" progress="${rowData.item.mem_current_usage_ratio}"
-                                   buffer="${rowData.item.mem_total_usage_ratio}"
-                                   description="${rowData.item.current_mem}GB"></lablup-progress-bar>
-
+              <lablup-progress-bar id="volume-usage-bar" progress="${usageRatio}"
+                                   buffer="${totalBuffer}"
+                                   description="${usagePercent}%"></lablup-progress-bar>
             </div>` : html``}
         </div>
       `, root
@@ -457,7 +449,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         <vaadin-grid-column width="100px" resizable header="${_t("agent.BackendType")}"
                             .renderer="${this._boundTypeRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable width="140px" header="${_t("agent.Resources")}"
+        <vaadin-grid-column resizable width="60px" header="${_t("agent.Resources")}"
                             .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Capabilities")}"
