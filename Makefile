@@ -26,6 +26,8 @@ compile_keepversion:
 	npm run build
 compile: versiontag
 	npm run build
+compile_all: versiontag
+	npm run build:all
 compile_wsproxy:
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
 	#cd ./src/wsproxy; rollup -c rollup.config.ts

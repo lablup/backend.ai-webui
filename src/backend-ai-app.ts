@@ -107,7 +107,7 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
       if (typeof globalThis.backendaiPages !== 'undefined') {
         for (let item of globalThis.backendaiPages) {
           if ('url' in item) {
-            import('./plugins/' + item.url + '.js');
+            import(`./plugins/${item.url}.js`);
           }
         }
         break;

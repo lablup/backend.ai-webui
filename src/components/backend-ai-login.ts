@@ -338,7 +338,7 @@ export default class BackendAILogin extends BackendAIPage {
   refreshWithConfig(config) {
     if (typeof config.plugin === "undefined" || typeof config.plugin.login === "undefined" || config.plugin.login === '') {
     } else {
-      import('../plugins/' + config.plugin.login).then(() => {
+      import(`../plugins/${config.plugin.login}.js`).then(() => {
         console.log("Plugin loaded.");
       }).catch((err) => {   // Connection failed
         if (this.loginPanel.open !== true) {

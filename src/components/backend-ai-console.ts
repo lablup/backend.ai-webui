@@ -14,6 +14,8 @@ import {navigate, updateOffline} from '../backend-ai-app';
 
 import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
+import '../plugins/dgx-system';
+import '../plugins/flash-blade';
 import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
@@ -330,7 +332,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         this.plugins['menuitem-superadmin'] = [];
         const pluginLoaderQueue = [] as any;
         for (let page of config.plugin.page.split(',')) {
-          pluginLoaderQueue.push(import('../plugins/' + page + '.js').then((module) => {
+          pluginLoaderQueue.push(import(`../plugins/${page}.js`).then((module) => {
               let pageItem = document.createElement(page) as any;
               pageItem.classList.add("page");
               pageItem.setAttribute('name', page);
@@ -1346,7 +1348,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">21.01.1.210107</small>
+                <small class="sidebar-footer" style="font-size:9px;">21.01.1.210119</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1370,7 +1372,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">21.01.1.210107</small>
+              <small class="sidebar-footer" style="font-size:9px;">21.01.1.210119</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
