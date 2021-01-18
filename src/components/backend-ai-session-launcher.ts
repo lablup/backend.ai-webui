@@ -2228,6 +2228,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </div>
             <div class="vertical layout center center-justified cluster-allocated">
               <div class="horizontal layout">
+                <p>${_t("session.launcher.AllocateNode")}</p>
                 <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
                 <span>${this.cluster_mode === 'single-node' ? 'Single' : 'multi'}</span>
               </div>
