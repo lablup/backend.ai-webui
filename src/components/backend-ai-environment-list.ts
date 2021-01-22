@@ -346,6 +346,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     // select only uninstalled images
     this.selectedImages = this._grid.selectedItems.filter(images => {return !images.installed});
     this.installImageNameList = this.selectedImages.map( image => {
+
+      // remove whitespace
+      Object.keys(image).map(elem => {
+        if (['registry', 'name', 'tag'].includes(elem)) {
+          image[elem] = image[elem].replace(/\s/g, '');
+        }
+      });
+      
       return image['registry'] + '/' + image['name'] + ':' + image['tag'];
     })
 
