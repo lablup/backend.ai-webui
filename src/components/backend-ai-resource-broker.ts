@@ -75,6 +75,17 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     'min': '1',
     'max': '1'
   };
+  @property({type: Array}) cuda_mig_type = [
+    'cuda.device:1g.5gb',
+    'cuda.device:2g.10gb',
+    'cuda.device:3g.20gb',
+    'cuda.device:4g.20gb',
+    'cuda.device:7g.40gb', // A100-40G
+    'cuda.device:1g.10gb',
+    'cuda.device:2g.20gb',
+    'cuda.device:3g.40gb',
+    'cuda.device:4g.40gb',
+    'cuda.device:7g.80gb'] // A100-80G
   @property({type: Number}) lastQueryTime = 0;
   @property({type: Number}) lastResourcePolicyQueryTime = 0;
   @property({type: Number}) lastVFolderQueryTime = 0;
@@ -91,6 +102,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Boolean}) _default_version_updated = false;
   @property({type: Boolean}) _GPUmodeUpdated = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
+  @property({type: Boolean}) support_CUDA_MIG_mode = true; // temporally true for testing
+  @property({type: Array}) support_CUDA_MIG_slots  = ['1g.5gb', '2g.10gb']; // temporally added for testing.
   @property({type: Array}) disableLaunch;
   // Custom information
   @property({type: Number}) max_cpu_core_per_session = 64;
@@ -198,6 +211,23 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   _initAliases() {
     for (let item in this.aliases) {
       this.aliases[this.aliases[item]] = item;
+    }
+  }
+
+  _getCUDAMIGInfoFromDeviceName(name) {
+    try {
+      let spec = name.split(":")[1];
+      let gen = spec.split(".")[0];
+      let mem = spec.split(".")[1].replace("gb", "");
+      return {
+        gen: gen,
+        mem: mem
+      };
+    } catch (e) {
+      return {
+        gen: '',
+        mem: 0
+      }; // When error
     }
   }
 
@@ -427,6 +457,12 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             } else if ('cuda.device' in item.resource_slots) {
               item.cuda_device = item.resource_slots['cuda.device'];
             }
+            this.cuda_mig_type.forEach((mig_slot) =>{
+              if (mig_slot in item.resource_slots) {
+                item.cuda_mig_device = 1; // Due to the Nvidia restriction, CUDA MIG can be mounted only one device per container.
+                item.cuda_mig_device_type = mig_slot;
+              }
+            });
             if ('rocm.device' in item.resource_slots) {
               item.rocm_device = item.resource_slots['rocm.device'];
             }
@@ -456,6 +492,16 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       let project_resource_using = response.group_using;
       let device_list = {
         'cuda.device': 'cuda_device',
+        /*'cuda.device:1g.5gb': 'cuda_device:7g.80gb',
+        'cuda.device:2g.10gb': 'cuda_device:7g.80gb',
+        'cuda.device:3g.20gb': 'cuda_device:7g.80gb',
+        'cuda.device:4g.20gb': 'cuda_device:7g.80gb',
+        'cuda.device:7g.40gb': 'cuda_device:7g.80gb', // A100-40G
+        'cuda.device:1g.10gb': 'cuda_device:7g.80gb',
+        'cuda.device:2g.20gb': 'cuda_device:7g.80gb',
+        'cuda.device:3g.40gb': 'cuda_device:7g.80gb',
+        'cuda.device:4g.40gb': 'cuda_device:7g.80gb',
+        'cuda.device:7g.80gb': 'cuda_device:7g.80gb', // A100-80G*/
         'cuda.shares': 'cuda_shares',
         'rocm.device': 'rocm_device',
         'tpu.device': 'tpu_device'

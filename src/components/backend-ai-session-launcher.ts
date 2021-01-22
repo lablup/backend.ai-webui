@@ -161,8 +161,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) resourceBroker;
   @property({type: Number}) cluster_size = 1;
   @property({type: String}) cluster_mode;
+  @property({type: Boolean}) support_cuda_mig = false;
+  @property({type: Boolean}) use_cuda_mig = false;
   @property({type: Boolean}) _debug = false;
 
+  @query('#gpu-resource') gpu_resource;
   constructor() {
     super();
     this.active = false;
@@ -328,7 +331,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           list-style-type: none;
         }
 
-        #scaling-groups {
+        #scaling-groups,
+        #mig-slot-type,
+        .mig-slot-checkbox {
           width: 50%;
         }
 
@@ -575,7 +580,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
 
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
-    const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
+    const gpu_resource = this.gpu_resource;
 
     gpu_resource.addEventListener('value-changed', () => {
       if (gpu_resource.value > 0) {
@@ -586,9 +591,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
     this.shadowRoot.querySelector('#use-gpu-checkbox').addEventListener('change', () => {
       if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked === true) {
-        this.shadowRoot.querySelector('#gpu-resource').disabled = this.cuda_device_metric.min === this.cuda_device_metric.max;
+        this.gpu_resource.disabled = this.cuda_device_metric.min === this.cuda_device_metric.max;
       } else {
-        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
+        this.gpu_resource.disabled = true;
       }
     });
     document.addEventListener("backend-ai-group-changed", (e) => {
@@ -726,11 +731,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.project_resource_monitor = this.resourceBroker.allow_project_resource_monitor;
+        this.support_cuda_mig = this.resourceBroker.support_CUDA_MIG_mode;
         this._updatePageVariables(true);
         this._disableEnterKey();
       }, {once: true});
     } else {
       this.project_resource_monitor = this.resourceBroker.allow_project_resource_monitor;
+      this.support_cuda_mig = this.resourceBroker.support_CUDA_MIG_mode;
       await this._updatePageVariables(true);
       this._disableEnterKey();
     }
@@ -786,9 +793,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       //this.notification.show();
     } else {
       await this.selectDefaultLanguage();
-      const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
-      if (gpu_resource.value > 0) {
+      if (this.gpu_resource.value > 0) {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
       } else {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
@@ -843,7 +849,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.cpu_request = parseInt(this.shadowRoot.querySelector('#cpu-resource').value);
     this.mem_request = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
     this.shmem_request = parseFloat(this.shadowRoot.querySelector('#shmem-resource').value);
-    this.gpu_request = parseFloat(this.shadowRoot.querySelector('#gpu-resource').value);
+    this.gpu_request = this.gpu_resource.value;
     this.session_request = parseInt(this.shadowRoot.querySelector('#session-resource').value);
     this.num_sessions = this.session_request;
     if (this.sessions_list.includes(sessionName)) {
@@ -885,24 +891,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
     }
     config['cpu'] = this.cpu_request;
-    switch (this.gpu_request_type) {
-      case 'cuda.shares':
-        config['cuda.shares'] = this.gpu_request;
-        break;
-      case 'cuda.device':
-        config['cuda.device'] = this.gpu_request;
-        break;
-      case 'rocm.device':
-        config['rocm.device'] = this.gpu_request;
-        break;
-      case 'tpu.device':
-        config['tpu.device'] = this.gpu_request;
-        break;
-      default:
-        // Fallback to current gpu mode if there is a gpu request, but without gpu type.
-        if (this.gpu_request > 0 && this.gpu_mode) {
-          config[this.gpu_mode] = this.gpu_request;
-        }
+    if (this.use_cuda_mig) { // CUDA MIG does not allow working with other device types.
+      let mig_device = this.shadowRoot.querySelector('#mig-slot-type').value;
+      config[mig_device] = 1;
+    } else {
+      switch (this.gpu_request_type) {
+        case 'cuda.shares':
+          config['cuda.shares'] = this.gpu_request;
+          break;
+        case 'cuda.device':
+          config['cuda.device'] = this.gpu_request;
+          break;
+        case 'rocm.device':
+          config['rocm.device'] = this.gpu_request;
+          break;
+        case 'tpu.device':
+          config['tpu.device'] = this.gpu_request;
+          break;
+        default:
+          // Fallback to current gpu mode if there is a gpu request, but without gpu type.
+          if (this.gpu_request > 0 && this.gpu_mode) {
+            config[this.gpu_mode] = this.gpu_request;
+          }
+      }
     }
     if (String(this.shadowRoot.querySelector('#mem-resource').value) === "Infinity") {
       config['mem'] = String(this.shadowRoot.querySelector('#mem-resource').value);
@@ -1142,9 +1153,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       'cuda11.0': 'GPU:CUDA11',
       'cuda11.1': 'GPU:CUDA11.1',
       'cuda11.2': 'GPU:CUDA11.2',
+      'cuda11.2': 'GPU:CUDA11.3',
       'miniconda': 'Miniconda',
       'anaconda2018.12': 'Anaconda 2018.12',
       'anaconda2019.12': 'Anaconda 2019.12',
+      'anaconda2020.12': 'Anaconda 2020.12',
       'alpine3.8': 'Alpine Linux 3.8',
       'ngc': 'Nvidia GPU Cloud',
       'ff': 'Research Env.',
@@ -1346,7 +1359,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // Post-UI markup to disable unchangeable values
       this.shadowRoot.querySelector('#cpu-resource').disabled = false;
       this.shadowRoot.querySelector('#mem-resource').disabled = false;
-      this.shadowRoot.querySelector('#gpu-resource').disabled = false;
+      this.gpu_resource.disabled = false;
       this.shadowRoot.querySelector('#session-resource').disabled = false;
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
@@ -1417,7 +1430,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cuda_device_metric.min = cuda_device_metric.max;
               disableLaunch = true;
             }
-            this.shadowRoot.querySelector('#gpu-resource').disabled = true;
+            this.gpu_resource.disabled = true;
           }
           this.cuda_device_metric = cuda_device_metric;
         }
@@ -1442,7 +1455,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cuda_shares_metric.min = cuda_shares_metric.max;
               disableLaunch = true;
             }
-            this.shadowRoot.querySelector('#gpu-resource').disabled = true;
+            this.gpu_resource.disabled = true;
           }
 
           this.cuda_shares_metric = cuda_shares_metric;
@@ -1526,8 +1539,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // GPU metric
       if (this.cuda_device_metric.min == 0 && this.cuda_device_metric.max == 0) { // GPU is disabled (by image,too).
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
-        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
-        this.shadowRoot.querySelector('#gpu-resource').value = 0;
+        this.gpu_resource.disabled = true;
+        this.gpu_resource.value = 0;
         if (this.resource_templates !== [] && this.resource_templates.length > 0) { // Remove mismatching templates
           let new_resource_templates: any = [];
           for (let i = 0; i < this.resource_templates.length; i++) {
@@ -1548,8 +1561,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
       } else {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
-        this.shadowRoot.querySelector('#gpu-resource').disabled = false;
-        this.shadowRoot.querySelector('#gpu-resource').value = this.cuda_device_metric.max;
+        this.gpu_resource.disabled = false;
+        this.gpu_resource.value = this.cuda_device_metric.max;
         this.resource_templates_filtered = this.resource_templates;
       }
       // Refresh with resource template
@@ -1565,7 +1578,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (disableLaunch) {
         this.shadowRoot.querySelector('#cpu-resource').disabled = true; // Not enough CPU. so no session.
         this.shadowRoot.querySelector('#mem-resource').disabled = true;
-        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
+        this.gpu_resource.disabled = true;
         this.shadowRoot.querySelector('#session-resource').disabled = true;
         this.shadowRoot.querySelector('#shmem-resource').disabled = true;
         this.shadowRoot.querySelector('#launch-button').disabled = true;
@@ -1576,7 +1589,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       } else {
         this.shadowRoot.querySelector('#cpu-resource').disabled = false;
         this.shadowRoot.querySelector('#mem-resource').disabled = false;
-        this.shadowRoot.querySelector('#gpu-resource').disabled = false;
+        this.gpu_resource.disabled = false;
         this.shadowRoot.querySelector('#session-resource').disabled = false;
         this.shadowRoot.querySelector('#shmem-resource').disabled = false;
         this.shadowRoot.querySelector('#launch-button').disabled = false;
@@ -1585,7 +1598,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
       }
       if (this.cuda_device_metric.min == this.cuda_device_metric.max) {
-        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
+        this.gpu_resource.disabled = true;
       }
       if (this.concurrency_limit <= 1) {
         this.shadowRoot.querySelector('#session-resource').max = 2;
@@ -1698,7 +1711,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _updateResourceIndicator(cpu, mem, gpu_type, gpu_value) {
     this.shadowRoot.querySelector('#cpu-resource').value = cpu;
     this.shadowRoot.querySelector('#mem-resource').value = mem;
-    this.shadowRoot.querySelector('#gpu-resource').value = gpu_value;
+    this.gpu_resource.value = gpu_value;
     this.shadowRoot.querySelector('#shmem-resource').value = this.shmem_request;
     this.cpu_request = cpu;
     this.mem_request = mem;
@@ -1956,6 +1969,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
   }
 
+  _updateResourceGroupForCUDAMIG() {
+    if (this.use_cuda_mig === false) {
+      this.use_cuda_mig = true;
+      this.gpu_resource.value = 0;
+      this.gpu_resource.disabled = true;
+      this.shadowRoot.querySelector('#mig-slot-type').select(1);
+      //this.gpu_resource.style.display = 'none';
+    } else {
+      this.use_cuda_mig = false;
+      //this.gpu_resource.style.display = 'flex';
+
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -2121,6 +2148,27 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ` : html``}
             </mwc-select>
           </div>
+          ${this.support_cuda_mig ? html`
+          <div class="horizontal center layout">
+            <div class="horizontal center layout mig-slot-checkbox">
+              <mwc-checkbox id="use-cuda-mig-checkbox" ?checked="${this.use_cuda_mig}"
+              @change="${()=>this._updateResourceGroupForCUDAMIG()}"></mwc-checkbox>
+              <span>${_t("session.launcher.UseCUDAMIG")}</span>
+            </div>
+            <mwc-select id="mig-slot-type" label="${_t("session.launcher.MIGSlot")}" required>
+              <mwc-list-item class="mig-slot-dropdown"
+                             value="" disabled>
+                ${_t("session.launcher.chooseMIGSlot")}
+              </mwc-list-item>
+              ${['1g.5gb', '2g.10gb'].map(item => html`
+                <mwc-list-item class="mig-slot-dropdown"
+                               id="${item}"
+                               value="cuda.device:${item}">
+                  ${item}
+                </mwc-list-item>
+              `)}
+            </mwc-select>
+          </div>`:html``}
           <wl-expansion name="resource-group" open style="--expansion-header-padding:16px;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.CustomAllocation")}</span>
             <span slot="description" style="font-size:12px;color:#646464;"></span>
