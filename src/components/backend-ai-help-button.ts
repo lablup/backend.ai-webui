@@ -28,12 +28,16 @@ export default class BackendAiHelpButton extends BackendAIPage {
   @property({type: Object}) URLmatchingTable = {
     '': 'summary/summary.html',
     'summary': 'summary/summary.html',
+    'job': 'sessions_all/sessions_all.html',
+    'import': 'import_run/import_run.html',
     'data': 'vfolder/vfolder.html',
-    'job': 'session_use/session_use.html',
-    'credential': 'admin_user_keypair_management/admin_user_keypair_management.html',
-    'environment': 'admin_user_keypair_management/admin_user_keypair_management.html#manage-images',
-    'agent': 'admin_user_keypair_management/admin_user_keypair_management.html#query-agent-nodes',
-    'settings': 'admin_user_keypair_management/admin_user_keypair_management.html#system-settings',
+    'statistics': 'statistics/statistics.html',
+    'credential': 'admin_menu/admin_menu.html',
+    'environment': 'admin_menu/admin_menu.html#manage-images',
+    'agent': 'admin_menu/admin_menu.html#query-agent-nodes',
+    'settings': 'admin_menu/admin_menu.html#system-settings',
+    'mainetenance': 'admin_menu/admin_menu.html#server-management',
+    'information': 'admin_menu/admin_menu.html#detailed-information',
     'usersettings': 'user_settings/user_settings.html'
   };
 

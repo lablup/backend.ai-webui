@@ -272,6 +272,23 @@
         }
       ]
     },
+    "ngc-triton": {
+      "name": "Triton Server (NGC)",
+      "description": "PyTorch is an open source machine learning framework that accelerates the path from research prototyping to production deployment. This environment is integrated with Nvidia GPU Cloud.",
+      "group": "Machine Learning / Deep Learning",
+      "tags": [],
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Triton",
+          "color": "blue"
+        },
+        {
+          "tag": "Nvidia GPU Cloud",
+          "color": "green"
+        }
+      ]
+    },
     "ngc-matlab": {
       "name": "MATLAB (NGC)",
       "description": "MATLAB® combines a desktop environment tuned for iterative analysis and design processes with a programming language that expresses matrix and array mathematics directly. This environment is integrated with Nvidia GPU Cloud.",

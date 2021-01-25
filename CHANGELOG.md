@@ -1,5 +1,19 @@
 # Changelog
 
+## v21.01.1 (07/01/2021)
+
+#### Enhancements:
+
+- [**enhancement**][**enterprise**][**library / SDK**][**minor**] Query waiting margin to session list / node list [#886](https://github.com/lablup/backend.ai-console/issues/886)
+
+#### Bug Fixes:
+
+- [**bug**] Unable to explore virtual folder in data & storage page [#888](https://github.com/lablup/backend.ai-console/issues/888)
+- [**bug**][**invalid**] Image downloading tag disappears when the user redirects to other pages and come back. [#757](https://github.com/lablup/backend.ai-console/issues/757)
+- [**bug**] Increase compatibility with Backend.AI 20.03 [#887](https://github.com/lablup/backend.ai-console/pull/887)
+- [**UI / UX**][**bugfix**] Hide storage proxy features on Backend.AI 20.03/APIv5 (#869)
+
+
 ## v21.01.0 (04/01/2021)
 
 #### Bug Fixes:

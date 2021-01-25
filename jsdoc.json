@@ -7,7 +7,7 @@
       "include": ["./src"],
       "includePattern": ".+\\.ts$",
       "exclude": ["./docs"],
-      "excludePattern": "(node_modules/|docs|types|plastics|wsproxy|lib)"
+      "excludePattern": "(node_modules/|docs|types|plastics|wsproxy|lib|plugins)"
     },
     "plugins": [
       "plugins/markdown",

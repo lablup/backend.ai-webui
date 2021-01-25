@@ -122,3 +122,4 @@ tags
 
 #plugins
 src/plugins
+src/plugins/*

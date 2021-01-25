@@ -603,9 +603,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerSession || 64;
-        this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerSession || 16;
-        this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerSession || 2;
+        this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
+        this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
+        this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerContainer || 2;
         if (globalThis.backendaiclient.supports('multi-container')) {
           this.cluster_support = true;
         }
@@ -614,9 +614,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this._enableLaunchButton();
       }, {once: true});
     } else {
-      this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerSession || 64;
-      this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerSession || 16;
-      this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerSession || 2;
+      this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
+      this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
+      this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerContainer || 2;
       if (globalThis.backendaiclient.supports('multi-container')) {
         this.cluster_support = true;
       }
@@ -1104,6 +1104,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       'base': 'Base',
       'cntk': 'CNTK',
       'h2o': 'H2O.AI',
+      'triton-server': 'Triton Server',
       'digits': 'DIGITS',
       'ubuntu-linux': 'Ubuntu Linux',
       'tf1': 'TensorFlow 1',
@@ -1116,6 +1117,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       'py37': 'Python 3.7',
       'py38': 'Python 3.8',
       'py39': 'Python 3.9',
+      'py310': 'Python 3.10',
       'lxde': 'LXDE',
       'lxqt': 'LXQt',
       'xfce': 'XFCE',
@@ -1142,10 +1144,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       'cuda11.0': 'GPU:CUDA11',
       'cuda11.1': 'GPU:CUDA11.1',
       'cuda11.2': 'GPU:CUDA11.2',
+      'cuda11.3': 'GPU:CUDA11.3',
       'miniconda': 'Miniconda',
       'anaconda2018.12': 'Anaconda 2018.12',
       'anaconda2019.12': 'Anaconda 2019.12',
       'alpine3.8': 'Alpine Linux 3.8',
+      'alpine3.12': 'Alpine Linux 3.12',
       'ngc': 'Nvidia GPU Cloud',
       'ff': 'Research Env.',
     };

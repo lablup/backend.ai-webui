@@ -593,6 +593,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'base': 'Base',
       'cntk': 'CNTK',
       'h2o': 'H2O.AI',
+      'triton-server': 'Triton Server',
       'digits': 'DIGITS',
       'ubuntu-linux': 'Ubuntu Linux',
       'tf1': 'TensorFlow 1',
@@ -695,7 +696,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   /**
    * show/hide resource monitor gauge by switch on/off.
-   * 
+   *
    * @param e {event}
    */
   _toggleResourceGauge(e) {

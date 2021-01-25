@@ -346,6 +346,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     // select only uninstalled images
     this.selectedImages = this._grid.selectedItems.filter(images => {return !images.installed});
     this.installImageNameList = this.selectedImages.map( image => {
+
+      // remove whitespace
+      Object.keys(image).map(elem => {
+        if (['registry', 'name', 'tag'].includes(elem)) {
+          image[elem] = image[elem].replace(/\s/g, '');
+        }
+      });
+      
       return image['registry'] + '/' + image['name'] + ':' + image['tag'];
     })
 
@@ -796,7 +804,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <template class="header">${_t("environment.Base")}</template>
           <template>
             <template is="dom-repeat" items="[[ item.baseimage ]]">
-              <lablup-shields app="" color="blue" description="[[item]]"></lablup-shields>
+              <lablup-shields app="" color="blue" ui="round" description="[[item]]"></lablup-shields>
             </template>
           </template>
         </vaadin-grid-column>
@@ -804,7 +812,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <template class="header">${_t("environment.Constraint")}</template>
           <template>
             <template is="dom-if" if="[[item.additional_req]]">
-              <lablup-shields app="" color="green" description="[[item.additional_req]]"></lablup-shields>
+              <lablup-shields app="" color="green" ui="round" description="[[item.additional_req]]"></lablup-shields>
             </template>
           </template>
         </vaadin-grid-column>
@@ -1358,6 +1366,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'base': 'Base',
       'cntk': 'CNTK',
       'h2o': 'H2O.AI',
+      'triton-server': 'Triton Server',
       'digits': 'DIGITS',
       'ubuntu-linux': 'Ubuntu Linux',
       'tf1': 'TensorFlow 1',
@@ -1370,6 +1379,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'py37': 'Python 3.7',
       'py38': 'Python 3.8',
       'py39': 'Python 3.9',
+      'py310': 'Python 3.10',
       'lxde': 'LXDE',
       'lxqt': 'LXQt',
       'xfce': 'XFCE',
@@ -1393,10 +1403,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'cuda10.3': 'GPU:CUDA10.3',
       'cuda11': 'GPU:CUDA11',
       'cuda11.0': 'GPU:CUDA11',
+      'cuda11.1': 'GPU:CUDA11.1',
+      'cuda11.2': 'GPU:CUDA11.2',
+      'cuda11.3': 'GPU:CUDA11.3',
       'miniconda': 'Miniconda',
       'anaconda2018.12': 'Anaconda 2018.12',
       'anaconda2019.12': 'Anaconda 2019.12',
       'alpine3.8': 'Alpine Linux 3.8',
+      'alpine3.12': 'Alpine Linux 3.12',
       'ngc': 'NVidia GPU Cloud',
       'ff': 'Research Env.',
     };

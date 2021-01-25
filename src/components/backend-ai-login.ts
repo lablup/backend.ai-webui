@@ -83,9 +83,9 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Boolean}) openPortToPublic = false;
-  @property({type: Boolean}) maxCPUCoresPerSession = 64;
-  @property({type: Boolean}) maxCUDADevicesPerSession = 16;
-  @property({type: Boolean}) maxShmPerSession = 2;
+  @property({type: Boolean}) maxCPUCoresPerContainer = 64;
+  @property({type: Boolean}) maxCUDADevicesPerContainer = 16;
+  @property({type: Boolean}) maxShmPerContainer = 2;
   @property({type: Boolean}) maxFileUploadSize = -1;
   @property({type: Array}) endpoints;
   @property({type: Object}) logoutTimerBeforeOneMin;
@@ -389,20 +389,20 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       this.openPortToPublic = true;
     }
-    if (typeof config.resources === "undefined" || typeof config.resources.maxCPUCoresPerSession === "undefined" || isNaN(parseInt(config.resources.maxCPUCoresPerSession))) {
-      this.maxCPUCoresPerSession = 64;
+    if (typeof config.resources === "undefined" || typeof config.resources.maxCPUCoresPerContainer === "undefined" || isNaN(parseInt(config.resources.maxCPUCoresPerContainer))) {
+      this.maxCPUCoresPerContainer = 64;
     } else {
-      this.maxCPUCoresPerSession = parseInt(config.resources.maxCPUCoresPerSession);
+      this.maxCPUCoresPerContainer = parseInt(config.resources.maxCPUCoresPerContainer);
     }
-    if (typeof config.resources === "undefined" || typeof config.resources.maxCUDADevicesPerSession === "undefined" || isNaN(parseInt(config.resources.maxCUDADevicesPerSession))) {
-      this.maxCUDADevicesPerSession = 16;
+    if (typeof config.resources === "undefined" || typeof config.resources.maxCUDADevicesPerContainer === "undefined" || isNaN(parseInt(config.resources.maxCUDADevicesPerContainer))) {
+      this.maxCUDADevicesPerContainer = 16;
     } else {
-      this.maxCUDADevicesPerSession = parseInt(config.resources.maxCUDADevicesPerSession);
+      this.maxCUDADevicesPerContainer = parseInt(config.resources.maxCUDADevicesPerContainer);
     }
-    if (typeof config.resources === "undefined" || typeof config.resources.maxShmPerSession === "undefined" || isNaN(parseFloat(config.resources.maxShmPerSession))) {
-      this.maxShmPerSession = 2;
+    if (typeof config.resources === "undefined" || typeof config.resources.maxShmPerContainer === "undefined" || isNaN(parseFloat(config.resources.maxShmPerContainer))) {
+      this.maxShmPerContainer = 2;
     } else {
-      this.maxShmPerSession = parseFloat(config.resources.maxShmPerSession);
+      this.maxShmPerContainer = parseFloat(config.resources.maxShmPerContainer);
     }
     if (typeof config.resources === "undefined" || typeof config.resources.maxFileUploadSize === "undefined" || config.resources.maxFileUploadSize === '') {
       this.maxFileUploadSize = -1;
@@ -937,9 +937,9 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.default_import_environment = this.default_import_environment;
       globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
-      globalThis.backendaiclient._config.maxCPUCoresPerSession = this.maxCPUCoresPerSession;
-      globalThis.backendaiclient._config.maxCUDADevicesPerSession = this.maxCUDADevicesPerSession;
-      globalThis.backendaiclient._config.maxShmPerSession = this.maxShmPerSession;
+      globalThis.backendaiclient._config.maxCPUCoresPerContainer = this.maxCPUCoresPerContainer;
+      globalThis.backendaiclient._config.maxCUDADevicesPerContainer = this.maxCUDADevicesPerContainer;
+      globalThis.backendaiclient._config.maxShmPerContainer = this.maxShmPerContainer;
       globalThis.backendaiclient._config.maxFileUploadSize = this.maxFileUploadSize;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
