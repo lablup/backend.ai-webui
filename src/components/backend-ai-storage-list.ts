@@ -80,6 +80,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Array}) vhosts = [];
   @property({type: Array}) allowedGroups = [];
   @property({type: Object}) fileListGrid = Object();
+  @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) renameFileDialog = Object();
   @property({type: Object}) deleteFileDialog = Object();
@@ -289,6 +290,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-button {
           margin: auto 10px;
+          --mdc-typography-button-font-size: 12px;
         }
 
         wl-button.goto {
@@ -525,12 +527,21 @@ export default class BackendAiStorageList extends BackendAIPage {
                 style="display:none;">
                 <span>${_t("data.explorer.Delete")}</span>
             </mwc-button>
+            <div id="filebrowser-btn-cover">
+              <mwc-button
+                  id="filebrowser-btn"
+                  ?disabled=${!this.isWritable}
+                  @click="${() => this._executeFileBrowser()}">
+                  <img src="./resources/icons/filebrowser.svg" style="width:24px; margin:15px 10px;"></img>
+                  <span>${_t("data.explorer.ExecuteFileBrowser")}</span>
+              </mwc-button>
+            </div>
             <div id="add-btn-cover">
               <mwc-button
                   id="add-btn"
                   icon="cloud_upload"
                   ?disabled=${!this.isWritable}
-                  @click="${() => this._openSelectUploadingDialog()}">
+                  @click="${(e) => this._uploadFileBtnClick(e)}">
                   <span>${_t("data.explorer.UploadFiles")}</span>
               </mwc-button>
             </div>
@@ -764,17 +775,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="select-uploading-dialog" fixed backdrop>
-        <span slot="title">${_t("data.explorer.SelectUploadOption")}</span>
-        <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button outlined icon="insert_drive_file" @click="${(e) => this._uploadFileBtnClick(e)}">
-            ${_t("data.explorer.File")}
-          </mwc-button>
-          <mwc-button raised icon="folder" @click="${() => this._openSessionLauncher()}">
-            ${_t("data.explorer.Folder")}
-          </mwc-button>
-        </div>
-      </backend-ai-dialog>
       <backend-ai-session-launcher mode="upload" location="data" hideLaunchButton
         id="session-launcher" ?active="${this.active === true}"
         .newSessionDialogTitle="${_t('session.launcher.StartFolderUploading')}"></backend-ai-session-launcher>
@@ -794,6 +794,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._toggleCheckbox();
     });
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
     let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {
@@ -1628,6 +1629,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       e.stopPropagation();
       e.preventDefault();
       dndZonePlaceholderEl.style.display = "none";
+      let sessionLaunchableForFolderUploading = true;
       if (this.isWritable) {
         for (let i = 0; i < e.dataTransfer.files.length; i++) {
           if (e.dataTransfer.items[i].webkitGetAsEntry().isFile) {
@@ -1665,8 +1667,14 @@ export default class BackendAiStorageList extends BackendAIPage {
             // let item = e.dataTransfer.items[i].webkitGetAsEntry();
             // console.log(item.webkitRelativePath)
 
-            // open session launcher for folder uploading
-            this._openSessionLauncher();
+            // open session launcher for folder uploading for once
+            if (sessionLaunchableForFolderUploading) {
+              this._executeFileBrowser();
+              sessionLaunchableForFolderUploading = false;
+            } else {
+              this.notification.text = _text('data.explorer.FileBrowserSessionRunningAlready');
+              this.notification.show();
+            }
           }
         }
 
@@ -1687,7 +1695,6 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the cloud_upload button
    * */
   _uploadFileBtnClick(e) {
-    this.closeDialog("select-uploading-dialog");
     const elem = this.shadowRoot.querySelector('#fileInput');
     if (elem && document.createEvent) {  // sanity check
       const evt = document.createEvent("MouseEvents");
@@ -1887,29 +1894,52 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
-   * Open the session launcher dialog to execute filebrowser app.
+   * Execute Filebrowser by launching session with mimimum resources
    * 
    */
-  _openSessionLauncher() {
-    let selectUploadingDialog = this.shadowRoot.querySelector('#select-uploading-dialog');
-    if (selectUploadingDialog.open) {
-      this.closeDialog("select-uploading-dialog");
-    }
-
-    // add current folder 
-    let rootVFolder = this.sessionLauncher.selectedVfolders;
-    if (!rootVFolder.includes(this.explorer.id)) {
-      rootVFolder.push(this.explorer.id);
-    }
-    this.sessionLauncher._launchSessionDialog();
+  _executeFileBrowser() {
+    this._launchSession();
   }
 
   /**
-   * Open the SelectUploadingDialog to select uploading file or folder.
+   * Open the session launcher dialog to execute filebrowser app.
    * 
    */
-  _openSelectUploadingDialog() {
-    this.openDialog("select-uploading-dialog");
+  async _launchSession() {
+    let appOptions;
+    let imageResource: Object = {};
+    // monkeypatch for filebrowser applied environment
+    const environment = 'cr.backend.ai/testing/filebrowser:21.01-ubuntu20.04';
+    // add current folder 
+    imageResource['mounts'] = [this.explorer.id];
+    imageResource['cpu'] = 1;
+    imageResource['mem'] = '0.5g';
+    imageResource['domain'] = globalThis.backendaiclient._config.domainName;
+    imageResource['group_name'] = globalThis.backendaiclient.current_group;
+    let indicator = await this.indicator.start('indeterminate');
+
+    return globalThis.backendaiclient.get_resource_slots().then((response) => {
+      indicator.set(200, _text('data.explorer.ExecutingFileBrowser'));
+      return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000);
+    }).then(async (res) => {
+      let service_info = res.servicePorts
+      appOptions = {
+        'session-uuid': res.sessionId,
+        'session-name': res.sessionName,
+        'access-key': '',
+        'runtime': 'filebrowser'
+      };
+      // only launch filebrowser app when it has valid service ports
+      if (service_info.length > 0 && service_info.filter(el => el.name === "filebrowser").length > 0) {
+        globalThis.appLauncher.showLauncher(appOptions);
+      }
+      indicator.end(1000);
+    }).catch(err => {
+      this.notification.text = PainKiller.relieve(err.title);
+      this.notification.detail = err.message;
+      this.notification.show(true, err);
+      indicator.end(1000);
+    });
   }
 
   /**
