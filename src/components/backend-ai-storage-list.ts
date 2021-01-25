@@ -10,7 +10,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
-import './backend-ai-session-launcher';
 
 import '@material/mwc-textfield';
 import '@material/mwc-select';
@@ -101,6 +100,10 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Boolean}) _uploadFlag = true;
   @property({type: Boolean}) isWritable = false;
   @property({type: Number}) _maxFileUploadSize = -1;
+  @property({type: Number}) minimumResource = {
+    cpu: 1,
+    mem: 0.5
+  }
 
   constructor() {
     super();
@@ -381,6 +384,11 @@ export default class BackendAiStorageList extends BackendAIPage {
           --component-min-width: 350px;
         }
 
+        .apply-grayscale {
+          -webkit-filter: grayscale(1.0);
+          filter: grayscale(1.0);
+        }
+
         @media screen and (max-width: 750px) {
           mwc-button {
             width: auto;
@@ -530,9 +538,9 @@ export default class BackendAiStorageList extends BackendAIPage {
             <div id="filebrowser-btn-cover">
               <mwc-button
                   id="filebrowser-btn"
-                  ?disabled=${!this.isWritable}
+                  ?disabled=${(!this.isWritable)}
                   @click="${() => this._executeFileBrowser()}">
-                  <img src="./resources/icons/filebrowser.svg" style="width:24px; margin:15px 10px;"></img>
+                  <img id="filebrowser-img" src="./resources/icons/filebrowser.svg" style="width:24px; margin:15px 10px;"></img>
                   <span>${_t("data.explorer.ExecuteFileBrowser")}</span>
               </mwc-button>
             </div>
@@ -775,9 +783,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-session-launcher mode="upload" location="data" hideLaunchButton
-        id="session-launcher" ?active="${this.active === true}"
-        .newSessionDialogTitle="${_t('session.launcher.StartFolderUploading')}"></backend-ai-session-launcher>
     `;
   }
 
@@ -805,7 +810,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     } else {
       this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 185px)';
     }
-
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({"detail": {"mini-ui": globalThis.mini_ui}});
@@ -1486,9 +1490,21 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
       this.explorerFiles = this.explorer.files;
       if (dialog) {
+        this._toggleFilebrowserButton();
         this.openDialog('folder-explorer-dialog');
       }
     });
+  }
+
+  /**
+   * toggle filebrowser button in Vfolder explorer dialog
+   */
+  _toggleFilebrowserButton() {
+    let isFilebrowserBtnDisabled = !this._isResourceEnough();
+    let filebrowserIcon= this.shadowRoot.querySelector('#filebrowser-img');
+    this.shadowRoot.querySelector('#filebrowser-btn').disabled = isFilebrowserBtnDisabled;
+    let filterClass = isFilebrowserBtnDisabled ? 'apply-grayscale' : '';
+    filebrowserIcon.setAttribute('class', filterClass);
   }
 
   /**
@@ -1629,7 +1645,6 @@ export default class BackendAiStorageList extends BackendAIPage {
       e.stopPropagation();
       e.preventDefault();
       dndZonePlaceholderEl.style.display = "none";
-      let sessionLaunchableForFolderUploading = true;
       if (this.isWritable) {
         for (let i = 0; i < e.dataTransfer.files.length; i++) {
           if (e.dataTransfer.items[i].webkitGetAsEntry().isFile) {
@@ -1668,13 +1683,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             // console.log(item.webkitRelativePath)
 
             // open session launcher for folder uploading for once
-            if (sessionLaunchableForFolderUploading) {
-              this._executeFileBrowser();
-              sessionLaunchableForFolderUploading = false;
-            } else {
-              this.notification.text = _text('data.explorer.FileBrowserSessionRunningAlready');
-              this.notification.show();
-            }
+            this._executeFileBrowser();
           }
         }
 
@@ -1898,7 +1907,13 @@ export default class BackendAiStorageList extends BackendAIPage {
    * 
    */
   _executeFileBrowser() {
-    this._launchSession();
+    if (this._isResourceEnough()) {
+      this._launchSession();
+      this._toggleFilebrowserButton();
+    } else {
+      this.notification.text = _text('data.explorer.NotEnoughResourceForFileBrowserSession');
+      this.notification.show();
+    }
   }
 
   /**
@@ -1913,7 +1928,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     // add current folder 
     imageResource['mounts'] = [this.explorer.id];
     imageResource['cpu'] = 1;
-    imageResource['mem'] = '0.5g';
+    imageResource['mem'] = this.minimumResource.mem + 'g';
     imageResource['domain'] = globalThis.backendaiclient._config.domainName;
     imageResource['group_name'] = globalThis.backendaiclient.current_group;
     let indicator = await this.indicator.start('indeterminate');
@@ -1922,7 +1937,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       indicator.set(200, _text('data.explorer.ExecutingFileBrowser'));
       return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000);
     }).then(async (res) => {
-      let service_info = res.servicePorts
+      let service_info = res.servicePorts;
       appOptions = {
         'session-uuid': res.sessionId,
         'session-name': res.sessionName,
@@ -1932,6 +1947,10 @@ export default class BackendAiStorageList extends BackendAIPage {
       // only launch filebrowser app when it has valid service ports
       if (service_info.length > 0 && service_info.filter(el => el.name === "filebrowser").length > 0) {
         globalThis.appLauncher.showLauncher(appOptions);
+      }
+      let folderExplorerDialog = this.shadowRoot.querySelector('#folder-explorer-dialog');
+      if (folderExplorerDialog.open) {
+        this.closeDialog('folder-explorer-dialog');
       }
       indicator.end(1000);
     }).catch(err => {
@@ -2054,6 +2073,24 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.notification.show();
       this._clearExplorer();
     });
+  }
+
+  /**
+   * Returns whether resource is enough to launch session for executing filebrowser app or not.
+   * @returns {boolean} - true when resource is enough, false when resource is not enough to create a session.
+   */
+  _isResourceEnough() {
+    // update current resources statistics.
+    let event = new CustomEvent("backend-ai-calculate-current-resource");
+    document.dispatchEvent(event);
+    let currentResource = globalThis.backendaioptions.get('current-resource');
+    if (currentResource) {
+      currentResource.cpu = (typeof currentResource.cpu === 'string') ? parseInt(currentResource['cpu']) : currentResource['cpu'];
+      if ((currentResource.cpu >= this.minimumResource.cpu) && (currentResource.mem >= this.minimumResource.mem)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
