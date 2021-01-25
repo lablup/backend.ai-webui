@@ -782,10 +782,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-button outlined @click="${() => this._renameFile()}">
             ${globalThis.backendaioptions.get('language') !== 'ko' ?
               html`
-                ${_text("data.explorer.UseNewFileExtension") + this.newFileExtension}
+                ${this.newFileExtension ? _text("data.explorer.UseNewFileExtension") + this.newFileExtension : _text("data.explorer.RemoveFileExtension")}
               ` : 
               html`
-                ${this.newFileExtension + _text("data.explorer.UseNewFileExtension")}
+                ${this.newFileExtension ? this.newFileExtension + _text("data.explorer.UseNewFileExtension") : _text("data.explorer.RemoveFileExtension")}
               `}
           </mwc-button>
         </div>
@@ -1901,13 +1901,18 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.newFileExtension = (newFilename.includes('.') && newFilename.match(regex)) ? newFilename.match(regex)[1].toLowerCase() : '';
     this.oldFileExtension = (oldFilename.includes('.') && oldFilename.match(regex)) ? oldFilename.match(regex)[1].toLowerCase() : '';
 
-    if (this.newFileExtension && (this.newFileExtension !== this.oldFileExtension)) {
-      this.shadowRoot.querySelector('#file-extension-change-dialog').show();
-    } else if (this.oldFileExtension) {
-      this._keepFileExtension();
+    if (newFilename) {
+      if (this.newFileExtension !== this.oldFileExtension) {
+        this.shadowRoot.querySelector('#file-extension-change-dialog').show();
+      } else if (this.oldFileExtension) {
+        this._keepFileExtension();
+      } else {
+        this._renameFile();
+      }
     } else {
       this._renameFile();
     }
+    
   }
 
   /**
@@ -1933,9 +1938,16 @@ export default class BackendAiStorageList extends BackendAIPage {
   _openRenameFileDialog(e) {
     const fn = e.target.getAttribute("filename");
     this.renameFileDialog.querySelector('#old-file-name').textContent = fn;
-    this.renameFileDialog.querySelector('#new-file-name').value = '';
+    this.renameFileDialog.querySelector('#new-file-name').value = fn;
     this.renameFileDialog.filename = fn;
     this.renameFileDialog.show();
+    let currentFilename = this.renameFileDialog.querySelector('#new-file-name');
+
+    currentFilename.addEventListener('focus', (e) => {
+      let endOfExtensionLength = fn.replace(/\.([0-9a-z]+)$/i, '').length;
+      currentFilename.setSelectionRange(0, endOfExtensionLength);
+    });
+    currentFilename.focus();
   }
 
   /**
@@ -1951,6 +1963,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     fileExtensionChangeDialog.hide();
     newNameEl.reportValidity();
     if (newNameEl.checkValidity()) {
+      if (fn === newName) {
+        newNameEl.focus();
+        this.notification.text = _text('data.folders.SameFileName');
+        this.notification.show();
+        return;
+      }
+
       const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id);
       job.then((res) => {
         this.notification.text = _text('data.folders.FileRenamed');
