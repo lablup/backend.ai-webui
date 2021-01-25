@@ -10,6 +10,7 @@ import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
+import './backend-ai-session-launcher';
 
 import '@material/mwc-textfield';
 import '@material/mwc-select';
@@ -83,6 +84,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) renameFileDialog = Object();
   @property({type: Object}) deleteFileDialog = Object();
   @property({type: Object}) downloadFileDialog = Object();
+  @property({type: Object}) sessionLauncher = Object();
   @property({type: Object}) spinner = Object();
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
@@ -528,7 +530,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                   id="add-btn"
                   icon="cloud_upload"
                   ?disabled=${!this.isWritable}
-                  @click="${(e) => this._uploadFileBtnClick(e)}">
+                  @click="${() => this._openSelectUploadingDialog()}">
                   <span>${_t("data.explorer.UploadFiles")}</span>
               </mwc-button>
             </div>
@@ -762,6 +764,20 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</mwc-button>
         </div>
       </backend-ai-dialog>
+      <backend-ai-dialog id="select-uploading-dialog" fixed backdrop>
+        <span slot="title">${_t("data.explorer.SelectUploadOption")}</span>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button outlined icon="insert_drive_file" @click="${(e) => this._uploadFileBtnClick(e)}">
+            ${_t("data.explorer.File")}
+          </mwc-button>
+          <mwc-button raised icon="folder" @click="${() => this._openSessionLauncher()}">
+            ${_t("data.explorer.Folder")}
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-session-launcher mode="upload" location="data" hideLaunchButton
+        id="session-launcher" ?active="${this.active === true}"
+        .newSessionDialogTitle="${_t('session.launcher.StartFolderUploading')}"></backend-ai-session-launcher>
     `;
   }
 
@@ -772,6 +788,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.renameFileDialog = this.shadowRoot.querySelector('#rename-file-dialog');
     this.deleteFileDialog = this.shadowRoot.querySelector('#delete-file-dialog');
     this.downloadFileDialog = this.shadowRoot.querySelector('#download-file-dialog');
+    this.sessionLauncher = this.shadowRoot.querySelector('#session-launcher');
     this.fileListGrid = this.shadowRoot.querySelector('#fileList-grid');
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleCheckbox();
@@ -1450,7 +1467,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         const fileInfo = JSON.parse(value.files);
         fileInfo.forEach((info, cnt) => {
           let ftype = 'FILE';
-          console.log(info)
           if (info.filename === value.items[cnt].name) {
             // value.files and value.items have same order
             ftype = value.items[cnt].type;
@@ -1612,24 +1628,32 @@ export default class BackendAiStorageList extends BackendAIPage {
       e.stopPropagation();
       e.preventDefault();
       dndZonePlaceholderEl.style.display = "none";
-
       if (this.isWritable) {
         for (let i = 0; i < e.dataTransfer.files.length; i++) {
-          const file = e.dataTransfer.files[i];
-          /* Drag & Drop file upload size limits to configuration */
-          if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
-            this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
-            this.notification.show();
-            return;
-          } else {
-            let reUploadFile = this.explorerFiles.find( elem => elem.filename === file.name);
-            if (reUploadFile) {
-              // plain javascript modal to confirm whether proceed to overwrite operation or not
-              /*
-               *  TODO: replace confirm operation with customized dialog
-               */
-              let confirmed = window.confirm(`${_text("data.explorer.FileAlreadyExists")}\n${file.name}\n${_text("data.explorer.DoYouWantToOverwrite")}`);
-              if (confirmed) {
+          if (e.dataTransfer.items[i].webkitGetAsEntry().isFile) {
+            const file = e.dataTransfer.files[i];
+            /* Drag & Drop file upload size limits to configuration */
+            if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
+              this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
+              this.notification.show();
+              return;
+            } else {
+              let reUploadFile = this.explorerFiles.find(elem => elem.filename === file.name);
+              if (reUploadFile) {
+                // plain javascript modal to confirm whether proceed to overwrite operation or not
+                /*
+                 *  TODO: replace confirm operation with customized dialog
+                 */
+                let confirmed = window.confirm(`${_text("data.explorer.FileAlreadyExists")}\n${file.name}\n${_text("data.explorer.DoYouWantToOverwrite")}`);
+                if (confirmed) {
+                  file.progress = 0;
+                  file.caption = '';
+                  file.error = false;
+                  file.complete = false;
+                  (this.uploadFiles as any).push(file);
+                }
+              }
+              else {
                 file.progress = 0;
                 file.caption = '';
                 file.error = false;
@@ -1637,13 +1661,12 @@ export default class BackendAiStorageList extends BackendAIPage {
                 (this.uploadFiles as any).push(file);
               }
             }
-            else {
-              file.progress = 0;
-              file.caption = '';
-              file.error = false;
-              file.complete = false;
-              (this.uploadFiles as any).push(file);
-            }
+          } else {
+            // let item = e.dataTransfer.items[i].webkitGetAsEntry();
+            // console.log(item.webkitRelativePath)
+
+            // open session launcher for folder uploading
+            this._openSessionLauncher();
           }
         }
 
@@ -1664,6 +1687,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the cloud_upload button
    * */
   _uploadFileBtnClick(e) {
+    this.closeDialog("select-uploading-dialog");
     const elem = this.shadowRoot.querySelector('#fileInput');
     if (elem && document.createEvent) {  // sanity check
       const evt = document.createEvent("MouseEvents");
@@ -1860,6 +1884,32 @@ export default class BackendAiStorageList extends BackendAIPage {
         URL.revokeObjectURL(url);
       }
     });
+  }
+
+  /**
+   * Open the session launcher dialog to execute filebrowser app.
+   * 
+   */
+  _openSessionLauncher() {
+    let selectUploadingDialog = this.shadowRoot.querySelector('#select-uploading-dialog');
+    if (selectUploadingDialog.open) {
+      this.closeDialog("select-uploading-dialog");
+    }
+
+    // add current folder 
+    let rootVFolder = this.sessionLauncher.selectedVfolders;
+    if (!rootVFolder.includes(this.explorer.id)) {
+      rootVFolder.push(this.explorer.id);
+    }
+    this.sessionLauncher._launchSessionDialog();
+  }
+
+  /**
+   * Open the SelectUploadingDialog to select uploading file or folder.
+   * 
+   */
+  _openSelectUploadingDialog() {
+    this.openDialog("select-uploading-dialog");
   }
 
   /**
