@@ -453,8 +453,8 @@
       "DoYouWantToOverwrite": "Do you want to overwrite?",
       "ExecutingFileBrowser": "Executing filebrowser...",
       "ExecuteFileBrowser": "Execute filebrowser",
-      "FileBrowserSessionRunningAlready": "The session supporing filebrowser is already running. Please upload folder(s) using that session."
-
+      "FileBrowserSessionRunningAlready": "The session supporting filebrowser is already running. Please upload folder(s) using that session.",
+      "NotEnoughResourceForFileBrowserSession": "No enough resources(cpu: 1 Core, mem: 0.5GB) to create the session for filebrowser. please check the available resources."
     },
     "invitation": {
       "EnterEmail": "Enter email address",
