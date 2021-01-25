@@ -451,9 +451,10 @@
       "ReadonlyFolder": "Read-only Folder",
       "FileAlreadyExists": "The file about to be uploaded already exists.",
       "DoYouWantToOverwrite": "Do you want to overwrite?",
-      "SelectUploadOption": "Select an option to upload.",
-      "Folder": "Folder",
-      "File": "File"
+      "ExecutingFileBrowser": "Executing filebrowser...",
+      "ExecuteFileBrowser": "Execute filebrowser",
+      "FileBrowserSessionRunningAlready": "The session supporing filebrowser is already running. Please upload folder(s) using that session."
+
     },
     "invitation": {
       "EnterEmail": "Enter email address",
