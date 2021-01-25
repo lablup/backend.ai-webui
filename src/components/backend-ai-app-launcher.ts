@@ -323,7 +323,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'src': './resources/icons/terminal.svg'
       });
     }
-    if (!appServices.includes('filebrowser')) {
+    /*if (!appServices.includes('filebrowser')) {
       this.appSupportList.push({ // Force push filebrowser
         'name' : 'filebrowser',
         'title': 'FileBrowser',
@@ -331,7 +331,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'redirect': '',
         'src': './resources/icons/filebrowser.svg'
       });
-    }
+    }*/
     appServices.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
     let interText = '';
     appServices.forEach((elm) => {
