@@ -594,7 +594,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div id="dropzone"><p>drag</p></div>
           <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
           ${this.uploadFilesExist ? html`
-          <mwc-button icon="cancel" id="cancel_upload" @click="${(e) => this._cancelUpload(e)}">
+          <mwc-button icon="cancel" id="cancel_upload" @click="${() => this._cancelUpload()}">
             ${_t("data.explorer.StopUploading")}
           </mwc-button>
           <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}"
@@ -1639,7 +1639,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   _addEventListenerDropZone() {
     const dndZoneEl = this.shadowRoot.querySelector('#folder-explorer-dialog');
     const dndZonePlaceholderEl = this.shadowRoot.querySelector('#dropzone');
-
     dndZonePlaceholderEl.addEventListener('dragleave', () => {
       dndZonePlaceholderEl.style.display = "none";
     });
@@ -1657,6 +1656,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
 
     dndZoneEl.addEventListener('drop', e => {
+      let isNotificationDisplayed = false;
       e.stopPropagation();
       e.preventDefault();
       dndZonePlaceholderEl.style.display = "none";
@@ -1695,10 +1695,19 @@ export default class BackendAiStorageList extends BackendAIPage {
             }
           } else {
             // let item = e.dataTransfer.items[i].webkitGetAsEntry();
-            // console.log(item.webkitRelativePath)
-
-            // open session launcher for folder uploading for once
-            this._executeFileBrowser();
+            // console.log(item.webkitRelativePath);
+            // this._executeFileBrowser();
+            // show snackbar to filebrowser only once
+            if (!isNotificationDisplayed) {
+              if (this.filebrowserSupportedImages.length > 0) {
+                this.notification.text = _text('data.explorer.ClickFilebrowserButton');
+                this.notification.show();
+              } else {
+                this.notification.text = _text('data.explorer.NoImagesSupportingFileBrowser');
+                this.notification.show();
+              }
+            } 
+            isNotificationDisplayed = true;
           }
         }
 
@@ -1872,9 +1881,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   /**
    * Cancel upload files.
    *
-   * @param {Event} e - click the cancle button
    * */
-  _cancelUpload(e) {
+  _cancelUpload() {
     this._uploadFlag = false;
   }
 
@@ -1945,8 +1953,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     let appOptions;
     let imageResource: Object = {};
     // monkeypatch for filebrowser applied environment
-    //const environment = 'cr.backend.ai/testing/filebrowser:21.01-ubuntu20.04';
-    let images = this.filebrowserSupportedImages.filter((image: any) => image['name'].toLowerCase().includes("filebrowser") );
+    // const environment = 'cr.backend.ai/testing/filebrowser:21.01-ubuntu20.04';
+    let images = this.filebrowserSupportedImages.filter((image: any) => (image['name'].toLowerCase().includes("filebrowser") && image['installed']));
     
     // select one image to launch filebrowser supported session
     let preferredImage = images[0];
