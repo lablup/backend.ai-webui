@@ -104,6 +104,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     cpu: 1,
     mem: 0.5
   }
+  @property({type: Array}) filebrowserSupportedImages = [];
 
   constructor() {
     super();
@@ -538,7 +539,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             <div id="filebrowser-btn-cover">
               <mwc-button
                   id="filebrowser-btn"
-                  ?disabled=${(!this.isWritable)}
+                  ?disabled=${!this.isWritable}
                   @click="${() => this._executeFileBrowser()}">
                   <img id="filebrowser-img" src="./resources/icons/filebrowser.svg" style="width:24px; margin:15px 10px;"></img>
                   <span>${_t("data.explorer.ExecuteFileBrowser")}</span>
@@ -1157,6 +1158,17 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+  /**
+   * Check the images that supports filebrowser application
+   * 
+   */
+  _checkFilebrowserSupported() {
+    globalThis.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true).then((response) => {
+      let images = response.images;
+      this.filebrowserSupportedImages = images.filter(image => image.labels.find(label => label.key === "ai.backend.service-ports" && label.value.toLowerCase().includes("filebrowser")));
+    });
+  }
+
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -1168,6 +1180,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.authenticated = true;
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
+        this._checkFilebrowserSupported();
         this._refreshFolderList();
       }, true);
     } else {
@@ -1175,6 +1188,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.authenticated = true;
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
+      this._checkFilebrowserSupported();
       this._refreshFolderList();
     }
   }
@@ -1500,7 +1514,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    * toggle filebrowser button in Vfolder explorer dialog
    */
   _toggleFilebrowserButton() {
-    let isFilebrowserBtnDisabled = !this._isResourceEnough();
+    let isfilebrowserSupported = (this.filebrowserSupportedImages.length > 0) ? true : false;
+    let isFilebrowserBtnDisabled = !this._isResourceEnough() || !isfilebrowserSupported;
     let filebrowserIcon= this.shadowRoot.querySelector('#filebrowser-img');
     this.shadowRoot.querySelector('#filebrowser-btn').disabled = isFilebrowserBtnDisabled;
     let filterClass = isFilebrowserBtnDisabled ? 'apply-grayscale' : '';
@@ -1908,8 +1923,14 @@ export default class BackendAiStorageList extends BackendAIPage {
    */
   _executeFileBrowser() {
     if (this._isResourceEnough()) {
-      this._launchSession();
-      this._toggleFilebrowserButton();
+      if (this.filebrowserSupportedImages.length > 0) {
+        this._launchSession();
+        this._toggleFilebrowserButton();
+      } else {
+        this.notification.text = _text('data.explorer.NoImagesSupportingFileBrowser');
+        this.notification.show();
+      }
+
     } else {
       this.notification.text = _text('data.explorer.NotEnoughResourceForFileBrowserSession');
       this.notification.show();
@@ -1924,7 +1945,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     let appOptions;
     let imageResource: Object = {};
     // monkeypatch for filebrowser applied environment
-    const environment = 'cr.backend.ai/testing/filebrowser:21.01-ubuntu20.04';
+    //const environment = 'cr.backend.ai/testing/filebrowser:21.01-ubuntu20.04';
+    let images = this.filebrowserSupportedImages.filter((image: any) => image['name'].toLowerCase().includes("filebrowser") );
+    
+    // select one image to launch filebrowser supported session
+    let preferredImage = images[0];
+    const environment = preferredImage['registry'] + '/' + preferredImage['name'] + ':' + preferredImage['tag'];
+    
     // add current folder 
     imageResource['mounts'] = [this.explorer.id];
     imageResource['cpu'] = 1;
