@@ -450,7 +450,8 @@
       "ExecutingFileBrowser": "파일브라우저를 실행합니다...",
       "ExecuteFileBrowser": "파일브라우저 실행",
       "FileBrowserSessionRunningAlready": "파일브라우저용 세션이 이미 실행중입니다. 해당 세션에서 폴더를 업로드 할 수 있습니다.",
-      "NotEnoughResourceForFileBrowserSession": "파일브라우저용 세션 생성을 위한 충분한 자원(cpu: 1 Core, mem: 0.5GB)이 없습니다. 자원 확인 후 다시 시도하십시오."
+      "NotEnoughResourceForFileBrowserSession": "파일브라우저용 세션 생성을 위한 충분한 자원(cpu: 1 Core, mem: 0.5GB)이 없습니다. 자원 확인 후 다시 시도하십시오.",
+      "NoImagesSupportingFileBrowser": "파일브라우저를 지원하는 이미지가 없습니다. 폴더를 업로드하려면 파일브라우저 지원 이미지가 필요합니다."
     },
     "invitation": {
       "EnterEmail": "이메일을 입력하세요",
