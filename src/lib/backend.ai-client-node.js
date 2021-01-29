@@ -2439,7 +2439,7 @@ class Maintenance {
                 registry = decodeURIComponent(registry);
                 q = `mutation($registry: String) {` +
                     `  rescan_images(registry: $registry) {` +
-                    `    ok msg ` +
+                    `    ok msg task_id ` +
                     `  }` +
                     `}`;
                 v = {
@@ -2449,7 +2449,7 @@ class Maintenance {
             else {
                 q = `mutation {` +
                     `  rescan_images {` +
-                    `    ok msg ` +
+                    `    ok msg task_id ` +
                     `  }` +
                     `}`;
                 v = {};
