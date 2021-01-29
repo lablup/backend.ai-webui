@@ -63,6 +63,7 @@ export default class LablupShields extends LitElement {
       "brightgreen": {"colorB": "#44cc11", "colorT": "#222222"},
       "lightgreen": {"colorB": "#f3f5d0", "colorT": "#222222"},
       "green": {"colorB": "#97ca00"},
+      "emerald": {"colorB": "#66bb6a"},
       "darkgreen": {"colorB": "#457b3b"},
       "yellow": {"colorB": "#dfb317"},
       "yellowgreen": {"colorB": "#a4a61d"},
