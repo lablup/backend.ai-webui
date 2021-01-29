@@ -544,9 +544,9 @@ export default class BackendAiStorageList extends BackendAIPage {
             <div id="filebrowser-btn-cover">
               <mwc-button
                   id="filebrowser-btn"
-                  ?disabled=${!this.isWritable && this._isResourceEnough() && (this.filebrowserSupportedImages.length > 0)}
+                  ?disabled=${!this.isWritable}
                   @click="${() => this._executeFileBrowser()}">
-                  <img class=${!this.isWritable && this._isResourceEnough() && (this.filebrowserSupportedImages.length > 0) ? '' : 'apply-grayscale'}
+                  <img class=${!this.isWritable}
                        id="filebrowser-img"
                        src="./resources/icons/filebrowser.svg"></img>
                   <span>${_t("data.explorer.ExecuteFileBrowser")}</span>
@@ -1169,11 +1169,11 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Check the images that supports filebrowser application
    * 
    */
-  _checkFilebrowserSupported() {
-    globalThis.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true).then((response) => {
-      let images = response.images;
-      this.filebrowserSupportedImages = images.filter(image => image.labels.find(label => label.key === "ai.backend.service-ports" && label.value.toLowerCase().includes("filebrowser")));
-    });
+  async _checkFilebrowserSupported() {
+    let response = await globalThis.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true);
+    let images = response.images;
+    // only filter both installed and filebrowser supported image from images
+    this.filebrowserSupportedImages = images.filter(image => image['installed'] && image.labels.find(label => label.key === "ai.backend.service-ports" && label.value.toLowerCase().includes("filebrowser")));
   }
 
   async _viewStateChanged(active) {
@@ -1481,40 +1481,41 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param id - explorer id
    * @param {boolean} dialog - whether open folder-explorer-dialog or not
    * */
-  _clearExplorer(path = this.explorer.breadcrumb.join('/'),
+  async _clearExplorer(path = this.explorer.breadcrumb.join('/'),
                  id = this.explorer.id,
                  dialog = false) {
-    let job = globalThis.backendaiclient.vfolder.list_files(path, id);
-    return job.then(value => {
-      this.shadowRoot.querySelector('#fileList-grid').selectedItems = [];
-      if (this._APIMajorVersion < 6) {
-        this.explorer.files = JSON.parse(value.files);
-      } else { // to support dedicated storage vendors such as FlashBlade
-        const fileInfo = JSON.parse(value.files);
-        fileInfo.forEach((info, cnt) => {
-          let ftype = 'FILE';
-          if (info.filename === value.items[cnt].name) {
-            // value.files and value.items have same order
-            ftype = value.items[cnt].type;
-          } else {
-            // In case the order is mixed
-            for (let i = 0; i < value.items.length; i++) {
-              if (info.filename === value.items[i].name) {
-                ftype = value.items[i].type;
-                break;
-              }
+    let job = await globalThis.backendaiclient.vfolder.list_files(path, id);
+    this.shadowRoot.querySelector('#fileList-grid').selectedItems = [];
+    if (this._APIMajorVersion < 6) {
+      this.explorer.files = JSON.parse(job.files);
+    } else { // to support dedicated storage vendors such as FlashBlade
+      const fileInfo = JSON.parse(job.files);
+      fileInfo.forEach((info, cnt) => {
+        let ftype = 'FILE';
+        if (info.filename === job.items[cnt].name) {
+          // value.files and value.items have same order
+          ftype = job.items[cnt].type;
+        } else {
+          // In case the order is mixed
+          for (let i = 0; i < job.items.length; i++) {
+            if (info.filename === job.items[i].name) {
+              ftype = job.items[i].type;
+              break;
             }
           }
-          info.type = ftype;
-        });
-        this.explorer.files = fileInfo;
+        }
+        info.type = ftype;
+      });
+      this.explorer.files = fileInfo;
+    }
+    this.explorerFiles = this.explorer.files;
+    if (dialog) {
+      if (this.filebrowserSupportedImages.length === 0) {
+        await this._checkFilebrowserSupported();
       }
-      this.explorerFiles = this.explorer.files;
-      if (dialog) {
-        this._toggleFilebrowserButton();
-        this.openDialog('folder-explorer-dialog');
-      }
-    });
+      this._toggleFilebrowserButton();
+      this.openDialog('folder-explorer-dialog');
+    }
   }
 
   /**
