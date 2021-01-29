@@ -390,6 +390,11 @@ export default class BackendAiStorageList extends BackendAIPage {
           filter: grayscale(1.0);
         }
 
+        img#filebrowser-img {
+          width:24px;
+          margin:15px 10px;
+        }
+
         @media screen and (max-width: 750px) {
           mwc-button {
             width: auto;
@@ -539,9 +544,11 @@ export default class BackendAiStorageList extends BackendAIPage {
             <div id="filebrowser-btn-cover">
               <mwc-button
                   id="filebrowser-btn"
-                  ?disabled=${!this.isWritable}
+                  ?disabled=${!this.isWritable && this._isResourceEnough() && (this.filebrowserSupportedImages.length > 0)}
                   @click="${() => this._executeFileBrowser()}">
-                  <img id="filebrowser-img" src="./resources/icons/filebrowser.svg" style="width:24px; margin:15px 10px;"></img>
+                  <img class=${!this.isWritable && this._isResourceEnough() && (this.filebrowserSupportedImages.length > 0) ? '' : 'apply-grayscale'}
+                       id="filebrowser-img"
+                       src="./resources/icons/filebrowser.svg"></img>
                   <span>${_t("data.explorer.ExecuteFileBrowser")}</span>
               </mwc-button>
             </div>
@@ -1514,11 +1521,10 @@ export default class BackendAiStorageList extends BackendAIPage {
    * toggle filebrowser button in Vfolder explorer dialog
    */
   _toggleFilebrowserButton() {
-    let isfilebrowserSupported = (this.filebrowserSupportedImages.length > 0) ? true : false;
-    let isFilebrowserBtnDisabled = !this._isResourceEnough() || !isfilebrowserSupported;
-    let filebrowserIcon= this.shadowRoot.querySelector('#filebrowser-img');
-    this.shadowRoot.querySelector('#filebrowser-btn').disabled = isFilebrowserBtnDisabled;
-    let filterClass = isFilebrowserBtnDisabled ? 'apply-grayscale' : '';
+    let isfilebrowserSupported = (this.filebrowserSupportedImages.length > 0 && this._isResourceEnough()) ? true : false;
+    let filebrowserIcon = this.shadowRoot.querySelector('#filebrowser-img');
+    this.shadowRoot.querySelector('#filebrowser-btn').disabled = !isfilebrowserSupported;
+    let filterClass = isfilebrowserSupported ? '' : 'apply-grayscale';
     filebrowserIcon.setAttribute('class', filterClass);
   }
 
