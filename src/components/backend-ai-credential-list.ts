@@ -11,6 +11,7 @@ import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
+import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
@@ -618,9 +619,11 @@ export default class BackendAICredentialList extends BackendAIPage {
         <vaadin-grid-sort-column resizable header="${_t("credential.KeyAge")}" path="created_at" .renderer="${this._boundKeyageRenderer}">
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-column width="150px" resizable>
-          <template class="header">${_t("credential.ResourcePolicy")}</template>
+        <vaadin-grid-filter-column path="resource_policy" width="150px" resizable header="${_t("credential.ResourcePolicy")}">
           <template>
+            <div style="margin:10px auto;">
+              <lablup-shields app="" color="emerald" description="[[item.resource_policy]]" ui="round"></lablup-shields>
+            </div>
             <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
                 <mwc-icon class="fg green">developer_board</mwc-icon>
@@ -662,8 +665,7 @@ export default class BackendAICredentialList extends BackendAIPage {
               </div>
             </div>
           </template>
-        </vaadin-grid-column>
-
+        </vaadin-grid-filter-column>
         <vaadin-grid-column resizable>
           <template class="header">${_t("credential.Allocation")}</template>
           <template>
