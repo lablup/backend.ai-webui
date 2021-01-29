@@ -200,6 +200,16 @@
       font-size: 12px;
     }
   </style>
+  <dom-module id="grid-height-by-rows-scrollbar-fix" theme-for="vaadin-grid">
+    <template>
+      <style>
+        :host([height-by-rows]) #items,
+        :host([height-by-rows]) #outerscroller {
+          overflow: hidden;
+        }
+      </style>
+    </template>
+  </dom-module>
 </head>
 
 <body>

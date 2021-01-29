@@ -21,6 +21,7 @@ import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
 import 'weightless/card';
+import 'weightless/select';
 import 'weightless/snackbar';
 import 'weightless/switch';
 import 'weightless/textarea';
@@ -65,6 +66,7 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Array}) userInfoGroups = Array();
   @property({type: String}) condition = 'active';
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) _boundResourcePolicyListRenderer =this._resourcePolicyListRenderer.bind(this);
   @property({type: Object}) spinner;
   @property({type: Object}) keypairs;
   @property({type: Object}) signoutUserDialog = Object();
@@ -72,6 +74,8 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) userGrid = Object();
   @property({type: Number}) _totalUserCount = 0;
+  @property({type: Array}) credentials = [];
+  @property({type: Object}) resourcePolicy = Object();
 
   constructor() {
     super();
@@ -88,22 +92,43 @@ export default class BackendAIUserList extends BackendAIPage {
       css`
         vaadin-grid {
           border: 0;
+        }
+
+        vaadin-grid#user-grid {
           font-size: 14px;
           height: calc(100vh - 235px);
         }
 
+        vaadin-grid.inner-dialog {
+          font-size: 10px;
+          overflow: hidden;
+        }
+
+        vaadin-grid#keypair-grid {
+          border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+        }
+
         backend-ai-dialog h4,
+        h4.title,
         backend-ai-dialog wl-label {
           font-size: 14px;
           padding: 5px 15px 5px 12px;
-          margin: 0 0 10px 0;
+          margin: 0;
           display: block;
           height: 20px;
           border-bottom: 1px solid #DDD;
         }
 
+        h4.title {
+          max-width: 100%;
+        }
+
         wl-label {
           font-family: Roboto;
+        }
+
+        wl-select {
+          --input-font-size: 12px;
         }
 
         wl-switch {
@@ -128,6 +153,12 @@ export default class BackendAIUserList extends BackendAIPage {
         div.password-area {
           width: 100%;
           max-width: 322px;
+        }
+
+        div.user-detail-footer-view {
+          border-top: 1px solid rgba(221, 221 ,221);
+          border-bottom: 1px solid rgba(221, 221 ,221);
+          margin-bottom: 20px;
         }
 
         backend-ai-dialog wl-textfield,
@@ -189,7 +220,42 @@ export default class BackendAIUserList extends BackendAIPage {
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
     this.addEventListener('user-list-updated', () => {
       this.refresh();
-    })
+    });
+  }
+
+  _getResourcePolicyList() {
+    globalThis.backendaiclient.resourcePolicy.get().then((response) => {
+      let rp = response.keypair_resource_policies;
+      this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
+    });
+  }
+
+  _indexFrom1(index) {
+    return index + 1;
+  }
+
+  indexRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`${this._indexFrom1(rowData.index)}`, root
+    );
+  }
+
+  _resourcePolicyListRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+      <div class="vertical layout">
+        <wl-select name="${rowData.item.access_key}" @change="${(e) => this._updateResourcePolicyByKeypair(e)}">
+          ${Object.keys(this.resourcePolicy).map(item => html`
+            <option ?selected="${rowData.item.resource_policy === item}" value="${item}">
+              ${item}
+            </option>
+          `)}
+        </wl-select>
+      </div>
+      `, root
+    );
   }
 
   /**
@@ -207,13 +273,28 @@ export default class BackendAIUserList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshUserData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
+        this._getResourcePolicyList();
         this.userGrid = this.shadowRoot.querySelector('#user-grid');
       }, true);
     } else { // already connected
       this._refreshUserData();
+      this._getResourcePolicyList();
       this.isAdmin = globalThis.backendaiclient.is_admin;
       this.userGrid = this.shadowRoot.querySelector('#user-grid');
     }
+  }
+
+  /**
+   * Set selected value to default when user-info-dialog displayed
+   */
+  _resetSelectedResourcePolicy() {
+    this.credentials.forEach( (item: any) => {
+      let elemName = 'wl-select[name=' + item.access_key + ']';
+      let selectEl = this.shadowRoot.querySelector(elemName);
+      if (selectEl) {
+        selectEl.value = item.resource_policy;
+      }
+    });
   }
 
   _refreshUserData() {
@@ -262,12 +343,14 @@ export default class BackendAIUserList extends BackendAIPage {
     let groupNames;
     try {
       const data = await this._getUserData(user_id);
+      await this._getKeypairByID(user_id);
       this.userInfo = data.user;
       groupNames = this.userInfo.groups.map((item) => {
         return item.name;
       });
       this.userInfoGroups = groupNames;
       this.shadowRoot.querySelector('#user-info-dialog').show();
+      this._resetSelectedResourcePolicy();
     } catch (err) {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -275,6 +358,35 @@ export default class BackendAIUserList extends BackendAIPage {
         this.notification.show(true, err);
       }
     }
+  }
+
+  /**
+   * Get Keypair by user id
+   * 
+   * @param {string} user_id
+   */
+  async _getKeypairByID(user_id = '') {
+    let fields = ["access_key", "is_active", "resource_policy"];
+    if (user_id) {
+      let activeResponse = await globalThis.backendaiclient.keypair.list(user_id, fields, true);
+      let inactiveResponse = await globalThis.backendaiclient.keypair.list(user_id, fields, false);
+      this.credentials = activeResponse.keypairs.concat(inactiveResponse.keypairs);
+    }
+  }
+
+  /**
+   * Update Resource Policy by accesskey
+   * 
+   * @param {event} e 
+   */
+  _updateResourcePolicyByKeypair(e) {
+    let accessKey = e.target.name;
+    let selected = e.target.value;
+    this.credentials.forEach( (item: any) => {
+      if(item.access_key === accessKey) {
+        item['updated_resource_policy'] = selected;
+      }
+    });
   }
 
   _signoutUserDialog(e) {
@@ -485,15 +597,27 @@ export default class BackendAIUserList extends BackendAIPage {
 
     this.refresh();
 
-    if (Object.entries(input).length === 0) {
+    let isUserdetailsChanged = Object.entries(input).length > 0 ? true : false;
+    let isResourcePolicyChanged = false;
+    this.credentials.forEach((item: any) => {
+      if (item['updated_resource_policy']) {
+        if (item['updated_resource_policy'] !== item['resource_policy']) {
+          isResourcePolicyChanged = true;
+        } else {
+          delete item['updated_resource_policy'];
+        }
+      }
+    });
+
+    if (!isUserdetailsChanged && !isResourcePolicyChanged) {
       this._hideDialog(event);
 
       this.notification.text = _text('environment.NoChangeMade');
       this.notification.show();
-
       return;
     }
 
+    if (isUserdetailsChanged) {
     // globalThis.backendaiclient.user.modify(this.userInfo.email, input)
     globalThis.backendaiclient.user.update(this.userInfo.email, input)
       .then(res => {
@@ -512,6 +636,31 @@ export default class BackendAIUserList extends BackendAIPage {
         }
         this.notification.show();
       });
+    }
+
+    if (isResourcePolicyChanged) {
+      this.credentials.forEach((item: any) => {
+        if (item['updated_resource_policy']) {
+          let input = {};
+          let resource_policy = item['updated_resource_policy'];
+          input = {...input, resource_policy};
+          globalThis.backendaiclient.keypair.mutate(item['access_key'], input).then(res => {
+            if (res.modify_keypair.ok) {
+              this.shadowRoot.querySelector("#user-info-dialog").hide();
+              this.notification.text = _text('environment.SuccessfullyModified');
+              this.notification.show();
+            }
+          }).catch(err => {
+            console.log(err);
+            if (err && err.message) {
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+              this.notification.show(true, err);
+            }
+          });
+        }
+      });
+    }
 
     // if updated user info is current user, then apply it right away
     if (this.userInfo.email === globalThis.backendaiclient.email) {
@@ -525,7 +674,7 @@ export default class BackendAIUserList extends BackendAIPage {
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <vaadin-grid theme="row-stripes column-borders compact"
-                   aria-label="User list" id="user-grid" .items="${this.users}">
+                   aria-label="User list" id="user-grid" .items="${this.users}" height-by-rows>
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
         <vaadin-grid-filter-column path="email" header="${_t("credential.UserID")}" resizable></vaadin-grid-filter-column>
@@ -549,7 +698,7 @@ export default class BackendAIUserList extends BackendAIPage {
               @click="${() => this._signoutUser()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="user-info-dialog" fixed backdrop narrowLayout>
+      <backend-ai-dialog id="user-info-dialog" fixed backdrop narrowLayout persistent>
         <div slot="title" class="horizontal center layout">
           <span style="margin-right:15px;">${_t("credential.UserDetail")}</span>
           <lablup-shields app="" description="user" ui="flat"></lablup-shields>
@@ -614,7 +763,30 @@ export default class BackendAIUserList extends BackendAIPage {
                     label="${_text("credential.Description")}"
                     placeholder="${_text('maxLength.500chars')}"
                     value="${this.userInfo.description}"
-                    id="description"></mwc-textfield>`: html``}
+                    id="description">
+                </mwc-textarea>
+                <div class="vertical layout" style="width:100%;">
+                  <h4>${_text("credential.Credentials")}</h4>
+                  <vaadin-grid theme="row-stripes column-borders compact" class="inner-dialog" id="keypair-grid" .items="${this.credentials}" height-by-rows>
+                    <vaadin-grid-column
+                        width="30px"
+                        flex-grow="0"
+                        header="#"
+                        text-align="center"
+                        .renderer="${this._indexRenderer.bind(this)}">
+                    </vaadin-grid-column>
+                    <vaadin-grid-column
+                        width="130px"
+                        header="${_t("general.AccessKey")}">
+                      <template>
+                        <div>[[item.access_key]]</div>
+                      </template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column header="${_t("credential.ResourcePolicy")}" .renderer="${this._boundResourcePolicyListRenderer}">
+                    </vaadin-grid-column>
+                  </vaadin-grid>
+                </div>    
+                    `: html``}
               ${this.editMode ? html`
                 <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text("credential.DescActiveUser")}</p>
@@ -665,13 +837,42 @@ export default class BackendAIUserList extends BackendAIPage {
           </div>
         `}
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout distancing">
-        ${this.editMode ? html`
-          <mwc-button
-              unelevated
-              label="${_t("button.SaveChanges")}"
-              icon="check"
-              @click=${e => this._saveChanges(e)}></mwc-button>`:html``}
+        ${this.editMode ?
+          html`
+          <div slot="footer" class="horizontal end-justified flex layout distancing">
+            <mwc-button
+                unelevated
+                label="${_t("button.SaveChanges")}"
+                icon="check"
+                @click=${e => this._saveChanges(e)}></mwc-button>
+          </div>`
+          : html`
+            <div slot="footer" class="vertical layout flex user-detail-footer-view">
+              <h4>${_text("credential.Credentials")}</h4>
+              <vaadin-grid theme="row-stripes colume-borders compact" class="inner-dialog" .items="${this.credentials}" height-by-rows>
+                <vaadin-grid-column
+                    width="30px"
+                    flex-grow="0"
+                    header="#"
+                    text-align="center"
+                    .renderer="${this._indexRenderer.bind(this)}">
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    width="130px"
+                    header="${_t("general.AccessKey")}">
+                  <template>
+                    <div>[[item.access_key]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column
+                    header="${_t("credential.ResourcePolicy")}">
+                  <template>
+                    <div>[[item.resource_policy]]</div>
+                  </template>
+                </vaadin-grid-column>
+              </vaadin-grid>
+            </div>
+          `}
         </div>
       </backend-ai-dialog>
     `;
