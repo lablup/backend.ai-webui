@@ -1229,8 +1229,9 @@ class VFolder {
    * @param {string} group - Virtual folder group name.
    * @param {string} usageMode - Virtual folder's purpose of use. Can be "general" (normal folders), "data" (data storage), and "model" (pre-trained model storage).
    * @param {string} permission - Virtual folder's innate permission.
+   * @param {boolean} cloneable - Whether Virtual folder is cloneable or not.
    */
-  async create(name, host = '', group = '', usageMode = 'general', permission = 'rw') {
+  async create(name, host = '', group = '', usageMode = 'general', permission = 'rw', cloneable = false) {
     let body;
     if (host !== '') {
       body = {
@@ -1253,10 +1254,41 @@ class VFolder {
         body['permission'] = permission;
       }
     }
+    if (this.client.supports('storage-proxy')) {
+      body['cloneable'] = cloneable;
+    }
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Clone selected Virtual folder
+   * 
+   * @param {json} input - parameters for cloning Vfolder 
+   * @param {boolean} input.cloneable - whether new cloned Vfolder is cloneable or not
+   * @param {string} input.permission - permission for new cloned Vfolder. permission should one of the following: 'ro', 'rw', 'wd'
+   * @param {string} input.target_host - target_host for new cloned Vfolder
+   * @param {string} input.target_name - name for new cloned Vfolder
+   * @param {string} input.usage_mode - Cloned virtual folder's purpose of use. Can be "general" (normal folders), "data" (data storage), and "model" (pre-trained model storage).
+   * @param name - source Vfolder name
+   */
+
+  async clone(input, name = null) {
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/clone`, input);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * 
+   * @param {json} input - parameters for updating folder options of Vfolder
+   * @param {boolean} input.cloneable - whether Vfolder is cloneable or not
+   * @param {string} input.permission - permission for Vfolder. permission should one of the following: 'ro', 'rw', 'wd'
+   * @param name - source Vfolder name
+   */
+  async update_folder(input, name = null) {
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/update-options`, input);
+    return this.client._wrapWithPromise(rqst);
+  }
 
   /**
    * List Virtual folders that requested accessKey has permission to.
