@@ -171,6 +171,7 @@
       "ThisSettingTakesPrecedence": "Note: This setting takes precedence",
       "CustomResourceApplied": "Custom resource is applied",
       "PleaseChooseFoldersToMount": "Please Choose Folders To Mount",
+      "StartFolderUploading": "Start Folder uploading",
       "StartImportedNotebook": "Start Imported Notebook",
       "DuplicatedSessionName": "Duplicated session name not allowed",
       "SessionNameAllowCondition": "Session name should have 4-64 alphabets/numbers without any whitespaces.",
@@ -449,7 +450,13 @@
       "WritePermissionRequiredInUploadFiles": "Write permission is required in uploading file(s).",
       "ReadonlyFolder": "Read-only Folder",
       "FileAlreadyExists": "The file about to be uploaded already exists.",
-      "DoYouWantToOverwrite": "Do you want to overwrite?"
+      "DoYouWantToOverwrite": "Do you want to overwrite?",
+      "ExecutingFileBrowser": "Executing filebrowser...",
+      "ExecuteFileBrowser": "Execute filebrowser",
+      "FileBrowserSessionRunningAlready": "The session supporting filebrowser is already running. Please upload folder(s) using that session.",
+      "NotEnoughResourceForFileBrowserSession": "No enough resources(cpu: 1 Core, mem: 0.5GB) to create the session for filebrowser. please check the available resources.",
+      "NoImagesSupportingFileBrowser": "There is no images supporting filebrowser yet. At least one or more image that supports filebrowser is required to upload folder(s).",
+      "ClickFilebrowserButton": "To upload Folder(s), Please click Execute filebrowser button."
     },
     "invitation": {
       "EnterEmail": "Enter email address",

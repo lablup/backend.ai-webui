@@ -2056,7 +2056,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <mwc-list-item value="" disabled="true">${_t("session.launcher.NoFolderExists")}</mwc-list-item>
             `:html``}
             ${this.vfolders.map(item => html`
-              <mwc-check-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}</mwc-check-list-item>
+              <mwc-check-list-item
+                  value="${item.name}"
+                  ?selected="${this.selectedVfolders.includes(item.name)}"
+                  ?disabled="${item.disabled}">${item.name}</mwc-check-list-item>
             `)}
             </mwc-list>
           </wl-expansion>
