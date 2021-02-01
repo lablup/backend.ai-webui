@@ -171,6 +171,7 @@
       "CustomResourceApplied": "사용자 설정 자원이 할당됨",
       "PleaseChooseFoldersToMount": "마운트할 폴더들을 선택하세요",
       "StartImportedNotebook": "가져온 노트북 열기",
+      "StartFolderUploading": "폴더 업로드를 위한 세션 생성",
       "DuplicatedSessionName": "동일한 이름의 연산 세션이 있습니다",
       "SessionNameAllowCondition": "세션 이름은 공백없이 4-64자  사이의 영문/숫자만 입력 가능합니다.",
       "NoFolderExists": "폴더가 없습니다",
@@ -454,7 +455,13 @@
       "WritePermissionRequiredInUploadFiles": "파일을 업로드하기 위해서는 쓰기(write) 권한이 필요합니다.",
       "ReadonlyFolder": "읽기 전용 폴더",
       "FileAlreadyExists": "다음 파일은 이미 존재합니다.",
-      "DoYouWantToOverwrite": "덮어쓰시겠습니까?"
+      "DoYouWantToOverwrite": "덮어쓰시겠습니까?",
+      "ExecutingFileBrowser": "파일브라우저를 실행합니다...",
+      "ExecuteFileBrowser": "파일브라우저 실행",
+      "FileBrowserSessionRunningAlready": "파일브라우저용 세션이 이미 실행중입니다. 해당 세션에서 폴더를 업로드 할 수 있습니다.",
+      "NotEnoughResourceForFileBrowserSession": "파일브라우저용 세션 생성을 위한 충분한 자원(cpu: 1 Core, mem: 0.5GB)이 없습니다. 자원 확인 후 다시 시도하십시오.",
+      "NoImagesSupportingFileBrowser": "파일브라우저를 지원하는 이미지가 없습니다. 폴더를 업로드하려면 파일브라우저 지원 이미지가 필요합니다.",
+      "ClickFilebrowserButton": "폴더를 업로드하려면 파일브라우저 실행 버튼을 클릭해주세요."
     },
     "invitation": {
       "EnterEmail": "이메일을 입력하세요",
