@@ -906,6 +906,12 @@ export default class BackendAiStorageList extends BackendAIPage {
                     || rowData.item.is_owner
                     || (rowData.item.type === 'group' && this.is_admin)))}"
                 .folder-id="${rowData.item.name}"></mwc-icon-button>
+              <mwc-icon-button
+                class="fg blue controls-running"
+                icon="content_copy"
+                @click="${(e) => {
+                  this._cloneFolder(rowData.item);
+                }}"></mwc-icon-button>
             `
             : html``
           }
@@ -1322,6 +1328,23 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Clone folder
+   * 
+   */
+  _cloneFolder(selectedItem){
+
+    if (selectedItem) {
+      let name = selectedItem.name;
+      let input = {
+        permission: selectedItem.permission,
+        target_hosts: selectedItem.host,
+        target_name: selectedItem.name,
+        usage_mode: selectedItem.usage_mode
+      };
+      /* TODO: Apply clone request */
+    }
+ }
   /**
    * dispatch backend-ai-folder-list-changed event
    *
