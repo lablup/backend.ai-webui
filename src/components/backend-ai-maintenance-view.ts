@@ -203,8 +203,8 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     indicator.set(0, _text('maintenance.Scanning'));
     globalThis.tasker.add(
       _text("maintenance.RescanImages"),
-      globalThis.backendaiclient.maintenance.rescan_images().then((resp) => {
-        let sse: EventSource =  globalThis.backendaiclient.maintenance.attach_background_task(resp.rescan_images.task_id);
+      globalThis.backendaiclient.maintenance.rescan_images().then(({rescan_images}) => {
+        let sse: EventSource =  globalThis.backendaiclient.maintenance.attach_background_task(rescan_images.task_id);
         sse.addEventListener('task_updated', (e) => {
           const data = JSON.parse(e["data"]);
           const ratio = data.current_progress/data.total_progress;
