@@ -267,7 +267,8 @@
     "DetailedInformation": "상세 정보",
     "Running": "실행중",
     "BackendType": "백엔드",
-    "Capabilities": "지원기능"
+    "Capabilities": "지원기능",
+    "NoNetworkSignal": "네트워크 신호 없음"
   },
   "general": {
     "cores": "코어",
