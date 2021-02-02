@@ -276,7 +276,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               let cuda_plugin = compute_plugins['cuda'];
               agents[objectKey].cuda_plugin = cuda_plugin;
             }
-            if (agents['objectKey']?.live_stat?.devices?.cpu_util) {
+            if (agents[objectKey].live_stat?.devices?.cpu_util) {
               let cpu_util: Array<any> = [];
               Object.entries(agents[objectKey].live_stat.devices.cpu_util).forEach(([k, v]) => {
                 let agentInfo = Object.assign({}, v, {num: k});
@@ -284,7 +284,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               });
               agents[objectKey].cpu_util_live = cpu_util;
             }
-            if (agents['objectKey']?.live_stat?.devices?.cuda_util) {
+            if (agents[objectKey].live_stat?.devices?.cuda_util) {
               let cuda_util: Array<any> = [];
               let i: number = 1;
               Object.entries(agents[objectKey].live_stat.devices.cuda_util).forEach(([k, v]) => {
@@ -294,7 +294,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               });
               agents[objectKey].cuda_util_live = cuda_util;
             }
-            if (agents['objectKey']?.live_stat?.devices?.cuda_mem) {
+            if (agents[objectKey].live_stat?.devices?.cuda_mem) {
               let cuda_mem: Array<any> = [];
               let i: number = 1;
               Object.entries(agents[objectKey].live_stat.devices.cuda_mem).forEach(([k, v]) => {
@@ -304,7 +304,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               });
               agents[objectKey].cuda_mem_live = cuda_mem;
             }
-            if (agents['objectKey']?.live_stat?.devices?.rocm_util) {
+            if (agents[objectKey].live_stat?.devices?.rocm_util) {
               let rocm_util: Array<any> = [];
               let i: number = 1;
               Object.entries(agents[objectKey].live_stat.devices.rocm_util).forEach(([k, v]) => {
@@ -314,7 +314,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               });
               agents[objectKey].rocm_util_live = rocm_util;
             }
-            if (agents['objectKey']?.live_stat?.devices?.rocm_mem) {
+            if (agents[objectKey].live_stat?.devices?.rocm_mem) {
               let rocm_mem: Array<any> = [];
               let i: number = 1;
               Object.entries(agents[objectKey].live_stat.devices.rocm_mem).forEach(([k, v]) => {
@@ -324,7 +324,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               });
               agents[objectKey].rocm_mem_live = rocm_mem;
             }
-            if (agents['objectKey']?.live_stat?.devices?.tpu_util) {
+            if (agents[objectKey].live_stat?.devices?.tpu_util) {
               let tpu_util: Array<any> = [];
               let i: number = 1;
               Object.entries(agents[objectKey].live_stat.devices.tpu_util).forEach(([k, v]) => {
@@ -334,7 +334,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               });
               agents[objectKey].tpu_util_live = tpu_util;
             }
-            if (agents['objectKey']?.live_stat?.devices?.tpu_mem) {
+            if (agents[objectKey].live_stat?.devices?.tpu_mem) {
               let tpu_mem: Array<any> = [];
               let i: number = 1;
               Object.entries(agents[objectKey].live_stat.devices.tpu_mem).forEach(([k, v]) => {
@@ -363,6 +363,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         }, 15000);
       }
     }).catch(err => {
+      console.log(err)
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
