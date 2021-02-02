@@ -2634,6 +2634,16 @@ class Maintenance {
   }
 
   /**
+   * Attach to the background task to listen to events
+   * @param {string} task_id - background task id.
+   */
+  attach_background_task(task_id: string) {
+    var urlStr = "/events/background-task?task_id=" + task_id;
+    let req = this.client.newSignedRequest("GET", urlStr, null);
+    return new EventSource(req.uri, {withCredentials:true});
+  }
+
+  /**
    * Rescan image from repository
    * @param {string} registry - registry. default is ''
    */
