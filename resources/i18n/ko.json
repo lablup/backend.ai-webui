@@ -185,7 +185,11 @@
       "SettingUpProxyForApp": "애플리케이션을 위한 프록시를 설정합니다...",
       "AddingKernelToSocketQueue": "커널을 소켓 큐에 추가합니다...",
       "ManualImageName": "환경 이름 (수동)",
-      "NotEnoughResource": "할당 가능한 자원 부족"
+      "NotEnoughResource": "할당 가능한 자원 부족",
+      "EnvDeleted": "환경변수를 삭제했습니다.",
+      "ModifyEnv": "환경변수 수정",
+      "EnvironmentVariable": "환경변수",
+      "EnvironmentVariableValue": "값"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
