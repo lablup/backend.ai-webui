@@ -587,7 +587,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.ownerKeypairs = [];
     this.ownerGroups = [];
     this.ownerScalingGroups = [];
-    this._resetEnvironmentVariables();
   }
 
   firstUpdated() {
@@ -2065,7 +2064,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.environ_values[items[0]] = items[1];
       return items;
     }
-    this._resetEnvironmentVariables();
+    this.environ_values = {};
     Array.prototype.filter.call(rows, row => nonempty(row)).map(row => encodeRow(row));
   }
 
@@ -2074,8 +2073,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.environ_values = {};
     let dialog = this.shadowRoot.querySelector('#modify-env-dialog');
     if (dialog !== null) {
-      dialog.requestUpdate();
+      this._clearRows();
     }
+  }
+  /**
+   * Clear rows from the environment variable.
+   */
+  _clearRows() {
+    const container = this.shadowRoot.querySelector("#modify-env-container");
+    const rows = container.querySelectorAll(".row");
+    const lastRow = rows[rows.length - 1];
+
+    lastRow.querySelectorAll("wl-textfield").forEach(tf => {
+      tf.value = "";
+    });
+    container.querySelectorAll(".row.extra").forEach(e => {
+      e.remove();
+    });
   }
 
   render() {
