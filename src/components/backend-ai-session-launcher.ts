@@ -587,8 +587,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.ownerKeypairs = [];
     this.ownerGroups = [];
     this.ownerScalingGroups = [];
-    this.environ = [];
-    this.environ_values = {};
+    this._resetEnvironmentVariables();
   }
 
   firstUpdated() {
@@ -991,6 +990,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
+      this._resetEnvironmentVariables();
       setTimeout(() => {
         this.metadata_updating = true;
         this.aggregateResource('session-creation');
@@ -2064,8 +2064,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.environ_values[items[0]] = items[1];
       return items;
     }
-    this.environ_values = {};
+    this._resetEnvironmentVariables();
     Array.prototype.filter.call(rows, row => nonempty(row)).map(row => encodeRow(row));
+  }
+
+  _resetEnvironmentVariables() {
+    this.environ = [];
+    this.environ_values = {};
   }
 
   render() {
@@ -2398,7 +2403,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         </mwc-button>
       </div>
     </backend-ai-dialog>
-    <backend-ai-dialog id="modify-env-dialog" fixed backdrop>
+    <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent>
       <span slot="title">${_t("session.launcher.ModifyEnv")}</span>
       <div slot="content" id="modify-env-container">
         <div class="row header">
