@@ -681,6 +681,7 @@
     "UpdatingRegistryInfo": "Updating registry information...",
     "RegistryUpdateFinished": "Registry update finished.",
     "RegistryUpdateFailed": "Registry update failed.",
+    "RescanImages": "Rescanning Images...",
     "RescanFailed": "Rescan Failed.",
     "PleaseSelectOption": "Please select one option."
   },
