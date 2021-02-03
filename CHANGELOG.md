@@ -1,5 +1,15 @@
 # Changelog
 
+## v21.02.0 (03/02/2021)
+
+#### Enhancements:
+
+- [**enhancement**] Provide environment configuration on session launcher [#902](https://github.com/lablup/backend.ai-console/issues/902)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Adopt background task id [#898](https://github.com/lablup/backend.ai-console/issues/898)
+- [**enhancement**][**library / SDK**][**minor**] Change perSession scheme to perContainer [#889](https://github.com/lablup/backend.ai-console/issues/889)
+- [**UI / UX**][**enhancement**][**minor**] Let's support folder upload in vfolder [#885](https://github.com/lablup/backend.ai-console/issues/885)
+
+
 ## v21.01.1 (07/01/2021)
 
 #### Enhancements:
