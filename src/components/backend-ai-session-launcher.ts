@@ -2462,6 +2462,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       </div>
       <div slot="footer" class="horizontal end-justified flex layout">
         <mwc-button
+            icon="delete"
+            label="${_t("button.DeleteAll")}"
+            @click="${()=>this._clearRows()}"></mwc-button>
+        <mwc-button
             unelevated
             slot="footer"
             icon="check"
