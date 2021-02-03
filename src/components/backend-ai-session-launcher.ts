@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property, query} from "lit-element";
@@ -2171,14 +2171,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <span slot="title"
                   style="font-size:12px;font-weight:400;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
             <mwc-list fullwidth multi id="vfolder"
-                      @selected="${() => this._updateSelectedFolder()}">
-              ${this.vfolders.length === 0 ? html`
-                <mwc-list-item value="" disabled="true">${_t("session.launcher.NoFolderExists")}</mwc-list-item>
-              ` : html``}
-              ${this.vfolders.map(item => html`
-                <mwc-check-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}
-                </mwc-check-list-item>
-              `)}
+              @selected="${() => this._updateSelectedFolder()}">
+            ${this.vfolders.length === 0 ? html`
+              <mwc-list-item value="" disabled="true">${_t("session.launcher.NoFolderExists")}</mwc-list-item>
+            `:html``}
+            ${this.vfolders.map(item => html`
+              <mwc-check-list-item
+                  value="${item.name}"
+                  ?selected="${this.selectedVfolders.includes(item.name)}"
+                  ?disabled="${item.disabled}">${item.name}</mwc-check-list-item>
+            `)}
             </mwc-list>
           </wl-expansion>
           <ul style="color:#646464;font-size:12px;">

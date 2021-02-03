@@ -312,7 +312,23 @@ class BackendAIRegistryList extends BackendAIPage {
     globalThis.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
       .then(({rescan_images}) => {
         if (rescan_images.ok) {
-          indicator.set(100, _text('registry.RegistryUpdateFinished'));
+          indicator.set(0, _text('registry.RescanImages'));
+          let sse: EventSource =  globalThis.backendaiclient.maintenance.attach_background_task(rescan_images.task_id);
+          sse.addEventListener('task_updated', (e) => {
+            const data = JSON.parse(e["data"]);
+            const ratio = data.current_progress/data.total_progress;
+            indicator.set(100 * ratio, _text('registry.RescanImages'));
+          });
+          sse.addEventListener('task_done', (e) => {
+            indicator.set(100, _text('registry.RegistryUpdateFinished'));
+          });
+          sse.addEventListener('task_failed', (e) => {
+            console.log('task_failed', e["data"]);
+            throw new Error('Background Image scanning task has failed');
+          });
+          sse.addEventListener('task_cancelled', (e) => {
+            throw new Error('Background Image scanning task has been cancelled');
+          });
         } else {
           indicator.set(50, _text('registry.RegistryUpdateFailed'));
           indicator.end(1000);

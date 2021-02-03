@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
@@ -346,6 +346,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     // select only uninstalled images
     this.selectedImages = this._grid.selectedItems.filter(images => {return !images.installed});
     this.installImageNameList = this.selectedImages.map( image => {
+
+      // remove whitespace
+      Object.keys(image).map(elem => {
+        if (['registry', 'name', 'tag'].includes(elem)) {
+          image[elem] = image[elem].replace(/\s/g, '');
+        }
+      });
+      
       return image['registry'] + '/' + image['name'] + ':' + image['tag'];
     })
 

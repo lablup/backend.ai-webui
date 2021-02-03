@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text} from "lit-translate";
 import {css, customElement, html, LitElement, property} from "lit-element";
@@ -145,7 +145,7 @@ export default class BackendAISplash extends LitElement {
           </ul>
           <ul>
             <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/master/LICENSE">open-source software</a></li>
-            <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
+            <li class="copyright">Copyright &copy; 2015-2021 Lablup Inc.</li>
             <li class="release-note">
               <a target="_blank" href="https://github.com/lablup/backend.ai-console/releases/tag/v${this.version}">Release Note</a>
               <a target="_blank" href="https://github.com/lablup/backend.ai-console/blob/main/LICENSE">License</a>

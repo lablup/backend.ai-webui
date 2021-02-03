@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
@@ -182,6 +182,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     });
     document.addEventListener("backend-ai-group-changed", (e) => {
       this._updatePageVariables(true);
+    });
+    document.addEventListener("backend-ai-calculate-current-resource", (e) => {
+      this.aggregateResource('resource-refreshed');
+      globalThis.backendaioptions.set('current-resource', this.available_slot);
     });
     /*setInterval(()=>{
       this.metadata_updating = true;
