@@ -808,6 +808,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       //this.notification.text = _text('session.launcher.PleaseWaitInitializing');
       //this.notification.show();
     } else {
+      this._resetEnvironmentVariables();
       await this.selectDefaultLanguage();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
@@ -2071,6 +2072,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _resetEnvironmentVariables() {
     this.environ = [];
     this.environ_values = {};
+    let dialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    if (dialog !== null) {
+      dialog.requestUpdate();
+    }
   }
 
   render() {
