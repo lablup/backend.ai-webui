@@ -117,6 +117,8 @@
       "CurrentResourceGroup": "Current Resource Group",
       "SelectResourceGroup": "Select Resource Group",
       "StartNewSession": "Start new session",
+      "SetEnvironmentVariable": "Set Environment Variable",
+      "Config": "Config",
       "ChooseEnvironment": "Choose Environment",
       "Version": "Version",
       "Base": "Base",
@@ -188,7 +190,8 @@
       "ManualImageName": "Image Name (Manual)",
       "NotEnoughResource": "Not enough resource",
       "EnvDeleted": "Envionment variable deleted",
-      "ModifyEnv": "Modify Environment variable",
+      "ModifyEnv": "Modify environment variable",
+      "DescModifyEnv": "You can set environment variable. Every input value will be initialized after starting session launcher.",
       "EnvironmentVariable": "Variable",
       "EnvironmentVariableValue": "Value"
     },

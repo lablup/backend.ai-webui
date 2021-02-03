@@ -117,6 +117,8 @@
       "SelectResourceGroup": "자원 그룹 선택",
       "StartNewSession": "새 세션 시작",
       "ChooseEnvironment": "환경을 선택하세요",
+      "SetEnvironmentVariable": "환경 변수 설정",
+      "Config": "설정",
       "Version": "버전",
       "Base": "기본환경",
       "Requirements": "요구사항",
@@ -188,6 +190,7 @@
       "NotEnoughResource": "할당 가능한 자원 부족",
       "EnvDeleted": "환경변수를 삭제했습니다.",
       "ModifyEnv": "환경변수 수정",
+      "DescModifyEnv": "세션 생성시 적용될 환경 변수명과 그 값을 설정할 수 있습니다. 세션 런쳐를 띄울 때마다 입력한 값은 모두 초기화됩니다.",
       "EnvironmentVariable": "환경변수",
       "EnvironmentVariableValue": "값"
     },
