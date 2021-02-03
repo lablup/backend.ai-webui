@@ -1912,6 +1912,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
+  _showEnvConfigDescription(e) {
+    e.stopPropagation();
+    this._helpDescriptionTitle = _text("session.launcher.ModifyEnv");
+    this._helpDescription = _text("session.launcher.DescModifyEnv");
+    let desc = this.shadowRoot.querySelector('#help-description');
+    desc.show();
+  }
+
   _resourceTemplateToCustom() {
     this.shadowRoot.querySelector('#resource-templates').selectedText = _text('session.launcher.CustomResourceApplied');
   }
@@ -2178,9 +2186,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            validationMessage="${_t("session.launcher.SessionNameAllowCondition")}"
                            style="margin-left:5px;">
             </mwc-textfield>
-            <mwc-icon-button icon="rule" @click="${()=>this._showEnvDialog()}"></mwc-icon-button>
           </div>
-
+          <div class="horizontal layout center justified">
+            <span style="color:rgba(0, 0, 0, 0.6);font-size:12px;padding-left:16px;">${_t("session.launcher.SetEnvironmentVariable")}</span>
+            <mwc-button 
+              unelevated
+              icon="rule"
+              label="${_t("session.launcher.Config")}"
+              style="width:auto;margin-right:15px;"
+              @click="${()=>this._showEnvDialog()}"></mwc-button>
+          </div>
           <wl-expansion id="vfolder-select-expansion" name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
             <mwc-list fullwidth multi id="vfolder"
@@ -2422,8 +2437,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         </mwc-button>
       </div>
     </backend-ai-dialog>
-    <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent>
+    <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent noclosebutton>
       <span slot="title">${_t("session.launcher.ModifyEnv")}</span>
+      <span slot="action">
+        <mwc-icon-button icon="info" @click="${(e) => this._showEnvConfigDescription(e)}" style="pointer-events: auto;"></mwc-icon-button>
+      </span>
       <div slot="content" id="modify-env-container">
         <div class="row header">
           <div> ${_t("session.launcher.EnvironmentVariable")} </div>
