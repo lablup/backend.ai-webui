@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from "lit-translate";
+import {get as _text, translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
 import {css, customElement, html, property, query} from "lit-element";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -1914,7 +1914,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _showEnvConfigDescription(e) {
     e.stopPropagation();
-    this._helpDescriptionTitle = _text("session.launcher.EnvironmentVariableTitle");
+    this._helpDescriptionTitle = _tr("session.launcher.EnvironmentVariableTitle");
     this._helpDescription = _text("session.launcher.DescSetEnv");
     let desc = this.shadowRoot.querySelector('#help-description');
     desc.show();

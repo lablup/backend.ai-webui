@@ -191,8 +191,8 @@
       "NotEnoughResource": "Not enough resource",
       "EnvDeleted": "Envionment variable deleted",
       "SetEnv": "Set environment variable",
-      "DescSetEnv": "<p>You can set environment variable and its value. You cannot overwrite the environment variable already set in the image.</p><p style='background-color:var(--paper-red-100);border-radius:5px;'>NOTICE:<br/>Every input value will be initialized after starting session launcher.</p>",
-      "EnvironmentVariableTitle": "Environment Variable",
+      "DescSetEnv": "<p>If you set a default environment variable in the container and also set an environment variable with the same name on the Backend.AI, the value set on the Backend.AI takes precedence.</p><p style='color:var(--paper-red-400);'>Every input value will be initialized after starting session launcher.</p>",
+      "EnvironmentVariableTitle": "Order of precedence: container vs Backend.AI internal variables",
       "EnvironmentVariable": "Variable",
       "EnvironmentVariableValue": "Value",
       "EnvironmentVariableConfigurationDone": "Environment variable configured successfully."
