@@ -191,9 +191,10 @@
       "NotEnoughResource": "Not enough resource",
       "EnvDeleted": "Envionment variable deleted",
       "ModifyEnv": "Modify environment variable",
-      "DescModifyEnv": "You can set environment variable. Every input value will be initialized after starting session launcher.",
+      "DescModifyEnv": "<p>You can set environment variable and its value.</p><p>Every input value will be initialized after starting session launcher.</p>",
       "EnvironmentVariable": "Variable",
-      "EnvironmentVariableValue": "Value"
+      "EnvironmentVariableValue": "Value",
+      "EnvironmentVariableConfigurationDone": "Environment variable configured successfully."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

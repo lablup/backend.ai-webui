@@ -2050,6 +2050,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   modifyEnv() {
     this._parseEnvVariableList();
     this.shadowRoot.querySelector('#modify-env-dialog').hide();
+    this.notification.text = _text("session.launcher.EnvironmentVariableConfigurationDone");
+    this.notification.show();
   }
 
   /**
