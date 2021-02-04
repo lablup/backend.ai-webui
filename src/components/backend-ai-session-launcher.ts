@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
+import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property, query} from "lit-element";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -157,6 +157,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Number}) max_cpu_core_per_session = 64;
   @property({type: Number}) max_cuda_device_per_session = 16;
+  @property({type: Number}) max_cuda_shares_per_session = 16;
   @property({type: Number}) max_shm_per_session = 2;
   @property({type: Object}) resourceBroker;
   @property({type: Number}) cluster_size = 1;
@@ -627,6 +628,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
         this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
+        this.max_cuda_shares_per_session = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
         this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerContainer || 2;
         if (globalThis.backendaiclient.supports('multi-container')) {
           this.cluster_support = true;
@@ -638,6 +640,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
       this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
+      this.max_cuda_shares_per_session = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
       this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerContainer || 2;
       if (globalThis.backendaiclient.supports('multi-container')) {
         this.cluster_support = true;
@@ -1433,7 +1436,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           cuda_device_metric.min = parseInt(cuda_device_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
             if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && cuda_device_metric.max !== NaN) {
-              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_shares'], this.max_cuda_device_per_session);
+              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device'], this.max_cuda_device_per_session);
             } else {
               cuda_device_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device'], this.max_cuda_device_per_session);
             }
@@ -1458,13 +1461,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           cuda_shares_metric.min = parseFloat(cuda_shares_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
             if (parseFloat(cuda_shares_metric.max) !== 0 && cuda_shares_metric.max !== 'Infinity' && cuda_shares_metric.max !== NaN) {
-              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares']);
+              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares'], this.max_cuda_shares_per_session);
             } else {
-              cuda_shares_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares']);
+              cuda_shares_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares'], this.max_cuda_shares_per_session);
             }
           } else {
             if (parseFloat(cuda_shares_metric.max) !== 0) {
-              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), available_slot['cuda_shares']);
+              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), available_slot['cuda_shares'], this.max_cuda_shares_per_session);
             } else {
               cuda_shares_metric.max = 0;
             }
@@ -1914,7 +1917,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _showEnvConfigDescription(e) {
     e.stopPropagation();
-    this._helpDescriptionTitle = _tr("session.launcher.EnvironmentVariableTitle");
+    this._helpDescriptionTitle = _text("session.launcher.EnvironmentVariableTitle");
     this._helpDescription = _text("session.launcher.DescSetEnv");
     let desc = this.shadowRoot.querySelector('#help-description');
     desc.show();
@@ -2220,7 +2223,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           ` : html``}
           <div class="horizontal layout center justified">
             <span style="color:rgba(0, 0, 0, 0.6);font-size:12px;padding-left:16px;">${_t("session.launcher.SetEnvironmentVariable")}</span>
-            <mwc-button 
+            <mwc-button
               unelevated
               icon="rule"
               label="${_t("session.launcher.Config")}"

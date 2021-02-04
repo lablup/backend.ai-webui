@@ -24,6 +24,7 @@ disableCertCheck = false
 openPortToPublic = true
 maxCPUCoresPerSession = 256
 maxCUDADevicesPerSession = 16
+maxCUDASharesPerSession = 1
 maxShmPerSession = 1
 maxFileUploadSize = 4294967296 # 4GB. 4294967296
 
