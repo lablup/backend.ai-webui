@@ -53,7 +53,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) openPortToPublic = false;
   @property({type: Array}) appOrder;
   @property({type: Array}) appSupportWithCategory = [];
-
+  @property({type: Object}) appEnvs = Object();
+  @property({type: Object}) appArgs = Object();
+  
   constructor() {
     super();
   }

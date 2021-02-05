@@ -118,6 +118,8 @@ class Manager extends EventEmitter {
       let app = req.query.app || "jupyter";
       let port = parseInt(req.query.port) || undefined;
       let p = sessionName + "|" + app;
+      let args = req.query.args || {};
+      let envs = req.query.envs || {};
       let gateway;
       let ip = "127.0.0.1"; //FIXME: Update needed
       //let port = undefined;
@@ -136,7 +138,7 @@ class Manager extends EventEmitter {
         let maxtry = 5;
         for (let i = 0; i < maxtry; i++) {
           try {
-            await gateway.start_proxy(sessionName, app, ip, port);
+            await gateway.start_proxy(sessionName, app, ip, port, envs, args);
             port = gateway.getPort();
             assigned = true;
             break;
