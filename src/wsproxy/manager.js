@@ -1,3 +1,9 @@
+/*
+Backend.AI Webapp proxy for console
+===================================
+
+(C) Copyright 2016-2021 Lablup Inc.
+*/
 // Backend.AI Websocket proxy server for local runtime environment / app.
 const express = require('express'),
   EventEmitter = require('events'),
