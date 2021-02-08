@@ -11,7 +11,10 @@
     "nfs": {
       "name": "Network File System",
       "description": "NFS is a distributed file system protocol. NFS is an open standard defined in a Request for Comments (RFC), allowing anyone to implement the protocol.",
-      "icon": "local.png"
+      "icon": "local.png",
+      "dialects": [
+        "NFS"
+      ]
     },
     "L3": {
       "name": "L3 (Lablup LargeData Locator)",
@@ -53,6 +56,14 @@
       "icon": "local.png",
       "dialects": [
         "cephfs"
+      ]
+    },
+    "xfs": {
+      "name": "XFS",
+      "description": "XFS is a high-performance 64-bit journaling file system created by Silicon Graphics.",
+      "icon": "local.png",
+      "dialects": [
+        "XFS"
       ]
     }
   }

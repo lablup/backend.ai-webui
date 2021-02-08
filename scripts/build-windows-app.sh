@@ -49,7 +49,7 @@ usage() {
   echo ""
   echo "  ${LWHITE}--branch branch${NC}"
   echo "                       Set the branch name to build"
-  echo "                       (default: master)"
+  echo "                       (default: main)"
 }
 
 if [ -z "$1" ]
@@ -58,7 +58,7 @@ then
     usage; exit 1;
 fi
 
-BRANCH="master"
+BRANCH="main"
 
 while [ $# -gt 0 ]; do
   case $1 in

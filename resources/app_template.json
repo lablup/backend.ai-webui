@@ -4,6 +4,7 @@
       {
         "name": "jupyter",
         "title": "Jupyter Notebook",
+        "category": "2.Development",
         "redirect": "&redirect=/tree",
         "src": "./resources/icons/jupyter.png"
       }
@@ -12,6 +13,7 @@
       {
         "name": "jupyter",
         "title": "Jupyter Extension",
+        "category": "2.Development",
         "redirect": "&redirect=/nbextensions",
         "src": "./resources/icons/jupyter.png",
         "icon": "vaadin:clipboard-pulse"
@@ -21,6 +23,7 @@
       {
         "name": "jupyterlab",
         "title": "JupyterLab",
+        "category": "2.Development",
         "redirect": "&redirect=/lab",
         "src": "./resources/icons/jupyterlab.png",
         "icon": "vaadin:flask"
@@ -30,6 +33,7 @@
       {
         "name": "tensorboard",
         "title": "TensorBoard",
+        "category": "3.Machine Learning Tools",
         "redirect": "&redirect=/",
         "src": "./resources/icons/tensorflow.png"
       }
@@ -38,6 +42,7 @@
       {
         "name": "digits",
         "title": "DIGITS",
+        "category": "3.Machine Learning Tools",
         "redirect": "&redirect=/",
         "src": "./resources/icons/nvidia.png"
       }
@@ -46,6 +51,7 @@
       {
         "name": "h2o-dai",
         "title": "H2O driverless AI",
+        "category": "3.Machine Learning Tools",
         "redirect": "",
         "src": "./resources/icons/h2o.png"
       }
@@ -54,6 +60,7 @@
       {
         "name": "vscode",
         "title": "Visual Studio Code",
+        "category": "2.Development",
         "redirect": "",
         "src": "./resources/icons/vscode.svg"
       }
@@ -62,14 +69,25 @@
       {
         "name": "nniboard",
         "title": "NNI Board",
+        "category": "4.AutoML",
         "redirect": "",
         "src": "./resources/icons/nni.png"
+      }
+    ],
+    "mlflow-ui": [
+      {
+        "name": "mlflow-ui",
+        "title": "MLFlow UI",
+        "category": "4.AutoML",
+        "redirect": "",
+        "src": "./resources/icons/mlflow.png"
       }
     ],
     "vnc": [
       {
         "name": "vnc",
         "title": "VNC",
+        "category": "5.Desktop Environment",
         "redirect": "",
         "src": "./resources/icons/novnc.svg"
       }
@@ -78,6 +96,7 @@
       {
         "name": "vnc-web",
         "title": "VNC (Web)",
+        "category": "5.Desktop Environment",
         "redirect": "/vnc.html?host=<proxy-host>&port=<port-number>&password=backendai&autoconnect=true",
         "src": "./resources/icons/novnc.svg"
       }
@@ -86,15 +105,8 @@
       {
         "name": "novnc",
         "title": "VNC (Web)",
+        "category": "5.Desktop Environment",
         "redirect": "/vnc.html?autoconnect=true&amp;password=backendai",
-        "src": "./resources/icons/default_app.svg"
-      }
-    ],
-    "novnc": [
-      {
-        "name": "novnc",
-        "title": "VNC (Web)",
-        "redirect": "/resize",
         "src": "./resources/icons/novnc.svg"
       }
     ],
@@ -102,7 +114,8 @@
       {
         "name": "xfce",
         "title": "XFCE",
-        "redirect": "/resize",
+        "category": "5.Desktop Environment",
+        "redirect": "",
         "src": "./resources/icons/xfce.png"
       }
     ],
@@ -110,7 +123,8 @@
       {
         "name": "gnome",
         "title": "GNOME Desktop",
-        "redirect": "/resize",
+        "category": "5.Desktop Environment",
+        "redirect": "",
         "src": "./resources/icons/gnome.svg"
       }
     ],
@@ -118,6 +132,7 @@
       {
         "name": "kde",
         "title": "KDE",
+        "category": "5.Desktop Environment",
         "redirect": "",
         "src": "./resources/icons/kde.svg"
       }
@@ -126,6 +141,7 @@
       {
         "name": "matlab",
         "title": "MATLAB",
+        "category": "6.Scientific Computing",
         "redirect": "",
         "src": "./resources/icons/matlab.png"
       }
@@ -134,22 +150,25 @@
       {
         "name": "spectravis",
         "title": "SpectraVIS",
+        "category": "6.Scientific Computing",
         "redirect": "",
         "src": "./resources/icons/default_app.svg"
       }
     ],
-    "mlflow-ui": [
+    "triton-server": [
       {
-        "name": "mlflow-ui",
-        "title": "MLFlow",
+        "name": "triton-server",
+        "title": "Triton Server",
+        "category": "3.Machine Learning Tools",
         "redirect": "",
-        "src": "./resources/icons/mlflow.png"
+        "src": "./resources/icons/terminal.svg"
       }
     ],
     "sftp": [
       {
         "name": "sftp",
         "title": "SFTP",
+        "category": "1.Utilities",
         "redirect": "",
         "src": "./resources/icons/sftp.png"
       }
@@ -158,8 +177,27 @@
       {
         "name": "sshd",
         "title": "SSH / SFTP",
+        "category": "1.Utilities",
         "redirect": "",
         "src": "./resources/icons/sftp.png"
+      }
+    ],
+    "ttyd": [
+      {
+        "name": "ttyd",
+        "title": "Console",
+        "category": "1.Utilities",
+        "redirect": "",
+        "src": "./resources/icons/terminal.svg"
+      }
+    ],
+    "filebrowser": [
+      {
+        "name": "filebrowser",
+        "title": "FileBrowser",
+        "category": "1.Utilities",
+        "redirect": "",
+        "src": "./resources/icons/filebrowser.svg"
       }
     ]
   }

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {css, customElement, html, property} from "lit-element";
 
@@ -10,10 +10,10 @@ import 'weightless/card';
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
-    IronFlex,
-    IronFlexAlignment,
-    IronFlexFactors,
-    IronPositioning
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
 /**

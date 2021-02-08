@@ -3,7 +3,7 @@ BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
 BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev | cut -c 3- | rev)
 REVISION_INDEX := $(shell git --no-pager log --pretty=format:%h -n 1)
-site := $(or $(site),master)
+site := $(or $(site),main)
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
@@ -28,8 +28,10 @@ compile: versiontag
 	npm run build
 compile_wsproxy:
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
+	#cd ./src/wsproxy; rollup -c rollup.config.ts
 all: dep mac win linux
 dep:
+	cd ./src/plastics/weightless && bash ./patch-input-behavior.sh
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
 		make compile_wsproxy; \
@@ -67,7 +69,7 @@ mac: dep
 	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos;
 	mv ./app/backend.ai-console-macos/backend.ai-console.app './app/backend.ai-console-macos/Backend.AI Console.app'
 	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-console-macos/Backend.AI Console.app' ./app/backend.ai-console-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
-ifeq ($(site),master)
+ifeq ($(site),main)
 	mv ./app/backend.ai-console-$(BUILD_DATE).dmg ./app/backend.ai-console-$(BUILD_VERSION)-macos.dmg
 else
 	mv ./app/backend.ai-console-$(BUILD_DATE).dmg ./app/backend.ai-console-$(BUILD_VERSION)-$(site).dmg
@@ -76,7 +78,7 @@ win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=win32 --arch=x64 --icon=manifest/backend-ai.ico
 	cd app; zip ./backend.ai-console-win32-x64-$(BUILD_DATE).zip -r ./backend.ai-console-win32-x64
-ifeq ($(site),master)
+ifeq ($(site),main)
 	mv ./app/backend.ai-console-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-console-$(BUILD_VERSION)-win32-x64.zip
 else
 	mv ./app/backend.ai-console-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-console-x64-$(BUILD_VERSION)-$(site).zip
@@ -84,8 +86,8 @@ endif
 linux: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=linux --icon=manifest/backend-ai.ico
-	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-linux-x64 ./backend.ai-console-linux-x64-$(BUILD_DATE).zip
-ifeq ($(site),master)
+	cd app; zip -r -9 ./backend.ai-console-linux-x64-$(BUILD_DATE).zip ./backend.ai-console-linux-x64
+ifeq ($(site),main)
 	mv ./app/backend.ai-console-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-console-$(BUILD_VERSION)-linux-x64.zip
 else
 	mv ./app/backend.ai-console-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-console-linux-x64-$(BUILD_VERSION)-$(site).zip

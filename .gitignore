@@ -98,7 +98,9 @@ src/lib/webcomponents-loader.js
 **/*.html-E
 **/*.js-E
 **/*.ts-E
+# Documentation
 
+docs/
 # backend.ai app directory
 backend.ai-app/
 
@@ -115,3 +117,9 @@ backend.ai-app/
 # ctags-generated file
 tags
 
+# git submodules
+.gitmodules
+
+#plugins
+src/plugins
+src/plugins/*

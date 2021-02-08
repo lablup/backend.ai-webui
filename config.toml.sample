@@ -12,12 +12,18 @@ debug = false
 allowProjectResourceMonitor = false
 AllowBetaFeatures = false
 
+[resources]
+openPortToPublic = false
+maxCPUCoresPerSession = 64
+maxCUDADevicesPerSession = 16
+maxShmPerSession = 2
 
 [menu]
 blocklist = "summary,statistics" # Separated by comma.
 
 [wsproxy]
-proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
+proxyURL = "http://127.0.0.1:5050/"
+#proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
 #proxyBaseURL = ""
 autoPortSelection = true
 disableCertCheck = true

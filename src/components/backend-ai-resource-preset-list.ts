@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from "lit-translate";
@@ -9,15 +9,13 @@ import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-listbox/paper-listbox';
-
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
-import '@material/mwc-textfield';
+import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-button/mwc-button';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -59,14 +57,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
           height: calc(100vh - 225px);
         }
 
-        paper-dropdown-menu {
-        }
-
-        paper-item {
-          height: 30px;
-          --paper-item-min-height: 30px;
-        }
-
         wl-button > wl-icon {
           --icon-size: 24px;
           padding: 0;
@@ -106,28 +96,29 @@ class BackendAiResourcePresetList extends BackendAIPage {
           --mdc-theme-primary: var(--paper-yellow-600) !important;
         }
 
-        wl-button.create-button {
-          --button-bg: white;
-          --button-bg-hover: var(--paper-yellow-100);
-          --button-bg-active: var(--paper-yellow-600);
+        mwc-button, mwc-button[unelevated] {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-typography-font-family: var(--general-font-family);
         }
 
-        wl-button {
-          color: var(--paper-yellow-600);
-          --button-bg: var(--paper-yellow-50);
-          --button-bg-hover: var(--paper-yellow-100);
-          --button-bg-active: var(--paper-yellow-600);
+        h4 {
+          font-weight: 200;
+          font-size: 14px;
+          margin: 0px;
+          padding: 5px 15px 5px 20px;
         }
 
-        wl-button#create-policy-button {
-          width: 100%;
-          box-sizing: border-box;
-          margin-top: 15px;
+        backend-ai-dialog h4 {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          height: 20px;
+          border-bottom: 1px solid #DDD;
         }
 
-        wl-card {
-          margin: 0;
-        }
       `];
   }
 
@@ -213,14 +204,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-card>
+      <div style="margin:0px;">
         <h4 class="horizontal flex center center-justified layout">
           <span>${_t("resourcePreset.ResourcePresets")}</span>
           <span class="flex"></span>
-          <wl-button class="fg orange" id="add-resource-preset" outlined @click="${e => this._launchPresetAddDialog(e)}">
-            <wl-icon>add</wl-icon>
-            ${_t("resourcePreset.CreatePreset")}
-          </wl-button>
+          <mwc-button raised id="add-resource-preset" icon="add" label="${_t("resourcePreset.CreatePreset")}" @click="${e => this._launchPresetAddDialog(e)}"></mwc-button>
         </h4>
         <div>
           <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
@@ -245,84 +233,89 @@ class BackendAiResourcePresetList extends BackendAIPage {
             </vaadin-grid-column>
           </vaadin-grid>
         </div>
-      </wl-card>
-      <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
+      </div>
+      <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling narrowLayout>
         <span slot="title">${_t("resourcePreset.ModifyResourcePreset")}</span>
-        <div slot="content" class="login-panel intro centered">
+        <div slot="content">
           <form id="login-form">
             <fieldset>
-              <mwc-textfield type="text" name="preset_name" id="id_preset_name" label="${_t("resourcePreset.PresetName")}"
+              <mwc-textfield type="text" name="preset_name" class="modify" id="id-preset-name"
+                          label="${_t("resourcePreset.PresetName")}"
                           auto-validate required
-                          pattern="[a-zA-Z0-9_-]+"
                           disabled
-                          error-message="Policy name only accepts letters, numbers, underscore, and dash"></mwc-textfield>
+                          error-message="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
               <h4>${_t("resourcePreset.ResourcePreset")}</h4>
               <div class="horizontal center layout">
-                <mwc-textfield id="cpu-resource" type="number" label="CPU"
-                    min="1" value="1"></mwc-textfield>
-                <mwc-textfield id="ram-resource" type="number" label="RAM (GB)"
-                    min="1" value="1"></mwc-textfield>
+                <mwc-textfield id="cpu-resource" class="modify" type="number" label="CPU"
+                    min="1" value="1" required validationMessage="${_t("resourcePreset.MinimumCPUUnit")}"></mwc-textfield>
+                <mwc-textfield id="ram-resource" class="modify" type="number" label="${_t("resourcePreset.RAM")}"
+                    min="1" value="1" required validationMessage="${_t("resourcePreset.MinimumMemUnit")}"></mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <mwc-textfield id="gpu-resource" type="number" label="GPU"
+                <mwc-textfield id="gpu-resource" class="modify" type="number" label="GPU"
                     min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
-                <mwc-textfield id="fgpu-resource" type="number" label="fGPU"
-                    min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
+                <mwc-textfield id="fgpu-resource" class="modify" type="number" label="fGPU"
+                    min="0" value="0" step="0.01" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
               </div>
               <div class="horizontal center layout">
-                <mwc-textfield id="shmem-resource" type="number" label="Shared Memory (GB)" min="0"></mwc-textfield>
+                <mwc-textfield id="shmem-resource" class="modify" type="number"
+                    label="${_t("resourcePreset.SharedMemory")}" min="0" step="0.01"
+                    validationMessage="${_t("resourcePreset.MinimumShmemUnit")}"></mwc-textfield>
               </div>
-              <br/><br/>
-              <wl-button class="fg orange create-button full-size" outlined type="button"
-                @click="${() => this._modifyResourceTemplate()}">
-                <wl-icon>check</wl-icon>
-                ${_t("button.SaveChanges")}
-              </wl-button>
             </fieldset>
           </form>
         </div>
+        <div slot="footer" class="horizontal end-justified flex layout distancing">
+          <mwc-button
+              unelevated
+              icon="check"
+              label="${_t("button.SaveChanges")}"
+              @click="${() => this._modifyResourceTemplate()}">
+          </mwc-button>
+        </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="create-preset-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="create-preset-dialog" fixed backdrop blockscrolling narrowLayout>
         <span slot="title">${_t("resourcePreset.CreateResourcePreset")}</span>
         <div slot="content">
           <mwc-textfield
             type="text"
             name="preset_name"
             id="create-preset-name"
+            class="create"
             label="Preset Name"
             auto-validate
             required
-            pattern="[a-zA-Z0-9-_]+"
-            error-message="Preset name only accepts letters and numbers"
+            maxLength="255"
+            placeholder="${_t("maxLength.255chars")}"
+            error-message="${_t("data.Allowslettersnumbersand-_")}"
           ></mwc-textfield>
           <h4>${_t("resourcePreset.ResourcePreset")}</h4>
           <div class="horizontal center layout">
-            <mwc-textfield id="create-cpu-resource" type="number" label="CPU"
-                min="1" value="1"></mwc-textfield>
-            <mwc-textfield id="create-ram-resource" type="number" label="RAM (GB)"
-                min="1" value="1"></mwc-textfield>
+            <mwc-textfield id="create-cpu-resource" class="create" type="number" label="CPU"
+                min="1" value="1" required validationMessage="${_t("resourcePreset.MinimumCPUUnit")}"></mwc-textfield>
+            <mwc-textfield id="create-ram-resource" class="create" type="number" label="${_t("resourcePreset.RAM")}"
+                min="1" value="1" required validationMessage="${_t("resourcePreset.MinimumMemUnit")}"></mwc-textfield>
           </div>
           <div class="horizontal center layout">
-            <mwc-textfield id="create-gpu-resource" type="number" label="GPU"
+            <mwc-textfield id="create-gpu-resource" class="create" type="number" label="GPU"
                 min="0" value="0" ?disabled=${this.gpuAllocationMode === 'fractional'}></mwc-textfield>
-            <mwc-textfield id="create-fgpu-resource" type="number" label="fGPU"
-                min="0" value="0" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
+            <mwc-textfield id="create-fgpu-resource" class="create" type="number" label="fGPU"
+                min="0" value="0" step="0.01" ?disabled=${this.gpuAllocationMode !== 'fractional'}></mwc-textfield>
           </div>
           <div class="horizontal center layout">
-            <mwc-textfield id="create-shmem-resource" type="number" label="Shared Memory (GB)" min="0"></mwc-textfield>
+            <mwc-textfield id="create-shmem-resource" class="create" type="number"
+                label="${_t("resourcePreset.SharedMemory")}" min="0" step="0.01"
+                validationMessage="${_t("resourcePreset.MinimumShmemUnit")}"></mwc-textfield>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button
-            class="fg orange create-button full-size"
-            id="create-policy-button"
-            outlined
-            type="button"
-            @click="${this._createPreset}"
-          >
-            <wl-icon>add</wl-icon>
-            ${_t("button.Add")}
-          </wl-button>
+        <div slot="footer" class="horizontal end-justified flex layout distancing">
+          <mwc-button
+              unelevated
+              id="create-policy-button"
+              icon="add"
+              label="${_t("button.Add")}"
+              @click="${this._createPreset}">
+          </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
@@ -333,8 +326,15 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <p>${_t("dialog.warning.CannotBeUndone")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout">
-            <wl-button class="fg orange cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
-            <wl-button class="fg orange ok" @click="${(e) => this._deleteResourcePresetWithCheck(e)}">${_t("button.Okay")}</wl-button>
+         <mwc-button
+              class="operation"
+              label="${_t("button.Cancel")}"
+              @click="${(e) => this._hideDialog(e)}"></mwc-button>
+          <mwc-button
+              unelevated
+              class="operation"
+              label="${_t("button.Okay")}"
+              @click="${(e) => this._deleteResourcePresetWithCheck(e)}"></mwc-button>
          </div>
       </backend-ai-dialog>
     `;
@@ -361,7 +361,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
     } else { // already connected
       this._refreshTemplateData();
       this.is_admin = globalThis.backendaiclient.is_admin;
-      globalThis.backendaiclient.getResourceSlots()
+      globalThis.backendaiclient.get_resource_slots()
         .then(res => {
           this.gpu_allocatable = (Object.keys(res).length !== 2);
           if (Object.keys(res).includes('cuda.shares')) {
@@ -371,12 +371,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
           }
         })
     }
-  }
-
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
   }
 
   _launchResourcePresetDialog(e) {
@@ -413,26 +407,13 @@ class BackendAiResourcePresetList extends BackendAIPage {
     const preset_name = controls['preset-name'];
     let resourcePresets = globalThis.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
     let resourcePreset = resourcePresets[preset_name];
-    console.log(resourcePreset);
     //resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
-    this.shadowRoot.querySelector('#id_preset_name').value = preset_name;
+    this.shadowRoot.querySelector('#id-preset-name').value = preset_name;
     this.shadowRoot.querySelector('#cpu-resource').value = resourcePreset.resource_slots.cpu;
-    if ('cuda.device' in resourcePreset.resource_slots) {
-      this.shadowRoot.querySelector('#gpu-resource').value = resourcePreset.resource_slots['cuda.device'];
-    } else {
-      this.shadowRoot.querySelector('#gpu-resource').value = "";
-    }
-    if ('cuda.shares' in resourcePreset.resource_slots) {
-      this.shadowRoot.querySelector('#fgpu-resource').value = resourcePreset.resource_slots['cuda.shares'];
-    } else {
-      this.shadowRoot.querySelector('#fgpu-resource').value = "";
-    }
+    this.shadowRoot.querySelector('#gpu-resource').value = 'cuda.device' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.device'] : '';
+    this.shadowRoot.querySelector('#fgpu-resource').value = 'cuda.shares' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.shares'] : '';
     this.shadowRoot.querySelector('#ram-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
-    if (resourcePreset.shared_memory) {
-      this.shadowRoot.querySelector('#shmem-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g')).toFixed(2);
-    } else {
-      this.shadowRoot.querySelector('#shmem-resource').value = '';
-    }
+    this.shadowRoot.querySelector('#shmem-resource').value = resourcePreset.shared_memory ? parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g')).toFixed(2) : '';
   }
 
   _refreshTemplateData() {
@@ -495,7 +476,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   _modifyResourceTemplate() {
-    const name = this.shadowRoot.querySelector('#id_preset_name').value;
+    // continue only if all input is valid
+    if (!this._checkFieldValidity('modify')) {
+      return;
+    }
+    const name = this.shadowRoot.querySelector('#id-preset-name').value;
     const wrapper = v => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
     const mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g');
     if (!name) {
@@ -573,7 +558,30 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }
   }
 
+  /**
+   * Check Validity of input value in a dialog
+   *
+   * @param {string} prefix - same prefix used in input field of each dialog
+   * (e.g. 'create' : create-preset-dialog, 'modify' : modify-template-dialog)
+   */
+  _checkFieldValidity(prefix: string = '') {
+    const query = 'mwc-textfield[class^="'.concat(prefix).concat('"]');
+    const createDialogTextfields = this.shadowRoot.querySelectorAll(query);
+    let isValid: boolean = true;
+    for (const textfield of createDialogTextfields) {
+      isValid = textfield.checkValidity();
+      if (!isValid) {
+        return textfield.checkValidity();
+      }
+    }
+    return isValid;
+  }
+
   _createPreset() {
+    // continue only if all input is valid
+    if (!this._checkFieldValidity('create')) {
+      return;
+    }
     const wrapper = (v) => {
       v = v.toString();
       return typeof (v) !== "undefined" && v.includes('Unlimited') ? 'Infinity' : v;
