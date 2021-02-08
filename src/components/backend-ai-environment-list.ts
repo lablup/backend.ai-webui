@@ -15,7 +15,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -353,7 +353,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           image[elem] = image[elem].replace(/\s/g, '');
         }
       });
-      
+
       return image['registry'] + '/' + image['name'] + ':' + image['tag'];
     })
 

@@ -8,9 +8,9 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid-column';
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid-sort-column';
+import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-column';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '../plastics/lablup-shields/lablup-shields';
 
 import '@material/mwc-linear-progress';
