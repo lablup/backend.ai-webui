@@ -323,7 +323,7 @@ class BackendAIRegistryList extends BackendAIPage {
             indicator.set(100, _text('registry.RegistryUpdateFinished'));
             sse.close();
           });
-          sse.addEventListener('task_failed', (e) => {
+          sse.addEventListener('bgtask_failed', (e) => {
             console.log('bgtask_failed', e["data"]);
             sse.close();
             throw new Error('Background Image scanning task has failed');
