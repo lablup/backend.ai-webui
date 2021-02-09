@@ -707,9 +707,6 @@ class Client {
       if (resources['tpu']) {
         config['tpu.device'] = resources['tpu'];
       }
-      if (resources['env']) {
-        config['environ'] = resources['env'];
-      }
       if (resources['cluster_size']) {
         params['cluster_size'] = resources['cluster_size'];
       }
@@ -754,6 +751,9 @@ class Client {
       if (resources['shmem']) {
         params['config'].resource_opts = {};
         params['config'].resource_opts.shmem = resources['shmem'];
+      }
+      if (resources['env']) {
+        params['config'].environ = resources['env'];
       }
     }
     let rqst;
@@ -2631,6 +2631,16 @@ class Maintenance {
   constructor(client) {
     this.client = client;
     this.urlPrefix = '/resource';
+  }
+
+  /**
+   * Attach to the background task to listen to events
+   * @param {string} task_id - background task id.
+   */
+  attach_background_task(task_id: string) {
+    var urlStr = "/events/background-task?task_id=" + task_id;
+    let req = this.client.newSignedRequest("GET", urlStr, null);
+    return new EventSource(req.uri, {withCredentials:true});
   }
 
   /**

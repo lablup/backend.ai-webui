@@ -17,7 +17,7 @@ import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -1167,7 +1167,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Check the images that supports filebrowser application
-   * 
+   *
    */
   async _checkFilebrowserSupported() {
     let response = await globalThis.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true);
@@ -1713,7 +1713,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 this.notification.text = _text('data.explorer.NoImagesSupportingFileBrowser');
                 this.notification.show();
               }
-            } 
+            }
             isNotificationDisplayed = true;
           }
         }
@@ -1934,7 +1934,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Execute Filebrowser by launching session with mimimum resources
-   * 
+   *
    */
   _executeFileBrowser() {
     if (this._isResourceEnough()) {
@@ -1954,7 +1954,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Open the session launcher dialog to execute filebrowser app.
-   * 
+   *
    */
   async _launchSession() {
     let appOptions;
@@ -1962,12 +1962,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     // monkeypatch for filebrowser applied environment
     // const environment = 'cr.backend.ai/testing/filebrowser:21.01-ubuntu20.04';
     let images = this.filebrowserSupportedImages.filter((image: any) => (image['name'].toLowerCase().includes("filebrowser") && image['installed']));
-    
+
     // select one image to launch filebrowser supported session
     let preferredImage = images[0];
     const environment = preferredImage['registry'] + '/' + preferredImage['name'] + ':' + preferredImage['tag'];
-    
-    // add current folder 
+
+    // add current folder
     imageResource['mounts'] = [this.explorer.id];
     imageResource['cpu'] = 1;
     imageResource['mem'] = this.minimumResource.mem + 'g';

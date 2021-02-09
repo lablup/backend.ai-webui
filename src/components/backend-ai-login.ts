@@ -84,7 +84,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Boolean}) openPortToPublic = false;
   @property({type: Boolean}) maxCPUCoresPerContainer = 64;
-  @property({type: Boolean}) maxCUDADevicesPerContainer = 16;
+  @property({type: Number}) maxCUDADevicesPerContainer = 16;
+  @property({type: Number}) maxCUDASharesPerContainer = 16;
   @property({type: Boolean}) maxShmPerContainer = 2;
   @property({type: Boolean}) maxFileUploadSize = -1;
   @property({type: Array}) endpoints;
@@ -398,6 +399,11 @@ export default class BackendAILogin extends BackendAIPage {
       this.maxCUDADevicesPerContainer = 16;
     } else {
       this.maxCUDADevicesPerContainer = parseInt(config.resources.maxCUDADevicesPerContainer);
+    }
+    if (typeof config.resources === "undefined" || typeof config.resources.maxCUDASharesPerContainer === "undefined" || isNaN(parseInt(config.resources.maxCUDASharesPerContainer))) {
+      this.maxCUDASharesPerContainer = 16;
+    } else {
+      this.maxCUDASharesPerContainer = parseInt(config.resources.maxCUDASharesPerContainer);
     }
     if (typeof config.resources === "undefined" || typeof config.resources.maxShmPerContainer === "undefined" || isNaN(parseFloat(config.resources.maxShmPerContainer))) {
       this.maxShmPerContainer = 2;
@@ -939,6 +945,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
       globalThis.backendaiclient._config.maxCPUCoresPerContainer = this.maxCPUCoresPerContainer;
       globalThis.backendaiclient._config.maxCUDADevicesPerContainer = this.maxCUDADevicesPerContainer;
+      globalThis.backendaiclient._config.maxCUDASharesPerContainer = this.maxCUDASharesPerContainer;
       globalThis.backendaiclient._config.maxShmPerContainer = this.maxShmPerContainer;
       globalThis.backendaiclient._config.maxFileUploadSize = this.maxFileUploadSize;
       globalThis.backendaiclient.ready = true;
