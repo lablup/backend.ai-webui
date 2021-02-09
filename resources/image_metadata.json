@@ -133,8 +133,22 @@
         }
       ]
     },
+    "swift-tensorflow": {
+      "name": "Swift For TensorFlow",
+      "description": "Swift for TensorFlow is a next generation system for deep learning and differentiable computing. TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications.",
+      "group": "Machine Learning / Deep Learning",
+      "tags": [],
+      "icon": "swift-tensorflow.png",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "TensorFlow",
+          "color": "blue"
+        }
+      ]
+    },
     "julia-tensorflow": {
-      "name": "TensorFlow (Julia)",
+      "name": "Julia TensorFlow",
       "description": "This is Julia-integrated TensorFlow environment. TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
