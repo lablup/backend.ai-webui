@@ -98,13 +98,12 @@ export default class BackendAIAgentList extends BackendAIPage {
           margin-right: 5px;
         }
 
-        backend-ai-dialog#agent-detail {
+        #agent-detail {
           --component-max-width: 90%;
-          --component-min-width: 350px;
         }
 
         lablup-progress-bar {
-          --progress-bar-width: 100px;
+          width: 100px;
           border-radius: 3px;
           height: 10px;
           --mdc-theme-primary: #3677eb;
@@ -123,7 +122,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
         lablup-progress-bar.mem {
           --progress-bar-height: 15px;
-          --progress-bar-width: 100%;
+          width: 100px;
           margin-bottom: 0;
         }
 
@@ -276,7 +275,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               let cuda_plugin = compute_plugins['cuda'];
               agents[objectKey].cuda_plugin = cuda_plugin;
             }
-            if (agents[objectKey].live_stat?.devices?.cpu_util) {
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cpu_util' in agents[objectKey].live_stat.devices) {
               let cpu_util: Array<any> = [];
               Object.entries(agents[objectKey].live_stat.devices.cpu_util).forEach(([k, v]) => {
                 let agentInfo = Object.assign({}, v, {num: k});
@@ -284,7 +283,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               });
               agents[objectKey].cpu_util_live = cpu_util;
             }
-            if (agents[objectKey].live_stat?.devices?.cuda_util) {
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_util' in agents[objectKey].live_stat.devices) {
               let cuda_util: Array<any> = [];
               let i: number = 1;
               Object.entries(agents[objectKey].live_stat.devices.cuda_util).forEach(([k, v]) => {
@@ -294,7 +293,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               });
               agents[objectKey].cuda_util_live = cuda_util;
             }
-            if (agents[objectKey].live_stat?.devices?.cuda_mem) {
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_mem' in agents[objectKey].live_stat.devices) {
               let cuda_mem: Array<any> = [];
               let i: number = 1;
               Object.entries(agents[objectKey].live_stat.devices.cuda_mem).forEach(([k, v]) => {
@@ -304,7 +303,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               });
               agents[objectKey].cuda_mem_live = cuda_mem;
             }
-            if (agents[objectKey].live_stat?.devices?.rocm_util) {
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_util' in agents[objectKey].live_stat.devices) {
               let rocm_util: Array<any> = [];
               let i: number = 1;
               Object.entries(agents[objectKey].live_stat.devices.rocm_util).forEach(([k, v]) => {
@@ -314,7 +313,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               });
               agents[objectKey].rocm_util_live = rocm_util;
             }
-            if (agents[objectKey].live_stat?.devices?.rocm_mem) {
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_mem' in agents[objectKey].live_stat.devices) {
               let rocm_mem: Array<any> = [];
               let i: number = 1;
               Object.entries(agents[objectKey].live_stat.devices.rocm_mem).forEach(([k, v]) => {
@@ -324,7 +323,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               });
               agents[objectKey].rocm_mem_live = rocm_mem;
             }
-            if (agents[objectKey].live_stat?.devices?.tpu_util) {
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_util' in agents[objectKey].live_stat.devices) {
               let tpu_util: Array<any> = [];
               let i: number = 1;
               Object.entries(agents[objectKey].live_stat.devices.tpu_util).forEach(([k, v]) => {
@@ -334,7 +333,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               });
               agents[objectKey].tpu_util_live = tpu_util;
             }
-            if (agents[objectKey].live_stat?.devices?.tpu_mem) {
+            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_mem' in agents[objectKey].live_stat.devices) {
               let tpu_mem: Array<any> = [];
               let i: number = 1;
               Object.entries(agents[objectKey].live_stat.devices.tpu_mem).forEach(([k, v]) => {
@@ -363,7 +362,6 @@ export default class BackendAIAgentList extends BackendAIPage {
         }, 15000);
       }
     }).catch(err => {
-      console.log(err)
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -722,12 +720,13 @@ export default class BackendAIAgentList extends BackendAIPage {
               <lablup-shields app="" color="blue"
                               description="Fractional GPU™" ui="round"></lablup-shields>
             ` : html``}
-            ${rowData.item.cuda_plugin?.cuda_version ? html`
+            ${'cuda_version' in rowData.item.cuda_plugin ? html`
                 <lablup-shields app="CUDA" color="green"
                                 description="${rowData.item.cuda_plugin['cuda_version']}" ui="round"></lablup-shields>`
               : html`
                 <lablup-shields app="CUDA Disabled" color="green"
                                 description="" ui="flat"></lablup-shields>`}` : html``}
+
         </div>`, root
     );
   }
@@ -760,15 +759,13 @@ export default class BackendAIAgentList extends BackendAIPage {
           <mwc-icon-button class="fg blue controls-running" icon="assignment"
                            @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
-            <mwc-icon-button class="temporarily-hide fg green controls-running" icon="refresh"
-            @click="${() => this._loadAgentList()}"></mwc-icon-button>
-            <mwc-icon-button class="temporarily-hide fg controls-running" disabled
+            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running"
                              icon="build"></mwc-icon-button>
-            <mwc-icon-button class="temporarily-hide fg controls-running" disabled
+            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running"
                              icon="alarm"></mwc-icon-button>
-            <mwc-icon-button class="temporarily-hide fg controls-running" disabled
+            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running"
                              icon="pause"></mwc-icon-button>
-            <mwc-icon-button class="temporarily-hide fg controls-running" disabled
+            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running"
                              icon="delete"></mwc-icon-button>
           ` : html``}
         </div>`, root
@@ -807,7 +804,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         <span slot="title">${_t("agent.DetailedInformation")}</span>
         <div slot="content">
           <div class="horizontal start start-justified layout">
-            ${this.agentDetail?.cpu_util_live ?
+            ${'cpu_util_live' in this.agentDetail ?
               html`
                 <div>
                   <h3>CPU</h3>
@@ -822,7 +819,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                       </div>`)}
                   </div>
                 </div>` : html``}
-            <div>
+            <div style="margin-left:10px;">
               <h3>Memory</h3>
               <div>
                 <lablup-progress-bar class="mem"
@@ -831,14 +828,12 @@ export default class BackendAIAgentList extends BackendAIPage {
                 ></lablup-progress-bar>
               </div>
               <h3>Network</h3>
-              ${this.agentDetail?.live_stat?.node ? html`
+              ${'live_stat' in this.agentDetail && 'node' in this.agentDetail.live_stat ? html`
                 <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
                 <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
-              ` : html`
-                <p>${_t("agent.NoNetworkSignal")}</p>
-              `}
+              ` : html``}
             </div>
-            ${this.agentDetail?.cuda_util_live ?
+            ${'cuda_util_live' in this.agentDetail ?
               html`
                 <div style="margin-left:10px;">
                   <h3>CUDA Devices</h3>
@@ -866,7 +861,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                     </div>`)}
 
                 </div>` : html``}
-            ${this.agentDetail?.rocm_util_live ?
+            ${'rocm_util_live' in this.agentDetail ?
               html`
                 <div style="margin-left:10px;">
                   <h3>ROCm Devices</h3>
@@ -894,7 +889,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                     </div>`)}
 
                 </div>` : html``}
-            ${this.agentDetail?.tpu_util_live ?
+            ${'tpu_util_live' in this.agentDetail ?
               html`
                 <div style="margin-left:10px;">
                   <h3>TPU Devices</h3>
