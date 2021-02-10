@@ -363,7 +363,6 @@ export default class BackendAIAgentList extends BackendAIPage {
         }, 15000);
       }
     }).catch(err => {
-      console.log(err)
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
