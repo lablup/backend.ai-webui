@@ -278,7 +278,8 @@
     "DetailedInformation": "Detailed Information",
     "Running": "Running",
     "BackendType": "Backend Type",
-    "Capabilities": "Capabilities"
+    "Capabilities": "Capabilities",
+    "NoNetworkSignal": "No network signals."
   },
   "general": {
     "cores": "cores",
