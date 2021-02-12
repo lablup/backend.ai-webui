@@ -994,13 +994,16 @@ export default class BackendAiStorageList extends BackendAIPage {
             `
             : html``
           }
-          ${rowData.item.is_owner ? html`` : html`
-            <mwc-icon-button
-              class="fg red controls-running"
-              icon="remove_circle"
-              @click="${(e) => this._leaveInvitedFolderDialog(e)}"
-            ></mwc-icon-button>
-          `}
+          ${(!rowData.item.is_owner && rowData.item.type == 'user') 
+            ? html`
+              <mwc-icon-button
+                class="fg red controls-running"
+                icon="remove_circle"
+                @click="${(e) => this._leaveInvitedFolderDialog(e)}"
+              ></mwc-icon-button>
+            `
+            : html``
+          }
         </div>
        `, root
     );
