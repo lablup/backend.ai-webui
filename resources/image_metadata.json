@@ -532,7 +532,7 @@
     },
     "swift": {
       "name": "Swift",
-      "description": "",
+      "description": "Swift is a general-purpose programming language built using a modern approach to safety, performance, and software design patterns.",
       "group": "Language",
       "tags": [],
       "icon": "swift.svg",
@@ -686,24 +686,6 @@
           "category": "Env",
           "tag": "Pytorch",
           "color": "blue"
-        }
-      ]
-    },
-    "lablup-pytorch": {
-      "name": "PyTorch (Cloudia)",
-      "description": "PyTorch is an open source machine learning framework that accelerates the path from research prototyping to production deployment. This environment is fully integrated with Cloudia platform.",
-      "group": "Machine Learning / Deep Learning",
-      "tags": [],
-      "icon": "pytorch.svg",
-      "label": [
-        {
-          "category": "Env",
-          "tag": "PyTorch",
-          "color": "blue"
-        },
-        {
-          "tag": "Cloudia",
-          "color": "green"
         }
       ]
     }
