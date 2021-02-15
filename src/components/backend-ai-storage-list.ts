@@ -100,6 +100,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Number}) _maxFileUploadSize = -1;
   @property({type: String}) oldFileExtension = '';
   @property({type: String}) newFileExtension = '';
+  @property({type: Boolean}) is_dir = false;
 
   constructor() {
     super();
@@ -1001,7 +1002,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
           `}
           <mwc-icon-button id="rename-btn" ?disabled="${!this.isWritable}" class="tiny fg green" icon="edit" required
-              filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
+              filename="${rowData.item.filename}" @click="${(e) => this._openRenameFileDialog(e, this._isDir(rowData.item))}"></mwc-icon-button>
           <mwc-icon-button id="delete-btn" ?disabled="${!this.isWritable}" class="tiny fg red" icon="delete_forever"
               filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
         </div>
@@ -1934,14 +1935,16 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Open the renameFileDialog to rename the file.
    *
    * @param {Event} e - click the edit icon button
+   * @param {Boolean} is_dir - True when file is directory type
    * */
-  _openRenameFileDialog(e) {
+  _openRenameFileDialog(e, is_dir = false) {
     const fn = e.target.getAttribute("filename");
     this.renameFileDialog.querySelector('#old-file-name').textContent = fn;
     this.renameFileDialog.querySelector('#new-file-name').value = fn;
     this.renameFileDialog.filename = fn;
     this.renameFileDialog.show();
     let currentFilename = this.renameFileDialog.querySelector('#new-file-name');
+    this.is_dir = is_dir;
 
     currentFilename.addEventListener('focus', (e) => {
       let endOfExtensionLength = fn.replace(/\.([0-9a-z]+)$/i, '').length;
@@ -1970,7 +1973,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         return;
       }
 
-      const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id);
+      const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id, this.is_dir);
       job.then((res) => {
         this.notification.text = _text('data.folders.FileRenamed');
         this.notification.show();
