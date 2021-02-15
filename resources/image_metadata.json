@@ -161,6 +161,24 @@
         }
       ]
     },
+    "julia-flux": {
+      "name": "Flux",
+      "description": "Flux is 100% pure-Julia stack and provides lightweight abstractions on top of Julia's native GPU and AD support. It makes the easy things easy while remaining fully hackable.",
+      "group": "Machine Learning / Deep Learning",
+      "tags": [],
+      "icon": "flux.png",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Flux",
+          "color": "blue"
+        },
+        {
+          "tag": "Julia",
+          "color": "blue"
+        }
+      ]
+    },
     "ngc-digits": {
       "name": "DIGITS (NGC)",
       "description": "This environment is integrated with Nvidia GPU Cloud. ",
