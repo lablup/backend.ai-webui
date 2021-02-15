@@ -65,6 +65,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) renameFolderId = '';
   @property({type: String}) deleteFolderId = '';
+  @property({type: String}) leaveFolderId = '';
   @property({type: Object}) explorer = Object();
   @property({type: Array}) explorerFiles = Array();
   @property({type: String}) existingFile = '';
@@ -486,6 +487,21 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
+
+      <backend-ai-dialog id="leave-folder-dialog" fixed backdrop>
+        <span slot="title">${_t("data.folders.LeaveAFolder")}</span>
+        <div slot="content">
+          <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
+          <mwc-textfield class="red" id="leave-folder-name" label="${_t('data.folders.TypeFolderNameToLeave')}"
+                         maxLength="64" placeholder="${_text('maxLength.64chars')}"></mwc-textfield>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button unelevated class="fullwidth red button" type="submit" id="leave-button" @click="${() => this._leaveFolderWithCheck()}">
+            ${_t("data.folders.Leave")}
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+
       <backend-ai-dialog id="info-folder-dialog" fixed backdrop>
         <span slot="title">${this.folderInfo.name}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;">
@@ -978,6 +994,16 @@ export default class BackendAiStorageList extends BackendAIPage {
             `
             : html``
           }
+          ${(!rowData.item.is_owner && rowData.item.type == 'user') 
+            ? html`
+              <mwc-icon-button
+                class="fg red controls-running"
+                icon="remove_circle"
+                @click="${(e) => this._leaveInvitedFolderDialog(e)}"
+              ></mwc-icon-button>
+            `
+            : html``
+          }
         </div>
        `, root
     );
@@ -1364,6 +1390,55 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     });
   }
+
+  /**
+   * Open leave-folder-dialog to Leave invited folder 
+   * 
+   * @param {Event} e - click the delete icon button
+   */
+  _leaveInvitedFolderDialog(e) {
+    this.leaveFolderId = this._getControlId(e);
+    this.shadowRoot.querySelector('#leave-folder-name').value = '';
+    this.openDialog('leave-folder-dialog');
+  }
+
+  /**
+   * Check folder name to leave.
+   * 
+   * */
+  _leaveFolderWithCheck() {
+    let typedDeleteFolderName = this.shadowRoot.querySelector('#leave-folder-name').value;
+    if (typedDeleteFolderName !== this.leaveFolderId) {
+      this.notification.text = _text('data.folders.FolderNameMismatched');
+      this.notification.show();
+      return;
+    }
+    this.closeDialog('leave-folder-dialog');
+    this._leaveFolder(this.leaveFolderId);
+  }
+
+  /**
+   * Leave invited folder and notice.
+   *
+   * @param {string} folderId
+   * */
+  _leaveFolder(folderId) {
+    let job = globalThis.backendaiclient.vfolder.leave_invited(folderId);
+    job.then((value) => {
+      this.notification.text = _text('data.folders.FolderDisconnected');
+      this.notification.show();
+      this.refreshFolderList();
+      this._triggerFolderListChanged();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+  }
+
 
   /**
    * dispatch backend-ai-folder-list-changed event
