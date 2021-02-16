@@ -278,7 +278,8 @@
     "DetailedInformation": "Detailed Information",
     "Running": "Running",
     "BackendType": "Backend Type",
-    "Capabilities": "Capabilities"
+    "Capabilities": "Capabilities",
+    "NoNetworkSignal": "No network signals."
   },
   "general": {
     "cores": "cores",
@@ -405,9 +406,12 @@
       "Owner": "Owner",
       "Control": "Control",
       "Name": "Name",
+      "LeaveAFolder": "Leave a folder",
       "DeleteAFolder": "Delete a folder",
       "TypeFolderNameToDelete": "Type folder name to delete",
+      "TypeFolderNameToLeave": "Type folder name to leave",
       "Delete": "Delete",
+      "Leave": "Leave",
       "RenameAFolder": "Rename a folder",
       "TypeNewFolderName": "Type new folder name",
       "FolderCreated": "Folder created",
@@ -415,6 +419,7 @@
       "FolderRenamed": "Folder renamed",
       "FolderNameMismatched": "Folder name mismmatched. Please Check whether space character in the input field or not.",
       "FolderDeleted": "Folder deleted",
+      "FolderDisconnected": "Folder has been disconnected.",
       "FileRenamed": "File Renamed",
       "FileDeleted": "File Deleted",
       "MultipleFilesDeleted": "Multiple Files deleted",

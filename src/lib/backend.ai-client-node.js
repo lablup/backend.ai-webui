@@ -1195,6 +1195,18 @@ class VFolder {
         return this.client._wrapWithPromise(rqst);
     }
     /**
+     * Leave an invited Virtual folder.
+     *
+     * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
+     */
+    async leave_invited(name = null) {
+        if (name == null) {
+            name = this.name;
+        }
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/leave`, null);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
      * Upload files to specific Virtual folder.
      *
      * @param {string} path - Path to upload.
