@@ -148,6 +148,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           height: calc(100vh - 370px);
         }
 
+        span.title {
+          margin: auto 10px;
+        }
+
         ul {
           padding-left: 0;
         }
@@ -227,7 +231,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         vaadin-text-field {
-          --vaadin-text-field-default-width: 100px;
+          --vaadin-text-field-default-width: auto;
         }
 
         div.breadcrumb {
@@ -387,10 +391,6 @@ export default class BackendAiStorageList extends BackendAIPage {
             left: 0px;
             right: 0px;
           }
-
-          vaadin-text-field {
-            --vaadin-text-field-default-width: auto;
-          }
         }
 
         @media screen and (max-width: 750px) {
@@ -440,15 +440,17 @@ export default class BackendAiStorageList extends BackendAIPage {
       <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable .renderer="${this._boundFolderListRenderer}">
+        <vaadin-grid-column width="200px" flex-grow="0" resizable .renderer="${this._boundFolderListRenderer}">
           <template class="header">
-            ${_t("data.folders.Name")}
-            <vaadin-grid-sorter path="name" direction="asc">
-              <vaadin-grid-filter path="name" value="[[_filterName]]" style="margin-right:10px;">
-                <vaadin-text-field slot="filter" focus-target theme="small" value="{{_filterName::input}}">
-                </vaadin-text-field>
-              </vaadin-grid-filter>
-            </vaadin-grid-sorter>
+            <div class="horizontal layout center justified flex" style="margin-right:15px;">
+              <span class="title">${_t("data.folders.Name")}</span>
+              <vaadin-grid-sorter path="name" direction="asc" style="padding:auto 10px;">
+                <vaadin-grid-filter path="name" value="[[_filterName]]">
+                  <vaadin-text-field slot="filter" focus-target theme="small" value="{{_filterName::input}}">
+                  </vaadin-text-field>
+                </vaadin-grid-filter>
+              </vaadin-grid-sorter>
+            </div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column resizable>
