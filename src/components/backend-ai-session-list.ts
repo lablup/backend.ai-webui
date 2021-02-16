@@ -6,7 +6,7 @@ import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-tree-column';
 import '@vaadin/vaadin-grid/vaadin-grid-tree-toggle';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';

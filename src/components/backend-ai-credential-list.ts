@@ -9,7 +9,7 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
@@ -574,7 +574,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Adjust Rate Limit value below the maximum value (50000) and also upper than zero.
-   * 
+   *
    */
   _adjustRateLimit() {
     const maximum_rate_limit = 50000; // the maximum value of rate limit value

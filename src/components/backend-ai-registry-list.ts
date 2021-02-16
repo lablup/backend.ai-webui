@@ -7,7 +7,7 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
@@ -312,7 +312,26 @@ class BackendAIRegistryList extends BackendAIPage {
     globalThis.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
       .then(({rescan_images}) => {
         if (rescan_images.ok) {
-          indicator.set(100, _text('registry.RegistryUpdateFinished'));
+          indicator.set(0, _text('registry.RescanImages'));
+          let sse: EventSource =  globalThis.backendaiclient.maintenance.attach_background_task(rescan_images.task_id);
+          sse.addEventListener('bgtask_updated', (e) => {
+            const data = JSON.parse(e["data"]);
+            const ratio = data.current_progress/data.total_progress;
+            indicator.set(100 * ratio, _text('registry.RescanImages'));
+          });
+          sse.addEventListener('bgtask_done', (e) => {
+            indicator.set(100, _text('registry.RegistryUpdateFinished'));
+            sse.close();
+          });
+          sse.addEventListener('bgtask_failed', (e) => {
+            console.log('bgtask_failed', e["data"]);
+            sse.close();
+            throw new Error('Background Image scanning task has failed');
+          });
+          sse.addEventListener('bgtask_cancelled', (e) => {
+            sse.close();
+            throw new Error('Background Image scanning task has been cancelled');
+          });
         } else {
           indicator.set(50, _text('registry.RegistryUpdateFailed'));
           indicator.end(1000);

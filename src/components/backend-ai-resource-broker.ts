@@ -183,6 +183,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     document.addEventListener("backend-ai-group-changed", (e) => {
       this._updatePageVariables(true);
     });
+    document.addEventListener("backend-ai-calculate-current-resource", (e) => {
+      this.aggregateResource('resource-refreshed');
+      globalThis.backendaioptions.set('current-resource', this.available_slot);
+    });
     /*setInterval(()=>{
       this.metadata_updating = true;
       this.aggregateResource('resource-refreshed');
