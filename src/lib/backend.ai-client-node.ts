@@ -1317,7 +1317,7 @@ class VFolder {
 
   /**
    * Leave an invited Virtual folder.
-   *  
+   *
    * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
    */
   async leave_invited(name = null) {
@@ -1422,7 +1422,12 @@ class VFolder {
     if (name == null) {
       name = this.name;
     }
-    const body = {target_path, new_name, is_dir};
+    let body;
+    if (this.client.isAPIVersionCompatibleWith('v6.20200815')) {
+      body = {target_path, new_name, is_dir};
+    } else {
+      body = {target_path, new_name};
+    }
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/rename_file`, body);
     return this.client._wrapWithPromise(rqst);
   }
