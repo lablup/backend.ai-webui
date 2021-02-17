@@ -150,6 +150,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         span.title {
           margin: auto 10px;
+          min-width: 35px;
         }
 
         ul {
