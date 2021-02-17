@@ -454,8 +454,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable>
-          <template class="header">id</template>
+        <vaadin-grid-column width="135px" flex-grow="0" resizable  header="ID">
           <template>
             <div class="layout vertical">
               <span class="indicator monospace">[[item.id]]</span>
@@ -463,7 +462,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="85px" flex-grow="0" resizable header="${_t("data.folders.Location")}">
+        <vaadin-grid-column width="105px" flex-grow="0" resizable header="${_t("data.folders.Location")}">
           <template>
             <div class="layout vertical">
               <span>[[item.host]]</span>
@@ -907,7 +906,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   folderListRenderer(root, column?, rowData?) {
-    render( 
+    render(
       // language=HTML
       html`
         <div class="indicator" @click="[[_folderExplorer()]]" .folder-id="${rowData.item.name}">${rowData.item.name}</div>
@@ -1021,7 +1020,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             `
             : html``
           }
-          ${(!rowData.item.is_owner && rowData.item.type == 'user') 
+          ${(!rowData.item.is_owner && rowData.item.type == 'user')
             ? html`
               <mwc-icon-button
                 class="fg red controls-running"
@@ -1419,8 +1418,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
-   * Open leave-folder-dialog to Leave invited folder 
-   * 
+   * Open leave-folder-dialog to Leave invited folder
+   *
    * @param {Event} e - click the delete icon button
    */
   _leaveInvitedFolderDialog(e) {
@@ -1431,7 +1430,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Check folder name to leave.
-   * 
+   *
    * */
   _leaveFolderWithCheck() {
     let typedDeleteFolderName = this.shadowRoot.querySelector('#leave-folder-name').value;
