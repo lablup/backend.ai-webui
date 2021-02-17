@@ -124,8 +124,8 @@ class Manager extends EventEmitter {
       let app = req.query.app || "jupyter";
       let port = parseInt(req.query.port) || undefined;
       let p = sessionName + "|" + app;
-      let args = req.query.args ? JSON.parse(req.query.args) : {};
-      let envs = req.query.envs ? JSON.parse(req.query.envs) : {};
+      let args = req.query.args ? JSON.parse(decodeURI(req.query.args)) : {};
+      let envs = req.query.envs ? JSON.parse(decodeURI(req.query.envs)) : {};
       let gateway;
       let ip = "127.0.0.1"; //FIXME: Update needed
       //let port = undefined;

@@ -450,10 +450,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         uri += '&open_to_public=true';
       }
       if (envs !== null && Object.keys(envs).length > 0) {
-        uri = uri + '&envs=' + JSON.stringify(envs);
+        uri = uri + '&envs=' + encodeURI(JSON.stringify(envs));
       }
       if (args !== null && Object.keys(args).length > 0) {
-        uri = uri + '&args=' + JSON.stringify(args);
+        uri = uri + '&args=' + encodeURI(JSON.stringify(args));
       }
       this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
       const rqst_proxy = {
