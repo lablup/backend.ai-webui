@@ -5,11 +5,10 @@
 
 import {customElement, html, LitElement, property} from "lit-element";
 
-import "../plastics/chart-js";
-import format from 'date-fns/format';
-
-import {BackendAiStyles} from "./backend-ai-general-styles";
-import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+import '../plastics/chart-js';
+import format from 'date-fns/esm/format';
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 const ByteConverter = {
   toB: bytes => bytes,
