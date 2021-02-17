@@ -73,7 +73,7 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
       app = app + '&envs='+ JSON.stringify(envs);
     }
     if (typeof args === 'object' && Object.keys(args).length > 0) {
-      app = app + '&args='+ JSON.stringify(args);
+      app = app + '&arguments='+ JSON.stringify(args);
     }
     let queryString = `/stream/${this.sessionPrefix}/` + sessionName + "/httpproxy?app=" + app;
     let hdrs = () => {

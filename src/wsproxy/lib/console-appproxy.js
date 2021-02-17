@@ -66,7 +66,7 @@ module.exports = (proxy = class Proxy {
       app = app + '&envs='+ JSON.stringify(envs);
     }
     if (typeof args === 'object' && Object.keys(args).length > 0) {
-      app = app + '&args='+ JSON.stringify(args);
+      app = app + '&arguments='+ JSON.stringify(args);
     }
     let queryString = `/stream/${this.sessionPrefix}/` + sessionName + "/httpproxy?app=" + app;
     let hdrs = () => {
@@ -135,17 +135,17 @@ module.exports = (proxy = class Proxy {
           switch(res.statusCode.toString()) {
             case "404":
               tcpConn.write("HTTP/1.1 503 Proxy Error\n" + "Connection: Closed\n" + "Content-Type: text/html; charset=UTF-8\n\n");
-              tcpConn.write(htmldeco("Server connection failed", "error_404"));
+              tcpConn.write(htmldeco("Server connection failed", "404 Error"));
               break;
             case "401":
               tcpConn.write("HTTP/1.1 503 Proxy Error\n" + "Connection: Closed\n" + "Content-Type: text/html; charset=UTF-8\n\n");
-              tcpConn.write(htmldeco("Server connection failed", "error_401"));
+              tcpConn.write(htmldeco("Server connection failed", "401 Error"));
               break;
             case "500":
               if (this._connectionCount > 4) {
                 tcpConn.write("HTTP/1.1 503 Proxy Error\n" + "Connection: Closed\n" + "Content-Type: text/html; charset=UTF-8\n\n");
                 logger.warn(`Server fail: ${res.statusCode}`);
-                tcpConn.write(htmldeco("Server connection failed", "error_500"));
+                tcpConn.write(htmldeco("Server connection failed", "500 Error"));
               } else {
                 tcpConn.write("HTTP/1.1 100 Continue\n" + "Connection: keep-alive\n" + "Content-Type: text/html; charset=UTF-8\n\n");
                 this._connectionCount = this._connectionCount + 1;
@@ -155,7 +155,7 @@ module.exports = (proxy = class Proxy {
             case "502":
               tcpConn.write("HTTP/1.1 503 Proxy Error\n" + "Connection: Closed\n" + "Content-Type: text/html; charset=UTF-8\n\n");
               logger.warn(`Server fail: ${res.statusCode}`);
-              tcpConn.write(htmldeco("Server connection failed", "error_502"));
+              tcpConn.write(htmldeco("Server connection failed", "502 Error"));
               break;
             default:
               tcpConn.write("HTTP/1.1 503 Proxy Error\n" + "Connection: Closed\n" + "Content-Type: text/html; charset=UTF-8\n\n");

@@ -994,7 +994,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             `
             : html``
           }
-          ${(!rowData.item.is_owner && rowData.item.type == 'user') 
+          ${(!rowData.item.is_owner && rowData.item.type == 'user')
             ? html`
               <mwc-icon-button
                 class="fg red controls-running"
@@ -1392,8 +1392,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
-   * Open leave-folder-dialog to Leave invited folder 
-   * 
+   * Open leave-folder-dialog to Leave invited folder
+   *
    * @param {Event} e - click the delete icon button
    */
   _leaveInvitedFolderDialog(e) {
@@ -1404,7 +1404,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Check folder name to leave.
-   * 
+   *
    * */
   _leaveFolderWithCheck() {
     let typedDeleteFolderName = this.shadowRoot.querySelector('#leave-folder-name').value;
@@ -2059,7 +2059,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         'session-uuid': res.sessionId,
         'session-name': res.sessionName,
         'access-key': '',
-        'runtime': 'filebrowser'
+        'runtime': 'filebrowser',
+        'arguments': {'--root': '/home/work'}
       };
       // only launch filebrowser app when it has valid service ports
       if (service_info.length > 0 && service_info.filter(el => el.name === "filebrowser").length > 0) {
