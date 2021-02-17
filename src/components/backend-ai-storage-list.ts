@@ -2060,7 +2060,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         'session-name': res.sessionName,
         'access-key': '',
         'runtime': 'filebrowser',
-        'arguments': {'--root': '/home/work'}
+        'arguments': {'--root': '/home/work/' + this.explorer.id}
       };
       // only launch filebrowser app when it has valid service ports
       if (service_info.length > 0 && service_info.filter(el => el.name === "filebrowser").length > 0) {
