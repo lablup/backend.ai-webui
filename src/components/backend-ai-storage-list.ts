@@ -17,7 +17,7 @@ import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -65,6 +65,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) renameFolderId = '';
   @property({type: String}) deleteFolderId = '';
+  @property({type: String}) leaveFolderId = '';
   @property({type: Object}) explorer = Object();
   @property({type: Array}) explorerFiles = Array();
   @property({type: String}) existingFile = '';
@@ -517,6 +518,21 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
+
+      <backend-ai-dialog id="leave-folder-dialog" fixed backdrop>
+        <span slot="title">${_t("data.folders.LeaveAFolder")}</span>
+        <div slot="content">
+          <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
+          <mwc-textfield class="red" id="leave-folder-name" label="${_t('data.folders.TypeFolderNameToLeave')}"
+                         maxLength="64" placeholder="${_text('maxLength.64chars')}"></mwc-textfield>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button unelevated class="fullwidth red button" type="submit" id="leave-button" @click="${() => this._leaveFolderWithCheck()}">
+            ${_t("data.folders.Leave")}
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+
       <backend-ai-dialog id="info-folder-dialog" fixed backdrop>
         <span slot="title">${this.folderInfo.name}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;">
@@ -1053,6 +1069,16 @@ export default class BackendAiStorageList extends BackendAIPage {
             `
             : html``
           }
+          ${(!rowData.item.is_owner && rowData.item.type == 'user') 
+            ? html`
+              <mwc-icon-button
+                class="fg red controls-running"
+                icon="remove_circle"
+                @click="${(e) => this._leaveInvitedFolderDialog(e)}"
+              ></mwc-icon-button>
+            `
+            : html``
+          }
         </div>
        `, root
     );
@@ -1261,7 +1287,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Check the images that supports filebrowser application
-   * 
+   *
    */
   async _checkFilebrowserSupported() {
     let response = await globalThis.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true);
@@ -1544,6 +1570,56 @@ export default class BackendAiStorageList extends BackendAIPage {
     let event = new CustomEvent('backend-ai-vfolder-cloning', {"detail": selectedItem});
     document.dispatchEvent(event);
  }
+
+ /**
+   * Open leave-folder-dialog to Leave invited folder 
+   * 
+   * @param {Event} e - click the delete icon button
+   */
+  _leaveInvitedFolderDialog(e) {
+    this.leaveFolderId = this._getControlId(e);
+    this.shadowRoot.querySelector('#leave-folder-name').value = '';
+    this.openDialog('leave-folder-dialog');
+  }
+
+  /**
+   * Check folder name to leave.
+   * 
+   * */
+  _leaveFolderWithCheck() {
+    let typedDeleteFolderName = this.shadowRoot.querySelector('#leave-folder-name').value;
+    if (typedDeleteFolderName !== this.leaveFolderId) {
+      this.notification.text = _text('data.folders.FolderNameMismatched');
+      this.notification.show();
+      return;
+    }
+    this.closeDialog('leave-folder-dialog');
+    this._leaveFolder(this.leaveFolderId);
+  }
+
+  /**
+   * Leave invited folder and notice.
+   *
+   * @param {string} folderId
+   * */
+  _leaveFolder(folderId) {
+    let job = globalThis.backendaiclient.vfolder.leave_invited(folderId);
+    job.then((value) => {
+      this.notification.text = _text('data.folders.FolderDisconnected');
+      this.notification.show();
+      this.refreshFolderList();
+      this._triggerFolderListChanged();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+  }
+
+
   /**
    * dispatch backend-ai-folder-list-changed event
    *
@@ -1892,7 +1968,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 this.notification.text = _text('data.explorer.NoImagesSupportingFileBrowser');
                 this.notification.show();
               }
-            } 
+            }
             isNotificationDisplayed = true;
           }
         }
@@ -2113,7 +2189,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Execute Filebrowser by launching session with mimimum resources
-   * 
+   *
    */
   _executeFileBrowser() {
     if (this._isResourceEnough()) {
@@ -2133,7 +2209,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Open the session launcher dialog to execute filebrowser app.
-   * 
+   *
    */
   async _launchSession() {
     let appOptions;
@@ -2141,12 +2217,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     // monkeypatch for filebrowser applied environment
     // const environment = 'cr.backend.ai/testing/filebrowser:21.01-ubuntu20.04';
     let images = this.filebrowserSupportedImages.filter((image: any) => (image['name'].toLowerCase().includes("filebrowser") && image['installed']));
-    
+
     // select one image to launch filebrowser supported session
     let preferredImage = images[0];
     const environment = preferredImage['registry'] + '/' + preferredImage['name'] + ':' + preferredImage['tag'];
-    
-    // add current folder 
+
+    // add current folder
     imageResource['mounts'] = [this.explorer.id];
     imageResource['cpu'] = 1;
     imageResource['mem'] = this.minimumResource.mem + 'g';
