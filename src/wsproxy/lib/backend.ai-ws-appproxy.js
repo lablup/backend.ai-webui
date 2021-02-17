@@ -69,10 +69,10 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
   }
 
   _conn(sessionName, app, envs, args) {
-    if (typeof envs === 'object' && Object.keys(envs).length > 0) {
+    if (envs !== null && typeof envs === 'object' && Object.keys(envs).length > 0) {
       app = app + '&envs='+ encodeURI(JSON.stringify(envs));
     }
-    if (typeof args === 'object' && Object.keys(args).length > 0) {
+    if (envs !== null && typeof args === 'object' && Object.keys(args).length > 0) {
       app = app + '&arguments='+ encodeURI(JSON.stringify(args));
     }
     let queryString = `/stream/${this.sessionPrefix}/` + sessionName + "/httpproxy?app=" + app;
