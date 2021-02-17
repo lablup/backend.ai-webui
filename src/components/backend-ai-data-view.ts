@@ -61,6 +61,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) enableStorageProxy = false;
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) deleteFolderId = '';
   @property({type: String}) vhost = '';
@@ -380,7 +381,7 @@ export default class BackendAIData extends BackendAIPage {
               </mwc-multi-select>
             </div>
           ` : html``}
-          ${globalThis.backendaiclient.supports('storage-proxy') ?
+          ${this.enableStorageProxy ?
           html`
           <div class="horizontal layout flex wrap center justified">
               <p style="color:rgba(0, 0, 0, 0.6);">
@@ -456,7 +457,7 @@ export default class BackendAIData extends BackendAIPage {
               </mwc-multi-select>
             </div>
           ` : html``}
-          ${globalThis.backendaiclient.supports('storage-proxy') ?
+          ${this.enableStorageProxy ?
           html`
           <div class="horizontal layout flex wrap center justified">
               <p style="color:rgba(0, 0, 0, 0.6);">
@@ -565,6 +566,7 @@ export default class BackendAIData extends BackendAIPage {
     const _init = () => {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
+      this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
         this._vfolderInnatePermissionSupport = true;

@@ -62,6 +62,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) enableStorageProxy = false;
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) renameFolderId = '';
   @property({type: String}) deleteFolderId = '';
@@ -463,7 +464,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid-column width="45px" flex-grow="0" resizable header="${_t("data.folders.Type")}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="85px" flex-grow="0" resizable header="${_t("data.folders.Permission")}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
         <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t("data.folders.Owner")}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
-        ${globalThis.backendaiclient.supports('storage-proxy') ? html`
+        ${this.enableStorageProxy ? html`
           <vaadin-grid-column
               auto-width flex-grow="0" resizable header="${_t("data.folders.Cloneable")}"
               .renderer="${this._boundCloneableRenderer}"></vaadin-grid-column>` : html``}
@@ -488,7 +489,7 @@ export default class BackendAiStorageList extends BackendAIPage {
               `)}
             </mwc-select>
           </div>
-          ${globalThis.backendaiclient.supports('storage-proxy') ? html`
+          ${this.enableStorageProxy ? html`
           <div class="horizontal layout flex wrap center justified">
             <p style="color:rgba(0, 0, 0, 0.6);">
               ${_t("data.folders.Cloneable")}
@@ -572,7 +573,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                                     description="D" ui="flat"></lablup-shields>` : html``}` : html``}
               </div>
             </mwc-list-item>
-            ${globalThis.backendaiclient.supports('storage-proxy') ? html`
+            ${this.enableStorageProxy ? html`
               <mwc-list-item twoline>
                 <span><strong>${_t("data.folders.Cloneable")}</strong></span>
                 <span class="monospace" slot="secondary">
@@ -1020,7 +1021,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             `
             : html``
           }
-          ${this._hasPermission(rowData.item, 'r') && globalThis.backendaiclient.supports('storage-proxy')
+          ${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy
             ? html`
             <mwc-icon-button
               class="fg blue controls-running"
@@ -1304,6 +1305,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = globalThis.backendaiclient.is_admin;
+        this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
         this.authenticated = true;
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
@@ -1312,6 +1314,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       }, true);
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
+      this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
       this.authenticated = true;
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
