@@ -101,6 +101,9 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Boolean}) _uploadFlag = true;
   @property({type: Boolean}) isWritable = false;
   @property({type: Number}) _maxFileUploadSize = -1;
+  @property({type: String}) oldFileExtension = '';
+  @property({type: String}) newFileExtension = '';
+  @property({type: Boolean}) is_dir = false;
   @property({type: Number}) minimumResource = {
     cpu: 1,
     mem: 0.5
@@ -776,11 +779,11 @@ export default class BackendAiStorageList extends BackendAIPage {
         <div slot="content">
           <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"
           required @change="${() => this._validateExistingFileName()}" auto-validate style="width:320px;"
-          maxLength="255" placeholder="${_text('maxLength.255chars')}"></mwc-textfield>
+          maxLength="255" placeholder="${_text('maxLength.255chars')}" autoFocus></mwc-textfield>
           <div id="old-file-name" style="padding-left:15px;height:2.5em;"></div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" unelevated @click="${(e) => this._renameFile(e)}">
+          <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" unelevated @click="${() => this._compareFileExtension()}">
             ${_t('data.explorer.RenameAFile')}
           </mwc-button>
         </div>
@@ -805,6 +808,32 @@ export default class BackendAiStorageList extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
           <mwc-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="file-extension-change-dialog" fixed backdrop>
+        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
+        <div slot="content">
+          <p>${_t("data.explorer.FileExtensionChanged")}</p>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout distancing">
+          <mwc-button unelevated @click="${(e) => this._keepFileExtension()}">
+            ${globalThis.backendaioptions.get('language') !== 'ko' ?
+              html`
+                ${_text("data.explorer.KeepFileExtension") + this.oldFileExtension}
+              ` : 
+              html`
+                ${this.oldFileExtension + _text("data.explorer.KeepFileExtension")}
+              `}
+          </mwc-button>
+          <mwc-button outlined @click="${() => this._renameFile()}">
+            ${globalThis.backendaioptions.get('language') !== 'ko' ?
+              html`
+                ${this.newFileExtension ? _text("data.explorer.UseNewFileExtension") + this.newFileExtension : _text("data.explorer.RemoveFileExtension")}
+              ` : 
+              html`
+                ${this.newFileExtension ? this.newFileExtension + _text("data.explorer.UseNewFileExtension") : _text("data.explorer.RemoveFileExtension")}
+              `}
+          </mwc-button>
         </div>
       </backend-ai-dialog>
     `;
@@ -1029,7 +1058,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
           `}
           <mwc-icon-button id="rename-btn" ?disabled="${!this.isWritable}" class="tiny fg green" icon="edit" required
-              filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
+              filename="${rowData.item.filename}" @click="${(e) => this._openRenameFileDialog(e, this._isDir(rowData.item))}"></mwc-icon-button>
           <mwc-icon-button id="delete-btn" ?disabled="${!this.isWritable}" class="tiny fg red" icon="delete_forever"
               filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
         </div>
@@ -2008,7 +2037,45 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
-   * Execute Filebrowser by launching session with mimimum resources
+   * Select filename without extension
+   * 
+   */
+  _compareFileExtension() {
+    let newFilename = this.shadowRoot.querySelector('#new-file-name').value;
+    let oldFilename = this.renameFileDialog.querySelector('#old-file-name').textContent;
+    const regex = /\.([0-9a-z]+)$/i;
+    this.newFileExtension = (newFilename.includes('.') && newFilename.match(regex)) ? newFilename.match(regex)[1].toLowerCase() : '';
+    this.oldFileExtension = (oldFilename.includes('.') && oldFilename.match(regex)) ? oldFilename.match(regex)[1].toLowerCase() : '';
+
+    if (newFilename) {
+      if (this.newFileExtension !== this.oldFileExtension) {
+        this.shadowRoot.querySelector('#file-extension-change-dialog').show();
+      } else if (this.oldFileExtension) {
+        this._keepFileExtension();
+      } else {
+        this._renameFile();
+      }
+    } else {
+      this._renameFile();
+    }
+  }
+
+  /**
+   * Keep the file extension whether the file extension is explicit or not. 
+   * 
+   */
+  _keepFileExtension() {
+    let newFilename = this.renameFileDialog.querySelector('#new-file-name').value;
+    if (this.newFileExtension) {
+      newFilename = newFilename.replace(new RegExp(this.newFileExtension + '$'), this.oldFileExtension);
+    } else {
+      newFilename = newFilename + '.' + this.oldFileExtension;
+    }
+    this.renameFileDialog.querySelector('#new-file-name').value = newFilename;
+    this._renameFile();
+  }
+  
+   /* Execute Filebrowser by launching session with mimimum resources
    *
    */
   _executeFileBrowser() {
@@ -2082,27 +2149,45 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Open the renameFileDialog to rename the file.
    *
    * @param {Event} e - click the edit icon button
+   * @param {Boolean} is_dir - True when file is directory type
    * */
-  _openRenameFileDialog(e) {
+  _openRenameFileDialog(e, is_dir = false) {
     const fn = e.target.getAttribute("filename");
     this.renameFileDialog.querySelector('#old-file-name').textContent = fn;
+    this.renameFileDialog.querySelector('#new-file-name').value = fn;
     this.renameFileDialog.filename = fn;
     this.renameFileDialog.show();
+    let currentFilename = this.renameFileDialog.querySelector('#new-file-name');
+    this.is_dir = is_dir;
+
+    currentFilename.addEventListener('focus', (e) => {
+      let endOfExtensionLength = fn.replace(/\.([0-9a-z]+)$/i, '').length;
+      currentFilename.setSelectionRange(0, endOfExtensionLength);
+    });
+    currentFilename.focus();
   }
 
   /**
    * Rename the file.
    *
-   * @param {Event} e - click the rename-file-button
    * */
-  _renameFile(e) {
+  _renameFile() {
     const fn = this.renameFileDialog.filename;
     const path = this.explorer.breadcrumb.concat(fn).join("/");
     const newNameEl = this.renameFileDialog.querySelector('#new-file-name');
     const newName = newNameEl.value;
+    const fileExtensionChangeDialog = this.shadowRoot.querySelector('#file-extension-change-dialog');
+    fileExtensionChangeDialog.hide();
     newNameEl.reportValidity();
     if (newNameEl.checkValidity()) {
-      const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id);
+      if (fn === newName) {
+        newNameEl.focus();
+        this.notification.text = _text('data.folders.SameFileName');
+        this.notification.show();
+        return;
+      }
+
+      const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id, this.is_dir);
       job.then((res) => {
         this.notification.text = _text('data.folders.FileRenamed');
         this.notification.show();

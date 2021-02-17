@@ -1416,12 +1416,13 @@ class VFolder {
    * @param {string} target_path - path to the target file or directory (with old name).
    * @param {string} new_name - new name of the target.
    * @param {string} name - Virtual folder name that target file exists.
+   * @param {string} is_dir - True when the object is directory, false when it is file
    */
-  async rename_file(target_path, new_name, name = null) {
+  async rename_file(target_path, new_name, name = null, is_dir = false) {
     if (name == null) {
       name = this.name;
     }
-    const body = {target_path, new_name};
+    const body = {target_path, new_name, is_dir};
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/rename_file`, body);
     return this.client._wrapWithPromise(rqst);
   }
