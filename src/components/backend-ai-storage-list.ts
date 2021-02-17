@@ -18,6 +18,8 @@ import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-column-group';
+import '@vaadin/vaadin-grid/vaadin-grid-filter';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -91,6 +93,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Boolean}) uploadFilesExist = false;
   @property({type: Object}) _boundIndexRenderer = Object();
   @property({type: Object}) _boundTypeRenderer = Object();
+  @property({type: Object}) _boundFolderListRenderer = Object();
   @property({type: Object}) _boundControlFolderListRenderer = Object();
   @property({type: Object}) _boundControlFileListRenderer = Object();
   @property({type: Object}) _boundPermissionViewRenderer = Object();
@@ -121,6 +124,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
+    this._boundFolderListRenderer = this.folderListRenderer.bind(this);
   }
 
   static get styles() {
@@ -145,6 +149,11 @@ export default class BackendAiStorageList extends BackendAIPage {
           border: 0;
           font-size: 14px;
           height: calc(100vh - 370px);
+        }
+
+        span.title {
+          margin: auto 10px;
+          min-width: 35px;
         }
 
         ul {
@@ -225,33 +234,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-icon-button-size: 28px;
         }
 
-        @media screen and (max-width: 700px) {
-          #folder-explorer-dialog,
-          #folder-explorer-dialog.mini_ui {
-            min-width: 410px;
-            --component-width: 100%;
-            width: 100%;
-            position: absolute;
-            margin-left: auto;
-            margin-right: auto;
-            left: 0px;
-            right: 0px;
-          }
-        }
-
-        @media screen and (max-width: 750px) {
-          #folder-explorer-dialog,
-          #folder-explorer-dialog.mini_ui {
-            --component-width: auto;
-          }
-        }
-
-        @media screen and (min-width: 900px) {
-          #folder-explorer-dialog,
-          #folder-explorer-dialog.mini_ui
-           {
-            --component-width: calc(100% - 45px); /* calc(100% - 30px); */
-          }
+        vaadin-text-field {
+          --vaadin-text-field-default-width: auto;
         }
 
         div.breadcrumb {
@@ -399,7 +383,26 @@ export default class BackendAiStorageList extends BackendAIPage {
           margin:15px 10px;
         }
 
+        @media screen and (max-width: 700px) {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui {
+            min-width: 410px;
+            --component-width: 100%;
+            width: 100%;
+            position: absolute;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0px;
+            right: 0px;
+          }
+        }
+
         @media screen and (max-width: 750px) {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui {
+            --component-width: auto;
+          }
+
           mwc-button {
             width: auto;
           }
@@ -408,6 +411,14 @@ export default class BackendAiStorageList extends BackendAIPage {
           }
           #modify-permission-dialog {
             --component-min-width: 100%;
+          }
+        }
+
+        @media screen and (min-width: 900px) {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui
+           {
+            --component-width: calc(100% - 45px); /* calc(100% - 30px); */
           }
         }
       `];
@@ -433,14 +444,20 @@ export default class BackendAiStorageList extends BackendAIPage {
       <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t("data.folders.Name")}">
-          <template>
-            <div class="indicator" @click="[[_folderExplorer()]]" .folder-id="[[item.name]]">[[item.name]]</div>
+        <vaadin-grid-column width="200px" flex-grow="0" resizable .renderer="${this._boundFolderListRenderer}">
+          <template class="header">
+            <div class="horizontal layout center justified flex" style="margin-right:15px;">
+              <span class="title">${_t("data.folders.Name")}</span>
+              <vaadin-grid-sorter path="name" direction="asc" style="padding:auto 10px;">
+                <vaadin-grid-filter path="name" value="[[_filterName]]">
+                  <vaadin-text-field slot="filter" focus-target theme="small" value="{{_filterName::input}}">
+                  </vaadin-text-field>
+                </vaadin-grid-filter>
+              </vaadin-grid-sorter>
+            </div>
           </template>
         </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">id</template>
+        <vaadin-grid-column width="135px" flex-grow="0" resizable  header="ID">
           <template>
             <div class="layout vertical">
               <span class="indicator monospace">[[item.id]]</span>
@@ -448,7 +465,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="85px" flex-grow="0" resizable header="${_t("data.folders.Location")}">
+        <vaadin-grid-column width="105px" flex-grow="0" resizable header="${_t("data.folders.Location")}">
           <template>
             <div class="layout vertical">
               <span>[[item.host]]</span>
@@ -913,6 +930,15 @@ export default class BackendAiStorageList extends BackendAIPage {
             <mwc-list-item value="kickout">${_t('data.folders.KickOut')}</mwc-list-item>
           </mwc-select>-->
         </div>
+      `, root
+    )
+  }
+
+  folderListRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div class="indicator" @click="[[_folderExplorer()]]" .folder-id="${rowData.item.name}">${rowData.item.name}</div>
       `, root
     )
   }
