@@ -515,31 +515,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
     if (appName === 'tensorboard') {
       this._openTensorboardDialog();
-      let port = null;
-      // wait for button click event
-      document.addEventListener('tensorboard-path-completed', async () => {
-        this.indicator = await globalThis.lablupIndicator.start();
-        try {
-          if (this.isPathConfigured) {
-            await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
-          }
-        } catch (err) {
-          console.log("error", err);
-        }
-        this.isPathConfigured = false;
-        this.indicator.set(100, 'Prepared.');
-        // if tensorboard path is empty, --logdir will be '/home/work/logs'
-        this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
-        const path: Object = {'--logdir': this.tensorboardPath};
-        this._open_wsproxy(sessionUuid, appName, port, path).then((response) => {
-          this._hideAppLauncher();
-          setTimeout(() => {
-            globalThis.open(response.url + urlPostfix, '_blank');
-                console.log(appName + " proxy loaded: ");
-                console.log(sessionUuid);
-          }, 1000);
-        });
-      })
       return;
     }
 
@@ -642,27 +617,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
     if (appName === 'tensorboard') {
       this._openTensorboardDialog();
-      let port = null;
-      // wait for button click event
-      document.addEventListener('tensorboard-path-completed', async () => {
-        this.indicator = await globalThis.lablupIndicator.start();
-        if (this.isPathConfigured) {
-          await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
-        }
-        this.isPathConfigured = false;
-        this.indicator.set(100, 'Prepared.');
-        // if tensorboard path is empty, --logdir will be '/home/work/logs'
-        this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
-        const path: Object = {'--logdir': this.tensorboardPath};
-        this._open_wsproxy(sessionUuid, appName, port, path).then((response) => {
-          this._hideAppLauncher();
-          setTimeout(() => {
-            globalThis.open(response.url + urlPostfix, '_blank');
-            console.log(appName + " proxy loaded: ");
-            console.log(sessionUuid);
-          }, 1000);
-        });
-      })
       return;
     }
     if (appName === 'ttyd') {
@@ -804,12 +758,28 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * add Tensorboard path and dispatch the event
    */
 
-  _addTensorboardPath() {
+  async _addTensorboardPath() {
     this.tensorboardPath = this.shadowRoot.querySelector('#tensorboard-path').value;
-    this.isPathConfigured = true;
-    const event = new CustomEvent("tensorboard-path-completed", {});
-    document.dispatchEvent(event);
-    this._hideTensorboardDialog();
+    let port = null;
+    let appName = this.appController['app-name']
+    let sessionUuid = this.appController['session-uuid'];
+    let urlPostfix = this.appController['url-postfix'];
+    await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
+    this.indicator = await globalThis.lablupIndicator.start();
+    this.indicator.set(100, 'Prepared.');
+    // if tensorboard path is empty, --logdir will be '/home/work/logs'
+    this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
+    const path: Object = {'--logdir': this.tensorboardPath};
+    this._open_wsproxy(sessionUuid, appName, port, null, path).then(async (response) => {
+      await this._connectToProxyWorker(response.url, urlPostfix);
+      this._hideAppLauncher();
+      this._hideTensorboardDialog();
+      setTimeout(() => {
+        globalThis.open(response.url + urlPostfix, '_blank');
+        console.log(appName + " proxy loaded: ");
+        console.log(sessionUuid);
+      }, 1000);
+    });
   }
 
   /**
@@ -971,7 +941,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <mwc-textfield id="tensorboard-path" value="${_t('session.DefaultTensorboardPath')}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button style="width:100%;" class="fg apps green" @click="${this._addTensorboardPath}">
+          <mwc-button style="width:100%;" class="fg apps green" @click="${() => this._addTensorboardPath()}">
             ${_t("session.UseThisPath")}
           </mwc-button>
         </div>
@@ -983,7 +953,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <mwc-textfield value=""></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button style="width:100%;" class="fg apps green" @click="${this._addTensorboardPath}">
+          <mwc-button style="width:100%;" class="fg apps green" @click="${() => this._addTensorboardPath()}">
             ${_t("session.UseThisArguments")}
           </mwc-button>
         </div>
