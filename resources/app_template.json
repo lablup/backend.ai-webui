@@ -190,6 +190,15 @@
         "redirect": "",
         "src": "./resources/icons/terminal.svg"
       }
+    ],
+    "filebrowser": [
+      {
+        "name": "filebrowser",
+        "title": "FileBrowser",
+        "category": "1.Utilities",
+        "redirect": "",
+        "src": "./resources/icons/filebrowser.svg"
+      }
     ]
   }
 }

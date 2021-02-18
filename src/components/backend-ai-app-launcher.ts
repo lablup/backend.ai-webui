@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
@@ -56,6 +56,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) openPortToPublic = false;
   @property({type: Array}) appOrder;
   @property({type: Array}) appSupportWithCategory = [];
+  @property({type: Object}) appEnvs = Object();
+  @property({type: Object}) appArgs = Object();
 
   constructor() {
     super();
@@ -332,6 +334,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       if (param['app-name'] === 'jupyter') {
         param['url-postfix'] = '&redirect=/notebooks/' + param['file-name'];
       }
+      if ('arguments' in controls) {
+        param['args'] = controls['arguments'];
+      }
       return this._runAppWithParameters(param);
     }
     this.appSupportList = [];
@@ -344,6 +349,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'src': './resources/icons/terminal.svg'
       });
     }
+    /*if (!appServices.includes('filebrowser')) {
+      this.appSupportList.push({ // Force push filebrowser
+        'name' : 'filebrowser',
+        'title': 'FileBrowser',
+        'category': '1.Utilities',
+        'redirect': '',
+        'src': './resources/icons/filebrowser.svg'
+      });
+    }*/
     appServices.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
     let interText = '';
     if (Object.keys(appServicesOption).length > 0) {
@@ -400,8 +414,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    * @param {string} app
    * @param {number} port
+   * @param {object | null} envs
+   * @param {object | null} args
    */
-  async _open_wsproxy(sessionUuid, app = 'jupyter', port: number | null = null, app_args: object | null = null) {
+  async _open_wsproxy(sessionUuid, app = 'jupyter', port: number | null = null, envs: object | null = null, args: object | null = null) {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
@@ -454,11 +470,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       if (port !== null && port > 1024 && port < 65535) {
         uri += `&port=${port}`;
       }
-      if (app_args !== null) {
-        uri += `&app_args=${encodeURIComponent(JSON.stringify(app_args))}`;
-      }
       if (openToPublic) {
         uri += '&open_to_public=true';
+      }
+      if (envs !== null && Object.keys(envs).length > 0) {
+        uri = uri + '&envs=' + encodeURI(JSON.stringify(envs));
+      }
+      if (args !== null && Object.keys(args).length > 0) {
+        uri = uri + '&args=' + encodeURI(JSON.stringify(args));
       }
       this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
       const rqst_proxy = {
@@ -481,12 +500,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let sessionUuid = param['session-uuid'];
     let urlPostfix = param['url-postfix'];
     let appName = param['app-name'];
+    let envs = null;
+    let args = null;
     if (appName === undefined || appName === null) {
       return;
     }
 
     if (urlPostfix === undefined || urlPostfix === null) {
       urlPostfix = '';
+    }
+    if ('args' in param) {
+      args = param['args'];
     }
 
     if (appName === 'tensorboard') {
@@ -529,7 +553,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      this._open_wsproxy(sessionUuid, appName, port)
+      this._open_wsproxy(sessionUuid, appName, port, envs, args)
         .then(async (response) => {
           if (response.url) {
             await this._connectToProxyWorker(response.url, urlPostfix);
@@ -606,6 +630,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let appName = config['app-name'];
     let sessionUuid = config['session-uuid'];
     let urlPostfix = config['url-postfix'];
+    let envs = null;
+    let args = null;
     if (appName === undefined || appName === null) {
       return;
     }
@@ -661,7 +687,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       if (usePreferredPort && userPort) {
         port = userPort;
       }
-      this._open_wsproxy(sessionUuid, appName, port)
+      this._open_wsproxy(sessionUuid, appName, port, envs, args)
         .then(async (response) => {
           await this._connectToProxyWorker(response.url, urlPostfix);
           if (appName === 'sshd') {

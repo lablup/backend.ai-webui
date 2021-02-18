@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from "lit-translate";
@@ -17,7 +17,9 @@ import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-column-group';
+import '@vaadin/vaadin-grid/vaadin-grid-filter';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -65,6 +67,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) renameFolderId = '';
   @property({type: String}) deleteFolderId = '';
+  @property({type: String}) leaveFolderId = '';
   @property({type: Object}) explorer = Object();
   @property({type: Array}) explorerFiles = Array();
   @property({type: String}) existingFile = '';
@@ -79,15 +82,18 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Array}) vhosts = [];
   @property({type: Array}) allowedGroups = [];
   @property({type: Object}) fileListGrid = Object();
+  @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) renameFileDialog = Object();
   @property({type: Object}) deleteFileDialog = Object();
   @property({type: Object}) downloadFileDialog = Object();
+  @property({type: Object}) sessionLauncher = Object();
   @property({type: Object}) spinner = Object();
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
   @property({type: Object}) _boundIndexRenderer = Object();
   @property({type: Object}) _boundTypeRenderer = Object();
+  @property({type: Object}) _boundFolderListRenderer = Object();
   @property({type: Object}) _boundControlFolderListRenderer = Object();
   @property({type: Object}) _boundControlFileListRenderer = Object();
   @property({type: Object}) _boundPermissionViewRenderer = Object();
@@ -98,6 +104,14 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Boolean}) _uploadFlag = true;
   @property({type: Boolean}) isWritable = false;
   @property({type: Number}) _maxFileUploadSize = -1;
+  @property({type: String}) oldFileExtension = '';
+  @property({type: String}) newFileExtension = '';
+  @property({type: Boolean}) is_dir = false;
+  @property({type: Number}) minimumResource = {
+    cpu: 1,
+    mem: 0.5
+  }
+  @property({type: Array}) filebrowserSupportedImages = [];
 
   constructor() {
     super();
@@ -110,6 +124,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
+    this._boundFolderListRenderer = this.folderListRenderer.bind(this);
   }
 
   static get styles() {
@@ -134,6 +149,11 @@ export default class BackendAiStorageList extends BackendAIPage {
           border: 0;
           font-size: 14px;
           height: calc(100vh - 370px);
+        }
+
+        span.title {
+          margin: auto 10px;
+          min-width: 35px;
         }
 
         ul {
@@ -214,33 +234,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-icon-button-size: 28px;
         }
 
-        @media screen and (max-width: 700px) {
-          #folder-explorer-dialog,
-          #folder-explorer-dialog.mini_ui {
-            min-width: 410px;
-            --component-width: 100%;
-            width: 100%;
-            position: absolute;
-            margin-left: auto;
-            margin-right: auto;
-            left: 0px;
-            right: 0px;
-          }
-        }
-
-        @media screen and (max-width: 750px) {
-          #folder-explorer-dialog,
-          #folder-explorer-dialog.mini_ui {
-            --component-width: auto;
-          }
-        }
-
-        @media screen and (min-width: 900px) {
-          #folder-explorer-dialog,
-          #folder-explorer-dialog.mini_ui
-           {
-            --component-width: calc(100% - 45px); /* calc(100% - 30px); */
-          }
+        vaadin-text-field {
+          --vaadin-text-field-default-width: auto;
         }
 
         div.breadcrumb {
@@ -287,6 +282,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-button {
           margin: auto 10px;
+          --mdc-typography-button-font-size: 12px;
         }
 
         wl-button.goto {
@@ -377,7 +373,36 @@ export default class BackendAiStorageList extends BackendAIPage {
           --component-min-width: 350px;
         }
 
+        .apply-grayscale {
+          -webkit-filter: grayscale(1.0);
+          filter: grayscale(1.0);
+        }
+
+        img#filebrowser-img {
+          width:24px;
+          margin:15px 10px;
+        }
+
+        @media screen and (max-width: 700px) {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui {
+            min-width: 410px;
+            --component-width: 100%;
+            width: 100%;
+            position: absolute;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0px;
+            right: 0px;
+          }
+        }
+
         @media screen and (max-width: 750px) {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui {
+            --component-width: auto;
+          }
+
           mwc-button {
             width: auto;
           }
@@ -386,6 +411,14 @@ export default class BackendAiStorageList extends BackendAIPage {
           }
           #modify-permission-dialog {
             --component-min-width: 100%;
+          }
+        }
+
+        @media screen and (min-width: 900px) {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui
+           {
+            --component-width: calc(100% - 45px); /* calc(100% - 30px); */
           }
         }
       `];
@@ -411,14 +444,20 @@ export default class BackendAiStorageList extends BackendAIPage {
       <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t("data.folders.Name")}">
-          <template>
-            <div class="indicator" @click="[[_folderExplorer()]]" .folder-id="[[item.name]]">[[item.name]]</div>
+        <vaadin-grid-column width="200px" flex-grow="0" resizable .renderer="${this._boundFolderListRenderer}">
+          <template class="header">
+            <div class="horizontal layout center justified flex" style="margin-right:15px;">
+              <span class="title">${_t("data.folders.Name")}</span>
+              <vaadin-grid-sorter path="name" direction="asc" style="padding:auto 10px;">
+                <vaadin-grid-filter path="name" value="[[_filterName]]">
+                  <vaadin-text-field slot="filter" focus-target theme="small" value="{{_filterName::input}}">
+                  </vaadin-text-field>
+                </vaadin-grid-filter>
+              </vaadin-grid-sorter>
+            </div>
           </template>
         </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">id</template>
+        <vaadin-grid-column width="135px" flex-grow="0" resizable  header="ID">
           <template>
             <div class="layout vertical">
               <span class="indicator monospace">[[item.id]]</span>
@@ -426,7 +465,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="85px" flex-grow="0" resizable header="${_t("data.folders.Location")}">
+        <vaadin-grid-column width="105px" flex-grow="0" resizable header="${_t("data.folders.Location")}">
           <template>
             <div class="layout vertical">
               <span>[[item.host]]</span>
@@ -468,6 +507,21 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
+
+      <backend-ai-dialog id="leave-folder-dialog" fixed backdrop>
+        <span slot="title">${_t("data.folders.LeaveAFolder")}</span>
+        <div slot="content">
+          <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
+          <mwc-textfield class="red" id="leave-folder-name" label="${_t('data.folders.TypeFolderNameToLeave')}"
+                         maxLength="64" placeholder="${_text('maxLength.64chars')}"></mwc-textfield>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button unelevated class="fullwidth red button" type="submit" id="leave-button" @click="${() => this._leaveFolderWithCheck()}">
+            ${_t("data.folders.Leave")}
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+
       <backend-ai-dialog id="info-folder-dialog" fixed backdrop>
         <span slot="title">${this.folderInfo.name}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;">
@@ -523,6 +577,17 @@ export default class BackendAiStorageList extends BackendAIPage {
                 style="display:none;">
                 <span>${_t("data.explorer.Delete")}</span>
             </mwc-button>
+            <div id="filebrowser-btn-cover">
+              <mwc-button
+                  id="filebrowser-btn"
+                  ?disabled=${!this.isWritable}
+                  @click="${() => this._executeFileBrowser()}">
+                  <img class=${!this.isWritable}
+                       id="filebrowser-img"
+                       src="./resources/icons/filebrowser.svg"></img>
+                  <span>${_t("data.explorer.ExecuteFileBrowser")}</span>
+              </mwc-button>
+            </div>
             <div id="add-btn-cover">
               <mwc-button
                   id="add-btn"
@@ -572,7 +637,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div id="dropzone"><p>drag</p></div>
           <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
           ${this.uploadFilesExist ? html`
-          <mwc-button icon="cancel" id="cancel_upload" @click="${(e) => this._cancelUpload(e)}">
+          <mwc-button icon="cancel" id="cancel_upload" @click="${() => this._cancelUpload()}">
             ${_t("data.explorer.StopUploading")}
           </mwc-button>
           <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}"
@@ -731,11 +796,11 @@ export default class BackendAiStorageList extends BackendAIPage {
         <div slot="content">
           <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"
           required @change="${() => this._validateExistingFileName()}" auto-validate style="width:320px;"
-          maxLength="255" placeholder="${_text('maxLength.255chars')}"></mwc-textfield>
+          maxLength="255" placeholder="${_text('maxLength.255chars')}" autoFocus></mwc-textfield>
           <div id="old-file-name" style="padding-left:15px;height:2.5em;"></div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" unelevated @click="${(e) => this._renameFile(e)}">
+          <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" unelevated @click="${() => this._compareFileExtension()}">
             ${_t('data.explorer.RenameAFile')}
           </mwc-button>
         </div>
@@ -762,6 +827,32 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</mwc-button>
         </div>
       </backend-ai-dialog>
+      <backend-ai-dialog id="file-extension-change-dialog" fixed backdrop>
+        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
+        <div slot="content">
+          <p>${_t("data.explorer.FileExtensionChanged")}</p>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout distancing">
+          <mwc-button unelevated @click="${(e) => this._keepFileExtension()}">
+            ${globalThis.backendaioptions.get('language') !== 'ko' ?
+              html`
+                ${_text("data.explorer.KeepFileExtension") + this.oldFileExtension}
+              ` : 
+              html`
+                ${this.oldFileExtension + _text("data.explorer.KeepFileExtension")}
+              `}
+          </mwc-button>
+          <mwc-button outlined @click="${() => this._renameFile()}">
+            ${globalThis.backendaioptions.get('language') !== 'ko' ?
+              html`
+                ${this.newFileExtension ? _text("data.explorer.UseNewFileExtension") + this.newFileExtension : _text("data.explorer.RemoveFileExtension")}
+              ` : 
+              html`
+                ${this.newFileExtension ? this.newFileExtension + _text("data.explorer.UseNewFileExtension") : _text("data.explorer.RemoveFileExtension")}
+              `}
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 
@@ -772,11 +863,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.renameFileDialog = this.shadowRoot.querySelector('#rename-file-dialog');
     this.deleteFileDialog = this.shadowRoot.querySelector('#delete-file-dialog');
     this.downloadFileDialog = this.shadowRoot.querySelector('#download-file-dialog');
+    this.sessionLauncher = this.shadowRoot.querySelector('#session-launcher');
     this.fileListGrid = this.shadowRoot.querySelector('#fileList-grid');
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleCheckbox();
     });
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
     let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {
@@ -787,7 +880,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     } else {
       this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 185px)';
     }
-
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({"detail": {"mini-ui": globalThis.mini_ui}});
@@ -838,6 +930,15 @@ export default class BackendAiStorageList extends BackendAIPage {
             <mwc-list-item value="kickout">${_t('data.folders.KickOut')}</mwc-list-item>
           </mwc-select>-->
         </div>
+      `, root
+    )
+  }
+
+  folderListRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div class="indicator" @click="[[_folderExplorer()]]" .folder-id="${rowData.item.name}">${rowData.item.name}</div>
       `, root
     )
   }
@@ -948,6 +1049,16 @@ export default class BackendAiStorageList extends BackendAIPage {
             `
             : html``
           }
+          ${(!rowData.item.is_owner && rowData.item.type == 'user')
+            ? html`
+              <mwc-icon-button
+                class="fg red controls-running"
+                icon="remove_circle"
+                @click="${(e) => this._leaveInvitedFolderDialog(e)}"
+              ></mwc-icon-button>
+            `
+            : html``
+          }
         </div>
        `, root
     );
@@ -973,7 +1084,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
           `}
           <mwc-icon-button id="rename-btn" ?disabled="${!this.isWritable}" class="tiny fg green" icon="edit" required
-              filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
+              filename="${rowData.item.filename}" @click="${(e) => this._openRenameFileDialog(e, this._isDir(rowData.item))}"></mwc-icon-button>
           <mwc-icon-button id="delete-btn" ?disabled="${!this.isWritable}" class="tiny fg red" icon="delete_forever"
               filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
         </div>
@@ -1135,6 +1246,17 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+  /**
+   * Check the images that supports filebrowser application
+   *
+   */
+  async _checkFilebrowserSupported() {
+    let response = await globalThis.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true);
+    let images = response.images;
+    // only filter both installed and filebrowser supported image from images
+    this.filebrowserSupportedImages = images.filter(image => image['installed'] && image.labels.find(label => label.key === "ai.backend.service-ports" && label.value.toLowerCase().includes("filebrowser")));
+  }
+
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -1146,6 +1268,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.authenticated = true;
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
+        this._checkFilebrowserSupported();
         this._refreshFolderList();
       }, true);
     } else {
@@ -1153,6 +1276,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.authenticated = true;
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
+      this._checkFilebrowserSupported();
       this._refreshFolderList();
     }
   }
@@ -1323,6 +1447,55 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
+   * Open leave-folder-dialog to Leave invited folder
+   *
+   * @param {Event} e - click the delete icon button
+   */
+  _leaveInvitedFolderDialog(e) {
+    this.leaveFolderId = this._getControlId(e);
+    this.shadowRoot.querySelector('#leave-folder-name').value = '';
+    this.openDialog('leave-folder-dialog');
+  }
+
+  /**
+   * Check folder name to leave.
+   *
+   * */
+  _leaveFolderWithCheck() {
+    let typedDeleteFolderName = this.shadowRoot.querySelector('#leave-folder-name').value;
+    if (typedDeleteFolderName !== this.leaveFolderId) {
+      this.notification.text = _text('data.folders.FolderNameMismatched');
+      this.notification.show();
+      return;
+    }
+    this.closeDialog('leave-folder-dialog');
+    this._leaveFolder(this.leaveFolderId);
+  }
+
+  /**
+   * Leave invited folder and notice.
+   *
+   * @param {string} folderId
+   * */
+  _leaveFolder(folderId) {
+    let job = globalThis.backendaiclient.vfolder.leave_invited(folderId);
+    job.then((value) => {
+      this.notification.text = _text('data.folders.FolderDisconnected');
+      this.notification.show();
+      this.refreshFolderList();
+      this._triggerFolderListChanged();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+  }
+
+
+  /**
    * dispatch backend-ai-folder-list-changed event
    *
    */
@@ -1438,40 +1611,52 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param id - explorer id
    * @param {boolean} dialog - whether open folder-explorer-dialog or not
    * */
-  _clearExplorer(path = this.explorer.breadcrumb.join('/'),
+  async _clearExplorer(path = this.explorer.breadcrumb.join('/'),
                  id = this.explorer.id,
                  dialog = false) {
-    let job = globalThis.backendaiclient.vfolder.list_files(path, id);
-    return job.then(value => {
-      this.shadowRoot.querySelector('#fileList-grid').selectedItems = [];
-      if (this._APIMajorVersion < 6) {
-        this.explorer.files = JSON.parse(value.files);
-      } else { // to support dedicated storage vendors such as FlashBlade
-        const fileInfo = JSON.parse(value.files);
-        fileInfo.forEach((info, cnt) => {
-          let ftype = 'FILE';
-          console.log(info)
-          if (info.filename === value.items[cnt].name) {
-            // value.files and value.items have same order
-            ftype = value.items[cnt].type;
-          } else {
-            // In case the order is mixed
-            for (let i = 0; i < value.items.length; i++) {
-              if (info.filename === value.items[i].name) {
-                ftype = value.items[i].type;
-                break;
-              }
+    let job = await globalThis.backendaiclient.vfolder.list_files(path, id);
+    this.shadowRoot.querySelector('#fileList-grid').selectedItems = [];
+    if (this._APIMajorVersion < 6) {
+      this.explorer.files = JSON.parse(job.files);
+    } else { // to support dedicated storage vendors such as FlashBlade
+      const fileInfo = JSON.parse(job.files);
+      fileInfo.forEach((info, cnt) => {
+        let ftype = 'FILE';
+        if (info.filename === job.items[cnt].name) {
+          // value.files and value.items have same order
+          ftype = job.items[cnt].type;
+        } else {
+          // In case the order is mixed
+          for (let i = 0; i < job.items.length; i++) {
+            if (info.filename === job.items[i].name) {
+              ftype = job.items[i].type;
+              break;
             }
           }
-          info.type = ftype;
-        });
-        this.explorer.files = fileInfo;
+        }
+        info.type = ftype;
+      });
+      this.explorer.files = fileInfo;
+    }
+    this.explorerFiles = this.explorer.files;
+    if (dialog) {
+      if (this.filebrowserSupportedImages.length === 0) {
+        await this._checkFilebrowserSupported();
       }
-      this.explorerFiles = this.explorer.files;
-      if (dialog) {
-        this.openDialog('folder-explorer-dialog');
-      }
-    });
+      this._toggleFilebrowserButton();
+      this.openDialog('folder-explorer-dialog');
+    }
+  }
+
+  /**
+   * toggle filebrowser button in Vfolder explorer dialog
+   */
+  _toggleFilebrowserButton() {
+    let isfilebrowserSupported = (this.filebrowserSupportedImages.length > 0 && this._isResourceEnough()) ? true : false;
+    let filebrowserIcon = this.shadowRoot.querySelector('#filebrowser-img');
+    this.shadowRoot.querySelector('#filebrowser-btn').disabled = !isfilebrowserSupported;
+    let filterClass = isfilebrowserSupported ? '' : 'apply-grayscale';
+    filebrowserIcon.setAttribute('class', filterClass);
   }
 
   /**
@@ -1591,7 +1776,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   _addEventListenerDropZone() {
     const dndZoneEl = this.shadowRoot.querySelector('#folder-explorer-dialog');
     const dndZonePlaceholderEl = this.shadowRoot.querySelector('#dropzone');
-
     dndZonePlaceholderEl.addEventListener('dragleave', () => {
       dndZonePlaceholderEl.style.display = "none";
     });
@@ -1609,27 +1793,36 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
 
     dndZoneEl.addEventListener('drop', e => {
+      let isNotificationDisplayed = false;
       e.stopPropagation();
       e.preventDefault();
       dndZonePlaceholderEl.style.display = "none";
-
       if (this.isWritable) {
         for (let i = 0; i < e.dataTransfer.files.length; i++) {
-          const file = e.dataTransfer.files[i];
-          /* Drag & Drop file upload size limits to configuration */
-          if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
-            this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
-            this.notification.show();
-            return;
-          } else {
-            let reUploadFile = this.explorerFiles.find( elem => elem.filename === file.name);
-            if (reUploadFile) {
-              // plain javascript modal to confirm whether proceed to overwrite operation or not
-              /*
-               *  TODO: replace confirm operation with customized dialog
-               */
-              let confirmed = window.confirm(`${_text("data.explorer.FileAlreadyExists")}\n${file.name}\n${_text("data.explorer.DoYouWantToOverwrite")}`);
-              if (confirmed) {
+          if (e.dataTransfer.items[i].webkitGetAsEntry().isFile) {
+            const file = e.dataTransfer.files[i];
+            /* Drag & Drop file upload size limits to configuration */
+            if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
+              this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
+              this.notification.show();
+              return;
+            } else {
+              let reUploadFile = this.explorerFiles.find(elem => elem.filename === file.name);
+              if (reUploadFile) {
+                // plain javascript modal to confirm whether proceed to overwrite operation or not
+                /*
+                 *  TODO: replace confirm operation with customized dialog
+                 */
+                let confirmed = window.confirm(`${_text("data.explorer.FileAlreadyExists")}\n${file.name}\n${_text("data.explorer.DoYouWantToOverwrite")}`);
+                if (confirmed) {
+                  file.progress = 0;
+                  file.caption = '';
+                  file.error = false;
+                  file.complete = false;
+                  (this.uploadFiles as any).push(file);
+                }
+              }
+              else {
                 file.progress = 0;
                 file.caption = '';
                 file.error = false;
@@ -1637,13 +1830,21 @@ export default class BackendAiStorageList extends BackendAIPage {
                 (this.uploadFiles as any).push(file);
               }
             }
-            else {
-              file.progress = 0;
-              file.caption = '';
-              file.error = false;
-              file.complete = false;
-              (this.uploadFiles as any).push(file);
+          } else {
+            // let item = e.dataTransfer.items[i].webkitGetAsEntry();
+            // console.log(item.webkitRelativePath);
+            // this._executeFileBrowser();
+            // show snackbar to filebrowser only once
+            if (!isNotificationDisplayed) {
+              if (this.filebrowserSupportedImages.length > 0) {
+                this.notification.text = _text('data.explorer.ClickFilebrowserButton');
+                this.notification.show();
+              } else {
+                this.notification.text = _text('data.explorer.NoImagesSupportingFileBrowser');
+                this.notification.show();
+              }
             }
+            isNotificationDisplayed = true;
           }
         }
 
@@ -1817,9 +2018,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   /**
    * Cancel upload files.
    *
-   * @param {Event} e - click the cancle button
    * */
-  _cancelUpload(e) {
+  _cancelUpload() {
     this._uploadFlag = false;
   }
 
@@ -1863,30 +2063,158 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
+   * Select filename without extension
+   * 
+   */
+  _compareFileExtension() {
+    let newFilename = this.shadowRoot.querySelector('#new-file-name').value;
+    let oldFilename = this.renameFileDialog.querySelector('#old-file-name').textContent;
+    const regex = /\.([0-9a-z]+)$/i;
+    this.newFileExtension = (newFilename.includes('.') && newFilename.match(regex)) ? newFilename.match(regex)[1].toLowerCase() : '';
+    this.oldFileExtension = (oldFilename.includes('.') && oldFilename.match(regex)) ? oldFilename.match(regex)[1].toLowerCase() : '';
+
+    if (newFilename) {
+      if (this.newFileExtension !== this.oldFileExtension) {
+        this.shadowRoot.querySelector('#file-extension-change-dialog').show();
+      } else if (this.oldFileExtension) {
+        this._keepFileExtension();
+      } else {
+        this._renameFile();
+      }
+    } else {
+      this._renameFile();
+    }
+  }
+
+  /**
+   * Keep the file extension whether the file extension is explicit or not. 
+   * 
+   */
+  _keepFileExtension() {
+    let newFilename = this.renameFileDialog.querySelector('#new-file-name').value;
+    if (this.newFileExtension) {
+      newFilename = newFilename.replace(new RegExp(this.newFileExtension + '$'), this.oldFileExtension);
+    } else {
+      newFilename = newFilename + '.' + this.oldFileExtension;
+    }
+    this.renameFileDialog.querySelector('#new-file-name').value = newFilename;
+    this._renameFile();
+  }
+  
+   /* Execute Filebrowser by launching session with mimimum resources
+   *
+   */
+  _executeFileBrowser() {
+    if (this._isResourceEnough()) {
+      if (this.filebrowserSupportedImages.length > 0) {
+        this._launchSession();
+        this._toggleFilebrowserButton();
+      } else {
+        this.notification.text = _text('data.explorer.NoImagesSupportingFileBrowser');
+        this.notification.show();
+      }
+
+    } else {
+      this.notification.text = _text('data.explorer.NotEnoughResourceForFileBrowserSession');
+      this.notification.show();
+    }
+  }
+
+  /**
+   * Open the session launcher dialog to execute filebrowser app.
+   *
+   */
+  async _launchSession() {
+    let appOptions;
+    let imageResource: Object = {};
+    // monkeypatch for filebrowser applied environment
+    // const environment = 'cr.backend.ai/testing/filebrowser:21.01-ubuntu20.04';
+    let images = this.filebrowserSupportedImages.filter((image: any) => (image['name'].toLowerCase().includes("filebrowser") && image['installed']));
+
+    // select one image to launch filebrowser supported session
+    let preferredImage = images[0];
+    const environment = preferredImage['registry'] + '/' + preferredImage['name'] + ':' + preferredImage['tag'];
+
+    // add current folder
+    imageResource['mounts'] = [this.explorer.id];
+    imageResource['cpu'] = 1;
+    imageResource['mem'] = this.minimumResource.mem + 'g';
+    imageResource['domain'] = globalThis.backendaiclient._config.domainName;
+    imageResource['group_name'] = globalThis.backendaiclient.current_group;
+    let indicator = await this.indicator.start('indeterminate');
+
+    return globalThis.backendaiclient.get_resource_slots().then((response) => {
+      indicator.set(200, _text('data.explorer.ExecutingFileBrowser'));
+      return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000);
+    }).then(async (res) => {
+      let service_info = res.servicePorts;
+      appOptions = {
+        'session-uuid': res.sessionId,
+        'session-name': res.sessionName,
+        'access-key': '',
+        'runtime': 'filebrowser',
+        'arguments': {'--root': '/home/work/' + this.explorer.id}
+      };
+      // only launch filebrowser app when it has valid service ports
+      if (service_info.length > 0 && service_info.filter(el => el.name === "filebrowser").length > 0) {
+        globalThis.appLauncher.showLauncher(appOptions);
+      }
+      let folderExplorerDialog = this.shadowRoot.querySelector('#folder-explorer-dialog');
+      if (folderExplorerDialog.open) {
+        this.closeDialog('folder-explorer-dialog');
+      }
+      indicator.end(1000);
+    }).catch(err => {
+      this.notification.text = PainKiller.relieve(err.title);
+      this.notification.detail = err.message;
+      this.notification.show(true, err);
+      indicator.end(1000);
+    });
+  }
+
+  /**
    * Open the renameFileDialog to rename the file.
    *
    * @param {Event} e - click the edit icon button
+   * @param {Boolean} is_dir - True when file is directory type
    * */
-  _openRenameFileDialog(e) {
+  _openRenameFileDialog(e, is_dir = false) {
     const fn = e.target.getAttribute("filename");
     this.renameFileDialog.querySelector('#old-file-name').textContent = fn;
+    this.renameFileDialog.querySelector('#new-file-name').value = fn;
     this.renameFileDialog.filename = fn;
     this.renameFileDialog.show();
+    let currentFilename = this.renameFileDialog.querySelector('#new-file-name');
+    this.is_dir = is_dir;
+
+    currentFilename.addEventListener('focus', (e) => {
+      let endOfExtensionLength = fn.replace(/\.([0-9a-z]+)$/i, '').length;
+      currentFilename.setSelectionRange(0, endOfExtensionLength);
+    });
+    currentFilename.focus();
   }
 
   /**
    * Rename the file.
    *
-   * @param {Event} e - click the rename-file-button
    * */
-  _renameFile(e) {
+  _renameFile() {
     const fn = this.renameFileDialog.filename;
     const path = this.explorer.breadcrumb.concat(fn).join("/");
     const newNameEl = this.renameFileDialog.querySelector('#new-file-name');
     const newName = newNameEl.value;
+    const fileExtensionChangeDialog = this.shadowRoot.querySelector('#file-extension-change-dialog');
+    fileExtensionChangeDialog.hide();
     newNameEl.reportValidity();
     if (newNameEl.checkValidity()) {
-      const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id);
+      if (fn === newName) {
+        newNameEl.focus();
+        this.notification.text = _text('data.folders.SameFileName');
+        this.notification.show();
+        return;
+      }
+
+      const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id, this.is_dir);
       job.then((res) => {
         this.notification.text = _text('data.folders.FileRenamed');
         this.notification.show();
@@ -1974,6 +2302,24 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.notification.show();
       this._clearExplorer();
     });
+  }
+
+  /**
+   * Returns whether resource is enough to launch session for executing filebrowser app or not.
+   * @returns {boolean} - true when resource is enough, false when resource is not enough to create a session.
+   */
+  _isResourceEnough() {
+    // update current resources statistics.
+    let event = new CustomEvent("backend-ai-calculate-current-resource");
+    document.dispatchEvent(event);
+    let currentResource = globalThis.backendaioptions.get('current-resource');
+    if (currentResource) {
+      currentResource.cpu = (typeof currentResource.cpu === 'string') ? parseInt(currentResource['cpu']) : currentResource['cpu'];
+      if ((currentResource.cpu >= this.minimumResource.cpu) && (currentResource.mem >= this.minimumResource.mem)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

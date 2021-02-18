@@ -707,9 +707,6 @@ class Client {
       if (resources['tpu']) {
         config['tpu.device'] = resources['tpu'];
       }
-      if (resources['env']) {
-        config['environ'] = resources['env'];
-      }
       if (resources['cluster_size']) {
         params['cluster_size'] = resources['cluster_size'];
       }
@@ -754,6 +751,9 @@ class Client {
       if (resources['shmem']) {
         params['config'].resource_opts = {};
         params['config'].resource_opts.shmem = resources['shmem'];
+      }
+      if (resources['env']) {
+        params['config'].environ = resources['env'];
       }
     }
     let rqst;
@@ -1325,6 +1325,19 @@ class VFolder {
   }
 
   /**
+   * Leave an invited Virtual folder.
+   *
+   * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
+   */
+  async leave_invited(name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/leave`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Upload files to specific Virtual folder.
    *
    * @param {string} path - Path to upload.
@@ -1412,12 +1425,18 @@ class VFolder {
    * @param {string} target_path - path to the target file or directory (with old name).
    * @param {string} new_name - new name of the target.
    * @param {string} name - Virtual folder name that target file exists.
+   * @param {string} is_dir - True when the object is directory, false when it is file
    */
-  async rename_file(target_path, new_name, name = null) {
+  async rename_file(target_path, new_name, name = null, is_dir = false) {
     if (name == null) {
       name = this.name;
     }
-    const body = {target_path, new_name};
+    let body;
+    if (this.client.isAPIVersionCompatibleWith('v6.20200815')) {
+      body = {target_path, new_name, is_dir};
+    } else {
+      body = {target_path, new_name};
+    }
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/rename_file`, body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -2643,6 +2662,16 @@ class Maintenance {
   }
 
   /**
+   * Attach to the background task to listen to events
+   * @param {string} task_id - background task id.
+   */
+  attach_background_task(task_id: string) {
+    var urlStr = "/events/background-task?task_id=" + task_id;
+    let req = this.client.newSignedRequest("GET", urlStr, null);
+    return new EventSource(req.uri, {withCredentials:true});
+  }
+
+  /**
    * Rescan image from repository
    * @param {string} registry - registry. default is ''
    */
@@ -2653,7 +2682,7 @@ class Maintenance {
         registry = decodeURIComponent(registry);
         q = `mutation($registry: String) {` +
           `  rescan_images(registry: $registry) {` +
-          `    ok msg ` +
+          `    ok msg task_id ` +
           `  }` +
           `}`;
         v = {
@@ -2662,7 +2691,7 @@ class Maintenance {
       } else {
         q = `mutation {` +
           `  rescan_images {` +
-          `    ok msg ` +
+          `    ok msg task_id ` +
           `  }` +
           `}`;
         v = {};

@@ -1,3 +1,9 @@
+/*
+Backend.AI Webapp proxy for console
+===================================
+
+(C) Copyright 2016-2021 Lablup Inc.
+*/
 // Backend.AI Websocket proxy server for local runtime environment / app.
 const express = require('express'),
   EventEmitter = require('events'),
@@ -119,6 +125,8 @@ class Manager extends EventEmitter {
       let app_args = typeof req.query.app_args !== "undefined" ? JSON.parse(req.query.app_args) : undefined;
       let port = parseInt(req.query.port) || undefined;
       let p = sessionName + "|" + app;
+      let args = req.query.args ? JSON.parse(decodeURI(req.query.args)) : {};
+      let envs = req.query.envs ? JSON.parse(decodeURI(req.query.envs)) : {};
       let gateway;
       let ip = "127.0.0.1"; //FIXME: Update needed
       //let port = undefined;
@@ -137,7 +145,7 @@ class Manager extends EventEmitter {
         let maxtry = 5;
         for (let i = 0; i < maxtry; i++) {
           try {
-            await gateway.start_proxy(sessionName, app, ip, port, app_args);
+            await gateway.start_proxy(sessionName, app, ip, port, envs, args);
             port = gateway.getPort();
             assigned = true;
             break;
