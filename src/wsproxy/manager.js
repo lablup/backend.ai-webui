@@ -122,7 +122,6 @@ class Manager extends EventEmitter {
       }
       let sessionName = req.params["sessionName"];
       let app = req.query.app || "jupyter";
-      let app_args = typeof req.query.app_args !== "undefined" ? JSON.parse(req.query.app_args) : undefined;
       let port = parseInt(req.query.port) || undefined;
       let p = sessionName + "|" + app;
       let args = req.query.args ? JSON.parse(decodeURI(req.query.args)) : {};

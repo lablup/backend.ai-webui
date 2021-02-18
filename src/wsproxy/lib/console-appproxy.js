@@ -65,16 +65,13 @@ module.exports = (proxy = class Proxy {
     if (envs !== null && typeof envs === 'object' && Object.keys(envs).length > 0) {
       app = app + '&envs='+ encodeURI(JSON.stringify(envs));
     }
-    if (envs !== null && typeof args === 'object' && Object.keys(args).length > 0) {
+    if (args !== null && typeof args === 'object' && Object.keys(args).length > 0) {
       app = app + '&arguments='+ encodeURI(JSON.stringify(args));
     }
     let queryString = `/stream/${this.sessionPrefix}/` + sessionName + "/httpproxy?app=" + app;
     let hdrs = () => {
       return this.get_header(queryString);
     };
-    if (typeof app_args !== "undefined") {
-      queryString = queryString + '&arguments=' + encodeURIComponent(JSON.stringify(app_args));
-    }
     let url = this._env.endpoint + queryString;
     url = url.replace(/^http/, "ws");
 
