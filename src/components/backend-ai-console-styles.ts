@@ -8,7 +8,6 @@ export const BackendAiConsoleStyles = [
     .loading-background {
       transition: all 0.3s linear;
       position: fixed;
-      z-index: 10000;
       top: 0;
       left: 0;
       width: 100%;
@@ -55,6 +54,14 @@ export const BackendAiConsoleStyles = [
       display: none;
     }
 
+    .vertical-line {
+      width: 1px; /* Line width */
+      background-color: #dbdbdb; /* Line color */
+      height: 100%;
+      float: left;
+      margin-top: 10px;
+    }
+
     .drawer-menu {
       overflow-y: auto;
       overflow-x: hidden;
@@ -63,6 +70,7 @@ export const BackendAiConsoleStyles = [
       -ms-overflow-style: none;
       will-change: transform;
       background-color: var(--general-sidebar-background-color, #fafafa);
+      scrollbar-width: none;
     }
 
     .drawer-menu .portrait-bar {
@@ -70,52 +78,69 @@ export const BackendAiConsoleStyles = [
       background-color: transparent;
       color: var(--general-sidebar-topbar-color);
       height: 80px;
+      max-width: 250px; /* prevent sidebar from expanding over its width limit */
     }
 
     .drawer-menu h3 {
       height: 12px;
       font-size: 12px;
       font-weight: 400;
-      padding: 5px 15px 10px 15px;
-      margin: 0;
+      line-height: 20px;
+      padding: 5px 15px 10px 0;
+      margin: 20px 25px 20px 25px;
       display: block;
       color: var(--general-sidebar-h3-color);
-      border-top: var(--general-sidebar-h3-border-color);
+      border-bottom: var(--general-sidebar-h3-border-color);
     }
 
-    .drawer-menu,
-    mwc-list.sidebar,
-    .drawer-menu footer,
-    #sidebar-navbar-footer {
-      background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
+    #sidebar-menu {
+      height:calc(100vh - 280px);
+    }
+
+    .mini-ui #sidebar-menu {
+      height:calc(100vh - 226px)!important;
     }
 
     mwc-list.sidebar {
       cursor: pointer;
-      color: var(--general-sidebar-color, #eeeeee);
+      color: var(--general-sidebar-color, #949494);
+      --mdc-list-side-padding: 32px;
     }
 
     mwc-list.sidebar mwc-list-item {
-      --mdc-theme-primary: var(--general-sidebar-selected-color, #eeeeee);
-      --mdc-theme-text-primary-on-background: var(--general-sidebar-color, #eeeeee);
+      --mdc-theme-primary: var(--general-sidebar-selected-color, #949494);
+      --mdc-theme-text-primary-on-background: var(--general-sidebar-color, #949494);
       --mdc-list-item-graphic-margin: 15px;
-      height: 48px;
+      height: 36px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    mwc-list.sidebar > mwc-list-item > i {
+      color: #949494;
+      font-size: 17px;
+      padding-top: 5px;
     }
 
     mwc-list.sidebar mwc-list-item[selected] {
-      color: var(--general-sidebar-selected-color, #eeeeee);
+      color: var(--general-sidebar-selected-color, #949494);
       background: var(--general-sidebar-selected-background-color, #23252b);
       border-left: var(--general-sidebar-selected-border-left);
-      padding-left: 11px;
+      padding-left: 29px; /* 32px - 3px */
       border-right: 0;
       padding-right: 11px;
       font-weight: 900;
     }
 
+    mwc-list.sidebar mwc-list-item[selected] > i {
+      color: inherit;
+    }
+
     mwc-list.sidebar mwc-list-item[disabled],
     mwc-list.sidebar mwc-list-item[disabled] mwc-icon {
-      --mdc-theme-on-surface: #888;
-      color: #888 !important;
+      --mdc-theme-on-surface: #888888;
+      color: #888888 !important;
     }
 
     .mini-ui mwc-list.sidebar mwc-list-item {
@@ -132,17 +157,38 @@ export const BackendAiConsoleStyles = [
       display: none;
     }
 
-    .drawer-menu footer {
+    .drawer-menu footer,
+    footer#short-height {
       bottom: 0;
       color: var(--general-sidebar-footer-color, #aaaaaa);
       background-color: var(--general-sidebar-background-color);
       margin: 0;
       padding-bottom: 5px;
+      line-height: 1;
       font-size: 10px;
     }
 
-    .drawer-menu footer a {
+    .drawer-menu footer a,
+    footer#short-height a {
       color: var(--general-sidebar-footer-color, #aaaaaa) !important;
+    }
+
+    mwc-menu#dropdown-menu {
+      position: relative;
+      left: 170px;
+      top: 20px;
+    }
+
+    mwc-button {
+      margin: auto 10px;
+      background-image: none;
+      --mdc-theme-primary: var(--general-button-background-color);
+      --mdc-on-theme-primary: var(--general-button-background-color);
+    }
+
+    mwc-button[unelevate--mdc-theme-primary] {
+      : var(--general-button-background-color);
+      --mdc-on-theme-primary: var(--general-button-background-color);
     }
 
     .page {
@@ -162,7 +208,7 @@ export const BackendAiConsoleStyles = [
     }
 
     #content-body {
-      background-color: #ffffff;
+      background-color: var(--general-background-color, #ffffff);
       color: var(--general-sidepanel-color, #fafafa);
       --mdc-drawer-background-color: var(--sidepanel-background-color, var(--general-sidepanel-background-color, #fafafa));
     }
@@ -187,8 +233,20 @@ export const BackendAiConsoleStyles = [
       top: calc(50vh - 24px);
     }
 
+    mwc-circular-progress {
+      width: 48px;
+      height: 48px;
+      position: fixed;
+      --mdc-theme-primary: #e91e63;
+      top: calc(50vh - 24px);
+    }
+
     @media screen and (max-width: 899px) {
       wl-progress-spinner {
+        left: calc(50% - 24px);
+      }
+
+      mwc-circular-progress {
         left: calc(50% - 24px);
       }
     }
@@ -201,6 +259,14 @@ export const BackendAiConsoleStyles = [
       .mini-ui wl-progress-spinner {
         left: calc(50% + 29px);
       }
+
+      mwc-circular-progress {
+        left: calc(50% + 71px);
+      }
+
+      .mini-ui mwc-circular-progress {
+        left: calc(50% + 29px);
+      }
     }
 
     .draggable {
@@ -208,12 +274,46 @@ export const BackendAiConsoleStyles = [
       -webkit-app-region: drag !important;
     }
 
-    .drawer-menu footer {
-      width: 190px;
+    .drawer-menu footer,
+    footer#short-height {
+      width: 250px;
     }
 
     mwc-tab {
       color: #ffffff;
+    }
+
+    mwc-menu {
+      font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+    }
+
+    span.full_name, mwc-select {
+      font-weight: bold;
+    }
+
+    mwc-select#group-select {
+      font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-size: 14px;
+      --mdc-typography-subtitle1-font-color: black;
+      --mdc-typography-subtitle1-font-weight: 400;
+      --mdc-typography-subtitle1-line-height: 16px;
+      --mdc-theme-primary: transparent;
+      --mdc-select-idle-line-color: transparent;
+      --mdc-select-hover-line-color: transparent;
+      --mdc-select-outlined-idle-border-color: rgba(255, 255, 255, 0.42);
+      --mdc-select-outlined-hover-border-color: rgba(255, 255, 255, 0.87);
+      --mdc-select-outlined-disabled-border-color: rgba(255, 255, 255, 0.87);
+      --mdc-select-fill-color: transparent;
+      --mdc-select-disabled-fill-color: transparent;
+      --mdc-select-ink-color: black;
+      --mdc-select-label-ink-color: black;
+      --mdc-select-focused-label-color: rgba(24, 24, 24, 1.0);
+      --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
+      --mdc-select-dropdown-icon-color: #747474;
+      --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
+      --mdc-select-disabled-dropdown-icon-color: #747474;
     }
 
     mwc-multi-select {
@@ -253,7 +353,25 @@ export const BackendAiConsoleStyles = [
 
     mwc-list-item[activated] {
       color: black;
-      background-color: #E1E1E1;
+      background-color: #e1e1e1;
+    }
+
+    mwc-list-item > mwc-icon {
+      font-size: 20px;
+      margin: 5px;
+    }
+
+    mwc-icon.dropdown-menu {
+      color: #242424;
+      padding-right: 10px;
+    }
+
+    mwc-textfield {
+      width: 100%;
+    }
+
+    mwc-textarea {
+      width: 100%;
     }
 
     wl-popover-card {
@@ -271,6 +389,8 @@ export const BackendAiConsoleStyles = [
 
     mwc-list-item {
       font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      --mdc-typography-body2-font-family: var(--general-font-family);
       font-weight: 400;
     }
 
@@ -285,12 +405,9 @@ export const BackendAiConsoleStyles = [
     }
 
     mwc-menu.user-menu mwc-list-item {
-      font-size: 16px;
+      font-size: 14px;
     }
 
-    mwc-menu.user-menu mwc-list-item mwc-icon {
-      --mdc-icon-size: 16px;
-    }
 
     mwc-icon-button.side-menu {
       --mdc-icon-button-size: 44px;
@@ -325,21 +442,37 @@ export const BackendAiConsoleStyles = [
     }
 
     .portrait-canvas {
-      margin-left: 16px;
-      padding-right: 5px;
+      margin-left: 18px;
+      border-radius: 8px;
+      min-width: 48px; /* only apply this style feature if it's Backend.AI logo */
+      width: 48px;
+      height: 48px;
+      background-color: #ffffff;
+      background-image: url("/manifest/backend.ai-brand-simple.svg");
+      background-repeat: no-repeat;
+      background-size: 36px 36px;
+      background-position: center center;
     }
 
     .mini-ui .portrait-canvas {
-      margin-left: 8px;
+      margin-left: 18px;
       padding-right: 0;
     }
 
     .drawer-menu::-webkit-scrollbar {
       display: none !important;
+      -webkit-appearance: none;
+      width: 0 !important;
+      height: 0;
+    }
+
+    footer#short-height {
+      display: none;
     }
 
     #portrait-bar {
-      height: 48px;
+      height: 64px;
+      padding-top: 15px;
     }
 
     #content-body {
@@ -351,11 +484,21 @@ export const BackendAiConsoleStyles = [
       color: var(--general-menu-color);
       z-index: 1;
       overflow: visible;
+      --mdc-theme-on-primary: black;
+      --mdc-theme-primary: rgba(247, 246, 246, 1);
+      border-bottom: 1px solid #dbdbdb;
     }
 
-    #main-toolbar h2 {
-      margin: 0 0 0 15px;
-      font-weight: 300;
+    #main-toolbar > p {
+      padding: 10px;
+      margin: auto;
+      font-size: 14px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: normal;
+      letter-spacing: normal;
+      color: #090909;
     }
 
     #content {
@@ -363,13 +506,11 @@ export const BackendAiConsoleStyles = [
     }
 
     #sidebar-navbar-footer {
-      position: absolute;
       right: 0;
       left: 0;
       bottom: 0 !important; /* Workaround to prevent miscalculated height */
       text-align: center;
       height: 100px;
-      border-top: 1px solid #eeeeee;
       background-color: var(--general-navbar-footer-background-color);
       color: var(--general-sidebar-navbar-footer-color);
     }
@@ -389,17 +530,53 @@ export const BackendAiConsoleStyles = [
 
     @media screen and (max-width: 449px) {
       #sidebar-navbar-footer {
-        border-top: 1px solid #eeeeee;
         background-color: var(--general-navbar-footer-background-color);
         color: var(--general-sidebar-navbar-footer-color);
+      }
+      div#center-area, span.email, span.full_name, span.log_out {
+        display: none;
+      }
+      mwc-menu#dropdown-menu {
+        position: relative;
+        left: 12vw;
+      }
+      mwc-top-app-bar-fixed {
+        --mdc-top-app-bar-width: 410px !important;
+      }
+    }
+
+    @media screen and (max-width: 889px) {
+      mwc-select#group-select {
+        display: none;
+      }
+
+    }
+
+    @media screen and (max-width: 1030px) {
+      span.email, #group-select-box > div > p
+       {
+        display: none;
       }
     }
 
     @media screen and (min-width: 450px) {
       #sidebar-navbar-footer {
-        border-top: 1px solid var(--general-sidebar-background-color);
         background-color: var(--general-sidebar-background-color);
         color: var(--general-sidebar-color);
       }
+    }
+
+    @media screen and (max-height: 953px) {
+      footer#short-height {
+        display: block;
+      }
+
+      footer {
+        display: none;
+      }
+    }
+
+    .temporarily-hide {
+      display: none !important;
     }
   `];

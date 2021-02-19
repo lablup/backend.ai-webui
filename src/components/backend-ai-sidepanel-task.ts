@@ -1,11 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import '../plastics/mwc/mwc-drawer';
-import '@material/mwc-dialog';
 import '@material/mwc-icon';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
@@ -31,7 +30,6 @@ import {
 @customElement("backend-ai-sidepanel-task")
 export default class BackendAiSidepanelTask extends BackendAIPage {
   public shadowRoot: any;
-  public updateComplete: any;
 
   @property({type: Boolean}) active = true;
   @property({type: Array}) tasks = Array();

@@ -1,9 +1,9 @@
 {
   "description": "Backend.AI Console",
-  "manifest_version": 5,
+  "manifest_version": 7,
   "name": "Backend.AI Console",
   "short_name": "BackendAIConsole",
-  "version": "20.08.0",
+  "version": "21.02.2",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fff",

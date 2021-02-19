@@ -1,16 +1,14 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {customElement, html, LitElement, property} from "lit-element";
 
-import "weightless/card";
-import "../plastics/chart-js";
-import format from 'date-fns/format';
-
-import {BackendAiStyles} from "./backend-ai-general-styles";
-import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+import '../plastics/chart-js';
+import format from 'date-fns/esm/format';
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 const ByteConverter = {
   toB: bytes => bytes,

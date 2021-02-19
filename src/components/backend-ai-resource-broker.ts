@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
@@ -26,7 +26,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   // Resource occupation information
   @property({type: String}) gpu_mode;
   @property({type: Array}) gpu_modes = [];
-  @property({type: Number}) gpu_step = 0.05;
+  @property({type: Number}) gpu_step = 0.1;
 
   // Resource slot information
   @property({type: Object}) total_slot;
@@ -39,6 +39,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Number}) concurrency_used;
   @property({type: Number}) concurrency_max;
   @property({type: Number}) concurrency_limit;
+  @property({type: Number}) max_containers_per_session;
   @property({type: Array}) vfolders;
   // Percentage data for views
   @property({type: Object}) used_slot_percent;
@@ -78,6 +79,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Number}) lastResourcePolicyQueryTime = 0;
   @property({type: Number}) lastVFolderQueryTime = 0;
   @property({type: String}) scaling_group;
+  @property({type: String}) current_user_group;
   @property({type: Array}) scaling_groups;
   @property({type: Array}) sessions_list;
   @property({type: Boolean}) metric_updating;
@@ -128,6 +130,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.concurrency_limit = 0;
     this.scaling_groups = [{name: ''}]; // if there is no scaling group, set the name as empty string
     this.scaling_group = '';
+    this.current_user_group = '';
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
@@ -179,6 +182,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     });
     document.addEventListener("backend-ai-group-changed", (e) => {
       this._updatePageVariables(true);
+    });
+    document.addEventListener("backend-ai-calculate-current-resource", (e) => {
+      this.aggregateResource('resource-refreshed');
+      globalThis.backendaioptions.set('current-resource', this.available_slot);
     });
     /*setInterval(()=>{
       this.metadata_updating = true;
@@ -240,14 +247,24 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       if (isChanged) {
         this.lastQueryTime = 0; // Reset query interval
       }
+      if (this.scaling_group === '' || isChanged) {
+        if (this.current_user_group === '') {
+          this.current_user_group = globalThis.backendaiclient.current_group;
+        }
+        //const currentGroup = globalThis.backendaiclient.current_group || null;
+        const sgs = await globalThis.backendaiclient.scalingGroup.list(this.current_user_group);
+        // Make empty scaling group item if there is no scaling groups.
+        this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
+        this.scaling_group = this.scaling_groups[0].name;
+      }
       // Reload number of sessions
-      let fields = ["created_at"];
+      let fields = ["name"];
       await globalThis.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
         .then(res => {
           if (!res.compute_session_list && res.legacy_compute_session_list) {
             res.compute_session_list = res.legacy_compute_session_list;
           }
-          this.sessions_list = res.compute_session_list.items.map(e => e.created_at);
+          this.sessions_list = res.compute_session_list.items.map(e => e.name);
         });
       this._initAliases();
       await this._refreshResourcePolicy();
@@ -292,6 +309,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       let resource_policy = response.keypair_resource_policy;
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
+      this.max_containers_per_session = resource_policy.max_containers_per_session;
       //this._refreshResourceTemplate('refresh-resource-policy');
       return this._updateGPUMode();
     }).catch((err) => {
@@ -303,14 +321,14 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   _updateGPUMode() {
     if (!this._GPUmodeUpdated) {
       this._GPUmodeUpdated = true;
-      return globalThis.backendaiclient.getResourceSlots().then((response) => {
+      return globalThis.backendaiclient.get_resource_slots().then((response) => {
         let results = response;
         ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
           if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
             this.gpu_mode = item;
             (this.gpu_modes as Array<string>).push(item);
             if (item === 'cuda.shares') {
-              this.gpu_step = 0.05;
+              this.gpu_step = 0.1;
             } else {
               this.gpu_step = 1;
             }
@@ -380,10 +398,24 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then(async (response) => {
       this.concurrency_used = response.keypair.concurrency_used;
+      if (this.current_user_group === '') {
+        this.current_user_group = globalThis.backendaiclient.current_group;
+      }
       const param: any = {group: globalThis.backendaiclient.current_group};
+<<<<<<< HEAD
       const sgs = await globalThis.backendaiclient.scalingGroup.list(globalThis.backendaiclient.current_group);
       // Make empty scaling group item if there is no scaling groups.
       this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
+=======
+      if (this.current_user_group !== globalThis.backendaiclient.current_group
+        || this.scaling_groups.length == 0
+        || this.scaling_groups.length === 1 && this.scaling_groups[0].name === "") {
+        this.current_user_group = globalThis.backendaiclient.current_group;
+        const sgs = await globalThis.backendaiclient.scalingGroup.list(this.current_user_group);
+        // Make empty scaling group item if there is no scaling groups.
+        this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
+      }
+>>>>>>> main
       if (this.scaling_groups.length > 0) {
         let scaling_groups: any = [];
         this.scaling_groups.map(group => {
@@ -629,7 +661,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
         remaining_slot['concurrency'] = this.concurrency_max - this.concurrency_used;
       }
-      this.concurrency_limit = Math.min(remaining_slot['concurrency'], 5);
+      this.concurrency_limit = Math.min(remaining_slot['concurrency'], 3);
       this.available_slot = remaining_sg_slot;
       this.used_slot_percent = used_slot_percent;
       this.used_resource_group_slot_percent = used_resource_group_slot_percent;
@@ -749,11 +781,15 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     return humanizedName;
   }
 
+  _cap(text) {
+    text = text.replace(/^./, text[0].toUpperCase());
+    return text;
+  }
+
   _updateEnvironment() {
     const langs = Object.keys(this.supports);
     if (langs === undefined) return;
     langs.sort((a, b) => (this.supportImages[a].group > this.supportImages[b].group) ? 1 : -1); // TODO: fix this to rearrange kernels
-    // TODO: add category indicator between groups
     let interCategory: string = '';
     this.languages = [];
     langs.forEach((item, index) => {
@@ -790,9 +826,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       if (kernelName in this.tags) {
         tags = tags.concat(this.tags[kernelName]);
       }
-      if (prefix != '' && prefix != 'lablup') {
+      if (prefix != '' && !['lablup', 'cloud', 'stable'].includes(prefix)) {
         tags.push({
-          tag: prefix,
+          tag: this._cap(prefix),
           color: 'purple'
         });
       }

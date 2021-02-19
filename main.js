@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
@@ -33,7 +33,7 @@ if (process.env.serveMode == 'dev') {
   versions = require('./app/version');
   es6Path = npjoin(__dirname, 'app');  // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname);
-  mainIndex = 'app/index.html'; 
+  mainIndex = 'app/index.html';
 }
 let windowWidth = 1280;
 let windowHeight = 970;
@@ -480,7 +480,7 @@ app.on('window-all-closed', function() {
 
 
 app.on('activate', function() {
-  // On OS X it's common to re-create a window in the app when the
+  // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow();
@@ -501,9 +501,5 @@ app.on('web-contents-created', (event, contents) => {
     // Disable Node.js integration
     webPreferences.nodeIntegration = false;
 
-    // Verify URL being loaded
-    // if (!params.src.startsWith('https://yourapp.com/')) {
-    //  event.preventDefault()
-    // }
   });
 });

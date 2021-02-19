@@ -1,12 +1,14 @@
 # backend.ai-console
 
-Make AI Accessible: Backend.AI GUI console (web/app) for End-user / SysAdmin / DevOps.
+[![GitHub version](https://badge.fury.io/gh/lablup%2Fbackend.ai-console.svg)](https://badge.fury.io/gh/lablup%2Fbackend.ai-console)
+
+Make AI Accessible: Backend.AI GUI console (web/app) for End-user / DevOps / SysAdmin.
 
 For more information, see [manual](https://console.docs.backend.ai/en/latest/).
 
 ## Changelog
 
-View [changelog](https://github.com/lablup/backend.ai-console/master/CHANGELOG.md)
+View [changelog](https://github.com/lablup/backend.ai-console/blob/main/CHANGELOG.md)
 
 ## Role
 
@@ -21,34 +23,41 @@ Backend.AI console focuses to
 ## User Features
  * Session management
     * Set default resources for runs
+    * Monitor current resources sessions using
     * Choose and run environment-supported apps
-    * Terminal for each session
+    * Web-based Terminal for each session
     * Fully-featured VSCode editor and environments
  * Pipeline
-    * Experiments (with SACRED / MLFlow)
-    * AutoML (with NNI)
+    * Experiments (with SACRED / Microsoft NNI / Apache MLFlow)
+    * AutoML (with Microsoft NNI / Apache MLFlow)
     * Manages container streams with pipeline vfolders
+    * Storage proxy for fast data I/O between backend.ai cluster and user
     * Checks queue and scheduled jobs
  * Storage management
     * Create / delete folders
     * Upload  / download files (with upload progress)
     * Integrated SSH/SFTP server (app mode only)
     * Share folders with friends / groups
+ * Node management
+    * See calculation nodes in Backend.AI cluster
+	* Live statistics of bare-metal / VM nodes
  * Statistics
     * User resource statistics
     * Session statistics
     * Workload statistics
+    * Per-node statistics
     * Insight (working)
  * Configurations
     * User-specific web / app configurations
     * Beta features
     * Console logs / errors
+ * License
+    * Check current license information (for enterprise only)
+ * Help & manuals
+
 
 ## Management Features
 
- * Keypair management
-    * Allocate resource limitation for keys
-    * Add / remove resource policies for keys
  * Kernel managements
     * List supported kernels
      * Add kernel
@@ -58,11 +67,18 @@ Backend.AI console focuses to
      * Add/remove docker registries
  * User management
     * User creation / deletion / key management / resource templates
+ * Keypair management
+    * Allocate resource limitation for keys
+    * Add / remove resource policies for keys
  * Manager settings
     * Add /setting repository
     * Plugin support
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
     * Needs backend.ai-wsproxy package
+ * Service information
+    * Component compatibility
+    * Security check
+    * License information
  * Work with console server (github/lablup/backend.ai-console-server)
     * Delegate login to console server
     * Support userid / password login
@@ -82,6 +98,7 @@ These are options in `config.toml`.
 apiEndpoint = "[Default API Endpoint. If blank, user input field will be shown.]"
 apiEndpointText = "[Placeholder text instead of API endpoint input field.]"
 defaultSessionEnvironment = "[Default session kernel. If blank, alphabetically first kernel will be default.]"
+defaultImportEnvironment = "[Default kernel to use import features. If blank, index.docker.io/lablup/python:3.8-ubuntu18.04 will be used.]"
 siteDescription = "[Site description placeholder. It will be at the bottom of 'Backend.AI' at the top left corner.]"
 connectionMode = "[Connection mode. Default is API. Currenly supports API and SESSION]"
 allowChangeSigninMode = false # Allows user to change signin mode between `API` and `SESSION`
@@ -89,6 +106,7 @@ signupSupport = false # Enable / disable signup feature support. Manager plugin 
 allowSignout = false # Let users signout from service. Signup plugin is required.
 allowAnonymousChangePassword = false # Enable / disable anonymous user can send change password email. Manager plugin is required.
 allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
+autoLogout = false # If true, user will be automatically logout when they close all Backend.AI tab / window.
 debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
 
 [wsproxy]
@@ -96,14 +114,22 @@ proxyURL = "[Proxy URL]"
 proxyBaseURL = "[Base URL of websocket proxy,]"
 proxyListenIP = "[Websocket proxy configuration IP.]"
 
+[resources]
+openPortToPublic = true # Show option to open app proxy port to anyone.
+maxCPUCoresPerContainer = 256 # Maximum CPU per container.
+maxCUDADevicesPerContainer = 16  # Maximum CUDA devices per container.
+maxShmPerContainer = 1 # Maximum shared memory per container.
+maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
+
 [server]
 consoleServerURL = "[Console server website URL. App will use the site instead of local app.]"
                    # Uses websocket proxy in the app
 
-[plugins]
+[plugin]
 # Reserved to load plugins
-# login = "login-test.js"
-# sidebar = "sidebar-test.js"
+#login = "signup-cloud.js"
+#page = "test-plugin1,test-plugin2"
+
 ```
 
 
@@ -121,6 +147,10 @@ Backend.AI console is built with
  * `npm` as package manager
  * `rollup` as bundler
  * `electron` as app shell
+
+### Code of conduct
+
+View [Code of conduct](https://github.com/lablup/backend.ai-console/blob/main/CODE_OF_CONDUCT.md) for community guidelines.
 
 ### Initializing
 
@@ -148,6 +178,11 @@ Some necessary libraries will be copied to `src/lib`. Now you are ready to test.
 $ npm run server:d # To run dev. web server
 $ npm run build:d # To watch source changes
 $ npm run wsproxy # To run websocket proxy
+```
+
+### Lint Checking
+```
+$ npm run lint # To check lints
 ```
 
 ### Unit Testing
@@ -354,7 +389,8 @@ $ make all # build win64/macos/linux app
 $ make win
 ```
 Note: Building Windows x86-64 on other than Windows requires Wine > 3.0
-Note: On macOS Catalina, use scripts/build-windows-app.sh to build Windows package. From macOS 10.15+, wine 32x is not supported.
+Note: On macOS Catalina, use scripts/build-windows-app.sh to build Windows 32bitpackage. From macOS 10.15+, wine 32x is not supported.
+Note: Now the `make win` command support only Windows x64 app, therefore you do not need to use `build-windows-app.sh` anymore.
 
 #### macOS version
 

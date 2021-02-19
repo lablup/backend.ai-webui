@@ -1,6 +1,6 @@
 /**
  @license
- Copyright 2015-2020 Lablup Inc.
+ Copyright 2015-2021 Lablup Inc.
 
  Original code by 2018 Google Inc. All Rights Reserved.
 
@@ -45,6 +45,13 @@ export class TopAppBarFixed extends TopAppBarFixedBase {
         }
         .mdc-top-app-bar--prominent-fixed-adjust {
           padding-top: 96px;
+        }
+
+        /* min-width for mobile-view */
+        @media screen and (max-width: 375px) {
+          .mdc-top-app-bar {
+            min-width: 375px !important;
+          }
         }
       `];
   }

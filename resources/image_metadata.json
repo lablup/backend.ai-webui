@@ -50,19 +50,6 @@
         }
       ]
     },
-    "ml-workspace": {
-      "name": "ML Workspace",
-      "description": "The ML workspace is an all-in-one web-based IDE specialized for machine learning and data science.",
-      "group": "Machine Learning / Deep Learning",
-      "tags": [],
-      "label": [
-        {
-          "category": "Env",
-          "tag": "ML Workspace",
-          "color": "blue"
-        }
-      ]
-    },
     "python-tensorflow": {
       "name": "TensorFlow",
       "description": "TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications.",
@@ -146,8 +133,22 @@
         }
       ]
     },
+    "swift-tensorflow": {
+      "name": "Swift For TensorFlow",
+      "description": "Swift for TensorFlow is a next generation system for deep learning and differentiable computing. TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications.",
+      "group": "Machine Learning / Deep Learning",
+      "tags": [],
+      "icon": "swift-tensorflow.png",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "TensorFlow",
+          "color": "blue"
+        }
+      ]
+    },
     "julia-tensorflow": {
-      "name": "TensorFlow (Julia)",
+      "name": "Julia TensorFlow",
       "description": "This is Julia-integrated TensorFlow environment. TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
@@ -156,6 +157,24 @@
         {
           "category": "Env",
           "tag": "TensorFlow",
+          "color": "blue"
+        }
+      ]
+    },
+    "julia-flux": {
+      "name": "Flux",
+      "description": "Flux is a Julia-based machine learning library. It comes batteries-included with many useful tools built in, but also lets you use the full power of the Julia language where you need it. Flux is 100% pure-Julia stack and provides lightweight abstractions on top of Julia's native GPU and AD support.",
+      "group": "Machine Learning / Deep Learning",
+      "tags": [],
+      "icon": "flux.png",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Flux",
+          "color": "blue"
+        },
+        {
+          "tag": "Julia",
           "color": "blue"
         }
       ]
@@ -277,6 +296,23 @@
         {
           "category": "Env",
           "tag": "Amazon MXNet",
+          "color": "blue"
+        },
+        {
+          "tag": "Nvidia GPU Cloud",
+          "color": "green"
+        }
+      ]
+    },
+    "ngc-triton": {
+      "name": "Triton Server (NGC)",
+      "description": "PyTorch is an open source machine learning framework that accelerates the path from research prototyping to production deployment. This environment is integrated with Nvidia GPU Cloud.",
+      "group": "Machine Learning / Deep Learning",
+      "tags": [],
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Triton",
           "color": "blue"
         },
         {
@@ -514,7 +550,7 @@
     },
     "swift": {
       "name": "Swift",
-      "description": "",
+      "description": "Swift is a general-purpose programming language built using a modern approach to safety, performance, and software design patterns.",
       "group": "Language",
       "tags": [],
       "icon": "swift.svg",
@@ -597,6 +633,20 @@
         }
       ]
     },
+    "filebrowser": {
+      "name": "FileBrowser",
+      "description": "",
+      "group": "Utilities",
+      "tags": [],
+      "icon": "filebrowser.svg",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "FileBrowser",
+          "color": "blue"
+        }
+      ]
+    },
     "ubuntu-linux": {
       "name": "Ubuntu Linux",
       "description": "Ubuntu is an open source software operating system that runs from the desktop, to the cloud, to all your internet connected things.",
@@ -607,6 +657,20 @@
         {
           "category": "Env",
           "tag": "Ubuntu Linux",
+          "color": "yellow"
+        }
+      ]
+    },
+    "kubuntu-linux": {
+      "name": "Kubuntu Linux",
+      "description": "Kubuntu is an official flavour of the Ubuntu operating system that uses the KDE Plasma Desktop instead of the GNOME desktop environment. As part of the Ubuntu project, Kubuntu uses the same underlying systems.",
+      "group": "Desktop Environment",
+      "tags": [],
+      "icon": "kubuntu.svg",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Kubuntu Linux",
           "color": "yellow"
         }
       ]
@@ -629,21 +693,17 @@
         }
       ]
     },
-    "lablup-pytorch": {
-      "name": "PyTorch (Cloudia)",
-      "description": "PyTorch is an open source machine learning framework that accelerates the path from research prototyping to production deployment. This environment is fully integrated with Cloudia platform.",
-      "group": "Machine Learning / Deep Learning",
+    "mask-rcnn": {
+      "name": "MLPerf Mask-RCNN",
+      "description": "MLPerf Mask-RCNN module",
+      "group": "Benchmarks",
       "tags": [],
-      "icon": "pytorch.svg",
+      "icon": "python.png",
       "label": [
         {
           "category": "Env",
-          "tag": "PyTorch",
+          "tag": "Pytorch",
           "color": "blue"
-        },
-        {
-          "tag": "Cloudia",
-          "color": "green"
         }
       ]
     }

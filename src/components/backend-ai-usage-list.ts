@@ -1,17 +1,13 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import 'weightless/card';
-import 'weightless/tab-group';
-import 'weightless/tab';
-import 'weightless/select';
-import {BackendAiStyles} from './backend-ai-general-styles';
+import 'weightless/card'; import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
 
 import {
@@ -59,6 +55,7 @@ export default class BackendAIUsageList extends BackendAIPage {
   @property({type: Object}) collection = Object();
   @property({type: String}) period = '1D';
   @property({type: Boolean}) updating = false;
+  @property({type: Number}) elapsedDays = 0;
   public data: any;
 
   constructor() {
@@ -75,16 +72,25 @@ export default class BackendAIUsageList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        wl-select {
-          --input-font-family: Roboto, Noto, sans-serif;
-          --input-color-disabled: #222222;
-          --input-label-color-disabled: #222222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #cccccc;
-        }
-
-        wl-card {
-          --card-elevation: 0;
+        mwc-select {
+          width: 100%;
+          font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
+          --mdc-theme-primary: var(--general-sidebar-color);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-focused-dropdown-icon-color: var(--general-sidebar-color);
+          --mdc-select-disabled-dropdown-icon-color: var(--general-sidebar-color);
+          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
+          --mdc-select-hover-line-color: var(--general-sidebar-color);
+          --mdc-select-outlined-idle-border-color: var(--general-sidebar-color);
+          --mdc-select-outlined-hover-border-color: var(--general-sidebar-color);
+          --mdc-theme-surface: white;
+          --mdc-list-vertical-padding: 5px;
+          --mdc-list-side-padding: 25px;
+          --mdc-list-item__primary-text: {
+            height: 20px;
+          };
         }
       `
     ]
@@ -123,6 +129,45 @@ export default class BackendAIUsageList extends BackendAIPage {
 
   firstUpdated() {
     //this.init();
+  }
+
+  async _viewStateChanged(active: Boolean) {
+    await this.updateComplete;
+    if (active === false) {
+      return;
+    }
+
+    // If disconnected
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._getUserInfo();
+        this.init();
+        setTimeout(() => {
+          const periodSelector = this.shadowRoot.querySelector('#period-selector');
+          periodSelector.selectedText = periodSelector.selected.textContent.trim();
+        }, 100);
+      }, true);
+    } else { // already connected
+      this._getUserInfo();
+      this.init();
+      setTimeout(() => {
+        const periodSelector = this.shadowRoot.querySelector('#period-selector');
+        periodSelector.selectedText = periodSelector.selected.textContent.trim();
+      }, 100);
+    }
+  }
+
+  _getUserInfo() {
+    const msec_to_sec = 1000;
+    const seconds_to_day = 86400;
+    globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['created_at']).then((response) => {
+      let created_at = response.keypair.created_at;
+      let start_time = new Date(created_at);
+      let current_time = new Date();
+      let seconds = Math.floor((current_time.getTime() - start_time.getTime()) / msec_to_sec);
+      let days = Math.floor(seconds / seconds_to_day);
+      this.elapsedDays = days;
+    });
   }
 
   /**
@@ -208,7 +253,7 @@ export default class BackendAIUsageList extends BackendAIPage {
    * */
   pulldownChange(e) {
     this.period = e.target.value;
-
+    console.log(this.period);
     const {data, period, collection, _map, templates} = this;
 
     if (!(period in collection)) {
@@ -235,33 +280,36 @@ export default class BackendAIUsageList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-card elevation="0">
+      <div class="card" elevation="0">
         <h3 class="horizontal center layout">
-          <wl-select label="${_t("statistics.SelectPeriod")}" style="width: 130px;" @input=${this.pulldownChange}>
-            <option value disabled>${_t("statistics.SelectPeriod")}</option>
-            <option value="1D" selected>${_t("statistics.1Day")}</option>
-            <option value="1W">${_t("statistics.1Week")}</option>
-          </wl-select>
+          <mwc-select label="${_t('statistics.SelectPeriod')}"
+              id="period-selector" style="width:130px; border:1px solid #ccc;"
+              @change="${(e) => {this.pulldownChange(e)}}">
+            <mwc-list-item value="1D" selected>${_t('statistics.1Day')}</mwc-list-item>
+            ${this.elapsedDays > 7 ? html`
+              <mwc-list-item value="1W">${_t('statistics.1Week')}</mwc-list-item>
+            ` : html``}
+          </mwc-select>
           <span class="flex"></span>
         </h3>
         ${Object.keys(this.collection).length > 0 ?
-      Object.keys(this._map).map((key, idx) =>
-        html`
-          <wl-card>
-            <h3 class="horizontal center layout">
-              <span>${this._map[key]}</span>
-              <span class="flex"></span>
-            </h3>
-            </div>
-            <div style="width:100%;min-height:180px;">
-              <backend-ai-chart
-                idx=${idx}
-                .collection=${this.collection[this.period][key]}
-              ></backend-ai-chart>
-            </div>
-          </wl-card>
-            `) : html``}
-      </wl-card>
+          Object.keys(this._map).map((key, idx) =>
+            html`
+              <div class="card">
+                <h3 class="horizontal center layout">
+                  <span>${this._map[key]}</span>
+                  <span class="flex"></span>
+                </h3>
+              </div>
+              <div style="width:100%;min-height:180px;">
+                <backend-ai-chart
+                  idx=${idx}
+                  .collection=${this.collection[this.period][key]}
+                ></backend-ai-chart>
+              </div>
+            `
+          ) : html``}
+      </div>
     `;
   }
 }

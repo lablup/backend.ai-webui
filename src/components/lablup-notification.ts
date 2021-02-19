@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {get as _text} from "lit-translate";
@@ -28,7 +28,6 @@ import {store} from '../store';
 @customElement("lablup-notification")
 export default class LablupNotification extends LitElement {
   public shadowRoot: any;
-  public updateComplete: any;
 
   @property({type: String}) text = '';
   @property({type: String}) detail = '';
@@ -93,17 +92,13 @@ export default class LablupNotification extends LitElement {
   firstUpdated() {
     if ("Notification" in window) {
       //console.log(Notification.permission);
-      if (Notification.permission === "granted") {
-        this.supportDesktopNotification = true;
-      } else if (Notification.permission !== "denied") {
-        Notification.requestPermission().then(() => {
+
+      // works on all browsers without promise error including Safari
+      Promise.resolve(Notification.requestPermission()).then((permission) => {
+        if (["default", "granted", "denied"].includes(permission)) {
           this.supportDesktopNotification = true;
-        });
-      } else {
-        Notification.requestPermission().then(() => {
-          this.supportDesktopNotification = true;
-        });
-      }
+        }
+      });
     }
     this._readUserSetting('desktop_notification', true);
     if (this.options['desktop_notification'] === false) {
@@ -229,7 +224,7 @@ export default class LablupNotification extends LitElement {
     // }
     // this.notificationstore.push(log);
     if (Object.keys(log).length !== 0) {
-      this._saveToLocalStoarge("backendaiconsole.logs", log);
+      this._saveToLocalStorage("backendaiconsole.logs", log);
     }
 
     if (this.detail !== '') {
@@ -261,6 +256,7 @@ export default class LablupNotification extends LitElement {
     notification.style.bottom = (20 + 55 * this.step) + 'px';
     notification.style.position = 'fixed';
     (notification.querySelector('span') as any).style.overflowX = 'hidden';
+    (notification.querySelector('span') as any).style.maxWidth = '70vw';
     notification.style.right = '20px';
     notification.style.fontSize = '16px';
     notification.style.fontWeight = '400';
@@ -304,7 +300,7 @@ export default class LablupNotification extends LitElement {
     window.open(url, '_blank');
   }
 
-  _saveToLocalStoarge(key, logMessages) {
+  _saveToLocalStorage(key, logMessages) {
     const previous_log = JSON.parse(localStorage.getItem(key) || '{}');
     let current_log = Array();
 
@@ -329,9 +325,10 @@ export default class LablupNotification extends LitElement {
     // }
     let logs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
     if (logs.length > 3000) {
-      logs = logs.slice(1, 3000);
+      logs = logs.slice(0, 2999);
     }
     this.step = this.notifications.length;
+    localStorage.setItem('backendaiconsole.logs', JSON.stringify(logs));
   }
 }
 declare global {

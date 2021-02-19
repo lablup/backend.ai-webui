@@ -16,7 +16,7 @@
  */
 
 import {css, customElement} from 'lit-element';
-import {SelectBase} from './mwc-multi-select-base';
+import {SelectBase} from '@material/mwc-select/mwc-select-base';
 import {style} from '@material/mwc-select/mwc-select-css.js';
 
 declare global {
