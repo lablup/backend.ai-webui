@@ -18,6 +18,8 @@ import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-column-group';
+import '@vaadin/vaadin-grid/vaadin-grid-filter';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -65,6 +67,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) renameFolderId = '';
   @property({type: String}) deleteFolderId = '';
+  @property({type: String}) leaveFolderId = '';
   @property({type: Object}) explorer = Object();
   @property({type: Array}) explorerFiles = Array();
   @property({type: String}) existingFile = '';
@@ -90,6 +93,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Boolean}) uploadFilesExist = false;
   @property({type: Object}) _boundIndexRenderer = Object();
   @property({type: Object}) _boundTypeRenderer = Object();
+  @property({type: Object}) _boundFolderListRenderer = Object();
   @property({type: Object}) _boundControlFolderListRenderer = Object();
   @property({type: Object}) _boundControlFileListRenderer = Object();
   @property({type: Object}) _boundPermissionViewRenderer = Object();
@@ -100,6 +104,9 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Boolean}) _uploadFlag = true;
   @property({type: Boolean}) isWritable = false;
   @property({type: Number}) _maxFileUploadSize = -1;
+  @property({type: String}) oldFileExtension = '';
+  @property({type: String}) newFileExtension = '';
+  @property({type: Boolean}) is_dir = false;
   @property({type: Number}) minimumResource = {
     cpu: 1,
     mem: 0.5
@@ -117,6 +124,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
+    this._boundFolderListRenderer = this.folderListRenderer.bind(this);
   }
 
   static get styles() {
@@ -141,6 +149,11 @@ export default class BackendAiStorageList extends BackendAIPage {
           border: 0;
           font-size: 14px;
           height: calc(100vh - 370px);
+        }
+
+        span.title {
+          margin: auto 10px;
+          min-width: 35px;
         }
 
         ul {
@@ -226,33 +239,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-icon-button-size: 28px;
         }
 
-        @media screen and (max-width: 700px) {
-          #folder-explorer-dialog,
-          #folder-explorer-dialog.mini_ui {
-            min-width: 410px;
-            --component-width: 100%;
-            width: 100%;
-            position: absolute;
-            margin-left: auto;
-            margin-right: auto;
-            left: 0px;
-            right: 0px;
-          }
-        }
-
-        @media screen and (max-width: 750px) {
-          #folder-explorer-dialog,
-          #folder-explorer-dialog.mini_ui {
-            --component-width: auto;
-          }
-        }
-
-        @media screen and (min-width: 900px) {
-          #folder-explorer-dialog,
-          #folder-explorer-dialog.mini_ui
-           {
-            --component-width: calc(100% - 45px); /* calc(100% - 30px); */
-          }
+        vaadin-text-field {
+          --vaadin-text-field-default-width: auto;
         }
 
         div.breadcrumb {
@@ -403,7 +391,26 @@ export default class BackendAiStorageList extends BackendAIPage {
           margin:15px 10px;
         }
 
+        @media screen and (max-width: 700px) {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui {
+            min-width: 410px;
+            --component-width: 100%;
+            width: 100%;
+            position: absolute;
+            margin-left: auto;
+            margin-right: auto;
+            left: 0px;
+            right: 0px;
+          }
+        }
+
         @media screen and (max-width: 750px) {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui {
+            --component-width: auto;
+          }
+
           mwc-button {
             width: auto;
           }
@@ -412,6 +419,14 @@ export default class BackendAiStorageList extends BackendAIPage {
           }
           #modify-permission-dialog {
             --component-min-width: 100%;
+          }
+        }
+
+        @media screen and (min-width: 900px) {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui
+           {
+            --component-width: calc(100% - 45px); /* calc(100% - 30px); */
           }
         }
       `];
@@ -437,14 +452,20 @@ export default class BackendAiStorageList extends BackendAIPage {
       <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t("data.folders.Name")}">
-          <template>
-            <div class="indicator" @click="[[_folderExplorer()]]" .folder-id="[[item.name]]">[[item.name]]</div>
+        <vaadin-grid-column width="200px" flex-grow="0" resizable .renderer="${this._boundFolderListRenderer}">
+          <template class="header">
+            <div class="horizontal layout center justified flex" style="margin-right:15px;">
+              <span class="title">${_t("data.folders.Name")}</span>
+              <vaadin-grid-sorter path="name" direction="asc" style="padding:auto 10px;">
+                <vaadin-grid-filter path="name" value="[[_filterName]]">
+                  <vaadin-text-field slot="filter" focus-target theme="small" value="{{_filterName::input}}">
+                  </vaadin-text-field>
+                </vaadin-grid-filter>
+              </vaadin-grid-sorter>
+            </div>
           </template>
         </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">id</template>
+        <vaadin-grid-column width="135px" flex-grow="0" resizable  header="ID">
           <template>
             <div class="layout vertical">
               <span class="indicator monospace">[[item.id]]</span>
@@ -452,7 +473,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="85px" flex-grow="0" resizable header="${_t("data.folders.Location")}">
+        <vaadin-grid-column width="105px" flex-grow="0" resizable header="${_t("data.folders.Location")}">
           <template>
             <div class="layout vertical">
               <span>[[item.host]]</span>
@@ -494,6 +515,21 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
+
+      <backend-ai-dialog id="leave-folder-dialog" fixed backdrop>
+        <span slot="title">${_t("data.folders.LeaveAFolder")}</span>
+        <div slot="content">
+          <div class="warning" style="margin-left:16px;">${_t("dialog.warning.CannotBeUndone")}</div>
+          <mwc-textfield class="red" id="leave-folder-name" label="${_t('data.folders.TypeFolderNameToLeave')}"
+                         maxLength="64" placeholder="${_text('maxLength.64chars')}"></mwc-textfield>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button unelevated class="fullwidth red button" type="submit" id="leave-button" @click="${() => this._leaveFolderWithCheck()}">
+            ${_t("data.folders.Leave")}
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+
       <backend-ai-dialog id="info-folder-dialog" fixed backdrop>
         <span slot="title">${this.folderInfo.name}</span>
         <div slot="content" role="listbox" style="margin: 0;width:100%;">
@@ -812,11 +848,11 @@ export default class BackendAiStorageList extends BackendAIPage {
         <div slot="content">
           <mwc-textfield class="red" id="new-file-name" label="${_t('data.explorer.NewFileName')}"
           required @change="${() => this._validateExistingFileName()}" auto-validate style="width:320px;"
-          maxLength="255" placeholder="${_text('maxLength.255chars')}"></mwc-textfield>
+          maxLength="255" placeholder="${_text('maxLength.255chars')}" autoFocus></mwc-textfield>
           <div id="old-file-name" style="padding-left:15px;height:2.5em;"></div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" unelevated @click="${(e) => this._renameFile(e)}">
+          <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" unelevated @click="${() => this._compareFileExtension()}">
             ${_t('data.explorer.RenameAFile')}
           </mwc-button>
         </div>
@@ -841,6 +877,32 @@ export default class BackendAiStorageList extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
           <mwc-button @click="${(e) => this._hideDialog(e)}">${_t("button.Close")}</mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="file-extension-change-dialog" fixed backdrop>
+        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
+        <div slot="content">
+          <p>${_t("data.explorer.FileExtensionChanged")}</p>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout distancing">
+          <mwc-button unelevated @click="${(e) => this._keepFileExtension()}">
+            ${globalThis.backendaioptions.get('language') !== 'ko' ?
+              html`
+                ${_text("data.explorer.KeepFileExtension") + this.oldFileExtension}
+              ` : 
+              html`
+                ${this.oldFileExtension + _text("data.explorer.KeepFileExtension")}
+              `}
+          </mwc-button>
+          <mwc-button outlined @click="${() => this._renameFile()}">
+            ${globalThis.backendaioptions.get('language') !== 'ko' ?
+              html`
+                ${this.newFileExtension ? _text("data.explorer.UseNewFileExtension") + this.newFileExtension : _text("data.explorer.RemoveFileExtension")}
+              ` : 
+              html`
+                ${this.newFileExtension ? this.newFileExtension + _text("data.explorer.UseNewFileExtension") : _text("data.explorer.RemoveFileExtension")}
+              `}
+          </mwc-button>
         </div>
       </backend-ai-dialog>
     `;
@@ -920,6 +982,15 @@ export default class BackendAiStorageList extends BackendAIPage {
             <mwc-list-item value="kickout">${_t('data.folders.KickOut')}</mwc-list-item>
           </mwc-select>-->
         </div>
+      `, root
+    )
+  }
+
+  folderListRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div class="indicator" @click="[[_folderExplorer()]]" .folder-id="${rowData.item.name}">${rowData.item.name}</div>
       `, root
     )
   }
@@ -1030,6 +1101,16 @@ export default class BackendAiStorageList extends BackendAIPage {
             `
             : html``
           }
+          ${(!rowData.item.is_owner && rowData.item.type == 'user')
+            ? html`
+              <mwc-icon-button
+                class="fg red controls-running"
+                icon="remove_circle"
+                @click="${(e) => this._leaveInvitedFolderDialog(e)}"
+              ></mwc-icon-button>
+            `
+            : html``
+          }
         </div>
        `, root
     );
@@ -1055,7 +1136,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 filename="${rowData.item.filename}" @click="${(e) => this._downloadFile(e)}"></mwc-icon-button>
           `}
           <mwc-icon-button id="rename-btn" ?disabled="${!this.isWritable}" class="tiny fg green" icon="edit" required
-              filename="${rowData.item.filename}" @click="${this._openRenameFileDialog.bind(this)}"></mwc-icon-button>
+              filename="${rowData.item.filename}" @click="${(e) => this._openRenameFileDialog(e, this._isDir(rowData.item))}"></mwc-icon-button>
           <mwc-icon-button id="delete-btn" ?disabled="${!this.isWritable}" class="tiny fg red" icon="delete_forever"
               filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
         </div>
@@ -1431,6 +1512,55 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     });
   }
+
+  /**
+   * Open leave-folder-dialog to Leave invited folder
+   *
+   * @param {Event} e - click the delete icon button
+   */
+  _leaveInvitedFolderDialog(e) {
+    this.leaveFolderId = this._getControlId(e);
+    this.shadowRoot.querySelector('#leave-folder-name').value = '';
+    this.openDialog('leave-folder-dialog');
+  }
+
+  /**
+   * Check folder name to leave.
+   *
+   * */
+  _leaveFolderWithCheck() {
+    let typedDeleteFolderName = this.shadowRoot.querySelector('#leave-folder-name').value;
+    if (typedDeleteFolderName !== this.leaveFolderId) {
+      this.notification.text = _text('data.folders.FolderNameMismatched');
+      this.notification.show();
+      return;
+    }
+    this.closeDialog('leave-folder-dialog');
+    this._leaveFolder(this.leaveFolderId);
+  }
+
+  /**
+   * Leave invited folder and notice.
+   *
+   * @param {string} folderId
+   * */
+  _leaveFolder(folderId) {
+    let job = globalThis.backendaiclient.vfolder.leave_invited(folderId);
+    job.then((value) => {
+      this.notification.text = _text('data.folders.FolderDisconnected');
+      this.notification.show();
+      this.refreshFolderList();
+      this._triggerFolderListChanged();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+  }
+
 
   /**
    * dispatch backend-ai-folder-list-changed event
@@ -2000,7 +2130,45 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
-   * Execute Filebrowser by launching session with mimimum resources
+   * Select filename without extension
+   * 
+   */
+  _compareFileExtension() {
+    let newFilename = this.shadowRoot.querySelector('#new-file-name').value;
+    let oldFilename = this.renameFileDialog.querySelector('#old-file-name').textContent;
+    const regex = /\.([0-9a-z]+)$/i;
+    this.newFileExtension = (newFilename.includes('.') && newFilename.match(regex)) ? newFilename.match(regex)[1].toLowerCase() : '';
+    this.oldFileExtension = (oldFilename.includes('.') && oldFilename.match(regex)) ? oldFilename.match(regex)[1].toLowerCase() : '';
+
+    if (newFilename) {
+      if (this.newFileExtension !== this.oldFileExtension) {
+        this.shadowRoot.querySelector('#file-extension-change-dialog').show();
+      } else if (this.oldFileExtension) {
+        this._keepFileExtension();
+      } else {
+        this._renameFile();
+      }
+    } else {
+      this._renameFile();
+    }
+  }
+
+  /**
+   * Keep the file extension whether the file extension is explicit or not. 
+   * 
+   */
+  _keepFileExtension() {
+    let newFilename = this.renameFileDialog.querySelector('#new-file-name').value;
+    if (this.newFileExtension) {
+      newFilename = newFilename.replace(new RegExp(this.newFileExtension + '$'), this.oldFileExtension);
+    } else {
+      newFilename = newFilename + '.' + this.oldFileExtension;
+    }
+    this.renameFileDialog.querySelector('#new-file-name').value = newFilename;
+    this._renameFile();
+  }
+  
+   /* Execute Filebrowser by launching session with mimimum resources
    *
    */
   _executeFileBrowser() {
@@ -2051,7 +2219,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         'session-uuid': res.sessionId,
         'session-name': res.sessionName,
         'access-key': '',
-        'runtime': 'filebrowser'
+        'runtime': 'filebrowser',
+        'arguments': {'--root': '/home/work/' + this.explorer.id}
       };
       // only launch filebrowser app when it has valid service ports
       if (service_info.length > 0 && service_info.filter(el => el.name === "filebrowser").length > 0) {
@@ -2074,27 +2243,45 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Open the renameFileDialog to rename the file.
    *
    * @param {Event} e - click the edit icon button
+   * @param {Boolean} is_dir - True when file is directory type
    * */
-  _openRenameFileDialog(e) {
+  _openRenameFileDialog(e, is_dir = false) {
     const fn = e.target.getAttribute("filename");
     this.renameFileDialog.querySelector('#old-file-name').textContent = fn;
+    this.renameFileDialog.querySelector('#new-file-name').value = fn;
     this.renameFileDialog.filename = fn;
     this.renameFileDialog.show();
+    let currentFilename = this.renameFileDialog.querySelector('#new-file-name');
+    this.is_dir = is_dir;
+
+    currentFilename.addEventListener('focus', (e) => {
+      let endOfExtensionLength = fn.replace(/\.([0-9a-z]+)$/i, '').length;
+      currentFilename.setSelectionRange(0, endOfExtensionLength);
+    });
+    currentFilename.focus();
   }
 
   /**
    * Rename the file.
    *
-   * @param {Event} e - click the rename-file-button
    * */
-  _renameFile(e) {
+  _renameFile() {
     const fn = this.renameFileDialog.filename;
     const path = this.explorer.breadcrumb.concat(fn).join("/");
     const newNameEl = this.renameFileDialog.querySelector('#new-file-name');
     const newName = newNameEl.value;
+    const fileExtensionChangeDialog = this.shadowRoot.querySelector('#file-extension-change-dialog');
+    fileExtensionChangeDialog.hide();
     newNameEl.reportValidity();
     if (newNameEl.checkValidity()) {
-      const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id);
+      if (fn === newName) {
+        newNameEl.focus();
+        this.notification.text = _text('data.folders.SameFileName');
+        this.notification.show();
+        return;
+      }
+
+      const job = globalThis.backendaiclient.vfolder.rename_file(path, newName, this.explorer.id, this.is_dir);
       job.then((res) => {
         this.notification.text = _text('data.folders.FileRenamed');
         this.notification.show();

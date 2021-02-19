@@ -205,19 +205,22 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
       _text("maintenance.RescanImages"),
       globalThis.backendaiclient.maintenance.rescan_images().then(({rescan_images}) => {
         let sse: EventSource =  globalThis.backendaiclient.maintenance.attach_background_task(rescan_images.task_id);
-        sse.addEventListener('task_updated', (e) => {
+        sse.addEventListener('bgtask_updated', (e) => {
           const data = JSON.parse(e["data"]);
           const ratio = data.current_progress/data.total_progress;
           indicator.set(100 * ratio, _text('maintenance.Scanning'));
         });
-        sse.addEventListener('task_done', (e) => {
+        sse.addEventListener('bgtask_done', (e) => {
           indicator.set(100, _text('maintenance.RescanImageFinished'));
+          sse.close();
         });
-        sse.addEventListener('task_failed', (e) => {
+        sse.addEventListener('bgtask_failed', (e) => {
           console.log('task_failed', e["data"]);
+          sse.close();
           throw new Error('Background Image scanning task has failed');
         });
-        sse.addEventListener('task_cancelled', (e) => {
+        sse.addEventListener('bgtask_cancelled', (e) => {
+          sse.close();
           throw new Error('Background Image scanning task has been cancelled');
         });
         this.shadowRoot.querySelector('#rescan-image-button-desc').label = _text("maintenance.RescanImages");

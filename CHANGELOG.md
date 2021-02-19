@@ -1,6 +1,35 @@
 
 # Changelog
 
+## v21.02.2 (17/02/2021)
+
+#### Enhancements:
+
+- [**enhancement**] Update Julia with Flux.ji support for scientific computing [#913](https://github.com/lablup/backend.ai-console/issues/913)
+- [**UI / UX**][**enhancement**][**minor**] Support Swift language [#912](https://github.com/lablup/backend.ai-console/issues/912)
+- [**enhancement**] Adopt runtime environment parameter / argument feature [#910](https://github.com/lablup/backend.ai-console/issues/910)
+- [**UI / UX**][**enhancement**][**good first issue**] Filter for storage folders  [#909](https://github.com/lablup/backend.ai-console/issues/909)
+- [**UI / UX**][**enhancement**] Let's provide leaving the invited folder. [#907](https://github.com/lablup/backend.ai-console/issues/907)
+- [**UI / UX**][**enhancement**][**minor**] Support Swift for TensorFlow environment [#904](https://github.com/lablup/backend.ai-console/issues/904)
+- [**UI / UX**][**enhancement**] Let's show an alert message when user rename the file including file extension in the Vfolder. [#803](https://github.com/lablup/backend.ai-console/issues/803)
+- [**UI / UX**][**enhancement**][**library / SDK**] Storage resource tab on computation resources [#336](https://github.com/lablup/backend.ai-console/issues/336)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**major**] Queue file deletion [#572](https://github.com/lablup/backend.ai-console/issues/572)
+
+
+## v21.02.1 (03/02/2021)
+
+#### Enhancements:
+
+- [**enhancement**] Provide environment configuration on session launcher [#902](https://github.com/lablup/backend.ai-console/issues/902)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Adopt background task id [#898](https://github.com/lablup/backend.ai-console/issues/898)
+- [**enhancement**][**library / SDK**][**minor**] Change perSession scheme to perContainer [#889](https://github.com/lablup/backend.ai-console/issues/889)
+- [**UI / UX**][**enhancement**][**minor**] Let's support folder upload in vfolder [#885](https://github.com/lablup/backend.ai-console/issues/885)
+- [**enhancement**][**library / SDK**][**major**] add maxCUDASharesPerContainer to limit fGPU slice size [#788](https://github.com/lablup/backend.ai-console/issues/788)
+- 
+
 ## v21.02.0 (03/02/2021)
 
 #### Enhancements:
