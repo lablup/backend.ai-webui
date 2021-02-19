@@ -402,11 +402,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         this.current_user_group = globalThis.backendaiclient.current_group;
       }
       const param: any = {group: globalThis.backendaiclient.current_group};
-<<<<<<< HEAD
-      const sgs = await globalThis.backendaiclient.scalingGroup.list(globalThis.backendaiclient.current_group);
-      // Make empty scaling group item if there is no scaling groups.
-      this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
-=======
       if (this.current_user_group !== globalThis.backendaiclient.current_group
         || this.scaling_groups.length == 0
         || this.scaling_groups.length === 1 && this.scaling_groups[0].name === "") {
@@ -415,7 +410,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         // Make empty scaling group item if there is no scaling groups.
         this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
       }
->>>>>>> main
       if (this.scaling_groups.length > 0) {
         let scaling_groups: any = [];
         this.scaling_groups.map(group => {

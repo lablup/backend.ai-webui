@@ -677,7 +677,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     } else {
       this._synchronizeWithBroker();
       return Promise.resolve(true);
-<<<<<<< HEAD
     }
   }
 
@@ -696,19 +695,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.available_slot = this.resourceBroker.available_slot;
     this.used_slot_percent = this.resourceBroker.used_slot_percent;
     this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
-=======
-      //return this.available_slot;
-    }).then(() => {
-    }).catch(err => {
-      if (err && err.message) {
-        console.log(err);
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-      return Promise.resolve(false);
-    });
->>>>>>> main
   }
 
   // Get available / total resources from manager
