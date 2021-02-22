@@ -337,6 +337,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'src': './resources/icons/filebrowser.svg'
       });
     }*/
+    appServices.forEach((elm) => {
+      if (!(elm in this.appTemplate)) {
+        this.appTemplate[elm] = [];
+        this.appTemplate[elm].push({
+          'name': elm,
+          'title': elm,
+          'category': '99.',
+          'redirect': '',
+          'src': ''
+        });
+      }
+    });
     appServices.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
     let interText = '';
     appServices.forEach((elm) => {
@@ -344,11 +356,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
           if (interText !== this.appTemplate[elm][0].category) {
             this.appSupportList.push({
-              "name": this.appTemplate[elm][0].category.substring(2),
-              "title": this.appTemplate[elm][0].category.substring(2),
-              "category": 'divider',
-              "redirect": "",
-              "src": ""
+              'name': this.appTemplate[elm][0].category.substring(2),
+              'title': this.appTemplate[elm][0].category.substring(2),
+              'category': 'divider',
+              'redirect': '',
+              'src': ''
             });
             interText = this.appTemplate[elm][0].category;
           }
@@ -362,7 +374,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             'name': elm,
             'title': elm,
             'category': 'Default',
-            'redirect': "",
+            'redirect': '',
             'src': './resources/icons/default_app.svg'
           });
         }

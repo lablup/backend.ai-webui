@@ -1,5 +1,41 @@
 {
   "appTemplate": {
+    "sftp": [
+      {
+        "name": "sftp",
+        "title": "SFTP",
+        "category": "1.Utilities",
+        "redirect": "",
+        "src": "./resources/icons/sftp.png"
+      }
+    ],
+    "sshd": [
+      {
+        "name": "sshd",
+        "title": "SSH / SFTP",
+        "category": "1.Utilities",
+        "redirect": "",
+        "src": "./resources/icons/sftp.png"
+      }
+    ],
+    "ttyd": [
+      {
+        "name": "ttyd",
+        "title": "Console",
+        "category": "1.Utilities",
+        "redirect": "",
+        "src": "./resources/icons/terminal.svg"
+      }
+    ],
+    "filebrowser": [
+      {
+        "name": "filebrowser",
+        "title": "FileBrowser",
+        "category": "1.Utilities",
+        "redirect": "",
+        "src": "./resources/icons/filebrowser.svg"
+      }
+    ],
     "jupyter": [
       {
         "name": "jupyter",
@@ -63,6 +99,15 @@
         "category": "2.Development",
         "redirect": "",
         "src": "./resources/icons/vscode.svg"
+      }
+    ],
+    "triton-server": [
+      {
+        "name": "triton-server",
+        "title": "Triton Server",
+        "category": "3.Machine Learning Tools",
+        "redirect": "",
+        "src": "./resources/icons/terminal.svg"
       }
     ],
     "nniboard": [
@@ -137,6 +182,24 @@
         "src": "./resources/icons/kde.svg"
       }
     ],
+    "xrdp": [
+      {
+        "name": "xrdp",
+        "title": "XRDP",
+        "category": "5.Desktop Environment",
+        "redirect": "",
+        "src": "./resources/icons/gnome.svg"
+      }
+    ],
+    "rstudio": [
+      {
+        "name": "rstudio",
+        "title": "R-Studio",
+        "category": "6.Scientific Computing",
+        "redirect": "",
+        "src": "./resources/icons/r-lang.svg"
+      }
+    ],
     "matlab": [
       {
         "name": "matlab",
@@ -153,51 +216,6 @@
         "category": "6.Scientific Computing",
         "redirect": "",
         "src": "./resources/icons/default_app.svg"
-      }
-    ],
-    "triton-server": [
-      {
-        "name": "triton-server",
-        "title": "Triton Server",
-        "category": "3.Machine Learning Tools",
-        "redirect": "",
-        "src": "./resources/icons/terminal.svg"
-      }
-    ],
-    "sftp": [
-      {
-        "name": "sftp",
-        "title": "SFTP",
-        "category": "1.Utilities",
-        "redirect": "",
-        "src": "./resources/icons/sftp.png"
-      }
-    ],
-    "sshd": [
-      {
-        "name": "sshd",
-        "title": "SSH / SFTP",
-        "category": "1.Utilities",
-        "redirect": "",
-        "src": "./resources/icons/sftp.png"
-      }
-    ],
-    "ttyd": [
-      {
-        "name": "ttyd",
-        "title": "Console",
-        "category": "1.Utilities",
-        "redirect": "",
-        "src": "./resources/icons/terminal.svg"
-      }
-    ],
-    "filebrowser": [
-      {
-        "name": "filebrowser",
-        "title": "FileBrowser",
-        "category": "1.Utilities",
-        "redirect": "",
-        "src": "./resources/icons/filebrowser.svg"
       }
     ]
   }
