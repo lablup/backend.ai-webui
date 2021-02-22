@@ -1,5 +1,12 @@
 # Changelog
 
+## v21.02.3 (22/02/2021)
+
+#### Enhancements:
+
+- [**enhancement**] R studio support [#916](https://github.com/lablup/backend.ai-console/issues/916)
+
+
 ## v21.02.2 (17/02/2021)
 
 #### Enhancements:
