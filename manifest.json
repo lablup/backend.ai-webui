@@ -3,7 +3,7 @@
   "manifest_version": 7,
   "name": "Backend.AI Console",
   "short_name": "BackendAIConsole",
-  "version": "21.02.2",
+  "version": "21.02.3",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fff",
