@@ -1,8 +1,8 @@
-# backend.ai-console
+# backend.ai-webui
 
-[![GitHub version](https://badge.fury.io/gh/lablup%2Fbackend.ai-console.svg)](https://badge.fury.io/gh/lablup%2Fbackend.ai-console)
+[![GitHub version](https://badge.fury.io/gh/lablup%2Fbackend.ai-webui.svg)](https://badge.fury.io/gh/lablup%2Fbackend.ai-webui)
 
-Make AI Accessible: Backend.AI GUI console (web/app) for End-user / DevOps / SysAdmin.
+Make AI Accessible: Backend.AI GUI (web/app) for End-user / DevOps / SysAdmin.
 
 For more information, see [manual](https://console.docs.backend.ai/en/latest/).
 
