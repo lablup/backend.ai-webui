@@ -2258,8 +2258,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div style="display:none"> (</div>
                   <div style="width:50px;text-align:right;">${item.cpu}<span style="display:none">CPU</span></div>
                   <div style="width:50px;text-align:right;">${item.mem}GB</div>
-                  <div style="width:50px;text-align:right;">${item.shmem ? html`${item.shmem}GB` : html`64MB`}</div>
-                  <div style="width:90px;text-align:right;">
+                  <div style="width:60px;text-align:right;">${item.shmem ? 
+                      html`
+                        ${parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g')).toFixed(2)} GB` : 
+                      html`
+                        64MB
+                        `}</div>
+                  <div style="width:80px;text-align:right;">
                     ${item.cuda_device && item.cuda_device > 0 ? html`${item.cuda_device} CUDA GPU` : html``}
                     ${item.cuda_shares && item.cuda_shares > 0 ? html`${item.cuda_shares} GPU` : html``}
                     ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} ROCM GPU` : html``}
