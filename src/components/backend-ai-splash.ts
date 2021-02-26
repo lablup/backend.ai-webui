@@ -17,7 +17,7 @@ import 'weightless/icon';
  Example:
 
  ```
- <backend-ai-splash></backend-ai-webui>
+ <backend-ai-splash></backend-ai-splash>
  ...
  this.shadowRoot.querySelector('backend-ai-splash').show()
  ```

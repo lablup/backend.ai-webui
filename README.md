@@ -317,10 +317,10 @@ If you need to serve as webserver (ID/password support) without compiling anythi
 
 To download and deploy web UI from pre-built source, do the following in `backend.ai-webserver` repository:
 
-```webui
+```console
 git submodule init
 git submodule update
-cd src/ai/backend/webui/static
+cd src/ai/backend/web/static
 git checkout master
 git fetch
 git pull
@@ -342,7 +342,7 @@ Local websocket proxy then communicates with the final destination via the http
 proxy. The address should include the protocol, host, and/or port (if exists).
 For example,
 
-```web ui
+```console
 export EXT_HTTP_PROXY=http://10.20.30.40:3128 (Linux)
 set EXT_HTTP_PROXY=http://10.20.30.40:3128 (Windows)
 ```
