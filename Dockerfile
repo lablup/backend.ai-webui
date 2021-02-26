@@ -26,7 +26,7 @@ RUN python3 -m pip install --no-cache-dir  -U -e . && \
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 2
 RUN redis-server --daemonize yes
 
-COPY ./build/rollup /webserver/src/ai/backend/webui/static
+COPY ./build/rollup /webserver/src/ai/backend/web/static
 
 ENV BACKEND_ENDPOINT_TYPE=api
 ENTRYPOINT redis-server --daemonize yes && python3 -m ai.backend.web.server -f /webserver.conf
