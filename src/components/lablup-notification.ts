@@ -15,13 +15,13 @@ import {store} from '../store';
 /**
  Lablup Notification
 
- `lablup-notification` notifies backend.ai console logs.
+ `lablup-notification` notifies backend.ai web UI logs.
 
  Example:
 
  <lablup-notification></lablup-notification>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element lablup-notification
  */
 
@@ -126,7 +126,7 @@ export default class LablupNotification extends LitElement {
    * Get user settings and set options according to user settings.
    * */
   _readUserSetting(name, default_value = true) {
-    let value: string | null = localStorage.getItem('backendaiconsole.usersetting.' + name);
+    let value: string | null = localStorage.getItem('backendaiwebui.usersetting.' + name);
     if (value !== null && value != '' && value != '""') {
       if (value === "false") {
         this.options[name] = false;
@@ -224,7 +224,7 @@ export default class LablupNotification extends LitElement {
     // }
     // this.notificationstore.push(log);
     if (Object.keys(log).length !== 0) {
-      this._saveToLocalStorage("backendaiconsole.logs", log);
+      this._saveToLocalStorage("backendaiwebui.logs", log);
     }
 
     if (this.detail !== '') {
@@ -323,12 +323,12 @@ export default class LablupNotification extends LitElement {
     // if (this.notificationstore.length > 5000) {
     //   this.notificationstore = this.notificationstore.slice(1, 5000);
     // }
-    let logs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
+    let logs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '{}');
     if (logs.length > 3000) {
       logs = logs.slice(0, 2999);
     }
     this.step = this.notifications.length;
-    localStorage.setItem('backendaiconsole.logs', JSON.stringify(logs));
+    localStorage.setItem('backendaiwebui.logs', JSON.stringify(logs));
   }
 }
 declare global {

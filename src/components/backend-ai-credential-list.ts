@@ -35,7 +35,7 @@ import {
 /**
  Backend.AI Credential List
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-credential-list
  */
 

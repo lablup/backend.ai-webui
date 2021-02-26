@@ -9,7 +9,7 @@ import {BackendAIPage} from "./backend-ai-page";
  Backend.AI Setting Storage
 
  `backend-ai-settings-store` is a general setting storage.
- @group Backend.AI Console
+@group Backend.AI Web UI
  */
 @customElement("backend-ai-settings-store")
 export default class BackendAiSettingsStore extends BackendAIPage {
@@ -39,8 +39,8 @@ export default class BackendAiSettingsStore extends BackendAIPage {
 
   _readSettings() { // Read all user settings.
     for (let i = 0, len = localStorage.length; i < len; ++i) {
-      if (localStorage.key(i)!.startsWith('backendaiconsole.settings')) {
-        let key = localStorage.key(i)!.replace('backendaiconsole.settings.', '');
+      if (localStorage.key(i)!.startsWith('backendaiwebui.settings')) {
+        let key = localStorage.key(i)!.replace('backendaiwebui.settings.', '');
         this._readSetting(key);
       }
     }
@@ -67,7 +67,7 @@ export default class BackendAiSettingsStore extends BackendAIPage {
   }
 
   _readSetting(name, default_value = true, namespace = "user") {
-    let value: string | null = localStorage.getItem('backendaiconsole.settings.' + name);
+    let value: string | null = localStorage.getItem('backendaiwebui.settings.' + name);
     if (value !== null && value != '' && value != '""') {
       if (value === "false") {
         this.options[name] = false;
@@ -85,19 +85,19 @@ export default class BackendAiSettingsStore extends BackendAIPage {
 
   _writeUserSetting(name, value, namespace) {
     if (value === false) {
-      localStorage.setItem('backendaiconsole.settings.' + namespace + '.' + name, "false");
+      localStorage.setItem('backendaiwebui.settings.' + namespace + '.' + name, "false");
     } else if (value === true) {
-      localStorage.setItem('backendaiconsole.settings.' + namespace + '.' + name, "true");
+      localStorage.setItem('backendaiwebui.settings.' + namespace + '.' + name, "true");
     } else if (typeof value === 'object') {
-      localStorage.setItem('backendaiconsole.settings.' + namespace + '.' + name, JSON.stringify(value));
+      localStorage.setItem('backendaiwebui.settings.' + namespace + '.' + name, JSON.stringify(value));
     } else {
-      localStorage.setItem('backendaiconsole.settings.' + namespace + '.' + name, value);
+      localStorage.setItem('backendaiwebui.settings.' + namespace + '.' + name, value);
     }
     this.options[namespace + '.' + name] = value;
   }
 
   _deleteUserSetting(name, namespace) {
-    localStorage.removeItem('backendaiconsole.settings.' + namespace + '.' + name);
+    localStorage.removeItem('backendaiwebui.settings.' + namespace + '.' + name);
     delete this.options[namespace + '.' + name];
     return true;
   }

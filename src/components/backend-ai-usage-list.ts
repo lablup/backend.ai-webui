@@ -28,7 +28,7 @@ import {
  ...
  </backend-ai-usage-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-usage-list
  */
 

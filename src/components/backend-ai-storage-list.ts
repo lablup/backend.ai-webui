@@ -53,7 +53,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
  <backend-ai-storage-list storageType="general" ?active="${!0===this.active}"></backend-ai-storage-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-storage-list
  */
 

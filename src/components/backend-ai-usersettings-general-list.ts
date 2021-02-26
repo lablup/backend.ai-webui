@@ -39,7 +39,7 @@ import './backend-ai-dialog';
 
  <backend-ai-usersettings-general-list active="true"></backend-ai-usersettings-general-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-usersettings-general-list
  */
 

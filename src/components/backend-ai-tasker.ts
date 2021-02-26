@@ -32,10 +32,10 @@ class Task {
 /**
  Backend.AI Task manager for Console
 
- `backend-ai-tasker` is a background task manager for console.
+ `backend-ai-tasker` is a background task manager for web UI.
 
  Example:
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-tasker
  */
 @customElement("backend-ai-tasker")

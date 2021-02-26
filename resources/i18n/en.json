@@ -1,5 +1,5 @@
 {
-  "console": {
+  "webui": {
     "menu": {
       "WelcomeMessage": "Welcome, ",
       "WelcomeMessage_2": " .",
@@ -584,12 +584,12 @@
     "UseCompactSidebar": "Use Compact Sidebar by default",
     "Language": "Language",
     "DescLanguage": "Set the UI language.",
-    "DescDesktopNotification": "Turn on or off desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within console.",
+    "DescDesktopNotification": "Turn on or off desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within web UI.",
     "DescUseCompactSidebar": "Compact sidebar lets you use more workspace. <br />If this option is turned on, compact sidebar becomes the initial UI at startup.",
     "KeepLoginSessionInformation": "Keep Login Session Information while Logout",
-    "DescKeepLoginSessionInformation": "Let console app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.",
+    "DescKeepLoginSessionInformation": "Let webui app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.",
     "BetaFeatures": "Beta Features",
-    "DescBetaFeatures": "Use beta features for GUI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.",
+    "DescBetaFeatures": "Use beta features for Web UI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.",
     "DescNoBetaFeatures": "No beta feature available now. :)",
     "EditBootstrapScript": "Edit Bootstrap Script",
     "EditUserConfigScript": "Edit User Config Script",
@@ -603,7 +603,7 @@
     "DescNewUserConfigFileCreated": "New User config file can be created with non-empty data.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Please update script with non empty value.",
     "AutomaticUpdateCheck": "Automatic Update Check",
-    "DescAutomaticUpdateCheck": "Notify when a new console version is released.<br />In where the Internet is unstable or offline, this option will be automatically turned off. You can toggle this switch to start the automatic update check again.",
+    "DescAutomaticUpdateCheck": "Notify when a new webui version is released.<br />In where the Internet is unstable or offline, this option will be automatically turned off. You can toggle this switch to start the automatic update check again.",
     "PreferredSSHPort": "Preferred SSH Port",
     "DescPreferredSSHPort": "Use this value as an SSH/SFTP port if possible. <br />If the port is already in use, assign another random port to SSH/SFTP. Leave blank to auto-assign.",
     "SSHKeypairManagement": "SSH Keypair Management",
@@ -771,7 +771,7 @@
     "UseCLIonGUI": "Use Backend.AI CLI on GUI",
     "DescUseCLIonGUI": "Provide Backend.AI CLI on GUI app/web. Requires Backend.AI CLI image.",
     "UseGUIonWeb": "Use Backend.AI GUI on Web",
-    "DescUseGUIonWeb": "Provide Backend.AI GUI as a web service. Requires Backend.AI Console image.",
+    "DescUseGUIonWeb": "Provide Backend.AI GUI as a web service. Requires Backend.AI Web UI image.",
     "NoteAboutFixedSetup": "Note: The settings below are automatically applied depending on the installation environment and status.",
     "Scaling": "Scaling",
     "AllowAgentSideRegistration": "Allow agent-side registration",
@@ -918,7 +918,7 @@
     "VerificationError": "Verification error occurred"
   },
   "update": {
-    "NewConsoleVersionAvailable": "New version is available:"
+    "NewWebUIVersionAvailable": "New version is available:"
   },
   "sidepanel": {
     "BackgroundTasks": "Running Tasks",

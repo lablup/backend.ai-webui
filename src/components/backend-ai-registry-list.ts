@@ -31,7 +31,7 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 
  `backend-ai-registry-list` manages registries.
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-release-check
  */
 

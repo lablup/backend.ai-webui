@@ -52,7 +52,7 @@ import {
  ...
  </backend-ai-user-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-user-list
  */
 
@@ -585,7 +585,7 @@ export default class BackendAIUserList extends BackendAIPage {
                       type="password"
                       id="password"
                       autoValidate
-                      validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
+                      validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
                       pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                       maxLength="64"
                       label="${_text("general.NewPassword")}"
@@ -599,11 +599,11 @@ export default class BackendAIUserList extends BackendAIPage {
                       type="password"
                       id="confirm"
                       autoValidate
-                      validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
+                      validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
                       pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                       maxLength="64"
                       @change=${() => this._togglePasswordInputRequired()}
-                      label="${_text("console.menu.NewPasswordAgain")}"></mwc-textfield>
+                      label="${_text("webui.menu.NewPasswordAgain")}"></mwc-textfield>
                   <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
                       @click="${(e) => this._togglePasswordVisibility(e.target)}">
                   </mwc-icon-button-toggle>

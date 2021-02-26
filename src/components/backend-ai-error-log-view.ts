@@ -19,7 +19,7 @@ import {
 /**
  Backend.AI Error Log View
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-error-log-view
  */
 

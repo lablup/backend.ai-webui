@@ -3,7 +3,7 @@
 
  `backend-ai-painkiller` informs error messages.
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-painkiller
  */
 
@@ -60,7 +60,7 @@ export default class BackendAIPainKiller {
       return 'Problem occurred.';
     }
     console.log("Error:", msg);
-    if (globalThis.backendaiconsole.debug === true) {
+    if (globalThis.backendaiwebui.debug === true) {
       return msg;
     }
     if (this.errorMessageTable.hasOwnProperty(msg)) {

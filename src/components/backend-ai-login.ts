@@ -48,7 +48,7 @@ declare global {
  ... content ...
  </backend-ai-login>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  */
 @customElement("backend-ai-login")
 export default class BackendAILogin extends BackendAIPage {
@@ -94,7 +94,7 @@ export default class BackendAILogin extends BackendAIPage {
 
   constructor() {
     super();
-    globalThis.backendaiconsole = {};
+    globalThis.backendaiwebui = {};
     this.endpoints = [];
   }
 
@@ -327,10 +327,10 @@ export default class BackendAILogin extends BackendAIPage {
     if (this.change_signin_support === true) {
       if (this.connection_mode == 'SESSION') {
         this.connection_mode = 'API';
-        localStorage.setItem('backendaiconsole.connection_mode', 'API');
+        localStorage.setItem('backendaiwebui.connection_mode', 'API');
       } else {
         this.connection_mode = 'SESSION';
-        localStorage.setItem('backendaiconsole.connection_mode', 'SESSION');
+        localStorage.setItem('backendaiwebui.connection_mode', 'SESSION');
       }
       this.requestUpdate();
     }
@@ -358,9 +358,9 @@ export default class BackendAILogin extends BackendAIPage {
       });
     }
     if (typeof config.general === "undefined" || typeof config.general.debug === "undefined" || config.general.debug === '') {
-      globalThis.backendaiconsole.debug = false;
+      globalThis.backendaiwebui.debug = false;
     } else if (config.general.debug === true) {
-      globalThis.backendaiconsole.debug = true;
+      globalThis.backendaiwebui.debug = true;
       console.log('Debug flag is set to true');
     }
     if (typeof config.general === "undefined" || typeof config.general.signupSupport === "undefined" || config.general.signupSupport === '' || config.general.signupSupport == false) {
@@ -461,7 +461,7 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       this.default_import_environment = config.general.defaultImportEnvironment;
     }
-    let connection_mode: string | null = localStorage.getItem('backendaiconsole.connection_mode');
+    let connection_mode: string | null = localStorage.getItem('backendaiwebui.connection_mode');
     if (globalThis.isElectron && connection_mode !== null && connection_mode != '' && connection_mode != '""') {
       if (connection_mode === 'SESSION') {
         this.connection_mode = 'SESSION';
@@ -537,7 +537,7 @@ export default class BackendAILogin extends BackendAIPage {
    * */
   login(showError: boolean = true) {
     if (this.api_endpoint === '') {
-      let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
+      let api_endpoint: any = localStorage.getItem('backendaiwebui.api_endpoint');
       if (api_endpoint != null) {
         this.api_endpoint = api_endpoint.replace(/^\"+|\"+$/g, '');
       }
@@ -556,7 +556,7 @@ export default class BackendAILogin extends BackendAIPage {
 
   async check_login(showError: boolean = true) {
     if (this.api_endpoint === '') {
-      let api_endpoint: any = localStorage.getItem('backendaiconsole.api_endpoint');
+      let api_endpoint: any = localStorage.getItem('backendaiwebui.api_endpoint');
       if (api_endpoint != null) {
         this.api_endpoint = api_endpoint.replace(/^\"+|\"+$/g, '');
       }
@@ -960,7 +960,7 @@ export default class BackendAILogin extends BackendAIPage {
       document.dispatchEvent(event);
       this.close();
       this._saveLoginInfo();
-      localStorage.setItem('backendaiconsole.api_endpoint', this.api_endpoint);
+      localStorage.setItem('backendaiwebui.api_endpoint', this.api_endpoint);
       //this.notification.text = 'Connected.';
       //this.notification.show();
     }).catch((err) => {   // Connection failed
@@ -993,10 +993,10 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   async _saveLoginInfo() {
-    localStorage.removeItem('backendaiconsole.login.api_key');
-    localStorage.removeItem('backendaiconsole.login.secret_key');
-    localStorage.removeItem('backendaiconsole.login.user_id');
-    localStorage.removeItem('backendaiconsole.login.password');
+    localStorage.removeItem('backendaiwebui.login.api_key');
+    localStorage.removeItem('backendaiwebui.login.secret_key');
+    localStorage.removeItem('backendaiwebui.login.user_id');
+    localStorage.removeItem('backendaiwebui.login.password');
   }
 
   _toggleEndpoint() {

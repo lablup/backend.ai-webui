@@ -34,7 +34,7 @@ import './lablup-progress-bar';
  ... content ...
  </backend-ai-agent-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-agent-list
  */
 

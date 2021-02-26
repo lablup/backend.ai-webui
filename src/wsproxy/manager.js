@@ -1,5 +1,5 @@
 /*
-Backend.AI Webapp proxy for console
+Backend.AI Webapp proxy for Web UI
 ===================================
 
 (C) Copyright 2016-2021 Lablup Inc.
@@ -67,7 +67,7 @@ class Manager extends EventEmitter {
         "endpoint": req.body.endpoint,
         "ext_proxy_url": this.extHttpProxyURL
       };
-      // Receive API version from console. Initialization timing is different so we use API information from requester.
+      // Receive API version from web UI. Initialization timing is different so we use API information from requester.
       if (req.body.api_version) {
         cf['_apiVersionMajor'] = req.body.api_version;
       } else {

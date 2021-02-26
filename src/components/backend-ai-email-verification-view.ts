@@ -27,13 +27,13 @@ import {
  ... content ...
  </backend-ai-email-verification-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-email-verification-view
  */
 
 @customElement("backend-ai-email-verification-view")
 export default class BackendAIEmailVerificationView extends BackendAIPage {
-  @property({type: Object}) consoleShell = Object();
+  @property({type: Object}) webUIShell = Object();
   @property({type: Object}) clientConfig = Object();
   @property({type: Object}) client = Object();
   @property({type: Object}) notification = Object();
@@ -65,8 +65,8 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
    * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   _initClient(apiEndpoint: string) {
-    this.consoleShell = document.querySelector('#console-shell');
-    this.consoleShell.appBody.style.visibility = 'visible';
+    this.webUIShell = document.querySelector('#webui-shell');
+    this.webUIShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
     this.successDialog = this.shadowRoot.querySelector('#verification-success-dialog');
     this.failDialog = this.shadowRoot.querySelector('#verification-fail-dialog');
@@ -74,7 +74,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
     this.client = new ai.backend.Client(
       this.clientConfig,
-      'Backend.AI Console.',
+      'Backend.AI Web UI.',
     );
     this.successDialog.addEventListener('didHide', () => {
       this._redirectToLoginPage();

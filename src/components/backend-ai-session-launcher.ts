@@ -43,7 +43,7 @@ import {
 
  <backend-ai-session-launcher active></backend-ai-session-launcher>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-session-launcher
  */
 
@@ -634,7 +634,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.cluster_support = true;
         }
         this.is_connected = true;
-        this._debug = globalThis.backendaiconsole.debug;
+        this._debug = globalThis.backendaiwebui.debug;
         this._enableLaunchButton();
       }, {once: true});
     } else {
@@ -646,7 +646,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.cluster_support = true;
       }
       this.is_connected = true;
-      this._debug = globalThis.backendaiconsole.debug;
+      this._debug = globalThis.backendaiwebui.debug;
       this._enableLaunchButton();
     }
   }
@@ -1240,7 +1240,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (var i = 0; i < 8; i++)
       text += possible.charAt(Math.floor(Math.random() * possible.length));
-    return text + "-console";
+    return text + "-session";
   }
 
   async _updateVirtualFolderList() {
@@ -2347,7 +2347,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
-              <div class="resource-type">${_t("console.menu.Sessions")}</div>
+              <div class="resource-type">${_t("webui.menu.Sessions")}</div>
               <lablup-slider id="session-resource" class="session"
                              pin snaps editable markers step="1"
                              @click="${this._resourceTemplateToCustom}"

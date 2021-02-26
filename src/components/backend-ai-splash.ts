@@ -17,11 +17,11 @@ import 'weightless/icon';
  Example:
 
  ```
- <backend-ai-splash></backend-ai-console>
+ <backend-ai-splash></backend-ai-webui>
  ...
  this.shadowRoot.querySelector('backend-ai-splash').show()
  ```
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-splash
  */
 @customElement("backend-ai-splash")
@@ -134,7 +134,7 @@ export default class BackendAISplash extends LitElement {
         </div>
         <div class="splash-information">
           <ul>
-            <li>Backend.AI Console <span id="version-detail" class="detail">${globalThis.packageVersion}</span></li>
+            <li>Backend.AI Web UI <span id="version-detail" class="detail">${globalThis.packageVersion}</span></li>
             <li><span id="license-detail">${this.edition} Edition</span></li>
             <li><span id="valid-until" class="detail">
               ${this.license === "Subscription" ? html`Subscription is active until ${this.validUntil}` : html``}
@@ -147,8 +147,8 @@ export default class BackendAISplash extends LitElement {
             <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/master/LICENSE">open-source software</a></li>
             <li class="copyright">Copyright &copy; 2015-2021 Lablup Inc.</li>
             <li class="release-note">
-              <a target="_blank" href="https://github.com/lablup/backend.ai-console/releases/tag/v${this.version}">Release Note</a>
-              <a target="_blank" href="https://github.com/lablup/backend.ai-console/blob/main/LICENSE">License</a>
+              <a target="_blank" href="https://github.com/lablup/backend.ai-webui/releases/tag/v${this.version}">Release Note</a>
+              <a target="_blank" href="https://github.com/lablup/backend.ai-webui/blob/main/LICENSE">License</a>
             </li>
             </ul>
           </ul>

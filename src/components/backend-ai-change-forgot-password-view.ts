@@ -27,13 +27,13 @@ import {
  ... content ...
  </backend-ai-change-forgot-password-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-change-forgot-password-view
  */
 
 @customElement("backend-ai-change-forgot-password-view")
 export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
-  @property({type: Object}) consoleShell = Object();
+  @property({type: Object}) webUIShell = Object();
   @property({type: Object}) clientConfig = Object();
   @property({type: Object}) client = Object();
   @property({type: Object}) notification = Object();
@@ -70,8 +70,8 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
    * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   _initClient(apiEndpoint: string) {
-    this.consoleShell = document.querySelector('#console-shell');
-    this.consoleShell.appBody.style.visibility = 'visible';
+    this.webUIShell = document.querySelector('#webui-shell');
+    this.webUIShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
     this.passwordChangeDialog = this.shadowRoot.querySelector('#update-password-dialog');
     this.failDialog = this.shadowRoot.querySelector('#verification-fail-dialog');
@@ -79,7 +79,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
     this.client = new ai.backend.Client(
       this.clientConfig,
-      'Backend.AI Console.',
+      'Backend.AI Web UI.',
     );
     this.passwordChangeDialog.addEventListener('didHide', () => {
       this._redirectToLoginPage();
@@ -123,7 +123,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     if (!emailEl.value || !emailEl.validity.valid) return;
     if (!passwordEl1.value || !passwordEl1.validity.valid) return;
     if (passwordEl1.value !== passwordEl2.value) {
-      this.notification.text = _text('console.menu.PasswordMismatch');
+      this.notification.text = _text('webui.menu.PasswordMismatch');
       this.notification.show();
       return;
     }
@@ -146,7 +146,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     // language=HTML
     return html`
       <backend-ai-dialog id="update-password-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
-        <span slot="title">${_t("console.menu.ChangePassword")}</span>
+        <span slot="title">${_t("webui.menu.ChangePassword")}</span>
 
         <div slot="content" class="login-panel intro centered">
           <div class="horizontal layout center" style="margin:10px;">
@@ -158,12 +158,12 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
                 pattern="^[A-Z0-9a-z#-_]+@.+\\..+$" maxLength="64"
                 placeholder="${_t('maxLength.64chars')}">
             </mwc-textfield>
-            <mwc-textfield id="password1" label="${_t('console.menu.NewPassword')}" type="password"
-                auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
+            <mwc-textfield id="password1" label="${_t('webui.menu.NewPassword')}" type="password"
+                auto-validate validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
                 pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$" maxLength="64">
             </mwc-textfield>
-            <mwc-textfield id="password2" label="${_t('console.menu.NewPasswordAgain')}" type="password"
-                auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
+            <mwc-textfield id="password2" label="${_t('webui.menu.NewPasswordAgain')}" type="password"
+                auto-validate validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
                 pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$" maxLength="64">
             </mwc-textfield>
             <div style="height:1em"></div>
@@ -172,7 +172,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               unelevated
-              label="${_t("console.menu.Update")}"
+              label="${_t("webui.menu.Update")}"
               @click="${() => this._updatePassword()}"></mwc-button>
         </div>
       </backend-ai-dialog>

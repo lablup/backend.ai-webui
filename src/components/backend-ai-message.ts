@@ -13,7 +13,7 @@ import {LitElement} from "lit-element";
 
  <backend-ai-message></backend-ai-message>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  */
 class BackendAiMessage extends LitElement {
   constructor() {

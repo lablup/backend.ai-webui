@@ -27,7 +27,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 import {default as PainKiller} from "./backend-ai-painkiller";
 
 /**
- `<backend-ai-import-view>` is a import feature of backend.ai console.
+ `<backend-ai-import-view>` is a import feature of backend.ai web UI.
 
  Example:
  <backend-ai-import-view active></backend-ai-import-view>

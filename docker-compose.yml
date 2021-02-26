@@ -1,32 +1,32 @@
 version: '3.1'
 
 services:
-  console-dev:
+  webui-dev:
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
       - "8080:8080"
     volumes:
-      - ./console-server.conf:/console-server.conf
-      - ./build/rollup:/console-server/src/ai/backend/console/static
+      - ./webserver.conf:/webserver.conf
+      - ./build/rollup:/webserver/src/ai/backend/webui/static
     environment:
       - BACKEND_ENDPOINT_TYPE=api
-    command: /bin/bash -c "redis-server --daemonize yes && python3 -m ai.backend.console.server -f /console-server.conf"
+    command: /bin/bash -c "redis-server --daemonize yes && python3 -m ai.backend.web.server -f /webserver.conf"
     networks:
       - backend
-  console:
+  webui:
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
       - "443:443"
     volumes:
-      - ./console-server.conf:/console-server.conf
+      - ./webserver.conf:/webserver.conf
       - ./certificates:/etc/certificates
     environment:
       - BACKEND_ENDPOINT_TYPE=api
-    command: /bin/bash -c "redis-server --daemonize yes && python3 -m ai.backend.console.server -f /console-server.conf"
+    command: /bin/bash -c "redis-server --daemonize yes && python3 -m ai.backend.web.server -f /webserver.conf"
     networks:
       - backend
 networks:

@@ -1,5 +1,5 @@
 {
-  "console": {
+  "webui": {
     "menu": {
       "WelcomeMessage": "환영합니다. ",
       "WelcomeMessage_2": "님",
@@ -581,10 +581,10 @@
     "UseCompactSidebar": "간결한 사이드바 기본 사용",
     "Language": "언어",
     "DescLanguage": "인터페이스 언어를 설정합니다.",
-    "DescDesktopNotification": "데스크탑 알림을 사용합니다.<br />이 옵션이 켜져 있을때, Backend.AI는 운영체제의 알림 기능을 함께 사용합니다. 이 옵션을 꺼도 콘솔내의 알림은 계속 동작합니다.",
+    "DescDesktopNotification": "데스크탑 알림을 사용합니다.<br />이 옵션이 켜져 있을때, Backend.AI는 운영체제의 알림 기능을 함께 사용합니다. 이 옵션을 꺼도 웹 UI내의 알림은 계속 동작합니다.",
     "DescUseCompactSidebar": "간결한 사이드바는 더 많은 작업 공간을 쓸 수 있게 합니다.<br />이 옵션이 켜져 있을때, 간결한 사이드바가 시작시 기본 인터페이스가 됩니다.",
     "KeepLoginSessionInformation": "로그아웃 후 로그인 정보 유지",
-    "DescKeepLoginSessionInformation": "콘솔 앱이 다음 앱 사용시까지 로그인 세션 정보를 저장합니다.<br />이 옵션이 꺼져있을 경우, 매 종료시마다 로그인 정보가 자동으로 삭제됩니다.",
+    "DescKeepLoginSessionInformation": "웹 UI 앱이 다음 앱 사용시까지 로그인 세션 정보를 저장합니다.<br />이 옵션이 꺼져있을 경우, 매 종료시마다 로그인 정보가 자동으로 삭제됩니다.",
     "BetaFeatures": "베타 기능",
     "DescBetaFeatures": "GUI용으로 테스트중인 기능들을 사용합니다.<br />베타 기능들은 불안정할 수 있습니다. 몇몇 베타 기능들은 정식 버전에서는 채택되지 않을 수 있습니다.",
     "DescNoBetaFeatures": "사용 가능한 베타 기능이 없습니다. :)",
@@ -600,7 +600,7 @@
     "DescNewUserConfigFileCreated": "새 사용자 스크립트 생성을 위한 내용이 필요합니다.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "스크립트 수정을 위한 내용을 입력하세요.",
     "AutomaticUpdateCheck": "자동 업데이트 체크",
-    "DescAutomaticUpdateCheck": "새 콘솔 버전이 출시된 경우 알려줍니다.<br />오프라인 또는 인터넷 연결 상태가 불안정한 환경에서는 몇 차례 시도후 자동으로 사용이 중지됩니다. 이 경우 이 스위치를 켜서 다시 자동 업데이트 체크를 시작할 수 있습니다.",
+    "DescAutomaticUpdateCheck": "새로운 웹 UI 버전이 출시된 경우 알려줍니다.<br />오프라인 또는 인터넷 연결 상태가 불안정한 환경에서는 몇 차례 시도후 자동으로 사용이 중지됩니다. 이 경우 이 스위치를 켜서 다시 자동 업데이트 체크를 시작할 수 있습니다.",
     "PreferredSSHPort": "선호하는 SSH 포트",
     "DescPreferredSSHPort": "가능하면 이 값을 SSH/SFTP 포트번호로 사용합니다.<br />만약 해당 포트가 이미 사용중이라면, SSH/SFTP를 위한 임의의 다른 포트를 할당합니다. 자동 할당을 위해서는 빈 칸으로 남겨두세요.",
     "SSHKeypairManagement": "SSH 키페어 관리",
@@ -621,7 +621,7 @@
     "Edit_ShellScriptTitle_1": " ",
     "Edit_ShellScriptTitle_2": " 셀 스크립트 수정하기",
     "AutoLogout": "자동 로그아웃",
-    "DescAutoLogout": "세션 내 앱을 실행하기 위해 생성된 페이지를 제외한 모든 Backend.AI 콘솔 페이지가 닫힐 경우 자동으로 로그아웃됩니다."
+    "DescAutoLogout": "세션 내 앱을 실행하기 위해 생성된 페이지를 제외한 모든 Backend.AI 웹 UI 페이지가 닫힐 경우 자동으로 로그아웃됩니다."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",
@@ -769,7 +769,7 @@
     "UseCLIonGUI": "Backend.AI CLI를 GUI에서 사용",
     "DescUseCLIonGUI": "Backend.AI CLI 를 앱 및 웹 GUI에서 사용합니다. Backend.AI CLI 이미지가 필요합니다.",
     "UseGUIonWeb": "Backend.AI GUI를 웹에서 사용",
-    "DescUseGUIonWeb": "Backend.AI GUI를 웹서비스 형태로 사용합니다. Backend.AI 콘솔서버 이미지가 필요합니다.",
+    "DescUseGUIonWeb": "Backend.AI GUI를 웹서비스 형태로 사용합니다. Backend.AI 웹 서버 이미지가 필요합니다.",
     "NoteAboutFixedSetup": "안내: 아래의 설정들은 설치 환경 및 상태에 따라 자동으로 지정된 값입니다.",
     "Scaling": "스케일링",
     "AllowAgentSideRegistration": "에이전트쪽으로부터의 등록 허용",
@@ -918,7 +918,7 @@
     "VerificationError": "인증 에러가 발생하였습니다."
   },
   "update": {
-    "NewConsoleVersionAvailable": "새 버전이 출시되었습니다:"
+    "NewWebUIVersionAvailable": "새 버전이 출시되었습니다:"
   },
   "sidepanel": {
     "BackgroundTasks": "작업",

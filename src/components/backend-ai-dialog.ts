@@ -24,7 +24,7 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
  ...
  </backend-ai-dialog>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-dialog
  */
 @customElement("backend-ai-dialog")

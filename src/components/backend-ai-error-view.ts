@@ -15,7 +15,7 @@ import {store} from '../store';
 import {navigate} from '../backend-ai-app';
 
 /**
- `<backend-ai-error-view>` is a blank panel of backend.ai console.
+ `<backend-ai-error-view>` is a blank panel of backend.ai Web UI.
 
  Example:
  <backend-ai-error-view active></backend-ai-error-view>
@@ -87,8 +87,8 @@ export default class BackendAIErrorView extends BackendAIPage {
     <div class="horizontal center flex layout" style="margin:20px;">
       <img src="/resources/images/404_not_found.svg" style="width:500px;margin:20px;"/>
       <div class="vertical layout" style="width:100%;">
-        <div class="title">${_tr('console.NOTFOUND')}</div>
-        <p class="description">${_t('console.DescNOTFOUND')}</p>
+        <div class="title">${_tr('webui.NOTFOUND')}</div>
+        <p class="description">${_t('webui.DescNOTFOUND')}</p>
         <div style="width:auto;">
           <mwc-button
               unelevated
