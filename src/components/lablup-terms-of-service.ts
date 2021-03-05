@@ -114,7 +114,10 @@ export default class LablupTermsOfService extends LitElement {
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable>
+      <backend-ai-dialog
+          id="terms-of-service-dialog"
+          class="terms-of-service-dialog"
+          fixed blockscrolling persistent scrollable noclosebutton>
         <span slot="title">${this.title}</span>
         <div slot="action" class="horizontal end-justified center flex layout">
           ${this.tosLanguages ? html`
@@ -146,11 +149,11 @@ export default class LablupTermsOfService extends LitElement {
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     this.dialog = this.shadowRoot.querySelector('#terms-of-service-dialog');
-    this.dialog.addEventListener('didShow', () => {
-      this._syncOpenState()
+    this.dialog.addEventListener('opened', () => {
+      this._syncOpenState();
     });
-    this.dialog.addEventListener('didHide', () => {
-      this._syncOpenState()
+    this.dialog.addEventListener('closed', () => {
+      this._syncOpenState();
     });
     if (this.block) {
       this.dialog.backdrop = true;
