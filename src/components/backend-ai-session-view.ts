@@ -41,7 +41,7 @@ import {
  ...
  </backend-ai-settings-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-storage-list
  */
 

@@ -58,7 +58,7 @@ app.once('ready', function() {
         label: 'Backend.AI',
         submenu: [
           {
-            label: 'About Backend.AI Console',
+            label: 'About Backend.AI Web UI',
             click: function() {
               mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
                 '    document.dispatchEvent(event);');
@@ -353,8 +353,8 @@ function createWindow() {
       if ('wsproxy' in config && 'disableCertCheck' in config.wsproxy && config.wsproxy.disableCertCheck == true) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
       }
-      if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != '') {
-        mainURL = config.server.consoleServerURL;
+      if ('server' in config && 'webServerURL' in config.server && config.server.webServerURL != '') {
+        mainURL = config.server.webServerURL;
       } else {
         mainURL = url.format({
           pathname: path.join(mainIndex),

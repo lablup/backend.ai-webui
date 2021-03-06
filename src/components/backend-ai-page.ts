@@ -1,7 +1,7 @@
 /**
  Backend.AI base view page for Single-page application
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  */
 import {get as _text, registerTranslateConfig} from "lit-translate";
 import {LitElement, property} from 'lit-element';
@@ -9,7 +9,7 @@ import {LitElement, property} from 'lit-element';
 /**
  Backend AI Page
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-page
  */
 

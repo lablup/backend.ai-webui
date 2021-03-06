@@ -19,7 +19,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  ...
  </lablup-activity-panel>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element lablup-activity-panel
  */
 

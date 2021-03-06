@@ -33,7 +33,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
  ... content ...
  </backend-ai-maintenance-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-maintenance-view
  */
 

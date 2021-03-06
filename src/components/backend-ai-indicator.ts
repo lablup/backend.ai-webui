@@ -12,7 +12,7 @@ import 'weightless/title';
 /**
  Backend.AI Indicator
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-indicator
  */
 

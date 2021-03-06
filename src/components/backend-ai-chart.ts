@@ -47,7 +47,7 @@ const capitalize = (s) => {
 /**
  Backend.AI Chart
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-chart
  */
 

@@ -3,7 +3,7 @@
 Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.8.1)
 ====================================================================
 
-(C) Copyright 2016-2020 Lablup Inc.
+(C) Copyright 2016-2021 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
@@ -19,7 +19,7 @@ class ClientConfig {
      * @param {string} accessKey - access key to connect Backend.AI manager
      * @param {string} secretKey - secret key to connect Backend.AI manager
      * @param {string} endpoint  - endpoint of Backend.AI manager
-     * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires console-server.
+     * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires webserver.
      */
     constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
         // default configs.
@@ -326,7 +326,7 @@ class Client {
                 description: errorDesc
             };
         }
-        let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
+        let previous_log = JSON.parse(localStorage.getItem('backendaiwebui.logs'));
         if (previous_log) {
             if (previous_log.length > 5000) {
                 previous_log = previous_log.slice(1, 5000);
@@ -355,7 +355,7 @@ class Client {
         if (previous_log) {
             log_stack = log_stack.concat(previous_log);
         }
-        localStorage.setItem('backendaiconsole.logs', JSON.stringify(log_stack));
+        localStorage.setItem('backendaiwebui.logs', JSON.stringify(log_stack));
         return body;
     }
     /**
@@ -465,7 +465,7 @@ class Client {
         return version <= apiVersion;
     }
     /**
-     * Check if console-server is authenticated. This requires additional console-server package.
+     * Check if webserver is authenticated. This requires additional webserver package.
      *
      */
     async check_login() {
@@ -489,7 +489,7 @@ class Client {
         return result.authenticated;
     }
     /**
-     * Login into console-server with given ID/Password. This requires additional console-server package.
+     * Login into webserver with given ID/Password. This requires additional webserver package.
      *
      */
     async login() {
@@ -514,7 +514,7 @@ class Client {
                 }
             }
         }
-        catch (err) { // Manager / console server down.
+        catch (err) { // Manager / webserver down.
             if ('statusCode' in err && err.statusCode === 429) {
                 throw {
                     "title": err.description,
@@ -532,7 +532,7 @@ class Client {
         }
     }
     /**
-     * Logout from console-server. This requires additional console-server package.
+     * Logout from webserver. This requires additional webserver package.
      *
      */
     logout() {
@@ -541,7 +541,7 @@ class Client {
         return this._wrapWithPromise(rqst);
     }
     /**
-     * Leave from manager user. This requires additional console-server package.
+     * Leave from manager user. This requires additional webserver package.
      *
      */
     async signout(userid, password) {
@@ -1918,7 +1918,7 @@ class ContainerImage {
      *
      * @param {array} fields - fields to query. Default fields are: ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]
      * @param {boolean} installed_only - filter images to installed / not installed. true to query installed images only.
-     * @param {boolean} system_images - filter images to get system images such as console, SFTP server. true to query system images only.
+     * @param {boolean} system_images - filter images to get system images such as web UI, SFTP server. true to query system images only.
      */
     async list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false, system_images = false) {
         let q, v;

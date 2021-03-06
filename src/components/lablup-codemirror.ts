@@ -21,7 +21,7 @@ import {CodemirrorBaseStyle} from '../lib/codemirror/base-style.css';
 
  <lablup-codemirror></lablup-codemirror>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element lablup-codemirror
  */
 

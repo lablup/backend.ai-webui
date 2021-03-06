@@ -16,7 +16,7 @@ import {BackendAIPage} from './backend-ai-page';
 
  <backend-ai-help></backend-ai-help>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-help
  */
 @customElement("backend-ai-help-button")

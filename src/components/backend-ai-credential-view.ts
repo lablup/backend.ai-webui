@@ -48,7 +48,7 @@ import {
  ... content ...
  </backend-ai-credential-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  */
 @customElement("backend-ai-credential-view")
 export default class BackendAICredentialView extends BackendAIPage {

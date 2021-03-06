@@ -25,7 +25,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
  <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-app-launcher
  */
 
@@ -210,9 +210,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const checkbox = this.shadowRoot.querySelector('#hide-guide');
     checkbox.addEventListener('change', (event) => {
       if (!event.target.checked) {
-        localStorage.setItem('backendaiconsole.terminalguide', 'true');
+        localStorage.setItem('backendaiwebui.terminalguide', 'true');
       } else {
-        localStorage.setItem('backendaiconsole.terminalguide', 'false');
+        localStorage.setItem('backendaiwebui.terminalguide', 'false');
       }
     });
   }
@@ -599,7 +599,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
 
     if (appName === 'ttyd') {
-      let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
+      let isVisible = localStorage.getItem('backendaiwebui.terminalguide');
       if (!isVisible || isVisible === 'true') {
         this._openTerminalGuideDialog();
       }
@@ -671,7 +671,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    */
   async runTerminal(sessionUuid: string) {
-    let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
+    let isVisible = localStorage.getItem('backendaiwebui.terminalguide');
     if (!isVisible || isVisible === 'true') {
       this._openTerminalGuideDialog();
     }

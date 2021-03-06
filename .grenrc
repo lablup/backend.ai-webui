@@ -1,6 +1,6 @@
 {
     "username": "lablup",
-    "repo": "backend.ai-console",
+    "repo": "backend.ai-webui",
     "dataSource": "issues",
     "ignoreIssuesWith": [
         "wontfix",
