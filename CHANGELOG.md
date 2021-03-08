@@ -1,5 +1,16 @@
 # Changelog
 
+## v21.03.0 (08/03/2021)
+
+#### Enhancements:
+
+- [**easy**][**enhancement**][**good first issue**][**urgency**] Let's rename Backend.AI GUI console to Backend.AI Web UI [#919](https://github.com/lablup/backend.ai-webui/issues/919)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**good first issue**][**urgency**] Let's fix the floating point in shared memory value of resource preset [#917](https://github.com/lablup/backend.ai-webui/issues/917)
+
+
 ## v21.02.3 (22/02/2021)
 
 #### Enhancements:
