@@ -1,5 +1,6 @@
 {
   "name": "backend.ai-webui",
+  "version": "21.03.0",
   "version": "21.02.3",
   "repository": "https://github.com/lablup/backend.ai-webui.git",
   "author": "Lablup Inc. <contact@lablup.com>",
