@@ -1,0 +1,13 @@
+{
+  "src": "./app/dist",
+  "dest": "./app",
+  "categories": [
+    "Utility"
+  ],
+  "options": {
+    "name": "Backend.AI Desktop",
+    "productName":  "Backend.AI Desktop",
+    "description": "Backend.AI Desktop App. Backend.AI Desktop provides a convenient environment for users, while allowing various commands to be executed without CLI. It also provides some visual features that are not provided by the CLI, such as dashboards and statistics.",
+    "arch": "amd64"
+  }
+}

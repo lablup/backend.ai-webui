@@ -1,4 +1,4 @@
-EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-app --ignore=node_modules/electron-packager --ignore=.git --overwrite --asar --ignore="\.git(ignore|modules)" --out=app
+EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-app "Backend.AI Desktop" --ignore=node_modules/electron-packager --ignore=.git --overwrite --asar --ignore="\.git(ignore|modules)" --out=app
 BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
 BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev | cut -c 3- | rev)
@@ -56,49 +56,51 @@ web:
 		make compile; \
 	fi
 	mkdir -p ./deploy/$(site)
-	cd deploy/$(site); rm -rf ./*; mkdir console
-	cp -Rp build/rollup/* deploy/$(site)/console
-	cp ./configs/$(site).toml deploy/$(site)/console/config.toml
+	cd deploy/$(site); rm -rf ./*; mkdir webui
+	cp -Rp build/rollup/* deploy/$(site)/webui
+	cp ./configs/$(site).toml deploy/$(site)/webui/config.toml
 	if [ -f "./configs/$(site).css" ];then \
-		cp ./configs/$(site).css deploy/$(site)/console/resources/custom.css; \
+		cp ./configs/$(site).css deploy/$(site)/webui/resources/custom.css; \
 	fi
 mac: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns
-	rm -rf ./app/backend.ai-console-macos
-	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos;
-	mv ./app/backend.ai-console-macos/backend.ai-console.app './app/backend.ai-console-macos/Backend.AI Console.app'
-	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-console-macos/Backend.AI Console.app' ./app/backend.ai-console-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
+	rm -rf ./app/backend.ai-desktop-macos
+	cd app; mv "Backend.AI Desktop-darwin-x64" backend.ai-desktop-macos;
+	#mv "./app/backend.ai-desktop-macos/Backend.AI Desktop.app" './app/backend.ai-desktop-macos/Backend.AI Desktop.app'
+	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos/Backend.AI Desktop.app' ./app/backend.ai-desktop-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
-	mv ./app/backend.ai-console-$(BUILD_DATE).dmg ./app/backend.ai-console-$(BUILD_VERSION)-macos.dmg
+	mv ./app/backend.ai-desktop-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-macos.dmg
 else
-	mv ./app/backend.ai-console-$(BUILD_DATE).dmg ./app/backend.ai-console-$(BUILD_VERSION)-$(site).dmg
+	mv ./app/backend.ai-desktop-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(site).dmg
 endif
 win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=win32 --arch=x64 --icon=manifest/backend-ai.ico
-	cd app; zip ./backend.ai-console-win32-x64-$(BUILD_DATE).zip -r ./backend.ai-console-win32-x64
+	cd app; zip ./backend.ai-desktop-win32-x64-$(BUILD_DATE).zip -r "./Backend.AI Desktop-win32-x64"
 ifeq ($(site),main)
-	mv ./app/backend.ai-console-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-console-$(BUILD_VERSION)-win32-x64.zip
+	mv ./app/backend.ai-desktop-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-win32-x64.zip
 else
-	mv ./app/backend.ai-console-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-console-x64-$(BUILD_VERSION)-$(site).zip
+	mv ./app/backend.ai-desktop-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-x64-$(BUILD_VERSION)-$(site).zip
 endif
 linux: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	$(EP) --platform=linux --icon=manifest/backend-ai.ico
-	cd app; zip -r -9 ./backend.ai-console-linux-x64-$(BUILD_DATE).zip ./backend.ai-console-linux-x64
+	cd app; zip -r -9 ./backend.ai-desktop-linux-x64-$(BUILD_DATE).zip "./Backend.AI Desktop-linux-x64"
+	#cd app;mkdir dist;cp -Rp "./Backend.AI Desktop-linux-x64" "./dist/backend.ai-webui"
+	#./node_modules/electron-installer-debian/src/cli.js --config packager-config.json
 ifeq ($(site),main)
-	mv ./app/backend.ai-console-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-console-$(BUILD_VERSION)-linux-x64.zip
+	mv ./app/backend.ai-desktop-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-linux-x64.zip
 else
-	mv ./app/backend.ai-console-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-console-linux-x64-$(BUILD_VERSION)-$(site).zip
+	mv ./app/backend.ai-desktop-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-linux-x64-$(BUILD_VERSION)-$(site).zip
 endif
 build_docker: compile
-	docker build -t backend.ai-console:$(BUILD_DATE) .
+	docker build -t backend.ai-webui:$(BUILD_DATE) .
 pack:
 	cd app; rm -rf ./backend*.zip
-	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-linux-x64 ./backend.ai-console-linux-x64-$(BUILD_DATE).zip
-	cd app; mv backend.ai-console-darwin-x64 backend.ai-console-macos; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-macos ./backend.ai-console-macos-$(BUILD_DATE).zip
-	cd app; ditto -c -k --sequesterRsrc --keepParent ./backend.ai-console-win32-x64 ./backend.ai-console-win32-x64-$(BUILD_DATE).zip
+	cd app; ditto -c -k --sequesterRsrc --keepParent "./Backend.AI Desktop-linux-x64" ./backend.ai-desktop-linux-x64-$(BUILD_DATE).zip
+	cd app; mv backend.ai-desktop-darwin-x64 backend.ai-desktop-macos; ditto -c -k --sequesterRsrc --keepParent "./Backend.AI Desktop-macos" ./backend.ai-desktop-macos-$(BUILD_DATE).zip
+	cd app; ditto -c -k --sequesterRsrc --keepParent "./"./Backend.AI Desktop-win32-x64" ./backend.ai-desktop-win32-x64-$(BUILD_DATE).zip
 i18n:
 	 ./node_modules/i18next-scanner/bin/cli.js --config ./i18n.config.js
 clean:
