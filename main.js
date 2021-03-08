@@ -58,7 +58,7 @@ app.once('ready', function() {
         label: 'Backend.AI',
         submenu: [
           {
-            label: 'About Backend.AI Web UI',
+            label: 'About Backend.AI Desktop',
             click: function() {
               mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
                 '    document.dispatchEvent(event);');
