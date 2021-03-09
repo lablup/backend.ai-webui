@@ -67,7 +67,6 @@ mac: dep
 	$(EP) --platform=darwin --icon=manifest/backend-ai.icns
 	rm -rf ./app/backend.ai-desktop-macos
 	cd app; mv "Backend.AI Desktop-darwin-x64" backend.ai-desktop-macos;
-	#mv "./app/backend.ai-desktop-macos/Backend.AI Desktop.app" './app/backend.ai-desktop-macos/Backend.AI Desktop.app'
 	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos/Backend.AI Desktop.app' ./app/backend.ai-desktop-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-macos.dmg
