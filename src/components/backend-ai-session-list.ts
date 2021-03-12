@@ -1361,7 +1361,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div style="font-size:8px;width:35px;">GPU</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
-                progress="${rowData.item.cuda_util / rowData.item.cuda_gpu_slot * 100}"
+                progress="${rowData.item.cuda_util / (rowData.item.cuda_gpu_slot * 100)}"
                 description=""
               ></lablup-progress-bar>
             </div>
@@ -1371,7 +1371,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div style="font-size:8px;width:35px;">GPU</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
-                progress="${rowData.item.cuda_util / rowData.item.cuda_fgpu_slot * 100}"
+                progress="${rowData.item.cuda_util / (rowData.item.cuda_fgpu_slot * 100)}"
                 description=""
               ></lablup-progress-bar>
             </div>
@@ -1381,7 +1381,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div style="font-size:8px;width:35px;">GPU</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
-                progress="${rowData.item.rocm_util / rowData.item.rocm_gpu_slot * 100}"
+                progress="${rowData.item.rocm_util / (rowData.item.rocm_gpu_slot * 100)}"
                 description=""
               ></lablup-progress-bar>
             </div>
@@ -1391,7 +1391,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div style="font-size:8px;width:35px;">TPU</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
-                progress="${rowData.item.tpu_util / rowData.item.tpu_slot * 100}"
+                progress="${rowData.item.tpu_util / (rowData.item.tpu_slot * 100)}"
                 description=""
               ></lablup-progress-bar>
             </div>
