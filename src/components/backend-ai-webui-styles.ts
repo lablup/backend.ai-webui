@@ -16,6 +16,8 @@ export const BackendAIWebUIStyles = [
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: top left;
+      -webkit-user-select: none !important;
+      -webkit-app-region: drag !important;
     }
 
     .loading-background[inactive] {
