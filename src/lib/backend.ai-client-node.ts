@@ -434,15 +434,19 @@ class Client {
     try {
       localStorage.setItem('backendaiwebui.logs', JSON.stringify(log_stack));
     } catch (e) {
-      // localStorage is full, so manually clear logs item.
+      console.warn('Local storage is full. Clearing part of the logs.');
+      // localStorage is full, we will keep the recent 2/3 of the logs.
+      let webuiLogs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
+      webuiLogs = webuiLogs.slice(0, Math.round(webuiLogs.length * 2 / 3));
+      localStorage.setItem('backendaiwebui.logs', JSON.stringify(webuiLogs));
       // Deprecated backendaiconsole.* should also be cleared here.
-      localStorage.removeItem('backendaiwebui.logs');
       Object.entries(localStorage)
           .map((x) => x[0])                                // get key
           .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiconsole
           .map((x) => localStorage.removeItem(x));         // remove filtered keys
-      // Even if we cannot write log to localStorage, the request should be proceeded.
-      console.warn('Local storage is full. Please clear it.');
+
+      // Will not throw exception here since the request should be proceeded
+      // even if it is not possible to write log to localStorage.
     }
 
     return body;
