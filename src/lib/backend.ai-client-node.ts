@@ -431,7 +431,23 @@ class Client {
     if(previous_log) {
       log_stack = log_stack.concat(previous_log);
     }
-    localStorage.setItem('backendaiwebui.logs', JSON.stringify(log_stack));
+    try {
+      localStorage.setItem('backendaiwebui.logs', JSON.stringify(log_stack));
+    } catch (e) {
+      console.warn('Local storage is full. Clearing part of the logs.');
+      // localStorage is full, we will keep the recent 2/3 of the logs.
+      let webuiLogs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
+      webuiLogs = webuiLogs.slice(0, Math.round(webuiLogs.length * 2 / 3));
+      localStorage.setItem('backendaiwebui.logs', JSON.stringify(webuiLogs));
+      // Deprecated backendaiconsole.* should also be cleared here.
+      Object.entries(localStorage)
+          .map((x) => x[0])                                // get key
+          .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiconsole
+          .map((x) => localStorage.removeItem(x));         // remove filtered keys
+
+      // Will not throw exception here since the request should be proceeded
+      // even if it is not possible to write log to localStorage.
+    }
 
     return body;
   }
