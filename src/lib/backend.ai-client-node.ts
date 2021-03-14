@@ -439,9 +439,9 @@ class Client {
       localStorage.removeItem('backendaiwebui.logs');
       Object.entries(localStorage)
           .map((x) => x[0])                                // get key
-          .filter((x) => x.startsWith('backendaiconsole')) // filter keys starts with backendaiconsole
+          .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiconsole
           .map((x) => localStorage.removeItem(x));         // remove filtered keys
-      // Even if we cannot write log to localStorage, the request should be proceed.
+      // Even if we cannot write log to localStorage, the request should be proceeded.
       console.warn('Local storage is full. Please clear it.');
     }
 
