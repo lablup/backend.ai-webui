@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {customElement, html, property} from "lit-element";
-import {BackendAIPage} from "./backend-ai-page";
+import {customElement, html, property} from 'lit-element';
+import {BackendAIPage} from './backend-ai-page';
 
 /**
  Backend.AI Setting Storage
@@ -11,22 +11,22 @@ import {BackendAIPage} from "./backend-ai-page";
  `backend-ai-settings-store` is a general setting storage.
 @group Backend.AI Web UI
  */
-@customElement("backend-ai-settings-store")
+@customElement('backend-ai-settings-store')
 export default class BackendAiSettingsStore extends BackendAIPage {
   @property({type: Object}) options = Object();
 
 
   constructor() {
     super();
-    this.options = {  // Default option.
+    this.options = { // Default option.
       'user.desktop_notification': true,
       'user.compact_sidebar': false,
       'user.preserve_login': false,
-      'user.language': "default",
+      'user.language': 'default',
       'user.automatic_update_check': true,
       'user.custom_ssh_port': '',
       'user.beta_feature': false,
-    }
+    };
     this.readSettings();
   }
 
@@ -40,17 +40,17 @@ export default class BackendAiSettingsStore extends BackendAIPage {
   _readSettings() { // Read all user settings.
     for (let i = 0, len = localStorage.length; i < len; ++i) {
       if (localStorage.key(i)!.startsWith('backendaiwebui.settings')) {
-        let key = localStorage.key(i)!.replace('backendaiwebui.settings.', '');
+        const key = localStorage.key(i)!.replace('backendaiwebui.settings.', '');
         this._readSetting(key);
       }
     }
   }
 
-  exists(name, namespace: string = "user") {
+  exists(name, namespace = 'user') {
     return (namespace + '.' + name in this.options);
   }
 
-  get(name: string, default_value: any = null, namespace: string = "user") {
+  get(name: string, default_value: any = null, namespace = 'user') {
     if (namespace + '.' + name in this.options) {
       return this.options[namespace + '.' + name];
     } else {
@@ -58,20 +58,20 @@ export default class BackendAiSettingsStore extends BackendAIPage {
     }
   }
 
-  set(name, value, namespace = "user") {
+  set(name, value, namespace = 'user') {
     return this._writeUserSetting(name, value, namespace);
   }
 
-  delete(name, namespace: string = "user") {
+  delete(name, namespace = 'user') {
     return this._deleteUserSetting(name, namespace);
   }
 
-  _readSetting(name, default_value = true, namespace = "user") {
-    let value: string | null = localStorage.getItem('backendaiwebui.settings.' + name);
+  _readSetting(name, default_value = true, namespace = 'user') {
+    const value: string | null = localStorage.getItem('backendaiwebui.settings.' + name);
     if (value !== null && value != '' && value != '""') {
-      if (value === "false") {
+      if (value === 'false') {
         this.options[name] = false;
-      } else if (value === "true") {
+      } else if (value === 'true') {
         this.options[name] = true;
       } else if (this.isJson(value)) {
         this.options[name] = JSON.parse(value);
@@ -85,9 +85,9 @@ export default class BackendAiSettingsStore extends BackendAIPage {
 
   _writeUserSetting(name, value, namespace) {
     if (value === false) {
-      localStorage.setItem('backendaiwebui.settings.' + namespace + '.' + name, "false");
+      localStorage.setItem('backendaiwebui.settings.' + namespace + '.' + name, 'false');
     } else if (value === true) {
-      localStorage.setItem('backendaiwebui.settings.' + namespace + '.' + name, "true");
+      localStorage.setItem('backendaiwebui.settings.' + namespace + '.' + name, 'true');
     } else if (typeof value === 'object') {
       localStorage.setItem('backendaiwebui.settings.' + namespace + '.' + name, JSON.stringify(value));
     } else {
@@ -120,6 +120,6 @@ export default class BackendAiSettingsStore extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-settings-store": BackendAiSettingsStore;
+    'backend-ai-settings-store': BackendAiSettingsStore;
   }
 }

@@ -193,7 +193,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           <div id="logs" class="item tab-content" style="display:none;">
             <h3 class="horizontal center layout outer-space">
               <span>${_t("logs.LogMessages")}</span>
-              <span class="mini" style="font-size:13px;padding-left:15px;">${_t("logs.UpTo5000Logs")}</span>
+              <span class="mini" style="font-size:13px;padding-left:15px;">${_t("logs.UpTo3000Logs")}</span>
               <span class="flex"></span>
               <mwc-button
                   class="log"

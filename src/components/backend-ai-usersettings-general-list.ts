@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t, translateUnsafeHTML as _tr, use as setLanguage} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t, translateUnsafeHTML as _tr, use as setLanguage} from 'lit-translate';
+import {css, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -25,7 +25,7 @@ import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-textarea/mwc-textarea';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
+import {default as PainKiller} from './backend-ai-painkiller';
 import './lablup-loading-spinner';
 import './lablup-codemirror';
 import './backend-ai-dialog';

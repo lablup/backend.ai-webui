@@ -636,7 +636,7 @@
   },
   "logs": {
     "LogMessages": "Log Messages",
-    "UpTo5000Logs": "(Up to 5000 recent logs)",
+    "UpTo3000Logs": "(Up to 3000 recent logs)",
     "TimeStamp": "Timestamp",
     "Status": "Status",
     "ErrorTitle": "Error Title",

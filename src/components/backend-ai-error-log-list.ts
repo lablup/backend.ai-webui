@@ -291,6 +291,6 @@ export default class BackendAiErrorLogList extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-error-log-list": BackendAiErrorLogList;
+    'backend-ai-error-log-list': BackendAiErrorLogList;
   }
 }

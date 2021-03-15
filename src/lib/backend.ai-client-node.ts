@@ -402,8 +402,8 @@ class Client {
 
     let previous_log = JSON.parse(localStorage.getItem('backendaiwebui.logs') as any);
     if (previous_log) {
-      if (previous_log.length > 5000) {
-        previous_log = previous_log.slice(1, 5000);
+      if (previous_log.length > 3000) {
+        previous_log = previous_log.slice(1, 3000);
       }
     }
     let log_stack = Array();

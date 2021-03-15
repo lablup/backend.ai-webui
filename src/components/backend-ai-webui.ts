@@ -56,8 +56,8 @@ import '../plastics/mwc/mwc-multi-select';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
 
-import BackendAiSettingsStore from "./backend-ai-settings-store";
-import BackendAiTasker from "./backend-ai-tasker";
+import BackendAiSettingsStore from './backend-ai-settings-store';
+import BackendAiTasker from './backend-ai-tasker';
 
 registerTranslateConfig({
   loader: lang => fetch(`/resources/i18n/${lang}.json`).then(res => res.json())

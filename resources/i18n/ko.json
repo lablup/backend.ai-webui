@@ -633,7 +633,7 @@
   },
   "logs": {
     "LogMessages": "로그 메세지",
-    "UpTo5000Logs": "(최근 5000개의 로그)",
+    "UpTo3000Logs": "(최근 3000개의 로그)",
     "TimeStamp": "시간",
     "Status": "상태",
     "ErrorTitle": "제목",
