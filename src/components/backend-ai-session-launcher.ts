@@ -487,7 +487,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding: 5px !important;
         }
 
-        #launch-confirmation-dialog {
+        #launch-confirmation-dialog, #env-config-confirmation {
           --component-width: 400px;
           --component-font-size: 14px;
         }
@@ -649,6 +649,53 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._debug = globalThis.backendaiwebui.debug;
       this._enableLaunchButton();
     }
+    let modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    modifyEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
+      let currentEnv = {};
+      const container = this.shadowRoot.querySelector("#modify-env-container");
+      const rows = container.querySelectorAll(".row:not(.header)");
+      
+      // allow any input in variable or value
+      const nonempty = row => Array.prototype.filter.call(
+        row.querySelectorAll("wl-textfield"), (tf, idx) => tf.value === ""
+      ).length <= 1;
+
+      const encodeRow = row => {
+        let items: Array<any> = Array.prototype.map.call(row.querySelectorAll("wl-textfield"), tf => tf.value);
+        currentEnv[items[0]] = items[1];
+        return items;
+      }
+      Array.prototype.filter.call(rows, row => nonempty(row)).map(row => encodeRow(row));
+
+      // check if there's any changes occurred
+      let isEquivalent = (a, b) => {
+        // create arrays of property names
+        let aProps = Object.getOwnPropertyNames(a);
+        let bProps = Object.getOwnPropertyNames(b);
+
+        if (aProps.length != bProps.length) {
+          return false;
+        }
+
+        for (let i = 0 ; i < aProps.length; i++) {
+          let propName = aProps[i];
+
+          if (a[propName] !== b[propName]) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      if (!isEquivalent(currentEnv, this.environ_values)) {
+        this.openDialog('env-config-confirmation');
+      } else {
+        modifyEnvDialog.closeWithConfirmation = false;
+        this.closeDialog('modify-env-dialog');
+      }
+    });
+
+
   }
 
   _enableLaunchButton() {
@@ -2052,7 +2099,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   modifyEnv() {
     this._parseEnvVariableList();
-    this.shadowRoot.querySelector('#modify-env-dialog').hide();
+    let modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    modifyEnvDialog.closeWithConfirmation = false;
+    modifyEnvDialog.hide();
     this.notification.text = _text("session.launcher.EnvironmentVariableConfigurationDone");
     this.notification.show();
   }
@@ -2061,8 +2110,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Show environment variable modification popup.
    */
   _showEnvDialog() {
-    this.shadowRoot.querySelector('#modify-env-dialog').show();
+    let modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    modifyEnvDialog.closeWithConfirmation = true;
+    modifyEnvDialog.show();
   }
+
+  _closeAndResetEnvInput() {
+    this.closeDialog('env-config-confirmation');
+    let modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    modifyEnvDialog.closeWithConfirmation = false;
+    modifyEnvDialog.hide();
+    this._clearRows();
+  }
+
   /**
    * Parse environment variables on UI.
    */
@@ -2077,7 +2137,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.environ_values[items[0]] = items[1];
       return items;
     }
-    this.environ_values = {};
     Array.prototype.filter.call(rows, row => nonempty(row)).map(row => encodeRow(row));
   }
 
@@ -2103,6 +2162,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     container.querySelectorAll(".row.extra").forEach(e => {
       e.remove();
     });
+  }
+
+  openDialog(id) {
+    this.shadowRoot.querySelector('#' + id).show();
+  }
+
+  closeDialog(id) {
+    this.shadowRoot.querySelector('#' + id).hide();
   }
 
   render() {
@@ -2447,7 +2514,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         </mwc-button>
       </div>
     </backend-ai-dialog>
-    <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent noclosebutton>
+    <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent closeWithConfirmation>
       <span slot="title">${_t("session.launcher.SetEnvironmentVariable")}</span>
       <span slot="action">
         <mwc-icon-button icon="info" @click="${(e) => this._showEnvConfigDescription(e)}" style="pointer-events: auto;"></mwc-icon-button>
@@ -2497,7 +2564,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             unelevated
             slot="footer"
             icon="check"
-            label="${_t("button.Finish")}"
+            label="${_t("button.Save")}"
             @click="${()=>this.modifyEnv()}"></mwc-button>
       </div>
     </backend-ai-dialog>
@@ -2525,6 +2592,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             icon="rowing"
             @click="${() => this._newSession()}">
           <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+        </mwc-button>
+      </div>
+    </backend-ai-dialog>
+    <backend-ai-dialog id="env-config-confirmation" warning fixed>
+      <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
+      <div slot="content">
+        <p>${_t('session.launcher.EnvConfigWillDisappear')}</p>
+        <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+      </div>
+      <div slot="footer" class="horizontal end-justified flex layout">
+        <mwc-button
+            unelevated
+            id="env-config-reset-button"
+            style="width:auto;margin-right:10px;"
+            @click="${() => this._closeAndResetEnvInput()}">
+          <span id="launch-button-msg">${_t('button.DismissAndProceed')}</span>
+        </mwc-button>
+        <mwc-button
+            outlined
+            id="env-config-remain-button"
+            style="width:auto;"
+            @click="${() => this.closeDialog('env-config-confirmation')}">
+          <span id="launch-button-msg">${_t('button.Cancel')}</span>
         </mwc-button>
       </div>
     </backend-ai-dialog>
