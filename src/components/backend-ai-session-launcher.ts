@@ -166,6 +166,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) deleteEnvRow = Object();
   @property({type: Array}) environ = Array();
   @property({type: Object}) environ_values = Object();
+  @property({type: Object}) vfolder_select_expansion = Object();
 
   @property({type: Boolean}) _debug = false;
 
@@ -693,9 +694,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         modifyEnvDialog.closeWithConfirmation = false;
         this.closeDialog('modify-env-dialog');
       }
-    });
-
-
+    });    
   }
 
   _enableLaunchButton() {
@@ -707,6 +706,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       setTimeout(() => {
         this._enableLaunchButton();
       }, 1000);
+    }
+  }
+
+  /**
+   * Toggle visibility of unselect all vfolders button
+   * 
+   * @param {Event} e
+   */
+  toggleUnselectAllVfoldersButton(e) {
+    let expansion = e.target;
+    let unselectAllVfolderBtn = this.shadowRoot.querySelector('#unselect-all-vfolders');
+    if (unselectAllVfolderBtn) {
+      unselectAllVfolderBtn.style.display = expansion.checked ? 'block' : 'none';
     }
   }
 
@@ -2259,7 +2271,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            style="margin-left:5px;">
             </mwc-textfield>
           </div>
-          <wl-expansion id="vfolder-select-expansion" name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
+          <wl-expansion
+                id="vfolder-select-expansion" name="vfolder-group"
+                style="--expansion-header-padding:16px;--expansion-content-padding:0;"
+                @change=${(e) => this.toggleUnselectAllVfoldersButton(e)}>
             <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
             <mwc-list fullwidth multi id="vfolder"
               @selected="${() => this._updateSelectedFolder()}">
@@ -2280,10 +2295,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `)}
           </ul>
           ${this.selectedVfolders.length > 0 ? html`
-            <div class="horizontal layout end-justified">
+            <div class="horizontal layout end-justified" style="margin-bottom:10px;">
               <mwc-button
                   outlined
                   label="${_t("session.launcher.UnSelectAllVFolders")}"
+                  id="unselect-all-vfolders"
                   style="width:auto;margin-right:10px;"
                   @click=${() => this._unselectAllSelectedFolder()}></mwc-button>
             </div>
