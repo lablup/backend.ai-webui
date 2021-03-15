@@ -9,6 +9,8 @@ Licensed under MIT
 /*jshint esnext: true */
 //const fetch = require('node-fetch'); /* Exclude for ES6 */
 //const Headers = fetch.Headers; /* Exclude for ES6 */
+//import Dexie from 'dexie';
+const Dexie = require('dexie');
 const crypto_node = require('crypto');
 //const FormData = require('form-data');
 const querystring = require('querystring');
