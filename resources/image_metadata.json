@@ -397,6 +397,24 @@
         }
       ]
     },
+    "apache-spark": {
+      "name": "Spark",
+      "description": "Apache Spark is an open-source unified analytics engine for large-scale data processing. Spark provides an interface for programming entire clusters with implicit data parallelism and fault tolerance.",
+      "group": "Big Data",
+      "tags": [],
+      "icon": "apache-spark.svg",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Spark",
+          "color": "blue"
+        },
+        {
+          "tag": "Python",
+          "color": "blue"
+        }
+      ]
+    },
     "julia": {
       "name": "Julia",
       "description": "Julia was designed from the beginning for high performance.",
