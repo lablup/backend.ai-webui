@@ -465,7 +465,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   async _editUserConfigScript() {
     const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     this.rcfiles = await this._fetchUserConfigScript();
-    const rcfileNames = Array('.bashrc', '.zshrc', '.Renviron');
+    const rcfileNames = Array('.bashrc', '.zshrc', '.tmux.conf', '.vimrc', '.Renviron');
     rcfileNames.map(filename => {
       let idx = this.rcfiles.findIndex(item => item.path === filename);
       if (idx == -1) {
