@@ -2059,25 +2059,34 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
   /**
    * Add a row to the environment variable list.
+   * 
+   * @param {string} name - environment variable name
+   * @param {string} value - environment variable value
    */
-  _addEnvRow() {
+  _addEnvRow(name = "", value = "") {
     const container = this.shadowRoot.querySelector("#modify-env-container");
     const lastChild = container.children[container.children.length - 1];
-    const div = this._createEnvRow();
+    const div = this._createEnvRow(name, value);
     container.insertBefore(div, lastChild);
   }
   /**
    * Create a row in the environment variable list.
+   * 
+   * @param {string} name - environment variable name
+   * @param {string} value - environment variable value
+   * 
    */
-  _createEnvRow() {
+  _createEnvRow(name = "", value = "") {
     const div = document.createElement("div");
     div.setAttribute("class", "row extra");
 
     const env = document.createElement("wl-textfield");
     env.setAttribute("type", "text");
+    env.setAttribute("value", name);
 
     const val = document.createElement("wl-textfield");
     val.setAttribute("type", "text");
+    val.setAttribute("value", value);
 
     const button = document.createElement("wl-button");
     button.setAttribute("class", "fg pink");
@@ -2111,6 +2120,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   modifyEnv() {
     this._parseEnvVariableList();
+    this._saveEnvVariableList();
     let modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
     modifyEnvDialog.closeWithConfirmation = false;
     modifyEnvDialog.hide();
@@ -2119,26 +2129,42 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * load environment variables for current session
+   */
+  _loadEnv() {
+    this.environ.forEach((item, index) => {
+      this._addEnvRow(item.name, item.value);
+    });
+  }
+
+  /**
    * Show environment variable modification popup.
    */
   _showEnvDialog() {
+
     let modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
     modifyEnvDialog.closeWithConfirmation = true;
     modifyEnvDialog.show();
   }
 
+  /**
+   * Close confirmation dialog and environment variable dialog and reset the environment variable and value
+   * 
+   */
   _closeAndResetEnvInput() {
+    this._clearRows();
+    this._loadEnv();
     this.closeDialog('env-config-confirmation');
     let modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
     modifyEnvDialog.closeWithConfirmation = false;
     modifyEnvDialog.hide();
-    this._clearRows();
   }
 
   /**
    * Parse environment variables on UI.
    */
   _parseEnvVariableList() {
+    this.environ_values = {};
     const container = this.shadowRoot.querySelector("#modify-env-container");
     const rows = container.querySelectorAll(".row:not(.header)");
     const nonempty = row => Array.prototype.filter.call(
@@ -2152,6 +2178,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     Array.prototype.filter.call(rows, row => nonempty(row)).map(row => encodeRow(row));
   }
 
+  /**
+   * Save Environment variables
+   */
+  _saveEnvVariableList() {
+    this.environ = Object.entries(this.environ_values).map(([name, value]) => ({name, value}));
+  }
+
   _resetEnvironmentVariables() {
     this.environ = [];
     this.environ_values = {};
@@ -2160,16 +2193,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._clearRows();
     }
   }
+
   /**
    * Clear rows from the environment variable.
    */
-  _clearRows() {
+  _clearRows(saveEnv = false) {
     const container = this.shadowRoot.querySelector("#modify-env-container");
     const rows = container.querySelectorAll(".row");
     const lastRow = rows[rows.length - 1];
 
     lastRow.querySelectorAll("wl-textfield").forEach(tf => {
-      tf.value = "";
+        tf.value = "";
     });
     container.querySelectorAll(".row.extra").forEach(e => {
       e.remove();
@@ -2540,7 +2574,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <div> ${_t("session.launcher.EnvironmentVariable")} </div>
           <div> ${_t("session.launcher.EnvironmentVariableValue")} </div>
         </div>
-        ${this.environ.map((item, index) => html`
+        ${this.environ.forEach((item, index) =>
+          html`
         <div class="row">
           <wl-textfield
             type="text"
