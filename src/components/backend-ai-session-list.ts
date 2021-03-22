@@ -1100,7 +1100,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _createStatusDetailDropdown(e, item) {
-    console.log(item)
+    // console.log(item)
     const menuButton: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as any;
 
