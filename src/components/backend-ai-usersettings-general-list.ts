@@ -464,7 +464,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * */
   async _editUserConfigScript() {
     const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
-    
+
     // instead of changing .tmux.conf, allow user to change .tmux.conf.local
     const ignoredRcFilename = ['.tmux.conf'];
 
@@ -556,7 +556,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           this.notification.text = _text("usersettings.DescLetUserUpdateScriptWithNonEmptyValue");
           this.notification.show();
           return;
-        } 
+        }
         else {
           await globalThis.backendaiclient.userConfig.update(script, this.rcfile)
             .then(res => {
@@ -999,10 +999,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>
         <div slot="footer" class="end-justified layout flex horizontal">
           <mwc-button id="discard-code" label="${_t("button.Cancel")}" @click="${() => this._hideUserConfigScriptDialog()}"></mwc-button>
+          <mwc-button id="delete-rcfile" label="${_t("button.Delete")}" @click="${() => this._deleteRcFile()}"></mwc-button>
           <mwc-button unelevated id="save-code" label="${_t("button.Save")}" @click="${() => this._saveUserConfigScript()}"></mwc-button>
           <mwc-button unelevated id="save-code-and-close" label="${_t("button.SaveAndClose")}" @click="${() => this._saveUserConfigScriptAndCloseDialog()}"></mwc-button>
-          <mwc-button unelevated id="delete-rcfile" label="${_t("button.Delete")}" @click="${() => this._deleteRcFile()}"></mwc-button>
-
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
