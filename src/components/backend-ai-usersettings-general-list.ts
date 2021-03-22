@@ -464,11 +464,20 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * */
   async _editUserConfigScript() {
     const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
+    
+    // instead of changing .tmux.conf, allow user to change .tmux.conf.local
+    const ignoredRcFilename = ['.tmux.conf'];
+
+    // remove ignored rcfilenames from fetched results
     this.rcfiles = await this._fetchUserConfigScript();
-    const rcfileNames = Array('.bashrc', '.zshrc', '.tmux.conf.local', '.vimrc.local', '.Renviron');
+    ignoredRcFilename.forEach((filename) => {
+      let idx = this.rcfiles.findIndex(item => item.path === filename);
+      this.rcfiles.splice(idx, 1);
+    });
+    const rcfileNames = ['.bashrc', '.zshrc', '.tmux.conf.local', '.vimrc', '.Renviron'];
     rcfileNames.map(filename => {
       let idx = this.rcfiles.findIndex(item => item.path === filename);
-      if (idx == -1) {
+      if (idx == -1 && !ignoredRcFilename.includes(filename)) {
         this.rcfiles.push({path: filename, data: ""});
         editor.setValue('');
       } else {
@@ -516,7 +525,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       if (this.rcfiles[idx]['data'] === '') { // if new rcfile
         if (script !== '') {
           // create and save with data and path
-          globalThis.backendaiclient.userConfig.create(
+          globalThis.backendaiclient.userConfig.update(
             script, this.rcfiles[idx]['path'])
             .then(res => {
               this.spinner.hide();
@@ -542,11 +551,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           this.notification.text = _text('resourceGroup.NochangesMade');
           this.notification.show();
           return;
-        } else if (script === '') {
+        }
+        else if (script === '') {
           this.notification.text = _text("usersettings.DescLetUserUpdateScriptWithNonEmptyValue");
           this.notification.show();
           return;
-        } else {
+        } 
+        else {
           await globalThis.backendaiclient.userConfig.update(script, this.rcfile)
             .then(res => {
               this.notification.text = _text("usersettings.DescScriptUpdated");
@@ -622,7 +633,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       this._launchChangeCurrentEditorDialog();
     } else {
       idx = this.rcfiles.findIndex((item) => item.path === this.rcfile);
-      code = this.rcfiles[idx]['data'];
+      code = this.rcfiles[idx]?.data ? this.rcfiles[idx]['data'] : '';
       editor.setValue(code);
     }
   }
