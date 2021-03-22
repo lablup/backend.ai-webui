@@ -1228,10 +1228,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             image.baseversion = tags[0];
             image.baseimage = tags[1];
             if (tags[2] !== undefined) {
-              image.additional_req = tags[2].toUpperCase();
+              image.additional_req = this._humanizeName(tags[2]);
             }
-          } else {
+          } else if (image.tag !== undefined) {
             image.baseversion = image.tag;
+          } else {
+            image.baseversion = '';
           }
           let names = image.name.split('/');
           if (names[1] !== undefined) {
@@ -1242,11 +1244,21 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             image.lang = names[0];
           }
           let langs = image.lang.split('-');
-          let baseimage = [this._humanizeName(image.baseimage)];
+          let baseimage: Array<string>;
+          if (image.baseimage !== undefined) {
+            baseimage = [this._humanizeName(image.baseimage)];
+          } else {
+            baseimage = [];
+          }
           if (langs[1] !== undefined) {
-            image.lang = langs[1];
-            baseimage.push(this._humanizeName(langs[0]));
-            //image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
+            if (langs[0] === 'r') { // Legacy handling for R images
+              image.lang = langs[0];
+              baseimage.push(this._humanizeName(langs[0]));
+            } else {
+              image.lang = langs[1];
+              baseimage.push(this._humanizeName(langs[0]));
+              //image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
+            }
           }
           image.baseimage = baseimage;//this._humanizeName(image.baseimage);
           image.lang = this._humanizeName(image.lang);
@@ -1406,6 +1418,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'cuda11.1': 'GPU:CUDA11.1',
       'cuda11.2': 'GPU:CUDA11.2',
       'cuda11.3': 'GPU:CUDA11.3',
+      'cuda12': 'GPU:CUDA12',
+      'cuda12.0': 'GPU:CUDA12.0',
       'miniconda': 'Miniconda',
       'anaconda2018.12': 'Anaconda 2018.12',
       'anaconda2019.12': 'Anaconda 2019.12',
