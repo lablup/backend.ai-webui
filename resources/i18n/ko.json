@@ -195,7 +195,7 @@
       "EnvironmentVariable": "환경변수",
       "EnvironmentVariableValue": "값",
       "EnvironmentVariableConfigurationDone": "환경변수가 설정되었습니다.",
-      "EnvConfigWillDisappear": "저장되지 않은 환경변수 설정값 은 사라집니다."
+      "EnvConfigWillDisappear": "저장되지 않은 환경변수 설정값은 사라집니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

@@ -655,7 +655,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       let currentEnv = {};
       const container = this.shadowRoot.querySelector("#modify-env-container");
       const rows = container.querySelectorAll(".row:not(.header)");
-      
+
       // allow any input in variable or value
       const nonempty = row => Array.prototype.filter.call(
         row.querySelectorAll("wl-textfield"), (tf, idx) => tf.value === ""
@@ -678,7 +678,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           return false;
         }
 
-        for (let i = 0 ; i < aProps.length; i++) {
+        for (let i = 0; i < aProps.length; i++) {
           let propName = aProps[i];
 
           if (a[propName] !== b[propName]) {
@@ -694,7 +694,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         modifyEnvDialog.closeWithConfirmation = false;
         this.closeDialog('modify-env-dialog');
       }
-    });    
+    });
   }
 
   _enableLaunchButton() {
@@ -711,7 +711,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Toggle visibility of unselect all vfolders button
-   * 
+   *
    * @param {Event} e
    */
   toggleUnselectAllVfoldersButton(e) {
@@ -2060,7 +2060,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Append a row to the environment variable list.
-   * 
+   *
    * @param {string} name - environment variable name
    * @param {string} value - environment variable value
    */
@@ -2072,10 +2072,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
   /**
    * Create a row in the environment variable list.
-   * 
+   *
    * @param {string} name - environment variable name
    * @param {string} value - environment variable value
-   * 
+   *
    */
   _createEnvRow(name = "", value = "") {
     const div = document.createElement("div");
@@ -2152,7 +2152,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         const firstRow = container.querySelector(".row:not(.header)");
         const envFields = firstRow.querySelectorAll('wl-textfield');
         Array.prototype.forEach.call(envFields, (elem, index) => {
-          elem.value = (index === firstIndex) ? item.name : item.value ;
+          elem.value = (index === firstIndex) ? item.name : item.value;
         });
       } else {
         this._appendEnvRow(item.name, item.value);
@@ -2172,7 +2172,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Close confirmation dialog and environment variable dialog and reset the environment variable and value
-   * 
+   *
    */
   _closeAndResetEnvInput() {
     this._clearRows();
@@ -2401,9 +2401,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div style="display:none"> (</div>
                   <div style="width:50px;text-align:right;">${item.cpu}<span style="display:none">CPU</span></div>
                   <div style="width:50px;text-align:right;">${item.mem}GB</div>
-                  <div style="width:60px;text-align:right;">${item.shmem ? 
+                  <div style="width:60px;text-align:right;">${item.shmem ?
                       html`
-                        ${parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g')).toFixed(2)} GB` : 
+                        ${parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g')).toFixed(2)} GB` :
                       html`
                         64MB
                         `}</div>
