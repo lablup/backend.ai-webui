@@ -2057,17 +2057,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
     });
   }
+
   /**
-   * Add a row to the environment variable list.
+   * Append a row to the environment variable list.
    * 
    * @param {string} name - environment variable name
    * @param {string} value - environment variable value
    */
-  _addEnvRow(name = "", value = "") {
+  _appendEnvRow(name = "", value = "") {
     const container = this.shadowRoot.querySelector("#modify-env-container");
     const lastChild = container.children[container.children.length - 1];
     const div = this._createEnvRow(name, value);
-    container.insertBefore(div, lastChild);
+    container.insertBefore(div, lastChild.nextSibling);
   }
   /**
    * Create a row in the environment variable list.
@@ -2116,6 +2117,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Remove empty env input fields
+   */
+  _removeEmptyEnv() {
+    const container = this.shadowRoot.querySelector('#modify-env-container');
+    const rows = container.querySelectorAll(".row.extra");
+    const empty = row => Array.prototype.filter.call(
+      row.querySelectorAll("wl-textfield"), (tf, idx) => tf.value === ""
+    ).length === 2;
+    Array.prototype.filter.call(rows, row => empty(row)).map(row => row.parentNode.removeChild(row));
+  }
+
+  /**
    * Modify environment variables for current session.
    */
   modifyEnv() {
@@ -2133,7 +2146,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _loadEnv() {
     this.environ.forEach((item, index) => {
-      this._addEnvRow(item.name, item.value);
+      const firstIndex = 0;
+      if (index === firstIndex) {
+        const container = this.shadowRoot.querySelector("#modify-env-container");
+        const firstRow = container.querySelector(".row:not(.header)");
+        const envFields = firstRow.querySelectorAll('wl-textfield');
+        Array.prototype.forEach.call(envFields, (elem, index) => {
+          elem.value = (index === firstIndex) ? item.name : item.value ;
+        });
+      } else {
+        this._appendEnvRow(item.name, item.value);
+      }
     });
   }
 
@@ -2141,7 +2164,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Show environment variable modification popup.
    */
   _showEnvDialog() {
-
+    this._removeEmptyEnv();
     let modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
     modifyEnvDialog.closeWithConfirmation = true;
     modifyEnvDialog.show();
@@ -2197,14 +2220,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   /**
    * Clear rows from the environment variable.
    */
-  _clearRows(saveEnv = false) {
+  _clearRows() {
     const container = this.shadowRoot.querySelector("#modify-env-container");
-    const rows = container.querySelectorAll(".row");
-    const lastRow = rows[rows.length - 1];
+    const rows = container.querySelectorAll(".row:not(.header)");
+    const firstRow = rows[0];
 
-    lastRow.querySelectorAll("wl-textfield").forEach(tf => {
-        tf.value = "";
+    // remain first row element and clear values
+    firstRow.querySelectorAll("wl-textfield").forEach(tf => {
+      tf.value = "";
     });
+
+    // delete extra rows
     container.querySelectorAll(".row.extra").forEach(e => {
       e.remove();
     });
@@ -2600,7 +2626,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <wl-button
             fab flat
             class="fg pink"
-            @click=${()=>this._addEnvRow()}
+            @click=${()=>this._appendEnvRow()}
           >
             <wl-icon>add</wl-icon>
           </wl-button>
