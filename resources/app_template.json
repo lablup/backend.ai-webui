@@ -128,11 +128,20 @@
         "src": "./resources/icons/mlflow.png"
       }
     ],
+    "spark": [
+      {
+        "name": "spark",
+        "title": "Spark",
+        "category": "5.Big Data Tools",
+        "redirect": "",
+        "src": "./resources/icons/apache-spark.svg"
+      }
+    ],
     "vnc": [
       {
         "name": "vnc",
         "title": "VNC",
-        "category": "5.Desktop Environment",
+        "category": "6.Desktop Environment",
         "redirect": "",
         "src": "./resources/icons/novnc.svg"
       }
@@ -141,7 +150,7 @@
       {
         "name": "vnc-web",
         "title": "VNC (Web)",
-        "category": "5.Desktop Environment",
+        "category": "6.Desktop Environment",
         "redirect": "/vnc.html?host=<proxy-host>&port=<port-number>&password=backendai&autoconnect=true",
         "src": "./resources/icons/novnc.svg"
       }
@@ -150,7 +159,7 @@
       {
         "name": "novnc",
         "title": "VNC (Web)",
-        "category": "5.Desktop Environment",
+        "category": "6.Desktop Environment",
         "redirect": "/vnc.html?autoconnect=true&amp;password=backendai",
         "src": "./resources/icons/novnc.svg"
       }
@@ -159,7 +168,7 @@
       {
         "name": "xfce",
         "title": "XFCE",
-        "category": "5.Desktop Environment",
+        "category": "6.Desktop Environment",
         "redirect": "",
         "src": "./resources/icons/xfce.png"
       }
@@ -168,7 +177,7 @@
       {
         "name": "gnome",
         "title": "GNOME Desktop",
-        "category": "5.Desktop Environment",
+        "category": "6.Desktop Environment",
         "redirect": "",
         "src": "./resources/icons/gnome.svg"
       }
@@ -177,7 +186,7 @@
       {
         "name": "kde",
         "title": "KDE",
-        "category": "5.Desktop Environment",
+        "category": "6.Desktop Environment",
         "redirect": "",
         "src": "./resources/icons/kde.svg"
       }
@@ -186,7 +195,7 @@
       {
         "name": "xrdp",
         "title": "XRDP",
-        "category": "5.Desktop Environment",
+        "category": "6.Desktop Environment",
         "redirect": "",
         "src": "./resources/icons/gnome.svg"
       }
@@ -195,7 +204,7 @@
       {
         "name": "rstudio",
         "title": "R-Studio",
-        "category": "6.Scientific Computing",
+        "category": "7.Scientific Computing",
         "redirect": "",
         "src": "./resources/icons/r-lang.svg"
       }
@@ -204,7 +213,7 @@
       {
         "name": "matlab",
         "title": "MATLAB",
-        "category": "6.Scientific Computing",
+        "category": "7.Scientific Computing",
         "redirect": "",
         "src": "./resources/icons/matlab.png"
       }
@@ -213,7 +222,7 @@
       {
         "name": "spectravis",
         "title": "SpectraVIS",
-        "category": "6.Scientific Computing",
+        "category": "7.Scientific Computing",
         "redirect": "",
         "src": "./resources/icons/default_app.svg"
       }

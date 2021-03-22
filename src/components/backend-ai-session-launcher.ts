@@ -1497,13 +1497,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && cuda_device_metric.max !== NaN) {
               cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device'], this.max_cuda_device_per_container);
             } else {
-              cuda_device_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device'], this.max_cuda_device_per_container);
+              cuda_device_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
             }
           } else {
-            if (parseInt(cuda_device_metric.max) !== 0) {
-              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), available_slot['cuda_device'], this.max_cuda_device_per_container);
+            if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && cuda_device_metric.max !== NaN) {
+              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
             } else {
-              cuda_device_metric.max = this.available_slot['cuda_device'];
+              cuda_device_metric.max = Math.min(parseInt(this.available_slot['cuda_device']), this.max_cuda_device_per_container);
             }
           }
           if (cuda_device_metric.min >= cuda_device_metric.max) {
@@ -2264,7 +2264,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ` : html`
                     <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
                       <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
-                      <div class="horizontal justified center flex layout" style="width:293px;">
+                      <div class="horizontal justified center flex layout" style="width:283px;">
                         <div style="padding-right:5px;">${item.basename}</div>
                         <div class="flex"></div>
                         <div class="horizontal layout end-justified center flex">
