@@ -2125,7 +2125,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ` : html`
                     <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
                       <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
-                      <div class="horizontal justified center flex layout" style="width:293px;">
+                      <div class="horizontal justified center flex layout" style="width:283px;">
                         <div style="padding-right:5px;">${item.basename}</div>
                         <div class="flex"></div>
                         <div class="horizontal layout end-justified center flex">
