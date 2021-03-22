@@ -525,7 +525,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       if (this.rcfiles[idx]['data'] === '') { // if new rcfile
         if (script !== '') {
           // create and save with data and path
-          globalThis.backendaiclient.userConfig.update(
+          globalThis.backendaiclient.userConfig.create(
             script, this.rcfiles[idx]['path'])
             .then(res => {
               this.spinner.hide();
@@ -558,7 +558,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           return;
         }
         else {
-          await globalThis.backendaiclient.userConfig.update(script, this.rcfile)
+          await globalThis.backendaiclient.userConfig.update(script, fileName)
             .then(res => {
               this.notification.text = _text("usersettings.DescScriptUpdated");
               this.notification.show();
@@ -649,7 +649,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
     if (path) {
       globalThis.backendaiclient.userConfig.delete(path).then(res => {
-        let message = 'User config script ' + path + 'is deleted.';
+        let message = 'User config script ' + path + ' is deleted.';
         this.notification.text = message;
         this.notification.show();
         this.spinner.hide();
@@ -776,6 +776,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   _cancelCurrentEditorChange() {
+    // this._cacheUserConfigScript(this.prevRcfile);
     this._updateSelectedRcFileName(this.prevRcfile);
     this._hideCurrentEditorChangeDialog();
   }
@@ -1004,28 +1005,22 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <mwc-button unelevated id="save-code-and-close" label="${_t("button.SaveAndClose")}" @click="${() => this._saveUserConfigScriptAndCloseDialog()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
+      <backend-ai-dialog id="change-current-editor-dialog" noclosebutton fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
         <div slot="title">
-          ${_t("usersettings.DialogSaveToSpecificFile", {File: () => this.prevRcfile})}
+          ${_t("usersettings.DialogDiscardOrSave", {File: () => this.prevRcfile})}
         </div>
         <div slot="content">
           ${_t("usersettings.DialogNoSaveNoPreserve")}
         </div>
         <div slot="footer" style="border-top:none;" class="end-justified layout flex horizontal">
           <mwc-button
-              unelevated
               id="cancel-editor"
-              label="${_t("button.No")}"
-              @click="${() => this._cancelCurrentEditorChange()}"></mwc-button>
-          <mwc-button
-              unelevated
-              id="discard-editor-data"
-              label="${_t("button.Yes")}"
+              label="${_t("button.Discard")}"
               @click="${() => this._discardCurrentEditorChange()}"></mwc-button>
           <mwc-button
               unelevated
               id="save-editor-data"
-              label="${_t("button.SaveAndClose")}"
+              label="${_t("button.Save")}"
               @click="${() => this._saveCurrentEditorChange()}"></mwc-button>
         </div>
       </backend-ai-dialog>

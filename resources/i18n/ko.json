@@ -593,7 +593,7 @@
     "PackageInstallation": "패키지 설치",
     "BootstrapScript": "부트스트랩 스크립트",
     "BootstrapScriptUpdated": "부트스트랩 스크립트가 갱신되었습니다.",
-    "DialogSaveToSpecificFile": "수정한 내용을 File 에 저장하시겠습니까?",
+    "DialogDiscardOrSave": "스크립트가 선택한 파일에 맞게 변경됩니다. 계속하시겠습니까?",
     "DialogNoSaveNoPreserve": "저장하지 않은 내용은 삭제됩니다.",
     "DescScriptUpdated": "사용자 스크립트를 수정했습니다. 이 스크립트는 이후 새로 생성하는 세션부터 적용됩니다.",
     "DescScriptCreated": "사용자 스크립트를 생성했습니다. 이 스크립트는 이후 새로 생성하는 세션부터 적용됩니다.",

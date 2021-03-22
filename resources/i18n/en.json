@@ -596,7 +596,7 @@
     "PackageInstallation": "Package Installation",
     "BootstrapScript": "Bootstrap Script",
     "BootstrapScriptUpdated": "Bootstrap script updated.",
-    "DialogSaveToSpecificFile": "Save the changes you made to File?",
+    "DialogCancelOrDiscardOrSave": "Current file and script will be changed without saving, Would you like to proceed?",
     "DialogNoSaveNoPreserve": "Your changes will be lost if you don't save them.",
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
     "DescScriptCreated": "User config script created. This will be applied to new sessions only.",
