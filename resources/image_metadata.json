@@ -408,10 +408,6 @@
           "category": "Env",
           "tag": "Spark",
           "color": "blue"
-        },
-        {
-          "tag": "Python",
-          "color": "blue"
         }
       ]
     },
