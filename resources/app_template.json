@@ -110,6 +110,15 @@
         "src": "./resources/icons/terminal.svg"
       }
     ],
+    "spark": [
+      {
+        "name": "spark",
+        "title": "Spark",
+        "category": "3.Machine Learning Tools",
+        "redirect": "",
+        "src": "./resources/icons/apache-spark.svg"
+      }
+    ],
     "nniboard": [
       {
         "name": "nniboard",
