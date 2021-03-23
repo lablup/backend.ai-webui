@@ -107,6 +107,11 @@ export default class LablupCodemirror extends LitElement {
           height: auto;
           font-size: 15px;
         }
+
+        .CodeMirror-code {
+          /* minimum margin to avoid overlapping with line numbers */
+          margin-left: 2px;
+        }
       `,
     ];
   }
