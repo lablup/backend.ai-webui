@@ -651,7 +651,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
     if (path) {
       globalThis.backendaiclient.userConfig.delete(path).then(res => {
-        let message = 'User config script ' + path + ' is deleted.';
+        let message = _text('usersettings.DescScriptDeleted') + path; 
         this.notification.text = message;
         this.notification.show();
         this.spinner.hide();
@@ -667,23 +667,31 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
-  _deleteRcFileAll() {
-    this.rcfiles.map(item => {
+  /**
+   * Delete all of created user's config script.
+   */
+  async _deleteRcFileAll() {
+    let createdRcfiles = this.rcfiles.filter((item) => item.permission !== "" && item.data !== "");
+    const rcfileDeletionQueue = createdRcfiles.map(item => {
       let path = item.path;
-      globalThis.backendaiclient.userConfig.delete(item.path).then(res => {
-        let message = 'User config script ' + path + ' is deleted.';
-        this.notification.text = message;
-        this.notification.show();
-        this.spinner.hide();
-      }).catch(err => {
-        console.log(err);
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      });
+      return globalThis.backendaiclient.userConfig.delete(path);
     });
+    Promise.all(rcfileDeletionQueue).then( response => {
+      let message = _text('usersettings.DescScriptAllDeleted');
+      this.notification.text = message;
+      this.notification.show()
+      this.spinner.hide();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+    await setTimeout(() => {
+      this._editUserConfigScript();
+    }, 200);
   }
 
   _createRcFile(path: string) {
@@ -1002,7 +1010,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>
         <div slot="footer" class="end-justified layout flex horizontal">
           <mwc-button id="discard-code" label="${_t("button.Cancel")}" @click="${() => this._hideUserConfigScriptDialog()}"></mwc-button>
-          <mwc-button id="delete-rcfile" label="${_t("button.Delete")}" @click="${() => this._deleteRcFile()}"></mwc-button>
+          <mwc-button id="delete-rcfile" label="${_t("button.Delete")}" @click="${() => this._deleteRcFileAll()}"></mwc-button>
           <mwc-button unelevated id="save-code" label="${_t("button.Save")}" @click="${() => this._saveUserConfigScript()}"></mwc-button>
           <mwc-button unelevated id="save-code-and-close" label="${_t("button.SaveAndClose")}" @click="${() => this._saveUserConfigScriptAndCloseDialog()}"></mwc-button>
         </div>
