@@ -494,6 +494,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
     editor.refresh();
     this.spinner.hide();
+    this._toggleDeleteButton();
   }
 
   _fetchUserConfigScript() {
@@ -623,20 +624,30 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _toggleRcFileName() {
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     let select = this.shadowRoot.querySelector('#select-rcfile-type');
-    let deleteBtn = this.shadowRoot.querySelector('#delete-rcfile');
     this.prevRcfile = this.rcfile;
     this.rcfile = select.value;
-    let prevIdx = this.rcfiles.findIndex(item => item.path === this.prevRcfile);
-    let currIdx = this.rcfiles.findIndex(item => item.path === this.rcfile);
-    let code = prevIdx > -1 ? this.rcfiles[prevIdx]['data'] : '';
+    let idx = this.rcfiles.findIndex(item => item.path === this.prevRcfile);
+    let code = idx > -1 ? this.rcfiles[idx]['data'] : '';
     let editorCode = editor.getValue();
     select.layout();
-    deleteBtn.disabled = !(this.rcfiles[currIdx]?.data && this.rcfiles[currIdx]?.permission);
+    this._toggleDeleteButton();
     if (code !== editorCode) {
       this._launchChangeCurrentEditorDialog();
     } else {
-      code = this.rcfiles[currIdx]?.data ? this.rcfiles[currIdx]['data'] : '';
+      idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+      code = this.rcfiles[idx]?.data ? this.rcfiles[idx]['data'] : '';
       editor.setValue(code);
+    }
+  }
+
+  /**
+   * Toggle delete button disabled when rcfile exists
+   */
+  _toggleDeleteButton() {
+    let deleteBtn = this.shadowRoot.querySelector('#delete-rcfile');
+    let idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+    if (idx > -1) {
+      deleteBtn.disabled = !(this.rcfiles[idx]?.data && this.rcfiles[idx]?.permission);
     }
   }
 
@@ -703,8 +714,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
-  _launchUserConfigDialog() {
-    this._editUserConfigScript();
+  async _launchUserConfigDialog() {
+    await this._editUserConfigScript();
+    this._toggleRcFileName();
     this.userconfigDialog.show();
   }
 
