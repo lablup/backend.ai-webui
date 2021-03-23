@@ -26,6 +26,7 @@
     "new-cap": 0,
     "indent": ["error", 2],
     "camelcase": "off",
+    "no-empty": "off",
     "no-empty-function": "off"
   }
 }
