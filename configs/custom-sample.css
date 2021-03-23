@@ -21,9 +21,11 @@ backend-ai-webui {
   height: 160px!important;
   background-position: left bottom!important;
 }
+
 .splash-header > img {
   padding-top:75px!important;
 }
+
 .loading-message {
   top: calc(50% + 128px)!important;
 }
@@ -33,51 +35,15 @@ backend-ai-webui {
 }
 
 .portrait-canvas {
-  background-image: url("sample-logo.svg")!important;
+  background-image: url("sample-sidebar-logo.svg")!important;
 }
 
 .site-name {
   font-size: 16px!important;
 }
 
-@keyframes dissolve {
-  0% {
-    opacity: 0;
-  }
-  75% {
-    opacity: 0;
-    transform: scale(0.9) translate(0, 30px);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translate(0, 0);
-  }
-}
-
-backend-ai-login:before {
-  content: url("hpc-innohub-logo.svg");
-  animation: dissolve 250ms;
-  z-index: 123456799;
-  position: absolute;
-  /*top: calc(50% - 205px); for non-signup & login mode */
-  /*top: calc(50% - 240px); for signup & login mode */
-  top: calc(50% - 190px); /*for non-signup & non-login mode */
-  left: calc(50% - 180px);
-  width: 200px;
-}
-
-backend-ai-login:after {
-  z-index: 123456798;
-  animation: dissolve 250ms;
-  position: absolute;
-  content: " ";
-  /*top: calc(50% - 215px); for non-signup & login mode */
-  /*top: calc(50% - 240px); for signup & login mode */
-  top: calc(50% - 200px); /* for non-signup & login mode */
-  left: calc(50% - 200px);
-  width: 400px;
-  height: 40px;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  background-color: #ffffff;
+backend-ai-login {
+  --login-banner-height:60px;
+  --login-banner-width:250px;
+  --login-banner-background: center left / contain no-repeat url("/resources/sample-logo.svg");
 }

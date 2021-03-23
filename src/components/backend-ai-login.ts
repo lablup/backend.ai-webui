@@ -207,107 +207,10 @@ export default class BackendAILogin extends BackendAIPage {
           margin-top: 5px;
         }
 
-        .sk-folding-cube {
-          margin: 20px auto;
-          width: 30px;
-          height: 30px;
-          position: relative;
-          -webkit-transform: rotateZ(45deg);
-                  transform: rotateZ(45deg);
-          z-index: 10;
-          position: absolute;
-          top: 35%;
-          left: 50%;
-        }
-
-        .sk-folding-cube > .loading {
-          -webkit-transform: rotateZ(-45deg);
-                  transform: rotateZ(-45deg);
-          font-size: 12px;
-          letter-spacing: 0.1em;
-          display: block;
-          position: relative;
-          top: 50%;
-          left: 40%;
-        }
-
-        .sk-folding-cube .sk-cube {
-          float: left;
-          width: 50%;
-          height: 50%;
-          position: relative;
-          -webkit-transform: scale(1.1);
-              -ms-transform: scale(1.1);
-                  transform: scale(1.1);
-        }
-        .sk-folding-cube .sk-cube:before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: #3e872d;
-          -webkit-animation: sk-foldCubeAngle 2.4s infinite linear both;
-                  animation: sk-foldCubeAngle 2.4s infinite linear both;
-          -webkit-transform-origin: 100% 100%;
-              -ms-transform-origin: 100% 100%;
-                  transform-origin: 100% 100%;
-        }
-        .sk-folding-cube .sk-cube2 {
-          -webkit-transform: scale(1.1) rotateZ(90deg);
-                  transform: scale(1.1) rotateZ(90deg);
-        }
-        .sk-folding-cube .sk-cube3 {
-          -webkit-transform: scale(1.1) rotateZ(180deg);
-                  transform: scale(1.1) rotateZ(180deg);
-        }
-        .sk-folding-cube .sk-cube4 {
-          -webkit-transform: scale(1.1) rotateZ(270deg);
-                  transform: scale(1.1) rotateZ(270deg);
-        }
-        .sk-folding-cube .sk-cube2:before {
-          -webkit-animation-delay: 0.3s;
-                  animation-delay: 0.3s;
-        }
-        .sk-folding-cube .sk-cube3:before {
-          -webkit-animation-delay: 0.6s;
-                  animation-delay: 0.6s;
-        }
-        .sk-folding-cube .sk-cube4:before {
-          -webkit-animation-delay: 0.9s;
-                  animation-delay: 0.9s;
-        }
-        @-webkit-keyframes sk-foldCubeAngle {
-          0%, 10% {
-            -webkit-transform: perspective(140px) rotateX(-180deg);
-                    transform: perspective(140px) rotateX(-180deg);
-            opacity: 0;
-          } 25%, 75% {
-            -webkit-transform: perspective(140px) rotateX(0deg);
-                    transform: perspective(140px) rotateX(0deg);
-            opacity: 1;
-          } 90%, 100% {
-            -webkit-transform: perspective(140px) rotateY(180deg);
-                    transform: perspective(140px) rotateY(180deg);
-            opacity: 0;
-          }
-        }
-
-        @keyframes sk-foldCubeAngle {
-          0%, 10% {
-            -webkit-transform: perspective(140px) rotateX(-180deg);
-                    transform: perspective(140px) rotateX(-180deg);
-            opacity: 0;
-          } 25%, 75% {
-            -webkit-transform: perspective(140px) rotateX(0deg);
-                    transform: perspective(140px) rotateX(0deg);
-            opacity: 1;
-          } 90%, 100% {
-            -webkit-transform: perspective(140px) rotateY(180deg);
-                    transform: perspective(140px) rotateY(180deg);
-            opacity: 0;
-          }
+        #login-title-area {
+          height: var(--login-banner-height, 0);
+          width: var(--login-banner-width, 0);
+          background: var(--login-banner-background, none);
         }
       `];
   }
@@ -814,6 +717,7 @@ export default class BackendAILogin extends BackendAIPage {
         this.is_connected = true;
         return this._connectGQL();
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     }).catch((err)=>{ // Server is unreachable
       this.free();
       this.open();
@@ -1057,9 +961,12 @@ export default class BackendAILogin extends BackendAIPage {
     // language=HTML
     return html`
       <backend-ai-dialog id="login-panel" noclosebutton fixed blockscrolling persistent disablefocustrap>
-        <div slot="title" class="horizontal center layout">
-          <img src="manifest/backend.ai-text.svg" style="height:35px;padding:15px 0 15px 5px;" />
-          <div class="flex"></div>
+        <div slot="title">
+          <div id="login-title-area"></div>
+          <div class="horizontal center layout">
+            <img src="manifest/backend.ai-text.svg" style="height:35px;padding:15px 0 15px 5px;" />
+            <div class="flex"></div>
+          </div>
         </div>
         <div slot="content" class="login-panel intro centered" style="margin: 0;">
           <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;min-height:40px;">
