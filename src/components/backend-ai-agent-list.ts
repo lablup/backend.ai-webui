@@ -34,7 +34,7 @@ import './lablup-progress-bar';
  ... content ...
  </backend-ai-agent-list>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element backend-ai-agent-list
  */
 
@@ -760,7 +760,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                            @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
             <mwc-icon-button class="temporarily-hide fg green controls-running" icon="refresh"
-            @click="${() => this._loadAgentList()}"></mwc-icon-button>
+                             @click="${() => this._loadAgentList()}"></mwc-icon-button>
             <mwc-icon-button class="temporarily-hide fg controls-running" disabled
                              icon="build"></mwc-icon-button>
             <mwc-icon-button class="temporarily-hide fg controls-running" disabled

@@ -3,8 +3,8 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {translate as _t} from 'lit-translate';
+import {css, customElement, html, property} from 'lit-element';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -15,7 +15,7 @@ import './lablup-activity-panel';
 import './backend-ai-agent-list';
 import './backend-ai-storage-proxy-list';
 import './backend-ai-scaling-group-list';
-import {BackendAiStyles} from "./backend-ai-general-styles";
+import {BackendAiStyles} from './backend-ai-general-styles';
 
 /**
  Backend.AI Agent view page
@@ -30,7 +30,7 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
  @element backend-ai-agent-view
  */
 
-@customElement("backend-ai-agent-view")
+@customElement('backend-ai-agent-view')
 export default class BackendAIAgentView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
   @property({type: String}) _tab = 'running-lists';
@@ -81,7 +81,7 @@ export default class BackendAIAgentView extends BackendAIPage {
    *
    * @param {Boolean} active
    */
-  async _viewStateChanged(active: Boolean) {
+  async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
       this.shadowRoot.querySelector('#running-agents').active = false;
@@ -99,10 +99,10 @@ export default class BackendAIAgentView extends BackendAIPage {
   /**
    * Display the tab.
    *
-   * @param tab
+   * @param {mwc-tab} tab
    */
   _showTab(tab) {
-    let els = this.shadowRoot.querySelectorAll(".tab-content");
+    const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
@@ -117,16 +117,16 @@ export default class BackendAIAgentView extends BackendAIPage {
         <div slot="message">
           <h3 class="tab horizontal center layout">
             <mwc-tab-bar>
-              <mwc-tab title="running-lists" label="${_t("agent.Connected")}"
+              <mwc-tab title="running-lists" label="${_t('agent.Connected')}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="terminated-lists" label="${_t("agent.Terminated")}"
+              <mwc-tab title="terminated-lists" label="${_t('agent.Terminated')}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <!--<mwc-tab title="maintenance-lists" label="${_t("agent.Maintaining")}"
+              <!--<mwc-tab title="maintenance-lists" label="${_t('agent.Maintaining')}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>-->
               ${this.enableStorageProxy ? html`
-              <mwc-tab title="storage-proxy-lists" label="${_t("general.StorageProxies")}"
+              <mwc-tab title="storage-proxy-lists" label="${_t('general.StorageProxies')}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>`:html``}
-              <mwc-tab title="scaling-group-lists" label="${_t("general.ResourceGroup")}"
+              <mwc-tab title="scaling-group-lists" label="${_t('general.ResourceGroup')}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
             <div class="flex"></div>
@@ -152,6 +152,6 @@ export default class BackendAIAgentView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-agent-view": BackendAIAgentView;
+    'backend-ai-agent-view': BackendAIAgentView;
   }
 }
