@@ -62,16 +62,28 @@ web:
 	if [ -f "./configs/$(site).css" ];then \
 		cp ./configs/$(site).css deploy/$(site)/webui/resources/custom.css; \
 	fi
-mac: dep
+mac: mac_intel mac_apple
+mac_intel: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	$(EP) --platform=darwin --icon=manifest/backend-ai.icns
-	rm -rf ./app/backend.ai-desktop-macos
-	cd app; mv "Backend.AI Desktop-darwin-x64" backend.ai-desktop-macos;
-	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos/Backend.AI Desktop.app' ./app/backend.ai-desktop-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
+	$(EP) --platform=darwin --arch=x64 --icon=manifest/backend-ai.icns
+	rm -rf ./app/backend.ai-desktop-macos-x64
+	cd app; mv "Backend.AI Desktop-darwin-x64" backend.ai-desktop-macos-intel;
+	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-intel/Backend.AI Desktop.app' ./app/backend.ai-desktop-intel-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
-	mv ./app/backend.ai-desktop-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-macos.dmg
+	mv ./app/backend.ai-desktop-intel-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-macos-intel.dmg
 else
-	mv ./app/backend.ai-desktop-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(site).dmg
+	mv ./app/backend.ai-desktop-intel-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(site)-macos-intel.dmg
+endif
+mac_apple: dep
+	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
+	$(EP) --platform=darwin --arch=arm64 --icon=manifest/backend-ai.icns
+	rm -rf ./app/backend.ai-desktop-macos-arm64
+	cd app; mv "Backend.AI Desktop-darwin-arm64" backend.ai-desktop-macos-apple;
+	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-apple/Backend.AI Desktop.app' ./app/backend.ai-desktop-apple-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
+ifeq ($(site),main)
+	mv ./app/backend.ai-desktop-apple-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-macos-apple.dmg
+else
+	mv ./app/backend.ai-desktop-apple-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(site)-macos-apple.dmg
 endif
 win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
