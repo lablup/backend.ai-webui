@@ -645,7 +645,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    *
    * @param {string} path - path that you want to delete
    * */
-  _deleteRcFile(path?: string) {
+  async _deleteRcFile(path?: string) {
     if (!path) {
       path = this.rcfile;
     }
@@ -665,6 +665,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
       })
     }
+    await setTimeout(() => {
+      this._editUserConfigScript();
+    }, 200);
   }
 
   /**
@@ -1010,7 +1013,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>
         <div slot="footer" class="end-justified layout flex horizontal">
           <mwc-button id="discard-code" label="${_t("button.Cancel")}" @click="${() => this._hideUserConfigScriptDialog()}"></mwc-button>
-          <mwc-button id="delete-rcfile" label="${_t("button.Delete")}" @click="${() => this._deleteRcFileAll()}"></mwc-button>
+          <mwc-button id="delete-rcfile" label="${_t("button.Delete")}" @click="${() => this._deleteRcFile()}"></mwc-button>
           <mwc-button unelevated id="save-code" label="${_t("button.Save")}" @click="${() => this._saveUserConfigScript()}"></mwc-button>
           <mwc-button unelevated id="save-code-and-close" label="${_t("button.SaveAndClose")}" @click="${() => this._saveUserConfigScriptAndCloseDialog()}"></mwc-button>
         </div>
