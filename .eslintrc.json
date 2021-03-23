@@ -24,6 +24,8 @@
     "require-jsdoc": 0,
     "max-len": 0,
     "new-cap": 0,
+    "indent": ["error", 2],
+    "camelcase": "off",
     "no-empty-function": "off"
   }
 }
