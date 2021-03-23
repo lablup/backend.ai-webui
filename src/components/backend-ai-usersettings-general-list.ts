@@ -623,17 +623,19 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _toggleRcFileName() {
     let editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
     let select = this.shadowRoot.querySelector('#select-rcfile-type');
+    let deleteBtn = this.shadowRoot.querySelector('#delete-rcfile');
     this.prevRcfile = this.rcfile;
     this.rcfile = select.value;
-    let idx = this.rcfiles.findIndex(item => item.path === this.prevRcfile);
-    let code = idx > -1 ? this.rcfiles[idx]['data'] : '';
+    let prevIdx = this.rcfiles.findIndex(item => item.path === this.prevRcfile);
+    let currIdx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+    let code = prevIdx > -1 ? this.rcfiles[prevIdx]['data'] : '';
     let editorCode = editor.getValue();
     select.layout();
+    deleteBtn.disabled = !(this.rcfiles[currIdx]?.data && this.rcfiles[currIdx]?.permission);
     if (code !== editorCode) {
       this._launchChangeCurrentEditorDialog();
     } else {
-      idx = this.rcfiles.findIndex((item) => item.path === this.rcfile);
-      code = this.rcfiles[idx]?.data ? this.rcfiles[idx]['data'] : '';
+      code = this.rcfiles[currIdx]?.data ? this.rcfiles[currIdx]['data'] : '';
       editor.setValue(code);
     }
   }
