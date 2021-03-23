@@ -1,5 +1,21 @@
 # Changelog
 
+## v21.03.1 (24/03/2021)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**enterprise**][**minor**] Easier custom logo for login screen [#941](https://github.com/lablup/backend.ai-webui/issues/941)
+- [**UI / UX**][**app**][**cloud**][**enhancement**][**enterprise**][**minor**] Support Apache Spark image [#932](https://github.com/lablup/backend.ai-webui/issues/932)
+- [**UI / UX**][**app**][**enhancement**] Move app window position before login to system [#925](https://github.com/lablup/backend.ai-webui/issues/925)
+
+#### Bug Fixes:
+
+- [**bug**] R container images are not displayed properly on environment list [#938](https://github.com/lablup/backend.ai-webui/issues/938)
+- [**bug**] GPU slider in session launch dialog is always fixed as zero when discrete mode is enabled [#937](https://github.com/lablup/backend.ai-webui/issues/937)
+- [**bug**][**major**] Unable to login when localStorage items exceeds size limit [#928](https://github.com/lablup/backend.ai-webui/issues/928)
+- [**bug**] Proxy is not working on desktop app from Electron 12 [#923](https://github.com/lablup/backend.ai-webui/issues/923)
+
+
 ## v21.03.0 (08/03/2021)
 
 #### Enhancements:
