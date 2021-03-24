@@ -549,14 +549,16 @@ export default class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].sessionTags = this._getKernelInfo(session.image);
           const specs = session.image.split('/');
           sessions[objectKey].cluster_size = parseInt(sessions[objectKey].cluster_size);
-          const tag = specs[specs.length - 1].split(':')[1]
+          const tag = specs[specs.length - 1].split(':')[1];
           let tags = tag.split('-');
           if (tags[1] !== undefined) {
             sessions[objectKey].baseversion = tags[0];
             sessions[objectKey].baseimage = tags[1];
             sessions[objectKey].additional_reqs = tags.slice(1, tags.length).map((tag) => tag.toUpperCase());
-          } else {
+          } else if (sessions[objectKey].tag !== undefined) {
             sessions[objectKey].baseversion = sessions[objectKey].tag;
+          } else {
+            sessions[objectKey].baseversion = tag;
           }
           if (this._selected_items.includes(sessions[objectKey][this.sessionNameField])) {
             sessions[objectKey].checked = true;
@@ -1100,7 +1102,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _createStatusDetailDropdown(e, item) {
-    console.log(item)
+    // console.log(item)
     const menuButton: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as any;
 

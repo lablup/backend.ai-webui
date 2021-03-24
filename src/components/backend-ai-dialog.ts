@@ -40,6 +40,7 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) hideActions = true;
   @property({type: Boolean}) open = false;
   @property({type: String}) type = 'normal';
+  @property({type: Boolean}) closeWithConfirmation = false;
 
   @query('#dialog') protected dialog;
 
@@ -130,6 +131,12 @@ export default class BackendAiDialog extends LitElement {
       } else {
         this.open = this.dialog.open;
       }
+
+      /**
+       * custom event for bubbling event of closing dialog
+       */
+      const closeEvent = new CustomEvent('dialog-closed', {detail: ''});
+      this.dispatchEvent(closeEvent);
     });
   }
 
@@ -141,7 +148,7 @@ export default class BackendAiDialog extends LitElement {
    * Hide a dialog.
    */
   _hideDialog() {
-    this.dialog.close();
+    this.hide();
   }
 
   /**
@@ -155,7 +162,12 @@ export default class BackendAiDialog extends LitElement {
    * Hide a dialog.
    */
   hide() {
-    this.dialog.close();
+    if (this.closeWithConfirmation) {
+      const closeEvent = new CustomEvent('dialog-closing-confirm', {detail: ''});
+      this.dispatchEvent(closeEvent);
+    } else {
+      this.dialog.close();
+    }
   }
 
   render() {

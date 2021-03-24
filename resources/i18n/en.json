@@ -191,11 +191,12 @@
       "NotEnoughResource": "Not enough resource",
       "EnvDeleted": "Envionment variable deleted",
       "SetEnv": "Set environment variable",
-      "DescSetEnv": "<p>If you set a default environment variable in the container and also set an environment variable with the same name on the Backend.AI, the value set on the Backend.AI takes precedence.</p><p style='color:var(--paper-red-400);'>Every input value will be initialized after starting session launcher.</p>",
+      "DescSetEnv": "<p>If you set a default environment variable in the container and also set an environment variable with the same name on the Backend.AI, the value set on the Backend.AI takes precedence.</p><p style='color:var(--paper-red-400);'>Every input value will be initialized after starting session launcher.<br />Also, those environment will be passed only if both variable and value are not empty.</p>",
       "EnvironmentVariableTitle": "Order of precedence: container vs Backend.AI internal variables",
       "EnvironmentVariable": "Variable",
       "EnvironmentVariableValue": "Value",
-      "EnvironmentVariableConfigurationDone": "Environment variable configured successfully."
+      "EnvironmentVariableConfigurationDone": "Environment variable configured successfully.",
+      "EnvConfigWillDisappear": "Any unsaved Environment variable and value will be disappeared."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -260,6 +261,7 @@
     "Update": "Update",
     "Delete": "Delete",
     "Dismiss": "Dismiss",
+    "DismissAndProceed": "Dismiss and Proceed",
     "Close": "Close",
     "Confirm": "Confirm",
     "Generate": "Generate",
