@@ -464,20 +464,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * */
   async _editUserConfigScript() {
     const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
-
-    // instead of changing .tmux.conf, allow user to change .tmux.conf.local
-    const ignoredRcFilename = ['.tmux.conf'];
-
-    // remove ignored rcfilenames from fetched results
     this.rcfiles = await this._fetchUserConfigScript();
-    ignoredRcFilename.forEach((filename) => {
-      let idx = this.rcfiles.findIndex(item => item.path === filename);
-      this.rcfiles.splice(idx, 1);
-    });
     const rcfileNames = ['.bashrc', '.zshrc', '.tmux.conf.local', '.vimrc', '.Renviron'];
     rcfileNames.map(filename => {
       let idx = this.rcfiles.findIndex(item => item.path === filename);
-      if (idx == -1 && !ignoredRcFilename.includes(filename)) {
+      if (idx === -1 ) {
         this.rcfiles.push({path: filename, data: ""});
         editor.setValue('');
       } else {
@@ -485,6 +476,18 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         editor.setValue(code);
       }
     });
+
+    // instead of changing .tmux.conf, allow user to change .tmux.conf.local
+    const ignoredRcFilename = ['.tmux.conf'];
+
+    // remove ignored rcfilenames from fetched results
+    ignoredRcFilename.forEach((filename) => {
+      let idx = this.rcfiles.findIndex(item => item.path === filename);
+      if (idx > -1) {
+        this.rcfiles.splice(idx, 1);
+      }
+    });
+
     let idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
     if (idx != -1) {
       let code = this.rcfiles[idx]['data'];
