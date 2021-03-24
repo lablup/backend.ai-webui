@@ -58,6 +58,7 @@ export default class BackendAiDialog extends LitElement {
         mwc-dialog {
           --mdc-dialog-min-width: var(--component-min-width, auto);
           --mdc-dialog-max-width: var(--component-max-width, 100%);
+          --mdc-dialog-min-height: var(--component-min-height, auto);
           --mdc-dialog-max-height: var(--component-max-height, calc(100vh - 45px));
           --mdc-dialog-width: var(--component-width, auto);
           --mdc-dialog-height: var(--component-height, auto);
@@ -183,7 +184,7 @@ export default class BackendAiDialog extends LitElement {
                     hideActions="${this.hideActions}"
                     style="padding:0;" class="${this.type}">
         <div elevation="1" class="card" style="margin: 0;padding:0;">
-          <h3 class="horizontal center layout" style="font-weight:bold">
+          <h3 class="horizontal justified layout" style="font-weight:bold">
             <span><slot name="title"></slot></span>
             <div class="flex"></div>
             <slot name="action"></slot>

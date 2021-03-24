@@ -104,7 +104,7 @@ export default class LablupCodemirror extends LitElement {
       CodemirrorBaseStyle,
       css`
         .CodeMirror {
-          height: auto;
+          height: auto !important;
           font-size: 15px;
         }
 

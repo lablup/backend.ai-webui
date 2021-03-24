@@ -132,7 +132,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           width: 75px;
         }
 
-
         .ssh-keypair {
           margin-right: 10px;
           width: 450px;
@@ -149,10 +148,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         #bootstrap-dialog, #userconfig-dialog {
-          --dialog-min-width: calc(100vw - 200px);
-          --dialog-max-width: calc(100vw - 200px);
-          --dialog-min-height: calc(100vh - 100px);
-          --dialog-max-height: calc(100vh - 100px);
+          --component-width: calc(100vw - 200px);
+          --component-height: calc(100vh - 100px);
+          --component-min-width: calc(100vw - 200px);
+          --component-max-width: calc(100vw - 200px);
+          --component-min-height: calc(100vh - 100px);
+          --component-max-height: calc(100vh - 100px);
         }
 
         mwc-select {
@@ -176,7 +177,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
         mwc-select#select-rcfile-type {
           width: 300px;
-          padding-right: 10px;
+          margin-bottom: 10px;
         }
 
         mwc-textarea {
@@ -244,7 +245,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           display: none; /* Chrome and Safari */
         }
 
-        @media screen and (max-width: 750px) {
+        @media screen and (max-width: 500px) {
+          #bootstrap-dialog, #userconfig-dialog {
+            --component-min-width: 300px;
+          }
+
+          mwc-select#select-rcfile-type {
+            width: 250px;
+          }
+          
           .setting-desc {
             width: 200px;
           }
@@ -279,6 +288,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         this.rcfile = '.bashrc';
       }
     }
+    this.userconfigDialog.addEventListener('dialog-closing-confirm', () => {
+      const editor = this.shadowRoot.querySelector('#usersetting-editor');
+      const script = editor.getValue();
+      let idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+      if (this.rcfiles[idx]['data'] !== script) {
+        this._launchChangeCurrentEditorDialog();
+      } else {
+        this.userconfigDialog.closeWithConfirmation = false;
+        this.userconfigDialog.hide();
+      }
+    })
     // this.beta_feature_panel = !this.shadowRoot.querySelector('#beta-feature-switch').disabled;
   }
 
@@ -427,7 +447,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   async _saveBootstrapScript() {
-    const editor = this.shadowRoot.querySelector('#bootstrap-dialog #bootstrap-editor');
+    const editor = this.shadowRoot.querySelector('#bootstrap-editor');
     const script = editor.getValue();
     if (this.lastSavedBootstrapScript === script) {
       this.notification.text = _text('resourceGroup.NochangesMade');
@@ -449,7 +469,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   async _editBootstrapScript() {
-    const editor = this.shadowRoot.querySelector('#bootstrap-dialog #bootstrap-editor');
+    const editor = this.shadowRoot.querySelector('#bootstrap-editor');
     const script = await this._fetchBootstrapScript();
     editor.setValue(script);
     this.bootstrapDialog.show();
@@ -463,7 +483,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * Edit user's .bashrc or .zshrc code.
    * */
   async _editUserConfigScript() {
-    const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
+    const editor = this.shadowRoot.querySelector('#usersetting-editor');
     this.rcfiles = await this._fetchUserConfigScript();
     const rcfileNames = ['.bashrc', '.zshrc', '.tmux.conf.local', '.vimrc', '.Renviron'];
     rcfileNames.map(filename => {
@@ -516,7 +536,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   async _saveUserConfigScript(fileName: string = this.rcfile) {
-    const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
+    const editor = this.shadowRoot.querySelector('#usersetting-editor');
     const script = editor.getValue();
     let idx = this.rcfiles.findIndex(item => item.path === fileName);
     let rcfiles = this.shadowRoot.querySelector('#select-rcfile-type');
@@ -719,7 +739,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   async _launchUserConfigDialog() {
     await this._editUserConfigScript();
-    this._toggleRcFileName();
+    this.userconfigDialog.closeWithConfirmation = true;
     this.userconfigDialog.show();
   }
 
@@ -1007,26 +1027,27 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <mwc-button unelevated id="save-code-and-close" label="${_t("button.SaveAndClose")}" @click="${() => this._saveBootstrapScriptAndCloseDialog()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
+      <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent closeWithConfirmation>
         <span slot="title">${_t("usersettings.Edit_ShellScriptTitle_1")} ${this.rcfile} ${_t("usersettings.Edit_ShellScriptTitle_2")}</span>
-        <div slot="action" class="vertical layout" style="margin-left:1em;">
+        <div slot="content" class="vertical layout" style="height:calc(100vh - 300px);">
           <mwc-select id="select-rcfile-type"
-                      label="${_t("usersettings.ConfigFilename")}"
-                      required
-                      outlined
-                      validationMessage="${_t("credential.validation.PleaseSelectOption")}"
-                      @selected="${() => this._toggleRcFileName()}"
-                      helper=${_t("dialog.warning.WillBeAppliedToNewSessions")}>
+                  label="${_t("usersettings.ConfigFilename")}"
+                  required
+                  outlined
+                  validationMessage="${_t("credential.validation.PleaseSelectOption")}"
+                  @selected="${() => this._toggleRcFileName()}"
+                  helper=${_t("dialog.warning.WillBeAppliedToNewSessions")}>
             ${this.rcfiles.map(item => html`
               <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
                 ${item.path}
-              </mwc-list-item>`)}
+              </mwc-list-item>`
+            )}
           </mwc-select>
+          <div style="background-color:#272823;height:100%;">
+            <lablup-codemirror id="usersetting-editor" mode="shell"></lablup-codemirror>
+          </div>
         </div>
-        <div slot="content" style="height:calc(100vh - 300px);background-color:#272823;">
-          <lablup-codemirror id="usersetting-editor" mode="shell"></lablup-codemirror>
-        </div>
-        <div slot="footer" class="end-justified layout flex horizontal">
+        <div slot="footer" class="end-justified layout flex">
           <mwc-button id="discard-code" label="${_t("button.Cancel")}" @click="${() => this._hideUserConfigScriptDialog()}"></mwc-button>
           <mwc-button id="delete-rcfile" label="${_t("button.Delete")}" @click="${() => this._deleteRcFile()}"></mwc-button>
           <mwc-button unelevated id="save-code" label="${_t("button.Save")}" @click="${() => this._saveUserConfigScript()}"></mwc-button>
