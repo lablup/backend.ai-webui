@@ -293,6 +293,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       const script = editor.getValue();
       let idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
       if (this.rcfiles[idx]['data'] !== script) {
+        this.prevRcfile = this.rcfile; // update prevRcfile to current file
         this._launchChangeCurrentEditorDialog();
       } else {
         this.userconfigDialog.closeWithConfirmation = false;
