@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {customElement, html, LitElement, property} from "lit-element";
+import {customElement, html, LitElement, property} from 'lit-element';
 
 import '../plastics/chart-js';
 import format from 'date-fns/esm/format';
