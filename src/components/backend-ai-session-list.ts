@@ -1202,6 +1202,9 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   controlRenderer(root, column?, rowData?) {
+    let mySession = true;
+    mySession = (this._connectionMode === 'API' && rowData.item.access_key === globalThis.backendaiclient._config._accessKey) ||
+      (rowData.item.user_email === globalThis.backendaiclient.email);
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
@@ -1213,10 +1216,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           ${rowData.item.appSupport ? html`
             <mwc-icon-button class="fg controls-running green"
                                @click="${(e) => this._showAppLauncher(e)}"
-							   ${(this._connectionMode === "API" && rowData.item.access_key === globalThis.backendaiclient._config._accessKey) || (rowData.item.user_email=== globalThis.backendaiclient.email) ? html'': html'disabled'}
+                               ?disabled="${!mySession}"
                                icon="apps"></mwc-icon-button>
             <mwc-icon-button class="fg controls-running"
-							   ${(this._connectionMode === "API" && rowData.item.access_key === globalThis.backendaiclient._config._accessKey) || (rowData.item.user_email=== globalThis.backendaiclient.email) ? html'': html'disabled'}
+                               ?disabled="${!mySession}"
                                @click="${(e) => this._runTerminal(e)}">
               <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                  width="471.362px" height="471.362px" viewBox="0 0 471.362 471.362" style="enable-background:new 0 0 471.362 471.362;"
