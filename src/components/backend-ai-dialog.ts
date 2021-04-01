@@ -2,16 +2,16 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-//import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
-import {css, customElement, html, LitElement, property, query} from "lit-element";
-import {BackendAiStyles} from "./backend-ai-general-styles";
+// import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import {css, customElement, html, LitElement, property, query} from 'lit-element';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/icon';
 import '../plastics/mwc/mwc-dialog';
 import '@material/mwc-icon-button';
 
-import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
  Backend.AI Dialog
@@ -27,7 +27,7 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 @group Backend.AI Web UI
  @element backend-ai-dialog
  */
-@customElement("backend-ai-dialog")
+@customElement('backend-ai-dialog')
 export default class BackendAiDialog extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Boolean}) fixed = false;
@@ -207,6 +207,6 @@ export default class BackendAiDialog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-dialog": BackendAiDialog;
+    'backend-ai-dialog': BackendAiDialog;
   }
 }
