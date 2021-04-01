@@ -14,7 +14,8 @@
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
-    }
+    },
+    "project": "tsconfig.json"
   },
   "plugins": [
     "@typescript-eslint"
@@ -27,6 +28,7 @@
     "indent": ["error", 2],
     "camelcase": "off",
     "no-empty": "off",
-    "no-empty-function": "off"
+    "no-empty-function": "off",
+    "no-invalid-this": "off"
   }
 }
