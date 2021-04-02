@@ -68,7 +68,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -253,7 +253,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           mwc-select#select-rcfile-type {
             width: 250px;
           }
-          
+
           .setting-desc {
             width: 200px;
           }
@@ -686,7 +686,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
     if (path) {
       globalThis.backendaiclient.userConfig.delete(path).then(res => {
-        let message = _text('usersettings.DescScriptDeleted') + path; 
+        let message = _text('usersettings.DescScriptDeleted') + path;
         this.notification.text = message;
         this.notification.show();
         this.spinner.hide();

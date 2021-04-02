@@ -44,7 +44,7 @@ export default class LablupSlider extends LitElement {
   @property({type: Object}) textfield;
   @query('#slider', true) slider;
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,

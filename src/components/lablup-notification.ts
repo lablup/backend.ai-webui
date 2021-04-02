@@ -56,7 +56,7 @@ export default class LablupNotification extends LitElement {
     return 'lablup-notification';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       // language=CSS
       css`

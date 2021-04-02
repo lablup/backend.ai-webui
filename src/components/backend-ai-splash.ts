@@ -39,7 +39,7 @@ export default class BackendAISplash extends LitElement {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       // language=CSS
       css`

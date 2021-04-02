@@ -67,7 +67,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     return 'backend-ai-settings-view';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,

@@ -143,7 +143,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.blockedMenuitem = [];
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAIWebUIStyles,
       IronFlex,

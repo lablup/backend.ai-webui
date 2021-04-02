@@ -39,7 +39,7 @@ export default class BackendAIIndicatorPool extends LitElement {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [];
   }
 

@@ -63,7 +63,7 @@ export default class BackendAIUsageList extends BackendAIPage {
     this.data = [];
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,

@@ -105,7 +105,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     return 'backend-ai-resource-broker';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [];
   }
 

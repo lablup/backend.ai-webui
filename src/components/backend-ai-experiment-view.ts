@@ -132,7 +132,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
     return 'backend-ai-experiment-view';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,

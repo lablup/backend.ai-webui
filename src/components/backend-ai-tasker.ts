@@ -63,7 +63,7 @@ export default class BackendAiTasker extends LitElement {
     }, 10000);
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       // language=CSS
       css``];

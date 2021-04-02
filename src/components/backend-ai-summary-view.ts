@@ -85,7 +85,7 @@ export default class BackendAISummary extends BackendAIPage {
     this.invitations = [];
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -592,7 +592,7 @@ export default class BackendAISummary extends BackendAIPage {
                         </a>
                     </div>
                   </lablup-activity-panel>` : html``}
-                    
+
                     <lablup-activity-panel class="footer-menu" noheader autowidth>
                       <div slot="message" class="layout horizontal center center-justified flex upper-space">
                           <a href="/maintenance">

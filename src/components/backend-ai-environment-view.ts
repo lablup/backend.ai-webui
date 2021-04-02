@@ -47,7 +47,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -102,7 +102,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
             mwc-tab, mwc-button {
               --mdc-typography-button-font-size: 10px;
             }
-  
+
             wl-tab {
               width: 5px;
             }

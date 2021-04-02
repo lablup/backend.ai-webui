@@ -40,7 +40,7 @@ export default class BackendAIAgentView extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       // language=CSS

@@ -60,7 +60,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     this.schedulerTypes = ['fifo', 'lifo', 'drf'];
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,

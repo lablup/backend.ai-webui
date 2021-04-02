@@ -52,7 +52,7 @@ class BackendAIRegistryList extends BackendAIPage {
     this.registryList = [];
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,

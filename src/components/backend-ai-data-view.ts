@@ -88,7 +88,7 @@ export default class BackendAIData extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -490,7 +490,7 @@ export default class BackendAIData extends BackendAIPage {
 
   /***
    * create Storage Doughnut Chart
-   * 
+   *
    */
   async _createStorageChart() {
     let accessKey = globalThis.backendaiclient._config.accessKey;

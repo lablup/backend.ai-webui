@@ -202,7 +202,7 @@ export default class BackendAIChart extends LitElement {
     return "backend-ai-chart";
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,

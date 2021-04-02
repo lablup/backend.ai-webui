@@ -41,7 +41,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
   @property({type: Object}) failDialog = Object();
   @property({type: String}) token = '';
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,

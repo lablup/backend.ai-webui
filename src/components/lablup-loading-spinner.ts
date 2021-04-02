@@ -29,7 +29,7 @@ export default class LablupLoadingSpinner extends LitElement {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       // language=CSS
       css`

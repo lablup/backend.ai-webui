@@ -62,7 +62,7 @@ export default class BackendAiSessionView extends BackendAIPage {
     this._status = 'inactive';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -126,7 +126,7 @@ export default class BackendAiSessionView extends BackendAIPage {
           left: -170px;
           top: 50px;
         }
-        
+
         mwc-list-item {
           font-size : 14px;
         }
@@ -223,7 +223,7 @@ export default class BackendAiSessionView extends BackendAIPage {
 
   /**
    * toggle dropdown menu (admin-only)
-   * 
+   *
    * @param e {event}
    */
   _toggleDropdown(e) {

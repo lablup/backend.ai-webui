@@ -17,7 +17,7 @@ import {css, customElement, html, LitElement} from "lit-element";
 
 @customElement("backend-ai-offline-indicator")
 export default class BackendAIOfflineIndicator extends LitElement {
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       css`
         :host {

@@ -49,7 +49,7 @@ export default class LablupActivityPanel extends LitElement {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       IronFlex,
       IronFlexAlignment,

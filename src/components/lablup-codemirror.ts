@@ -96,7 +96,7 @@ export default class LablupCodemirror extends LitElement {
     this.refresh();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       IronFlex,
       IronFlexAlignment,

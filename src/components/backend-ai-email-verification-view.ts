@@ -40,7 +40,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
   @property({type: Object}) successDialog = Object();
   @property({type: Object}) failDialog = Object();
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,

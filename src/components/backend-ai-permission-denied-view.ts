@@ -32,7 +32,7 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -46,7 +46,7 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
         color: var(--general-navbar-footer-color, #424242);
         line-height: 1em;
       }
-      
+
       .description {
         font-size: 1em;
         font-weight: normal;
@@ -115,7 +115,7 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
   }
 
   /**
-   * 
+   *
    * @param url - page to redirect from the current page.
    */
   _moveTo(url = '') {

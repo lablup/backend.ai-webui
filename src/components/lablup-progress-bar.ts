@@ -35,7 +35,7 @@ export default class LablupProgressBar extends LitElement {
   @property({type: Number}) progress = 0;
   @property({type: String}) description = ''
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,

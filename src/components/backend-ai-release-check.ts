@@ -37,7 +37,7 @@ export default class BackendAiReleaseCheck extends LitElement {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [];
   }
 

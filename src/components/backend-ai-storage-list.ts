@@ -127,7 +127,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundFolderListRenderer = this.folderListRenderer.bind(this);
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -837,7 +837,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             ${globalThis.backendaioptions.get('language') !== 'ko' ?
               html`
                 ${_text("data.explorer.KeepFileExtension") + this.oldFileExtension}
-              ` : 
+              ` :
               html`
                 ${this.oldFileExtension + _text("data.explorer.KeepFileExtension")}
               `}
@@ -846,7 +846,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             ${globalThis.backendaioptions.get('language') !== 'ko' ?
               html`
                 ${this.newFileExtension ? _text("data.explorer.UseNewFileExtension") + this.newFileExtension : _text("data.explorer.RemoveFileExtension")}
-              ` : 
+              ` :
               html`
                 ${this.newFileExtension ? this.newFileExtension + _text("data.explorer.UseNewFileExtension") : _text("data.explorer.RemoveFileExtension")}
               `}
@@ -2067,7 +2067,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Select filename without extension
-   * 
+   *
    */
   _compareFileExtension() {
     let newFilename = this.shadowRoot.querySelector('#new-file-name').value;
@@ -2090,8 +2090,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
-   * Keep the file extension whether the file extension is explicit or not. 
-   * 
+   * Keep the file extension whether the file extension is explicit or not.
+   *
    */
   _keepFileExtension() {
     let newFilename = this.renameFileDialog.querySelector('#new-file-name').value;
@@ -2103,7 +2103,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.renameFileDialog.querySelector('#new-file-name').value = newFilename;
     this._renameFile();
   }
-  
+
    /* Execute Filebrowser by launching session with mimimum resources
    *
    */
