@@ -1,5 +1,18 @@
 # Changelog
 
+## v21.03.2 (02/04/2021)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Disable (non-working) app / terminal button when admin lists other users' session list [#945](https://github.com/lablup/backend.ai-webui/issues/945)
+- [**app**][**enhancement**][**major**] Support Apple Silicon macs [#942](https://github.com/lablup/backend.ai-webui/issues/942)
+- [**enhancement**][**good first issue**][**minor**] Let users to change .vimrc and .tmux.conf for better customizability [#935](https://github.com/lablup/backend.ai-webui/issues/935)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**maintenance**][**minor**] It looks like the domain administrator can create the keypair resource policy, but it doesn't actually do it. [#946](https://github.com/lablup/backend.ai-webui/issues/946)
+
+
 ## v21.03.1 (24/03/2021)
 
 #### Enhancements:
@@ -62,7 +75,7 @@
 - [**enhancement**][**library / SDK**][**minor**] Change perSession scheme to perContainer [#889](https://github.com/lablup/backend.ai-console/issues/889)
 - [**UI / UX**][**enhancement**][**minor**] Let's support folder upload in vfolder [#885](https://github.com/lablup/backend.ai-console/issues/885)
 - [**enhancement**][**library / SDK**][**major**] add maxCUDASharesPerContainer to limit fGPU slice size [#788](https://github.com/lablup/backend.ai-console/issues/788)
-- 
+-
 
 ## v21.02.0 (03/02/2021)
 
