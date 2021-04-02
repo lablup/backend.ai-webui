@@ -4,7 +4,7 @@
  */
 
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';

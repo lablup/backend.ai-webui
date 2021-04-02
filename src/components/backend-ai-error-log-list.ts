@@ -4,7 +4,7 @@
  */
 
 import {translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from "lit-element";
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';

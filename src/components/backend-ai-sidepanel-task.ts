@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from "lit-element";
 import '../plastics/mwc/mwc-drawer';
 import '@material/mwc-icon';
 import '@material/mwc-list';

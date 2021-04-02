@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from "lit-element";
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 

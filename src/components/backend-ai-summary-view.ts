@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from "lit-translate";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
-import {css, customElement, html, property} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';

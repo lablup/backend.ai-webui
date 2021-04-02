@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, LitElement, property, query} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property, query} from "lit-element";
 import '@material/mwc-slider';
 import 'weightless/textfield';
 

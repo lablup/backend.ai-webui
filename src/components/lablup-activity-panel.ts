@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from "lit-element";
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/icon';

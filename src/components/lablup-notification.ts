@@ -4,7 +4,7 @@
  */
 
 import {get as _text} from 'lit-translate';
-import {css, customElement, html, LitElement, property} from 'lit-element';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 import 'weightless/snackbar';
 import 'weightless/button';
 import 'weightless/icon';
