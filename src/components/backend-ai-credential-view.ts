@@ -112,12 +112,12 @@ export default class BackendAICredentialView extends BackendAIPage {
         }
 
         wl-tab-group {
-          border-radius: 5px 5px 0px 0px;
+          border-radius: 5px 5px 0 0;
           --tab-group-indicator-bg: var(--general-tabbar-button-color);
         }
 
         wl-tab {
-          border-radius: 5px 5px 0px 0px;
+          border-radius: 5px 5px 0 0;
           --tab-color: var(--general-sidepanel-color);
           --tab-color-hover: #26272a;
           --tab-color-hover-filled: var(--general-tabbar-button-color);
@@ -131,8 +131,8 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         h3.tab {
           background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0px 0px;
-          margin: 0px auto;
+          border-radius: 5px 5px 0 0;
+          margin: 0 auto;
         }
 
         mwc-tab-bar {
@@ -662,12 +662,14 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
     this._activeTab = tab.title;
     this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
+    let tabKeyword;
+    let innerTab;
     // show inner tab(active) after selecting outer tab
     switch (this._activeTab) {
     case 'user-lists':
     case 'credential-lists':
-      const tabKeyword = this._activeTab.substring(0, this._activeTab.length - 1); // to remove '-s'.
-      const innerTab = this.shadowRoot.querySelector('wl-tab[value=active-' + tabKeyword + ']');
+      tabKeyword = this._activeTab.substring(0, this._activeTab.length - 1); // to remove '-s'.
+      innerTab = this.shadowRoot.querySelector('wl-tab[value=active-' + tabKeyword + ']');
       innerTab.checked = true;
       this._showList(innerTab);
       break;
@@ -849,25 +851,26 @@ export default class BackendAICredentialView extends BackendAIPage {
     if (!fileNameEl.validity.valid) {
       return;
     }
+    let users; let credential_active; let credential_inactive; let credential; let resource_policy;
     switch (this._activeTab) {
     case 'user-lists':
-      const users = this.shadowRoot.querySelector('#active-user-list')['users'];
+      users = this.shadowRoot.querySelector('#active-user-list')['users'];
       users.map((obj) => { // filtering unnecessary key
         ['password', 'need_password_change'].forEach((key) => delete obj[key]);
       });
       JsonToCsv.exportToCsv(fileNameEl.value, users);
       break;
     case 'credential-lists':
-      const credential_active = this.shadowRoot.querySelector('#active-credential-list')['keypairs'];
-      const credential_inactive = this.shadowRoot.querySelector('#inactive-credential-list')['keypairs'];
-      const credential = credential_active.concat(credential_inactive);
+      credential_active = this.shadowRoot.querySelector('#active-credential-list')['keypairs'];
+      credential_inactive = this.shadowRoot.querySelector('#inactive-credential-list')['keypairs'];
+      credential = credential_active.concat(credential_inactive);
       credential.map((obj)=> { // filtering unnecessary key
         ['is_admin'].forEach((key) => delete obj[key]);
       });
       JsonToCsv.exportToCsv(fileNameEl.value, credential);
       break;
     case 'resource-policy-lists':
-      const resource_policy = this.shadowRoot.querySelector('#resource-policy-list')['resourcePolicy'];
+      resource_policy = this.shadowRoot.querySelector('#resource-policy-list')['resourcePolicy'];
       JsonToCsv.exportToCsv(fileNameEl.value, resource_policy);
       break;
     }
