@@ -63,7 +63,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Object}) container_per_session_limit = {};
   @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
   @property({type: Object}) resource_policies = Object();
-  @property({type: Array}) resource_policy_names = [];
+  @property({type: Array}) resource_policy_names;
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) isSuperAdmin = false;
   @property({type: String}) _status = 'inactive';
@@ -79,6 +79,7 @@ export default class BackendAICredentialView extends BackendAIPage {
 
   constructor() {
     super();
+    this.resource_policy_names = [];
   }
 
   static get styles(): CSSResultOrNative | CSSResultArray {
