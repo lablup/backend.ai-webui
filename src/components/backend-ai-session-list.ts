@@ -58,13 +58,13 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
   @property({type: Array}) compute_sessions = [];
-  @property({type: Array}) terminationQueue = [];
+  @property({type: Array}) terminationQueue;
   @property({type: String}) filterAccessKey = '';
   @property({type: String}) sessionNameField = 'name';
   @property({type: Array}) appSupportList = [];
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
-  @property({type: Array}) _selected_items = [];
+  @property({type: Array}) _selected_items;
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundConfigRenderer = this.configRenderer.bind(this);
   @property({type: Object}) _boundUsageRenderer = this.usageRenderer.bind(this);
@@ -107,6 +107,8 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   constructor() {
     super();
+    this._selected_items = [];
+    this.terminationQueue = [];
   }
 
   static get styles(): CSSResultOrNative | CSSResultArray {

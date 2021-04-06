@@ -45,7 +45,7 @@ export default class BackendAiHelpButton extends BackendAIPage {
     super();
   }
 
-  static get styles(): Array<any> {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [css`
     mwc-icon-button {
       color: white;

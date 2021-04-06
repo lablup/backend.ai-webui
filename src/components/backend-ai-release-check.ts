@@ -3,8 +3,8 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {get as _text} from "lit-translate";
-import {customElement, html, LitElement, property} from "lit-element";
+import {get as _text} from 'lit-translate';
+import {CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 
 /**
  Backend AI Release Check
@@ -19,7 +19,7 @@ import {customElement, html, LitElement, property} from "lit-element";
  @element backend-ai-release-check
  */
 
-@customElement("backend-ai-release-check")
+@customElement('backend-ai-release-check')
 export default class BackendAiReleaseCheck extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: String}) releaseURL = 'https://raw.githubusercontent.com/lablup/backend.ai-webui/release/version.json';
@@ -49,7 +49,7 @@ export default class BackendAiReleaseCheck extends LitElement {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    if (globalThis.isElectron && typeof globalThis.backendaioptions != 'undefined' && globalThis.backendaioptions.get("automatic_update_check", true)) {
+    if (globalThis.isElectron && typeof globalThis.backendaioptions != 'undefined' && globalThis.backendaioptions.get('automatic_update_check', true)) {
       this.checkRelease();
     }
   }
@@ -60,31 +60,31 @@ export default class BackendAiReleaseCheck extends LitElement {
   async checkRelease() {
     if (!this.updateChecked) {
       fetch(this.releaseURL).then(
-        response => response.json()
+        (response) => response.json()
       ).then(
-        json => {
+        (json) => {
           this.updateChecked = true;
           this.remoteVersion = json.package;
           this.remoteBuild = json.build;
           this.remoteRevision = json.revision;
           if (this.compareVersion(globalThis.packageVersion, this.remoteVersion) < 0) { // update needed.
-            //if (this.compareVersion('20.03.3', this.remoteVersion) < 0) { // For testing
+            // if (this.compareVersion('20.03.3', this.remoteVersion) < 0) { // For testing
             this.updateNeeded = true;
             this.updateURL = `https://github.com/lablup/backend.ai-webui/releases/tag/v${this.remoteVersion}`;
             if (globalThis.isElectron) {
-              this.notification.text = _text("update.NewWebUIVersionAvailable") + ' ' + this.remoteVersion;
-              this.notification.detail = _text("update.NewWebUIVersionAvailable");
+              this.notification.text = _text('update.NewWebUIVersionAvailable') + ' ' + this.remoteVersion;
+              this.notification.detail = _text('update.NewWebUIVersionAvailable');
               this.notification.url = this.updateURL;
               this.notification.show();
             }
           }
         }
       ).catch((e) => {
-        let count = globalThis.backendaioptions.get("automatic_update_count_trial", 0);
+        const count = globalThis.backendaioptions.get('automatic_update_count_trial', 0);
         if (count > 3) { // Try 3 times.
-          globalThis.backendaioptions.set("automatic_update_check", false); // Turn off automatic check.
+          globalThis.backendaioptions.set('automatic_update_check', false); // Turn off automatic check.
         }
-        globalThis.backendaioptions.set("automatic_update_count_trial", count + 1);
+        globalThis.backendaioptions.set('automatic_update_count_trial', count + 1);
       });
     }
   }
@@ -115,6 +115,6 @@ export default class BackendAiReleaseCheck extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-release-check": BackendAiReleaseCheck;
+    'backend-ai-release-check': BackendAiReleaseCheck;
   }
 }
