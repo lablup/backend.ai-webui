@@ -67,7 +67,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       rocm_gpu: false,
       tpu: false,
       scheduler: 'fifo'
-    }
+    };
   }
 
   static get is() {
