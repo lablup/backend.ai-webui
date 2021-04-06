@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement} from 'lit-element';
 
 /**
  Backend.AI Offline Indicator
@@ -15,7 +15,7 @@ import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement}
  @element backend-ai-offline-indicator
  */
 
-@customElement("backend-ai-offline-indicator")
+@customElement('backend-ai-offline-indicator')
 export default class BackendAIOfflineIndicator extends LitElement {
   static get styles(): CSSResultOrNative | CSSResultArray {
     return [
@@ -62,6 +62,6 @@ export default class BackendAIOfflineIndicator extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-offline-indicator": BackendAIOfflineIndicator;
+    'backend-ai-offline-indicator': BackendAIOfflineIndicator;
   }
 }

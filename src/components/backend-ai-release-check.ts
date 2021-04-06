@@ -96,6 +96,7 @@ export default class BackendAiReleaseCheck extends LitElement {
    *
    * @param {string} v1 - version 1
    * @param {string} v2 - version 2
+   * @return {boolean} Comparison result. One of [0, -1, 1]
    * */
   compareVersion(v1, v2) {
     if (typeof v1 !== 'string') return false;
