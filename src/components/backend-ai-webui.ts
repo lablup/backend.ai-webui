@@ -856,7 +856,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.menuTitle = _text("webui.menu.Data&Storage");
         break;
       case 'pipeline':
-        this.menuTitle = _text("console.menu.Pipeline");
+        this.menuTitle = _text("webui.menu.Pipeline");
         break;
       case 'statistics':
         this.menuTitle = _text("webui.menu.Statistics");
@@ -1284,7 +1284,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}" ?disabled="${this.blockedMenuitem.includes('pipeline')}">
               <i class="fas fa-stream" slot="graphic" id="pipeline-menu-icon"></i>
-              <span class="full-menu">${_t("console.menu.Pipeline")}</span>
+              <span class="full-menu">${_t("webui.menu.Pipeline")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}" ?disabled="${this.blockedMenuitem.includes('statistics')}">
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
