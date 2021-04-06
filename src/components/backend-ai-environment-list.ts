@@ -49,7 +49,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
   @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
   @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
-  @property({type: Array}) servicePorts = [];
+  @property({type: Array}) servicePorts;
   @property({type: Number}) selectedIndex = 0;
   @property({type: Array}) selectedImages = [];
   @property({type: Boolean}) _cuda_gpu_disabled = false;
@@ -85,6 +85,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.deleteImageNameList = [];
     this.images = [];
     this.allowed_registries = [];
+    this.servicePorts = [];
   }
 
   static get styles(): CSSResultOrNative | CSSResultArray {
@@ -355,10 +356,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.selectedImages = this._grid.selectedItems.filter((images) => {
       return !images.installed;
     });
-    this.installImageNameList = this.selectedImages.map( (image) => {
+    this.installImageNameList = this.selectedImages.map( (image: any) => {
       // remove whitespace
       Object.keys(image).map((elem) => {
-        if (['registry', 'name', 'tag'].includes(elem)) {
+        if (['registry', 'name', 'tag'].includes(elem) && elem in image) {
           image[elem] = image[elem].replace(/\s/g, '');
         }
       });
@@ -377,17 +378,18 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   _installImage() {
     this.installImageDialog.hide();
-    this.selectedImages.forEach( async (image) => {
+    this.selectedImages.forEach( async (image: any) => {
       // make image installing status visible
       const selectedImageLabel = '#' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-');
       this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:block;');
-
       const imageName = image['registry'] + '/' + image['name'] + ':' + image['tag'];
       let isGPURequired = false;
       const imageResource = Object();
-      image['resource_limits'].forEach( (el) => {
-        imageResource[el['key'].replace('_', '.')] = el.min;
-      });
+      if ('resource_limits' in image) {
+        image['resource_limits'].forEach((el) => {
+          imageResource[el['key'].replace('_', '.')] = el.min;
+        });
+      }
 
       if ('cuda.device' in imageResource && 'cuda.shares' in imageResource) {
         isGPURequired = true;
