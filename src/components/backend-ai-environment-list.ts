@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from "lit-translate";
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 import {render} from 'lit-html';
 
@@ -33,7 +33,7 @@ import '@material/mwc-slider/mwc-slider';
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
+import {default as PainKiller} from './backend-ai-painkiller';
 
 /**
  Backend.AI Environment List
@@ -42,16 +42,16 @@ import {default as PainKiller} from "./backend-ai-painkiller";
  @element backend-ai-environment-list
  */
 
-@customElement("backend-ai-environment-list")
+@customElement('backend-ai-environment-list')
 export default class BackendAIEnvironmentList extends BackendAIPage {
-  @property({type: Array}) images = Array();
-  @property({type: Array}) allowed_registries = Array();
+  @property({type: Array}) images;
+  @property({type: Array}) allowed_registries;
   @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
   @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
   @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
-  @property({type: Array}) servicePorts = Array();
+  @property({type: Array}) servicePorts = [];
   @property({type: Number}) selectedIndex = 0;
-  @property({type: Array}) selectedImages = Array();
+  @property({type: Array}) selectedImages = [];
   @property({type: Boolean}) _cuda_gpu_disabled = false;
   @property({type: Boolean}) _cuda_fgpu_disabled = false;
   @property({type: Boolean}) _rocm_gpu_disabled = false;
@@ -61,29 +61,34 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Object}) installImageDialog = Object();
   @property({type: Object}) deleteImageDialog = Object();
-  @property({type: Array}) installImageNameList = Array();
-  @property({type: Array}) deleteImageNameList = Array();
+  @property({type: Array}) installImageNameList;
+  @property({type: Array}) deleteImageNameList;
   @property({type: Object}) deleteAppInfo = Object();
   @property({type: Object}) deleteAppRow = Object();
   @property({type: Object}) installImageResource = Object();
   @property({type: Object}) selectedCheckbox = Object();
   @property({type: Object}) _grid = Object();
   @property({type: String}) servicePortsMsg = '';
-  @property({type: Object}) _range = {"cpu":["1", "2", "3", "4", "5", "6", "7", "8"],
-                                      "mem":["64MB", "128MB", "256MB", "512MB",
-                                           "1GB", "2GB", "4GB", "8GB",
-                                           "16GB", "32GB", "256GB", "512GB"],
-                                      "cuda-gpu":["0", "1", "2", "3", "4", "5", "6", "7"],
-                                      "cuda-fgpu":["0", "0.1", "0.2", "0.5", "1.0", "2.0"],
-                                      "rocm-gpu":["0", "1", "2", "3", "4", "5", "6", "7"],
-                                      "tpu":["0", "1", "2"]};
+  @property({type: Object}) _range = {'cpu': ['1', '2', '3', '4', '5', '6', '7', '8'],
+    'mem': ['64MB', '128MB', '256MB', '512MB',
+      '1GB', '2GB', '4GB', '8GB',
+      '16GB', '32GB', '256GB', '512GB'],
+    'cuda-gpu': ['0', '1', '2', '3', '4', '5', '6', '7'],
+    'cuda-fgpu': ['0', '0.1', '0.2', '0.5', '1.0', '2.0'],
+    'rocm-gpu': ['0', '1', '2', '3', '4', '5', '6', '7'],
+    'tpu': ['0', '1', '2']};
   @property({type: Number}) cpuValue = 0;
 
   constructor() {
     super();
+    this.installImageNameList = [];
+    this.deleteImageNameList = [];
+    this.images = [];
+    this.allowed_registries = [];
   }
 
   static get styles(): CSSResultOrNative | CSSResultArray {
+    // noinspection CssInvalidPropertyValue
     return [
       BackendAiStyles,
       IronFlex,
@@ -258,7 +263,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   /**
    * If value includes unlimited contents, mark as unlimited.
    *
-   * @param value
+   * @param {string} value - string value
+   * @return {string} ∞ when value contains -, 0, 'Unlimited', Infinity, 'Infinity'
    */
   _markIfUnlimited(value) {
     if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
@@ -271,7 +277,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   /**
    * Hide a dialog by id.
    *
-   * @param id
+   * @param {string} id - Dialog component ID
+   * @return {void}
    */
   _hideDialogById(id) {
     return this.shadowRoot.querySelector(id).hide();
@@ -280,7 +287,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   /**
    * Display a dialog by id.
    *
-   * @param id
+   * @param {string} id - Dialog component ID
+   * @return {void}
    */
   _launchDialogById(id) {
     return this.shadowRoot.querySelector(id).show();
@@ -290,40 +298,40 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Modify images of cpu, memory, cuda-gpu, cuda-fgpu, rocm-gpu and tpu.
    */
   modifyImage() {
-    const cpu = this.shadowRoot.querySelector("#modify-image-cpu").label,
-      mem = this.shadowRoot.querySelector("#modify-image-mem").label,
-      gpu = this.shadowRoot.querySelector("#modify-image-cuda-gpu").label,
-      fgpu = this.shadowRoot.querySelector("#modify-image-cuda-fgpu").label,
-      rocm_gpu = this.shadowRoot.querySelector("#modify-image-rocm-gpu").label,
-      tpu = this.shadowRoot.querySelector("#modify-image-tpu").value;
+    const cpu = this.shadowRoot.querySelector('#modify-image-cpu').label;
+    const mem = this.shadowRoot.querySelector('#modify-image-mem').label;
+    const gpu = this.shadowRoot.querySelector('#modify-image-cuda-gpu').label;
+    const fgpu = this.shadowRoot.querySelector('#modify-image-cuda-fgpu').label;
+    const rocm_gpu = this.shadowRoot.querySelector('#modify-image-rocm-gpu').label;
+    const tpu = this.shadowRoot.querySelector('#modify-image-tpu').value;
 
     const {resource_limits} = this.images[this.selectedIndex];
 
-    let input = {};
+    const input = {};
 
     // TODO : index modification
     const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
-    if (cpu !== resource_limits[0].min) input["cpu"] = {"min": cpu};
-    let memory = this._symbolicUnit(mem);
-    if (memory !== resource_limits[mem_idx].min) input["mem"] = {"min": memory};
+    if (cpu !== resource_limits[0].min) input['cpu'] = {'min': cpu};
+    const memory = this._symbolicUnit(mem);
+    if (memory !== resource_limits[mem_idx].min) input['mem'] = {'min': memory};
 
-    if (!this._cuda_gpu_disabled && gpu !== resource_limits[1].min) input["cuda.device"] = {"min": gpu};
-    if (!this._cuda_fgpu_disabled && fgpu !== resource_limits[2].min) input["cuda.shares"] = {"min": fgpu};
-    if (!this._rocm_gpu_disabled && rocm_gpu !== resource_limits[3].min) input["rocm.device"] = {"min": rocm_gpu};
-    if (!this._tpu_disabled && tpu !== resource_limits[4].min) input["tpu.device"] = {"min": tpu};
+    if (!this._cuda_gpu_disabled && gpu !== resource_limits[1].min) input['cuda.device'] = {'min': gpu};
+    if (!this._cuda_fgpu_disabled && fgpu !== resource_limits[2].min) input['cuda.shares'] = {'min': fgpu};
+    if (!this._rocm_gpu_disabled && rocm_gpu !== resource_limits[3].min) input['rocm.device'] = {'min': rocm_gpu};
+    if (!this._tpu_disabled && tpu !== resource_limits[4].min) input['tpu.device'] = {'min': tpu};
 
     const image = this.images[this.selectedIndex];
 
     if (Object.keys(input).length === 0) {
       this.notification.text = _text('environment.NoChangeMade');
       this.notification.show();
-      this._hideDialogById("#modify-image-dialog");
+      this._hideDialogById('#modify-image-dialog');
       return;
     }
 
     globalThis.backendaiclient.image.modifyResource(image.registry, image.name, image.tag, input)
-      .then(res => {
-        const ok = res.reduce((acc, cur) => acc && cur.result === "ok", true);
+      .then((res) => {
+        const ok = res.reduce((acc, cur) => acc && cur.result === 'ok', true);
 
         if (ok) {
           this._getImages();
@@ -334,8 +342,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         }
 
         this.notification.show();
-        this._hideDialogById("#modify-image-dialog");
-      })
+        this._hideDialogById('#modify-image-dialog');
+      });
   }
 
   /**
@@ -344,18 +352,19 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    */
   openInstallImageDialog() {
     // select only uninstalled images
-    this.selectedImages = this._grid.selectedItems.filter(images => {return !images.installed});
-    this.installImageNameList = this.selectedImages.map( image => {
-
+    this.selectedImages = this._grid.selectedItems.filter((images) => {
+      return !images.installed;
+    });
+    this.installImageNameList = this.selectedImages.map( (image) => {
       // remove whitespace
-      Object.keys(image).map(elem => {
+      Object.keys(image).map((elem) => {
         if (['registry', 'name', 'tag'].includes(elem)) {
           image[elem] = image[elem].replace(/\s/g, '');
         }
       });
 
       return image['registry'] + '/' + image['name'] + ':' + image['tag'];
-    })
+    });
 
     // show dialog only if selected image exists and uninstalled
     if (this.selectedImages.length > 0) {
@@ -368,16 +377,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   _installImage() {
     this.installImageDialog.hide();
-    this.selectedImages.forEach( async image => {
+    this.selectedImages.forEach( async (image) => {
       // make image installing status visible
-      let selectedImageLabel = '#' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-');
+      const selectedImageLabel = '#' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-');
       this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:block;');
 
-      let imageName = image['registry'] + '/' + image['name'] + ':' + image['tag'];
-      let isGPURequired: Boolean = false;
-      let imageResource = Object();
-      image['resource_limits'].forEach( el => {
-        imageResource[ el['key'].replace("_", ".")] = el.min;
+      const imageName = image['registry'] + '/' + image['name'] + ':' + image['tag'];
+      let isGPURequired = false;
+      const imageResource = Object();
+      image['resource_limits'].forEach( (el) => {
+        imageResource[el['key'].replace('_', '.')] = el.min;
       });
 
       if ('cuda.device' in imageResource && 'cuda.shares' in imageResource) {
@@ -403,12 +412,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
       const resourceSlots = await globalThis.backendaiclient.get_resource_slots();
 
-      if(isGPURequired) {
+      if (isGPURequired) {
         if (!('cuda.device' in resourceSlots) && !('cuda.shares' in resourceSlots)) {
           this.notification.text = _text('environment.NoResourcesForImage') + imageName;
           this.notification.show();
           this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:none;');
-          return ;
+          return;
         }
       }
 
@@ -427,7 +436,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
       this.notification.text = _text('environment.InstallingImage') + imageName + _text('environment.TakesTime');
       this.notification.show();
-      let indicator = await this.indicator.start('indeterminate');
+      const indicator = await this.indicator.start('indeterminate');
       indicator.set(10, _text('import.Downloading'));
 
       globalThis.backendaiclient.image.install(imageName, imageResource).then((response) => {
@@ -437,8 +446,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         // change installing -> installed
         this._grid.querySelector(selectedImageLabel).className = 'installed';
         this._grid.querySelector(selectedImageLabel).innerHTML = _text('environment.Installed');
-
-      }).catch(err => {
+      }).catch((err) => {
         // if something goes wrong during installation
         this._grid.querySelector(selectedImageLabel).className = _text('environment.Installing');
         this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:none;');
@@ -459,8 +467,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    */
   openDeleteImageDialog() {
     // select only installed images
-    this.selectedImages = this._grid.selectedItems.filter(images => {return images.installed});
-    this.deleteImageNameList = this.selectedImages.map( image => {
+    this.selectedImages = this._grid.selectedItems.filter((images) => {
+      return images.installed;
+    });
+    this.deleteImageNameList = this.selectedImages.map( (image) => {
       return image['registry'] + '/' + image['name'] + ':' + image['tag'];
     });
     // show dialog only if selected image exists and installed
@@ -493,7 +503,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <wl-icon class="fg green">developer_board</wl-icon>
               <span>${rowData.item.cpu_limit_min}</span> ~
               <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
-              <span class="indicator">${_t("general.cores")}</span>
+              <span class="indicator">${_t('general.cores')}</span>
             </div>
           </div>
           <div class="layout horizontal center flex">
@@ -554,51 +564,63 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * @param {object} resource_limits
    */
   _setPulldownDefaults(resource_limits) {
-    this._cuda_gpu_disabled = resource_limits.filter(e => e.key === "cuda_device").length === 0;
-    this._cuda_fgpu_disabled = resource_limits.filter(e => e.key === "cuda_shares").length === 0;
-    this._rocm_gpu_disabled = resource_limits.filter(e => e.key === "rocm_device").length === 0;
-    this._tpu_disabled = resource_limits.filter(e => e.key === "tpu_device").length === 0;
-    this.shadowRoot.querySelector("#modify-image-cpu").label = resource_limits[0].min;
+    this._cuda_gpu_disabled = resource_limits.filter((e) => e.key === 'cuda_device').length === 0;
+    this._cuda_fgpu_disabled = resource_limits.filter((e) => e.key === 'cuda_shares').length === 0;
+    this._rocm_gpu_disabled = resource_limits.filter((e) => e.key === 'rocm_device').length === 0;
+    this._tpu_disabled = resource_limits.filter((e) => e.key === 'tpu_device').length === 0;
+    this.shadowRoot.querySelector('#modify-image-cpu').label = resource_limits[0].min;
     if (!this._cuda_gpu_disabled) {
-      this.shadowRoot.querySelector("#modify-image-cuda-gpu").label = resource_limits[1].min;
-      this.shadowRoot.querySelector("mwc-slider#cuda-gpu").value = this._range['cuda-gpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
+      this.shadowRoot.querySelector('#modify-image-cuda-gpu').label = resource_limits[1].min;
+      this.shadowRoot.querySelector('mwc-slider#cuda-gpu').value = this._range['cuda-gpu'].indexOf(this._range['cpu'].filter((value) => {
+        return value === resource_limits[0].min;
+      })[0]);
     } else {
-      this.shadowRoot.querySelector("#modify-image-cuda-gpu").label = _t("environment.Disabled");
-      this.shadowRoot.querySelector("mwc-slider#cuda-gpu").value = 0;
+      this.shadowRoot.querySelector('#modify-image-cuda-gpu').label = _t('environment.Disabled');
+      this.shadowRoot.querySelector('mwc-slider#cuda-gpu').value = 0;
     }
     if (!this._cuda_fgpu_disabled) {
-      this.shadowRoot.querySelector("#modify-image-cuda-fgpu").label = resource_limits[2].min;
-      this.shadowRoot.querySelector("mwc-slider#cuda-fgpu").value = this._range['cuda-fgpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
+      this.shadowRoot.querySelector('#modify-image-cuda-fgpu').label = resource_limits[2].min;
+      this.shadowRoot.querySelector('mwc-slider#cuda-fgpu').value = this._range['cuda-fgpu'].indexOf(this._range['cpu'].filter((value) => {
+        return value === resource_limits[0].min;
+      })[0]);
     } else {
-      this.shadowRoot.querySelector("#modify-image-cuda-fgpu").label = _t("environment.Disabled");
-      this.shadowRoot.querySelector("mwc-slider#cuda-gpu").value = 0;
+      this.shadowRoot.querySelector('#modify-image-cuda-fgpu').label = _t('environment.Disabled');
+      this.shadowRoot.querySelector('mwc-slider#cuda-gpu').value = 0;
     }
     if (!this._rocm_gpu_disabled) {
-      this.shadowRoot.querySelector("#modify-image-rocm-gpu").label = resource_limits[3].min;
-      this.shadowRoot.querySelector("mwc-slider#rocm-gpu").value = this._range['rocm-gpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
+      this.shadowRoot.querySelector('#modify-image-rocm-gpu').label = resource_limits[3].min;
+      this.shadowRoot.querySelector('mwc-slider#rocm-gpu').value = this._range['rocm-gpu'].indexOf(this._range['cpu'].filter((value) => {
+        return value === resource_limits[0].min;
+      })[0]);
     } else {
-      this.shadowRoot.querySelector("#modify-image-rocm-gpu").label = _t("environment.Disabled");
-      this.shadowRoot.querySelector("mwc-slider#rocm-gpu").value = 0;
+      this.shadowRoot.querySelector('#modify-image-rocm-gpu').label = _t('environment.Disabled');
+      this.shadowRoot.querySelector('mwc-slider#rocm-gpu').value = 0;
     }
     if (!this._tpu_disabled) {
-      this.shadowRoot.querySelector("#modify-image-tpu").label = resource_limits[4].min;
-      this.shadowRoot.querySelector("mwc-slider#tpu").value = this._range['tpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
+      this.shadowRoot.querySelector('#modify-image-tpu').label = resource_limits[4].min;
+      this.shadowRoot.querySelector('mwc-slider#tpu').value = this._range['tpu'].indexOf(this._range['cpu'].filter((value) => {
+        return value === resource_limits[0].min;
+      })[0]);
     } else {
-      this.shadowRoot.querySelector("#modify-image-tpu").label = _t("environment.Disabled");
-      this.shadowRoot.querySelector("mwc-slider#tpu").value = 0;
+      this.shadowRoot.querySelector('#modify-image-tpu').label = _t('environment.Disabled');
+      this.shadowRoot.querySelector('mwc-slider#tpu').value = 0;
     }
 
     const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
-    this.shadowRoot.querySelector("#modify-image-mem").label = this._addUnit(resource_limits[mem_idx].min);
+    this.shadowRoot.querySelector('#modify-image-mem').label = this._addUnit(resource_limits[mem_idx].min);
 
-    this.shadowRoot.querySelector("mwc-slider#cpu").value = this._range['cpu'].indexOf(this._range['cpu'].filter(value => {return value === resource_limits[0].min })[0]);
-    this.shadowRoot.querySelector("mwc-slider#mem").value = this._range['mem'].indexOf(this._range['mem'].filter(value => {return value === this._addUnit(resource_limits[mem_idx].min) })[0]);
+    this.shadowRoot.querySelector('mwc-slider#cpu').value = this._range['cpu'].indexOf(this._range['cpu'].filter((value) => {
+      return value === resource_limits[0].min;
+    })[0]);
+    this.shadowRoot.querySelector('mwc-slider#mem').value = this._range['mem'].indexOf(this._range['mem'].filter((value) => {
+      return value === this._addUnit(resource_limits[mem_idx].min);
+    })[0]);
 
     this._updateSliderLayout();
   }
 
   _updateSliderLayout() {
-    this.shadowRoot.querySelectorAll('mwc-slider').forEach( el => {
+    this.shadowRoot.querySelectorAll('mwc-slider').forEach( (el) => {
       el.layout();
     });
   }
@@ -607,18 +629,18 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Decode backend.ai service ports.
    */
   _decodeServicePort() {
-    if (this.images[this.selectedIndex].labels["ai.backend.service-ports"] === "") {
+    if (this.images[this.selectedIndex].labels['ai.backend.service-ports'] === '') {
       this.servicePorts = [];
     } else {
       this.servicePorts =
-        this.images[this.selectedIndex].labels["ai.backend.service-ports"]
-          .split(",")
-          .map(e => {
-            const sp = e.split(":");
+        this.images[this.selectedIndex].labels['ai.backend.service-ports']
+          .split(',')
+          .map((e) => {
+            const sp = e.split(':');
             return {
-              "app": sp[0],
-              "protocol": sp[1],
-              "port": sp[2]
+              'app': sp[0],
+              'protocol': sp[1],
+              'port': sp[2]
             };
           });
     }
@@ -626,23 +648,25 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Validate backend.ai service ports.
+   *
+   * @return {boolean} Whether the port is valid or not
    */
   _isServicePortValid() {
-    const container = this.shadowRoot.querySelector("#modify-app-container");
-    const rows = container.querySelectorAll(".row:not(.header)");
+    const container = this.shadowRoot.querySelector('#modify-app-container');
+    const rows = container.querySelectorAll('.row:not(.header)');
     const ports = new Set();
     for (const row of rows) {
-      const textFields = row.querySelectorAll("wl-textfield");
-      if (Array.prototype.every.call(textFields, field => field.value === "")) {
+      const textFields = row.querySelectorAll('wl-textfield');
+      if (Array.prototype.every.call(textFields, (field) => field.value === '')) {
         continue;
       }
 
-      const appName = textFields[0].value, protocol = textFields[1].value, port = parseInt(textFields[2].value);
-      if (appName === "") {
+      const appName = textFields[0].value; const protocol = textFields[1].value; const port = parseInt(textFields[2].value);
+      if (appName === '') {
         this.servicePortsMsg = _text('environment.AppNameMustNotBeEmpty');
         return false;
       }
-      if (!["http", "tcp", "pty", "preopen"].includes(protocol)) {
+      if (!['http', 'tcp', 'pty', 'preopen'].includes(protocol)) {
         this.servicePortsMsg = _text('environment.ProtocolMustBeOneOfSupported');
         return false;
       }
@@ -665,16 +689,18 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Parse backend.ai service ports.
+   *
+   * @return {string} Service ports separated with comma
    */
   _parseServicePort() {
-    const container = this.shadowRoot.querySelector("#modify-app-container");
-    const rows = container.querySelectorAll(".row:not(.header)");
-    const nonempty = row => Array.prototype.filter.call(
-      row.querySelectorAll("wl-textfield"), (tf, idx) => tf.value === ""
+    const container = this.shadowRoot.querySelector('#modify-app-container');
+    const rows = container.querySelectorAll('.row:not(.header)');
+    const nonempty = (row) => Array.prototype.filter.call(
+      row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
     ).length === 0;
-    const encodeRow = row => Array.prototype.map.call(row.querySelectorAll("wl-textfield"), tf => tf.value).join(":");
+    const encodeRow = (row) => Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf) => tf.value).join(':');
 
-    return Array.prototype.filter.call(rows, row => nonempty(row)).map(row => encodeRow(row)).join(",");
+    return Array.prototype.filter.call(rows, (row) => nonempty(row)).map((row) => encodeRow(row)).join(',');
   }
 
   /**
@@ -685,19 +711,19 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       const value = this._parseServicePort();
       const image = this.images[this.selectedIndex];
       this.servicePortsMsg = '';
-      globalThis.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, "ai.backend.service-ports", value)
+      globalThis.backendaiclient.image.modifyLabel(image.registry, image.name, image.tag, 'ai.backend.service-ports', value)
         .then(({result}) => {
-          if (result === "ok") {
-            this.notification.text = _text("environment.DescServicePortModified");
+          if (result === 'ok') {
+            this.notification.text = _text('environment.DescServicePortModified');
           } else {
-            this.notification.text = _text("dialog.ErrorOccurred");
+            this.notification.text = _text('dialog.ErrorOccurred');
           }
           this._getImages();
           this.requestUpdate();
           this._clearRows();
           this.notification.show();
-          this._hideDialogById("#modify-app-dialog");
-        })
+          this._hideDialogById('#modify-app-dialog');
+        });
     }
   }
 
@@ -715,33 +741,33 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <wl-button fab flat inverted
             class="fg blue controls-running"
             @click=${() => {
-              this.selectedIndex = rowData.index;
-              this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
-              this._launchDialogById("#modify-image-dialog");
-              this.requestUpdate();
-           }}>
+    this.selectedIndex = rowData.index;
+    this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
+    this._launchDialogById('#modify-image-dialog');
+    this.requestUpdate();
+  }}>
             <wl-icon>settings</wl-icon>
           </wl-button>
           <wl-button fab flat inverted
             class="fg pink controls-running"
             @click=${() => {
-              if (this.selectedIndex !== rowData.index) {
-                this._clearRows();
-              }
-              this.selectedIndex = rowData.index;
-              this._decodeServicePort();
-              this._launchDialogById("#modify-app-dialog");
-              this.requestUpdate();
-          }}>
+    if (this.selectedIndex !== rowData.index) {
+      this._clearRows();
+    }
+    this.selectedIndex = rowData.index;
+    this._decodeServicePort();
+    this._launchDialogById('#modify-app-dialog');
+    this.requestUpdate();
+  }}>
             <wl-icon>apps</wl-icon>
           </wl-button>
         </div>
       `,
       root
-    )
+    );
   }
 
-/**
+  /**
  * Render an installed tag for each image.
  *
  * @param {DOMelement} root
@@ -756,15 +782,15 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           ${rowData.item.installed ? html`
           <wl-label class="installed"
               id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
-                    rowData.item.name.replace('/','-') + '-' +
+                    rowData.item.name.replace('/', '-') + '-' +
                     rowData.item.tag.replace(/\./gi, '-')}">
             ${_t('environment.Installed')}
           </wl-label>
           ` :
-          html`
+    html`
           <wl-label class="installing"
             id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
-                  rowData.item.name.replace('/','-') + '-' +
+                  rowData.item.name.replace('/', '-') + '-' +
                   rowData.item.tag.replace(/\./gi, '-')}"
             style="display:none">
             ${_t('environment.Installing')}
@@ -772,7 +798,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           `}
         </div>
       `
-    , root);
+      , root);
   }
 
   render() {
@@ -801,7 +827,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             header="${_t('environment.Version')}"></vaadin-grid-filter-column>
 
         <vaadin-grid-column width="60px" resizable>
-          <template class="header">${_t("environment.Base")}</template>
+          <template class="header">${_t('environment.Base')}</template>
           <template>
             <template is="dom-repeat" items="[[ item.baseimage ]]">
               <lablup-shields app="" color="blue" ui="round" description="[[item]]"></lablup-shields>
@@ -809,7 +835,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="50px" resizable>
-          <template class="header">${_t("environment.Constraint")}</template>
+          <template class="header">${_t('environment.Constraint')}</template>
           <template>
             <template is="dom-if" if="[[item.additional_req]]">
               <lablup-shields app="" color="green" ui="round" description="[[item.additional_req]]"></lablup-shields>
@@ -825,13 +851,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </template>
         </vaadin-grid-filter-column>
 
-        <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t("environment.ResourceLimit")}" .renderer="${this._boundRequirementsRenderer}">
+        <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t('environment.ResourceLimit')}" .renderer="${this._boundRequirementsRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer=${this._boundControlsRenderer}>
+        <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${_t("environment.ModifyImageResourceLimit")}</span>
+        <span slot="title">${_t('environment.ModifyImageResourceLimit')}</span>
         <div slot="content">
           <div class="vertical layout flex">
             <div class="horizontal layout flex center">
@@ -904,18 +930,18 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <mwc-button
               unelevated
               icon="check"
-              label="${_t("button.SaveChanges")}"
+              label="${_t('button.SaveChanges')}"
               @click="${() => this.modifyImage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="modify-app-dialog" fixed backdrop>
-        <span slot="title">${_t("environment.ManageApps")}</span>
+        <span slot="title">${_t('environment.ManageApps')}</span>
         <div slot="content" id="modify-app-container">
           <div class="row header">
-            <div> ${_t("environment.AppName")} </div>
-            <div> ${_t("environment.Protocol")} </div>
-            <div> ${_t("environment.Port")} </div>
-            <div> ${_t("environment.Action")} </div>
+            <div> ${_t('environment.AppName')} </div>
+            <div> ${_t('environment.Protocol')} </div>
+            <div> ${_t('environment.Port')} </div>
+            <div> ${_t('environment.Action')} </div>
           </div>
           ${this.servicePorts.map((item, index) => html`
           <div class="row">
@@ -934,7 +960,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             <wl-button
               fab flat
               class="fg pink"
-              @click=${e => this._checkDeleteAppInfo(e)}
+              @click=${(e) => this._checkDeleteAppInfo(e)}
             >
               <wl-icon>remove</wl-icon>
             </wl-button>
@@ -959,68 +985,68 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               unelevated
               slot="footer"
               icon="check"
-              label="${_t("button.Finish")}"
+              label="${_t('button.Finish')}"
               @click="${this.modifyServicePort}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="install-image-dialog" fixed backdrop persistent>
-        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
-          <p>${_t("environment.DescDownloadImage")}</p>
+          <p>${_t('environment.DescDownloadImage')}</p>
           <p style="margin:auto; "><span style="color:blue;">
-          ${this.installImageNameList.map(el => {
-            return html`${el}<br />`
-          })}
+          ${this.installImageNameList.map((el) => {
+    return html`${el}<br />`;
+  })}
           </span></p>
-          <p>${_t("environment.DescSignificantDownloadTime")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
+          <p>${_t('environment.DescSignificantDownloadTime')} ${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
         <div slot="footer" class="horizontal flex layout">
           <div class="flex"></div>
           <mwc-button
               class="operation"
-              label="${_t("button.Cancel")}"
+              label="${_t('button.Cancel')}"
               @click="${(e) => {
-                this._hideDialog(e);
-                this._uncheckSelectedRow();
-              }}"></mwc-button>
+    this._hideDialog(e);
+    this._uncheckSelectedRow();
+  }}"></mwc-button>
           <mwc-button
               unelevated
               class="operation"
-              label="${_t("button.Okay")}"
+              label="${_t('button.Okay')}"
               @click="${() => this._installImage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-image-dialog" fixed backdrop persistent>
-        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
-          <p>${_t("environment.DescDeleteImage")}</p>
+          <p>${_t('environment.DescDeleteImage')}</p>
           <p style="margin:auto; "><span style="color:blue;">
-          ${this.deleteImageNameList.map(el => {
-            return html`${el}<br />`
-          })}
+          ${this.deleteImageNameList.map((el) => {
+    return html`${el}<br />`;
+  })}
           </span></p>
-          <p>${_t("dialog.ask.DoYouWantToProceed")}</p>
+          <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
         <div slot="footer" class="horizontal flex layout">
           <div class="flex"></div>
           <mwc-button
               class="operation"
-              label="${_t("button.Cancel")}"
+              label="${_t('button.Cancel')}"
               @click="${(e) => {
-                this._hideDialog(e);
-                this._uncheckSelectedRow();
-              }}"></mwc-button>
+    this._hideDialog(e);
+    this._uncheckSelectedRow();
+  }}"></mwc-button>
           <mwc-button
               unelevated
               class="operation"
-              label="${_t("button.Okay")}"
+              label="${_t('button.Okay')}"
               @click="${() => this._deleteImage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-app-info-dialog" fixed backdrop persistent>
-        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
-          <p>${_t("environment.DescDeleteAppInfo")}</p>
+          <p>${_t('environment.DescDeleteAppInfo')}</p>
           <div class="horizontal layout">
               <p>${_t('environment.AppName')}</p>
               <p style="color:blue;">: ${this.deleteAppInfo[0]}</p>
@@ -1033,20 +1059,20 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <p>${_t('environment.Port')}</p>
               <p style="color:blue;">: ${this.deleteAppInfo[2]}</p>
             </div>
-          <p>${_t("dialog.ask.DoYouWantToProceed")}</p>
+          <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
         <div slot="footer" class="horizontal flex layout">
           <div class="flex"></div>
           <mwc-button
               class="operation"
-              label="${_t("button.Cancel")}"
+              label="${_t('button.Cancel')}"
               @click="${(e) => {
-                this._hideDialog(e);
-              }}"></mwc-button>
+    this._hideDialog(e);
+  }}"></mwc-button>
           <mwc-button
               unelevated
               class="operation"
-              label="${_t("button.Okay")}"
+              label="${_t('button.Okay')}"
               @click="${() => this._removeRow()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -1060,7 +1086,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   _removeRow() {
     this.deleteAppRow.remove();
     this.shadowRoot.querySelector('#delete-app-info-dialog').hide();
-    this.notification.text = _text("environment.AppInfoDeleted");
+    this.notification.text = _text('environment.AppInfoDeleted');
     this.notification.show();
   }
 
@@ -1068,7 +1094,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Add a row to the environment list.
    */
   _addRow() {
-    const container = this.shadowRoot.querySelector("#modify-app-container");
+    const container = this.shadowRoot.querySelector('#modify-app-container');
     const lastChild = container.children[container.children.length - 1];
     const div = this._createRow();
     container.insertBefore(div, lastChild);
@@ -1076,28 +1102,30 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   /**
    * Create a row in the environment list.
+   *
+   * @return {HTMLElement} Generated div element
    */
   _createRow() {
-    const div = document.createElement("div");
-    div.setAttribute("class", "row extra");
+    const div = document.createElement('div');
+    div.setAttribute('class', 'row extra');
 
-    const app = document.createElement("wl-textfield");
-    app.setAttribute("type", "text");
+    const app = document.createElement('wl-textfield');
+    app.setAttribute('type', 'text');
 
-    const protocol = document.createElement("wl-textfield");
-    app.setAttribute("type", "text");
+    const protocol = document.createElement('wl-textfield');
+    app.setAttribute('type', 'text');
 
-    const port = document.createElement("wl-textfield");
-    app.setAttribute("type", "number");
+    const port = document.createElement('wl-textfield');
+    app.setAttribute('type', 'number');
 
-    const button = document.createElement("wl-button");
-    button.setAttribute("class", "fg pink");
-    button.setAttribute("fab", "");
-    button.setAttribute("flat", "");
-    button.addEventListener("click", (e) => this._checkDeleteAppInfo(e));
+    const button = document.createElement('wl-button');
+    button.setAttribute('class', 'fg pink');
+    button.setAttribute('fab', '');
+    button.setAttribute('flat', '');
+    button.addEventListener('click', (e) => this._checkDeleteAppInfo(e));
 
-    const icon = document.createElement("wl-icon");
-    icon.innerHTML = "remove";
+    const icon = document.createElement('wl-icon');
+    icon.innerHTML = 'remove';
     button.appendChild(icon);
 
     div.appendChild(port);
@@ -1111,16 +1139,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   /**
    * Check whether delete operation will proceed or not.
    *
-   * @param e - Dispatches from the native input event each time the input changes.
+   * @param {any} e - Dispatches from the native input event each time the input changes.
    */
   _checkDeleteAppInfo(e) {
     // htmlCollection should be converted to Array.
     this.deleteAppRow = e.target.parentNode;
-    let childRow = this.deleteAppRow.children;
+    const childRow = this.deleteAppRow.children;
     const textfieldsArray = [...childRow];
-    let appInfo = textfieldsArray.filter(item => item.tagName === 'WL-TEXTFIELD').map(item => item.value);
+    const appInfo = textfieldsArray.filter((item) => item.tagName === 'WL-TEXTFIELD').map((item) => item.value);
     // if every value of the row is empty
-    if (appInfo.filter(item => item === "")?.length === appInfo.length) {
+    if (appInfo.filter((item) => item === '')?.length === appInfo.length) {
       this._removeRow();
     } else {
       this.deleteAppInfo = appInfo;
@@ -1132,14 +1160,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Clear rows from the environment list.
    */
   _clearRows() {
-    const container = this.shadowRoot.querySelector("#modify-app-container");
-    const rows = container.querySelectorAll(".row");
+    const container = this.shadowRoot.querySelector('#modify-app-container');
+    const rows = container.querySelectorAll('.row');
     const lastRow = rows[rows.length - 1];
 
-    lastRow.querySelectorAll("wl-textfield").forEach(tf => {
-      tf.value = "";
+    lastRow.querySelectorAll('wl-textfield').forEach((tf) => {
+      tf.value = '';
     });
-    container.querySelectorAll(".row.extra").forEach(e => {
+    container.querySelectorAll('.row.extra').forEach((e) => {
       e.remove();
     });
   }
@@ -1163,7 +1191,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this._getImages();
       }, true);
-
     } else { // already connected
       this._getImages();
     }
@@ -1173,12 +1200,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     });
 
     // uncheck every checked rows when dialog is closed
-    this.shadowRoot.querySelector('#install-image-dialog').addEventListener("didHide", () => {
+    this.shadowRoot.querySelector('#install-image-dialog').addEventListener('didHide', () => {
       this._uncheckSelectedRow();
     });
     this.shadowRoot.querySelector('#delete-image-dialog').addEventListener('didHide', () => {
       this._uncheckSelectedRow();
-    })
+    });
   }
 
   /**
@@ -1187,8 +1214,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _refreshSorter(e) {
-    let sorter = e.target;
-    let sorterPath = sorter.path.toString();
+    const sorter = e.target;
+    const sorterPath = sorter.path.toString();
     if (sorter.direction) {
       if (sorter.direction === 'asc') {
         this._grid.items.sort((a, b) => {
@@ -1217,13 +1244,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
-      return globalThis.backendaiclient.image.list(["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], false, true);
+      return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
     }).then((response) => {
-      let images = response.images;
-      let domainImages: any = [];
+      const images = response.images;
+      const domainImages: any = [];
       images.forEach((image) => {
-        if (this.allowed_registries.includes(image.registry)) {
-          let tags = image.tag.split('-');
+        if ('registry' in image && this.allowed_registries.includes(image.registry)) {
+          const tags = image.tag.split('-');
           if (tags[1] !== undefined) {
             image.baseversion = tags[0];
             image.baseimage = tags[1];
@@ -1235,7 +1262,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           } else {
             image.baseversion = '';
           }
-          let names = image.name.split('/');
+          const names = image.name.split('/');
           if (names[1] !== undefined) {
             image.namespace = names[0];
             image.lang = names.slice(1).join('');
@@ -1243,7 +1270,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             image.namespace = '';
             image.lang = names[0];
           }
-          let langs = image.lang.split('-');
+          const langs = image.lang.split('-');
           let baseimage: Array<string>;
           if (image.baseimage !== undefined) {
             baseimage = [this._humanizeName(image.baseimage)];
@@ -1257,13 +1284,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             } else {
               image.lang = langs[1];
               baseimage.push(this._humanizeName(langs[0]));
-              //image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
+              // image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
             }
           }
-          image.baseimage = baseimage;//this._humanizeName(image.baseimage);
+          image.baseimage = baseimage;// this._humanizeName(image.baseimage);
           image.lang = this._humanizeName(image.lang);
 
-          var resource_limit = image.resource_limits;
+          const resource_limit = image.resource_limits;
           resource_limit.forEach((resource) => {
             if (resource.max == 0) {
               resource.max = '∞';
@@ -1288,10 +1315,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           domainImages.push(image);
         }
       });
-      //let image_keys = Object.keys(domainImages);
-      //console.log(image_keys);
-      //let sorted_images = {};
-      //image_keys.sort();
+      // let image_keys = Object.keys(domainImages);
+      // console.log(image_keys);
+      // let sorted_images = {};
+      // image_keys.sort();
       this.images = domainImages;
       this.spinner.hide();
     }).catch((err) => {
@@ -1311,9 +1338,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Add unit to the value.
    *
    * @param {string} value
+   * @return {string} value with proper unit
    */
   _addUnit(value) {
-    let unit = value.substr(-1);
+    const unit = value.substr(-1);
     if (unit == 'm') {
       return value.slice(0, -1) + 'MB';
     }
@@ -1330,9 +1358,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Change unit to symbol.
    *
    * @param {string} value
+   * @return {string} value with proper unit
    */
   _symbolicUnit(value) {
-    let unit = value.substr(-2);
+    const unit = value.substr(-2);
     if (unit == 'MB') {
       return value.slice(0, -2) + 'm';
     }
@@ -1348,7 +1377,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   /**
    * Humanize the value.
    *
-   * @param {string} value
+   * @param {string} value - Language name, version, environment or identifier
+   * @return {string} Humanized value for value
    */
   _humanizeName(value) {
     this.alias = {
@@ -1436,15 +1466,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _changeSliderValue(el) {
-    let currentVal= this._range[el.id].filter( (value, index) => { return index === el._value });
+    const currentVal= this._range[el.id].filter( (value, index) => {
+      return index === el._value;
+    });
     this.shadowRoot.querySelector('#modify-image-'+el.id).label = currentVal[0];
     this.shadowRoot.querySelector('#modify-image-'+el.id).value = currentVal[0];
-
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-environment-list": BackendAIEnvironmentList;
+    'backend-ai-environment-list': BackendAIEnvironmentList;
   }
 }
