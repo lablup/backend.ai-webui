@@ -8,6 +8,7 @@ import 'weightless/card';
 import 'weightless/icon';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+
 /**
  Lablup Activitiy Panel
 

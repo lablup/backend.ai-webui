@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {customElement, CSSResultArray, CSSResultOrNative, html, LitElement, property} from 'lit-element';
-import {get as _text, translate as _t} from 'lit-translate';
+import {CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {get as _text} from 'lit-translate';
 
 import 'weightless/dialog';
 import 'weightless/banner';

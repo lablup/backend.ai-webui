@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t, get as _text, translateUnsafeHTML as _tr} from 'lit-translate';
+import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
 import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
