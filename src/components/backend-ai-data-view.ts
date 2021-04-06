@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from "lit-translate";
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 
 import {BackendAIPage} from './backend-ai-page';
@@ -28,7 +28,7 @@ import 'weightless/tab-group';
 import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
-import "../plastics/chart-js";
+import '../plastics/chart-js';
 import './backend-ai-dialog';
 import './backend-ai-storage-list';
 import './lablup-activity-panel';
@@ -36,8 +36,8 @@ import './lablup-loading-spinner';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 
-import {BackendAiStyles} from "./backend-ai-general-styles";
-import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
  Backend.AI Data View
@@ -53,7 +53,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
  */
 
 
-@customElement("backend-ai-data-view")
+@customElement('backend-ai-data-view')
 export default class BackendAIData extends BackendAIPage {
   @property({type: String}) apiMajorVersion = '';
   @property({type: Object}) folders = Object();
@@ -304,14 +304,14 @@ export default class BackendAIData extends BackendAIPage {
           <div slot="message">
             <h3 class="horizontal center flex layout tab">
               <mwc-tab-bar>
-                <mwc-tab title="general-folder" label="${_t("data.Folders")}"
+                <mwc-tab title="general-folder" label="${_t('data.Folders')}"
                     @click="${(e) => this._showTab(e.target)}">
                 </mwc-tab>
-                <mwc-tab title="automount-folder" label="${_t("data.AutomountFolders")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                <mwc-tab title="automount-folder" label="${_t('data.AutomountFolders')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               </mwc-tab-bar>
               <span class="flex"></span>
               <mwc-button dense raised id="add-folder" icon="add" @click="${() => this._addFolderDialog()}" style="margin-right:15px;">
-                <span>${_t("data.NewFolder")}</span>
+                <span>${_t('data.NewFolder')}</span>
               </mwc-button>
             </h3>
             <div id="general-folder-lists" class="tab-content">
@@ -319,7 +319,7 @@ export default class BackendAIData extends BackendAIPage {
             </div>
             <div id="automount-folder-lists" class="tab-content" style="display:none;">
               <div class="horizontal layout">
-                <p>${_t("data.DialogFolderStartingWithDotAutomount")}</p>
+                <p>${_t('data.DialogFolderStartingWithDotAutomount')}</p>
               </div>
               <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
             </div>
@@ -327,14 +327,14 @@ export default class BackendAIData extends BackendAIPage {
         </lablup-activity-panel>
       </div>
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
-        <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
+        <span slot="title">${_t('data.CreateANewStorageFolder')}</span>
         <div slot="content">
-          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}"
+          <mwc-textfield id="add-folder-name" label="${_t('data.Foldername')}"
           @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
-            required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}" maxLength="64"
+            required validationMessage="${_t('data.Allowslettersnumbersand-_dot')}" maxLength="64"
             placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
           <div class="horizontal layout">
-            <mwc-multi-select id="add-folder-host" label="${_t("data.Host")}">
+            <mwc-multi-select id="add-folder-host" label="${_t('data.Host')}">
               ${this.vhosts.map((item, idx) => html`
                 <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
                   <span>${item}</span>
@@ -344,32 +344,32 @@ export default class BackendAIData extends BackendAIPage {
                 </mwc-list-item>
               `)}
             </mwc-multi-select>
-            <mwc-multi-select id="add-folder-type" label="${_t("data.Type")}">
-              ${(this.allowed_folder_type as String[]).includes('user') ? html`
-                <mwc-list-item value="user" selected>${_t("data.User")}</mwc-list-item>
+            <mwc-multi-select id="add-folder-type" label="${_t('data.Type')}">
+              ${(this.allowed_folder_type as string[]).includes('user') ? html`
+                <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
-              ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
-                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as String[]).includes('user')}">${_t("data.Group")}</mwc-list-item>
+              ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
+                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Group')}</mwc-list-item>
               ` : html``}
             </mwc-multi-select>
           </div>
           ${this._vfolderInnatePermissionSupport ? html`
             <div class="horizontal layout">
-              <mwc-multi-select id="add-folder-usage-mode" label="${_t("data.UsageMode")}">
+              <mwc-multi-select id="add-folder-usage-mode" label="${_t('data.UsageMode')}">
                 ${this.usageModes.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
               </mwc-multi-select>
-              <mwc-multi-select id="add-folder-permission" label="${_t("data.Type")}">
+              <mwc-multi-select id="add-folder-permission" label="${_t('data.Type')}">
                 ${this.permissions.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
               </mwc-multi-select>
             </div>
           ` : html``}
-          ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
+          ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
             <div class="horizontal layout">
-              <mwc-multi-select id="add-folder-group" label="${_t("data.Group")}">
+              <mwc-multi-select id="add-folder-group" label="${_t('data.Group')}">
                 ${(this.allowedGroups as any).map((item, idx) => html`
                   <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
@@ -377,7 +377,7 @@ export default class BackendAIData extends BackendAIPage {
             </div>
           ` : html``}
           <div style="font-size:11px;">
-            ${_t("data.DialogFolderStartingWithDotAutomount")}
+            ${_t('data.DialogFolderStartingWithDotAutomount')}
           </div>
         </div>
         <div slot="footer" class="horizontal flex">
@@ -385,7 +385,7 @@ export default class BackendAIData extends BackendAIPage {
               unelevated
               id="add-button"
               icon="rowing"
-              label="${_t("data.Create")}"
+              label="${_t('data.Create')}"
               style="width:100%;"
               @click="${() => this._addFolder()}"></mwc-button>
         </div>
@@ -407,29 +407,31 @@ export default class BackendAIData extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
     this.folderLists = this.shadowRoot.querySelectorAll('backend-ai-storage-list');
     fetch('resources/storage_metadata.json').then(
-      response => response.json()
+      (response) => response.json()
     ).then(
-      json => {
-        let storageInfo = Object();
-        for (let key in json.storageInfo) {
-          storageInfo[key] = {};
-          if ("name" in json.storageInfo[key]) {
-            storageInfo[key].name = json.storageInfo[key].name;
-          }
-          if ("description" in json.storageInfo[key]) {
-            storageInfo[key].description = json.storageInfo[key].description;
-          } else {
-            storageInfo[key].description = _text('data.NoStorageDescriptionFound');
-          }
-          if ("icon" in json.storageInfo[key]) {
-            storageInfo[key].icon = json.storageInfo[key].icon;
-          } else {
-            storageInfo[key].icon = 'local.png';
-          }
-          if ("dialects" in json.storageInfo[key]) {
-            json.storageInfo[key].dialects.forEach(item => {
-              storageInfo[item] = storageInfo[key];
-            });
+      (json) => {
+        const storageInfo = Object();
+        for (const key in json.storageInfo) {
+          if ({}.hasOwnProperty.call(json.storageInfo, key)) {
+            storageInfo[key] = {};
+            if ('name' in json.storageInfo[key]) {
+              storageInfo[key].name = json.storageInfo[key].name;
+            }
+            if ('description' in json.storageInfo[key]) {
+              storageInfo[key].description = json.storageInfo[key].description;
+            } else {
+              storageInfo[key].description = _text('data.NoStorageDescriptionFound');
+            }
+            if ('icon' in json.storageInfo[key]) {
+              storageInfo[key].icon = json.storageInfo[key].icon;
+            } else {
+              storageInfo[key].icon = 'local.png';
+            }
+            if ('dialects' in json.storageInfo[key]) {
+              json.storageInfo[key].dialects.forEach((item) => {
+                storageInfo[item] = storageInfo[key];
+              });
+            }
           }
         }
         this.storageInfo = storageInfo;
@@ -447,7 +449,7 @@ export default class BackendAIData extends BackendAIPage {
           boxWidth: 10,
         }
       }
-    }
+    };
     document.addEventListener('backend-ai-folder-list-changed', () => {
       // this.shadowRoot.querySelector('#storage-status').updateChart();
       this._createStorageChart();
@@ -472,12 +474,12 @@ export default class BackendAIData extends BackendAIPage {
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
         this._vfolderInnatePermissionSupport = true;
       }
-      globalThis.backendaiclient.vfolder.list_allowed_types().then(response => {
+      globalThis.backendaiclient.vfolder.list_allowed_types().then((response) => {
         this.allowed_folder_type = response;
       });
-    }
+    };
 
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         _init();
         this._createStorageChart();
@@ -488,27 +490,27 @@ export default class BackendAIData extends BackendAIPage {
     }
   }
 
-  /***
+  /** *
    * create Storage Doughnut Chart
    *
    */
   async _createStorageChart() {
-    let accessKey = globalThis.backendaiclient._config.accessKey;
-    let res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
-    let policyName = res.keypair.resource_policy;
-    let resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count']);
-    let max_vfolder_count = resource_policy.keypair_resource_policy.max_vfolder_count;
-    let groupId = globalThis.backendaiclient.current_group_id();
-    let folders = await globalThis.backendaiclient.vfolder.list(groupId);
-    this.createdCount = folders.filter(item => item.is_owner).length;
+    const accessKey = globalThis.backendaiclient._config.accessKey;
+    const res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
+    const policyName = res.keypair.resource_policy;
+    const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count']);
+    const max_vfolder_count = resource_policy.keypair_resource_policy.max_vfolder_count;
+    const groupId = globalThis.backendaiclient.current_group_id();
+    const folders = await globalThis.backendaiclient.vfolder.list(groupId);
+    this.createdCount = folders.filter((item) => item.is_owner).length;
     this.invitedCount = folders.length - this.createdCount;
-    this.capacity = (this.createdCount < max_vfolder_count ? (max_vfolder_count - this.createdCount) : 0)
+    this.capacity = (this.createdCount < max_vfolder_count ? (max_vfolder_count - this.createdCount) : 0);
     this.totalCount = this.capacity + this.createdCount + this.invitedCount;
     this.folders = {
       labels: [
-          _text('data.Created'),
-          _text('data.Invited'),
-          _text('data.Capacity')
+        _text('data.Created'),
+        _text('data.Invited'),
+        _text('data.Capacity')
       ],
       datasets: [{
         data: [
@@ -531,7 +533,7 @@ export default class BackendAIData extends BackendAIPage {
    * @param {object} tab
    */
   _showTab(tab) {
-    let els = this.shadowRoot.querySelectorAll(".tab-content");
+    const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
@@ -546,12 +548,12 @@ export default class BackendAIData extends BackendAIPage {
    * Add folder dialog.
    */
   async _addFolderDialog() {
-    let vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
-    let nameEl = this.shadowRoot.querySelector('#add-folder-name');
+    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    const nameEl = this.shadowRoot.querySelector('#add-folder-name');
     nameEl.value = ''; // reset folder name
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
-    if ((this.allowed_folder_type as String[]).includes('group')) {
+    if ((this.allowed_folder_type as string[]).includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
     }
@@ -583,7 +585,7 @@ export default class BackendAIData extends BackendAIPage {
       this._helpDescriptionIcon = 'local.png';
       this._helpDescription = _text('data.NoStorageDescriptionFound');
     }
-    let desc = this.shadowRoot.querySelector('#help-description');
+    const desc = this.shadowRoot.querySelector('#help-description');
     desc.show();
   }
 
@@ -595,9 +597,9 @@ export default class BackendAIData extends BackendAIPage {
    * Add folder with name, host, type, usage mode and permission.
    */
   _addFolder() {
-    let nameEl = this.shadowRoot.querySelector('#add-folder-name');
-    let name = nameEl.value;
-    let host = this.shadowRoot.querySelector('#add-folder-host').value;
+    const nameEl = this.shadowRoot.querySelector('#add-folder-name');
+    const name = nameEl.value;
+    const host = this.shadowRoot.querySelector('#add-folder-host').value;
     let ownershipType = this.shadowRoot.querySelector('#add-folder-type').value;
     let group;
     const usageModeEl = this.shadowRoot.querySelector('#add-folder-usage-mode');
@@ -619,27 +621,27 @@ export default class BackendAIData extends BackendAIPage {
     if (permissionEl) {
       permission = permissionEl.value;
       switch (permission) {
-        case 'Read-Write':
-          permission = 'rw';
-          break;
-        case 'Read-Only':
-          permission = 'ro';
-          break;
-        case 'Delete':
-          permission = 'wd';
-          break;
-        default:
-          permission = 'rw';
+      case 'Read-Write':
+        permission = 'rw';
+        break;
+      case 'Read-Only':
+        permission = 'ro';
+        break;
+      case 'Delete':
+        permission = 'wd';
+        break;
+      default:
+        permission = 'rw';
       }
     }
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {
-      let job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission);
+      const job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission);
       job.then((value) => {
         this.notification.text = _text('data.folders.FolderCreated');
         this.notification.show();
         this._refreshFolderList();
-      }).catch(err => {
+      }).catch((err) => {
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.message);
           this.notification.detail = err.message;
@@ -674,7 +676,7 @@ export default class BackendAIData extends BackendAIPage {
         }
       } else {
         // custom validation for folder name using regex
-        let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/\s]/gi;
+        const regex = /[`~!@#$%^&*()|+=?;:'",<>{}[\]\\/\s]/gi;
         let isValid = !regex.test(folderName.value);
         if (!isValid) {
           folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
@@ -688,7 +690,7 @@ export default class BackendAIData extends BackendAIPage {
           customError: !isValid
         };
       }
-    }
+    };
   }
 
   /**
@@ -704,6 +706,6 @@ export default class BackendAIData extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-data-view": BackendAIData;
+    'backend-ai-data-view': BackendAIData;
   }
 }
