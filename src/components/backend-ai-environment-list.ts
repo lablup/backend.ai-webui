@@ -124,9 +124,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           background-clip: padding-box;
           border: 1px solid #ccc;
           background-color: #f9f9f9;
-          padding: 0px 3px;
+          padding: 0 3px;
           display: inline-block;
-          margin: 0px;
+          margin: 0;
         }
 
         wl-label.installed {

@@ -3,8 +3,8 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from "lit-element";
+import {translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -37,7 +37,7 @@ import './backend-ai-registry-list';
  @element backend-ai-environment-view
  */
 
-@customElement("backend-ai-environment-view")
+@customElement('backend-ai-environment-view')
 export default class BackendAIEnvironmentView extends BackendAIPage {
   @property({type: String}) images = Object();
   @property({type: Boolean}) is_superadmin = false;
@@ -119,7 +119,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
       _activeTab: {
         type: Boolean
       }
-    }
+    };
   }
 
   /**
@@ -146,11 +146,11 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
   /**
    * Display the tab.
    *
-   * @param tab
+   * @param {any} tab - tab webcomponent that has 'title' property
    */
   _showTab(tab) {
-    var els = this.shadowRoot.querySelectorAll(".tab-content");
-    for (var x = 0; x < els.length; x++) {
+    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
     this._activeTab = tab.title;
@@ -164,10 +164,10 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
         <div slot="message">
           <h3 class="tab horizontal center layout">
             <mwc-tab-bar>
-              <mwc-tab title="image-lists" label="${_t("environment.Images")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="resource-template-lists" label="${_t("environment.ResourcePresets")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="image-lists" label="${_t('environment.Images')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="resource-template-lists" label="${_t('environment.ResourcePresets')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               ${this.is_superadmin ? html`
-                <mwc-tab title="registry-lists" label="${_t("environment.Registries")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                <mwc-tab title="registry-lists" label="${_t('environment.Registries')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               `: html``}
             </mwc-tab-bar>
             <div class="flex"></div>
@@ -184,9 +184,6 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     `;
   }
 
-  firstUpdated() {
-  }
-
   disconnectedCallback() {
     super.disconnectedCallback();
   }
@@ -194,7 +191,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-environment-view": BackendAIEnvironmentView;
+    'backend-ai-environment-view': BackendAIEnvironmentView;
   }
 }
 
