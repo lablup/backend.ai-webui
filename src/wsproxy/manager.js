@@ -1,3 +1,9 @@
+/*
+Backend.AI Webapp proxy for Web UI
+===================================
+
+(C) Copyright 2016-2021 Lablup Inc.
+*/
 // Backend.AI Websocket proxy server for local runtime environment / app.
 const express = require('express'),
   EventEmitter = require('events'),
@@ -61,7 +67,7 @@ class Manager extends EventEmitter {
         "endpoint": req.body.endpoint,
         "ext_proxy_url": this.extHttpProxyURL
       };
-      // Receive API version from console. Initialization timing is different so we use API information from requester.
+      // Receive API version from web UI. Initialization timing is different so we use API information from requester.
       if (req.body.api_version) {
         cf['_apiVersionMajor'] = req.body.api_version;
       } else {
@@ -118,6 +124,8 @@ class Manager extends EventEmitter {
       let app = req.query.app || "jupyter";
       let port = parseInt(req.query.port) || undefined;
       let p = sessionName + "|" + app;
+      let args = req.query.args ? JSON.parse(decodeURI(req.query.args)) : {};
+      let envs = req.query.envs ? JSON.parse(decodeURI(req.query.envs)) : {};
       let gateway;
       let ip = "127.0.0.1"; //FIXME: Update needed
       //let port = undefined;
@@ -136,7 +144,7 @@ class Manager extends EventEmitter {
         let maxtry = 5;
         for (let i = 0; i < maxtry; i++) {
           try {
-            await gateway.start_proxy(sessionName, app, ip, port);
+            await gateway.start_proxy(sessionName, app, ip, port, envs, args);
             port = gateway.getPort();
             assigned = true;
             break;

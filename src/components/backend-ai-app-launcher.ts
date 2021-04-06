@@ -1,9 +1,9 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, customElement, html, property} from 'lit-element';
 
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
@@ -25,21 +25,21 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
  <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
 
- @group Backend.AI Console
+ @group Backend.AI Web UI
  @element backend-ai-app-launcher
  */
 
-@customElement("backend-ai-app-launcher")
+@customElement('backend-ai-app-launcher')
 export default class BackendAiAppLauncher extends BackendAIPage {
   public shadowRoot: any;
 
   @property({type: Boolean}) active = true;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
-  @property({type: Array}) appSupportList = Array();
+  @property({type: Array}) appSupportList = [];
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
-  @property({type: Array}) _selected_items = Array();
+  @property({type: Array}) _selected_items = [];
   @property({type: Boolean}) refreshing = false;
   @property({type: Object}) notification = Object();
   @property({type: Object}) spinner = Object();
@@ -48,9 +48,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
-  @property({type: Array}) appLaunchBeforeTunneling = ['nniboard'];
+  @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
   @property({type: Object}) appController = Object();
   @property({type: Object}) openPortToPublic = false;
+  @property({type: Array}) appOrder;
+  @property({type: Array}) appSupportWithCategory = [];
+  @property({type: Object}) appEnvs = Object();
+  @property({type: Object}) appArgs = Object();
 
   constructor() {
     super();
@@ -74,7 +78,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
 
         .app-icon {
-          margin-left: 5px;
+          margin-left: 15px;
           margin-right: 5px;
         }
 
@@ -82,6 +86,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           display: block;
           width: 80px;
           text-align: center;
+          line-height: 15px;
           height: 25px;
           font-size: 13px;
         }
@@ -89,6 +94,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         #app-launch-confirmation-dialog {
           --component-width: 400px;
           --component-font-size: 14px;
+        }
+
+        #app-dialog {
+          --component-width: 400px;
         }
 
         mwc-textfield {
@@ -179,16 +188,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this._initializeAppTemplate();
     this.refreshTimer = null;
     fetch('resources/image_metadata.json').then(
-      response => response.json()
+      (response) => response.json()
     ).then(
-      json => {
+      (json) => {
         this.imageInfo = json.imageInfo;
-        for (let key in this.imageInfo) {
-          this.kernel_labels[key] = [];
-          if ("label" in this.imageInfo[key]) {
-            this.kernel_labels[key] = this.imageInfo[key].label;
-          } else {
+        for (const key in this.imageInfo) {
+          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
             this.kernel_labels[key] = [];
+            if ('label' in this.imageInfo[key]) {
+              this.kernel_labels[key] = this.imageInfo[key].label;
+            } else {
+              this.kernel_labels[key] = [];
+            }
           }
         }
       }
@@ -201,9 +212,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const checkbox = this.shadowRoot.querySelector('#hide-guide');
     checkbox.addEventListener('change', (event) => {
       if (!event.target.checked) {
-        localStorage.setItem('backendaiconsole.terminalguide', 'true');
+        localStorage.setItem('backendaiwebui.terminalguide', 'true');
       } else {
-        localStorage.setItem('backendaiconsole.terminalguide', 'false');
+        localStorage.setItem('backendaiwebui.terminalguide', 'false');
       }
     });
   }
@@ -217,10 +228,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
   _initializeAppTemplate() {
     fetch('resources/app_template.json').then(
-      response => response.json()
+      (response) => response.json()
     ).then(
-      json => {
+      (json) => {
         this.appTemplate = json.appTemplate;
+        const apps = Object.keys(this.appTemplate);
+        apps.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
+        this.appOrder = apps;
       }
     );
   }
@@ -238,7 +252,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
       resp = await fetch(rqst.uri, rqst);
       let contentType = resp.headers.get('Content-Type');
-      if (contentType.startsWith('application/json') ||
+      if (contentType === null) {
+        body = resp.ok;
+        if (!resp.ok) {
+          throw new Error(resp);
+        }
+      } else if (contentType.startsWith('application/json') ||
         contentType.startsWith('application/problem+json')) {
         body = await resp.json();
       } else if (contentType.startsWith('text/')) {
@@ -250,6 +269,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         throw body;
       }
     } catch (e) {
+      return resp;
       //console.log(e);
     }
     return body;
@@ -271,7 +291,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   /**
    * Display the app launcher.
    *
-   * @param detail
+   * @param {Object} detail
+   *
    */
   showLauncher(detail) {
     return this._showAppLauncher(detail);
@@ -280,7 +301,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   /**
    * Display the app launcher.
    *
-   * @param detail
+   * @param controls
    */
   _showAppLauncher(controls) {
     const sessionUuid = controls['session-uuid'];
@@ -295,18 +316,57 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       if (param['app-name'] === 'jupyter') {
         param['url-postfix'] = '&redirect=/notebooks/' + param['file-name'];
       }
+      if ('arguments' in controls) {
+        param['args'] = controls['arguments'];
+      }
       return this._runAppWithParameters(param);
     }
     this.appSupportList = [];
-    this.appSupportList.push({ // Force push terminal
-      'name': 'ttyd',
-      'title': 'Console',
-      'redirect': "",
-      'src': './resources/icons/terminal.svg'
+    if (!appServices.includes('ttyd')) {
+      this.appSupportList.push({ // Force push terminal
+        'name': 'ttyd',
+        'title': 'Console',
+        'category': '0.Default',
+        'redirect': '',
+        'src': './resources/icons/terminal.svg'
+      });
+    }
+    /* if (!appServices.includes('filebrowser')) {
+      this.appSupportList.push({ // Force push filebrowser
+        'name' : 'filebrowser',
+        'title': 'FileBrowser',
+        'category': '1.Utilities',
+        'redirect': '',
+        'src': './resources/icons/filebrowser.svg'
+      });
+    }*/
+    appServices.forEach((elm) => {
+      if (!(elm in this.appTemplate)) {
+        this.appTemplate[elm] = [];
+        this.appTemplate[elm].push({
+          'name': elm,
+          'title': elm,
+          'category': '99.',
+          'redirect': '',
+          'src': ''
+        });
+      }
     });
+    appServices.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
+    let interText = '';
     appServices.forEach((elm) => {
       if (elm in this.appTemplate) {
         if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
+          if (interText !== this.appTemplate[elm][0].category) {
+            this.appSupportList.push({
+              'name': this.appTemplate[elm][0].category.substring(2),
+              'title': this.appTemplate[elm][0].category.substring(2),
+              'category': 'divider',
+              'redirect': '',
+              'src': ''
+            });
+            interText = this.appTemplate[elm][0].category;
+          }
           this.appTemplate[elm].forEach((app) => {
             this.appSupportList.push(app);
           });
@@ -316,7 +376,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           this.appSupportList.push({
             'name': elm,
             'title': elm,
-            'redirect': "",
+            'category': 'Default',
+            'redirect': '',
             'src': './resources/icons/default_app.svg'
           });
         }
@@ -344,8 +405,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    * @param {string} app
    * @param {number} port
+   * @param {object | null} envs
+   * @param {object | null} args
    */
-  async _open_wsproxy(sessionUuid, app = 'jupyter', port: number | null = null) {
+  async _open_wsproxy(sessionUuid, app = 'jupyter', port: number | null = null, envs: object | null = null, args: object | null = null) {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
@@ -370,7 +433,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
     if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
       this.indicator.end();
-      this.notification.text = 'Proxy is not ready yet. Check proxy settings for detail.';
+      this.notification.text = _text('session.launcher.ProxyNotReady');
+
       this.notification.show();
       return Promise.resolve(false);
     }
@@ -383,12 +447,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       },
       uri: this._getProxyURL() + 'conf'
     };
-    this.indicator.set(20, 'Setting up proxy for the app...');
+    this.indicator.set(20, _text('session.launcher.SettingUpProxyForApp'));
     try {
       const response = await this.sendRequest(rqst);
       if (response === undefined) {
         this.indicator.end();
-        this.notification.text = 'Proxy configurator is not responding.';
+        this.notification.text = _text('session.launcher.ProxyConfiguratorNotResponding');
         this.notification.show();
         return Promise.resolve(false);
       }
@@ -400,7 +464,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       if (openToPublic) {
         uri += '&open_to_public=true';
       }
-      this.indicator.set(50, 'Adding kernel to socket queue...');
+      if (envs !== null && Object.keys(envs).length > 0) {
+        uri = uri + '&envs=' + encodeURI(JSON.stringify(envs));
+      }
+      if (args !== null && Object.keys(args).length > 0) {
+        uri = uri + '&args=' + encodeURI(JSON.stringify(args));
+      }
+      this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
       const rqst_proxy = {
         method: 'GET',
         app: app,
@@ -421,12 +491,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let sessionUuid = param['session-uuid'];
     let urlPostfix = param['url-postfix'];
     let appName = param['app-name'];
+    let envs = null;
+    let args = null;
     if (appName === undefined || appName === null) {
       return;
     }
 
     if (urlPostfix === undefined || urlPostfix === null) {
       urlPostfix = '';
+    }
+    if ('args' in param) {
+      args = param['args'];
     }
 
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
@@ -439,18 +514,43 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      this._open_wsproxy(sessionUuid, appName, port)
-        .then((response) => {
+      this._open_wsproxy(sessionUuid, appName, port, envs, args)
+        .then(async (response) => {
           if (response.url) {
-            this.indicator.set(100, 'Prepared.');
+            await this._connectToProxyWorker(response.url, urlPostfix);
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
-              console.log(appName + " proxy loaded: ");
-              console.log(sessionUuid);
+              //console.log(appName + " proxy loaded: ");
+              //console.log(sessionUuid);
             }, 1000);
           }
         });
     }
+  }
+
+  async _connectToProxyWorker(url, urlPostfix) {
+    const rqst_proxy = {
+      method: 'GET',
+      uri: url + urlPostfix,
+      mode: 'no-cors',
+      redirect: 'follow',//'manual'
+      credentials: 'include'
+    };
+    let count = 0;
+    while (count < 5) {
+      let result = await this.sendRequest(rqst_proxy);
+      if (typeof result === 'object' && 'status' in result && [500, 501, 502].includes(result.status)) {
+        await this._sleep(1000);
+        count = count + 1;
+      } else {
+        count = 6;
+      }
+    }
+  }
+
+  async _sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   async _runThisAppWithConfirmationIfNeeded(e) {
@@ -491,6 +591,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let appName = config['app-name'];
     let sessionUuid = config['session-uuid'];
     let urlPostfix = config['url-postfix'];
+    let envs = null;
+    let args = null;
     if (appName === undefined || appName === null) {
       return;
     }
@@ -500,7 +602,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
 
     if (appName === 'ttyd') {
-      let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
+      let isVisible = localStorage.getItem('backendaiwebui.terminalguide');
       if (!isVisible || isVisible === 'true') {
         this._openTerminalGuideDialog();
       }
@@ -521,10 +623,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       if (usePreferredPort && userPort) {
         port = userPort;
       }
-      this._open_wsproxy(sessionUuid, appName, port)
-        .then((response) => {
+      this._open_wsproxy(sessionUuid, appName, port, envs, args)
+        .then(async (response) => {
+          await this._connectToProxyWorker(response.url, urlPostfix);
           if (appName === 'sshd') {
-            this.indicator.set(100, 'Prepared.');
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             this.sshPort = response.port;
             this._readSSHKey(sessionUuid);
             this._openSSHDialog();
@@ -532,15 +635,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               this.indicator.end();
             }, 1000);
           } else if (appName === 'vnc') {
-            this.indicator.set(100, 'Prepared.');
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             this.vncPort = response.port;
             this._openVNCDialog();
           } else if (response.url) {
-            this.indicator.set(100, 'Prepared.');
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
-              console.log(appName + " proxy loaded: ");
-              console.log(sessionUuid);
+              //console.log(appName + " proxy loaded: ");
+              //console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -571,21 +674,22 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    */
   async runTerminal(sessionUuid: string) {
-    let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
+    let isVisible = localStorage.getItem('backendaiwebui.terminalguide');
     if (!isVisible || isVisible === 'true') {
       this._openTerminalGuideDialog();
     }
     if (globalThis.backendaiwsproxy == undefined || globalThis.backendaiwsproxy == null) {
       this.indicator = await globalThis.lablupIndicator.start();
       this._open_wsproxy(sessionUuid, 'ttyd')
-        .then((response) => {
+        .then(async (response) => {
+          await this._connectToProxyWorker(response.url, '');
           if (response.url) {
-            this.indicator.set(100, 'Prepared.');
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url, '_blank');
               this.indicator.end();
-              console.log("Terminal proxy loaded: ");
-              console.log(sessionUuid);
+              //console.log("Terminal proxy loaded: ");
+              //console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -631,7 +735,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let dialog = this.shadowRoot.querySelector('#terminal-guide');
     const lastChild = dialog.children[dialog.children.length - 1];
     const div: HTMLElement = document.createElement('div');
-    div.setAttribute('class', 'horizontal layout flex');
+    div.setAttribute('class', 'horizontal layout flex center');
 
     const checkbox = document.createElement('mwc-checkbox');
     checkbox.setAttribute("id", "hide-guide");
@@ -641,6 +745,25 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     div.appendChild(checkbox);
     div.appendChild(checkboxMsg);
     lastChild.appendChild(div);
+  }
+
+  /**
+   * Adjust port number in range of the starting number of port to the last number of the port.
+   *
+   * @param {Event} e -
+   */
+  _adjustPreferredAppPortNumber(e) {
+    const preferredPortNumber = e.target.value;
+    const defaultPreferredPortNumber = 10250;
+    const minPortNumber = 1025;
+    const maxPortNumber = 65534;
+    if (preferredPortNumber) {
+      if (preferredPortNumber < minPortNumber || preferredPortNumber > maxPortNumber) {
+        this.shadowRoot.querySelector('#app-port').value = defaultPreferredPortNumber;
+      }
+    } else {
+      this.shadowRoot.querySelector('#app-port').value = defaultPreferredPortNumber;
+    }
   }
 
   /**
@@ -695,22 +818,27 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="app-dialog" fixed backdrop>
-        <span slot="title">App</span>
+      <backend-ai-dialog id="app-dialog" fixed backdrop narrowLayout>
+        <div slot="title" class="horizontal layout center">
+          <span>App</span>
+        </div>
         <div slot="content">
-          <div style="padding:15px;" class="horizontal layout wrap center start-justified">
+          <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
             ${this.appSupportList.map(item => html`
-              <div class="vertical layout center center-justified app-icon">
-                <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
-                                 .url-postfix="${item.redirect}"
-                                 @click="${(e) => this._runThisAppWithConfirmationIfNeeded(e)}">
-                  <img src="${item.src}" />
-                </mwc-icon-button>
-                <span class="label">${item.title}</span>
-              </div>
+              ${item.category === 'divider' ? html`
+                <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${item.title}</h3>
+              ` : html`
+                <div class="vertical layout center center-justified app-icon">
+                  <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
+                                   .url-postfix="${item.redirect}"
+                                   @click="${(e) => this._runThisAppWithConfirmationIfNeeded(e)}">
+                    <img src="${item.src}"/>
+                  </mwc-icon-button>
+                  <span class="label">${item.title}</span>
+                </div>`}
             `)}
           </div>
-          <div style="padding:10px 20px 0 20px">
+          <div style="padding:10px 20px 15px 20px">
             ${globalThis.isElectron || !this.openPortToPublic ? `` : html`
               <div class="horizontal layout center">
                 <mwc-checkbox id="chk-open-to-public" style="margin-right:0.5em"></mwc-checkbox>
@@ -720,8 +848,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <div class="horizontal layout center">
               <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em"></mwc-checkbox>
               ${_t("session.TryPreferredPort")}
-              <mwc-textfield id="app-port" type="number" no-label-float value="10250" outlined
-                  min="1025" max="65534" style="margin-left:1em; width:90px"></mwc-textfield>
+              <mwc-textfield id="app-port" type="number" no-label-float value="10250"
+                             min="1025" max="65534" style="margin-left:1em; width:90px"
+                             @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
             </div>
           </div>
         </div>
@@ -729,11 +858,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <backend-ai-dialog id="ssh-dialog" fixed backdrop>
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content" style="padding:15px;">
-          <div style="padding:15px 0;" >${_t("session.SFTPDescription")}</div>
+          <div style="padding:15px 0;">${_t("session.SFTPDescription")}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t("session.ConnectionInformation")}</h4>
-            <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a></div>
-            <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a></div>
+            <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a>
+            </div>
+            <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a>
+            </div>
             <div><span>Port:</span> ${this.sshPort}</div>
             <a id="sshkey-download-link" style="margin-top:15px;" href="">
               <mwc-button class="fg apps green">${_t("DownloadSSHKey")}</mwc-button>
@@ -747,7 +878,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div style="padding:15px 0;">${_t("session.UseYourFavoriteSSHApp")}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t("session.ConnectionInformation")}</h4>
-            <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a></div>
+            <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a>
+            </div>
           </section>
         </div>
       </backend-ai-dialog>
@@ -757,14 +889,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <p>${_t('session.applauncher.AppMustBeRunDialog')}</p>
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
-        <div slot="footer" style="padding-top:0;margin:0 5px;">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
-          raised
-          id="app-launch-confirmation-button"
-          icon="rowing"
-          label="${_t('session.applauncher.ConfirmAndRun')}"
-          style="width:100%;"
-          @click="${() => this._runApp(this.appController)}">
+            raised
+            id="app-launch-confirmation-button"
+            icon="rowing"
+            label="${_t('session.applauncher.ConfirmAndRun')}"
+            style="width:100%;"
+            @click="${() => this._runApp(this.appController)}">
           </mwc-button>
         </div>
       </backend-ai-dialog>
@@ -773,7 +905,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         <div slot="content"></div>
         <div slot="footer"></div>
       </backend-ai-dialog>
-      `;
+    `;
   }
 }
 

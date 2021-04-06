@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from "lit-translate";
@@ -242,7 +242,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
               <mwc-textfield type="text" name="preset_name" class="modify" id="id-preset-name"
                           label="${_t("resourcePreset.PresetName")}"
                           auto-validate required
-                          pattern="[a-zA-Z0-9_-]+"
                           disabled
                           error-message="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
               <h4>${_t("resourcePreset.ResourcePreset")}</h4>
@@ -286,7 +285,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
             label="Preset Name"
             auto-validate
             required
-            pattern="[a-zA-Z0-9-_]+"
+            maxLength="255"
+            placeholder="${_t("maxLength.255chars")}"
             error-message="${_t("data.Allowslettersnumbersand-_")}"
           ></mwc-textfield>
           <h4>${_t("resourcePreset.ResourcePreset")}</h4>

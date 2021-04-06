@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
@@ -37,9 +37,8 @@ export const navigate = (path: any, params: Object = {}) => (dispatch: any) => {
   // you can do here
   if (['agent', 'resource', 'user', 'credential', 'environment', 'settings',
   'maintenance', 'information'].includes(page)) {
-    console.log(globalThis.backendaiclient);
-      // page = 'summary';
-      // globalThis.history.pushState({}, '', '/summary');
+    // page = 'summary';
+    // globalThis.history.pushState({}, '', '/summary');
   }
   dispatch(loadPage(page, params));
 

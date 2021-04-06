@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from "lit-translate";
@@ -9,7 +9,7 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
@@ -35,7 +35,7 @@ import {
 /**
  Backend.AI Credential List
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-credential-list
  */
 
@@ -534,7 +534,12 @@ export default class BackendAICredentialList extends BackendAIPage {
    */
   _saveKeypairModification(e) {
     const resource_policy = this.shadowRoot.querySelector('#policy-list').value;
-    const rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
+    const rate_limit_element = this.shadowRoot.querySelector('#rate-limit');
+    const rate_limit = rate_limit_element.value;
+
+    if (!rate_limit_element.checkValidity()) {
+      return;
+    }
 
     let input = {};
     if (resource_policy !== this.keypairInfo.resource_policy) {
@@ -551,7 +556,11 @@ export default class BackendAICredentialList extends BackendAIPage {
       globalThis.backendaiclient.keypair.mutate(this.keypairInfo.access_key, input)
         .then(res => {
           if (res.modify_keypair.ok) {
-            this.notification.text = _text('environment.SuccessfullyModified');
+            if (this.keypairInfo.resource_policy === resource_policy && this.keypairInfo.rate_limit === parseInt(rate_limit)) {
+              this.notification.text = _text('credential.NoChanges');
+            } else {
+              this.notification.text = _text('environment.SuccessfullyModified');
+            }
             this.refresh();
           } else {
             this.notification.text = _text('dialog.ErrorOccurred');
@@ -561,6 +570,21 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
 
     this._hideDialog(e);
+  }
+
+  /**
+   * Adjust Rate Limit value below the maximum value (50000) and also upper than zero.
+   *
+   */
+  _adjustRateLimit() {
+    const maximum_rate_limit = 50000; // the maximum value of rate limit value
+    let rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
+    if (rate_limit > maximum_rate_limit) {
+      this.shadowRoot.querySelector('#rate-limit').value = maximum_rate_limit;
+    }
+    if (rate_limit <= 0 ) {
+      this.shadowRoot.querySelector('#rate-limit').value = 1;
+    }
   }
 
   render() {
@@ -742,7 +766,11 @@ export default class BackendAICredentialList extends BackendAIPage {
                 type="number"
                 id="rate-limit"
                 min="1"
+                max="50000"
                 label="${_t('credential.RateLimit')}"
+                validationMessage="${_t('credential.RateLimitValidation')}"
+                helper="${_t('credential.RateLimitValidation')}"
+                @change=${() => this._adjustRateLimit()}
                 value="${this.keypairInfo.rate_limit}"></mwc-textfield>
           </div>
         </div>

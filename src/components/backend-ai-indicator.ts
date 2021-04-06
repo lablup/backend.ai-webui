@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {css, customElement, html, LitElement, property} from "lit-element";
 
@@ -12,7 +12,7 @@ import 'weightless/title';
 /**
  Backend.AI Indicator
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-indicator
  */
 

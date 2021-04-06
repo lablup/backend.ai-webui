@@ -1,14 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 
 import {BackendAIPage} from './backend-ai-page';
-
-import './lablup-loading-spinner';
 
 import '@material/mwc-list/mwc-list-item';
 import '../plastics/mwc/mwc-multi-select';
@@ -30,8 +28,12 @@ import 'weightless/tab-group';
 import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
+import "../plastics/chart-js";
 import './backend-ai-dialog';
 import './backend-ai-storage-list';
+import './lablup-activity-panel';
+import './lablup-loading-spinner';
+
 import {default as PainKiller} from './backend-ai-painkiller';
 
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -46,9 +48,10 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
  ... content ...
  </backend-ai-data-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-data-view
  */
+
 
 @customElement("backend-ai-data-view")
 export default class BackendAIData extends BackendAIPage {
@@ -75,6 +78,11 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
+  @property({type: Object}) options;
+  @property({type: Number}) createdCount;
+  @property({type: Number}) invitedCount;
+  @property({type: Number}) totalCount;
+  @property({type: Number}) capacity;
 
   constructor() {
     super();
@@ -247,6 +255,20 @@ export default class BackendAIData extends BackendAIPage {
             display: none;
           }
         }
+
+        .storage-status-indicator {
+          width: 90px;
+          color: black;
+        }
+
+        div.big {
+          font-size: 72px;
+        }
+
+        .storage-chart-wrapper {
+          margin: 20px 50px 0px 50px;
+        }
+
       `];
   }
 
@@ -254,7 +276,30 @@ export default class BackendAIData extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <div style="margin:20px;">
+      <div class="vertical layout" style="margin:20px;">
+        <lablup-activity-panel elevation="1" narrow title=${_t('data.StorageStatus')} autowidth>
+          <div slot="message">
+            <div class="horizontal layout wrap flex center center-justified">
+              <div class="storage-chart-wrapper">
+                <chart-js id="storage-status" type="doughnut" .data="${this.folders}" .options="${this.options}" height="250" width="250"></chart-js>
+              </div>
+              <div class="horizontal layout justified">
+                <div class="vertical layout center storage-status-indicator">
+                  <div class="big">${this.createdCount}</div>
+                  <span>${_t('data.Created')}</span>
+                </div>
+                <div class="vertical layout center storage-status-indicator">
+                  <div class="big">${this.invitedCount}</div>
+                  <span>${_t('data.Invited')}</span>
+                </div>
+                <div class="vertical layout center storage-status-indicator">
+                  <div class="big">${this.capacity}</div>
+                  <span>${_t('data.Capacity')}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </lablup-activity-panel>
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
             <h3 class="horizontal center flex layout tab">
@@ -284,8 +329,10 @@ export default class BackendAIData extends BackendAIPage {
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
         <div slot="content">
-          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" @change="${() => this._validateFolderName()}"
-            required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
+          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}"
+          @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
+            required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}" maxLength="64"
+            placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
           <div class="horizontal layout">
             <mwc-multi-select id="add-folder-host" label="${_t("data.Host")}">
               ${this.vhosts.map((item, idx) => html`
@@ -388,6 +435,23 @@ export default class BackendAIData extends BackendAIPage {
         this.storageInfo = storageInfo;
       }
     );
+    this.options = {
+      responsive: true,
+      maintainAspectRatio: true,
+      legend: {
+        display: true,
+        position: 'bottom',
+        align: 'center',
+        labels: {
+          fontSize: 20,
+          boxWidth: 10,
+        }
+      }
+    }
+    document.addEventListener('backend-ai-folder-list-changed', () => {
+      // this.shadowRoot.querySelector('#storage-status').updateChart();
+      this._createStorageChart();
+    });
   }
 
   /**
@@ -416,10 +480,49 @@ export default class BackendAIData extends BackendAIPage {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         _init();
+        this._createStorageChart();
       }, true);
     } else {
       _init();
+      this._createStorageChart();
     }
+  }
+
+  /***
+   * create Storage Doughnut Chart
+   * 
+   */
+  async _createStorageChart() {
+    let accessKey = globalThis.backendaiclient._config.accessKey;
+    let res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
+    let policyName = res.keypair.resource_policy;
+    let resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count']);
+    let max_vfolder_count = resource_policy.keypair_resource_policy.max_vfolder_count;
+    let groupId = globalThis.backendaiclient.current_group_id();
+    let folders = await globalThis.backendaiclient.vfolder.list(groupId);
+    this.createdCount = folders.filter(item => item.is_owner).length;
+    this.invitedCount = folders.length - this.createdCount;
+    this.capacity = (this.createdCount < max_vfolder_count ? (max_vfolder_count - this.createdCount) : 0)
+    this.totalCount = this.capacity + this.createdCount + this.invitedCount;
+    this.folders = {
+      labels: [
+          _text('data.Created'),
+          _text('data.Invited'),
+          _text('data.Capacity')
+      ],
+      datasets: [{
+        data: [
+          this.createdCount,
+          this.invitedCount,
+          this.capacity
+        ],
+        backgroundColor: [
+          '#722cd7',
+          '#60bb43',
+          '#efefef'
+        ]
+      }]
+    };
   }
 
   /**
@@ -538,7 +641,7 @@ export default class BackendAIData extends BackendAIPage {
         this._refreshFolderList();
       }).catch(err => {
         if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.text = PainKiller.relieve(err.message);
           this.notification.detail = err.message;
           this.notification.show(true, err);
         }
@@ -575,6 +678,10 @@ export default class BackendAIData extends BackendAIPage {
         let isValid = !regex.test(folderName.value);
         if (!isValid) {
           folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+        }
+        if (folderName.value.length > 64) {
+          isValid = false;
+          folderName.validationMessage = _text('data.FolderNameTooLong');
         }
         return {
           valid: isValid,

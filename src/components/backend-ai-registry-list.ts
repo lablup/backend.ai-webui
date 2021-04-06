@@ -7,7 +7,7 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
@@ -20,7 +20,6 @@ import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-switch/mwc-switch';
-import '@material/mwc-textfield/mwc-textfield';
 
 import './backend-ai-dialog';
 import {default as PainKiller} from "./backend-ai-painkiller";
@@ -32,7 +31,7 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 
  `backend-ai-registry-list` manages registries.
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-release-check
  */
 
@@ -46,6 +45,7 @@ class BackendAIRegistryList extends BackendAIPage {
   @property({type: Array}) _registryType = Array();
   @property({type: Array}) allowed_registries = Array();
   @property({type: Array}) hostnames = Array();
+  @property({type: String}) projectName = 'docker';
 
   constructor() {
     super();
@@ -186,11 +186,11 @@ class BackendAIRegistryList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this._registryType = ['docker', 'harbor'];
+        this._registryType = ['docker', 'harbor', 'harbor2'];
       }, true);
     } else { // already connected
       this._refreshRegistryList();
-      this._registryType = ['docker', 'harbor'];
+      this._registryType = ['docker', 'harbor', 'harbor2'];
     }
   }
 
@@ -244,7 +244,7 @@ class BackendAIRegistryList extends BackendAIPage {
     }
 
     input['type'] = registerType;
-    if (registerType === 'harbor') {
+    if (['harbor', 'harbor2'].includes(registerType)) {
       if (projectName && projectName !== '') {
         input['project'] = projectName;
       } else {
@@ -263,7 +263,7 @@ class BackendAIRegistryList extends BackendAIPage {
       .then(({result}) => {
         if (result === "ok") {
           this.notification.text = _text('registry.RegistrySuccessfullyAdded');
-          // add 
+          // add
           this.hostnames.push(hostname);
           this._refreshRegistryList();
         } else {
@@ -312,7 +312,26 @@ class BackendAIRegistryList extends BackendAIPage {
     globalThis.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]["hostname"])
       .then(({rescan_images}) => {
         if (rescan_images.ok) {
-          indicator.set(100, _text('registry.RegistryUpdateFinished'));
+          indicator.set(0, _text('registry.RescanImages'));
+          let sse: EventSource =  globalThis.backendaiclient.maintenance.attach_background_task(rescan_images.task_id);
+          sse.addEventListener('bgtask_updated', (e) => {
+            const data = JSON.parse(e["data"]);
+            const ratio = data.current_progress/data.total_progress;
+            indicator.set(100 * ratio, _text('registry.RescanImages'));
+          });
+          sse.addEventListener('bgtask_done', (e) => {
+            indicator.set(100, _text('registry.RegistryUpdateFinished'));
+            sse.close();
+          });
+          sse.addEventListener('bgtask_failed', (e) => {
+            console.log('bgtask_failed', e["data"]);
+            sse.close();
+            throw new Error('Background Image scanning task has failed');
+          });
+          sse.addEventListener('bgtask_cancelled', (e) => {
+            sse.close();
+            throw new Error('Background Image scanning task has been cancelled');
+          });
         } else {
           indicator.set(50, _text('registry.RegistryUpdateFailed'));
           indicator.end(1000);
@@ -343,7 +362,7 @@ class BackendAIRegistryList extends BackendAIPage {
   _toggleProjectNameInput() {
     let select = this.shadowRoot.querySelector('#select-registry-type');
     let projectTextEl = this.shadowRoot.querySelector('#add-project-name');
-    projectTextEl.disabled = !(select.value && select.value === 'harbor');
+    projectTextEl.disabled = !(select.value && ['harbor', 'harbor2'].includes(select.value));
     this.shadowRoot.querySelector('#project-name-validation').style.display = 'block';
     if (projectTextEl.disabled) {
       this.shadowRoot.querySelector('#project-name-validation').textContent = _text("registry.ForHarborOnly");
@@ -369,7 +388,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _validateProjectName() {
-    let projectName = this.shadowRoot.querySelector('#add-project-name').value;
+    let projectName = this.projectName;
     let validationMessage = this.shadowRoot.querySelector('#project-name-validation');
     if (projectName && projectName !== '') {
       validationMessage.style.display = 'none';
@@ -584,7 +603,7 @@ class BackendAIRegistryList extends BackendAIPage {
          </div>
          <mwc-select id="select-registry-type" label="${_t("registry.RegistryType")}"
                       @change=${this._toggleProjectNameInput} required
-                      validationMessage="Please select one option.">
+                      validationMessage="${_t('registry.PleaseSelectOption')}" value="${this.projectName}">
             ${this._registryType.map(item => html`
               <mwc-list-item value="${item}" ?selected="${item === 'docker'}">${item}</mwc-list-item>
             `)}
@@ -596,6 +615,7 @@ class BackendAIRegistryList extends BackendAIPage {
               type="text"
               label="${_t("registry.ProjectName")}"
               required
+              ?disabled="${this.projectName === 'docker'}"
               @change=${this._validateProjectName}
               ></wl-textfield>
               <wl-label class="helper-text" id="project-name-validation" style="display:block;">${_t("registry.ForHarborOnly")}</wl-label>

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
@@ -11,7 +11,7 @@ import {render} from 'lit-html';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
@@ -52,7 +52,7 @@ import {
  ...
  </backend-ai-user-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-user-list
  */
 
@@ -187,6 +187,9 @@ export default class BackendAIUserList extends BackendAIPage {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
+    this.addEventListener('user-list-updated', () => {
+      this.refresh();
+    })
   }
 
   /**
@@ -305,6 +308,8 @@ export default class BackendAIUserList extends BackendAIPage {
 
   refresh() {
     this._refreshUserData();
+    // update current grid to new data
+    this.shadowRoot.querySelector('#user-grid').render();
   }
 
   _isActive() {
@@ -406,8 +411,8 @@ export default class BackendAIUserList extends BackendAIPage {
 
   /**
    * Toggle password visible/invisible mode.
-   * 
-   * @param element 
+   *
+   * @param element
    */
   _togglePasswordVisibility(element) {
     const isVisible = element.__on;
@@ -417,7 +422,7 @@ export default class BackendAIUserList extends BackendAIPage {
 
   /**
    * Toggle password and confirm input field is required or not.
-   * 
+   *
    */
   _togglePasswordInputRequired() {
     const passwordEl = this.shadowRoot.querySelector('#password'),
@@ -453,7 +458,7 @@ export default class BackendAIUserList extends BackendAIPage {
     }
 
     if (password !== confirm) {
-      this.notification.text = "Password and Confirmation do not match.";
+      this.notification.text = _text('environment.PasswordsDoNotMatch');
       this.notification.show();
       return;
     }
@@ -478,10 +483,12 @@ export default class BackendAIUserList extends BackendAIPage {
     if (is_active !== this.userInfo.is_active)
       input.is_active = is_active;
 
+    this.refresh();
+
     if (Object.entries(input).length === 0) {
       this._hideDialog(event);
 
-      this.notification.text = "No Changes Made";
+      this.notification.text = _text('environment.NoChangeMade');
       this.notification.show();
 
       return;
@@ -499,14 +506,18 @@ export default class BackendAIUserList extends BackendAIPage {
           this.shadowRoot.querySelector("#password").value = "";
           this.shadowRoot.querySelector("#confirm").value = "";
         } else {
-          this.notification.text = res.modify_user.msg ? `${ _text('logs.errorMessage') + ':  ' + res.modify_user.msg}` : _text('dialog.ErrorOccurred');
-
+          this.notification.text = PainKiller.relieve(res.modify_user.msg);
           this.shadowRoot.querySelector("#username").value = this.userInfo.username;
           this.shadowRoot.querySelector("#description").value = this.userInfo.description;
         }
         this.notification.show();
       });
-    
+
+    // if updated user info is current user, then apply it right away
+    if (this.userInfo.email === globalThis.backendaiclient.email) {
+      let event = new CustomEvent('current-user-info-changed', {detail: input});
+      document.dispatchEvent(event);
+    }
   }
 
   render() {
@@ -551,29 +562,32 @@ export default class BackendAIUserList extends BackendAIPage {
                   disabled
                   label="${_text("credential.UserID")}"
                   pattern="^[a-zA-Z0-9_-]+$"
-                  value="${this.userInfo.email}"></mwc-textfield>
+                  value="${this.userInfo.email}"
+                  maxLength="64"
+                  helper="${_text('maxLength.64chars')}"></mwc-textfield>
               <mwc-textfield
                   ?disabled=${!this.editMode}
                   label="${_text("credential.UserName")}"
                   id="username"
-                  pattern="^[a-zA-Z0-9_ ]*$"
-                  value="${this.userInfo.username}"></mwc-textfield>
+                  value="${this.userInfo.username}"
+                  maxLength="64"
+                  helper="${_text('maxLength.64chars')}"></mwc-textfield>
               <mwc-textfield
                   ?disabled=${!this.editMode}
                   label="${_text("credential.FullName")}"
                   id="full_name"
-                  pattern="^[a-zA-Z0-9_ ]*$"
                   value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}"
-                  ></mwc-textfield>
+                  maxLength="64"
+                  helper="${_text('maxLength.64chars')}"></mwc-textfield>
               ${this.editMode ? html`
                 <div class="horizontal layout password-area">
                   <mwc-textfield
                       type="password"
                       id="password"
                       autoValidate
-                      validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
+                      validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
                       pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                      min-length="8"
+                      maxLength="64"
                       label="${_text("general.NewPassword")}"
                       @change=${() => this._togglePasswordInputRequired()}></mwc-textfield>
                   <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
@@ -585,11 +599,11 @@ export default class BackendAIUserList extends BackendAIPage {
                       type="password"
                       id="confirm"
                       autoValidate
-                      validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
+                      validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
                       pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                      min-length="8"
+                      maxLength="64"
                       @change=${() => this._togglePasswordInputRequired()}
-                      label="${_text("console.menu.NewPasswordAgain")}"></mwc-textfield>
+                      label="${_text("webui.menu.NewPasswordAgain")}"></mwc-textfield>
                   <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
                       @click="${(e) => this._togglePasswordVisibility(e.target)}">
                   </mwc-icon-button-toggle>
@@ -598,6 +612,8 @@ export default class BackendAIUserList extends BackendAIPage {
                     type="text"
                     id="description"
                     label="${_text("credential.Description")}"
+                    placeholder="${_text('maxLength.500chars')}"
+                    value="${this.userInfo.description}"
                     id="description"></mwc-textfield>`: html``}
               ${this.editMode ? html`
                 <div class="horizontal layout center" style="margin:10px;">

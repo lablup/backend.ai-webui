@@ -29,3 +29,10 @@ Icons from www.flaticon.com made by https://www.flaticon.com/authors/dave-gandy 
 
  * terminal.svg (as code form)
 
+Icon from Cern GitLab ( https://gitlab.cern.ch/linuxsupport/ceph-for-el6 ) under Apache 2.0 License.
+ * ceph.png
+
+Icon from Github purestorage repo ( https://github.com/purestorage/helm-charts ) under Apache 2.0 License.
+ * purestorage.png
+
+

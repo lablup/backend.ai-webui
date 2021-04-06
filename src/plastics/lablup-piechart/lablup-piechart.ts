@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {css, customElement, html, LitElement, property} from "lit-element";
 import {IronFlex, IronFlexAlignment} from '../layout/iron-flex-layout-classes';
@@ -56,6 +56,8 @@ export default class LablupPiechart extends LitElement {
     let chartFontSize = this.fontsize / this.size;
     if (chartFontSize >= 0.5) {
       chartFontSize = 0.3;
+    } else {
+      chartFontSize = 0.9 / (this.currentNumber.toString().length);
     }
     this.chartFontSize = chartFontSize.toString();
     let chart: HTMLElement = this.shadowRoot.querySelector("#chart");

@@ -39,7 +39,7 @@ show_important_note() {
 }
 
 usage() {
-  echo "${GREEN}Backend.AI Windows Console App builder${NC}"
+  echo "${GREEN}Backend.AI Windows Web UI App builder${NC}"
   echo ""
   echo "${LWHITE}USAGE${NC}"
   echo "  $0 ${LWHITE}[OPTIONS]${NC}"
@@ -73,11 +73,11 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-if [[ "$(docker images -q enterprise.docker.backend.ai/dist/backendai-console-builder:latest 2> /dev/null)" == "" ]]; then
-  show_error "Cannot find console builder image. Make sure you have pulled the console builder image."
-  show_info "Image name: enterprise.docker.backend.ai/dist/backendai-console-builder:latest"
+if [[ "$(docker images -q enterprise.docker.backend.ai/dist/backendai-webui-builder:latest 2> /dev/null)" == "" ]]; then
+  show_error "Cannot find web UI builder image. Make sure you have pulled the web UI builder image."
+  show_info "Image name: enterprise.docker.backend.ai/dist/backendai-webui-builder:latest"
   exit 1
 fi
 
 show_info "Building Windows app..."
-docker run --rm --name backendai-console-builder -v ${PWD}:/root/backend.ai-console/app -it enterprise.docker.backend.ai/dist/backendai-console-builder:latest /root/update-and-build.sh ${BRANCH}
+docker run --rm --name backendai-webui-builder -v ${PWD}:/root/backend.ai-webui/app -it enterprise.docker.backend.ai/dist/backendai-webui-builder:latest /root/update-and-build.sh ${BRANCH}

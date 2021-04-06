@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {css, customElement, html, LitElement} from "lit-element";
 
@@ -11,7 +11,7 @@ import {css, customElement, html, LitElement} from "lit-element";
 
  <backend-ai-offline-indicator ?active="${0}"></backend-ai-offline-indicator>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-offline-indicator
  */
 

@@ -1,26 +1,36 @@
 /*
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import Chart from '../lib/Chart.min';
 import {css, html, LitElement, property, TemplateResult} from 'lit-element';
 
 export default class ChartJs extends LitElement {
+  public shadowRoot: any; // ShadowRoot
   @property({type: Object}) data = {};
   @property({type: Object}) options = {};
   @property({type: Object}) chart;
   @property({type: String}) type = '';
+  @property({type: Number}) height = 0;
+  @property({type: Number}) width = 0;
 
   updated(prop) {
     super.update(prop);
     if (this.chart) {
       this.chart.data = this.data;
+      if(!this.options) {
+        this.options = {
+          responsive: true,
+          maintainAspectRatio: true
+        }
+      }
       this.chart.options = this.options;
-      if (typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && this.type != '' && this.data != {} && this.options != {}) {
+      if (typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && this.type !== '' && this.data != {} && this.options != {}) {
         this.updateChart();
       }
+
     } else {
-      if (typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && this.type != '' && this.data != {} && this.options != {}) {
+      if (typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && this.type !== '' && this.data != {} && this.options != {}) {
         this._initializeChart();
       }
     }
@@ -45,19 +55,19 @@ export default class ChartJs extends LitElement {
           margin: 0 auto;
           padding: 5px;
           overflow: hidden;
-          width: 70vw;
-          height: 25vh;
+          width: auto;
         }
 
-        .chart-sub-container {
+        .chart-top-container > .chart-sub-container {
           position: relative;
-          width: 100%;
-          height: 100%
+          width: 65vw;
+          max-width: 70vw;
+          height: 200px;
         }
 
         @media only screen and (max-width: 1015px) {
-          .chart-sub-container {
-            width: 90%;
+          .chart-top-container > .chart-sub-container {
+            max-width: 55vw;
           }
         }
       `
@@ -68,12 +78,16 @@ export default class ChartJs extends LitElement {
     if (this.type != '' && this.data != {} && this.options != {}) {
       this._initializeChart();
     }
+    if (this.height && this.width) {
+      this.shadowRoot.querySelector('.chart-top-container .chart-sub-container').style.height = this.height + 'px';
+      this.shadowRoot.querySelector('.chart-top-container .chart-sub-container').style.width = this.width + 'px';
+    }
   }
 
   public render(): void | TemplateResult {
     return html`
       <div class="chart-top-container" style="display:grid;place-items:center;">
-        <div class="chart-shell chart-sub-container">
+        <div class="chart-sub-container">
           <canvas></canvas>
         </div>
       </div>

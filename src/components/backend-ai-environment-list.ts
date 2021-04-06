@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
@@ -15,7 +15,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -38,7 +38,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
 /**
  Backend.AI Environment List
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-environment-list
  */
 
@@ -346,6 +346,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     // select only uninstalled images
     this.selectedImages = this._grid.selectedItems.filter(images => {return !images.installed});
     this.installImageNameList = this.selectedImages.map( image => {
+
+      // remove whitespace
+      Object.keys(image).map(elem => {
+        if (['registry', 'name', 'tag'].includes(elem)) {
+          image[elem] = image[elem].replace(/\s/g, '');
+        }
+      });
+
       return image['registry'] + '/' + image['name'] + ':' + image['tag'];
     })
 
@@ -420,10 +428,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this.notification.text = _text('environment.InstallingImage') + imageName + _text('environment.TakesTime');
       this.notification.show();
       let indicator = await this.indicator.start('indeterminate');
-      indicator.set(10, 'Downloading...');
+      indicator.set(10, _text('import.Downloading'));
 
       globalThis.backendaiclient.image.install(imageName, imageResource).then((response) => {
-        indicator.set(100, 'Install finished.');
+        indicator.set(100, _text('import.Installed'));
         indicator.end(1000);
 
         // change installing -> installed
@@ -634,8 +642,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this.servicePortsMsg = _text('environment.AppNameMustNotBeEmpty');
         return false;
       }
-      if (!["http", "tcp", "pty"].includes(protocol)) {
-        this.servicePortsMsg = _text('environment.ProtocolMustBeOneOfHttpTcpPty');
+      if (!["http", "tcp", "pty", "preopen"].includes(protocol)) {
+        this.servicePortsMsg = _text('environment.ProtocolMustBeOneOfSupported');
         return false;
       }
       if (ports.has(port)) {
@@ -796,7 +804,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <template class="header">${_t("environment.Base")}</template>
           <template>
             <template is="dom-repeat" items="[[ item.baseimage ]]">
-              <lablup-shields app="" color="blue" description="[[item]]"></lablup-shields>
+              <lablup-shields app="" color="blue" ui="round" description="[[item]]"></lablup-shields>
             </template>
           </template>
         </vaadin-grid-column>
@@ -804,7 +812,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <template class="header">${_t("environment.Constraint")}</template>
           <template>
             <template is="dom-if" if="[[item.additional_req]]">
-              <lablup-shields app="" color="green" description="[[item.additional_req]]"></lablup-shields>
+              <lablup-shields app="" color="green" ui="round" description="[[item.additional_req]]"></lablup-shields>
             </template>
           </template>
         </vaadin-grid-column>
@@ -1220,10 +1228,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             image.baseversion = tags[0];
             image.baseimage = tags[1];
             if (tags[2] !== undefined) {
-              image.additional_req = tags[2].toUpperCase();
+              image.additional_req = this._humanizeName(tags[2]);
             }
-          } else {
+          } else if (image.tag !== undefined) {
             image.baseversion = image.tag;
+          } else {
+            image.baseversion = '';
           }
           let names = image.name.split('/');
           if (names[1] !== undefined) {
@@ -1234,11 +1244,21 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             image.lang = names[0];
           }
           let langs = image.lang.split('-');
-          let baseimage = [this._humanizeName(image.baseimage)];
+          let baseimage: Array<string>;
+          if (image.baseimage !== undefined) {
+            baseimage = [this._humanizeName(image.baseimage)];
+          } else {
+            baseimage = [];
+          }
           if (langs[1] !== undefined) {
-            image.lang = langs[1];
-            baseimage.push(this._humanizeName(langs[0]));
-            //image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
+            if (langs[0] === 'r') { // Legacy handling for R images
+              image.lang = langs[0];
+              baseimage.push(this._humanizeName(langs[0]));
+            } else {
+              image.lang = langs[1];
+              baseimage.push(this._humanizeName(langs[0]));
+              //image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
+            }
           }
           image.baseimage = baseimage;//this._humanizeName(image.baseimage);
           image.lang = this._humanizeName(image.lang);
@@ -1358,6 +1378,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'base': 'Base',
       'cntk': 'CNTK',
       'h2o': 'H2O.AI',
+      'triton-server': 'Triton Server',
       'digits': 'DIGITS',
       'ubuntu-linux': 'Ubuntu Linux',
       'tf1': 'TensorFlow 1',
@@ -1370,6 +1391,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'py37': 'Python 3.7',
       'py38': 'Python 3.8',
       'py39': 'Python 3.9',
+      'py310': 'Python 3.10',
       'lxde': 'LXDE',
       'lxqt': 'LXQt',
       'xfce': 'XFCE',
@@ -1393,10 +1415,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'cuda10.3': 'GPU:CUDA10.3',
       'cuda11': 'GPU:CUDA11',
       'cuda11.0': 'GPU:CUDA11',
+      'cuda11.1': 'GPU:CUDA11.1',
+      'cuda11.2': 'GPU:CUDA11.2',
+      'cuda11.3': 'GPU:CUDA11.3',
+      'cuda12': 'GPU:CUDA12',
+      'cuda12.0': 'GPU:CUDA12.0',
       'miniconda': 'Miniconda',
       'anaconda2018.12': 'Anaconda 2018.12',
       'anaconda2019.12': 'Anaconda 2019.12',
       'alpine3.8': 'Alpine Linux 3.8',
+      'alpine3.12': 'Alpine Linux 3.12',
       'ngc': 'NVidia GPU Cloud',
       'ff': 'Research Env.',
     };

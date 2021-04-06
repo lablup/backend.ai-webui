@@ -1,17 +1,17 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-//import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
-import {css, customElement, html, LitElement, property, query} from "lit-element";
-import {BackendAiStyles} from "./backend-ai-general-styles";
+// import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import {css, customElement, html, LitElement, property, query} from 'lit-element';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/icon';
 import '../plastics/mwc/mwc-dialog';
 import '@material/mwc-icon-button';
 
-import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
  Backend.AI Dialog
@@ -24,10 +24,10 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
  ...
  </backend-ai-dialog>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-dialog
  */
-@customElement("backend-ai-dialog")
+@customElement('backend-ai-dialog')
 export default class BackendAiDialog extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Boolean}) fixed = false;
@@ -40,6 +40,7 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) hideActions = true;
   @property({type: Boolean}) open = false;
   @property({type: String}) type = 'normal';
+  @property({type: Boolean}) closeWithConfirmation = false;
 
   @query('#dialog') protected dialog;
 
@@ -57,6 +58,7 @@ export default class BackendAiDialog extends LitElement {
         mwc-dialog {
           --mdc-dialog-min-width: var(--component-min-width, auto);
           --mdc-dialog-max-width: var(--component-max-width, 100%);
+          --mdc-dialog-min-height: var(--component-min-height, auto);
           --mdc-dialog-max-height: var(--component-max-height, calc(100vh - 45px));
           --mdc-dialog-width: var(--component-width, auto);
           --mdc-dialog-height: var(--component-height, auto);
@@ -118,7 +120,7 @@ export default class BackendAiDialog extends LitElement {
   firstUpdated() {
     this.open = this.dialog.open;
     if (this.persistent) {
-      this.dialog.scrimClickAction = 'persistent';
+      this.dialog.scrimClickAction = '';
     }
     this.dialog.addEventListener('opened', () => {
       this.open = this.dialog.open;
@@ -130,6 +132,12 @@ export default class BackendAiDialog extends LitElement {
       } else {
         this.open = this.dialog.open;
       }
+
+      /**
+       * custom event for bubbling event of closing dialog
+       */
+      const closeEvent = new CustomEvent('dialog-closed', {detail: ''});
+      this.dispatchEvent(closeEvent);
     });
   }
 
@@ -141,7 +149,7 @@ export default class BackendAiDialog extends LitElement {
    * Hide a dialog.
    */
   _hideDialog() {
-    this.dialog.close();
+    this.hide();
   }
 
   /**
@@ -155,7 +163,12 @@ export default class BackendAiDialog extends LitElement {
    * Hide a dialog.
    */
   hide() {
-    this.dialog.close();
+    if (this.closeWithConfirmation) {
+      const closeEvent = new CustomEvent('dialog-closing-confirm', {detail: ''});
+      this.dispatchEvent(closeEvent);
+    } else {
+      this.dialog.close();
+    }
   }
 
   render() {
@@ -171,8 +184,8 @@ export default class BackendAiDialog extends LitElement {
                     hideActions="${this.hideActions}"
                     style="padding:0;" class="${this.type}">
         <div elevation="1" class="card" style="margin: 0;padding:0;">
-          <h3 class="horizontal center layout" style="font-weight:bold">
-            <span><slot name="title"></slot></span>
+          <h3 class="horizontal justified layout" style="font-weight:bold">
+            <span class="vertical center-justified layout"><slot name="title"></slot></span>
             <div class="flex"></div>
             <slot name="action"></slot>
             ${this.noclosebutton ? html`` : html`
@@ -194,6 +207,6 @@ export default class BackendAiDialog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-dialog": BackendAiDialog;
+    'backend-ai-dialog': BackendAiDialog;
   }
 }

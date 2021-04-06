@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
@@ -33,7 +33,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
  ... content ...
  </backend-ai-maintenance-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-maintenance-view
  */
 
@@ -200,18 +200,36 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     //this.notification.text = 'Rescan image started.';
     //this.notification.show();
     let indicator = await this.indicator.start('indeterminate');
-    indicator.set(10, 'Scanning...');
+    indicator.set(0, _text('maintenance.Scanning'));
     globalThis.tasker.add(
       _text("maintenance.RescanImages"),
-      globalThis.backendaiclient.maintenance.rescan_images().then((response) => {
+      globalThis.backendaiclient.maintenance.rescan_images().then(({rescan_images}) => {
+        let sse: EventSource =  globalThis.backendaiclient.maintenance.attach_background_task(rescan_images.task_id);
+        sse.addEventListener('bgtask_updated', (e) => {
+          const data = JSON.parse(e["data"]);
+          const ratio = data.current_progress/data.total_progress;
+          indicator.set(100 * ratio, _text('maintenance.Scanning'));
+        });
+        sse.addEventListener('bgtask_done', (e) => {
+          indicator.set(100, _text('maintenance.RescanImageFinished'));
+          sse.close();
+        });
+        sse.addEventListener('bgtask_failed', (e) => {
+          console.log('task_failed', e["data"]);
+          sse.close();
+          throw new Error('Background Image scanning task has failed');
+        });
+        sse.addEventListener('bgtask_cancelled', (e) => {
+          sse.close();
+          throw new Error('Background Image scanning task has been cancelled');
+        });
         this.shadowRoot.querySelector('#rescan-image-button-desc').label = _text("maintenance.RescanImages");
         this.scanning = false;
-        indicator.set(100, 'Rescan image finished.');
       }).catch(err => {
         this.scanning = false;
         this.shadowRoot.querySelector('#rescan-image-button-desc').label = _text("maintenance.RescanImages");
         console.log(err);
-        indicator.set(50, 'Rescan failed.');
+        indicator.set(50, _text('maintenance.RescanFailed'));
         indicator.end(1000);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);
@@ -228,18 +246,18 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     this.shadowRoot.querySelector('#recalculate_usage-button-desc').label = _text('maintenance.Recalculating');
     this.recalculating = true;
     let indicator = await this.indicator.start('indeterminate');
-    indicator.set(10, 'Recalculating...');
+    indicator.set(10, _text('maintenance.Recalculating'));
     this.tasker.add(
       _text('maintenance.RecalculateUsage'),
       globalThis.backendaiclient.maintenance.recalculate_usage().then((response) => {
         this.shadowRoot.querySelector('#recalculate_usage-button-desc').label = _text('maintenance.RecalculateUsage');
         this.recalculating = false;
-        indicator.set(100, 'Recalculation finished.');
+        indicator.set(100, _text('maintenance.RecalculationFinished'));
       }).catch(err => {
         this.recalculating = false;
         this.shadowRoot.querySelector('#recalculate_usage-button-desc').label = _text('maintenance.RecalculateUsage');
         console.log(err);
-        indicator.set(50, 'Recalculation failed.');
+        indicator.set(50, _text('maintenance.RecalculationFailed'));
         indicator.end(1000);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);

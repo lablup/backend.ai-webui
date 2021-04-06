@@ -1,18 +1,18 @@
-# backend.ai-console
+# backend.ai-webui
 
-[![GitHub version](https://badge.fury.io/gh/lablup%2Fbackend.ai-console.svg)](https://badge.fury.io/gh/lablup%2Fbackend.ai-console)
+[![GitHub version](https://badge.fury.io/gh/lablup%2Fbackend.ai-webui.svg)](https://badge.fury.io/gh/lablup%2Fbackend.ai-webui)
 
-Make AI Accessible: Backend.AI GUI console (web/app) for End-user / DevOps / SysAdmin.
+Make AI Accessible: Backend.AI Web UI (web/app) for End-user / DevOps / SysAdmin.
 
 For more information, see [manual](https://console.docs.backend.ai/en/latest/).
 
 ## Changelog
 
-View [changelog](https://github.com/lablup/backend.ai-console/blob/main/CHANGELOG.md)
+View [changelog](https://github.com/lablup/backend.ai-webui/blob/main/CHANGELOG.md)
 
 ## Role
 
-Backend.AI console focuses to
+Backend.AI Web UI focuses to
 
  * Serve as desktop app (windows, macOS and Linux) and web service
  * Provide both basic administration and user mode
@@ -23,12 +23,13 @@ Backend.AI console focuses to
 ## User Features
  * Session management
     * Set default resources for runs
+    * Monitor current resources sessions using
     * Choose and run environment-supported apps
     * Web-based Terminal for each session
     * Fully-featured VSCode editor and environments
  * Pipeline
-    * Experiments (with SACRED / MLFlow)
-    * AutoML (with Microsoft NNI / MLFlow)
+    * Experiments (with SACRED / Microsoft NNI / Apache MLFlow)
+    * AutoML (with Microsoft NNI / Apache MLFlow)
     * Manages container streams with pipeline vfolders
     * Storage proxy for fast data I/O between backend.ai cluster and user
     * Checks queue and scheduled jobs
@@ -37,6 +38,9 @@ Backend.AI console focuses to
     * Upload  / download files (with upload progress)
     * Integrated SSH/SFTP server (app mode only)
     * Share folders with friends / groups
+ * Node management
+    * See calculation nodes in Backend.AI cluster
+	* Live statistics of bare-metal / VM nodes
  * Statistics
     * User resource statistics
     * Session statistics
@@ -46,9 +50,11 @@ Backend.AI console focuses to
  * Configurations
     * User-specific web / app configurations
     * Beta features
-    * Console logs / errors
+    * WebUI logs / errors
  * License
     * Check current license information (for enterprise only)
+ * Help & manuals
+
 
 ## Management Features
 
@@ -70,20 +76,20 @@ Backend.AI console focuses to
  * Proxy mode to support various app environments (with node.js (web), electron (app) )
     * Needs backend.ai-wsproxy package
  * Service information
-    * Component compatibility 
+    * Component compatibility
     * Security check
     * License information
- * Work with console server (github/lablup/backend.ai-console-server)
-    * Delegate login to console server
+ * Work with Web server (github/lablup/backend.ai-webserver)
+    * Delegate login to web server
     * Support userid / password login
 
 ## Setup Guide
 ### Baked versions
-`backend.ai-console` production version is also served as `backend.ai-app` and refered by `backend.ai-console-server` as submodule. If you use `backend.ai-console-server`, you are using latest stable release of `backend.ai-console`.
+`backend.ai-webui` production version is also served as `backend.ai-app` and refered by `backend.ai-webserver` as submodule. If you use `backend.ai-webserver`, you are using latest stable release of `backend.ai-webui`.
 
 ### Configuration
 
-Backend.AI Console uses `config.toml` located in app root directory. You can prepare many `config.toml.[POSTFIX]` in `configs` directory to switch various configurations.
+Backend.AI Web UI uses `config.toml` located in app root directory. You can prepare many `config.toml.[POSTFIX]` in `configs` directory to switch various configurations.
 
 These are options in `config.toml`.
 
@@ -92,6 +98,7 @@ These are options in `config.toml`.
 apiEndpoint = "[Default API Endpoint. If blank, user input field will be shown.]"
 apiEndpointText = "[Placeholder text instead of API endpoint input field.]"
 defaultSessionEnvironment = "[Default session kernel. If blank, alphabetically first kernel will be default.]"
+defaultImportEnvironment = "[Default kernel to use import features. If blank, index.docker.io/lablup/python:3.8-ubuntu18.04 will be used.]"
 siteDescription = "[Site description placeholder. It will be at the bottom of 'Backend.AI' at the top left corner.]"
 connectionMode = "[Connection mode. Default is API. Currenly supports API and SESSION]"
 allowChangeSigninMode = false # Allows user to change signin mode between `API` and `SESSION`
@@ -99,6 +106,7 @@ signupSupport = false # Enable / disable signup feature support. Manager plugin 
 allowSignout = false # Let users signout from service. Signup plugin is required.
 allowAnonymousChangePassword = false # Enable / disable anonymous user can send change password email. Manager plugin is required.
 allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
+autoLogout = false # If true, user will be automatically logout when they close all Backend.AI tab / window.
 debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
 
 [wsproxy]
@@ -106,14 +114,22 @@ proxyURL = "[Proxy URL]"
 proxyBaseURL = "[Base URL of websocket proxy,]"
 proxyListenIP = "[Websocket proxy configuration IP.]"
 
+[resources]
+openPortToPublic = true # Show option to open app proxy port to anyone.
+maxCPUCoresPerContainer = 256 # Maximum CPU per container.
+maxCUDADevicesPerContainer = 16  # Maximum CUDA devices per container.
+maxShmPerContainer = 1 # Maximum shared memory per container.
+maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
+
 [server]
-consoleServerURL = "[Console server website URL. App will use the site instead of local app.]"
+webServerURL = "[Web server website URL. App will use the site instead of local app.]"
                    # Uses websocket proxy in the app
 
-[plugins]
+[plugin]
 # Reserved to load plugins
-# login = "login-test.js"
-# sidebar = "sidebar-test.js"
+#login = "signup-cloud.js"
+#page = "test-plugin1,test-plugin2"
+
 ```
 
 
@@ -126,7 +142,7 @@ consoleServerURL = "[Console server website URL. App will use the site instead o
 
 ## Development Guide
 
-Backend.AI console is built with
+Backend.AI Web UI is built with
  * `lit-element` as webcomponent framework
  * `npm` as package manager
  * `rollup` as bundler
@@ -134,7 +150,7 @@ Backend.AI console is built with
 
 ### Code of conduct
 
-View [Code of conduct](https://github.com/lablup/backend.ai-console/blob/main/CODE_OF_CONDUCT.md) for community guidelines.
+View [Code of conduct](https://github.com/lablup/backend.ai-webui/blob/main/CODE_OF_CONDUCT.md) for community guidelines.
 
 ### Initializing
 
@@ -236,9 +252,9 @@ server {
 
 ### Building docker image using docker-compose
 
-Make sure that you compile the console.
+Make sure that you compile the Web UI.
 
-e.g. You will download the `backend.ai-console-server` package.
+e.g. You will download the `backend.ai-webserver` package.
 
 ```
 $ make compile
@@ -247,32 +263,32 @@ $ make compile
 #### Web server
 Good for develop phase. Not recommended for production environment.
 
-Note: This command will use console source in `build/rollup` directory. No certificate will be used therefore console server will serve as HTTP.
+Note: This command will use Web UI source in `build/rollup` directory. No certificate will be used therefore web server will serve as HTTP.
 
-Copy `console-server.example.conf` in `docker_build` directory into current directory as `console-server.conf` and modify configuration files for your needs.
+Copy `webserver.example.conf` in `docker_build` directory into current directory as `webserver.conf` and modify configuration files for your needs.
 
 ```
-$ docker-compose build console-dev // build only
-$ docker-compose up console-dev    // for testing
-$ docker-compose up -d console-dev // as a daemon
+$ docker-compose build webui-dev // build only
+$ docker-compose up webui-dev    // for testing
+$ docker-compose up -d webui-dev // as a daemon
 ```
 
-Visit `http://127.0.0.1:8080` to test console server.
+Visit `http://127.0.0.1:8080` to test web server.
 
 #### Web server with SSL
 Recommended for production.
 
 Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `certificates` directory. Otherwise, you will have an error during container initialization.
 
-Copy `console-server.example.ssl.conf` in `docker_build` directory into current directory as `console-server.conf` and modify configuration files for your needs.
+Copy `webserver.example.ssl.conf` in `docker_build` directory into current directory as `webserver.conf` and modify configuration files for your needs.
 
 ```
-$ docker-compose build console  // build only
-$ docker-compose up console     // for testing
-$ docker-compose up -d console  // as a daemon
+$ docker-compose build webui  // build only
+$ docker-compose up webui     // for testing
+$ docker-compose up -d webui  // as a daemon
 ```
 
-Visit `https://127.0.0.1:443` to test console server serving. Change `127.0.0.1` to your production domain.
+Visit `https://127.0.0.1:443` to test web server serving. Change `127.0.0.1` to your production domain.
 
 #### Removing
 
@@ -283,28 +299,28 @@ $ docker-compose down
 #### Manual image build
 ```
 $ make compile
-$ docker build -t backendai-console .
+$ docker build -t backendai-webui .
 ```
 
 Testing / Running example
 
-Check your image name is `backendai-console_console` or `backendai-console_console-ssl`. Otherwise, change the image name in the script below.
+Check your image name is `backendai-webui_webui` or `backendai-webui_webui-ssl`. Otherwise, change the image name in the script below.
 
 ```
-$ docker run --name backendai-console -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -p 80:80 backendai-console_console /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
-$ docker run --name backendai-console-ssl -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-console_console-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+$ docker run --name backendai-webui -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -p 80:80 backendai-webui_webui /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+$ docker run --name backendai-webui-ssl -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-webui_webui-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 ```
 
-### Building / serving with console-server
+### Building / serving with webserver
 
-If you need to serve as console-server (ID/password support) without compiling anything, you can use pre-built code through console-server submodule.
+If you need to serve as webserver (ID/password support) without compiling anything, you can use pre-built code through webserver submodule.
 
-To download and deploy console from pre-built source, do the following in `backend.ai-console-server` repository:
+To download and deploy web UI from pre-built source, do the following in `backend.ai-webserver` repository:
 
 ```console
 git submodule init
 git submodule update
-cd src/ai/backend/console/static
+cd src/ai/backend/web/static
 git checkout master
 git fetch
 git pull
@@ -319,8 +335,8 @@ This is only needed with pure ES6 dev. environment / browser. Websocket proxy is
 $ npm run wsproxy
 ```
 
-If console app is behind an external http proxy, and you have to pass through
-it to connect to a console-server or manager server, you can set
+If webui app is behind an external http proxy, and you have to pass through
+it to connect to a webserver or manager server, you can set
 `EXT_HTTP_PROXY` environment variable with the address of the http proxy.
 Local websocket proxy then communicates with the final destination via the http
 proxy. The address should include the protocol, host, and/or port (if exists).
@@ -444,7 +460,7 @@ In i18n resource (en.json):
 #### Adding new language
 
  1. Copy `en.json` to target language. (e.g. `ko.json`)
- 2. Add language identifier to `supportLanguageCodes` in `backend-ai-console.ts`.
+ 2. Add language identifier to `supportLanguageCodes` in `backend-ai-webui.ts`.
 e.g.
 ```javascript
   @property({type: Array}) supportLanguageCodes = ["en", "ko"];

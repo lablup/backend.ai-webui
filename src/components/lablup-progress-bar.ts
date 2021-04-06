@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html, LitElement, property} from "lit-element";
@@ -22,7 +22,7 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
 
  <lablup-progress-bar></lablup-progress-bar>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element lablup-progress-bar
  */
 

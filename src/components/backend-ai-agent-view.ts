@@ -1,10 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {translate as _t} from 'lit-translate';
+import {css, customElement, html, property} from 'lit-element';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -13,8 +13,9 @@ import '@material/mwc-tab';
 
 import './lablup-activity-panel';
 import './backend-ai-agent-list';
+import './backend-ai-storage-proxy-list';
 import './backend-ai-scaling-group-list';
-import {BackendAiStyles} from "./backend-ai-general-styles";
+import {BackendAiStyles} from './backend-ai-general-styles';
 
 /**
  Backend.AI Agent view page
@@ -25,13 +26,15 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
  ... content ...
  </backend-ai-agent-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-agent-view
  */
 
-@customElement("backend-ai-agent-view")
+@customElement('backend-ai-agent-view')
 export default class BackendAIAgentView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
+  @property({type: String}) _tab = 'running-lists';
+  @property({type: Boolean}) enableStorageProxy = false;
 
   constructor() {
     super();
@@ -64,6 +67,13 @@ export default class BackendAIAgentView extends BackendAIPage {
   }
 
   firstUpdated() {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
+      }, true);
+    } else {
+      this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
+    }
   }
 
   /**
@@ -71,7 +81,7 @@ export default class BackendAIAgentView extends BackendAIPage {
    *
    * @param {Boolean} active
    */
-  async _viewStateChanged(active: Boolean) {
+  async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
       this.shadowRoot.querySelector('#running-agents').active = false;
@@ -89,14 +99,15 @@ export default class BackendAIAgentView extends BackendAIPage {
   /**
    * Display the tab.
    *
-   * @param tab
+   * @param {mwc-tab} tab
    */
   _showTab(tab) {
-    let els = this.shadowRoot.querySelectorAll(".tab-content");
+    const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
     this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
+    this._tab = tab.title;
   }
 
   render() {
@@ -106,25 +117,32 @@ export default class BackendAIAgentView extends BackendAIPage {
         <div slot="message">
           <h3 class="tab horizontal center layout">
             <mwc-tab-bar>
-              <mwc-tab title="running-lists" label="${_t("agent.Connected")}"
+              <mwc-tab title="running-lists" label="${_t('agent.Connected')}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="terminated-lists" label="${_t("agent.Terminated")}"
+              <mwc-tab title="terminated-lists" label="${_t('agent.Terminated')}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <!--<mwc-tab title="maintenance-lists" label="${_t("agent.Maintaining")}"
+              <!--<mwc-tab title="maintenance-lists" label="${_t('agent.Maintaining')}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>-->
-              <mwc-tab title="scaling-group-lists" label="${_t("general.ResourceGroup")}"
+              ${this.enableStorageProxy ? html`
+              <mwc-tab title="storage-proxy-lists" label="${_t('general.StorageProxies')}"
+                  @click="${(e) => this._showTab(e.target)}"></mwc-tab>`:html``}
+              <mwc-tab title="scaling-group-lists" label="${_t('general.ResourceGroup')}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
             <div class="flex"></div>
           </h3>
           <div id="running-lists" class="tab-content">
-            <backend-ai-agent-list id="running-agents" condition="running" ?active="${this._status === 'active'}"></backend-ai-agent-list>
+            <backend-ai-agent-list id="running-agents" condition="running" ?active="${this._status === 'active' && this._tab === 'running-lists'}"></backend-ai-agent-list>
           </div>
           <div id="terminated-lists" class="tab-content" style="display:none;">
-            <backend-ai-agent-list id="terminated-agents" condition="terminated" ?active="${this._status === 'active'}"></backend-ai-agent-list>
+            <backend-ai-agent-list id="terminated-agents" condition="terminated" ?active="${this._status === 'active' && this._tab === 'terminated-lists'}"></backend-ai-agent-list>
           </div>
+          ${this.enableStorageProxy ? html`
+          <div id="storage-proxy-lists" class="tab-content" style="display:none;">
+            <backend-ai-storage-proxy-list id="storage-proxies" ?active="${this._status === 'active' && this._tab === 'storage-proxy-lists'}"></backend-ai-storage-proxy-list>
+          </div>`:html``}
           <div id="scaling-group-lists" class="tab-content" style="display:none;">
-            <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active'}"> </backend-ai-scaling-group-list>
+            <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active' && this._tab === 'scaling-group-lists'}"> </backend-ai-scaling-group-list>
           </div>
         </div>
       </lablup-activity-panel>
@@ -134,6 +152,6 @@ export default class BackendAIAgentView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-agent-view": BackendAIAgentView;
+    'backend-ai-agent-view': BackendAIAgentView;
   }
 }

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
@@ -27,13 +27,13 @@ import {
  ... content ...
  </backend-ai-email-verification-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-email-verification-view
  */
 
 @customElement("backend-ai-email-verification-view")
 export default class BackendAIEmailVerificationView extends BackendAIPage {
-  @property({type: Object}) consoleShell = Object();
+  @property({type: Object}) webUIShell = Object();
   @property({type: Object}) clientConfig = Object();
   @property({type: Object}) client = Object();
   @property({type: Object}) notification = Object();
@@ -65,8 +65,8 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
    * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   _initClient(apiEndpoint: string) {
-    this.consoleShell = document.querySelector('#console-shell');
-    this.consoleShell.appBody.style.visibility = 'visible';
+    this.webUIShell = document.querySelector('#webui-shell');
+    this.webUIShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
     this.successDialog = this.shadowRoot.querySelector('#verification-success-dialog');
     this.failDialog = this.shadowRoot.querySelector('#verification-fail-dialog');
@@ -74,7 +74,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
     this.client = new ai.backend.Client(
       this.clientConfig,
-      'Backend.AI Console.',
+      'Backend.AI Web UI.',
     );
     this.successDialog.addEventListener('didHide', () => {
       this._redirectToLoginPage();
@@ -108,7 +108,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         this.successDialog.show();
       } catch (e) {
         console.error(e);
-        this.notification.text = e.message || 'Verification Error';
+        this.notification.text = _text('signup.VerificationError');
         this.notification.show();
         window.setTimeout(() => this.failDialog.show(), 100);
       }
@@ -129,7 +129,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
       this.notification.show();
     } catch (e) {
       console.error(e);
-      this.notification.text = e.message || 'Send error';
+      this.notification.text = e.message || _text('signup.SendError');
       this.notification.show();
     }
   }
@@ -163,11 +163,12 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
           <div style="margin:20px;">
             <mwc-textfield id="email" label="${_t('data.explorer.EnterEmailAddress')}"
                 autofocus auto-validate validationMessage="${_t('signup.InvalidEmail')}"
-                pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
+                pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"
+                maxLength="64" placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
             <div style="height:1em"></div>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
               label="${_t("signup.SendEmail")}"

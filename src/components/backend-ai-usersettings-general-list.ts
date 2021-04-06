@@ -1,9 +1,9 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t, translateUnsafeHTML as _tr, use as setLanguage} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t, translateUnsafeHTML as _tr, use as setLanguage} from 'lit-translate';
+import {css, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -25,7 +25,7 @@ import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-textarea/mwc-textarea';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
+import {default as PainKiller} from './backend-ai-painkiller';
 import './lablup-loading-spinner';
 import './lablup-codemirror';
 import './backend-ai-dialog';
@@ -39,7 +39,7 @@ import './backend-ai-dialog';
 
  <backend-ai-usersettings-general-list active="true"></backend-ai-usersettings-general-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-usersettings-general-list
  */
 
@@ -62,6 +62,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: String}) rcfile = '';
   @property({type: String}) prevRcfile = '';
   @property({type: String}) preferredSSHPort = '';
+  @property({type: String}) publicSSHkey = '';
 
   constructor() {
     super();
@@ -131,7 +132,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           width: 75px;
         }
 
-
         .ssh-keypair {
           margin-right: 10px;
           width: 450px;
@@ -148,16 +148,19 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         #bootstrap-dialog, #userconfig-dialog {
-          --dialog-min-width: calc(100vw - 200px);
-          --dialog-max-width: calc(100vw - 200px);
-          --dialog-min-height: calc(100vh - 100px);
-          --dialog-max-height: calc(100vh - 100px);
+          --component-width: calc(100vw - 200px);
+          --component-height: calc(100vh - 100px);
+          --component-min-width: calc(100vw - 200px);
+          --component-max-width: calc(100vw - 200px);
+          --component-min-height: calc(100vh - 100px);
+          --component-max-height: calc(100vh - 100px);
         }
 
         mwc-select {
           width: 140px;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-size: 11px;
           --mdc-theme-primary: var(--general-sidebar-color);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
@@ -174,7 +177,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
         mwc-select#select-rcfile-type {
           width: 300px;
-          padding-right: 10px;
+          margin-bottom: 10px;
         }
 
         mwc-textarea {
@@ -242,7 +245,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           display: none; /* Chrome and Safari */
         }
 
-        @media screen and (max-width: 750px) {
+        @media screen and (max-width: 500px) {
+          #bootstrap-dialog, #userconfig-dialog {
+            --component-min-width: 300px;
+          }
+
+          mwc-select#select-rcfile-type {
+            width: 250px;
+          }
+          
           .setting-desc {
             width: 200px;
           }
@@ -277,6 +288,18 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         this.rcfile = '.bashrc';
       }
     }
+    this.userconfigDialog.addEventListener('dialog-closing-confirm', () => {
+      const editor = this.shadowRoot.querySelector('#usersetting-editor');
+      const script = editor.getValue();
+      let idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+      if (this.rcfiles[idx]['data'] !== script) {
+        this.prevRcfile = this.rcfile; // update prevRcfile to current file
+        this._launchChangeCurrentEditorDialog();
+      } else {
+        this.userconfigDialog.closeWithConfirmation = false;
+        this.userconfigDialog.hide();
+      }
+    })
     // this.beta_feature_panel = !this.shadowRoot.querySelector('#beta-feature-switch').disabled;
   }
 
@@ -322,6 +345,23 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   /**
+   * Toggle auto logout.
+   *
+   * @param {Event} e  - click the auto-logout-switch
+   */
+  toggleAutoLogout(e) {
+    if (e.target.checked === false) {
+      globalThis.backendaioptions.set('auto_logout', false);
+      let event = new CustomEvent('backend-ai-auto-logout', { detail: false });
+      document.dispatchEvent(event);
+    } else {
+      globalThis.backendaioptions.set('auto_logout', true);
+      let event = new CustomEvent('backend-ai-auto-logout', { detail: true });
+      document.dispatchEvent(event);
+    }
+  }
+
+  /**
    * Toggle automatic_update_check. If automatic_update_check is true, set automatic_update_count_trial to 0.
    *
    * @param {Event} e - click the automatic-update-check-switch
@@ -342,9 +382,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * */
   setUserLanguage(e) {
     if (e.target.selected.value !== globalThis.backendaioptions.get('language')) {
+      let lang = e.target.selected.value;
+      if (lang === 'default') {
+        lang = globalThis.navigator.language.split('-')[0];
+      }
       globalThis.backendaioptions.set('language', e.target.selected.value);
-      globalThis.backendaioptions.set('current_language', e.target.selected.value);
-      setLanguage(e.target.selected.value);
+      globalThis.backendaioptions.set('current_language', lang);
+      setLanguage(lang);
+      setTimeout(() => {
+        const langEl = this.shadowRoot.querySelector('#ui-language');
+        langEl.selectedText = langEl.selected.textContent.trim();
+      }, 100);
     }
   }
 
@@ -400,17 +448,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   async _saveBootstrapScript() {
-    const editor = this.shadowRoot.querySelector('#bootstrap-dialog #bootstrap-editor');
+    const editor = this.shadowRoot.querySelector('#bootstrap-editor');
     const script = editor.getValue();
     if (this.lastSavedBootstrapScript === script) {
-      this.notification.text = 'No changes';
+      this.notification.text = _text('resourceGroup.NochangesMade');
       this.notification.show();
       return;
     }
     this.spinner.show();
     globalThis.backendaiclient.userConfig.update_bootstrap_script(script)
       .then(res => {
-        this.notification.text = 'Bootstrap script updated.';
+        this.notification.text = _text("usersettings.BootstrapScriptUpdated");
         this.notification.show();
         this.spinner.hide();
       });
@@ -422,7 +470,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   async _editBootstrapScript() {
-    const editor = this.shadowRoot.querySelector('#bootstrap-dialog #bootstrap-editor');
+    const editor = this.shadowRoot.querySelector('#bootstrap-editor');
     const script = await this._fetchBootstrapScript();
     editor.setValue(script);
     this.bootstrapDialog.show();
@@ -436,12 +484,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * Edit user's .bashrc or .zshrc code.
    * */
   async _editUserConfigScript() {
-    const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
+    const editor = this.shadowRoot.querySelector('#usersetting-editor');
     this.rcfiles = await this._fetchUserConfigScript();
-    const rcfileNames = Array('.bashrc', '.zshrc', '.Renviron');
+    const rcfileNames = ['.bashrc', '.zshrc', '.tmux.conf.local', '.vimrc', '.Renviron'];
     rcfileNames.map(filename => {
       let idx = this.rcfiles.findIndex(item => item.path === filename);
-      if (idx == -1) {
+      if (idx === -1 ) {
         this.rcfiles.push({path: filename, data: ""});
         editor.setValue('');
       } else {
@@ -449,6 +497,18 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         editor.setValue(code);
       }
     });
+
+    // instead of changing .tmux.conf, allow user to change .tmux.conf.local
+    const ignoredRcFilename = ['.tmux.conf'];
+
+    // remove ignored rcfilenames from fetched results
+    ignoredRcFilename.forEach((filename) => {
+      let idx = this.rcfiles.findIndex(item => item.path === filename);
+      if (idx > -1) {
+        this.rcfiles.splice(idx, 1);
+      }
+    });
+
     let idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
     if (idx != -1) {
       let code = this.rcfiles[idx]['data'];
@@ -458,6 +518,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
     editor.refresh();
     this.spinner.hide();
+    this._toggleDeleteButton();
   }
 
   _fetchUserConfigScript() {
@@ -476,7 +537,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   async _saveUserConfigScript(fileName: string = this.rcfile) {
-    const editor = this.shadowRoot.querySelector('#userconfig-dialog #usersetting-editor');
+    const editor = this.shadowRoot.querySelector('#usersetting-editor');
     const script = editor.getValue();
     let idx = this.rcfiles.findIndex(item => item.path === fileName);
     let rcfiles = this.shadowRoot.querySelector('#select-rcfile-type');
@@ -512,15 +573,17 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
       } else { // if rcfile already exists
         if (this.rcfiles[idx]['data'] === script) {
-          this.notification.text = 'No changes';
+          this.notification.text = _text('resourceGroup.NochangesMade');
           this.notification.show();
           return;
-        } else if (script === '') {
+        }
+        else if (script === '') {
           this.notification.text = _text("usersettings.DescLetUserUpdateScriptWithNonEmptyValue");
           this.notification.show();
           return;
-        } else {
-          await globalThis.backendaiclient.userConfig.update(script, this.rcfile)
+        }
+        else {
+          await globalThis.backendaiclient.userConfig.update(script, fileName)
             .then(res => {
               this.notification.text = _text("usersettings.DescScriptUpdated");
               this.notification.show();
@@ -591,12 +654,24 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     let code = idx > -1 ? this.rcfiles[idx]['data'] : '';
     let editorCode = editor.getValue();
     select.layout();
+    this._toggleDeleteButton();
     if (code !== editorCode) {
       this._launchChangeCurrentEditorDialog();
     } else {
-      idx = this.rcfiles.findIndex((item) => item.path === this.rcfile);
-      code = this.rcfiles[idx]['data'];
+      idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+      code = this.rcfiles[idx]?.data ? this.rcfiles[idx]['data'] : '';
       editor.setValue(code);
+    }
+  }
+
+  /**
+   * Toggle delete button disabled when rcfile exists
+   */
+  _toggleDeleteButton() {
+    let deleteBtn = this.shadowRoot.querySelector('#delete-rcfile');
+    let idx = this.rcfiles.findIndex(item => item.path === this.rcfile);
+    if (idx > -1) {
+      deleteBtn.disabled = !(this.rcfiles[idx]?.data && this.rcfiles[idx]?.permission);
     }
   }
 
@@ -605,13 +680,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    *
    * @param {string} path - path that you want to delete
    * */
-  _deleteRcFile(path?: string) {
+  async _deleteRcFile(path?: string) {
     if (!path) {
       path = this.rcfile;
     }
     if (path) {
       globalThis.backendaiclient.userConfig.delete(path).then(res => {
-        let message = 'User config script ' + path + 'is deleted.';
+        let message = _text('usersettings.DescScriptDeleted') + path; 
         this.notification.text = message;
         this.notification.show();
         this.spinner.hide();
@@ -625,25 +700,36 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
       })
     }
+    await setTimeout(() => {
+      this._editUserConfigScript();
+    }, 200);
   }
 
-  _deleteRcFileAll() {
-    this.rcfiles.map(item => {
+  /**
+   * Delete all of created user's config script.
+   */
+  async _deleteRcFileAll() {
+    let createdRcfiles = this.rcfiles.filter((item) => item.permission !== "" && item.data !== "");
+    const rcfileDeletionQueue = createdRcfiles.map(item => {
       let path = item.path;
-      globalThis.backendaiclient.userConfig.delete(item.path).then(res => {
-        let message = 'User config script ' + path + ' is deleted.';
-        this.notification.text = message;
-        this.notification.show();
-        this.spinner.hide();
-      }).catch(err => {
-        console.log(err);
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      });
+      return globalThis.backendaiclient.userConfig.delete(path);
     });
+    Promise.all(rcfileDeletionQueue).then( response => {
+      let message = _text('usersettings.DescScriptAllDeleted');
+      this.notification.text = message;
+      this.notification.show()
+      this.spinner.hide();
+    }).catch(err => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+    await setTimeout(() => {
+      this._editUserConfigScript();
+    }, 200);
   }
 
   _createRcFile(path: string) {
@@ -652,8 +738,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     }
   }
 
-  _launchUserConfigDialog() {
-    this._editUserConfigScript();
+  async _launchUserConfigDialog() {
+    await this._editUserConfigScript();
+    this.userconfigDialog.closeWithConfirmation = true;
     this.userconfigDialog.show();
   }
 
@@ -679,8 +766,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       publicKeyEl.disabled = publicKeyEl.value === '' ? true : false;
       publicKeyCopyBtn.disabled = publicKeyEl.disabled;
 
-      // show information text for SSH generation
-      publicKeyEl.value = _text('usersettings.NoExistingSSHKeypair');
+      // show information text for SSH generation if the user has never generated SSH Keypair.
+      this.publicSSHkey = publicKeyEl.value ? publicKeyEl.value : _text('usersettings.NoExistingSSHKeypair');
+
       dialog.show();
     });
   }
@@ -694,6 +782,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     if (updatedSSHPublicKey !== "") {
       const dialog = this.shadowRoot.querySelector('#ssh-keypair-management-dialog');
       dialog.querySelector('#current-ssh-public-key').value = updatedSSHPublicKey;
+      dialog.querySelector('#copy-current-ssh-public-key-button').disabled = false;
     }
   }
 
@@ -736,6 +825,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   _cancelCurrentEditorChange() {
+    // this._cacheUserConfigScript(this.prevRcfile);
     this._updateSelectedRcFileName(this.prevRcfile);
     this._hideCurrentEditorChangeDialog();
   }
@@ -837,7 +927,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
           <div class="vertical center-justified layout setting-text">
             <mwc-textfield pattern="[0-9]*" @change="${(e) => this.changePreferredSSHPort(e)}"
-                value="${this.preferredSSHPort}" validationMessage="Allows numbers only" auto-validate></mwc-textfield>
+                value="${this.preferredSSHPort}" validationMessage="${_t("credential.validation.NumbersOnly")}" auto-validate maxLength="5"></mwc-textfield>
           </div>
         </div>
         ` : html``}
@@ -863,7 +953,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <mwc-switch id="automatic-update-check-switch" @change="${(e) => this.toggleAutomaticUploadCheck(e)}" ?checked="${globalThis.backendaioptions.get('automatic_update_check')}"></mwc-switch>
           </div>
         </div>
-        <div class="horizontal layout wrap setting-item" style="display:none;!impo">
+        <div class="horizontal layout wrap setting-item" style="display:none;">
           <div class="vertical start start-justified layout setting-desc">
             <div class="title">${_t("usersettings.BetaFeatures")}</div>
             <div class="description">${_tr("usersettings.DescBetaFeatures")}</div>
@@ -872,23 +962,34 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <mwc-switch id="beta-feature-switch" @change="${(e) => this.toggleBetaFeature(e)}" ?checked="${globalThis.backendaioptions.get('beta_feature')}"></mwc-switch>
           </div>
         </div>
-      </div>
-      ${this.beta_feature_panel ? html`
-      <h3 class="horizontal center layout">
-        <span>${_t("usersettings.BetaFeatures")}</span>
-        <span class="flex"></span>
-      </h3>
-      <div class="description">
-        ${_t("usersettings.DescNoBetaFeatures")}
-      </div>
+        <div class="horizontal layout wrap setting-item">
+          <div class="vertical start start-justified layout setting-desc">
+            <div class="title">${_t("usersettings.AutoLogout")}</div>
+            <div class="description">${_tr("usersettings.DescAutoLogout")}
+            </div>
+          </div>
+          <div class="vertical center-justified layout setting-button flex end">
+            <mwc-switch id="auto-logout-switch" @change="${(e) => this.toggleAutoLogout(e)}"
+                        ?checked="${globalThis.backendaioptions.get('auto_logout', false)}"></mwc-switch>
+          </div>
+        </div>
+        ${this.beta_feature_panel ? html`
+          <h3 class="horizontal center layout">
+            <span>${_t("usersettings.BetaFeatures")}</span>
+            <span class="flex"></span>
+          </h3>
+          <div class="description">
+            ${_t("usersettings.DescNoBetaFeatures")}
+          </div>
       ` : html``}
+      </div>
       ${this.shell_script_edit ? html`
-      <h3 class="horizontal center layout">
-        <span>${_t('usersettings.ShellEnvironments')}</span>
-        <span class="flex"></span>
-      </h3>
-      <div class="horizontal wrap layout setting-item">
-        <mwc-button
+        <h3 class="horizontal center layout">
+          <span>${_t('usersettings.ShellEnvironments')}</span>
+          <span class="flex"></span>
+        </h3>
+        <div class="horizontal wrap layout setting-item">
+          <mwc-button
             icon="edit"
             outlined
             label="${_t("usersettings.EditBootstrapScript")}"
@@ -927,55 +1028,49 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <mwc-button unelevated id="save-code-and-close" label="${_t("button.SaveAndClose")}" @click="${() => this._saveBootstrapScriptAndCloseDialog()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent>
+      <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent closeWithConfirmation>
         <span slot="title">${_t("usersettings.Edit_ShellScriptTitle_1")} ${this.rcfile} ${_t("usersettings.Edit_ShellScriptTitle_2")}</span>
-        <div slot="action" class="vertical layout">
+        <div slot="content" class="vertical layout" style="height:calc(100vh - 300px);">
           <mwc-select id="select-rcfile-type"
-                      label="${_t("usersettings.ConfigFilename")}"
-                      required
-                      outlined
-                      validationMessage="Please select one option."
-                      @selected="${() => this._toggleRcFileName()}"
-                      helper=${_t("dialog.warning.WillBeAppliedToNewSessions")}>
+                  label="${_t("usersettings.ConfigFilename")}"
+                  required
+                  outlined
+                  validationMessage="${_t("credential.validation.PleaseSelectOption")}"
+                  @selected="${() => this._toggleRcFileName()}"
+                  helper=${_t("dialog.warning.WillBeAppliedToNewSessions")}>
             ${this.rcfiles.map(item => html`
               <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
                 ${item.path}
-              </mwc-list-item>`)}
+              </mwc-list-item>`
+            )}
           </mwc-select>
+          <div style="background-color:#272823;height:100%;">
+            <lablup-codemirror id="usersetting-editor" mode="shell"></lablup-codemirror>
+          </div>
         </div>
-        <div slot="content" style="height:calc(100vh - 300px);background-color:#272823;">
-          <lablup-codemirror id="usersetting-editor" mode="shell"></lablup-codemirror>
-        </div>
-        <div slot="footer" class="end-justified layout flex horizontal">
+        <div slot="footer" class="end-justified layout flex">
           <mwc-button id="discard-code" label="${_t("button.Cancel")}" @click="${() => this._hideUserConfigScriptDialog()}"></mwc-button>
+          <mwc-button id="delete-rcfile" label="${_t("button.Delete")}" @click="${() => this._deleteRcFile()}"></mwc-button>
           <mwc-button unelevated id="save-code" label="${_t("button.Save")}" @click="${() => this._saveUserConfigScript()}"></mwc-button>
           <mwc-button unelevated id="save-code-and-close" label="${_t("button.SaveAndClose")}" @click="${() => this._saveUserConfigScriptAndCloseDialog()}"></mwc-button>
-          <mwc-button unelevated id="delete-rcfile" label="${_t("button.Delete")}" @click="${() => this._deleteRcFile()}"></mwc-button>
-
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="change-current-editor-dialog" fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
+      <backend-ai-dialog id="change-current-editor-dialog" noclosebutton fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
         <div slot="title">
-          ${_t("usersettings.DialogSaveToSpecificFile", {File: () => this.prevRcfile})}
+          ${_t("usersettings.DialogDiscardOrSave", {File: () => this.prevRcfile})}
         </div>
         <div slot="content">
           ${_t("usersettings.DialogNoSaveNoPreserve")}
         </div>
         <div slot="footer" style="border-top:none;" class="end-justified layout flex horizontal">
           <mwc-button
-              unelevated
               id="cancel-editor"
-              label="${_t("button.No")}"
-              @click="${() => this._cancelCurrentEditorChange()}"></mwc-button>
-          <mwc-button
-              unelevated
-              id="discard-editor-data"
-              label="${_t("button.Yes")}"
+              label="${_t("button.Discard")}"
               @click="${() => this._discardCurrentEditorChange()}"></mwc-button>
           <mwc-button
               unelevated
               id="save-editor-data"
-              label="${_t("button.SaveAndClose")}"
+              label="${_t("button.Save")}"
               @click="${() => this._saveCurrentEditorChange()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -983,7 +1078,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <span slot="title">${_t("usersettings.SSHKeypairManagement")}</span>
         <div slot="content" style="max-width:500px">
           <span slot="title"> ${_t("usersettings.CurrentSSHPublicKey")}</span>
-          <mwc-textarea class="ssh-keypair" style="width:435px; height:270px;" id="current-ssh-public-key" outlined readonly></mwc-textarea>
+          <mwc-textarea
+              outlined
+              readonly
+              class="ssh-keypair"
+              id="current-ssh-public-key"
+              style="width:430px; height:270px;"
+              value="${this.publicSSHkey}"></mwc-textarea>
           <mwc-icon-button
               id="copy-current-ssh-public-key-button"
               icon="content_copy"
@@ -1008,14 +1109,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               <mwc-textarea class="ssh-keypair" id="ssh-public-key" outlined readonly></mwc-textarea>
               <mwc-icon-button
               icon="content_copy"
-              @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+              @click="${() => this._copySSHKey("#ssh-public-key")}"></mwc-icon-button>
             </div>
             <span slot="title">${_t("usersettings.PrivateKey")}</span>
             <div class="horizontal layout flex">
               <mwc-textarea class="ssh-keypair" id="ssh-private-key" outlined readonly></mwc-textarea>
               <mwc-icon-button
                   icon="content_copy"
-                  @click="${() => this._copySSHKey("#current-ssh-public-key")}"></mwc-icon-button>
+                  @click="${() => this._copySSHKey("#ssh-private-key")}"></mwc-icon-button>
             </div>
             <div style="color:crimson">${_t("usersettings.SSHKeypairGenerationWarning")}</div>
           </div>

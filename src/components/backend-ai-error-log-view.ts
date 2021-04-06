@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {css, customElement, html, property} from "lit-element";
 
@@ -19,7 +19,7 @@ import {
 /**
  Backend.AI Error Log View
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-error-log-view
  */
 

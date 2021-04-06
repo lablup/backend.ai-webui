@@ -8,7 +8,7 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
@@ -42,7 +42,7 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 
  <backend-ai-scaling-group-list active></backend-ai-scaling-group-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-scaling-group-list
  */
 
@@ -265,7 +265,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       domain = this.shadowRoot.querySelector("#scaling-group-domain").value;
 
     if (scalingGroup === "") {
-      this.notification.text = "Enter valid Resource group name";
+      this.notification.text = _text("resourceGroup.EnterValidResourceGroupName");
       this.notification.show();
       this._hideDialogById("#create-scaling-group-dialog");
       return;
@@ -442,11 +442,15 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             type="text"
             id="scaling-group-name"
             label="${_t("resourceGroup.ResourceGroupName")}"
+            maxLength="64"
+            placeholder="${_t("maxLength.64chars")}"
           ></mwc-textfield>
           <mwc-textarea
             name="description"
             id="scaling-group-description"
             label="${_t("resourceGroup.Description")}"
+            maxLength="512"
+            placeholder="${_t("maxLength.512chars")}"
           ></mwc-textarea>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
@@ -472,7 +476,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           <mwc-select
             id="modify-scaling-group-scheduler"
             label="${_t('resourceGroup.SelectScheduler')}"
-            value="${this.scalingGroups.length === 0 ? "" 
+            value="${this.scalingGroups.length === 0 ? ""
                 : this.scalingGroups[this.selectedIndex].scheduler}">
             ${this.schedulerTypes.map(sched => html`
             <mwc-list-item value="${sched}">${sched}</mwc-list-item>
@@ -501,6 +505,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             id="delete-scaling-group"
             type="text"
             label="${_t("resourceGroup.TypeResourceGroupNameToDelete")}"
+            maxLength="64"
+            placeholder="${_t("maxLength.64chars")}"
           ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">

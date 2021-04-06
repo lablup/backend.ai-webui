@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {css, customElement, html, LitElement, property} from "lit-element";
 import 'weightless/button';
@@ -19,7 +19,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  ...
  </lablup-activity-panel>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element lablup-activity-panel
  */
 
@@ -151,7 +151,7 @@ export default class LablupActivityPanel extends LitElement {
     } else {
       (this.shadowRoot.querySelector('.card') as any).style.width = this.widthpct !== 0 ? this.widthpct + "%" : this.width + "px";
     }
-    
+
 
     if (this.minwidth) {
       (this.shadowRoot.querySelector('.card') as any).style.minWidth = this.minwidth + "px";
@@ -164,10 +164,10 @@ export default class LablupActivityPanel extends LitElement {
         (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 2 + 32) + "px";
       }
       if (this.horizontalsize == '3x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 3 + 32) + "px";
+        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 3 + 64) + "px";
       }
       if (this.horizontalsize == '4x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 4 + 32) + "px";
+        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 4 + 96) + "px";
       }
     }
     (this.shadowRoot.querySelector('.card') as any).style.margin = this.marginWidth + "px";

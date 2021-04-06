@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
@@ -404,7 +404,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
     this._updateToggleResourceMonitorDisplay();
     document.addEventListener("backend-ai-group-changed", (e) => {
-      // this.scaling_group = '';
+      this.scaling_group = '';
       this._updatePageVariables(true);
     });
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
@@ -517,11 +517,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       opt.innerHTML = _text('session.launcher.SelectResourceGroup');
       opt.style.borderBottom = "1px solid #ccc";
       scaling_select.appendChild(opt);
+      let currentSelectedResourceGroup = scaling_select.value ? scaling_select.value : this.resourceBroker.scaling_group;
       this.resourceBroker.scaling_groups.map(group => {
         opt = document.createElement('mwc-list-item');
         opt.value = group.name;
         opt.setAttribute('graphic', 'icon');
-        if (this.resourceBroker.scaling_group === group.name) {
+        if (currentSelectedResourceGroup === group.name) {
           opt.selected = true;
         } else {
           opt.selected = false;
@@ -592,6 +593,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'base': 'Base',
       'cntk': 'CNTK',
       'h2o': 'H2O.AI',
+      'triton-server': 'Triton Server',
       'digits': 'DIGITS',
       'ubuntu-linux': 'Ubuntu Linux',
       'tf1': 'TensorFlow 1',
@@ -694,7 +696,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   /**
    * show/hide resource monitor gauge by switch on/off.
-   * 
+   *
    * @param e {event}
    */
   _toggleResourceGauge(e) {

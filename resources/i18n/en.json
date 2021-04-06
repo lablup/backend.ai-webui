@@ -1,7 +1,8 @@
 {
-  "console": {
+  "webui": {
     "menu": {
       "WelcomeMessage": "Welcome, ",
+      "WelcomeMessage_2": " .",
       "Summary": "Summary",
       "Sessions": "Sessions",
       "Import&Run": "Import & Run",
@@ -22,6 +23,7 @@
       "ChangeUserInformation": "Change User Information",
       "ChangeUserInfo": "Change User Info",
       "FullName": "Full Name",
+      "FullNameInvalid": "Full name should not exceed 64 characters",
       "ChangePassword": "Change Password",
       "Preferences": "Preferences",
       "LogsErrors": "Logs / Errors",
@@ -51,7 +53,6 @@
       "Experiments": "Experiments",
       "Menu": "Menu",
       "Run": "Run",
-      "Import&Run": "Import & Run",
       "UserName": "User Name"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
@@ -59,8 +60,10 @@
     "YouAreOnline": "You are now online",
     "NOTFOUND": "<p>Oops!<br/>Page not Found...</p>",
     "DescNOTFOUND": "Sorry, the page you are looking for could not be found.",
-    "UNAUTHORIZEDACCESS":"Unauthorized Access",
-    "AdminOnlyPage": "You don't have permission to access this page.<br />Click the button below to redirect to summary page."
+    "UNAUTHORIZEDACCESS": "Unauthorized Access",
+    "AdminOnlyPage": "You don't have permission to access this page.<br />Click the button below to redirect to summary page.",
+    "CleanUpLoginSession": "Clean up login session...",
+    "CleanUpNow": "Clean up now..."
   },
   "summary": {
     "Dashboard": "Dashboard",
@@ -115,6 +118,8 @@
       "CurrentResourceGroup": "Current Resource Group",
       "SelectResourceGroup": "Select Resource Group",
       "StartNewSession": "Start new session",
+      "SetEnvironmentVariable": "Set Environment Variable",
+      "Config": "Config",
       "ChooseEnvironment": "Choose Environment",
       "Version": "Version",
       "Base": "Base",
@@ -130,8 +135,15 @@
       "CustomAllocation": "Custom allocation",
       "Core": "Core",
       "SharedMemory": "Shared Memory",
+      "SingleNode": "Single Node",
+      "MultiNode": "Multi Node",
+      "single-node": "Single Node",
+      "multi-node": "Multi Node",
+      "ClusterMode": "Cluster mode",
+      "ClusterSize": "Cluster size",
+      "Node": "Node",
       "Ownership": "Ownership",
-      "SetSessionOwner": "Set session owner",
+      "SetSessionOwner": "Session owner",
       "OwnerAccessKey": "Owner access key",
       "OwnerGroup": "Owner group",
       "OwnerResourceGroup": "Owner resource group",
@@ -142,6 +154,8 @@
       "DescSharedMemory": "<p>Shared memory is memory that may be simultaneously accessed by multiple programs with an intent to provide communication among them or avoid redundant copies.</p><p>For multi-CPU or multi-threaded workloads, shared memory is important because it is used for inter-thread communication. For deep learning workloads and high performance computing workloads using multi-threaded, we recommend setting this value to 1 GB or higher.</p>",
       "DescGPU": "<p>GPUs are well-suited for the matrix/vector computations involved in machine learning. GPUs speed up training algorithms by orders of magnitude, reducing running times from weeks to days.</p>",
       "DescSession": "<p>A session is a unit of computational environment that is created according to a specified environment and resources.</p><p>If this value is set to a value greater than 1, multiple sessions corresponding to the resource set above are created.</p><p>If there are not enough resources available, requests to create sessions that cannot be created are put on the waiting queue.</p>",
+      "DescSingleNode": "<p>When running a session, the managed node and worker nodes are placed on a single physical node or virtual machine.</p>",
+      "DescMultiNode": "<p>When running a session, one managed node and one or more worker nodes are split across multiple physical nodes or virtual machines.</p>",
       "CPU": "CPU",
       "Memory": "Memory",
       "GPU": "GPU",
@@ -160,12 +174,33 @@
       "ThisSettingTakesPrecedence": "Note: This setting takes precedence",
       "CustomResourceApplied": "Custom resource is applied",
       "PleaseChooseFoldersToMount": "Please Choose Folders To Mount",
+      "StartFolderUploading": "Start Folder uploading",
       "StartImportedNotebook": "Start Imported Notebook",
-      "SessionNameAllowCondition": "Session name only allows at least 4 characters without any whitespaces.",
+      "DuplicatedSessionName": "Duplicated session name not allowed",
+      "SessionNameAllowCondition": "Session name should have 4-64 alphabets/numbers without any whitespaces.",
       "NoFolderExists": "No Folder Exists",
       "sessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app.",
-      "ResourceMonitorToggle": "See resource monitor"
+      "UnSelectAllVFolders": "UNSELECT ALL",
+      "ResourceMonitorToggle": "See resource monitor",
+      "SharedMemorySettingIsReduced": "Shared memory setting is reduced to below the allocated memory.",
+      "NoActiveKeypair": "No Active Keypair",
+      "ProxyNotReady": "Proxy is not ready yet. Check proxy settings for detail.",
+      "ProxyConfiguratorNotResponding": "Proxy configurator is not responding.",
+      "SettingUpProxyForApp": "Setting up proxy for the app...",
+      "AddingKernelToSocketQueue": "Adding kernel to socket queue...",
+      "ManualImageName": "Image Name (Manual)",
+      "NotEnoughResource": "Not enough resource",
+      "EnvDeleted": "Envionment variable deleted",
+      "SetEnv": "Set environment variable",
+      "DescSetEnv": "<p>If you set a default environment variable in the container and also set an environment variable with the same name on the Backend.AI, the value set on the Backend.AI takes precedence.</p><p style='color:var(--paper-red-400);'>Every input value will be initialized after starting session launcher.<br />Also, those environment will be passed only if both variable and value are not empty.</p>",
+      "EnvironmentVariableTitle": "Order of precedence: container vs Backend.AI internal variables",
+      "EnvironmentVariable": "Variable",
+      "EnvironmentVariableValue": "Value",
+      "EnvironmentVariableConfigurationDone": "Environment variable configured successfully.",
+      "EnvConfigWillDisappear": "Any unsaved Environment variable and value will be disappeared."
     },
+    "Preparing": "Preparing...",
+    "PreparingSession": "Preparing session...",
     "Running": "Running",
     "Finished": "Finished",
     "Others": "Others",
@@ -190,7 +225,6 @@
     "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
     "TerminatingSessionDialog": "You are terminating multiple sessions.",
     "ExportSessionListToCSVFile": "Export Session list to CSV File",
-    "OnlyRecent100SessionExport": "Only recent 100 session logs will be exported.",
     "ExportCSVFile": "Export CSV File",
     "ResourceGroup": "Resource Group",
     "NoLogs": "No logs.",
@@ -198,7 +232,8 @@
     "applauncher": {
       "AppMustBeRun": "Start only when the app is already running",
       "AppMustBeRunDialog": "This app can only be accessed and used if it is already running through the terminal. If not, you will be directed to an error page that occurs when the app is not running.",
-      "ConfirmAndRun": "I checked and I'll start"
+      "ConfirmAndRun": "I checked and I'll start",
+      "Prepared": "Prepared"
     },
     "SessionTerminated": "Session terminated.",
     "SessionsTerminated": "Sessions terminated.",
@@ -223,16 +258,16 @@
     "SaveAndClose": "Save And Close",
     "DoNotSave": "Do Not Save",
     "Discard": "Discard",
-    "DeleteAll": "DeleteAll",
+    "DeleteAll": "Delete All",
     "Update": "Update",
     "Delete": "Delete",
     "Dismiss": "Dismiss",
+    "DismissAndProceed": "Dismiss and Proceed",
     "Close": "Close",
     "Confirm": "Confirm",
     "Generate": "Generate",
     "Continue": "Continue",
     "GoBackToSummaryPage": "Go back to Summary page"
-
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -244,7 +279,10 @@
     "Maintaining": "Maintaining",
     "Status": "Status",
     "DetailedInformation": "Detailed Information",
-    "Running": "Running"
+    "Running": "Running",
+    "BackendType": "Backend Type",
+    "Capabilities": "Capabilities",
+    "NoNetworkSignal": "No network signals."
   },
   "general": {
     "cores": "cores",
@@ -261,7 +299,8 @@
     "Create": "Create",
     "Control": "Control",
     "NewPassword": "New Password",
-    "Enabled": "Enabled"
+    "Enabled": "Enabled",
+    "StorageProxies": "Storages"
   },
   "credential": {
     "Permission": "Permission",
@@ -276,6 +315,7 @@
     "active": "active",
     "concurrentsessions": "Concurrent sessions",
     "RateLimit": "Rate Limit",
+    "RateLimitValidation": "Rate Limit should be greater than zero and below 50000.",
     "RateLimitFor15min": "Rate Limit (for 15 min.)",
     "for900seconds": "for 900 seconds",
     "Users": "Users",
@@ -294,7 +334,7 @@
     "ConcurrentJobs": "Concurrent jobs",
     "Folders": "Folders",
     "Capacity(GB)": "Capacity (GB)",
-    "Max#": "Max. #",
+    "Max#": "Max. # of folders",
     "Create": "Create",
     "ExportCSVFile": "Export CSV File",
     "Credentials": "Credentials",
@@ -313,11 +353,15 @@
     "Description": "Description",
     "Days": "Days",
     "NoChanges": "No changes were made",
+    "FileName": "File name",
     "validation": {
       "InvalidEmailAddress": "Invalid Email Address.",
       "PolicyName": "Policy name Required.",
+      "NumbersOnly": "Allows numbers only",
+      "PleaseSelectOption": "Please select one option",
       "LetterNumber-_dot": "Allows letters, numbers and -_.",
-      "NameAlreadyExists": "Policy Name Already Exists!"
+      "NameAlreadyExists": "Policy Name Already Exists!",
+      "ValidationFailed": "Validation failed"
     },
     "ProjectAndGroup": "Projects & Groups",
     "ModifyKeypairResourcePolicy": "Modify keypair resource policy",
@@ -343,32 +387,43 @@
     "DialogFolderStartingWithDotAutomount": "Folders starting with a .(dot) are automatically mounted when a new session is started.",
     "User": "User",
     "Create": "Create",
-    "FolderNameRequired":"Folder name is required",
+    "FolderNameRequired": "Folder name is required",
     "FileandFoldernameRequired": "File/Folder name is required",
     "Allowslettersnumbersand-_dot": "Allows letters, numbers and -_.",
     "Allowslettersnumbersand-_": "Allows letters, numbers and -_",
+    "FolderNameTooLong": "Enter folder name less than 64 characters",
     "EnterDifferentValue": "Please enter a value different from the existing file or folder name. Please Check whether space character in the input field or not.",
     "Host": "Host",
     "Foldername": "Folder name",
     "Type": "Type",
     "UsageMode": "Usage Mode",
     "Permission": "Permission",
+    "StorageStatus": "Storage Status",
+    "Created": "created",
+    "Invited": "invited",
+    "Capacity": "capacity",
     "folders": {
       "Location": "Location",
       "Type": "Type",
       "Permission": "Permission",
+      "Owner": "Owner",
       "Control": "Control",
       "Name": "Name",
+      "LeaveAFolder": "Leave a folder",
       "DeleteAFolder": "Delete a folder",
       "TypeFolderNameToDelete": "Type folder name to delete",
+      "TypeFolderNameToLeave": "Type folder name to leave",
       "Delete": "Delete",
+      "Leave": "Leave",
       "RenameAFolder": "Rename a folder",
       "TypeNewFolderName": "Type new folder name",
       "FolderCreated": "Folder created",
       "Rename": "Rename",
       "FolderRenamed": "Folder renamed",
-      "FolderNameMismatched": "Folder name mismmatched. Please Check whether space character in the input field or not.",
+      "FolderNameMismatched": "Folder name mismatched. Please Check whether space character in the input field or not.",
+      "SameFileName": "The input value is same as the filename to update. Please change it to a different name.",
       "FolderDeleted": "Folder deleted",
+      "FolderDisconnected": "Folder has been disconnected.",
       "FileRenamed": "File Renamed",
       "FileDeleted": "File Deleted",
       "MultipleFilesDeleted": "Multiple Files deleted",
@@ -404,13 +459,26 @@
       "DownloadFile": "Download File",
       "TouchToDownload": "Touch to Download file",
       "ValueRequired": "Value is required",
+      "InputTooShort": "Input value is too short",
       "ValueShouldBeStarted": "Path should start with .(dot) or letters, numbers only.",
-      "DragDropFileUploadSizeLimit": "File size limit (< 1 GiB)",
+      "FileUploadSizeLimit": "File size exceeds upload size limit.",
       "LessThan10Sec": "Less than 10 seconds",
       "MoreThanADay": "More than a day",
       "WritePermissionRequiredInFolderCreation": "Write permission is required in creating a folder.",
       "WritePermissionRequiredInUploadFiles": "Write permission is required in uploading file(s).",
-      "ReadonlyFolder": "Read-only Folder"
+      "ReadonlyFolder": "Read-only Folder",
+      "FileAlreadyExists": "The file about to be uploaded already exists.",
+      "DoYouWantToOverwrite": "Do you want to overwrite?",
+      "FileExtensionChanged": "Would you like to change the file extension?",
+      "KeepFileExtension": "Keep ",
+      "UseNewFileExtension": "Use ",
+      "RemoveFileExtension": "remove file extension",
+      "ExecutingFileBrowser": "Executing filebrowser...",
+      "ExecuteFileBrowser": "Execute filebrowser",
+      "FileBrowserSessionRunningAlready": "The session supporting filebrowser is already running. Please upload folder(s) using that session.",
+      "NotEnoughResourceForFileBrowserSession": "No enough resources(cpu: 1 Core, mem: 0.5GB) to create the session for filebrowser. please check the available resources.",
+      "NoImagesSupportingFileBrowser": "There is no images supporting filebrowser yet. At least one or more image that supports filebrowser is required to upload folder(s).",
+      "ClickFilebrowserButton": "To upload Folder(s), Please click Execute filebrowser button."
     },
     "invitation": {
       "EnterEmail": "Enter email address",
@@ -474,7 +542,7 @@
     "Images": "Images",
     "ResourcePresets": "Resource Presets",
     "Registries": "Registries",
-    "ProtocolMustBeOneOfHttpTcpPty": "Protocol must be one of 'http', 'tcp', and 'pty'",
+    "ProtocolMustBeOneOfSupported": "Protocol must be one of 'http', 'tcp', 'preopen' and 'pty'",
     "AppNameMustNotBeEmpty": "App Name must not be empty",
     "PortMustBeUnique": "Port must be unique for each app",
     "PortMustBeInRange": "Port must be between 0 to 65534",
@@ -488,7 +556,8 @@
     "AppInfoDeleted": "App information successfully deleted.",
     "NoChangeMade": "",
     "SuccessfullyModified": "Successfully modified",
-    "ProblemOccurred": "Problem occurred"
+    "ProblemOccurred": "Problem occurred",
+    "PasswordsDoNotMatch": "Password and Confirmation do not match."
   },
   "resourcePreset": {
     "ResourcePresets": "Resource Presets",
@@ -518,25 +587,28 @@
     "UseCompactSidebar": "Use Compact Sidebar by default",
     "Language": "Language",
     "DescLanguage": "Set the UI language.",
-    "DescDesktopNotification": "Turn on or off desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within console.",
+    "DescDesktopNotification": "Turn on or off desktop notification. <br />If turned on, Backend.AI uses OS built-in notification system too. Turning off this option does not affect notifications within web UI.",
     "DescUseCompactSidebar": "Compact sidebar lets you use more workspace. <br />If this option is turned on, compact sidebar becomes the initial UI at startup.",
     "KeepLoginSessionInformation": "Keep Login Session Information while Logout",
-    "DescKeepLoginSessionInformation": "Let console app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.",
+    "DescKeepLoginSessionInformation": "Let webui app keep current login session information next time.<br />If the option is turned off, login information will be cleared each logout.",
     "BetaFeatures": "Beta Features",
-    "DescBetaFeatures": "Use beta features for GUI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.",
+    "DescBetaFeatures": "Use beta features for Web UI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.",
     "DescNoBetaFeatures": "No beta feature available now. :)",
     "EditBootstrapScript": "Edit Bootstrap Script",
     "EditUserConfigScript": "Edit User Config Script",
     "PackageInstallation": "Package Installation",
     "BootstrapScript": "Bootstrap Script",
-    "DialogSaveToSpecificFile": "Save the changes you made to File?",
+    "BootstrapScriptUpdated": "Bootstrap script updated.",
+    "DialogDiscardOrSave": "Current file and script will be changed without saving, Would you like to proceed?",
     "DialogNoSaveNoPreserve": "Your changes will be lost if you don't save them.",
     "DescScriptUpdated": "User config script updated. This will be applied to new sessions only.",
     "DescScriptCreated": "User config script created. This will be applied to new sessions only.",
     "DescNewUserConfigFileCreated": "New User config file can be created with non-empty data.",
+    "DescScriptDeleted": "User config script deleted : ",
+    "DescScriptAllDeleted": "All of created user config script were deleted.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "Please update script with non empty value.",
     "AutomaticUpdateCheck": "Automatic Update Check",
-    "DescAutomaticUpdateCheck": "Notify when a new console version is released.<br />In where the Internet is unstable or offline, this option will be automatically turned off. You can toggle this switch to start the automatic update check again.",
+    "DescAutomaticUpdateCheck": "Notify when a new webui version is released.<br />In where the Internet is unstable or offline, this option will be automatically turned off. You can toggle this switch to start the automatic update check again.",
     "PreferredSSHPort": "Preferred SSH Port",
     "DescPreferredSSHPort": "Use this value as an SSH/SFTP port if possible. <br />If the port is already in use, assign another random port to SSH/SFTP. Leave blank to auto-assign.",
     "SSHKeypairManagement": "SSH Keypair Management",
@@ -555,7 +627,9 @@
     "ShellEnvironments": "Shell Environments",
     "ConfigFilename": "Config file name",
     "Edit_ShellScriptTitle_1": "Edit ",
-    "Edit_ShellScriptTitle_2": " shell script"
+    "Edit_ShellScriptTitle_2": " shell script",
+    "AutoLogout": "Auto Logout",
+    "DescAutoLogout": "Log out automatically if all logined pages are closed except session originated pages for apps(e.g. jupyter notebook, web terminal, etc.)"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
@@ -567,7 +641,7 @@
   },
   "logs": {
     "LogMessages": "Log Messages",
-    "UpTo5000Logs": "(Up to 5000 recent logs)",
+    "UpTo3000Logs": "(Up to 3000 recent logs)",
     "TimeStamp": "Timestamp",
     "Status": "Status",
     "ErrorTitle": "Error Title",
@@ -575,7 +649,8 @@
     "Method": "Method",
     "RequestUrl": "Request Url",
     "Parameters": "Parameters",
-    "ErrorType": "Error Type"
+    "ErrorType": "Error Type",
+    "LogMessageRemoved": "Log Messages have been removed."
   },
   "resourcePolicy": {
     "Resources": "Resources",
@@ -596,11 +671,11 @@
     "AllowedHosts": "Allowed hosts",
     "PleaseInputValue": "Please input value or check unlimited.",
     "CannotCreateResourcePolicy": "Cannot create Resource Policy. Please check input values.",
+    "SuccessfullyCreated": "Resource policy successfully created.",
     "SuccessfullyUpdated": "Resource policy successfully updated.",
     "SuccessfullyDeleted": "Resource policy successfully deleted.",
     "PolicyNameEmpty": "Policy name should not be empty.",
     "AboutToDeleteResourcePolicy": "You are about to delete this resource policy: "
-
   },
   "registry": {
     "Hostname": "Hostname",
@@ -630,7 +705,9 @@
     "UpdatingRegistryInfo": "Updating registry information...",
     "RegistryUpdateFinished": "Registry update finished.",
     "RegistryUpdateFailed": "Registry update failed.",
-    "RescanFailed": "Rescan Failed."
+    "RescanImages": "Rescanning Images...",
+    "RescanFailed": "Rescan Failed.",
+    "PleaseSelectOption": "Please select one option."
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",
@@ -652,7 +729,8 @@
     "ResourceGroupNameNotMatch": "Resource group name does not match!",
     "ResourceGroupCreated": "Resource group succesfully created",
     "ResourceGroupModified": "Resource group successfully modified",
-    "ResourceGroupDeleted": "Resource group successfully deleted"
+    "ResourceGroupDeleted": "Resource group successfully deleted",
+    "EnterValidResourceGroupName": "Enter valid Resource group name"
   },
   "maintenance": {
     "General": "General",
@@ -668,7 +746,13 @@
     "RescanImageList": "Rescan image list from repository",
     "DescRescanImageList": "Rescan image list from registered repositories.<br />It may take a long time, so please wait after execution.",
     "Recalculating": "Recalculating...",
-    "RescanImageScanning": "Scanning..."
+    "RecalculationFinished": "Recalculation finished",
+    "RecalculationFailed": "Recalculation failed",
+    "Scanning": "Scanning...",
+    "RescanImageStarted": "Rescanning image started",
+    "RescanImageScanning": "Rescanning...",
+    "RescanImageFinished": "Rescanning image finished.",
+    "RescanFailed": "Rescan failed"
   },
   "pipeline": {
     "List": "List",
@@ -730,7 +814,7 @@
     "UseCLIonGUI": "Use Backend.AI CLI on GUI",
     "DescUseCLIonGUI": "Provide Backend.AI CLI on GUI app/web. Requires Backend.AI CLI image.",
     "UseGUIonWeb": "Use Backend.AI GUI on Web",
-    "DescUseGUIonWeb": "Provide Backend.AI GUI as a web service. Requires Backend.AI Console image.",
+    "DescUseGUIonWeb": "Provide Backend.AI GUI as a web service. Requires Backend.AI Web UI image.",
     "NoteAboutFixedSetup": "Note: The settings below are automatically applied depending on the installation environment and status.",
     "Scaling": "Scaling",
     "AllowAgentSideRegistration": "Allow agent-side registration",
@@ -765,7 +849,8 @@
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",
     "Visit": "Visit",
-    "SeeDetail": "See Detail"
+    "SeeDetail": "See Detail",
+    "Initializing": "Initializing..."
   },
   "information": {
     "System": "System",
@@ -852,11 +937,12 @@
     "PasswordNotMatched": "Those passwords didn't match. Try it again.",
     "Signup": "Signup",
     "SignupSucceeded": "Successfully signed up.",
+    "Processing": "Processing...",
     "InvitationToken": "Invitation Token",
     "TokenInputRequired": "Token is required.",
-    "PolicyAgreement_1":"I have read and agree to the ",
-    "PolicyAgreement_2":" and ",
-    "PolicyAgreement_3":".",
+    "PolicyAgreement_1": "I have read and agree to the ",
+    "PolicyAgreement_2": " and ",
+    "PolicyAgreement_3": ".",
     "TermsOfService": "Terms of service",
     "RequestAgreementTermsOfService": "Please read and agree with the terms of service to proceed.",
     "PrivacyPolicy": "Privacy Policy",
@@ -869,11 +955,13 @@
     "EmailInputRequired": "Email address is required.",
     "InvalidEmail": "Invalid email address",
     "SendEmail": "Send verification email",
+    "SendError": "Error occurred during email sending",
     "EmailSent": "Email sent",
-    "EmailNotSent": "Unable to send email"
+    "EmailNotSent": "Unable to send email",
+    "VerificationError": "Verification error occurred"
   },
   "update": {
-    "NewConsoleVersionAvailable": "New version is available:"
+    "NewWebUIVersionAvailable": "New version is available:"
   },
   "sidepanel": {
     "BackgroundTasks": "Running Tasks",
@@ -916,7 +1004,8 @@
     "ImportFinished": "Import finished.",
     "FolderName": "Imported folder name: ",
     "NotebookBadgeCodeHTML": "Notebook Badge Code (HTML)",
-    "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)"
+    "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)",
+    "Installed": "Installed"
   },
   "DownloadSSHKey": "Download SSH Key",
   "license": {
@@ -925,6 +1014,50 @@
     "OpenSource": "Open Source"
   },
   "error": {
-    "APINotSupported": "API not supported. Requires latest version of Backend.AI manager."
+    "UpdateError": "Update error",
+    "APIEndpointIsEmpty": "API Endpoint is empty. Please specify Backend.AI API endpoint to signup.",
+    "APINotSupported": "API not supported. Requires latest version of Backend.AI manager.",
+    "UserHasNoGroup": "User has no group. Please contact administrator to fix it.",
+    "WrongAPIServerAddress": "Wrong API server address.",
+    "LoginFailed": "Login failed. Check login information.",
+    "VirtualFolderAlreadyExist": "A virtual folder with the same name already exists. Delete your own folder or decline the invitation.",
+    "MaximumVfolderCreation": "You cannot create more vfolders due to resource policy",
+    "LoginInformationMismatch": "Login information mismatch. Check your information",
+    "ReachedResourceLimit": "Reached your resource limit. Check resources and sessions.",
+    "AuthenticationFailed": "Authentication failed. Check information and manager status.",
+    "NetworkConnectionFailed": "Network connection failed. Check network status.",
+    "TooManyLoginFailures": "There have been too many login failures in a short time. Login is blocked for a while.",
+    "ResourcePolicyAlreadyExist": "A resource policy with the same name already exists.",
+    "ScalingGroupAlreadyExist": "A scaling group with the same name already exists.",
+    "ResourceLimitExceed": "Resource limit exceed. Check your free resources.",
+    "SmallerResourceThenImageRequires": "Your resource request is smaller than the minimum required by the image. Try more resources.",
+    "LoginSucceededManagerNotResponding": "Login succeed but manager is not responding.",
+    "UserNameAlreadyExist": "Username already exists. It cannot be duplicated.",
+    "ResourcePolicyStillReferenced": "There exist keypairs which reference this resource policy.",
+    "InvalidSignupToken": "Invalid signup token"
+  },
+  "maxLength": {
+    "20chars": "(maximum 20 chars)",
+    "40chars": "(maximum 40 chars)",
+    "64chars": "(maximum 64 chars)",
+    "255chars": "(maximum 255 chars)",
+    "500chars": "(maximum 500 chars)",
+    "512chars": "(maximum 512 chars)",
+    "2048chars": "(maximum 2048 chars)"
+  },
+  "maxNumber": {
+    "20": "(<= 20)",
+    "40": "(<= 40)",
+    "64": "(<= 64)",
+    "100": "(<= 100)",
+    "255": "(<= 255)",
+    "500": "(<= 500)",
+    "512": "(<= 512)",
+    "1024": "(<= 1024)",
+    "2048": "(<= 2048)"
+  },
+  "explorer": {
+    "ValueRequired": "ValueRequired",
+    "InputTooShort": "InputTooShort"
   }
 }

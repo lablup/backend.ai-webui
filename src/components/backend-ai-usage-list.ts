@@ -1,14 +1,13 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import 'weightless/card';
-import {BackendAiStyles} from './backend-ai-general-styles';
+import 'weightless/card'; import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
 
 import {
@@ -29,7 +28,7 @@ import {
  ...
  </backend-ai-usage-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-usage-list
  */
 
@@ -56,6 +55,7 @@ export default class BackendAIUsageList extends BackendAIPage {
   @property({type: Object}) collection = Object();
   @property({type: String}) period = '1D';
   @property({type: Boolean}) updating = false;
+  @property({type: Number}) elapsedDays = 0;
   public data: any;
 
   constructor() {
@@ -129,6 +129,45 @@ export default class BackendAIUsageList extends BackendAIPage {
 
   firstUpdated() {
     //this.init();
+  }
+
+  async _viewStateChanged(active: Boolean) {
+    await this.updateComplete;
+    if (active === false) {
+      return;
+    }
+
+    // If disconnected
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._getUserInfo();
+        this.init();
+        setTimeout(() => {
+          const periodSelector = this.shadowRoot.querySelector('#period-selector');
+          periodSelector.selectedText = periodSelector.selected.textContent.trim();
+        }, 100);
+      }, true);
+    } else { // already connected
+      this._getUserInfo();
+      this.init();
+      setTimeout(() => {
+        const periodSelector = this.shadowRoot.querySelector('#period-selector');
+        periodSelector.selectedText = periodSelector.selected.textContent.trim();
+      }, 100);
+    }
+  }
+
+  _getUserInfo() {
+    const msec_to_sec = 1000;
+    const seconds_to_day = 86400;
+    globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['created_at']).then((response) => {
+      let created_at = response.keypair.created_at;
+      let start_time = new Date(created_at);
+      let current_time = new Date();
+      let seconds = Math.floor((current_time.getTime() - start_time.getTime()) / msec_to_sec);
+      let days = Math.floor(seconds / seconds_to_day);
+      this.elapsedDays = days;
+    });
   }
 
   /**
@@ -243,31 +282,33 @@ export default class BackendAIUsageList extends BackendAIPage {
     return html`
       <div class="card" elevation="0">
         <h3 class="horizontal center layout">
-          <mwc-select outlined label="${_t("statistics.SelectPeriod")}" style="width: 130px;" @change="${(e) => {
-      this.pulldownChange(e)
-    }}">
-            <mwc-list-item value="1D" selected>${_t("statistics.1Day")}</mwc-list-item>
-            <mwc-list-item value="1W">${_t("statistics.1Week")}</mwc-list-item>
+          <mwc-select label="${_t('statistics.SelectPeriod')}"
+              id="period-selector" style="width:130px; border:1px solid #ccc;"
+              @change="${(e) => {this.pulldownChange(e)}}">
+            <mwc-list-item value="1D" selected>${_t('statistics.1Day')}</mwc-list-item>
+            ${this.elapsedDays > 7 ? html`
+              <mwc-list-item value="1W">${_t('statistics.1Week')}</mwc-list-item>
+            ` : html``}
           </mwc-select>
           <span class="flex"></span>
         </h3>
         ${Object.keys(this.collection).length > 0 ?
-      Object.keys(this._map).map((key, idx) =>
-        html`
-          <div class="card">
-            <h3 class="horizontal center layout">
-              <span>${this._map[key]}</span>
-              <span class="flex"></span>
-            </h3>
-            </div>
-            <div style="width:100%;min-height:180px;">
-              <backend-ai-chart
-                idx=${idx}
-                .collection=${this.collection[this.period][key]}
-              ></backend-ai-chart>
-            </div>
-          </div>
-            `) : html``}
+          Object.keys(this._map).map((key, idx) =>
+            html`
+              <div class="card">
+                <h3 class="horizontal center layout">
+                  <span>${this._map[key]}</span>
+                  <span class="flex"></span>
+                </h3>
+              </div>
+              <div style="width:100%;min-height:180px;">
+                <backend-ai-chart
+                  idx=${idx}
+                  .collection=${this.collection[this.period][key]}
+                ></backend-ai-chart>
+              </div>
+            `
+          ) : html``}
       </div>
     `;
   }

@@ -1,12 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
@@ -34,7 +34,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 /**
  Backend.AI Error Log List
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-error-log-list
  */
 
@@ -140,7 +140,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   _refreshLogData() {
     this.spinner.show();
     this._updatePageItemSize();
-    this.logs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
+    this.logs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '{}');
     this._totalLogCount = this.logs.length > 0 ? this.logs.length : 1;
     this._updateItemsFromPage(1);
     this._grid.clearCache();
@@ -190,7 +190,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    */
   _humanReadableTime(d: any) {
     d = new Date(d);
-    return d.toLocaleString();
+    let option = { hour12: false };
+    return d.toLocaleString("en-US", option);
   }
 
   /**
@@ -290,6 +291,6 @@ export default class BackendAiErrorLogList extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-error-log-list": BackendAiErrorLogList;
+    'backend-ai-error-log-list': BackendAiErrorLogList;
   }
 }

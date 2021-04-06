@@ -1,9 +1,9 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-//import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+// import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import {css, customElement, html, property} from 'lit-element';
 import '@material/mwc-icon-button';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -16,10 +16,10 @@ import {BackendAIPage} from './backend-ai-page';
 
  <backend-ai-help></backend-ai-help>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-help
  */
-@customElement("backend-ai-help-button")
+@customElement('backend-ai-help-button')
 export default class BackendAiHelpButton extends BackendAIPage {
   @property({type: String}) lang = 'default';
   @property({type: String}) manualURL = '';
@@ -28,12 +28,16 @@ export default class BackendAiHelpButton extends BackendAIPage {
   @property({type: Object}) URLmatchingTable = {
     '': 'summary/summary.html',
     'summary': 'summary/summary.html',
+    'job': 'sessions_all/sessions_all.html',
+    'import': 'import_run/import_run.html',
     'data': 'vfolder/vfolder.html',
-    'job': 'session_use/session_use.html',
-    'credential': 'admin_user_keypair_management/admin_user_keypair_management.html',
-    'environment': 'admin_user_keypair_management/admin_user_keypair_management.html#manage-images',
-    'agent': 'admin_user_keypair_management/admin_user_keypair_management.html#query-agent-nodes',
-    'settings': 'admin_user_keypair_management/admin_user_keypair_management.html#system-settings',
+    'statistics': 'statistics/statistics.html',
+    'credential': 'admin_menu/admin_menu.html',
+    'environment': 'admin_menu/admin_menu.html#manage-images',
+    'agent': 'admin_menu/admin_menu.html#query-agent-nodes',
+    'settings': 'admin_menu/admin_menu.html#system-settings',
+    'mainetenance': 'admin_menu/admin_menu.html#server-management',
+    'information': 'admin_menu/admin_menu.html#detailed-information',
     'usersettings': 'user_settings/user_settings.html'
   };
 
@@ -41,7 +45,7 @@ export default class BackendAiHelpButton extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): Array<any> {
     return [css`
     mwc-icon-button {
       color: white;
@@ -58,7 +62,7 @@ export default class BackendAiHelpButton extends BackendAIPage {
   }
 
   get currentPage() {
-    let page: string | undefined = globalThis.location.toString().split(/[\/]+/).pop();
+    const page: string | undefined = globalThis.location.toString().split(/[/]+/).pop();
     if (typeof this.page == 'undefined') {
       this.page = 'error';
     } else {
@@ -71,14 +75,14 @@ export default class BackendAiHelpButton extends BackendAIPage {
    * Show help page with current language(Korean or English).
    */
   showHelpPage() {
-    let postfix: string = '';
+    let postfix = '';
     if (this.manualURL !== '') {
       postfix = this.manualURL;
     } else {
       if (this.currentPage in this.URLmatchingTable) {
         postfix = this.URLmatchingTable[this.currentPage];
-        let lang = globalThis.backendaioptions.get('current_language');
-        if (["ko", 'en'].includes(lang)) {
+        const lang = globalThis.backendaioptions.get('current_language');
+        if (['ko', 'en'].includes(lang)) {
           this.lang = lang;
         } else {
           this.lang = 'en';
@@ -90,8 +94,8 @@ export default class BackendAiHelpButton extends BackendAIPage {
 
   /**
    * Open the online help page.
-   * 
-   * @param {string} postfix 
+   *
+   * @param {string} postfix
    */
   showOnlineHelpPage(postfix: string) {
     window.open(`https://console.docs.backend.ai/${this.lang}/latest/` + postfix, '_blank');
@@ -107,6 +111,6 @@ export default class BackendAiHelpButton extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-help-button": BackendAiHelpButton;
+    'backend-ai-help-button': BackendAiHelpButton;
   }
 }

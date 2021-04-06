@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
@@ -10,7 +10,7 @@ import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 
 import {BackendAIPage} from './backend-ai-page';
-import {BackendAiConsoleStyles} from './backend-ai-console-styles';
+import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 import {
   IronFlex,
   IronFlexAlignment,
@@ -21,10 +21,10 @@ import {
 /**
  Backend.AI Sidepanel notification viewer for Console
 
- `backend-ai-sidepanel-notification` is a sidepanel notification viewer for console.
+ `backend-ai-sidepanel-notification` is a sidepanel notification viewer for web UI.
 
  Example:
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-sidepanel-notification
  */
 @customElement("backend-ai-sidepanel-notification")
@@ -44,7 +44,7 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
 
   static get styles() {
     return [
-      BackendAiConsoleStyles,
+      BackendAIWebUIStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,

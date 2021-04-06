@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
@@ -32,7 +32,7 @@ import './lablup-loading-spinner';
  ... content ...
  </backend-ai-information-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-information-view
  */
 
@@ -42,7 +42,7 @@ export default class BackendAiInformationView extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: String}) manager_version = '';
   @property({type: String}) manager_version_latest = '';
-  @property({type: String}) console_version = '';
+  @property({type: String}) webui_version = '';
   @property({type: String}) api_version = '';
   @property({type: String}) docker_version = '';
   @property({type: String}) pgsql_version = '';
@@ -347,7 +347,7 @@ export default class BackendAiInformationView extends BackendAIPage {
    */
   updateInformation() {
     this.manager_version = globalThis.backendaiclient.managerVersion;
-    this.console_version = globalThis.packageVersion;
+    this.webui_version = globalThis.packageVersion;
     this.api_version = globalThis.backendaiclient.apiVersion;
     this.docker_version = _text('information.Compatible'); // It uses 20.03 API. So blocked now.
     this.pgsql_version = _text('information.Compatible');

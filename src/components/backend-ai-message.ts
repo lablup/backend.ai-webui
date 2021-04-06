@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {LitElement} from "lit-element";
 
@@ -13,7 +13,7 @@ import {LitElement} from "lit-element";
 
  <backend-ai-message></backend-ai-message>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  */
 class BackendAiMessage extends LitElement {
   constructor() {

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
@@ -15,7 +15,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
 import '@material/mwc-switch/mwc-switch';
@@ -34,7 +34,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
  ...
  </backend-ai-settings-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-storage-list
  */
 
@@ -173,7 +173,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           div.description-shrink {
             width: auto;
           }
-          
+
         }
 
         @media screen and (min-width: 1400px) {

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t, get as _text, translateUnsafeHTML as _tr} from "lit-translate";
@@ -27,7 +27,7 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
 /**
- `<backend-ai-resource-panel>` is a Summary panel of backend.ai console.
+ `<backend-ai-resource-panel>` is a Summary panel of backend.ai web UI.
 
  Example:
  <backend-ai-resource-panel active></backend-ai-resource-panel>
@@ -46,7 +46,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: Object}) resources = Object();
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) manager_version = '';
-  @property({type: String}) console_version = '';
+  @property({type: String}) webui_version = '';
   @property({type: Number}) cpu_total = 0;
   @property({type: Number}) cpu_used = 0;
   @property({type: String}) cpu_percent = '0';
@@ -322,7 +322,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
 
   _sync_resource_values() {
     this.manager_version = globalThis.backendaiclient.managerVersion;
-    this.console_version = globalThis.packageVersion;
+    this.webui_version = globalThis.packageVersion;
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
     if (isNaN(this.resources['cuda.device'].total)) {

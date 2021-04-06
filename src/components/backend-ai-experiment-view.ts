@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html} from "lit-element";
@@ -38,7 +38,7 @@ import {
  ... content ...
  </backend-ai-experiment-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-experiment-view
  */
 

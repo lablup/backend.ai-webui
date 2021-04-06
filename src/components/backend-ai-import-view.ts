@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from "lit-translate";
@@ -27,7 +27,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 import {default as PainKiller} from "./backend-ai-painkiller";
 
 /**
- `<backend-ai-import-view>` is a import feature of backend.ai console.
+ `<backend-ai-import-view>` is a import feature of backend.ai web UI.
 
  Example:
  <backend-ai-import-view active></backend-ai-import-view>
@@ -232,7 +232,7 @@ export default class BackendAIImport extends BackendAIPage {
     return globalThis.backendaiclient.get_resource_slots().then((response) => {
       //let results = response;
       indicator.set(50, _text('import.Downloading'));
-      return globalThis.backendaiclient.createIfNotExists('index.docker.io/lablup/python:3.8-ubuntu18.04', null, imageResource, 60000);
+      return globalThis.backendaiclient.createIfNotExists(globalThis.backendaiclient._config.default_import_environment, null, imageResource, 60000);
     }).then(async (response) => {
       indicator.set(80, _text('import.CleanUpImportTask'));
       await globalThis.backendaiclient.destroy(response.sessionId);
@@ -371,7 +371,8 @@ export default class BackendAIImport extends BackendAIPage {
       <lablup-activity-panel title="${_t('import.ImportNotebook')}" elevation="1" horizontalsize="2x">
         <div slot="message">
           <div class="horizontal wrap layout center">
-            <mwc-textfield id="notebook-url" label="${_t('import.NotebookURL')}"></mwc-textfield>
+            <mwc-textfield id="notebook-url" label="${_t('import.NotebookURL')}"
+                           maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
             <mwc-button icon="cloud_download" @click="${() => this.getNotebookFromURL()}">
               <span>${_t('import.GetAndRunNotebook')}</span>
             </mwc-button>
@@ -393,7 +394,8 @@ export default class BackendAIImport extends BackendAIPage {
             <div class="vertical wrap layout center description">
               ${_t('import.YouCanCreateNotebookCode')}
               <img src="/resources/badge.svg" style="margin-top:5px;margin-bottom:5px;"/>
-              <mwc-textfield id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"></mwc-textfield>
+              <mwc-textfield id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"
+                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
               <mwc-button style="width:100%;" @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
               <mwc-textarea id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
               <mwc-textarea id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
@@ -408,7 +410,8 @@ export default class BackendAIImport extends BackendAIPage {
               <p>${_t('import.RepoWillBeFolder')}</p>
             </div>
             <div class="horizontal wrap layout center">
-              <mwc-textfield id="github-repo-url" label="${_t('import.GitHubURL')}"></mwc-textfield>
+              <mwc-textfield id="github-repo-url" label="${_t('import.GitHubURL')}"
+                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
               <mwc-button icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>

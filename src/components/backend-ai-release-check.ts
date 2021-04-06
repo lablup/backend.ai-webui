@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {get as _text} from "lit-translate";
@@ -15,14 +15,14 @@ import {customElement, html, LitElement, property} from "lit-element";
 
  <backend-ai-release-check></backend-ai-release-check>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-release-check
  */
 
 @customElement("backend-ai-release-check")
 export default class BackendAiReleaseCheck extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: String}) releaseURL = 'https://raw.githubusercontent.com/lablup/backend.ai-console/release/version.json';
+  @property({type: String}) releaseURL = 'https://raw.githubusercontent.com/lablup/backend.ai-webui/release/version.json';
   @property({type: String}) localVersion = '';
   @property({type: String}) localBuild = '';
   @property({type: String}) remoteVersion = '';
@@ -70,10 +70,10 @@ export default class BackendAiReleaseCheck extends LitElement {
           if (this.compareVersion(globalThis.packageVersion, this.remoteVersion) < 0) { // update needed.
             //if (this.compareVersion('20.03.3', this.remoteVersion) < 0) { // For testing
             this.updateNeeded = true;
-            this.updateURL = `https://github.com/lablup/backend.ai-console/releases/tag/v${this.remoteVersion}`;
+            this.updateURL = `https://github.com/lablup/backend.ai-webui/releases/tag/v${this.remoteVersion}`;
             if (globalThis.isElectron) {
-              this.notification.text = _text("update.NewConsoleVersionAvailable") + ' ' + this.remoteVersion;
-              this.notification.detail = _text("update.NewConsoleVersionAvailable");
+              this.notification.text = _text("update.NewWebUIVersionAvailable") + ' ' + this.remoteVersion;
+              this.notification.detail = _text("update.NewWebUIVersionAvailable");
               this.notification.url = this.updateURL;
               this.notification.show();
             }

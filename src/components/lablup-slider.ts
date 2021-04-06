@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html, LitElement, property, query} from "lit-element";
@@ -24,7 +24,7 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
 
  <lablup-slider></lablup-slider>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element lablup-slider
  */
 
@@ -58,7 +58,7 @@ export default class LablupSlider extends LitElement {
         }
 
         wl-textfield {
-          --input-state-color-invalid :  var(--input-state-color-inactive,hsl(var(--shade-400,var(--shade-hue,200),var(--shade-saturation,4%),var(--shade-lightness,65%))));
+          --input-state-color-invalid: var(--input-state-color-inactive, hsl(var(--shade-400, var(--shade-hue, 200), var(--shade-saturation, 4%), var(--shade-lightness, 65%))));
           width: var(--textfield-min-width, 65px);
           margin-left: 10px;
         }
@@ -75,17 +75,18 @@ export default class LablupSlider extends LitElement {
     // language=HTML
     return html`
       <div class="horizontal center layout">
-      <mwc-slider id="slider" class="${this.id}" value="${this.value}"
-          min="${this.min}" max="${this.max}"
-          ?pin="${this.pin}"
-          ?disabled="${this.disabled}"
-          ?markers="${this.markers}"
-          @change="${this.syncToText}">
-      </mwc-slider>
-      <wl-textfield style="display:none" id="textfield" class="${this.id}" type="number"
-        value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
-        @change="${this.syncToSlider}">
-      </wl-textfield>
+        <mwc-slider id="slider" class="${this.id}" value="${this.value}"
+                    min="${this.min}" max="${this.max}"
+                    ?pin="${this.pin}"
+                    ?disabled="${this.disabled}"
+                    ?markers="${this.markers}"
+                    @change="${() => this.syncToText()}">
+        </mwc-slider>
+        <wl-textfield style="display:none" id="textfield" class="${this.id}" type="number"
+                      value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
+                      ?disabled="${this.disabled}"
+                      @change="${() => this.syncToSlider()}">
+        </wl-textfield>
       </div>
     `;
   }
@@ -95,21 +96,7 @@ export default class LablupSlider extends LitElement {
       this.textfield = this.shadowRoot.querySelector('#textfield');
       this.textfield.style.display = 'flex';
     }
-
-    // wl-textfield does not provide step property. The default step for number input
-    // is 1, so float numbers will invalidate the wl-textfield, which is a problem.
-    // So, we manually set the step property of wl-textfield's input field here.
-    const textfields = this.shadowRoot.querySelectorAll('wl-textfield');
-    setTimeout(() => {
-      textfields.forEach((el) => {
-        const step = el.getAttribute('step');
-        el.$formElement.step = step;
-      });
-    }, 100);
-    if (this.step) {
-    } else {
-      this.step = 1.0;
-    }
+    this.updateStep();
     this.checkMarkerDisplay();
   }
 
@@ -121,10 +108,15 @@ export default class LablupSlider extends LitElement {
     super.disconnectedCallback();
   }
 
+  update(changedProperties) {
+    this.min = (this.min > this.max) ? this.max : this.min;
+    super.update(changedProperties);
+  }
+
   updated(changedProperties) {
     changedProperties.forEach((oldVal, propName) => {
       if (propName === 'value') {
-        setTimeout(()=>{
+        setTimeout(() => {
           if (this.editable) {
             this.syncToSlider();
           }
@@ -133,7 +125,7 @@ export default class LablupSlider extends LitElement {
         const event = new CustomEvent('value-changed', {'detail': {}});
         this.dispatchEvent(event);
       }
-      if (['min', 'max'].includes(propName)) {
+      if (['min', 'max', 'step'].includes(propName)) {
         this.checkMarkerDisplay();
       }
     });
@@ -153,13 +145,15 @@ export default class LablupSlider extends LitElement {
    * Setting value, slider value, and slider step to synchronize with slider.
    * */
   syncToSlider() {
+    this.textfield.step = this.step;
     let rounded = Math.round(this.textfield.value / this.step) * this.step;
     this.textfield.value = rounded.toFixed(((decimal_places: number) => {
       if (Math.floor(decimal_places) === decimal_places) {
         return 0;
       }
       return decimal_places.toString().split(".")[1].length || 0;
-      })(this.step));
+    })(this.step));
+
     if (this.textfield.value > this.max) {
       this.textfield.value = this.max;
     }
@@ -180,6 +174,23 @@ export default class LablupSlider extends LitElement {
       if (((this.max - this.min) / this.step) > this.marker_limit) {
         this.slider.removeAttribute('markers');
       }
+    }
+    this.updateStep();
+  }
+
+  updateStep() {
+    // wl-textfield does not provide step property. The default step for number input
+    // is 1, so float numbers will invalidate the wl-textfield, which is a problem.
+    // So, we manually set the step property of wl-textfield's input field here.
+    const textfields = this.shadowRoot.querySelectorAll('wl-textfield');
+    setTimeout(() => {
+      textfields.forEach((el) => {
+        const step = el.getAttribute('step');
+        el.$formElement.step = step;
+      });
+    }, 100);
+    if (!this.step) {
+      this.step = 1.0;
     }
     this.slider.setAttribute('step', this.step);
     this.slider.step = this.step;
