@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 import 'weightless/progress-spinner';
 
 /**
@@ -19,7 +19,7 @@ import 'weightless/progress-spinner';
  @element lablup-loading-spinner
  */
 
-@customElement("lablup-loading-spinner")
+@customElement('lablup-loading-spinner')
 export default class LablupLoadingSpinner extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) spinner;
@@ -69,10 +69,6 @@ export default class LablupLoadingSpinner extends LitElement {
     super.disconnectedCallback();
   }
 
-  async getMoreState() {
-
-  }
-
   /**
    * Set up active state and spinner style to show the loading spinner.
    * */
@@ -110,6 +106,6 @@ export default class LablupLoadingSpinner extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "lablup-loading-spinner": LablupLoadingSpinner;
+    'lablup-loading-spinner': LablupLoadingSpinner;
   }
 }
