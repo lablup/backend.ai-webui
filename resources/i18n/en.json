@@ -266,7 +266,8 @@
     "Confirm": "Confirm",
     "Generate": "Generate",
     "Continue": "Continue",
-    "GoBackToSummaryPage": "Go back to Summary page"
+    "GoBackToSummaryPage": "Go back to Summary page",
+    "ForceTerminate": "Force Terminate"
   },
   "agent": {
     "Endpoint": "Endpoint",
