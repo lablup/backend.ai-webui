@@ -450,7 +450,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       param['mode'] = "SESSION";
       param['session'] = globalThis.backendaiclient._config._session_id;
     } else {
-      param['mode'] = "DEFAULT";
+      param['mode'] = "API";
       param['access_key'] = globalThis.backendaiclient._config.accessKey;
       param['secret_key'] = globalThis.backendaiclient._config.secretKey;
     }

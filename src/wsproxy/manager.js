@@ -78,7 +78,7 @@ class Manager extends EventEmitter {
         cf['session'] = req.body.session;
         cf['endpoint'] = cf['endpoint'] + "/func";
       } else {
-        cf['mode'] = "DEFAULT";
+        cf['mode'] = "API";
         cf['access_key'] = req.body.access_key;
         cf['secret_key'] = req.body.secret_key;
         let config = new ai.backend.ClientConfig(
@@ -165,6 +165,8 @@ class Manager extends EventEmitter {
             }
           }
         }
+        logger.debug(`proxies: ${p}`);
+        logger.info(this.proxies);
         if (!assigned) {
           res.send({"code": 500});
           return;
@@ -198,13 +200,34 @@ class Manager extends EventEmitter {
 
     this.app.get('/proxy/local/:sessionName/delete', (req, res) => {
       //find all and kill
-
-      let sessionName = req.params["sessionName"];
       if (!this._config) {
         res.send({"code": 401});
         return;
       }
+      logger.debug('deleting session');
+
+      let sessionName = req.params["sessionName"];
       if (sessionName in this.proxies) {
+        logger.debug('exists');
+        this.proxies[sessionName].stop_proxy();
+        res.send({"code": 200});
+        delete this.proxies[sessionName];
+      } else {
+        logger.debug('epic fail');
+        res.send({"code": 404});
+      }
+    });
+
+    this.app.get('/proxy/local/:sessionName/down', (req, res) => {
+      //find app in session and stop if possible
+      if (!this._config) {
+        res.send({"code": 401});
+        return;
+      }
+      let sessionName = req.params["sessionName"];
+      let app = req.query.app || null;
+
+      if (sessionName in this.proxies && app !== null) {
         this.proxies[sessionName].stop_proxy();
         res.send({"code": 200});
         delete this.proxies[sessionName];

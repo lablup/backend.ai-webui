@@ -30,6 +30,7 @@ class ClientConfig {
   public _userId: string;
   public _password: string;
   public _proxyURL: any;
+  public _proxyToken: any;
   public _connectionMode: string;
 
   /**
@@ -71,6 +72,7 @@ class ClientConfig {
       this._password = secretKey;
     }
     this._proxyURL = null;
+    this._proxyToken = null;
     this._connectionMode = connectionMode;
   }
 
@@ -96,6 +98,9 @@ class ClientConfig {
 
   get proxyURL() {
     return this._proxyURL;
+  }
+  get proxyToken() {
+    return this._proxyToken;
   }
 
   get endpointHost() {
@@ -1325,8 +1330,8 @@ class VFolder {
 
   /**
    * Clone selected Virtual folder
-   * 
-   * @param {json} input - parameters for cloning Vfolder 
+   *
+   * @param {json} input - parameters for cloning Vfolder
    * @param {boolean} input.cloneable - whether new cloned Vfolder is cloneable or not
    * @param {string} input.permission - permission for new cloned Vfolder. permission should one of the following: 'ro', 'rw', 'wd'
    * @param {string} input.target_host - target_host for new cloned Vfolder
@@ -1341,7 +1346,7 @@ class VFolder {
   }
 
   /**
-   * 
+   *
    * @param {json} input - parameters for updating folder options of Vfolder
    * @param {boolean} input.cloneable - whether Vfolder is cloneable or not
    * @param {string} input.permission - permission for Vfolder. permission should one of the following: 'ro', 'rw', 'wd'
