@@ -231,7 +231,7 @@ class Manager extends EventEmitter {
       let app = req.query.app || null;
       let p = sessionId + "|" + app;
       if (p in this.proxies && app !== null) {
-        logger.info(`Found app to terminate in ${sessionId}`);
+        logger.debug(`Found ${app} to terminate in ${sessionId}`);
         this.proxies[p].stop_proxy();
         res.send({"code": 200});
         delete this.proxies[p];
