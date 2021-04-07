@@ -919,14 +919,14 @@ export default class BackendAiSessionList extends BackendAIPage {
     return this._terminateKernel(sessionName, accessKey);
   }
 
-  _terminateSessionWithCheck(e) {
+  _terminateSessionWithCheck(forced = false) {
     if (this.terminationQueue.includes(this.terminateSessionDialog.sessionName)) {
       this.notification.text = 'Already terminating the session.';
       this.notification.show();
       return false;
     }
     this.spinner.show();
-    return this._terminateKernel(this.terminateSessionDialog.sessionName, this.terminateSessionDialog.accessKey).then((response) => {
+    return this._terminateKernel(this.terminateSessionDialog.sessionName, this.terminateSessionDialog.accessKey, forced).then((response) => {
       this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
@@ -962,10 +962,10 @@ export default class BackendAiSessionList extends BackendAIPage {
     });
   }
 
-  _terminateSelectedSessionsWithCheck() {
+  _terminateSelectedSessionsWithCheck(forced = false) {
     this.spinner.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
-      return this._terminateKernel(item[this.sessionNameField], item.access_key);
+      return this._terminateKernel(item[this.sessionNameField], item.access_key, forced);
     });
     this._selected_items = [];
     return Promise.all(terminateSessionQueue).then((response) => {
@@ -1016,10 +1016,10 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   // General closing
 
-  async _terminateKernel(sessionName, accessKey) {
+  async _terminateKernel(sessionName, accessKey, forced = false) {
     this.terminationQueue.push(sessionName);
     return this._terminateApp(sessionName).then(() => {
-      globalThis.backendaiclient.destroy(sessionName, accessKey).then((req) => {
+      globalThis.backendaiclient.destroy(sessionName, accessKey, forced).then((req) => {
         setTimeout(async () => {
           this.terminationQueue = [];
           // await this.refreshList(true, false); // Will be called from session-view from the event below
@@ -1632,8 +1632,11 @@ export default class BackendAiSessionList extends BackendAIPage {
             <p>${_t('usersettings.SessionTerminationDialog')}</p>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout">
+           ${globalThis.backendaiclient.is_admin ? html`
+            <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">${_t('button.ForceTerminate')}</wl-button>
+            <span class="flex"></span>`:html``}
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}</wl-button>
-            <wl-button class="ok" @click="${(e) => this._terminateSessionWithCheck(e)}">${_t('button.Okay')}</wl-button>
+            <wl-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</wl-button>
          </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
@@ -1642,6 +1645,9 @@ export default class BackendAiSessionList extends BackendAIPage {
             <p>${_t('usersettings.SessionTerminationDialog')}</p>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout">
+           ${globalThis.backendaiclient.is_admin ? html`
+            <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}</wl-button>
+            <span class="flex"></span>`:html``}
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}</wl-button>
             <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}</wl-button>
          </div>
