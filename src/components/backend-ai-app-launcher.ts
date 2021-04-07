@@ -953,6 +953,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         <span slot="title">${_t("session.TensorboardPath")}</span>
         <div slot="content" class="vertical layout" style="padding:15px 10px;">
           <div>${_t('session.InputTensorboardPath')}</div>
+          <div class="fg red">${_t('session.WarningTensorboardPathCannotBeChanged')}</div>
           <mwc-textfield id="tensorboard-path" value="${_t('session.DefaultTensorboardPath')}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">

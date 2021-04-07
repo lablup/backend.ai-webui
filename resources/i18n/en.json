@@ -242,7 +242,11 @@
     "SessionsTerminated": "Sessions terminated.",
     "NoSession": "No session.",
     "DownloadingCSVFile": "Downloading CSV file...",
-    "UseThisPath": "Use"
+    "UseThisPath": "Use",
+    "WarningTensorboardPathCannotBeChanged": "Warning: Tensorboard log path cannot be changed after launch.",
+    "Arguments": "Arguments",
+    "ModifyArguments": "Modify arguments",
+    "UseThisArguments": "Use this arguments"
   },
   "button": {
     "Cancel": "Cancel",

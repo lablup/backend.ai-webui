@@ -241,7 +241,11 @@
     "SessionsTerminated": "세션들을 중지했습니다.",
     "NoSession": "세션이 없습니다.",
     "DownloadingCSVFile": "CSV 파일을 내려받습니다.",
-    "UseThisPath": "이 경로 사용"
+    "UseThisPath": "이 경로 사용",
+    "WarningTensorboardPathCannotBeChanged": "주의: TensorBoard 로그 경로는 TensorBoard 실행 중엔 바꿀 수 없습니다.",
+    "Arguments": "프로그램 인수",
+    "ModifyArguments": "프로그램 인수 수정",
+    "UseThisArguments": "이 인수 사용"
   },
   "button": {
     "Cancel": "취소",
