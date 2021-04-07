@@ -127,9 +127,6 @@ class Manager extends EventEmitter {
       let args = req.query.args ? JSON.parse(decodeURI(req.query.args)) : {};
       let envs = req.query.envs ? JSON.parse(decodeURI(req.query.envs)) : {};
       let gateway;
-      // Show logger
-      logger.info(`App arguments: ${args}`);
-      logger.info(`App environments: ${envs}`);
       let ip = "127.0.0.1"; //FIXME: Update needed
       //let port = undefined;
       if (this.proxies.hasOwnProperty(p)) {
@@ -166,7 +163,7 @@ class Manager extends EventEmitter {
           }
         }
         logger.debug(`proxies: ${p}`);
-        logger.info(this.proxies);
+        logger.info(`Total connections: ${Object.keys(this.proxies).length}`);
         if (!assigned) {
           res.send({"code": 500});
           return;
@@ -216,6 +213,7 @@ class Manager extends EventEmitter {
           stopped = true;
         }
       }
+      logger.info(`Total connections: ${Object.keys(this.proxies).length}`);
       if (stopped) {
         res.send({"code": 200});
       } else {
