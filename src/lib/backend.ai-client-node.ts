@@ -822,9 +822,10 @@ class Client {
   async destroy(sessionId, ownerKey = null, forced:boolean = false) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey !== null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+      queryString = `${queryString}?owner_access_key=${ownerKey}${forced ? '&forced=true' : ''}`;
+    } else {
+      queryString = `${queryString}${forced ? '?forced=true' : ''}`;
     }
-    queryString = `${queryString}${forced ? '?forced=true' : ''}`;
     let rqst = this.newSignedRequest('DELETE', queryString, null);
     return this._wrapWithPromise(rqst, false, null, 15000, 2); // 15 sec., two trial when error occurred.
   }
