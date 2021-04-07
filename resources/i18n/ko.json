@@ -7,6 +7,7 @@
       "Sessions": "세션",
       "Import&Run": "가져오기 & 실행",
       "Data&Storage": "데이터 & 폴더",
+      "Pipeline": "파이프라인(베타)",
       "Statistics": "통계",
       "Help": "도움말",
       "Settings": "설정",
@@ -17,6 +18,7 @@
       "Configurations": "환경 설정",
       "Maintenance": "관리",
       "Information": "정보",
+      "About": "대하여",
       "AboutBackendAI": "Backend.AI에 대하여",
       "ChangeUserInformation": "사용자 정보 변경",
       "ChangeUserInfo": "사용자 정보 변경",
@@ -751,6 +753,44 @@
     "RescanImageScanning": "리스캔중...",
     "RescanImageFinished": "이미지 리스캔 작업이 완료되었습니다.",
     "RescanFailed": "리스캔 작업이 실패하였습니다."
+  },
+  "pipeline": {
+    "List": "리스트",
+    "Running": "실행중",
+    "Finished": "종료",
+    "SelectPipeline": "파이프라인을 선택하세요",
+    "NoPipelineSelected": "파이프라인이 선택되지 않았습니다",
+    "PipelineCreated": "파이프라인이 생성되었습니다",
+    "PipelineUpdated": "파이프라인이 수정되었습니다",
+    "PipelineDeleted": "파이프라인이 삭제되었습니다",
+    "RunPipeline": "파이프라인 실행",
+    "PipelineDialog": {
+      "CreateTitle": "파이프라인 만들기",
+      "UpdateTitle": "파이프라인 수정",
+      "DeleteTitle": "파이프라인 삭제",
+      "Name": "파이프라인 이름",
+      "Description": "파이프라인 설명",
+      "Environment": "연산 환경",
+      "Version": "버전",
+      "TargetFolder": "대상 데이터 폴더",
+      "FillAllInputFields": "모든 필드에 값을 입력하세요"
+    },
+    "Component": {
+      "Connect": "연결",
+      "NoComponentSelected": "파이프라인 컴포넌트가 선택되지 않았습니다",
+      "SelectTwoComponents": "두 개의 컴포넌트만 선택하세요"
+    },
+    "ComponentDialog": {
+      "CreateTitle": "파이프라인 컴포넌트 추가",
+      "UpdateTitle": "파이프라인 컴포넌트 수정",
+      "DeleteTitle": "파이프라인 컴포넌트 삭제",
+      "Name": "컴포넌트 이름",
+      "Description": "컴포넌트 설명",
+      "PathInFolder": "저장 폴더 내 컴포넌트 경로",
+      "NamePathRequired": "이름과 경로는 필수 항목입니다",
+      "CPUNotEnough": "CPU는 1 이상이어야 합니다",
+      "MemoryNotEnough": "메모리는 0.1 GiB 이상이어야 합니다"
+    }
   },
   "statistics": {
     "Usage": "사용량",

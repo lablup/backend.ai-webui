@@ -651,6 +651,12 @@ class Client {
             if (resources['domain']) {
                 params['domain'] = resources['domain'];
             }
+            if (resources['type']) {
+                params['type'] = resources['type'];
+            }
+            if (resources['startsAt']) {
+                params['starts_at'] = resources['startsAt'];
+            }
             if (resources['enqueueOnly']) {
                 params['enqueueOnly'] = resources['enqueueOnly'];
             }
@@ -712,7 +718,7 @@ class Client {
         return this._wrapWithPromise(rqst);
     }
     /**
-     * Obtain the session information by given sessionId.
+     * Obtain the session container logs by given sessionId.
      *
      * @param {string} sessionId - the sessionId given when created
      * @param {string | null} ownerKey - owner key to access
@@ -725,6 +731,16 @@ class Client {
         }
         let rqst = this.newSignedRequest('GET', queryString, null);
         return this._wrapWithPromise(rqst, false, null, timeout);
+    }
+    /**
+     * Obtain the batch session (task) logs by given sessionId.
+     *
+     * @param {string} sessionId - the sessionId given when created
+     */
+    getTaskLogs(sessionId) {
+        const queryString = `${this.kernelPrefix}/_/logs?session_name=${sessionId}`;
+        let rqst = this.newSignedRequest('GET', queryString, null);
+        return this._wrapWithPromise(rqst);
     }
     /**
      * Terminate and destroy the kernel session.
@@ -986,12 +1002,25 @@ class Client {
         let k2 = this.sign(k1, 'binary', this._config.endpointHost, 'binary');
         return k2;
     }
-    generateSessionId() {
+    generateSessionId(length = 8, nosuffix = false) {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (var i = 0; i < 8; i++)
+        for (var i = 0; i < length; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
-        return text + "-jsSDK";
+        return nosuffix ? text : text + "-jsSDK";
+    }
+    slugify(text) {
+        const a = 'àáäâèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;';
+        const b = 'aaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh------';
+        const p = new RegExp(a.split('').join('|'), 'g');
+        return text.toString().toLowerCase()
+            .replace(/\s+/g, '-') // Replace spaces with -
+            .replace(p, c => b.charAt(a.indexOf(c))) // Replace special chars
+            .replace(/&/g, '-and-') // Replace & with 'and'
+            .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+            .replace(/\-\-+/g, '-') // Replace multiple - with single -
+            .replace(/^-+/, '') // Trim - from start of text
+            .replace(/-+$/, ''); // Trim - from end of text
     }
     /**
      * fetch existing pubic key of SSH Keypair from container
@@ -1296,15 +1325,23 @@ class VFolder {
      *
      * @param {string} path - Directory path to create.
      * @param {string} name - Virtual folder name.
+     * @param {string} parents - create parent folders when not exists (>=APIv6).
+     * @param {string} exist_ok - Do not raise error when the folder already exists (>=APIv6).
      */
-    async mkdir(path, name = null) {
+    async mkdir(path, name = null, parents = null, exist_ok = null) {
         if (name == null) {
             name = this.name;
         }
-        let body = {
+        const body = {
             'path': path
         };
-        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
+        if (parents) {
+            body['parents'] = parents;
+        }
+        if (exist_ok) {
+            body['exist_ok'] = exist_ok;
+        }
+        const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
         return this.client._wrapWithPromise(rqst);
     }
     /**
@@ -1351,26 +1388,32 @@ class VFolder {
         return this.client._wrapWithPromise(rqst);
     }
     /**
-     * Download file in a Virtual folder.
+     * Download file from a Virtual folder.
      *
      * @param {string} file - File to download. Should contain full path.
      * @param {string} name - Virtual folder name that files are in.
+     * @param {boolean} archive - Download target directory as an archive.
+     * @param {boolean} noCache - If true, do not store the file response in any cache. New in API v6.
      */
-    async download(file, name = false, archive = false) {
-        let params = {
-            file,
-            archive
-        };
-        let q = querystring.stringify(params);
-        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
-        return this.client._wrapWithPromise(rqst, true);
+    async download(file, name = false, archive = false, noCache = false) {
+        const params = { file, archive };
+        const q = querystring.stringify(params);
+        if (this.client._apiVersionMajor < 6) {
+            const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
+            return this.client._wrapWithPromise(rqst, true);
+        }
+        else {
+            const res = await this.request_download_token(file, name);
+            const downloadUrl = `${res.url}?token=${res.token}&archive=${archive}&no_cache=${noCache}`;
+            return fetch(downloadUrl);
+        }
     }
     /**
      * Request a download and get the token for direct download.
      *
      * @param {string} file - File to download. Should contain full path.
      * @param {string} name - Virtual folder name that files are in.
-     * @param {string} archive - Download target directory as an archive.
+     * @param {boolean} archive - Download target directory as an archive.
      */
     async request_download_token(file, name = false, archive = false) {
         let body = {
@@ -2171,23 +2214,17 @@ class ComputeSession {
      * get compute session with specific condition.
      *
      * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
-     * @param {string} sessionName - session name to query specific compute session.
-     * @param {string} domainName - domain name to query specific compute session.
-     * @param {string} accessKey - access key that is used to start compute sessions.
+     * @param {string} sessionUuid - session ID to query specific compute session.
      */
-    async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], sessionName = '', domainName = '', accessKey = '') {
+    async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], sessionUuid = '') {
         fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
         let q, v;
-        q = `query($ak:String, $domain_name:String, $session_name:String!) {
-      compute_session(access_key:$ak, domain_name:$domain_name, sess_id:$session_name) {
+        q = `query($session_uuid: UUID!) {
+      compute_session(id:$session_uuid) {
         ${fields.join(" ")}
       }
     }`;
-        v = {
-            'ak': accessKey,
-            'domain_name': domainName,
-            'session_name': sessionName
-        };
+        v = { session_uuid: sessionUuid };
         return this.client.query(q, v);
     }
 }

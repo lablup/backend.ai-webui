@@ -10,7 +10,7 @@ export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const navigate = (path: any, params: Object = {}) => (dispatch: any) => {
   // Extract the page name from path.
-  if (['/summary', '/job', '/data', '/statistics', '/usersettings', //'/experiment',
+  if (['/summary', '/job', '/pipeline', '/experiment', '/data', '/statistics', '/usersettings',
     '/agent', '/resource', '/user', '/credential', '/environment', '/settings',
     '/maintenance', '/information', '/github', '/import'].includes(path) !== true) { // Fallback for Electron Shell/Windows OS
     let fragments = path.split(/[\/]+/);
@@ -55,6 +55,9 @@ const loadPage = (page, params: Object = {}) => (dispatch) => {
       break;
     case 'job':
       import('./components/backend-ai-session-view.js');
+      break;
+    case 'pipeline':
+      import('./components/backend-ai-pipeline-view.js');
       break;
     /* case 'experiment':
       import('./components/backend-ai-experiment-view.js');
