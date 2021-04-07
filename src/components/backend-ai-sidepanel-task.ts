@@ -1,17 +1,16 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import '../plastics/mwc/mwc-drawer';
-import '@material/mwc-dialog';
 import '@material/mwc-icon';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 
 import {BackendAIPage} from './backend-ai-page';
-import {BackendAiConsoleStyles} from './backend-ai-console-styles';
+import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 import {
   IronFlex,
   IronFlexAlignment,
@@ -20,12 +19,12 @@ import {
 } from "../plastics/layout/iron-flex-layout-classes";
 
 /**
- Backend.AI Sidepanel task viewer for Console
+ Backend.AI Sidepanel task viewer for Web UI
 
- `backend-ai-sidepanel-task` is a sidepanel task viewer for console.
+ `backend-ai-sidepanel-task` is a sidepanel task viewer for web UI.
 
  Example:
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-sidepanel-task
  */
 @customElement("backend-ai-sidepanel-task")
@@ -36,7 +35,7 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
   @property({type: Array}) tasks = Array();
 
   /**
-   *  Backend.AI Task manager for Console
+   *  Backend.AI Task manager for Web UI
    *
    */
   constructor() {
@@ -45,7 +44,7 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
 
   static get styles() {
     return [
-      BackendAiConsoleStyles,
+      BackendAIWebUIStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,

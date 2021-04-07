@@ -2,7 +2,7 @@
 #apiEndpoint =
 #apiEndpointText =
 #defaultSessionEnvironment =
-siteDescription = "Console"
+siteDescription = "Web UI"
 connectionMode = "SESSION" #connectionMode = API
 allowChangeSigninMode = false # Allows user to change signin mode
 allowSignout = true
@@ -12,6 +12,11 @@ debug = false
 allowProjectResourceMonitor = false
 AllowBetaFeatures = false
 
+[resources]
+openPortToPublic = false
+maxCPUCoresPerSession = 64
+maxCUDADevicesPerSession = 16
+maxShmPerSession = 2
 
 [menu]
 blocklist = "summary,statistics" # Separated by comma.
@@ -24,7 +29,7 @@ autoPortSelection = true
 disableCertCheck = true
 
 [server]
-consoleServerURL =
+webServerURL =
 
 [plugin]
 #login = "signup-cloud.js"

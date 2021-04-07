@@ -1,9 +1,9 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t, translateUnsafeHTML as _tr, get as _text} from "lit-translate";
+import {get as _text, translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
@@ -15,15 +15,14 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
+import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
-import 'weightless/card';
-import 'weightless/switch';
-import 'weightless/select';
+import './lablup-activity-panel';
 import {default as PainKiller} from "./backend-ai-painkiller";
 
 /**
@@ -35,7 +34,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
  ...
  </backend-ai-settings-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-storage-list
  */
 
@@ -49,6 +48,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
     {name: _text("settings.image.tag"), behavior: "tag"},
     {name: _text("settings.image.none"), behavior: "none"}
   ];
+  @property({type: Array}) jobschedulerType = [
+    'fifo', 'lifo', 'drf'];
 
   constructor() {
     super();
@@ -81,32 +82,51 @@ export default class BackendAiSettingsView extends BackendAIPage {
           margin-right: 5px;
         }
 
+        div.title {
+          font-size: 14px;
+          font-weight: bold;
+        }
+
         div.description,
         span.description {
-          font-size: 11px;
+          font-size: 13px;
           margin-top: 5px;
           margin-right: 5px;
+          max-width: 500px;
+        }
+
+        div.description-shrink {
+          font-size: 13px;
+          margin-top: 5px;
+          margin-right: 5px;
+          width: 260px;
+        }
+
+        div.description-extra {
+          font-size: 13px;
+          margin-top: 5px;
+          margin-right: 5px;
+          max-width: 500px;
         }
 
         .setting-item {
-          margin: 15px 10px;
-          width: 340px;
+          margin: 15px 10px 15px 0px;
+          width: auto;
         }
 
-        .setting-desc {
-          width: 300px;
+        .setting-desc, .setting-desc-select {
+          float: left;
+          width: 100%;
+        }
+
+        .setting-desc-shrink {
+          float: left;
+          width: auto;
         }
 
         .setting-button {
+          float: right;
           width: 35px;
-        }
-
-        .setting-select-desc {
-          width: 200px;
-        }
-
-        .setting-select {
-          width: 135px;
         }
 
         .setting-desc-pulldown {
@@ -117,8 +137,49 @@ export default class BackendAiSettingsView extends BackendAIPage {
           width: 70px;
         }
 
-        wl-card > div {
-          padding: 15px;
+        lablup-activity-panel {
+          color: #000;
+        }
+
+        mwc-select {
+          font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
+          --mdc-theme-primary: var(--general-sidebar-color);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-focused-dropdown-icon-color: var(--general-sidebar-color);
+          --mdc-select-disabled-dropdown-icon-color: var(--general-sidebar-color);
+          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
+          --mdc-select-hover-line-color: var(--general-sidebar-color);
+          --mdc-select-outlined-idle-border-color: var(--general-sidebar-color);
+          --mdc-select-outlined-hover-border-color: var(--general-sidebar-color);
+          --mdc-theme-surface: white;
+          --mdc-list-vertical-padding: 5px;
+          --mdc-list-side-padding: 25px;
+          --mdc-list-item__primary-text: {
+            height: 20px;
+          };
+        }
+
+        @media screen and (max-width: 750px) {
+          .setting-desc, .setting-desc-shrink {
+            width: 275px;
+          }
+
+          .setting-desc-select {
+            width: 190px;
+          }
+
+          div.description-shrink {
+            width: auto;
+          }
+
+        }
+
+        @media screen and (min-width: 1400px) {
+          div.description-extra {
+            max-width: 100%;
+          }
         }
       `];
   }
@@ -126,160 +187,171 @@ export default class BackendAiSettingsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <wl-card elevation="1">
-        <h3 class="horizontal center layout">
-          <span>${_t("settings.General")}</span>
-          <span class="flex"></span>
-        </h3>
-        <h4 class="horizontal center layout">
-          <span>${_t("settings.Image")}</span>
-          <span class="flex"></span>
-        </h4>
-        <div class="horizontal wrap layout">
-          <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("settings.RegisterNewImagesFromRepo")}</div>
-              <div class="description">${_t("settings.DescRegisterNewImagesFromRepo")}
+      <div class="horizontal layout wrap">
+        <lablup-activity-panel title="${_t("settings.Image")}" autowidth>
+          <div slot="message" class="horizontal wrap layout">
+            <div class="horizontal layout setting-item">
+              <div class="vertical center-justified layout setting-desc">
+                <div class="title">${_t("settings.RegisterNewImagesFromRepo")}</div>
+                <div class="description">${_t("settings.DescRegisterNewImagesFromRepo")}
+                </div>
+              </div>
+              <div class="vertical center-justified layout setting-button">
+                <mwc-switch id="register-new-image-switch" disabled></mwc-switch>
               </div>
             </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="register-new-image-switch" disabled></wl-switch>
-            </div>
-          </div>
-          <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-select-desc">
-              <div>${_t("settings.ImagePullBehavior")}</div>
-              <div class="description">${_tr("settings.DescImagePullBehavior")}<br />
-                  ${_t("settings.Require2003orAbove")}
+            <div class="horizontal layout setting-item">
+              <div class="vertical center-justified layout setting-desc-select">
+                <div class="title">${_t("settings.ImagePullBehavior")}</div>
+                <div class="description-extra">${_tr("settings.DescImagePullBehavior")}<br />
+                    ${_t("settings.Require2003orAbove")}
+                </div>
+              </div>
+              <div class="vertical center-justified layout">
+                <mwc-select id="ui-image-pulling-behavior"
+                            required
+                            outlined
+                            style="width:120px;"
+                            @selected="${(e) => this.setImagePullingBehavior(e)}">
+                ${this.imagePullingBehavior.map(item => html`
+                  <mwc-list-item value="${item.behavior}"
+                                 ?selected=${this.options['image_pulling_behavior'] === item.behavior}>
+                    ${item.name}
+                  </mwc-list-item>`)}
+                </mwc-select>
               </div>
             </div>
-            <div class="vertical center-justified layout setting-select">
-              <mwc-select id="ui-image-pulling-behavior"
-                          required
-                          @selected="${(e) => this.setImagePullingBehavior(e)}">
-              ${this.imagePullingBehavior.map(item => html`
-                <mwc-list-item value="${item.behavior}" ?selected=${this.options['image_pulling_behavior'] === item.behavior}>
-                  ${item.name}
-                </mwc-list-item>`)}
-              </mwc-select>
-            </div>
-
           </div>
-        </div>
-        <h4 class="horizontal center layout">
-          <span>${_t("settings.GUI")}</span>
-          <span class="flex"></span>
-        </h4>
-        <div class="horizontal wrap layout">
-          <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("settings.UseCLIonGUI")}</div>
-              <div class="description">${_tr("settings.DescUseCLIonGUI")}
+        </lablup-activity-panel>
+        <lablup-activity-panel title="${_t("settings.GUI")}" autowidth>
+          <div slot="message" class="horizontal wrap layout">
+            <div class="horizontal layout setting-item">
+              <div class="vertical center-justified layout setting-desc-shrink">
+                <div class="title">${_t("settings.UseCLIonGUI")}</div>
+                <div class="description-shrink">${_tr("settings.DescUseCLIonGUI")}
+                </div>
+              </div>
+              <div class="vertical center-justified layout setting-button">
+                <mwc-switch id="use-cli-on-gui-switch" disabled></mwc-switch>
               </div>
             </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="use-cli-on-gui-switch" disabled></wl-switchdisabled>
-            </div>
-          </div>
-          <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("settings.UseGUIonWeb")}</div>
-              <div class="description">${_tr("settings.DescUseGUIonWeb")}
+            <div class="horizontal layout setting-item">
+              <div class="vertical center-justified layout setting-desc-shrink">
+                <div class="title">${_t("settings.UseGUIonWeb")}</div>
+                <div class="description-shrink">${_tr("settings.DescUseGUIonWeb")}
+                </div>
+              </div>
+              <div class="vertical center-justified layout setting-button">
+                <mwc-switch id="use-gui-on-web-switch" disabled></mwc-switch>
               </div>
             </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="use-gui-on-web-switch" disabled></wl-switch>
-            </div>
           </div>
-        </div>
-        <div class="horizontal wrap layout" style="background-color:#FFFBE7;padding: 5px 15px;">
-          ${_t("settings.NoteAboutFixedSetup")}
-        </div>
-        <h3 class="horizontal center layout">
-            <span>${_t("settings.Scaling")}</span>
-            <span class="flex"></span>
-        </h3>
-        <div class="horizontal wrap layout">
-          <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("settings.AllowAgentSideRegistration")}</div>
-              <div class="description">${_tr("settings.DescAllowAgentSideRegistration")}
+        </lablup-activity-panel>
+        <lablup-activity-panel title="${_t("settings.Scaling")} & ${_t("settings.Plugins")}" narrow autowidth>
+          <div slot="message" class="vertical wrap layout">
+            <div class="horizontal wrap layout note" style="background-color:#FFFBE7;width:100%;padding:10px 0px;">
+              <p style="margin:auto 10px;">
+                ${_t("settings.NoteAboutFixedSetup")}
+              </p>
+            </div>
+            <div style="margin:auto 16px;">
+                <h3 class="horizontal center layout">
+                <span>${_t("settings.Scaling")}</span>
+                <span class="flex"></span>
+              </h3>
+              <div class="horizontal wrap layout">
+                <div class="horizontal layout wrap setting-item">
+                  <div class="vertical center-justified layout setting-desc-shrink">
+                    <div class="title">${_t("settings.AllowAgentSideRegistration")}</div>
+                    <div class="description-shrink">${_tr("settings.DescAllowAgentSideRegistration")}
+                    </div>
+                  </div>
+                  <div class="vertical center-justified layout setting-button">
+                    <mwc-switch id="allow-agent-registration-switch" checked disabled></mwc-switch>
+                  </div>
+                </div>
+              </div>
+              <h3 class="horizontal center layout">
+                <span>${_t("settings.Plugins")}</span>
+                <span class="flex"></span>
+              </h3>
+              <div class="vertical layout wrap">
+                <div class="horizontal layout wrap start start-justified">
+                  <div class="horizontal layout setting-item">
+                    <div class="vertical center-justified layout setting-desc-shrink">
+                      <div class="title">${_t("settings.CUDAGPUsupport")}</div>
+                      <div class="description-shrink">${_tr("settings.DescCUDAGPUsupport")}
+                        ${this.options['cuda_fgpu'] ? html`<br />${_t("settings.CUDAGPUdisabledByFGPUsupport")}` : html``}
+                      </div>
+                    </div>
+                    <div class="vertical center-justified layout setting-button">
+                      <mwc-switch id="cuda-gpu-support-switch" ?checked="${this.options['cuda_gpu']}" disabled></mwc-switch>
+                    </div>
+                  </div>
+                  <div class="horizontal layout setting-item">
+                    <div class="vertical center-justified layout setting-desc-shrink">
+                      <div class="title">${_t("settings.ROCMGPUsupport")}</div>
+                      <div class="description-shrink">${_tr("settings.DescROCMGPUsupport")}<br />${_t("settings.Require1912orAbove")}
+                      </div>
+                    </div>
+                    <div class="vertical center-justified layout setting-button">
+                      <mwc-switch id="rocm-gpu-support-switch" ?checked="${this.options['rocm_gpu']}" disabled></mwc-switch>
+                    </div>
+                  </div>
+                  <div class="horizontal layout setting-item">
+                    <div class="vertical center-justified layout setting-desc-select" style="margin: 15px 0px;">
+                      <div class="title">${_t("settings.Scheduler")}</div>
+                      <div class="description-shrink">${_t("settings.JobScheduler")}<br/>
+                          ${_t("settings.Require1912orAbove")}
+                      </div>
+                    </div>
+                    <div class="vertical layout center-justified">
+                      <mwc-select id="scheduler-switch"
+                                  required
+                                  outlined
+                                  @selected="${(e) => this.changeScheduler(e)}"
+                                  label=""
+                                  style="width:130px;">
+                        ${this.jobschedulerType.map(item => html`
+                          <mwc-list-item value="${item}"
+                                        ?selected=${this.options['scheduler'] === item}>
+                            ${item}
+                          </mwc-list-item>`)}
+                      </mwc-select>
+                    </div>
+                  </div>
+                </div>
+                <h3 class="horizontal center layout">
+                  <span>${_t("settings.EnterpriseFeatures")}</span>
+                  <span class="flex"></span>
+                </h3>
+                <div class="horizontal wrap layout">
+                  <div class="horizontal layout setting-item">
+                    <div class="vertical center-justified layout setting-desc-shrink">
+                      <div class="title">${_t("settings.FractionalGPU")}</div>
+                      <div class="description-shrink">${_t("settings.DescFractionalGPU")} <br/> ${_t("settings.RequireFGPUPlugin")}
+                      </div>
+                    </div>
+                    <div class="vertical center-justified layout setting-button">
+                      <mwc-switch id="fractional-gpu-switch" ?checked="${this.options['cuda_fgpu']}" disabled></mwc-switch>
+                    </div>
+                  </div>
+                  <div class="horizontal layout setting-item">
+                    <div class="vertical center-justified layout setting-desc-shrink">
+                      <div class="title">${_t("settings.TPU")}</div>
+                      <div class="description-shrink">${_t("settings.DescTPU")} <br/>${_t("settings.RequireTPUPlugin")}
+                      </div>
+                    </div>
+                    <div class="vertical center-justified layout setting-button">
+                      <mwc-switch id="tpu-switch" ?checked="${this.options['tpu']}" disabled></mwc-switch>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="allow-agent-registration-switch" checked disabled></wl-switch>
-            </div>
           </div>
-        </div>
-        <h3 class="horizontal center layout">
-            <span>${_t("settings.Plugins")}</span>
-            <span class="flex"></span>
-        </h3>
-        <div class="horizontal wrap layout">
-          <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("settings.CUDAGPUsupport")}</div>
-              <div class="description">${_tr("settings.DescCUDAGPUsupport")}
-              ${this.options['cuda_fgpu'] ? html`<br />${_t("settings.CUDAGPUdisabledByFGPUsupport")}` : html``}
-              </div>
-            </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="cuda-gpu-support-switch" ?checked="${this.options['cuda_gpu']}" disabled></wl-switch>
-            </div>
-          </div>
-          <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("settings.ROCMGPUsupport")}</div>
-              <div class="description">${_tr("settings.DescROCMGPUsupport")}<br />${_t("settings.Require1912orAbove")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="rocm-gpu-support-switch" ?checked="${this.options['rocm_gpu']}" disabled></wl-switch>
-            </div>
-          </div>
-          <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc-pulldown">
-              <div>${_t("settings.Scheduler")}</div>
-              <div class="description">${_t("settings.JobScheduler")}<br/>
-                  ${_t("settings.Require1912orAbove")}
-              </div>
-            </div>
-            <div class="vertical layout setting-pulldown">
-              <wl-select name="scheduler-switch" id="scheduler-switch" required @change="${(e) => this.changeScheduler(e)}">
-                <option value="fifo" ?selected="${this.options['scheduler'] === "fifo"}">FIFO</option>
-                <option value="lifo" ?selected="${this.options['scheduler'] === "lifo"}">LIFO</option>
-                <option value="drf" ?selected="${this.options['scheduler'] === "drf"}">DRF</option>
-              </wl-select>
-            </div>
-          </div>
-        </div>
-        <h3 class="horizontal center layout">
-          <span>${_t("settings.EnterpriseFeatures")}</span>
-          <span class="flex"></span>
-        </h3>
-        <div class="horizontal wrap layout">
-          <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("settings.FractionalGPU")}</div>
-              <div class="description">${_t("settings.DescFractionalGPU")} <br/> ${_t("settings.RequireFGPUPlugin")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="fractional-gpu-switch" ?checked="${this.options['cuda_fgpu']}" disabled></wl-switch>
-            </div>
-          </div>
-          <div class="horizontal layout wrap setting-item">
-            <div class="vertical center-justified layout setting-desc">
-              <div>${_t("settings.TPU")}</div>
-              <div class="description">${_t("settings.DescTPU")} <br/>${_t("settings.RequireTPUPlugin")}
-              </div>
-            </div>
-            <div class="vertical center-justified layout setting-button">
-              <wl-switch id="tpu-switch" ?checked="${this.options['tpu']}" disabled></wl-switch>
-            </div>
-          </div>
-        </div>
-      </wl-card>
+        </lablup-activity-panel>
+      </div>
     `;
   }
 

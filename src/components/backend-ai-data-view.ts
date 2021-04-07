@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
@@ -8,14 +8,13 @@ import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import '@polymer/paper-item/paper-item';
-import './lablup-loading-spinner';
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-
 import '@material/mwc-list/mwc-list-item';
 import '../plastics/mwc/mwc-multi-select';
 import '@material/mwc-textfield';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
+import '@material/mwc-icon-button';
+import '@material/mwc-button';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -27,11 +26,14 @@ import 'weightless/tab';
 import 'weightless/title';
 import 'weightless/tab-group';
 import 'weightless/textfield';
-import '@material/mwc-icon-button';
 
 import '../plastics/lablup-shields/lablup-shields';
+import "../plastics/chart-js";
 import './backend-ai-dialog';
 import './backend-ai-storage-list';
+import './lablup-activity-panel';
+import './lablup-loading-spinner';
+
 import {default as PainKiller} from './backend-ai-painkiller';
 
 import {BackendAiStyles} from "./backend-ai-general-styles";
@@ -46,9 +48,10 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
  ... content ...
  </backend-ai-data-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-data-view
  */
+
 
 @customElement("backend-ai-data-view")
 export default class BackendAIData extends BackendAIPage {
@@ -75,6 +78,11 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
+  @property({type: Object}) options;
+  @property({type: Number}) createdCount;
+  @property({type: Number}) invitedCount;
+  @property({type: Number}) totalCount;
+  @property({type: Number}) capacity;
 
   constructor() {
     super();
@@ -120,11 +128,6 @@ export default class BackendAIData extends BackendAIPage {
           width: 350px;
         }
 
-        mwc-icon-button.tiny {
-          width: 35px;
-          height: 35px;
-        }
-
         wl-card.item {
           height: calc(100vh - 145px) !important;
         }
@@ -142,6 +145,19 @@ export default class BackendAIData extends BackendAIPage {
 
         mwc-textfield.red {
           --mdc-theme-primary: var(--paper-red-400) !important;
+        }
+
+        h3.tab {
+          background-color: var(--general-tabbar-background-color);
+          border-radius: 5px 5px 0px 0px;
+          margin: 0px auto;
+        }
+
+        mwc-tab-bar {
+          --mdc-theme-primary: var(--general-sidebar-selected-color);
+          --mdc-text-transform: none;
+          --mdc-tab-color-default: var(--general-tabbar-background-color);
+          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
         }
 
         wl-tab-group {
@@ -198,11 +214,11 @@ export default class BackendAIData extends BackendAIPage {
           width: 180px;
           --mdc-select-min-width: 180px;
           margin-bottom: 10px;
-          --mdc-theme-primary: var(--paper-orange-600);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: var(--paper-orange-400);
-          --mdc-select-hover-line-color: var(--paper-orange-600);
+          --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
+          --mdc-select-hover-line-color: var(--general-textfield-selected-color);
           --mdc-list-vertical-padding: 5px;
         }
 
@@ -216,6 +232,41 @@ export default class BackendAIData extends BackendAIPage {
 
         mwc-multi-select mwc-icon-button {
           --mdc-icon-button-size: 24px;
+          color: var(--general-textfield-selected-color);
+        }
+
+        #automount-folder-lists > div {
+          background-color: white;
+          color: var(--general-textfield-selected-color);
+          border-bottom:0.5px solid var(--general-textfield-selected-color);
+        }
+
+        #automount-folder-lists > div > p {
+          color: var(--general-sidebar-color);
+          margin-left: 10px;
+        }
+
+        @media screen and (max-width: 750px) {
+          mwc-tab {
+            --mdc-typography-button-font-size: 10px;
+          }
+
+          mwc-button > span {
+            display: none;
+          }
+        }
+
+        .storage-status-indicator {
+          width: 90px;
+          color: black;
+        }
+
+        div.big {
+          font-size: 72px;
+        }
+
+        .storage-chart-wrapper {
+          margin: 20px 50px 0px 50px;
         }
 
       `];
@@ -225,42 +276,70 @@ export default class BackendAIData extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <wl-card class="item" elevation="1" style="padding-bottom:20px;">
-        <h3 class="horizontal center flex layout tab">
-          <wl-tab-group>
-            <wl-tab value="general-folder" checked @click="${(e) => this._showTab(e.target)}">${_t("data.Folders")}</wl-tab>
-            <wl-tab value="automount-folder" @click="${(e) => this._showTab(e.target)}">${_t("data.AutomountFolders")}</wl-tab>
-            <wl-tab value="shared-folder" disabled>${_t("data.SharedData")}</wl-tab>
-            <wl-tab value="model" disabled>${_t("data.Models")}</wl-tab>
-          </wl-tab-group>
-          <span class="flex"></span>
-          <wl-button class="fg red" id="add-folder" outlined @click="${() => this._addFolderDialog()}">
-            <wl-icon>add</wl-icon>
-            ${_t("data.NewFolder")}
-          </wl-button>
-        </h3>
-        <div id="general-folder-lists" class="tab-content">
-          <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
-        </div>
-        <div id="automount-folder-lists" class="tab-content" style="display:none;">
-          <p>${_t("data.DialogFolderStartingWithDotAutomount")}</p>
-          <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
-        </div>
-      </wl-card>
+      <div class="vertical layout" style="margin:20px;">
+        <lablup-activity-panel elevation="1" narrow title=${_t('data.StorageStatus')} autowidth>
+          <div slot="message">
+            <div class="horizontal layout wrap flex center center-justified">
+              <div class="storage-chart-wrapper">
+                <chart-js id="storage-status" type="doughnut" .data="${this.folders}" .options="${this.options}" height="250" width="250"></chart-js>
+              </div>
+              <div class="horizontal layout justified">
+                <div class="vertical layout center storage-status-indicator">
+                  <div class="big">${this.createdCount}</div>
+                  <span>${_t('data.Created')}</span>
+                </div>
+                <div class="vertical layout center storage-status-indicator">
+                  <div class="big">${this.invitedCount}</div>
+                  <span>${_t('data.Invited')}</span>
+                </div>
+                <div class="vertical layout center storage-status-indicator">
+                  <div class="big">${this.capacity}</div>
+                  <span>${_t('data.Capacity')}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </lablup-activity-panel>
+        <lablup-activity-panel elevation="1" noheader narrow autowidth>
+          <div slot="message">
+            <h3 class="horizontal center flex layout tab">
+              <mwc-tab-bar>
+                <mwc-tab title="general-folder" label="${_t("data.Folders")}"
+                    @click="${(e) => this._showTab(e.target)}">
+                </mwc-tab>
+                <mwc-tab title="automount-folder" label="${_t("data.AutomountFolders")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              </mwc-tab-bar>
+              <span class="flex"></span>
+              <mwc-button dense raised id="add-folder" icon="add" @click="${() => this._addFolderDialog()}" style="margin-right:15px;">
+                <span>${_t("data.NewFolder")}</span>
+              </mwc-button>
+            </h3>
+            <div id="general-folder-lists" class="tab-content">
+              <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
+            </div>
+            <div id="automount-folder-lists" class="tab-content" style="display:none;">
+              <div class="horizontal layout">
+                <p>${_t("data.DialogFolderStartingWithDotAutomount")}</p>
+              </div>
+              <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
+            </div>
+          </div>
+        </lablup-activity-panel>
+      </div>
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t("data.CreateANewStorageFolder")}</span>
         <div slot="content">
-          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}" pattern="[a-zA-Z0-9_-.]+"
-              auto-validate required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}"></mwc-textfield>
+          <mwc-textfield id="add-folder-name" label="${_t("data.Foldername")}"
+          @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
+            required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}" maxLength="64"
+            placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
           <div class="horizontal layout">
             <mwc-multi-select id="add-folder-host" label="${_t("data.Host")}">
               ${this.vhosts.map((item, idx) => html`
                 <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
                   <span>${item}</span>
-                  <mwc-icon-button slot="meta" icon="info" class="fg orange info"
-                      @click="${(e) => {
-      this._showStorageDescription(e, item);
-    }}">
+                  <mwc-icon-button slot="meta" icon="info"
+                      @click="${(e) => this._showStorageDescription(e, item)}">
                   </mwc-icon-button>
                 </mwc-list-item>
               `)}
@@ -301,11 +380,14 @@ export default class BackendAIData extends BackendAIPage {
             ${_t("data.DialogFolderStartingWithDotAutomount")}
           </div>
         </div>
-        <div slot="footer">
-          <wl-button class="blue button" type="button" id="add-button" outlined @click="${() => this._addFolder()}">
-            <wl-icon>rowing</wl-icon>
-             ${_t("data.Create")}
-          </wl-button>
+        <div slot="footer" class="horizontal flex">
+          <mwc-button
+              unelevated
+              id="add-button"
+              icon="rowing"
+              label="${_t("data.Create")}"
+              style="width:100%;"
+              @click="${() => this._addFolder()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="help-description" fixed backdrop>
@@ -353,6 +435,23 @@ export default class BackendAIData extends BackendAIPage {
         this.storageInfo = storageInfo;
       }
     );
+    this.options = {
+      responsive: true,
+      maintainAspectRatio: true,
+      legend: {
+        display: true,
+        position: 'bottom',
+        align: 'center',
+        labels: {
+          fontSize: 20,
+          boxWidth: 10,
+        }
+      }
+    }
+    document.addEventListener('backend-ai-folder-list-changed', () => {
+      // this.shadowRoot.querySelector('#storage-status').updateChart();
+      this._createStorageChart();
+    });
   }
 
   /**
@@ -381,10 +480,49 @@ export default class BackendAIData extends BackendAIPage {
     if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         _init();
+        this._createStorageChart();
       }, true);
     } else {
       _init();
+      this._createStorageChart();
     }
+  }
+
+  /***
+   * create Storage Doughnut Chart
+   * 
+   */
+  async _createStorageChart() {
+    let accessKey = globalThis.backendaiclient._config.accessKey;
+    let res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
+    let policyName = res.keypair.resource_policy;
+    let resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count']);
+    let max_vfolder_count = resource_policy.keypair_resource_policy.max_vfolder_count;
+    let groupId = globalThis.backendaiclient.current_group_id();
+    let folders = await globalThis.backendaiclient.vfolder.list(groupId);
+    this.createdCount = folders.filter(item => item.is_owner).length;
+    this.invitedCount = folders.length - this.createdCount;
+    this.capacity = (this.createdCount < max_vfolder_count ? (max_vfolder_count - this.createdCount) : 0)
+    this.totalCount = this.capacity + this.createdCount + this.invitedCount;
+    this.folders = {
+      labels: [
+          _text('data.Created'),
+          _text('data.Invited'),
+          _text('data.Capacity')
+      ],
+      datasets: [{
+        data: [
+          this.createdCount,
+          this.invitedCount,
+          this.capacity
+        ],
+        backgroundColor: [
+          '#722cd7',
+          '#60bb43',
+          '#efefef'
+        ]
+      }]
+    };
   }
 
   /**
@@ -397,11 +535,11 @@ export default class BackendAIData extends BackendAIPage {
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.value + '-lists').style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.title + '-lists').style.display = 'block';
     for (let x = 0; x < this._lists.length; x++) {
       this._lists[x].removeAttribute('active');
     }
-    this.shadowRoot.querySelector('#' + tab.value + '-storage').setAttribute('active', true);
+    this.shadowRoot.querySelector('#' + tab.title + '-storage').setAttribute('active', true);
   }
 
   /**
@@ -502,9 +640,8 @@ export default class BackendAIData extends BackendAIPage {
         this.notification.show();
         this._refreshFolderList();
       }).catch(err => {
-        console.log(err);
         if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.text = PainKiller.relieve(err.message);
           this.notification.detail = err.message;
           this.notification.show(true, err);
         }
@@ -512,6 +649,45 @@ export default class BackendAIData extends BackendAIPage {
       this.closeDialog('add-folder-dialog');
     } else {
       return;
+    }
+  }
+
+  /**
+   * Validate folder name.
+   */
+  _validateFolderName() {
+    const folderName = this.shadowRoot.querySelector('#add-folder-name');
+    folderName.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          folderName.validationMessage = _text('data.FolderNameRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else {
+          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        // custom validation for folder name using regex
+        let regex = /[`~!@#$%^&*()|+=?;:'",<>\{\}\[\]\\\/\s]/gi;
+        let isValid = !regex.test(folderName.value);
+        if (!isValid) {
+          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+        }
+        if (folderName.value.length > 64) {
+          isValid = false;
+          folderName.validationMessage = _text('data.FolderNameTooLong');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
     }
   }
 

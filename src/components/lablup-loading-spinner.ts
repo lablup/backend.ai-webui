@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html, LitElement, property} from "lit-element";
@@ -15,7 +15,7 @@ import 'weightless/progress-spinner';
 
  <lablup-loading-spinner></lablup-loading-spinner>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element lablup-loading-spinner
  */
 

@@ -3,7 +3,7 @@
 Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.8.1)
 ====================================================================
 
-(C) Copyright 2016-2020 Lablup Inc.
+(C) Copyright 2016-2021 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
@@ -38,7 +38,7 @@ class ClientConfig {
    * @param {string} accessKey - access key to connect Backend.AI manager
    * @param {string} secretKey - secret key to connect Backend.AI manager
    * @param {string} endpoint  - endpoint of Backend.AI manager
-   * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires console-server.
+   * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires webserver.
    */
   constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
     // default configs.
@@ -155,6 +155,7 @@ class Client {
   public group: Group;
   public domain: Domain;
   public resources: Resources;
+  public storageproxy: StorageProxy;
   public maintenance: Maintenance;
   public scalingGroup: ScalingGroup;
   public registry: Registry;
@@ -185,7 +186,7 @@ class Client {
     this.code = null;
     this.sessionId = null;
     this.kernelType = null;
-    this.clientVersion = '20.8.1';
+    this.clientVersion = '20.11.0';
     this.agentSignature = agentSignature;
     if (config === undefined) {
       this._config = ClientConfig.createFromEnv();
@@ -210,6 +211,7 @@ class Client {
     this.group = new Group(this);
     this.domain = new Domain(this);
     this.resources = new Resources(this);
+    this.storageproxy = new StorageProxy(this);
     this.maintenance = new Maintenance(this);
     this.scalingGroup = new ScalingGroup(this);
     this.registry = new Registry(this);
@@ -249,11 +251,13 @@ class Client {
    * @param {Boolean} rawFile - True if it is raw request
    * @param {AbortController.signal} signal - Request signal to abort fetch
    * @param {number} timeout - Custom timeout (sec.) If no timeout is given, default timeout is used.
+   * @param {number} retry - an integer to retry this request
    */
-  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0) {
+  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0, retry: number = 0) {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
+    let errorDesc = '';
     let resp, body, requestTimer;
 
     try {
@@ -304,6 +308,10 @@ class Client {
         throw body;
       }
     } catch (err) {
+      if (retry > 0) {
+        await new Promise(r => setTimeout(r, 2000)); // Retry after 2 seconds.
+        return this._wrapWithPromise(rqst, rawFile, signal, timeout, retry - 1);
+      }
       let error_message;
       if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
         error_message = err.title; // formatted message
@@ -319,15 +327,18 @@ class Client {
           if (navigator.onLine) {
             errorTitle = error_message;
             errorMsg = `sending request has failed: ${error_message}`;
+            errorDesc = error_message;
           } else {
             errorTitle = "Network disconnected.";
             errorMsg = `sending request has failed: Network disconnected`;
+            errorDesc = 'Network disconnected';
           }
           break;
         case Client.ERR_RESPONSE:
           errorType = 'https://api.backend.ai/probs/client-response-error';
           errorTitle = error_message;
           errorMsg = `reading response has failed: ${error_message}`;
+          errorDesc = error_message;
           break;
         case Client.ERR_SERVER:
           errorType = 'https://api.backend.ai/probs/server-error';
@@ -335,14 +346,17 @@ class Client {
           errorMsg = 'server responded failure: ';
           if (body.msg) {
             errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.msg}`;
+            errorDesc = body.msg;
           } else {
             errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.title}`;
+            errorDesc = body.title;
           }
           break;
         case Client.ERR_ABORT:
           errorType = 'https://api.backend.ai/probs/request-abort-error';
           errorTitle = `Request aborted`;
           errorMsg = 'Request aborted by user';
+          errorDesc = errorMsg;
           resp.status = 408;
           resp.statusText = 'Request aborted by user'
           break;
@@ -350,8 +364,9 @@ class Client {
           errorType = 'https://api.backend.ai/probs/request-timeout-error';
           errorTitle = `Request timeout`;
           errorMsg = 'No response returned during the timeout period';
+          errorDesc = errorMsg;
           resp.status = 408;
-          resp.statusText = 'Timeout exceeded'
+          resp.statusText = 'Timeout exceeded';
           break;
         default:
           if (typeof resp.status === 'undefined') {
@@ -366,6 +381,9 @@ class Client {
           }
           errorMsg = 'server responded failure: '
             + `${resp.status} ${resp.statusText} - ${body.title}`;
+          if (body.title !== '') {
+            errorDesc = body.title;
+          }
       }
       throw {
         isError: true,
@@ -378,13 +396,14 @@ class Client {
         statusText: resp.statusText,
         title: errorTitle,
         message: errorMsg,
+        description: errorDesc
       };
     }
 
-    let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs') as any);
+    let previous_log = JSON.parse(localStorage.getItem('backendaiwebui.logs') as any);
     if (previous_log) {
-      if (previous_log.length > 5000) {
-        previous_log = previous_log.slice(1, 5000);
+      if (previous_log.length > 3000) {
+        previous_log = previous_log.slice(1, 3000);
       }
     }
     let log_stack = Array();
@@ -412,7 +431,23 @@ class Client {
     if(previous_log) {
       log_stack = log_stack.concat(previous_log);
     }
-    localStorage.setItem('backendaiconsole.logs', JSON.stringify(log_stack));
+    try {
+      localStorage.setItem('backendaiwebui.logs', JSON.stringify(log_stack));
+    } catch (e) {
+      console.warn('Local storage is full. Clearing part of the logs.');
+      // localStorage is full, we will keep the recent 2/3 of the logs.
+      let webuiLogs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
+      webuiLogs = webuiLogs.slice(0, Math.round(webuiLogs.length * 2 / 3));
+      localStorage.setItem('backendaiwebui.logs', JSON.stringify(webuiLogs));
+      // Deprecated backendaiconsole.* should also be cleared here.
+      Object.entries(localStorage)
+          .map((x) => x[0])                                // get key
+          .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiconsole
+          .map((x) => localStorage.removeItem(x));         // remove filtered keys
+
+      // Will not throw exception here since the request should be proceeded
+      // even if it is not possible to write log to localStorage.
+    }
 
     return body;
   }
@@ -499,6 +534,13 @@ class Client {
       this._features['group-folder'] = true;
       this._features['system-images'] = true;
       this._features['detailed-session-states'] = true;
+      this._features['change-user-name'] = true;
+    }
+    if (this.isAPIVersionCompatibleWith('v6.20200815')) {
+      this._features['multi-container'] = true;
+      this._features['multi-node'] = true;
+      this._features['storage-proxy'] = true;
+      this._features['hardware-metadata'] = true;
     }
   }
 
@@ -525,7 +567,7 @@ class Client {
   }
 
   /**
-   * Check if console-server is authenticated. This requires additional console-server package.
+   * Check if webserver is authenticated. This requires additional webserver package.
    *
    */
   async check_login() {
@@ -548,7 +590,7 @@ class Client {
   }
 
   /**
-   * Login into console-server with given ID/Password. This requires additional console-server package.
+   * Login into webserver with given ID/Password. This requires additional webserver package.
    *
    */
   async login() {
@@ -570,18 +612,25 @@ class Client {
           return Promise.resolve(false);
         }
       }
-    } catch (err) { // Manager / console server down.
-      throw {
-        "title": "No manager found at API Endpoint.",
-        "message": "Authentication failed. Check information and manager status."
-      };
+    } catch (err) { // Manager / webserver down.
+      if ('statusCode' in err && err.statusCode === 429) {
+        throw {
+          "title": err.description,
+          "message": "Too many failed login attempts."
+        };
+      } else {
+        throw {
+          "title": "No manager found at API Endpoint.",
+          "message": "Authentication failed. Check information and manager status."
+        };
+      }
       //console.log(err);
       //return false;
     }
   }
 
   /**
-   * Logout from console-server. This requires additional console-server package.
+   * Logout from webserver. This requires additional webserver package.
    *
    */
   logout() {
@@ -591,7 +640,7 @@ class Client {
   }
 
   /**
-   * Leave from manager user. This requires additional console-server package.
+   * Leave from manager user. This requires additional webserver package.
    *
    */
   async signout(userid, password) {
@@ -668,20 +717,29 @@ class Client {
       if (resources['cuda.shares']) { // Generalized device information from 20.03
         config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
       }
+      if (resources['rocm']) {
+        config['rocm.device'] = resources['rocm'];
+      }
       if (resources['tpu']) {
         config['tpu.device'] = resources['tpu'];
       }
-      if (resources['env']) {
-        config['environ'] = resources['env'];
+      if (resources['cluster_size']) {
+        params['cluster_size'] = resources['cluster_size'];
       }
-      if (resources['clustersize']) {
-        config['clusterSize'] = resources['clustersize'];
+      if (resources['cluster_mode']) {
+        params['cluster_mode'] = resources['cluster_mode'];
       }
       if (resources['group_name']) {
         params['group_name'] = resources['group_name'];
       }
       if (resources['domain']) {
         params['domain'] = resources['domain'];
+      }
+      if (resources['type']) {
+        params['type'] = resources['type'];
+      }
+      if (resources['startsAt']) {
+        params['starts_at'] = resources['startsAt'];
       }
       if (resources['enqueueOnly']) {
         params['enqueueOnly'] = resources['enqueueOnly'];
@@ -716,6 +774,9 @@ class Client {
         params['config'].resource_opts = {};
         params['config'].resource_opts.shmem = resources['shmem'];
       }
+      if (resources['env']) {
+        params['config'].environ = resources['env'];
+      }
     }
     let rqst;
     if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
@@ -742,16 +803,28 @@ class Client {
   }
 
   /**
-   * Obtain the session information by given sessionId.
+   * Obtain the session container logs by given sessionId.
    *
    * @param {string} sessionId - the sessionId given when created
    * @param {string | null} ownerKey - owner key to access
+   * @param {number} timeout - timeout to wait log query. Set to 0 to use default value.
    */
-  async get_logs(sessionId, ownerKey = null) {
+  async get_logs(sessionId, ownerKey = null, timeout = 0) {
     let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
     }
+    let rqst = this.newSignedRequest('GET', queryString, null);
+    return this._wrapWithPromise(rqst, false, null, timeout);
+  }
+
+  /**
+   * Obtain the batch session (task) logs by given sessionId.
+   *
+   * @param {string} sessionId - the sessionId given when created
+   */
+  getTaskLogs(sessionId) {
+    const queryString = `${this.kernelPrefix}/_/logs?session_name=${sessionId}`;
     let rqst = this.newSignedRequest('GET', queryString, null);
     return this._wrapWithPromise(rqst);
   }
@@ -760,14 +833,18 @@ class Client {
    * Terminate and destroy the kernel session.
    *
    * @param {string} sessionId - the sessionId given when created
+   * @param {string|null} ownerKey - owner key when terminating other users' session
+   * @param {boolean} forced - force destroy session. Requires admin privilege.
    */
-  async destroy(sessionId, ownerKey = null) {
+  async destroy(sessionId, ownerKey = null, forced:boolean = false) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
-    if (ownerKey != null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+    if (ownerKey !== null) {
+      queryString = `${queryString}?owner_access_key=${ownerKey}${forced ? '&forced=true' : ''}`;
+    } else {
+      queryString = `${queryString}${forced ? '?forced=true' : ''}`;
     }
     let rqst = this.newSignedRequest('DELETE', queryString, null);
-    return this._wrapWithPromise(rqst);
+    return this._wrapWithPromise(rqst, false, null, 15000, 2); // 15 sec., two trial when error occurred.
   }
 
   /**
@@ -853,20 +930,27 @@ class Client {
     return this._wrapWithPromise(rqst, true);
   }
 
-  async mangleUserAgentSignature() {
+  mangleUserAgentSignature() {
     let uaSig = this.clientVersion
       + (this.agentSignature ? ('; ' + this.agentSignature) : '');
     return uaSig;
   }
 
-  /* GraphQL requests */
-  async query(q, v, signal = null, timeout: number = 0) {
+  /**
+   * Send GraphQL requests
+   *
+   * @param {string} q - query string for GraphQL
+   * @param {string} v - variable string for GraphQL
+   * @param {number} timeout - Timeout to force terminate request
+   * @param {number} retry - The number of retry when request is failled
+   */
+  async query(q, v, signal = null, timeout: number = 0, retry: number = 0) {
     let query = {
       'query': q,
       'variables': v
     };
     let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
-    return this._wrapWithPromise(rqst, false, signal, timeout);
+    return this._wrapWithPromise(rqst, false, signal, timeout, retry);
   }
 
   /**
@@ -875,9 +959,9 @@ class Client {
    *
    * @param {string} method - the HTTP method
    * @param {string} queryString - the URI path and GET parameters
-   * @param {string} body - an object that will be encoded as JSON in the request body
+   * @param {any} body - an object that will be encoded as JSON in the request body
    */
-  newSignedRequest(method, queryString, body) {
+  newSignedRequest(method: string, queryString, body: any) {
     let content_type = "application/json";
     let requestBody;
     let authBody;
@@ -1017,12 +1101,28 @@ class Client {
     return k2;
   }
 
-  generateSessionId() {
+  generateSessionId(length=8, nosuffix=false) {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < 8; i++)
+    for (var i = 0; i < length; i++)
       text += possible.charAt(Math.floor(Math.random() * possible.length));
-    return text + "-jsSDK";
+    return nosuffix ? text : text + "-jsSDK";
+  }
+
+  slugify(text) {
+    const a = 'àáäâèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;'
+    const b = 'aaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh------'
+    const p = new RegExp(a.split('').join('|'), 'g')
+
+    return text.toString().toLowerCase()
+      .replace(/\s+/g, '-')           // Replace spaces with -
+      .replace(p, c =>
+          b.charAt(a.indexOf(c)))     // Replace special chars
+      .replace(/&/g, '-and-')         // Replace & with 'and'
+      .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+      .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+      .replace(/^-+/, '')             // Trim - from start of text
+      .replace(/-+$/, '')             // Trim - from end of text
   }
 
   /**
@@ -1269,6 +1369,19 @@ class VFolder {
   }
 
   /**
+   * Leave an invited Virtual folder.
+   *
+   * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
+   */
+  async leave_invited(name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/leave`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Upload files to specific Virtual folder.
    *
    * @param {string} path - Path to upload.
@@ -1311,15 +1424,26 @@ class VFolder {
       'path': path,
       'size': fs.size
     };
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/create_upload_session`, body);
+    let rqstUrl;
+    if (this.client._apiVersionMajor < 6) {
+      rqstUrl = `${this.urlPrefix}/${name}/create_upload_session`;
+    } else {
+      rqstUrl = `${this.urlPrefix}/${name}/request-upload`;
+    }
+    const rqst = this.client.newSignedRequest('POST', rqstUrl, body);
     const res = await this.client._wrapWithPromise(rqst);
     const token = res['token'];
-    let url = this.client._config.endpoint;
-    if (this.client._config.connectionMode === 'SESSION') {
-      url = url + '/func';
+    let tusUrl;
+    if (this.client._apiVersionMajor < 6) {
+      tusUrl = this.client._config.endpoint;
+      if (this.client._config.connectionMode === 'SESSION') {
+        tusUrl = tusUrl + '/func';
+      }
+      tusUrl = tusUrl + `${this.urlPrefix}/_/tus/upload/${token}`;
+    } else {
+      tusUrl = `${res.url}?token=${token}`;
     }
-    url = url + `${this.urlPrefix}/_/tus/upload/${token}`;
-    return Promise.resolve(url);
+    return Promise.resolve(tusUrl);
   }
 
   /**
@@ -1327,15 +1451,23 @@ class VFolder {
    *
    * @param {string} path - Directory path to create.
    * @param {string} name - Virtual folder name.
+   * @param {string} parents - create parent folders when not exists (>=APIv6).
+   * @param {string} exist_ok - Do not raise error when the folder already exists (>=APIv6).
    */
-  async mkdir(path, name = null) {
+  async mkdir(path, name = null, parents = null, exist_ok = null) {
     if (name == null) {
       name = this.name;
     }
-    let body = {
+    const body = {
       'path': path
     };
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
+    if (parents) {
+      body['parents'] = parents
+    }
+    if (exist_ok) {
+      body['exist_ok'] = exist_ok
+    }
+    const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1345,12 +1477,18 @@ class VFolder {
    * @param {string} target_path - path to the target file or directory (with old name).
    * @param {string} new_name - new name of the target.
    * @param {string} name - Virtual folder name that target file exists.
+   * @param {string} is_dir - True when the object is directory, false when it is file
    */
-  async rename_file(target_path, new_name, name = null) {
+  async rename_file(target_path, new_name, name = null, is_dir = false) {
     if (name == null) {
       name = this.name;
     }
-    const body = {target_path, new_name};
+    let body;
+    if (this.client.isAPIVersionCompatibleWith('v6.20200815')) {
+      body = {target_path, new_name, is_dir};
+    } else {
+      body = {target_path, new_name};
+    }
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/rename_file`, body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1379,19 +1517,24 @@ class VFolder {
   }
 
   /**
-   * Download file in a Virtual folder.
+   * Download file from a Virtual folder.
    *
    * @param {string} file - File to download. Should contain full path.
    * @param {string} name - Virtual folder name that files are in.
+   * @param {boolean} archive - Download target directory as an archive.
+   * @param {boolean} noCache - If true, do not store the file response in any cache. New in API v6.
    */
-  async download(file, name = false, archive = false) {
-    let params = {
-      file,
-      archive
-    };
-    let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
-    return this.client._wrapWithPromise(rqst, true);
+  async download(file, name = false, archive = false, noCache = false) {
+    const params = {file, archive};
+    const q = querystring.stringify(params);
+    if (this.client._apiVersionMajor < 6) {
+      const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
+      return this.client._wrapWithPromise(rqst, true);
+    } else {
+      const res = await this.request_download_token(file, name);
+      const downloadUrl = `${res.url}?token=${res.token}&archive=${archive}&no_cache=${noCache}`;
+      return fetch(downloadUrl);
+    }
   }
 
   /**
@@ -1399,14 +1542,20 @@ class VFolder {
    *
    * @param {string} file - File to download. Should contain full path.
    * @param {string} name - Virtual folder name that files are in.
-   * @param {string} archive - Download target directory as an archive.
+   * @param {boolean} archive - Download target directory as an archive.
    */
   async request_download_token(file, name = false, archive = false) {
     let body = {
       file,
       archive
     };
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/request_download`, body);
+    let rqstUrl;
+    if (this.client._apiVersionMajor < 6) {
+      rqstUrl = `${this.urlPrefix}/${name}/request_download`;
+    } else {
+      rqstUrl = `${this.urlPrefix}/${name}/request-download`;
+    }
+    const rqst = this.client.newSignedRequest('POST', rqstUrl, body);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1430,9 +1579,7 @@ class VFolder {
    * @param {string} token - Temporary token to download specific file.
    */
   get_download_url_with_token(token: string = '') {
-    let params = {
-      'token': token
-    };
+    const params = {token};
     let q = querystring.stringify(params);
     if (this.client._config.connectionMode === 'SESSION') {
       return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
@@ -1555,8 +1702,9 @@ class Agent {
    *
    * @param {string} status - Status to query. Should be one of 'ALIVE', 'PREPARING', 'TERMINATING' and 'TERMINATED'.
    * @param {array} fields - Fields to query. Queryable fields are:  'id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'.
+   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots']) {
+  async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'], timeout:number = 0) {
     if (['ALIVE', 'TERMINATED'].includes(status) === false) {
       return Promise.resolve(false);
     }
@@ -1566,6 +1714,56 @@ class Agent {
       `  }` +
       `}`;
     let v = {'status': status};
+    return this.client.query(q, v, null, timeout);
+  }
+}
+
+class StorageProxy {
+  public client: any;
+
+  /**
+   * Agent API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+  }
+
+  /**
+   * List storage proxies and its volumes.
+   *
+   * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'capabilities'.
+   * @param {number} limit - limit number of query items.
+   * @param {number} offset - offset for item query. Useful for pagination.
+   */
+  async list(fields = ['id', 'backend', 'capabilities'], limit = 20, offset = 0) {
+    let q = `query($offset:Int!, $limit:Int!) {` +
+      `  storage_volume_list(limit:$limit, offset:$offset) {` +
+      `     items { ${fields.join(' ')} }` +
+      `     total_count` +
+      `  }` +
+      `}`;
+    let v = {
+      'limit': limit,
+      'offset': offset
+    };
+    return this.client.query(q, v);
+  }
+
+  /**
+   * Detail of specific storage proxy / volume.
+   *
+   * @param {string} host - Virtual folder host.
+   * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'capabilities'.
+   */
+  async detail(host :string = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities']) {
+    let q = `query($vfolder_host: String!) {` +
+      `  storage_volume(id: $vfolder_host) {` +
+      `     ${fields.join(" ")}` +
+      `  }` +
+      `}`;
+    let v = {'vfolder_host': host};
     return this.client.query(q, v);
   }
 }
@@ -1648,7 +1846,7 @@ class Keypair {
       // From 20.03, there is no single query to fetch every keypairs, so
       // we iterate pages to gather all keypairs for client-side compability.
       const limit = 100;
-      const keypairs = [];
+      const keypairs = [] as any;
       q = (this.client.is_admin && userId == null) ? `
         query($offset:Int!, $limit:Int!, $is_active: Boolean) {
           keypair_list(offset:$offset, limit:$limit, is_active: $is_active) {
@@ -1690,12 +1888,9 @@ class Keypair {
    * @param {boolean} isAdmin - is_admin state. Default is False.
    * @param {string} resourcePolicy - resource policy name to assign. Default is `default`.
    * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
-   * @param {string} accessKey - Manual access key (optional)
-   * @param {string} secretKey - Manual secret key. Only works if accessKey is present (optional)
-
    */
   async add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
-            rateLimit = 1000, accessKey = null, secretKey = null) {
+            rateLimit = 1000) {
     let fields = [
       'is_active',
       'is_admin',
@@ -1703,16 +1898,27 @@ class Keypair {
       'concurrency_limit',
       'rate_limit'
     ];
+    let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
+    `  create_keypair(user_id: $user_id, props: $input) {` +
+    `    ok msg keypair { ${fields.join(" ")} }` +
+    `  }` +
+    `}`;
+  let v = {
+    'user_id': userId,
+    'input': {
+      'is_active': isActive,
+      'is_admin': isAdmin,
+      'resource_policy': resourcePolicy,
+      'rate_limit': rateLimit,
+    },
+  };
+  return this.client.query(q, v);
+    /** accessKey is no longer used */
+    /*
     if (accessKey !== null && accessKey !== '') {
       fields = fields.concat(['access_key', 'secret_key']);
-    }
-    let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
-      `  create_keypair(user_id: $user_id, props: $input) {` +
-      `    ok msg keypair { ${fields.join(" ")} }` +
-      `  }` +
-      `}`;
-    let v;
-    if (accessKey !== null && accessKey !== '') {
+    } */
+     /* if (accessKey !== null && accessKey !== '') {
       v = {
         'user_id': userId,
         'input': {
@@ -1720,8 +1926,6 @@ class Keypair {
           'is_admin': isAdmin,
           'resource_policy': resourcePolicy,
           'rate_limit': rateLimit,
-          'access_key': accessKey,
-          'secret_key': secretKey
         },
       };
     } else {
@@ -1734,8 +1938,7 @@ class Keypair {
           'rate_limit': rateLimit
         },
       };
-    }
-    return this.client.query(q, v);
+    } */
   }
 
   /**
@@ -1871,7 +2074,7 @@ class ResourcePolicy {
   /**
    * mutate specified resource policy with given name with new values.
    *
-   * @param {string} name - resource policy name to mutate.
+   * @param {string} name - resource policy name to mutate. (READ-ONLY)
    * @param {json} input - resource policy specification and data. Required fields are:
    * {
    *   {string} 'default_for_unspecified': 'UNLIMITED', // default resource policy when resource slot is not given. 'UNLIMITED' or 'LIMITED'.
@@ -1900,6 +2103,28 @@ class ResourcePolicy {
       return Promise.resolve(false);
     }
   }
+
+  /**
+   * delete specified resource policy that exists in policy list.
+   *
+   * @param {string} name - resource policy name to delete. (READ-ONLY)
+   */
+  async delete(name = null) {
+    if (this.client.is_superadmin === true && name !== null) {
+      let q =`mutation($name: String!) {` +
+        ` delete_keypair_resource_policy(name: $name) {` +
+        `   ok msg ` +
+        ` }` +
+        `}`;
+      let v = {
+        'name': name
+      };
+      return this.client.query(q, v);
+    } else {
+      return Promise.resolve(false);
+    }
+  }
+
 }
 
 class ContainerImage {
@@ -1919,7 +2144,7 @@ class ContainerImage {
    *
    * @param {array} fields - fields to query. Default fields are: ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]
    * @param {boolean} installed_only - filter images to installed / not installed. true to query installed images only.
-   * @param {boolean} system_images - filter images to get system images such as console, SFTP server. true to query system images only.
+   * @param {boolean} system_images - filter images to get system images such as web UI, SFTP server. true to query system images only.
    */
   async list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false, system_images = false) {
     let q, v;
@@ -2007,7 +2232,7 @@ class ContainerImage {
       resource = {'cpu': '1', 'mem': '512m'};
     }
     return this.client.createIfNotExists(registry + name, sessionId, resource, 600000).then((response) => {
-      return this.client.destroyKernel(sessionId);
+      return this.client.destroy(sessionId);
     }).catch(err => {
       throw err;
     });
@@ -2054,6 +2279,36 @@ class ComputeSession {
   }
 
   /**
+   * Get the number of compute sessions with specific conditions.
+   *
+   * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+   * @param {string} accessKey - access key that is used to start compute sessions.
+   * @param {number} limit - limit number of query items.
+   * @param {number} offset - offset for item query. Useful for pagination.
+   * @param {string} group - project group id to query. Default returns sessions from all groups.
+   */
+  async total_count(status = 'RUNNING', accessKey = '', limit = 1, offset = 0, group = '') {
+    let q, v;
+    q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
+        total_count
+      }
+    }`;
+    v = {
+      'limit': limit,
+      'offset': offset,
+      'status': status
+    };
+    if (accessKey != '') {
+      v['ak'] = accessKey;
+    }
+    if (group != '') {
+      v['group_id'] = group;
+    }
+    return this.client.query(q, v);
+  }
+
+  /**
    * list compute sessions with specific conditions.
    *
    * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
@@ -2062,9 +2317,10 @@ class ComputeSession {
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {string} group - project group id to query. Default returns sessions from all groups.
+   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
   async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"],
-             status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
+             status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout: number = 0) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
@@ -2084,7 +2340,7 @@ class ComputeSession {
     if (group != '') {
       v['group_id'] = group;
     }
-    return this.client.query(q, v);
+    return this.client.query(q, v, null, timeout);
   }
 
   /**
@@ -2096,10 +2352,11 @@ class ComputeSession {
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {string} group - project group id to query. Default returns sessions from all groups.
+   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
   async listAll(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"],
                 status = "RUNNING,RESTARTING,TERMINATING,PENDING,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR",
-                accessKey = '', limit = 100, offset = 0, group = '') {
+                accessKey = '', limit = 100, offset = 0, group = '', timeout:number = 0) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
     let q, v;
     const sessions: any = [];
@@ -2115,12 +2372,12 @@ class ComputeSession {
     for (let offset = 0; offset < 10 * limit; offset+=limit) {
       v = {limit, offset, status};
       if (accessKey != '') {
-        v.ak = accessKey;
+        v.access_key = accessKey;
       }
       if (group != '') {
         v.group_id = group;
       }
-      const session = await this.client.gql(q, v);
+      const session = await this.client.query(q, v, null, timeout);
       console.log(session.compute_session_list.total_count)
       sessions.push(...session.compute_session_list.items);
       if (offset >= session.compute_session_list.total_count) {
@@ -2134,28 +2391,20 @@ class ComputeSession {
    * get compute session with specific condition.
    *
    * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
-   * @param {string} sessionName - session name to query specific compute session.
-   * @param {string} domainName - domain name to query specific compute session.
-   * @param {string} accessKey - access key that is used to start compute sessions.
+   * @param {string} sessionUuid - session ID to query specific compute session.
    */
   async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
-            sessionName = '', domainName = '', accessKey = '') {
+            sessionUuid = '') {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
-    q = `query($ak:String, $domain_name:String, $session_name:String!) {
-      compute_session(access_key:$ak, domain_name:$domain_name, sess_id:$session_name) {
+    q = `query($session_uuid: UUID!) {
+      compute_session(id:$session_uuid) {
         ${fields.join(" ")}
       }
     }`;
-
-    v = {
-      'ak': accessKey,
-      'domain_name': domainName,
-      'session_name': sessionName
-    };
+    v = {session_uuid: sessionUuid};
     return this.client.query(q, v);
   }
-
 }
 
 class Resources {
@@ -2462,6 +2711,16 @@ class Maintenance {
   }
 
   /**
+   * Attach to the background task to listen to events
+   * @param {string} task_id - background task id.
+   */
+  attach_background_task(task_id: string) {
+    var urlStr = "/events/background-task?task_id=" + task_id;
+    let req = this.client.newSignedRequest("GET", urlStr, null);
+    return new EventSource(req.uri, {withCredentials:true});
+  }
+
+  /**
    * Rescan image from repository
    * @param {string} registry - registry. default is ''
    */
@@ -2472,7 +2731,7 @@ class Maintenance {
         registry = decodeURIComponent(registry);
         q = `mutation($registry: String) {` +
           `  rescan_images(registry: $registry) {` +
-          `    ok msg ` +
+          `    ok msg task_id ` +
           `  }` +
           `}`;
         v = {
@@ -2481,7 +2740,7 @@ class Maintenance {
       } else {
         q = `mutation {` +
           `  rescan_images {` +
-          `    ok msg ` +
+          `    ok msg task_id ` +
           `  }` +
           `}`;
         v = {};
@@ -2550,7 +2809,7 @@ class User {
       // From 20.03, there is no single query to fetch every users, so
       // we iterate pages to gather all users for client-side compability.
       const limit = 100;
-      const users = [];
+      const users = [] as any;
       q = this.client.is_admin ? `
         query($offset:Int!, $limit:Int!, $is_active:Boolean) {
           user_list(offset:$offset, limit:$limit, is_active:$is_active) {

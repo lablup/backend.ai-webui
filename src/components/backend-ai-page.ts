@@ -1,23 +1,23 @@
 /**
  Backend.AI base view page for Single-page application
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  */
-import {registerTranslateConfig} from "lit-translate";
+import {get as _text, LanguageIdentifier, registerTranslateConfig} from 'lit-translate';
 import {LitElement, property} from 'lit-element';
 
 /**
  Backend AI Page
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-page
  */
 
 registerTranslateConfig({
-  loader: lang => {
-    return fetch(`/resources/i18n/${lang}.json`).then(res => {
-      return res.json()
-    })
+  loader: (lang: LanguageIdentifier) => {
+    return fetch(`/resources/i18n/${lang}.json`).then((res: Response) => {
+      return res.json();
+    });
   }
 });
 
@@ -42,28 +42,25 @@ export class BackendAIPage extends LitElement {
     return typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null && globalThis.backendaiclient.ready === true;
   }
 
-  public run_after_connection = (fn: any) => {
-    fn;
-  };
+  public _viewStateChanged(param: boolean): void;
 
-  public _viewStateChanged(param: Boolean): void;
-
-  _viewStateChanged(param) {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  public _viewStateChanged(param) {
   }
 
-  shouldUpdate() {
+  shouldUpdate(): boolean {
     return this.active;
   }
 
-  connectedCallback() {
+  connectedCallback(): void {
     super.connectedCallback();
   }
 
-  disconnectedCallback() {
+  disconnectedCallback(): void {
     super.disconnectedCallback();
   }
 
-  attributeChangedCallback(name, oldval, newval) {
+  attributeChangedCallback(name: string, oldval: string|null, newval: string|null): void {
     if (name == 'active' && newval !== null) {
       this.active = true;
       this._viewStateChanged(true);
@@ -73,9 +70,19 @@ export class BackendAIPage extends LitElement {
     }
     super.attributeChangedCallback(name, oldval, newval);
   }
+  /**
+   * Hide the backend.ai dialog.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
+  _hideDialog(e) {
+    const hideButton = e.target;
+    const dialog = hideButton.closest('backend-ai-dialog');
+    dialog.hide();
+  }
 
   // Compatibility layer from here.
-  _addInputValidator(obj) {
+  _addInputValidator(obj: any) {
     if (!obj.hasAttribute('auto-validate')) {
       return;
     }
@@ -86,7 +93,7 @@ export class BackendAIPage extends LitElement {
       } else if (obj.getAttribute('validationMessage')) { // Support standard attribute
         validationMessage = obj.getAttribute('validationMessage');
       } else {
-        validationMessage = 'Validation failed.';
+        validationMessage = _text('credential.validation.ValidationFailed');
       }
       obj.validityTransform = (value, nativeValidity) => {
         if (!nativeValidity.valid) {
@@ -97,28 +104,28 @@ export class BackendAIPage extends LitElement {
               patternMismatch: !nativeValidity.valid
             };
           } else if (nativeValidity.valueMissing) {
-            obj.validationMessage = "Value required.";
+            obj.validationMessage = _text('explorer.ValueRequired');
             return {
               valid: nativeValidity.valid,
               valueMissing: !nativeValidity.valid
-            }
+            };
           } else if (nativeValidity.tooShort) {
-            obj.validationMessage = "Input too short.";
+            obj.validationMessage = _text('explorer.InputTooShort');
             return {
               valid: nativeValidity.valid,
               valueMissing: !nativeValidity.valid
-            }
+            };
           } else {
             obj.validationMessage = validationMessage;
             return {
               valid: nativeValidity.valid,
               patternMismatch: !nativeValidity.valid,
-            }
+            };
           }
         } else {
           return {
             valid: nativeValidity.valid
-          }
+          };
         }
       };
     }

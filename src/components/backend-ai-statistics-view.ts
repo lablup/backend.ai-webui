@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t} from "lit-translate";
@@ -11,6 +11,9 @@ import 'weightless/card';
 import 'weightless/progress-spinner';
 import 'weightless/tab-group';
 import 'weightless/tab';
+
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-usage-list.js';
@@ -30,7 +33,7 @@ import {
  ...
  </backend-ai-statistics-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-statistics-view
  */
 
@@ -72,6 +75,19 @@ export default class BackendAIStatisticsView extends BackendAIPage {
           --tab-bg-active-hover: var(--paper-cyan-100);
         }
 
+        h3.tab {
+          background-color: var(--general-tabbar-background-color);
+          border-radius: 5px 5px 0px 0px;
+          margin: 0px auto;
+        }
+
+        mwc-tab-bar {
+          --mdc-theme-primary: var(--general-sidebar-selected-color);
+          --mdc-text-transform: none;
+          --mdc-tab-color-default: var(--general-tabbar-background-color);
+          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
+        }
+
         .tab-content {
           width: 100%;
         }
@@ -80,7 +96,7 @@ export default class BackendAIStatisticsView extends BackendAIPage {
   }
 
   /**
-   * If active is false, set _status to inactive and remove active attribute.
+   * If active is false, set _status to inactive.
    * Else, set both _status and #usage-list items to active.
    *
    * @param {boolean} active
@@ -89,10 +105,6 @@ export default class BackendAIStatisticsView extends BackendAIPage {
     await this.updateComplete;
     if (active === false) {
       this._status = "inactive";
-
-      const activeElement = this.shadowRoot.querySelector("[active]");
-      activeElement.removeAttribute("active");
-
       return;
     }
     this.shadowRoot.querySelector("#usage-list").setAttribute("active", true);
@@ -111,29 +123,33 @@ export default class BackendAIStatisticsView extends BackendAIPage {
       el.style.display = 'none';
     }
 
-    this.shadowRoot.querySelector('#' + tab.value + '-stat').style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.title + '-stat').style.display = 'block';
 
     els.forEach(e => {
       e.children[0].removeAttribute("active");
     });
-    this.shadowRoot.querySelector(`#${tab.value}-list`).setAttribute("active", true);
+    this.shadowRoot.querySelector(`#${tab.title}-list`).setAttribute("active", true);
   }
 
   render() {
     // language=HTML
     return html`
-        <wl-card class="item">
-          <h3 class="tab horizontal center layout">
-            <wl-tab-group>
-              <wl-tab value="usage" checked @click="${e => this._showTab(e.target)}">${_t("statistics.Usage")}</wl-tab>
-            </wl-tab-group>
-          </h3>
-          <div class="horizontal wrap layout">
-            <div id="usage-stat" class="tab-content">
-              <backend-ai-usage-list id="usage-list"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usage-list>
+        <div style="margin:20px;">
+          <lablup-activity-panel elevation="1" noheader narrow autowidth>
+            <div slot="message">
+              <h3 class="tab horizontal center layout">
+                <mwc-tab-bar>
+                  <mwc-tab title="usage" label="${_t("statistics.Usage")}"></mwc-tab>
+                </mwc-tab-bar>
+              </h3>
+              <div class="horizontal wrap layout">
+                <div id="usage-stat" class="tab-content">
+                  <backend-ai-usage-list id="usage-list"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usage-list>
+                </div>
+              </div>
             </div>
-          </div>
-        </wl-card>
+          </lablup-activity-panel>
+        </div>
       `;
   }
 }

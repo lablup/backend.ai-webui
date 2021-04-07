@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
@@ -9,9 +9,9 @@ function isDev() {
 }
 let debugMode = true;
 if (isDev()) { // Dev mode from Makefile
-  process.env.serveMode = "dev"; // Prod OR debug
+  process.env.serveMode = 'dev'; // Prod OR debug
 } else {
-  process.env.serveMode = "prod"; // Prod OR debug
+  process.env.serveMode = 'prod'; // Prod OR debug
   debugMode = false;
 }
 process.env.liveDebugMode = false; // Special flag for live server debug.
@@ -21,22 +21,22 @@ const toml = require('markty-toml');
 const nfs = require('fs');
 const npjoin = require('path').join;
 const BASE_DIR = __dirname;
-let ProxyManager, versions, es6Path, electronPath, mainIndex;
+let ProxyManager; let versions; let es6Path; let electronPath; let mainIndex;
 if (process.env.serveMode == 'dev') {
   ProxyManager = require('./build/electron-app/app/wsproxy/wsproxy.js');
   versions = require('./version');
-  es6Path = npjoin(__dirname, 'build/electron-app/app');  // ES6 module loader with custom protocol
+  es6Path = npjoin(__dirname, 'build/electron-app/app'); // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname, 'build/electron-app');
   mainIndex = 'build/electron-app/app/index.html';
 } else {
   ProxyManager = require('./app/wsproxy/wsproxy.js');
   versions = require('./app/version');
-  es6Path = npjoin(__dirname, 'app');  // ES6 module loader with custom protocol
+  es6Path = npjoin(__dirname, 'app'); // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname);
-  mainIndex = 'app/index.html'; 
+  mainIndex = 'app/index.html';
 }
-let windowWidth = 1280;
-let windowHeight = 970;
+const windowWidth = 1280;
+const windowHeight = 970;
 
 protocol.registerSchemesAsPrivileged([
   {scheme: 'es6', privileges: {standard: true, secure: true, bypassCSP: true}}
@@ -58,7 +58,7 @@ app.once('ready', function() {
         label: 'Backend.AI',
         submenu: [
           {
-            label: 'About Backend.AI Console',
+            label: 'About Backend.AI Desktop',
             click: function() {
               mainContent.executeJavaScript('let event = new CustomEvent("backend-ai-show-splash", {"detail": ""});' +
                 '    document.dispatchEvent(event);');
@@ -331,7 +331,9 @@ function createWindow() {
       nativeWindowOpen: true,
       nodeIntegration: false,
       preload: path.join(electronPath, 'preload.js'),
-      devTools: (debugMode === true)
+      devTools: (debugMode === true),
+      worldSafeExecuteJavaScript: false,
+      contextIsolation: false
     }
   });
   // and load the index.html of the app.
@@ -353,8 +355,8 @@ function createWindow() {
       if ('wsproxy' in config && 'disableCertCheck' in config.wsproxy && config.wsproxy.disableCertCheck == true) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
       }
-      if ('server' in config && 'consoleServerURL' in config.server && config.server.consoleServerURL != '') {
-        mainURL = config.server.consoleServerURL;
+      if ('server' in config && 'webServerURL' in config.server && config.server.webServerURL != '') {
+        mainURL = config.server.webServerURL;
       } else {
         mainURL = url.format({
           pathname: path.join(mainIndex),
@@ -500,6 +502,5 @@ app.on('web-contents-created', (event, contents) => {
 
     // Disable Node.js integration
     webPreferences.nodeIntegration = false;
-
   });
 });

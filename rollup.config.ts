@@ -1,22 +1,22 @@
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
-//import babel from 'rollup-plugin-babel'; // To support legacy browsers
+//import babel from 'rollup-plugin-babel'; // To support legacy browsers. Disabled by default.
 import typescript from 'rollup-plugin-typescript';
-import { generateSW } from 'rollup-plugin-workbox';
-
-//import typescript from 'rollup-plugin-typescript2';
 //import typescript from '@rollup/plugin-typescript';
+import { generateSW } from 'rollup-plugin-workbox';
 import { terser } from "rollup-plugin-terser";
 
 export default {
-  input: ['src/components/backend-ai-console.ts'],
+  input: ['src/components/backend-ai-webui.ts'],
   output: {
     dir: 'build/rollup/dist/components',
     format: 'es',
     sourcemap: false
   },
   plugins: [
-    typescript(),
+    typescript({
+      tsconfig: "./tsconfig.json"
+    }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
@@ -27,6 +27,7 @@ export default {
       globDirectory: 'build/rollup/',
       globPatterns: ["dist/**/*.{html,json,js,css}",
         "src/lib/**/*.{js, map}"],
+  	  skipWaiting: true,
     })
 //    babel()
   ]

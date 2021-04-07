@@ -1,21 +1,22 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
+import {translate as _t, get as _text, translateUnsafeHTML as _tr} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
-import './lablup-loading-spinner';
-
 import 'weightless/icon';
+import 'weightless/progress-bar';
 
 import '@material/mwc-linear-progress/mwc-linear-progress';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 
 import './lablup-activity-panel';
+import './lablup-loading-spinner';
+import './lablup-progress-bar';
 import './backend-ai-resource-monitor';
 import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
@@ -26,7 +27,7 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
 /**
- `<backend-ai-resource-panel>` is a Summary panel of backend.ai console.
+ `<backend-ai-resource-panel>` is a Summary panel of backend.ai web UI.
 
  Example:
  <backend-ai-resource-panel active></backend-ai-resource-panel>
@@ -39,14 +40,13 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Number}) sessions = 0;
-  @property({type: Object}) jobs = Object();
   @property({type: Number}) agents = 0;
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
   @property({type: Object}) resources = Object();
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) manager_version = '';
-  @property({type: String}) console_version = '';
+  @property({type: String}) webui_version = '';
   @property({type: Number}) cpu_total = 0;
   @property({type: Number}) cpu_used = 0;
   @property({type: String}) cpu_percent = '0';
@@ -71,6 +71,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
+  @property({type: Number}) height = 0;
 
   constructor() {
     super();
@@ -109,6 +110,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
           width: 100px;
         }
 
+        div.card {
+          margin: 20px;
+        }
+
         div.big.indicator {
           font-size: 48px;
         }
@@ -123,8 +128,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         }
 
         mwc-linear-progress {
-          width: 190px;
-          height: 5px;
+          width: 260px;
+          height: 15px;
           border-radius: 0;
           --mdc-theme-primary: #3677eb;
         }
@@ -163,8 +168,24 @@ export default class BackendAIResourcePanel extends BackendAIPage {
           margin-right: 5px;
         }
 
+        div.indicators {
+          min-height: 80px;
+          padding: 15px 20px 5px 20px;
+          background-color: #F6F6F6;
+        }
+
         .system-health-indicator {
           width: 90px;
+        }
+
+        .resource {
+          margin-bottom: 10px;
+          margin-left: 5px;
+          height: 46px;
+        }
+
+        .resource-line {
+          margin-left: 85px;
         }
       `
     ];
@@ -201,10 +222,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       default:
         status = 'RUNNING';
     }
-    let fields = ["created_at"];
-    globalThis.backendaiclient.computeSession.list(fields, status).then((response) => {
+    globalThis.backendaiclient.computeSession.total_count(status).then((response) => {
       this.spinner.hide();
-      this.jobs = response;
       if (!response.compute_session_list && response.legacy_compute_session_list) {
         response.compute_session_list = response.legacy_compute_session_list;
       }
@@ -216,11 +235,15 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       }
     }).catch(err => {
       this.spinner.hide();
-      this.jobs = [];
       this.sessions = 0;
-      this.notification.text = PainKiller.relieve('Couldn\'t connect to manager.');
+      this.notification.text = _text('summary.connectingToCluster');
       this.notification.detail = err;
-      this.notification.show(true, err);
+      this.notification.show(false, err);
+      if (this.active) {
+        setTimeout(() => {
+          this._refreshSessionInformation()
+        }, 15000);
+      }
     });
   }
 
@@ -299,7 +322,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
 
   _sync_resource_values() {
     this.manager_version = globalThis.backendaiclient.managerVersion;
-    this.console_version = globalThis.packageVersion;
+    this.webui_version = globalThis.packageVersion;
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
     if (isNaN(this.resources['cuda.device'].total)) {
@@ -317,9 +340,11 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.cuda_fgpu_used = this.resources['cuda.shares'].used;
 
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
-    this.cpu_total_percent = ((parseFloat(this.resources.cpu.percent) / (this.cpu_total * 100.0)) * 100.0).toFixed(2);
+    this.cpu_total_percent = this.cpu_used !== 0 ? ((this.cpu_used / this.cpu_total) * 100).toFixed(2) : '0';
+    // this.cpu_total_percent = ((parseFloat(this.cpu_percent) / (this.cpu_total * 100.0)) * 100.0).toFixed(2);
     this.cpu_total_usage_ratio = this.resources.cpu.used / this.resources.cpu.total * 100.0;
     this.cpu_current_usage_ratio = this.resources.cpu.percent / this.resources.cpu.total;
+
 
     // mem.total: total memory
     // mem.allocated: allocated by backend.ai
@@ -390,9 +415,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <lablup-activity-panel title="${_t('summary.SystemResources')}" elevation="1">
+      <lablup-activity-panel title="${_t('summary.SystemResources')}" elevation="1" narrow height="${this.height}">
         <div slot="message">
-          <div class="horizontal justified layout wrap">
+          <div class="horizontal justified layout wrap indicators">
             ${this.is_superadmin ? html`
               <div class="vertical layout center system-health-indicator">
                 <div class="big indicator">${this.agents}</div>
@@ -403,103 +428,133 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               <span>${_t('summary.ActiveSessions')}</span>
             </div>
           </div>
-          ${this.is_superadmin ? html`
-          <div class="layout horizontal center flex" style="margin-top:15px;margin-bottom:5px;">
-            <div class="layout vertical start center-justified">
-              <wl-icon class="fg green">developer_board</wl-icon>
-              <span>CPU</span>
-            </div>
-            <div class="layout vertical start" style="padding-left:15px;">
-              <mwc-linear-progress class="mem-usage-bar start-bar" progress="${this.cpu_total_usage_ratio / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress class="mem-usage-bar end-bar" id="cpu-usage-bar"
-                progress="${this.cpu_current_usage_ratio / 100.0}"
-                buffer="${this.cpu_current_usage_ratio / 100.0}"></mwc-linear-progress>
-              <div><span class="progress-value"> ${this._addComma(this.cpu_used)}</span>/${this._addComma(this.cpu_total)}
-                ${_t('summary.CoresReserved')}.
+          <div class="vertical-card" style="align-items: flex-start">
+            ${this.is_superadmin ? html`
+            <div class="layout horizontal center flex resource">
+              <div class="layout vertical center center-justified resource-name">
+                <div class="gauge-name">CPU</div>
               </div>
-              <div>${_t('summary.Using')} <span class="progress-value"> ${this.cpu_total_percent}</span>% (util. ${this.cpu_percent} %)
+              <div class="layout vertical start-justified wrap">
+                <lablup-progress-bar id="cpu-usage-bar" class="start"
+                  progress="${this.cpu_total_usage_ratio / 100.0}"
+                  description="${this._addComma(this.cpu_used)}/${this._addComma(this.cpu_total)} ${_t('summary.CoresReserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="cpu-usage-bar-2" class="end"
+                  progress="${this.cpu_current_usage_ratio / 100.0}"
+                  description="${_t('summary.Using')} ${this.cpu_total_percent} % (util. ${this.cpu_percent} %)"
+                ></lablup-progress-bar>
               </div>
-            </div>
-          </div>
-          <div class="layout horizontal center flex" style="margin-bottom:5px;">
-            <div class="layout vertical start center-justified">
-              <wl-icon class="fg green">memory</wl-icon>
-              <span>RAM</span>
-            </div>
-            <div class="layout vertical start" style="padding-left:15px;">
-              <mwc-linear-progress class="mem-usage-bar start-bar" id="mem-usage-bar" progress="${this.mem_total_usage_ratio / 100.0}"></mwc-linear-progress>
-              <mwc-linear-progress class="mem-usage-bar end-bar"
-                progress="${this.mem_current_usage_ratio / 100.0}"
-                buffer="${this.mem_current_usage_ratio / 100.0}"></mwc-linear-progress>
-              <div><span class="progress-value"> ${this._addComma(this.mem_allocated)}</span>/${this._addComma(this.mem_total)} GB
-                ${_t('summary.reserved')}.
-              </div>
-              <div>${_t('summary.Using')} <span class="progress-value"> ${this._addComma(this.mem_used)}</span> GB
-                (${this.mem_current_usage_percent} %)
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">${parseInt(this.cpu_total_percent)+ '%'}</span>
+                <span class="percentage end-bar">${parseInt(this.cpu_percent) + '%'}</span>
               </div>
             </div>
-          </div>
-          ${this.cuda_gpu_total || this.cuda_fgpu_total || this.rocm_gpu_total || this.tpu_total ? html`
-          <div class="layout horizontal center flex" style="margin-bottom:5px;">
-            <div class="layout vertical start center-justified">
-              <wl-icon class="fg green">view_module</wl-icon>
-              <span>GPU</span>
-            </div>
-            <div class="layout vertical start" style="padding-left:15px;">
-            ${this.cuda_gpu_total ? html`
-              <mwc-linear-progress id="gpu-bar"
-                progress="${this.cuda_gpu_used / this.cuda_gpu_total}"></mwc-linear-progress>
-              <div class="horizontal center layout">
-                <img class="resource-type-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                <div>
-                  <div><span class="progress-value"> ${this.cuda_gpu_used}</span>/${this.cuda_gpu_total} CUDA GPUs</div>
-                </div>
+            <div class="resource-line"></div>
+            <div class="layout horizontal center flex resource">
+              <div class="layout vertical center center-justified resource-name">
+                <div class="gauge-name">RAM</div>
               </div>
-            ` : html``}
-            ${this.cuda_fgpu_total ? html`
-              <mwc-linear-progress id="vgpu-bar"
+              <div class="layout vertical start-justified wrap">
+                <lablup-progress-bar id="mem-usage-bar" class="start"
+                  progress="${this.mem_total_usage_ratio / 100.0}"
+                  description="${this._addComma(this.mem_allocated)} / ${this._addComma(this.mem_total)} GB ${_t('summary.reserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="mem-usage-bar-2" class="end"
+                  progress="${this.mem_current_usage_ratio / 100.0}"
+                  description="${_t('summary.Using')} ${this._addComma(this.mem_used)} GB
+                    (${parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0' } %)"
+                ></lablup-progress-bar>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">${this.mem_total_usage_ratio.toFixed(1) + '%'}</span>
+                <span class="percentage end-bar">${(parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0' ) + '%'}</span>
+              </div>
+            </div>
+            ${this.cuda_gpu_total || this.cuda_fgpu_total || this.rocm_gpu_total || this.tpu_total ? html`
+            <div class="resource-line"></div>
+            <div class="layout horizontal center flex resource">
+              <div class="layout vertical center center-justified resource-name">
+                <div class="gauge-name">GPU</div>
+              </div>
+              ${this.cuda_gpu_total ? html`
+              <div class="layout vertical start-justified wrap">
+                <lablup-progress-bar id="gpu-usage-bar" class="start"
+                  progress="${this.cuda_gpu_used / this.cuda_gpu_total}"
+                  description="${this.cuda_gpu_used} / ${this.cuda_gpu_total} CUDA GPUs ${_t('summary.reserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="gpu-usage-bar-2" class="end"
+                  progress="0"
+                  description="${_t('summary.FractionalGPUScalingEnabled')}."
+                ></lablup-progress-bar>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">${this.cuda_gpu_used !== 0 ? (this.cuda_gpu_used / this.cuda_gpu_total * 100).toFixed(1) : 0}%</span>
+                <span class="percentage end-bar">&nbsp;</span>
+              </div>
+              `: html``}
+              ${this.cuda_fgpu_total ? html`
+              <div class="layout vertical start-justified wrap">
+              <lablup-progress-bar id="fgpu-usage-bar" class="start"
                 progress="${this.cuda_fgpu_used / this.cuda_fgpu_total}"
-                buffer="${this.cuda_fgpu_used / this.cuda_fgpu_total}"></mwc-linear-progress>
-              <div class="horizontal center layout">
-                <img class="resource-type-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                <div>
-                  <div><span class="progress-value"> ${this.cuda_fgpu_used}</span>/${this.cuda_fgpu_total} CUDA fGPUs</div>
-                  <div><span class="progress-value">${_t('summary.FractionalGPUScalingEnabled')}.</div>
-                </div>
+                description="${this.cuda_fgpu_used} / ${this.cuda_fgpu_total} CUDA fGPUs ${_t('summary.reserved')}."
+              ></lablup-progress-bar>
+              <lablup-progress-bar id="fgpu-usage-bar-2" class="end"
+                progress="0"
+                description="${_t('summary.FractionalGPUScalingEnabled')}."
+              ></lablup-progress-bar>
+
               </div>
-            ` : html``}
-            ${this.rocm_gpu_total ? html`
-              <mwc-linear-progress id="rocm-gpu-bar"
-                progress="${this.rocm_gpu_used / 100.0}"
-                buffer="${this.rocm_gpu_used / 100.0}"></mwc-linear-progress>
-              <div class="horizontal center layout">
-                <img class="resource-type-icon fg green" src="/resources/icons/ROCm.png" />
-                <div>
-                  <div><span class="progress-value"> ${this.rocm_gpu_used}</span>/${this.rocm_gpu_total} ROCm GPUs</div>
-                </div>
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">${this.cuda_fgpu_used !== 0 ? (this.cuda_fgpu_used / this.cuda_fgpu_total * 100).toFixed(1) : 0}%</span>
+                <span class="percentage end-bar">&nbsp;</span>
               </div>
-            ` : html``}
-            ${this.tpu_total ? html`
-              <mwc-linear-progress id="tpu-bar"
-                progress="${this.tpu_used / 100.0}"
-                buffer="${this.tpu_used / 100.0}"></mwc-linear-progress>
-              <div class="horizontal center layout">
-                <img class="resource-type-icon fg green" src="/resources/icons/tpu.svg" />
-                <div>
-                  <div><span class="progress-value"> ${this.tpu_used}</span>/${this.tpu_total} TPUs</div>
-                </div>
+              `: html``}
+              ${this.rocm_gpu_total ? html`
+              <div class="layout vertical start-justified wrap">
+                <lablup-progress-bar id="rocm-gpu-usage-bar" class="start"
+                  progress="${this.rocm_gpu_used / 100.0}"
+                  description="${this.rocm_gpu_used} / ${this.rocm_gpu_total} ROCm GPUs ${_t('summary.reserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="rocm-gpu-usage-bar-2" class="end"
+                  progress="0"
+                  description="${_t('summary.ROCMGPUEnabled')}."
+                ></lablup-progress-bar>
               </div>
-        ` : html``}
-            </div>
-          </div>` : html``}
-          <div class="horizontal center layout">
-            <div style="width:10px;height:10px;margin-left:40px;margin-right:3px;background-color:#4775E3;"></div>
-            <span style="margin-right:5px;">${_t('summary.Reserved')}</span>
-            <div style="width:10px;height:10px;margin-right:3px;background-color:#A0BD67"></div>
-            <span style="margin-right:5px;">${_t('summary.Used')}</span>
-            <div style="width:10px;height:10px;margin-right:3px;background-color:#E0E0E0"></div>
-            <span>${_t('summary.Total')}</span>
-          </div>` : html``}
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">${this.rocm_gpu_used.toFixed(1) + '%'}</span>
+                <span class="percentage end-bar">&nbsp;</span>
+              </div>`: html``}
+              ${this.tpu_total ? html`
+              <div class="layout vertical start-justified wrap">
+                <lablup-progress-bar id="tpu-usage-bar" class="start"
+                  progress="${this.tpu_used / 100.0}"
+                  description="${this.tpu_used} / ${this.tpu_total} TPUs ${_t('summary.reserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="tpu-usage-bar-2" class="end"
+                  progress="0"
+                  description="${_t('summary.TPUEnabled')}."
+                ></lablup-progress-bar>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">${this.tpu_used.toFixed(1) + '%'}</span>
+                <span class="percentage end-bar"></span>
+              </div>`: html``}
+            </div>`: html``}
+            <div class="vertical start layout" style="margin-top:30px;">
+              <div class="horizontal layout resource-legend-stack">
+                <div class="resource-legend-icon start"></div>
+                <span class="resource-legend">${_t('summary.Reserved')} ${_t('resourcePolicy.Resources')}</span>
+              </div>
+              <div class="horizontal layout resource-legend-stack">
+                <div class="resource-legend-icon end"></div>
+                <span class="resource-legend">${_t('summary.Used')} ${_t('resourcePolicy.Resources')}</span>
+              </div>
+              <div class="horizontal layout">
+                <div class="resource-legend-icon total"></div>
+                <span class="resource-legend">${_t('summary.Total')} ${_t('resourcePolicy.Resources')}</span>
+              </div>
+            </div>` : html``}
+          </div>
         </div>
       </lablup-activity-panel>
 `;

@@ -1,12 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t} from "lit-translate";
 import {css, customElement, html, property} from "lit-element";
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
@@ -24,6 +24,8 @@ import 'weightless/label';
 import './lablup-loading-spinner';
 import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
+import '@material/mwc-icon';
+import '@material/mwc-icon-button';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
@@ -32,7 +34,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 /**
  Backend.AI Error Log List
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-error-log-list
  */
 
@@ -69,11 +71,15 @@ export default class BackendAiErrorLogList extends BackendAIPage {
           width: 100%;
           border: 0;
           font-size: 12px;
-          height: calc(100vh - 275px);
+          height: calc(100vh - 305px);
         }
 
         vaadin-grid-cell {
           font-size: 10px;
+        }
+
+        vaadin-grid#list-grid {
+          border-top: 1px solid #dbdbdb;
         }
 
         [error-cell] {
@@ -134,7 +140,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   _refreshLogData() {
     this.spinner.show();
     this._updatePageItemSize();
-    this.logs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
+    this.logs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '{}');
     this._totalLogCount = this.logs.length > 0 ? this.logs.length : 1;
     this._updateItemsFromPage(1);
     this._grid.clearCache();
@@ -161,7 +167,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     if (typeof page !== 'number') {
       let page_action = page.target;
       if (page_action['role'] !== 'button') {
-        page_action = page.target.closest('wl-button');
+        page_action = page.target.closest('mwc-icon-button');
       }
       page_action.id === 'previous-page' ? this._currentPage -= 1 : this._currentPage += 1;
     }
@@ -184,7 +190,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    */
   _humanReadableTime(d: any) {
     d = new Date(d);
-    return d.toLocaleString();
+    let option = { hour12: false };
+    return d.toLocaleString("en-US", option);
   }
 
   /**
@@ -262,19 +269,21 @@ export default class BackendAiErrorLogList extends BackendAIPage {
         </vaadin-grid-column>
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;border-top:1px solid #ccc;">
-        <wl-button class="pagination" id="previous-page"
-                   ?disabled="${this._currentPage === 1}"
-                   @click="${(e) => {this._updateItemsFromPage(e)}}">
-          <wl-icon class="pagination">navigate_before</wl-icon>
-        </wl-button>
+        <mwc-icon-button
+            class="pagination"
+            id="previous-page"
+            icon="navigate_before"
+            ?disabled="${this._currentPage === 1}"
+            @click="${(e) => {this._updateItemsFromPage(e)}}"></mwc-icon-button>
         <wl-label style="padding: 5px 15px 0px 15px;">
           ${this._currentPage} / ${Math.ceil( this._totalLogCount / this._pageSize)}
         </wl-label>
-        <wl-button class="pagination" id="next-page"
-                   ?disabled="${this._totalLogCount <= this._pageSize * this._currentPage }"
-                   @click="${(e) => {this._updateItemsFromPage(e)}}">
-          <wl-icon class="pagination">navigate_next</wl-icon>
-        </wl-button>
+        <mwc-icon-button
+            class="pagination"
+            id="next-page"
+            icon="navigate_next"
+            ?disabled="${this._totalLogCount <= this._pageSize * this._currentPage}"
+            @click="${(e) => {this._updateItemsFromPage(e)}}"></mwc-icon-button>
       </div>
     `;
   }
@@ -282,6 +291,6 @@ export default class BackendAiErrorLogList extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-error-log-list": BackendAiErrorLogList;
+    'backend-ai-error-log-list': BackendAiErrorLogList;
   }
 }

@@ -1,8 +1,9 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {customElement, html, LitElement, property} from "lit-element";
+import {get as _text, translate as _t} from "lit-translate";
 
 import 'weightless/dialog';
 import 'weightless/banner';
@@ -14,13 +15,13 @@ import './backend-ai-indicator';
 /**
  Backend.AI Indicator pool for Console
 
- `backend-ai-indicator-pool` is a global indicator pool for console.
+ `backend-ai-indicator-pool` is a global indicator pool for web UI.
 
  Example:
 
  <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-indicator-pool
  */
 @customElement("backend-ai-indicator-pool")
@@ -59,7 +60,7 @@ export default class BackendAIIndicatorPool extends LitElement {
     this.gc();
     let indicator = document.createElement('backend-ai-indicator');
     indicator.value = 0;
-    indicator.text = 'Initializing...';
+    indicator.text = _text('notification.Initializing');
     indicator.mode = mode;
     indicator.style.bottom = (20 + 90 * this.step) + 'px';
     document.body.appendChild(indicator);

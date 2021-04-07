@@ -1,15 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {css, customElement, html} from "lit-element";
 import {BackendAIPage} from './backend-ai-page';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
-
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import './backend-ai-session-list';
 import 'weightless/button';
@@ -21,6 +18,8 @@ import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/list-item';
 import 'weightless/divider';
+
+import '@material/mwc-button';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -39,7 +38,7 @@ import {
  ... content ...
  </backend-ai-experiment-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-experiment-view
  */
 
@@ -467,10 +466,11 @@ export default class BackendAIExperimentView extends BackendAIPage {
                   <wl-title level="4" style="margin: 0">TensorFlow Serving</wl-title>
                   <div style="font-size: 11px;max-width:450px;">TensorFlow Serving is a flexible, high-performance serving system for machine learning models, designed for production environments.</div>
                 </wl-list-item>
-                <wl-button class="fg blue button" id="launch-session" outlined>
-                  <wl-icon>add</wl-icon>
-                  Add component
-                </wl-button>
+                <mwc-button
+                    outliend
+                    id="launch-session"
+                    icon="add"
+                    label="Add component"></mwc-button>
             </div>
           </div>
         </div>
