@@ -53,7 +53,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
 
  <backend-ai-storage-list storageType="general" ?active="${!0===this.active}"></backend-ai-storage-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-storage-list
  */
 
@@ -1654,9 +1654,12 @@ export default class BackendAiStorageList extends BackendAIPage {
   _toggleFilebrowserButton() {
     let isfilebrowserSupported = (this.filebrowserSupportedImages.length > 0 && this._isResourceEnough()) ? true : false;
     let filebrowserIcon = this.shadowRoot.querySelector('#filebrowser-img');
-    this.shadowRoot.querySelector('#filebrowser-btn').disabled = !isfilebrowserSupported;
-    let filterClass = isfilebrowserSupported ? '' : 'apply-grayscale';
-    filebrowserIcon.setAttribute('class', filterClass);
+    let filebrowserBtn = this.shadowRoot.querySelector('#filebrowser-btn');
+    if (filebrowserIcon && filebrowserBtn) {
+      filebrowserBtn.disabled = !isfilebrowserSupported;
+      let filterClass = isfilebrowserSupported ? '' : 'apply-grayscale';
+      filebrowserIcon.setAttribute('class', filterClass);
+    }
   }
 
   /**

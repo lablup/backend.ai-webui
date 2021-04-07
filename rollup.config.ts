@@ -7,7 +7,7 @@ import { generateSW } from 'rollup-plugin-workbox';
 import { terser } from "rollup-plugin-terser";
 
 export default {
-  input: ['src/components/backend-ai-console.ts'],
+  input: ['src/components/backend-ai-webui.ts'],
   output: {
     dir: 'build/rollup/dist/components',
     format: 'es',

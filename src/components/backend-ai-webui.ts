@@ -40,7 +40,7 @@ import './backend-ai-sidepanel-task';
 import './backend-ai-sidepanel-notification';
 import './backend-ai-app-launcher';
 import './backend-ai-resource-broker';
-import {BackendAiConsoleStyles} from './backend-ai-console-styles';
+import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 
 import '../lib/backend.ai-client-es6';
 import {default as TabCount} from '../lib/TabCounter';
@@ -56,8 +56,8 @@ import '../plastics/mwc/mwc-multi-select';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
 
-import BackendAiSettingsStore from "./backend-ai-settings-store";
-import BackendAiTasker from "./backend-ai-tasker";
+import BackendAiSettingsStore from './backend-ai-settings-store';
+import BackendAiTasker from './backend-ai-tasker';
 
 registerTranslateConfig({
   loader: lang => fetch(`/resources/i18n/${lang}.json`).then(res => res.json())
@@ -66,22 +66,22 @@ globalThis.backendaioptions = new BackendAiSettingsStore;
 globalThis.tasker = new BackendAiTasker;
 
 /**
- Backend.AI GUI Console
+ Backend.AI Web UI
 
- `backend-ai-console` is a shell of Backend.AI GUI console (web / app).
+ `backend-ai-webui` is a shell of Backend.AI Web UI (web / app).
 
  Example:
 
- <backend-ai-console>
+ <backend-ai-webui>
  ... content ...
- </backend-ai-console>lablup-terms-of-service
+ </backend-ai-webui>lablup-terms-of-service
 
- @group Backend.AI Console
- @element backend-ai-console
+ @group Backend.AI Web UI
+ @element backend-ai-webui
  */
 
-@customElement("backend-ai-console")
-export default class BackendAIConsole extends connect(store)(LitElement) {
+@customElement("backend-ai-webui")
+export default class BackendAIWebUI extends connect(store)(LitElement) {
   public shadowRoot: any; // ShadowRoot
   @property({type: Boolean}) hasLoadedStrings = false;
   @property({type: String}) menuTitle = 'LOGIN REQUIRED';
@@ -130,7 +130,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   @property({type: Number}) sidepanelWidth = 250;
   @property({type: Object}) supports = Object();
   @property({type: Array}) availablePages = ["summary", "verify-email", "change-password", "job",
-                                             "data", "statistics", "usersettings", "credential",
+                                             "data", "pipeline", "statistics", "usersettings", "credential",
                                              "environment", "agent", "settings", "maintenance",
                                              "information", "github", "import", 'unauthorized'];
   @property({type: Array}) adminOnlyPages = ["experiment", "credential", "environment", "agent",
@@ -145,7 +145,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   static get styles() {
     return [
-      BackendAiConsoleStyles,
+      BackendAIWebUIStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
@@ -419,7 +419,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
   showUpdateNotifier(): void {
     let indicator = <any>this.shadowRoot.getElementById('backend-ai-indicator');
-    indicator.innerHTML = 'New console available. Please <a onclick="globalThis.location.reload()">reload</a> to update.';
+    indicator.innerHTML = 'New Web UI is available. Please <a onclick="globalThis.location.reload()">reload</a> to update.';
     indicator.show();
   }
 
@@ -582,7 +582,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     div.className = "horizontal center center-justified layout";
     let p = document.createElement('p') as any;
     p.setAttribute('style', "font-size:12px;color:#8c8484;");
-    p.innerHTML = `${_text("console.menu.Project")}`;
+    p.innerHTML = `${_text("webui.menu.Project")}`;
     let select = document.createElement('mwc-select') as any;
     select.id = 'group-select';
     select.value = this.current_group;
@@ -591,7 +591,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     select.addEventListener('selected', (e) => this.changeGroup(e));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
-    opt.innerHTML = _text("console.menu.SelectProject");
+    opt.innerHTML = _text("webui.menu.SelectProject");
     opt.style.borderBottom = "1px solid #ccc";
     select.appendChild(opt);
     this.groups.map(group => {
@@ -726,7 +726,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   async _updateFullname(newFullname = '') {
     newFullname = newFullname === '' ? this.shadowRoot.querySelector('#pref-original-name').value : newFullname;
     if (newFullname.length > 64) {
-      this.notification.text = _text('console.menu.FullNameInvalid');
+      this.notification.text = _text('webui.menu.FullNameInvalid');
       this.notification.show();
       return;
     }
@@ -734,7 +734,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     if (globalThis.backendaiclient.supports('change-user-name')) {
       if (newFullname && (newFullname !== this.full_name)) {
         globalThis.backendaiclient.user.update(this.user_id, {'full_name': newFullname}).then((resp) => {
-          this.notification.text = _text('console.menu.FullnameUpdated');
+          this.notification.text = _text('webui.menu.FullnameUpdated');
           this.notification.show();
           this.full_name = globalThis.backendaiclient.full_name = newFullname;
           this.shadowRoot.querySelector('#pref-original-name').value = this.full_name;
@@ -774,23 +774,23 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     }
 
     if (!oldPassword) {
-      this.notification.text = _text('console.menu.InputOriginalPassword');
+      this.notification.text = _text('webui.menu.InputOriginalPassword');
       this.notification.show();
       return;
     }
     if (!newPassword1El.value || !newPassword1El.validity.valid) {
-      this.notification.text = _text('console.menu.InvalidPasswordMessage');
+      this.notification.text = _text('webui.menu.InvalidPasswordMessage');
       this.notification.show();
       return;
     }
     if (newPassword1El.value !== newPassword2El.value) {
-      this.notification.text = _text('console.menu.NewPasswordMismatch');
+      this.notification.text = _text('webui.menu.NewPasswordMismatch');
       this.notification.show();
       return;
     }
     const p = globalThis.backendaiclient.update_password(oldPassword, newPassword1El.value, newPassword2El.value);
     p.then((resp) => {
-      this.notification.text = _text('console.menu.PasswordUpdated');
+      this.notification.text = _text('webui.menu.PasswordUpdated');
       this.notification.show();
       this._hideUserPrefDialog();
     }).catch((err) => {
@@ -841,50 +841,53 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     switch (view) {
       case 'summary':
       case 'verify-email':
-        this.menuTitle = _text("console.menu.Summary");
+        this.menuTitle = _text("webui.menu.Summary");
         break;
       case 'change-password':
-        this.menuTitle = _text("console.menu.Summary") + this.user_id;
+        this.menuTitle = _text("webui.menu.Summary") + this.user_id;
         break;
       case 'job':
-        this.menuTitle = _text("console.menu.Sessions");
+        this.menuTitle = _text("webui.menu.Sessions");
         break;
       case 'experiment':
-        this.menuTitle = _text("console.menu.Experiments");
+        this.menuTitle = _text("webui.menu.Experiments");
         break;
       case 'data':
-        this.menuTitle = _text("console.menu.Data&Storage");
+        this.menuTitle = _text("webui.menu.Data&Storage");
+        break;
+      case 'pipeline':
+        this.menuTitle = _text("webui.menu.Pipeline");
         break;
       case 'statistics':
-        this.menuTitle = _text("console.menu.Statistics");
+        this.menuTitle = _text("webui.menu.Statistics");
         break;
       case 'usersettings':
-        this.menuTitle = _text("console.menu.Settings&Logs");
+        this.menuTitle = _text("webui.menu.Settings&Logs");
         break;
       case 'credential':
-        this.menuTitle = _text("console.menu.UserCredentials&Policies");
+        this.menuTitle = _text("webui.menu.UserCredentials&Policies");
         break;
       case 'environment':
-        this.menuTitle = _text("console.menu.Environments&Presets");
+        this.menuTitle = _text("webui.menu.Environments&Presets");
         break;
       case 'agent':
-        this.menuTitle = _text("console.menu.ComputationResources");
+        this.menuTitle = _text("webui.menu.ComputationResources");
         break;
       case 'settings':
-        this.menuTitle = _text("console.menu.Configurations");
+        this.menuTitle = _text("webui.menu.Configurations");
         break;
       case 'maintenance':
-        this.menuTitle = _text("console.menu.Maintenance");
+        this.menuTitle = _text("webui.menu.Maintenance");
         break;
       case 'information':
-        this.menuTitle = _text("console.menu.Information");
+        this.menuTitle = _text("webui.menu.Information");
         break;
       case 'logs':
-        this.menuTitle = _text("console.menu.Logs");
+        this.menuTitle = _text("webui.menu.Logs");
         break;
       case 'github':
       case 'import':
-        this.menuTitle = _text("console.menu.Import&Run");
+        this.menuTitle = _text("webui.menu.Import&Run");
         break;
       default:
         if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(view)) {
@@ -910,7 +913,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         }
         console.log("set to error");
         this._page = 'error';
-        this.menuTitle = _text("console.NOTFOUND");
+        this.menuTitle = _text("webui.NOTFOUND");
     }
   }
 
@@ -921,12 +924,12 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    */
   async close_app_window(performClose = false) {
     if (globalThis.backendaioptions.get('preserve_login') === false) { // Delete login information.
-      this.notification.text = _text("console.CleanUpLoginSession");
+      this.notification.text = _text("webui.CleanUpLoginSession");
       this.notification.show();
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        if (/^(backendaiconsole\.login\.)/.test(key)) {
+        if (/^(BackendAIWebUI\.login\.)/.test(key)) {
           localStorage.removeItem(key);
         }
       }
@@ -950,7 +953,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
     console.log('also close the app:', performClose);
     this._deleteRecentProjectGroupInfo();
     if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
-      this.notification.text = _text("console.CleanUpNow");
+      this.notification.text = _text("webui.CleanUpNow");
       this.notification.show();
       if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
         await globalThis.backendaiclient.logout();
@@ -961,7 +964,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       const keys = Object.keys(localStorage);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        if (/^(backendaiconsole\.login\.)/.test(key)) {
+        if (/^(BackendAIWebUI\.login\.)/.test(key)) {
           localStorage.removeItem(key);
         }
       }
@@ -1047,7 +1050,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   showTOSAgreement() {
     this.TOSdialog.tosContent = "";
     this.TOSdialog.tosLanguage = this.lang;
-    this.TOSdialog.title = _text("console.menu.TermsOfService");
+    this.TOSdialog.title = _text("webui.menu.TermsOfService");
     this.TOSdialog.tosEntry = 'terms-of-service';
     this.TOSdialog.open();
   }
@@ -1058,7 +1061,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
   showPPAgreement() {
     this.TOSdialog.tosContent = "";
     this.TOSdialog.tosLanguage = this.lang;
-    this.TOSdialog.title = _text("console.menu.PrivacyPolicy");
+    this.TOSdialog.title = _text("webui.menu.PrivacyPolicy");
     this.TOSdialog.tosEntry = 'privacy-policy';
     this.TOSdialog.open();
   }
@@ -1159,23 +1162,24 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
    * Add tool tips by create popovers.
    */
   async addTooltips() {
-    this._createPopover("#summary-menu-icon", _text("console.menu.Summary"));
-    this._createPopover("#sessions-menu-icon", _text("console.menu.Sessions"));
-    this._createPopover("#data-menu-icon", _text("console.menu.Data&Storage"));
-    this._createPopover("#import-menu-icon", _text("console.menu.Import&Run"));
-    this._createPopover("#statistics-menu-icon", _text("console.menu.Statistics"));
-    this._createPopover("#usersettings-menu-icon", _text("console.menu.Settings"));
-    this._createPopover("backend-ai-help-button", _text("console.menu.Help"));
+    this._createPopover("#summary-menu-icon", _text("webui.menu.Summary"));
+    this._createPopover("#sessions-menu-icon", _text("webui.menu.Sessions"));
+    this._createPopover("#data-menu-icon", _text("webui.menu.Data&Storage"));
+    this._createPopover("#import-menu-icon", _text("webui.menu.Import&Run"));
+    this._createPopover("#pipeline-menu-icon", _text("webui.menu.Pipeline"));
+    this._createPopover("#statistics-menu-icon", _text("webui.menu.Statistics"));
+    this._createPopover("#usersettings-menu-icon", _text("webui.menu.Settings"));
+    this._createPopover("backend-ai-help-button", _text("webui.menu.Help"));
     if (this.is_admin) {
-      this._createPopover("#user-menu-icon", _text("console.menu.Users"));
+      this._createPopover("#user-menu-icon", _text("webui.menu.Users"));
     }
     if (this.is_superadmin) {
-      this._createPopover("#resources-menu-icon", _text("console.menu.Resources"));
-      this._createPopover("#environments-menu-icon", _text("console.menu.Environments"));
-      this._createPopover("#configurations-menu-icon", _text("console.menu.Configurations"));
-      this._createPopover("#maintenance-menu-icon", _text("console.menu.Maintenance"));
-      this._createPopover("#information-menu-icon", _text("console.menu.Information"));
-      //this._createPopover("#admin-menu-icon", _text("console.menu.Administration"));
+      this._createPopover("#resources-menu-icon", _text("webui.menu.Resources"));
+      this._createPopover("#environments-menu-icon", _text("webui.menu.Environments"));
+      this._createPopover("#configurations-menu-icon", _text("webui.menu.Configurations"));
+      this._createPopover("#maintenance-menu-icon", _text("webui.menu.Maintenance"));
+      this._createPopover("#information-menu-icon", _text("webui.menu.Information"));
+      //this._createPopover("#admin-menu-icon", _text("webui.menu.Administration"));
     }
   }
 
@@ -1235,7 +1239,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
       <link rel="stylesheet" href="resources/custom.css">
       <div id="loading-curtain" class="loading-background"></div>
-      <mwc-drawer id="app-body" class="${this.mini_ui ? "mini-ui" : ""}" style="visibility:hidden;">
+      <mwc-drawer id="app-body" class="${this.mini_ui ? 'mini-ui' : ''}" style="visibility:hidden;">
         <div class="drawer-menu" style="height:100vh;">
           <div id="portrait-bar" class="draggable">
             <div class="horizontal center layout flex bar draggable" style="cursor:pointer;" @click="${() => this._moveTo('/summary')}">
@@ -1259,28 +1263,32 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}">
               <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
-              <span class="full-menu">${_t("console.menu.Summary")}</span>
+              <span class="full-menu">${_t("webui.menu.Summary")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}" ?disabled="${this.blockedMenuitem.includes('job')}">
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
-              <span class="full-menu">${_t("console.menu.Sessions")}</span>
+              <span class="full-menu">${_t("webui.menu.Sessions")}</span>
             </mwc-list-item>
             ${false ? html`
             <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}">
               <i class="fas fa-flask" slot="graphic"></i>
-              <span class="full-menu">${_t("console.menu.Experiments")}</span>
+              <span class="full-menu">${_t("webui.menu.Experiments")}</span>
             </mwc-list-item>` : html``}
             <mwc-list-item graphic="icon" ?selected="${this._page === 'github' || this._page === 'import'}" @click="${() => this._moveTo('/import')}" ?disabled="${this.blockedMenuitem.includes('import')}">
               <i class="fas fa-play" slot="graphic" id="import-menu-icon"></i>
-              <span class="full-menu">${_t("console.menu.Import&Run")}</span>
+              <span class="full-menu">${_t("webui.menu.Import&Run")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}" ?disabled="${this.blockedMenuitem.includes('data')}">
               <i class="fas fa-cloud-upload-alt" slot="graphic" id="data-menu-icon"></i>
-              <span class="full-menu">${_t("console.menu.Data&Storage")}</span>
+              <span class="full-menu">${_t("webui.menu.Data&Storage")}</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}" ?disabled="${this.blockedMenuitem.includes('pipeline')}" style="display:none">
+              <i class="fas fa-stream" slot="graphic" id="pipeline-menu-icon"></i>
+              <span class="full-menu">${_t("webui.menu.Pipeline")}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}" ?disabled="${this.blockedMenuitem.includes('statistics')}">
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
-              <span class="full-menu">${_t("console.menu.Statistics")}</span>
+              <span class="full-menu">${_t("webui.menu.Statistics")}</span>
             </mwc-list-item>
             ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-user'].includes(item.url))).map(item => html`
             <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
@@ -1290,14 +1298,14 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             `) : html``}
             ${this.is_admin ?
               html`
-                <h3 class="full-menu">${_t("console.menu.Administration")}</h3>
+                <h3 class="full-menu">${_t("webui.menu.Administration")}</h3>
                 <mwc-list-item graphic="icon" ?selected="${this._page === 'credential'}" @click="${() => this._moveTo('/credential')}" ?disabled="${!this.is_admin}">
                   <i class="fas fa-address-card" slot="graphic" id="user-menu-icon"></i>
-                  <span class="full-menu">${_t("console.menu.Users")}</span>
+                  <span class="full-menu">${_t("webui.menu.Users")}</span>
                 </mwc-list-item>
                 <mwc-list-item graphic="icon" ?selected="${this._page === 'environment'}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}">
                   <i class="fas fa-microchip" slot="graphic" id="environments-menu-icon"></i>
-                  <span class="full-menu">${_t("console.menu.Environments")}</span>
+                  <span class="full-menu">${_t("webui.menu.Environments")}</span>
                 </mwc-list-item>` : html``}
                 ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-admin'].includes(item.url))).map(item => html`
                 <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
@@ -1309,19 +1317,19 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
               html`
                 <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-server" slot="graphic" id="resources-menu-icon"></i>
-                  <span class="full-menu">${_t("console.menu.Resources")}</span>
+                  <span class="full-menu">${_t("webui.menu.Resources")}</span>
                 </mwc-list-item>
                 <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-cog" slot="graphic" id="configurations-menu-icon"></i>
-                  <span class="full-menu">${_t("console.menu.Configurations")}</span>
+                  <span class="full-menu">${_t("webui.menu.Configurations")}</span>
                 </mwc-list-item>
                 <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-wrench" slot="graphic" id="maintenance-menu-icon"></i>
-                  <span class="full-menu">${_t("console.menu.Maintenance")}</span>
+                  <span class="full-menu">${_t("webui.menu.Maintenance")}</span>
                 </mwc-list-item>
                 <mwc-list-item graphic="icon" ?selected="${this._page === 'information'}" @click="${() => this._moveTo('/information')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-info-circle" slot="graphic" id="information-menu-icon"></i>
-                  <span class="full-menu">${_t("console.menu.Information")}</span>
+                  <span class="full-menu">${_t("webui.menu.Information")}</span>
                 </mwc-list-item>
                 ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-superadmin'].includes(item.url))).map(item => html`
                 <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
@@ -1333,20 +1341,20 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             <footer id="short-height">
               <div class="terms-of-use full-menu" style="margin-bottom:10px;">
                 <small style="font-size:11px;">
-                  <a @click="${() => this.showTOSAgreement()}">${_t("console.menu.TermsOfService")}</a>
+                  <a @click="${() => this.showTOSAgreement()}">${_t("webui.menu.TermsOfService")}</a>
                   ·
-                  <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">${_t("console.menu.PrivacyPolicy")}</a>
+                  <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">${_t("webui.menu.PrivacyPolicy")}</a>
                   ·
-                  <a @click="${() => this.splash.show()}">${_t("console.menu.AboutBackendAI")}</a>
+                  <a @click="${() => this.splash.show()}">${_t("webui.menu.AboutBackendAI")}</a>
                   ${this.allow_signout === true ? html`
                   ·
-                  <a @click="${() => this.loginPanel.signout()}">${_t("console.menu.LeaveService")}</a>
+                  <a @click="${() => this.loginPanel.signout()}">${_t("webui.menu.LeaveService")}</a>
                   ` : html``}
                 </small>
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">21.02.2.210217</small>
+                <small class="sidebar-footer" style="font-size:9px;">21.03.2.210402</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1357,20 +1365,20 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
           <footer>
             <div class="terms-of-use full-menu" style="margin-bottom:10px;">
               <small style="font-size:11px;">
-                <a @click="${() => this.showTOSAgreement()}">${_t("console.menu.TermsOfService")}</a>
+                <a @click="${() => this.showTOSAgreement()}">${_t("webui.menu.TermsOfService")}</a>
                 ·
-                <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">${_t("console.menu.PrivacyPolicy")}</a>
+                <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">${_t("webui.menu.PrivacyPolicy")}</a>
                 ·
-                <a @click="${() => this.splash.show()}">${_t("console.menu.AboutBackendAI")}</a>
+                <a @click="${() => this.splash.show()}">${_t("webui.menu.AboutBackendAI")}</a>
                 ${this.allow_signout === true ? html`
                 ·
-                <a @click="${() => this.loginPanel.signout()}">${_t("console.menu.LeaveService")}</a>
+                <a @click="${() => this.loginPanel.signout()}">${_t("webui.menu.LeaveService")}</a>
                 ` : html``}
               </small>
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">21.02.2.210217</small>
+              <small class="sidebar-footer" style="font-size:9px;">21.03.2.210402</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1391,8 +1399,8 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                 </div>
                 <div slot="navigationIcon" class="vertical-line" style="height:35px;"></div>
                 <div class="horizontal layout" slot="title" style="font-size:12px;margin-left:10px;padding-top:10px;">
-                  <p>${_t("console.menu.WelcomeMessage")}</p>
-                  <p>&nbsp;${this._getUsername()}${_t("console.menu.WelcomeMessage_2")}</p>
+                  <p>${_t("webui.menu.WelcomeMessage")}</p>
+                  <p>&nbsp;${this._getUsername()}${_t("webui.menu.WelcomeMessage_2")}</p>
                 </div>
                 <div slot="actionItems" style="margin:0px;">
                   <div class="horizontal flex center layout">
@@ -1401,7 +1409,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                     <div class="horizontal center layout">
                       <div class="vertical layout center" style="position:relative;padding-top:10px;">
                         <span class="email" style="color:#8c8484;font-size:12px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;margin:auto 10px;">
-                          ${_t("console.menu.UserName")}
+                          ${_t("webui.menu.UserName")}
                         </span>
                         <mwc-menu id="dropdown-menu" class="user-menu">
                           ${this.domain !== 'default' && this.domain !== '' ? html`
@@ -1414,23 +1422,23 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
                               <mwc-icon class="dropdown-menu">info</mwc-icon>
-                              ${_t("console.menu.AboutBackendAI")}
+                              ${_t("webui.menu.AboutBackendAI")}
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                               <mwc-icon class="dropdown-menu">lock</mwc-icon>
-                              ${_t("console.menu.ChangeUserInfo")}
+                              ${_t("webui.menu.ChangeUserInfo")}
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
                               <mwc-icon class="dropdown-menu">drag_indicator</mwc-icon>
-                              ${_t("console.menu.Preferences")}
+                              ${_t("webui.menu.Preferences")}
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
                               <mwc-icon class="dropdown-menu">assignment</mwc-icon>
-                              ${_t("console.menu.LogsErrors")}
+                              ${_t("webui.menu.LogsErrors")}
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
                               <mwc-icon class="dropdown-menu">logout</mwc-icon>
-                              ${_t("console.menu.LogOut")}
+                              ${_t("webui.menu.LogOut")}
                           </mwc-list-item>
                         </mwc-menu>
                       </div>
@@ -1443,7 +1451,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                       <div class="vertical-line" style="height:35px;"></div>
                       <div class="horizontal layout center" style="margin:auto 10px;padding-top:10px;">
                         <span class="log_out" style="font-size:12px;margin:auto 0px;color:#8c8484;">
-                          ${_text("console.menu.LogOut")}
+                          ${_text("webui.menu.LogOut")}
                         </span>
                         <mwc-icon-button @click="${() => this.logout()}" style="padding-bottom:5px;">
                           <i class="fas fa-sign-out-alt fa-xs" style="color:#8c8484;"></i>
@@ -1466,6 +1474,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
                     <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
                     <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
+                    <backend-ai-pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>
                     <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view>
                     <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-settings-view>
                     <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>
@@ -1495,7 +1504,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         </wl-popover>
       </div>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
-        ${this._offline ? _t("console.YouAreOffline") : _t("console.YouAreOnline")}.
+        ${this._offline ? _t("webui.YouAreOffline") : _t("webui.YouAreOnline")}.
       </backend-ai-offline-indicator>
       <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-backendai-panel"></backend-ai-splash>
@@ -1503,23 +1512,23 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
       <backend-ai-dialog id="user-preference-dialog" fixed backdrop>
-        <span slot="title">${_t("console.menu.ChangeUserInformation")}</span>
+        <span slot="title">${_t("webui.menu.ChangeUserInformation")}</span>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-name" type="text"
-              label="${_t('console.menu.FullName')}" maxLength="64" autofocus
+              label="${_t('webui.menu.FullName')}" maxLength="64" autofocus
               style="margin-bottom:20px;" value="${this.full_name}"
               helper="${_t('maxLength.64chars')}">
           </mwc-text-field>
         </div>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-password" type="password"
-              label="${_t('console.menu.OriginalPassword')}" maxLength="64"
+              label="${_t('webui.menu.OriginalPassword')}" maxLength="64"
               style="margin-bottom:20px;">
           </mwc-textfield>
           <div class="horizontal flex layout">
-            <mwc-textfield id="pref-new-password" label="${_t('console.menu.NewPassword')}"
+            <mwc-textfield id="pref-new-password" label="${_t('webui.menu.NewPassword')}"
                 type="password" maxLength="64"
-                auto-validate validationMessage="${_t('console.menu.InvalidPasswordMessage')}"
+                auto-validate validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
                 pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
                 @change="${this._validatePassword}">
             </mwc-textfield>
@@ -1528,7 +1537,7 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
             </mwc-icon-button-toggle>
           </div>
           <div class="horizontal flex layout">
-            <mwc-textfield id="pref-new-password2" label="${_t('console.menu.NewPasswordAgain')}"
+            <mwc-textfield id="pref-new-password2" label="${_t('webui.menu.NewPasswordAgain')}"
                 type="password" maxLength="64"
                 @change="${this._validatePassword}">
             </mwc-textfield>
@@ -1540,11 +1549,11 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
           <mwc-button
-              label="${_t("console.menu.Cancel")}"
+              label="${_t("webui.menu.Cancel")}"
               @click="${this._hideUserPrefDialog}"></mwc-button>
           <mwc-button
               unelevated
-              label="${_t("console.menu.Update")}"
+              label="${_t("webui.menu.Update")}"
               @click="${this._updateUserInformation}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -1556,6 +1565,6 @@ export default class BackendAIConsole extends connect(store)(LitElement) {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-console": BackendAIConsole;
+    "backend-ai-webui": BackendAIWebUI;
   }
 }

@@ -15,13 +15,13 @@ import './backend-ai-indicator';
 /**
  Backend.AI Indicator pool for Console
 
- `backend-ai-indicator-pool` is a global indicator pool for console.
+ `backend-ai-indicator-pool` is a global indicator pool for web UI.
 
  Example:
 
  <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-indicator-pool
  */
 @customElement("backend-ai-indicator-pool")

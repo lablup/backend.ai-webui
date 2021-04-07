@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, customElement, html, property} from 'lit-element';
 
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
@@ -25,11 +25,11 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
  <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
 
- @group Backend.AI Console
+ @group Backend.AI Web UI
  @element backend-ai-app-launcher
  */
 
-@customElement("backend-ai-app-launcher")
+@customElement('backend-ai-app-launcher')
 export default class BackendAiAppLauncher extends BackendAIPage {
   public shadowRoot: any;
 
@@ -40,7 +40,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Array}) appSupportOption = Array();
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
-  @property({type: Array}) _selected_items = Array();
+  @property({type: Array}) _selected_items = [];
   @property({type: Boolean}) refreshing = false;
   @property({type: Object}) notification = Object();
   @property({type: Object}) spinner = Object();
@@ -208,16 +208,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this._initializeAppTemplate();
     this.refreshTimer = null;
     fetch('resources/image_metadata.json').then(
-      response => response.json()
+      (response) => response.json()
     ).then(
-      json => {
+      (json) => {
         this.imageInfo = json.imageInfo;
-        for (let key in this.imageInfo) {
-          this.kernel_labels[key] = [];
-          if ("label" in this.imageInfo[key]) {
-            this.kernel_labels[key] = this.imageInfo[key].label;
-          } else {
+        for (const key in this.imageInfo) {
+          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
             this.kernel_labels[key] = [];
+            if ('label' in this.imageInfo[key]) {
+              this.kernel_labels[key] = this.imageInfo[key].label;
+            } else {
+              this.kernel_labels[key] = [];
+            }
           }
         }
       }
@@ -230,9 +232,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const checkbox = this.shadowRoot.querySelector('#hide-guide');
     checkbox.addEventListener('change', (event) => {
       if (!event.target.checked) {
-        localStorage.setItem('backendaiconsole.terminalguide', 'true');
+        localStorage.setItem('backendaiwebui.terminalguide', 'true');
       } else {
-        localStorage.setItem('backendaiconsole.terminalguide', 'false');
+        localStorage.setItem('backendaiwebui.terminalguide', 'false');
       }
     });
   }
@@ -246,9 +248,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
   _initializeAppTemplate() {
     fetch('resources/app_template.json').then(
-      response => response.json()
+      (response) => response.json()
     ).then(
-      json => {
+      (json) => {
         this.appTemplate = json.appTemplate;
         const apps = Object.keys(this.appTemplate);
         apps.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
@@ -309,7 +311,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   /**
    * Display the app launcher.
    *
-   * @param detail
+   * @param {Object} detail
+   *
    */
   showLauncher(detail) {
     return this._showAppLauncher(detail);
@@ -345,11 +348,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'name': 'ttyd',
         'title': 'Console',
         'category': '0.Default',
-        'redirect': "",
+        'redirect': '',
         'src': './resources/icons/terminal.svg'
       });
     }
-    /*if (!appServices.includes('filebrowser')) {
+    /* if (!appServices.includes('filebrowser')) {
       this.appSupportList.push({ // Force push filebrowser
         'name' : 'filebrowser',
         'title': 'FileBrowser',
@@ -358,6 +361,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'src': './resources/icons/filebrowser.svg'
       });
     }*/
+    appServices.forEach((elm) => {
+      if (!(elm in this.appTemplate)) {
+        this.appTemplate[elm] = [];
+        this.appTemplate[elm].push({
+          'name': elm,
+          'title': elm,
+          'category': '99.',
+          'redirect': '',
+          'src': ''
+        });
+      }
+    });
     appServices.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
     let interText = '';
     if (Object.keys(appServicesOption).length > 0) {
@@ -368,11 +383,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
           if (interText !== this.appTemplate[elm][0].category) {
             this.appSupportList.push({
-              "name": this.appTemplate[elm][0].category.substring(2),
-              "title": this.appTemplate[elm][0].category.substring(2),
-              "category": 'divider',
-              "redirect": "",
-              "src": ""
+              'name': this.appTemplate[elm][0].category.substring(2),
+              'title': this.appTemplate[elm][0].category.substring(2),
+              'category': 'divider',
+              'redirect': '',
+              'src': ''
             });
             interText = this.appTemplate[elm][0].category;
           }
@@ -386,7 +401,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             'name': elm,
             'title': elm,
             'category': 'Default',
-            'redirect': "",
+            'redirect': '',
             'src': './resources/icons/default_app.svg'
           });
         }
@@ -443,7 +458,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.launcher.ProxyNotReady');
-      ;
+
       this.notification.show();
       return Promise.resolve(false);
     }
@@ -620,7 +635,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return;
     }
     if (appName === 'ttyd') {
-      let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
+      let isVisible = localStorage.getItem('backendaiwebui.terminalguide');
       if (!isVisible || isVisible === 'true') {
         this._openTerminalGuideDialog();
       }
@@ -692,7 +707,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    */
   async runTerminal(sessionUuid: string) {
-    let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
+    let isVisible = localStorage.getItem('backendaiwebui.terminalguide');
     if (!isVisible || isVisible === 'true') {
       this._openTerminalGuideDialog();
     }
@@ -888,16 +903,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
             ${this.appSupportList.map(item => html`
               ${item.category === 'divider' ? html`
-              <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${item.title}</h3>
-              `:html`
-              <div class="vertical layout center center-justified app-icon">
-                <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
-                                 .url-postfix="${item.redirect}"
-                                 @click="${(e) => this._runThisAppWithConfirmationIfNeeded(e)}">
-                  <img src="${item.src}"/>
-                </mwc-icon-button>
-                <span class="label">${item.title}</span>
-              </div>`}
+                <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${item.title}</h3>
+              ` : html`
+                <div class="vertical layout center center-justified app-icon">
+                  <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
+                                   .url-postfix="${item.redirect}"
+                                   @click="${(e) => this._runThisAppWithConfirmationIfNeeded(e)}">
+                    <img src="${item.src}"/>
+                  </mwc-icon-button>
+                  <span class="label">${item.title}</span>
+                </div>`}
             `)}
           </div>
           <div style="padding:10px 20px 15px 20px">

@@ -44,7 +44,7 @@ import './backend-ai-usersettings-general-list';
   ...
  </backend-ai-usersettings-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-usersettings-view
  */
 
@@ -193,7 +193,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           <div id="logs" class="item tab-content" style="display:none;">
             <h3 class="horizontal center layout outer-space">
               <span>${_t("logs.LogMessages")}</span>
-              <span class="mini" style="font-size:13px;padding-left:15px;">${_t("logs.UpTo5000Logs")}</span>
+              <span class="mini" style="font-size:13px;padding-left:15px;">${_t("logs.UpTo3000Logs")}</span>
               <span class="flex"></span>
               <mwc-button
                   class="log"
@@ -289,13 +289,13 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
    * Remove log message.
    * */
   _removeLogMessage() {
-    let currentLogs = localStorage.getItem('backendaiconsole.logs');
+    let currentLogs = localStorage.getItem('backendaiwebui.logs');
     if (currentLogs) {
-      localStorage.removeItem('backendaiconsole.logs');
+      localStorage.removeItem('backendaiwebui.logs');
     }
     let event = new CustomEvent("log-message-clear", {});
     document.dispatchEvent(event);
-    localStorage.getItem('backendaiconsole.logs');
+    localStorage.getItem('backendaiwebui.logs');
     this.clearLogsDialog.hide();
     this.notification.text = _text('logs.LogMessageRemoved');
     this.notification.show();
@@ -313,7 +313,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
    * Refresh log messages.
    * */
   _refreshLogs() {
-    this.logGrid = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
+    this.logGrid = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '{}');
     let event = new CustomEvent("log-message-refresh", this.logGrid);
     document.dispatchEvent(event);
   }

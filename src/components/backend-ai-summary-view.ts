@@ -32,7 +32,7 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
 import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
 
 /**
- `<backend-ai-summary-view>` is a Summary panel of backend.ai console.
+ `<backend-ai-summary-view>` is a Summary panel of backend.ai web UI.
 
  Example:
  <backend-ai-summary-view active></backend-ai-summary-view>
@@ -53,7 +53,7 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Object}) update_checker = Object();
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) manager_version = '';
-  @property({type: String}) console_version = '';
+  @property({type: String}) webui_version = '';
   @property({type: Number}) cpu_total = 0;
   @property({type: Number}) cpu_used = 0;
   @property({type: String}) cpu_percent = '0';
@@ -312,7 +312,7 @@ export default class BackendAISummary extends BackendAIPage {
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
         this.manager_version = globalThis.backendaiclient.managerVersion;
-        this.console_version = globalThis.packageVersion;
+        this.webui_version = globalThis.packageVersion;
 
         if (this.activeConnected) {
           this._refreshConsoleUpdateInformation();
@@ -324,7 +324,7 @@ export default class BackendAISummary extends BackendAIPage {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
       this.manager_version = globalThis.backendaiclient.managerVersion;
-      this.console_version = globalThis.packageVersion;
+      this.webui_version = globalThis.packageVersion;
       this._refreshConsoleUpdateInformation();
       this._refreshInvitations();
       //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
@@ -546,7 +546,7 @@ export default class BackendAISummary extends BackendAIPage {
                           <div class="layout vertical center center-justified flex" style="margin-bottom:5px;">
                             <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
                             <div class="layout horizontal center flex" style="margin-top:4px;">
-                              <lablup-shields app="Console version" color="${this.update_checker.updateNeeded ? 'red' : 'darkgreen'}" description="${this.console_version}" ui="flat"></lablup-shields>
+                              <lablup-shields app="Console version" color="${this.update_checker.updateNeeded ? 'red' : 'darkgreen'}" description="${this.webui_version}" ui="flat"></lablup-shields>
                               ${this.update_checker.updateNeeded ? html`
                                 <mwc-icon-button class="update-button" icon="new_releases"
                                   @click="${() => {window.open(this.update_checker.updateURL, '_blank')}}"></mwc-icon-button>`

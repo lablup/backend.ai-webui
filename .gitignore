@@ -78,7 +78,7 @@ app
 .idea
 .vscode
 
-# console config
+# webui config
 config.ini
 config.toml
 configs/*.toml

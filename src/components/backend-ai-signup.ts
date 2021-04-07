@@ -35,7 +35,7 @@ import {BackendAIPage} from "./backend-ai-page";
  ... content ...
  </backend-ai-signup>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  */
 @customElement("backend-ai-signup")
 export default class BackendAiSignup extends BackendAIPage {
@@ -158,7 +158,7 @@ export default class BackendAiSignup extends BackendAIPage {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
       this.TOSdialog.tosLanguage = globalThis.backendaioptions.get("language");
-      this.TOSdialog.title = _t("console.menu.TermsOfService");
+      this.TOSdialog.title = _t("webui.menu.TermsOfService");
       this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
     }
@@ -168,7 +168,7 @@ export default class BackendAiSignup extends BackendAIPage {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = "";
       this.TOSdialog.tosLanguage = globalThis.backendaioptions.get("language");
-      this.TOSdialog.title = _t("console.menu.PrivacyPolicy");
+      this.TOSdialog.title = _t("webui.menu.PrivacyPolicy");
       this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();
     }

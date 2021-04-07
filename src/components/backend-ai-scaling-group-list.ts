@@ -42,7 +42,7 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 
  <backend-ai-scaling-group-list active></backend-ai-scaling-group-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-scaling-group-list
  */
 

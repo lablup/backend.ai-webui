@@ -1,5 +1,5 @@
 {
-  "console": {
+  "webui": {
     "menu": {
       "WelcomeMessage": "환영합니다. ",
       "WelcomeMessage_2": "님",
@@ -7,6 +7,7 @@
       "Sessions": "세션",
       "Import&Run": "가져오기 & 실행",
       "Data&Storage": "데이터 & 폴더",
+      "Pipeline": "파이프라인(베타)",
       "Statistics": "통계",
       "Help": "도움말",
       "Settings": "설정",
@@ -17,6 +18,7 @@
       "Configurations": "환경 설정",
       "Maintenance": "관리",
       "Information": "정보",
+      "About": "대하여",
       "AboutBackendAI": "Backend.AI에 대하여",
       "ChangeUserInformation": "사용자 정보 변경",
       "ChangeUserInfo": "사용자 정보 변경",
@@ -190,11 +192,12 @@
       "NotEnoughResource": "할당 가능한 자원 부족",
       "EnvDeleted": "환경변수를 삭제했습니다.",
       "SetEnv": "환경변수 수정",
-      "DescSetEnv": "<p>사용자가 기본 환경 변수를 설정하고 Backend.AI 에서도 자체적인 동작을 위하여 이름이 같은 환경 변수를 설정한 경우, Backend.AI가 설정하는 값이 우선 적용됩니다.</p><p style='color:var(--paper-red-400);'>세션 런쳐 다이얼로그를 띄울 때마다 입력한 값은 모두 초기화됩니다.</p>",
+      "DescSetEnv": "<p>사용자가 기본 환경 변수를 설정하고 Backend.AI 에서도 자체적인 동작을 위하여 이름이 같은 환경 변수를 설정한 경우, Backend.AI가 설정하는 값이 우선 적용됩니다.</p><p style='color:var(--paper-red-400);'>세션 런쳐 다이얼로그를 띄울 때마다 입력한 값은 모두 초기화됩니다.<br />이러한 설정은 환경변수와 값 입력란이 각각 비어있지 않은 경우에만 전달됩니다.</p>",
       "EnvironmentVariableTitle": "우선 순위: 컨테이너와 Backend.AI 환경 변수",
       "EnvironmentVariable": "환경변수",
       "EnvironmentVariableValue": "값",
-      "EnvironmentVariableConfigurationDone": "환경변수가 설정되었습니다."
+      "EnvironmentVariableConfigurationDone": "환경변수가 설정되었습니다.",
+      "EnvConfigWillDisappear": "저장되지 않은 환경변수 설정값은 사라집니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -262,11 +265,13 @@
     "Update": "업데이트",
     "Delete": "삭제",
     "Dismiss": "해제",
+    "DismissAndProceed": "무시하고 진행",
     "Close": "닫기",
     "Confirm": "확인",
     "Generate": "생성하기",
     "Continue": "계속",
-    "GoBackToSummaryPage": "요약 페이지로 돌아가기"
+    "GoBackToSummaryPage": "요약 페이지로 돌아가기",
+    "ForceTerminate": "강제 종료"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -585,10 +590,10 @@
     "UseCompactSidebar": "간결한 사이드바 기본 사용",
     "Language": "언어",
     "DescLanguage": "인터페이스 언어를 설정합니다.",
-    "DescDesktopNotification": "데스크탑 알림을 사용합니다.<br />이 옵션이 켜져 있을때, Backend.AI는 운영체제의 알림 기능을 함께 사용합니다. 이 옵션을 꺼도 콘솔내의 알림은 계속 동작합니다.",
+    "DescDesktopNotification": "데스크탑 알림을 사용합니다.<br />이 옵션이 켜져 있을때, Backend.AI는 운영체제의 알림 기능을 함께 사용합니다. 이 옵션을 꺼도 웹 UI내의 알림은 계속 동작합니다.",
     "DescUseCompactSidebar": "간결한 사이드바는 더 많은 작업 공간을 쓸 수 있게 합니다.<br />이 옵션이 켜져 있을때, 간결한 사이드바가 시작시 기본 인터페이스가 됩니다.",
     "KeepLoginSessionInformation": "로그아웃 후 로그인 정보 유지",
-    "DescKeepLoginSessionInformation": "콘솔 앱이 다음 앱 사용시까지 로그인 세션 정보를 저장합니다.<br />이 옵션이 꺼져있을 경우, 매 종료시마다 로그인 정보가 자동으로 삭제됩니다.",
+    "DescKeepLoginSessionInformation": "웹 UI 앱이 다음 앱 사용시까지 로그인 세션 정보를 저장합니다.<br />이 옵션이 꺼져있을 경우, 매 종료시마다 로그인 정보가 자동으로 삭제됩니다.",
     "BetaFeatures": "베타 기능",
     "DescBetaFeatures": "GUI용으로 테스트중인 기능들을 사용합니다.<br />베타 기능들은 불안정할 수 있습니다. 몇몇 베타 기능들은 정식 버전에서는 채택되지 않을 수 있습니다.",
     "DescNoBetaFeatures": "사용 가능한 베타 기능이 없습니다. :)",
@@ -597,14 +602,16 @@
     "PackageInstallation": "패키지 설치",
     "BootstrapScript": "부트스트랩 스크립트",
     "BootstrapScriptUpdated": "부트스트랩 스크립트가 갱신되었습니다.",
-    "DialogSaveToSpecificFile": "수정한 내용을 File 에 저장하시겠습니까?",
+    "DialogDiscardOrSave": "스크립트가 선택한 파일에 맞게 변경됩니다. 계속하시겠습니까?",
     "DialogNoSaveNoPreserve": "저장하지 않은 내용은 삭제됩니다.",
     "DescScriptUpdated": "사용자 스크립트를 수정했습니다. 이 스크립트는 이후 새로 생성하는 세션부터 적용됩니다.",
     "DescScriptCreated": "사용자 스크립트를 생성했습니다. 이 스크립트는 이후 새로 생성하는 세션부터 적용됩니다.",
     "DescNewUserConfigFileCreated": "새 사용자 스크립트 생성을 위한 내용이 필요합니다.",
+    "DescScriptDeleted": "다음 사용자 스크립트가 삭제되었습니다. 삭제된 스크립트 : ",
+    "DescScriptAllDeleted": "생성되었던 모든 사용자 스크립트가 삭제되었습니다.",
     "DescLetUserUpdateScriptWithNonEmptyValue": "스크립트 수정을 위한 내용을 입력하세요.",
     "AutomaticUpdateCheck": "자동 업데이트 체크",
-    "DescAutomaticUpdateCheck": "새 콘솔 버전이 출시된 경우 알려줍니다.<br />오프라인 또는 인터넷 연결 상태가 불안정한 환경에서는 몇 차례 시도후 자동으로 사용이 중지됩니다. 이 경우 이 스위치를 켜서 다시 자동 업데이트 체크를 시작할 수 있습니다.",
+    "DescAutomaticUpdateCheck": "새로운 웹 UI 버전이 출시된 경우 알려줍니다.<br />오프라인 또는 인터넷 연결 상태가 불안정한 환경에서는 몇 차례 시도후 자동으로 사용이 중지됩니다. 이 경우 이 스위치를 켜서 다시 자동 업데이트 체크를 시작할 수 있습니다.",
     "PreferredSSHPort": "선호하는 SSH 포트",
     "DescPreferredSSHPort": "가능하면 이 값을 SSH/SFTP 포트번호로 사용합니다.<br />만약 해당 포트가 이미 사용중이라면, SSH/SFTP를 위한 임의의 다른 포트를 할당합니다. 자동 할당을 위해서는 빈 칸으로 남겨두세요.",
     "SSHKeypairManagement": "SSH 키페어 관리",
@@ -625,7 +632,7 @@
     "Edit_ShellScriptTitle_1": " ",
     "Edit_ShellScriptTitle_2": " 셀 스크립트 수정하기",
     "AutoLogout": "자동 로그아웃",
-    "DescAutoLogout": "세션 내 앱을 실행하기 위해 생성된 페이지를 제외한 모든 Backend.AI 콘솔 페이지가 닫힐 경우 자동으로 로그아웃됩니다."
+    "DescAutoLogout": "세션 내 앱을 실행하기 위해 생성된 페이지를 제외한 모든 Backend.AI 웹 UI 페이지가 닫힐 경우 자동으로 로그아웃됩니다."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",
@@ -637,7 +644,7 @@
   },
   "logs": {
     "LogMessages": "로그 메세지",
-    "UpTo5000Logs": "(최근 5000개의 로그)",
+    "UpTo3000Logs": "(최근 3000개의 로그)",
     "TimeStamp": "시간",
     "Status": "상태",
     "ErrorTitle": "제목",
@@ -751,6 +758,44 @@
     "RescanImageFinished": "이미지 리스캔 작업이 완료되었습니다.",
     "RescanFailed": "리스캔 작업이 실패하였습니다."
   },
+  "pipeline": {
+    "List": "리스트",
+    "Running": "실행중",
+    "Finished": "종료",
+    "SelectPipeline": "파이프라인을 선택하세요",
+    "NoPipelineSelected": "파이프라인이 선택되지 않았습니다",
+    "PipelineCreated": "파이프라인이 생성되었습니다",
+    "PipelineUpdated": "파이프라인이 수정되었습니다",
+    "PipelineDeleted": "파이프라인이 삭제되었습니다",
+    "RunPipeline": "파이프라인 실행",
+    "PipelineDialog": {
+      "CreateTitle": "파이프라인 만들기",
+      "UpdateTitle": "파이프라인 수정",
+      "DeleteTitle": "파이프라인 삭제",
+      "Name": "파이프라인 이름",
+      "Description": "파이프라인 설명",
+      "Environment": "연산 환경",
+      "Version": "버전",
+      "TargetFolder": "대상 데이터 폴더",
+      "FillAllInputFields": "모든 필드에 값을 입력하세요"
+    },
+    "Component": {
+      "Connect": "연결",
+      "NoComponentSelected": "파이프라인 컴포넌트가 선택되지 않았습니다",
+      "SelectTwoComponents": "두 개의 컴포넌트만 선택하세요"
+    },
+    "ComponentDialog": {
+      "CreateTitle": "파이프라인 컴포넌트 추가",
+      "UpdateTitle": "파이프라인 컴포넌트 수정",
+      "DeleteTitle": "파이프라인 컴포넌트 삭제",
+      "Name": "컴포넌트 이름",
+      "Description": "컴포넌트 설명",
+      "PathInFolder": "저장 폴더 내 컴포넌트 경로",
+      "NamePathRequired": "이름과 경로는 필수 항목입니다",
+      "CPUNotEnough": "CPU는 1 이상이어야 합니다",
+      "MemoryNotEnough": "메모리는 0.1 GiB 이상이어야 합니다"
+    }
+  },
   "statistics": {
     "Usage": "사용량",
     "SelectPeriod": "기간을 선택하세요",
@@ -773,7 +818,7 @@
     "UseCLIonGUI": "Backend.AI CLI를 GUI에서 사용",
     "DescUseCLIonGUI": "Backend.AI CLI 를 앱 및 웹 GUI에서 사용합니다. Backend.AI CLI 이미지가 필요합니다.",
     "UseGUIonWeb": "Backend.AI GUI를 웹에서 사용",
-    "DescUseGUIonWeb": "Backend.AI GUI를 웹서비스 형태로 사용합니다. Backend.AI 콘솔서버 이미지가 필요합니다.",
+    "DescUseGUIonWeb": "Backend.AI GUI를 웹서비스 형태로 사용합니다. Backend.AI 웹 서버 이미지가 필요합니다.",
     "NoteAboutFixedSetup": "안내: 아래의 설정들은 설치 환경 및 상태에 따라 자동으로 지정된 값입니다.",
     "Scaling": "스케일링",
     "AllowAgentSideRegistration": "에이전트쪽으로부터의 등록 허용",
@@ -922,7 +967,7 @@
     "VerificationError": "인증 에러가 발생하였습니다."
   },
   "update": {
-    "NewConsoleVersionAvailable": "새 버전이 출시되었습니다:"
+    "NewWebUIVersionAvailable": "새 버전이 출시되었습니다:"
   },
   "sidepanel": {
     "BackgroundTasks": "작업",
@@ -967,6 +1012,17 @@
     "NotebookBadgeCodeHTML": "노트북 배지 코드(HTML)",
     "NotebookBadgeCodeMarkdown": "노트북 배지 코드(Markdown)",
     "Installed": "설치됨"
+  },
+  "usagepanel": {
+    "StatisticsForThisMonth": "이번달 통계",
+    "NumSessions": "실행 세션 수",
+    "UsedTime": "사용 시간",
+    "CpuUsedTime": "CPU 사용량",
+    "GpuUsedTime": "GPU 사용량",
+    "DiskUsed": "디스크 사용량",
+    "TrafficUsed": "트래픽 사용",
+    "Hours": "시간",
+    "Minutes": "분"
   },
   "DownloadSSHKey": "SSH 키 다운로드",
   "license": {

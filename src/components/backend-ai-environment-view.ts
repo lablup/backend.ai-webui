@@ -33,7 +33,7 @@ import './backend-ai-registry-list';
  ... content ...
  </backend-ai-environment-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-environment-view
  */
 
