@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, customElement, html, property} from 'lit-element';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {render} from 'lit-html';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -58,13 +58,13 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
   @property({type: Array}) compute_sessions = [];
-  @property({type: Array}) terminationQueue = [];
+  @property({type: Array}) terminationQueue;
   @property({type: String}) filterAccessKey = '';
   @property({type: String}) sessionNameField = 'name';
   @property({type: Array}) appSupportList = [];
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
-  @property({type: Array}) _selected_items = [];
+  @property({type: Array}) _selected_items;
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundConfigRenderer = this.configRenderer.bind(this);
   @property({type: Object}) _boundUsageRenderer = this.usageRenderer.bind(this);
@@ -107,9 +107,11 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   constructor() {
     super();
+    this._selected_items = [];
+    this.terminationQueue = [];
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -147,7 +149,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         wl-button.pagination {
           width: 15px;
           height: 15px;
-          padding: 10 10px;
+          padding: 10px;
           box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
           --button-bg: transparent;
           --button-bg-hover: var(--paper-red-100);
@@ -301,16 +303,18 @@ export default class BackendAiSessionList extends BackendAIPage {
       (json) => {
         this.imageInfo = json.imageInfo;
         for (const key in this.imageInfo) {
-          this.kernel_labels[key] = [];
-          if ('label' in this.imageInfo[key]) {
-            this.kernel_labels[key] = this.imageInfo[key].label;
-          } else {
+          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
             this.kernel_labels[key] = [];
-          }
-          if ('icon' in this.imageInfo[key]) {
-            this.kernel_icons[key] = this.imageInfo[key].icon;
-          } else {
-            this.kernel_icons[key] = '';
+            if ('label' in this.imageInfo[key]) {
+              this.kernel_labels[key] = this.imageInfo[key].label;
+            } else {
+              this.kernel_labels[key] = [];
+            }
+            if ('icon' in this.imageInfo[key]) {
+              this.kernel_icons[key] = this.imageInfo[key].icon;
+            } else {
+              this.kernel_icons[key] = '';
+            }
           }
         }
       }
@@ -611,7 +615,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * */
   _refreshWorkDialogUI(e) {
     const work_dialog = this.shadowRoot.querySelector('#work-dialog');
-    if (e.detail.hasOwnProperty('mini-ui') && e.detail['mini-ui'] === true) {
+    if (Object.prototype.hasOwnProperty.call(e.detail, 'mini-ui') && e.detail['mini-ui'] === true) {
       work_dialog.classList.add('mini_ui');
     } else {
       work_dialog.classList.remove('mini_ui');
@@ -619,10 +623,11 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   /**
-   * Return human readable time.
+   * Convert start date to human readable date.
    *
-   * @param {any} d - date
-   * */
+   * @param {Date} d - Date to convert
+   * @return {string} Human-readable date
+   */
   _humanReadableTime(d: any) {
     d = new Date(d);
     return d.toLocaleString();
@@ -632,6 +637,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Get kernel information - category, tag, color.
    *
    * @param {string} lang - session language
+   * @return {Record<string, unknown>} Information containing category, tag, color
    * */
   _getKernelInfo(lang) {
     const tags: any = [];
@@ -665,6 +671,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Get kernel icon
    *
    * @param {string} lang - session language
+   * @return {string} kernel icon name
    * */
   _getKernelIcon(lang) {
     if (lang === undefined) return [];
@@ -693,6 +700,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Scale the time in units of D, H, M, S, and MS.
    *
    * @param {number} value - time to want to scale
+   * @return {Record<string, unknown>} result containing time information
    * */
   _automaticScaledTime(value: number) { // number: msec.
     let result = Object();
@@ -727,6 +735,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    *
    * @param {any} start - start time
    * @param {any} end - end time
+   * @return {string} Elapsed time between start and end
    * */
   _elapsed(start, end) {
     return globalThis.backendaiclient.utils.elapsedTime(start, end);
@@ -910,14 +919,14 @@ export default class BackendAiSessionList extends BackendAIPage {
     return this._terminateKernel(sessionName, accessKey);
   }
 
-  _terminateSessionWithCheck(e) {
+  _terminateSessionWithCheck(forced = false) {
     if (this.terminationQueue.includes(this.terminateSessionDialog.sessionName)) {
       this.notification.text = 'Already terminating the session.';
       this.notification.show();
       return false;
     }
     this.spinner.show();
-    return this._terminateKernel(this.terminateSessionDialog.sessionName, this.terminateSessionDialog.accessKey).then((response) => {
+    return this._terminateKernel(this.terminateSessionDialog.sessionName, this.terminateSessionDialog.accessKey, forced).then((response) => {
       this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
@@ -953,10 +962,10 @@ export default class BackendAiSessionList extends BackendAIPage {
     });
   }
 
-  _terminateSelectedSessionsWithCheck() {
+  _terminateSelectedSessionsWithCheck(forced = false) {
     this.spinner.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
-      return this._terminateKernel(item[this.sessionNameField], item.access_key);
+      return this._terminateKernel(item[this.sessionNameField], item.access_key, forced);
     });
     this._selected_items = [];
     return Promise.all(terminateSessionQueue).then((response) => {
@@ -977,6 +986,8 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   /**
    * Terminate selected sessions without check.
+   *
+   * @return {void}
    * */
   _terminateSelectedSessions() {
     this.spinner.show();
@@ -1005,10 +1016,10 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   // General closing
 
-  async _terminateKernel(sessionName, accessKey) {
+  async _terminateKernel(sessionName, accessKey, forced = false) {
     this.terminationQueue.push(sessionName);
     return this._terminateApp(sessionName).then(() => {
-      globalThis.backendaiclient.destroy(sessionName, accessKey).then((req) => {
+      globalThis.backendaiclient.destroy(sessionName, accessKey, forced).then((req) => {
         setTimeout(async () => {
           this.terminationQueue = [];
           // await this.refreshList(true, false); // Will be called from session-view from the event below
@@ -1059,13 +1070,13 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Create dropdown menu that shows mounted folder names.
    * Added menu to document.body to show at the top.
    *
-   * @param e {Event} - mouseenter the mount-button
-   * @param mounts {Array} - array of the mounted folders
+   * @param {Event} e - mouseenter the mount-button
+   * @param {Array} mounts - array of the mounted folders
    * */
   _createMountedFolderDropdown(e, mounts) {
     const menuButton: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as any;
-    const regExp = /[\[\]\,\'\"]/g;
+    const regExp = /[[\],'"]/g;
 
     menu.anchor = menuButton;
     menu.className = 'dropdown-menu';
@@ -1323,7 +1334,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                   @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
                   @mouseleave="${() => this._removeMountedFolderDropdown()}"
                 >
-                  ${rowData.item.mounts[0].replace(/[\[\]\,\'\"]/g, '').split(' ')[0]}
+                  ${rowData.item.mounts[0].replace(/[[\],'"]/g, '').split(' ')[0]}
                 </button>
               ` : html``}
           </div>
@@ -1621,8 +1632,11 @@ export default class BackendAiSessionList extends BackendAIPage {
             <p>${_t('usersettings.SessionTerminationDialog')}</p>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout">
+           ${globalThis.backendaiclient.is_admin ? html`
+            <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">${_t('button.ForceTerminate')}</wl-button>
+            <span class="flex"></span>`:html``}
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}</wl-button>
-            <wl-button class="ok" @click="${(e) => this._terminateSessionWithCheck(e)}">${_t('button.Okay')}</wl-button>
+            <wl-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</wl-button>
          </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
@@ -1631,6 +1645,9 @@ export default class BackendAiSessionList extends BackendAIPage {
             <p>${_t('usersettings.SessionTerminationDialog')}</p>
          </div>
          <div slot="footer" class="horizontal end-justified flex layout">
+           ${globalThis.backendaiclient.is_admin ? html`
+            <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}</wl-button>
+            <span class="flex"></span>`:html``}
             <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}</wl-button>
             <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}</wl-button>
          </div>

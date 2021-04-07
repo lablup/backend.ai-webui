@@ -746,11 +746,16 @@ class Client {
      * Terminate and destroy the kernel session.
      *
      * @param {string} sessionId - the sessionId given when created
+     * @param {string|null} ownerKey - owner key when terminating other users' session
+     * @param {boolean} forced - force destroy session. Requires admin privilege.
      */
-    async destroy(sessionId, ownerKey = null) {
+    async destroy(sessionId, ownerKey = null, forced = false) {
         let queryString = `${this.kernelPrefix}/${sessionId}`;
-        if (ownerKey != null) {
-            queryString = `${queryString}?owner_access_key=${ownerKey}`;
+        if (ownerKey !== null) {
+            queryString = `${queryString}?owner_access_key=${ownerKey}${forced ? '&forced=true' : ''}`;
+        }
+        else {
+            queryString = `${queryString}${forced ? '?forced=true' : ''}`;
         }
         let rqst = this.newSignedRequest('DELETE', queryString, null);
         return this._wrapWithPromise(rqst, false, null, 15000, 2); // 15 sec., two trial when error occurred.
