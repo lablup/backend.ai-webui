@@ -1009,6 +1009,17 @@
     "NotebookBadgeCodeMarkdown": "노트북 배지 코드(Markdown)",
     "Installed": "설치됨"
   },
+  "usagepanel": {
+    "StatisticsForThisMonth": "이번달 통계",
+    "NumSessions": "실행 세션 수",
+    "UsedTime": "사용 시간",
+    "CpuUsedTime": "CPU 사용량",
+    "GpuUsedTime": "GPU 사용량",
+    "DiskUsed": "디스크 사용량",
+    "TrafficUsed": "트래픽 사용",
+    "Hours": "시간",
+    "Minutes": "분"
+  },
   "DownloadSSHKey": "SSH 키 다운로드",
   "license": {
     "Perpetual": "영구 라이선스",

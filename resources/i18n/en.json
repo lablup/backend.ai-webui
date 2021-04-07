@@ -1008,6 +1008,17 @@
     "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)",
     "Installed": "Installed"
   },
+  "usagepanel": {
+    "StatisticsForThisMonth": "Statistics for This Month",
+    "NumSessions": "Number of Sessions",
+    "UsedTime": "Used Time",
+    "CpuUsedTime": "CPU Used Time",
+    "GpuUsedTime": "GPU Used Time",
+    "DiskUsed": "Disk Usage",
+    "TrafficUsed": "Traffic Usage",
+    "Hours": "h",
+    "Minutes": "m"
+  },
   "DownloadSSHKey": "Download SSH Key",
   "license": {
     "Perpetual": "Perpetual",
