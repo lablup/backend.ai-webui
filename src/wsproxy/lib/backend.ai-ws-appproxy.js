@@ -76,6 +76,10 @@ module.exports = (proxy = class Proxy extends ai.backend.Client {
       app = app + '&arguments='+ encodeURI(JSON.stringify(args));
     }
     let queryString = `/stream/${this.sessionPrefix}/` + sessionName + "/httpproxy?app=" + app;
+    if (typeof params !==  "undefined") {
+      queryString = queryString + '&arguments=' + encodeURIComponent(JSON.stringify(params));
+    }
+
     let hdrs = () => {
       return this.get_header(queryString);
     };

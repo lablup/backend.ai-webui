@@ -2,7 +2,7 @@
 #apiEndpoint =
 #apiEndpointText =
 #defaultSessionEnvironment =
-siteDescription = "Console"
+siteDescription = "Debug"
 connectionMode = "SESSION"
 allowChangeSigninMode = true
 signupSupport = false

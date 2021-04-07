@@ -24,7 +24,7 @@ import '../lib/backend.ai-client-es6';
 import '../plastics/mwc/mwc-multi-select';
 import './backend-ai-offline-indicator';
 import './backend-ai-login';
-declare const BackendAIConsole_base: (new (...args: any[]) => {
+declare const BackendAIWebUI_base: (new (...args: any[]) => {
     _storeUnsubscribe: import("redux").Unsubscribe;
     connectedCallback(): void;
     disconnectedCallback(): void;
@@ -32,20 +32,20 @@ declare const BackendAIConsole_base: (new (...args: any[]) => {
     readonly isConnected: boolean;
 }) & typeof LitElement;
 /**
- Backend.AI GUI Console
+ Backend.AI Web UI
 
- `backend-ai-console` is a shell of Backend.AI GUI console (web / app).
+ `backend-ai-webui` is a shell of Backend.AI Web UI (web / app).
 
  Example:
 
- <backend-ai-console>
+ <backend-ai-webui>
  ... content ...
- </backend-ai-console>lablup-terms-of-service
+ </backend-ai-webui>lablup-terms-of-service
 
- @group Backend.AI Console
- @element backend-ai-console
+@group Backend.AI Web UI
+ @element backend-ai-webui
  */
-export default class BackendAIConsole extends BackendAIConsole_base {
+export default class BackendAIWebUI extends BackendAIWebUI_base {
     shadowRoot: any;
     hasLoadedStrings: boolean;
     menuTitle: string;
@@ -130,8 +130,8 @@ export default class BackendAIConsole extends BackendAIConsole_base {
 }
 declare global {
     interface HTMLElementTagNameMap {
-        "backend-ai-console": BackendAIConsole;
+        "backend-ai-webui": BackendAIWebUI;
     }
 }
 export {};
-//# sourceMappingURL=backend-ai-console.d.ts.map
+//# sourceMappingURL=backend-ai-webui.d.ts.map

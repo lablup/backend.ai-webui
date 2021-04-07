@@ -11,7 +11,7 @@ import {css, customElement, html, LitElement} from "lit-element";
 
  <backend-ai-offline-indicator ?active="${0}"></backend-ai-offline-indicator>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-offline-indicator
  */
 

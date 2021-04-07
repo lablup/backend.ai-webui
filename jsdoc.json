@@ -30,15 +30,15 @@
         "outputSourceFiles": false
       },
       "better-docs": {
-        "name": "Backend.AI Console Documentation",
-        "title": "<h1>Backend.AI Console</h1>",
+        "name": "Backend.AI Web UI Documentation",
+        "title": "<h1>Backend.AI Web UI</h1>",
         "css": "style.css",
         "trackingCode": "tracking-code-which-will-go-to-the-HEAD",
         "hideGenerator": true,
         "navLinks": [
             {
                 "label": "Github",
-                "href": "https://github.com/lablup/backend.ai-console"
+                "href": "https://github.com/lablup/backend.ai-webui"
             },
             {
                 "label": "Cloud",

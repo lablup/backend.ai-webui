@@ -1,5 +1,45 @@
 # Changelog
 
+## v21.03.2 (02/04/2021)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Disable (non-working) app / terminal button when admin lists other users' session list [#945](https://github.com/lablup/backend.ai-webui/issues/945)
+- [**app**][**enhancement**][**major**] Support Apple Silicon macs [#942](https://github.com/lablup/backend.ai-webui/issues/942)
+- [**enhancement**][**good first issue**][**minor**] Let users to change .vimrc and .tmux.conf for better customizability [#935](https://github.com/lablup/backend.ai-webui/issues/935)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**maintenance**][**minor**] It looks like the domain administrator can create the keypair resource policy, but it doesn't actually do it. [#946](https://github.com/lablup/backend.ai-webui/issues/946)
+
+
+## v21.03.1 (24/03/2021)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**enterprise**][**minor**] Easier custom logo for login screen [#941](https://github.com/lablup/backend.ai-webui/issues/941)
+- [**UI / UX**][**app**][**cloud**][**enhancement**][**enterprise**][**minor**] Support Apache Spark image [#932](https://github.com/lablup/backend.ai-webui/issues/932)
+- [**UI / UX**][**app**][**enhancement**] Move app window position before login to system [#925](https://github.com/lablup/backend.ai-webui/issues/925)
+
+#### Bug Fixes:
+
+- [**bug**] R container images are not displayed properly on environment list [#938](https://github.com/lablup/backend.ai-webui/issues/938)
+- [**bug**] GPU slider in session launch dialog is always fixed as zero when discrete mode is enabled [#937](https://github.com/lablup/backend.ai-webui/issues/937)
+- [**bug**][**major**] Unable to login when localStorage items exceeds size limit [#928](https://github.com/lablup/backend.ai-webui/issues/928)
+- [**bug**] Proxy is not working on desktop app from Electron 12 [#923](https://github.com/lablup/backend.ai-webui/issues/923)
+
+
+## v21.03.0 (08/03/2021)
+
+#### Enhancements:
+
+- [**easy**][**enhancement**][**good first issue**][**urgency**] Let's rename Backend.AI GUI console to Backend.AI Web UI [#919](https://github.com/lablup/backend.ai-webui/issues/919)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**good first issue**][**urgency**] Let's fix the floating point in shared memory value of resource preset [#917](https://github.com/lablup/backend.ai-webui/issues/917)
+
+
 ## v21.02.3 (22/02/2021)
 
 #### Enhancements:
@@ -35,7 +75,7 @@
 - [**enhancement**][**library / SDK**][**minor**] Change perSession scheme to perContainer [#889](https://github.com/lablup/backend.ai-console/issues/889)
 - [**UI / UX**][**enhancement**][**minor**] Let's support folder upload in vfolder [#885](https://github.com/lablup/backend.ai-console/issues/885)
 - [**enhancement**][**library / SDK**][**major**] add maxCUDASharesPerContainer to limit fGPU slice size [#788](https://github.com/lablup/backend.ai-console/issues/788)
-- 
+-
 
 ## v21.02.0 (03/02/2021)
 

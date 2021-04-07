@@ -48,7 +48,7 @@ import {
  ... content ...
  </backend-ai-credential-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  */
 @customElement("backend-ai-credential-view")
 export default class BackendAICredentialView extends BackendAIPage {
@@ -65,6 +65,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Object}) resource_policies = Object();
   @property({type: Array}) resource_policy_names = Array();
   @property({type: Boolean}) isAdmin = false;
+  @property({type: Boolean}) isSuperAdmin = false;
   @property({type: String}) _status = 'inactive';
   @property({type: Array}) allowed_vfolder_hosts = Array();
   @property({type: String}) default_vfolder_host = '';
@@ -297,6 +298,9 @@ export default class BackendAICredentialView extends BackendAIPage {
       this.disablePage();
     } else {
       this.isAdmin = true;
+      if (globalThis.backendaiclient.is_superadmin === true) {
+        this.isSuperAdmin = true;
+      }
     }
     this._activeTab = 'user-lists';
     this._addValidatorToPolicyInput();
@@ -1067,7 +1071,8 @@ export default class BackendAICredentialView extends BackendAIPage {
               <span>${_t("credential.PolicyGroup")}</span>
               <span class="flex"></span>
               <mwc-button raised id="add-policy" icon="add" label="${_t("credential.CreatePolicy")}"
-              @click="${this._launchResourcePolicyDialog}"></mwc-button>
+                          ?disabled="${!this.isSuperAdmin}"
+                          @click="${this._launchResourcePolicyDialog}"></mwc-button>
             </h4>
             <div>
               <backend-ai-resource-policy-list id="resource-policy-list" ?active="${this._activeTab === 'resource-policy-lists'}"></backend-ai-resource-policy-list>

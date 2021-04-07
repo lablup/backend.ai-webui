@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Backend.AI Console">
+  <meta name="description" content="Backend.AI Web UI">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="theme-color" content="#fff">
   <base href="">
@@ -29,8 +29,8 @@
         NODE_ENV: 'production'
       }
     };
-    globalThis.packageVersion = "21.02.3";
-    globalThis.buildVersion = "210222.230200";
+    globalThis.packageVersion = "21.03.2";
+    globalThis.buildVersion = "210402.180435";
   </script>
   <style>
     body {
@@ -203,20 +203,20 @@
 </head>
 
 <body>
-<backend-ai-console id="console-shell" style="background-color:#222222;">
+<backend-ai-webui id="webui-shell" style="background-color:#222222;">
   <div class="splash">
     <div class="splash-header">
       <img src="manifest/backend.ai-text.svg" style="height:50px;padding:35px 20px;">
     </div>
     <div class="splash-information">
       <ul>
-        <li>Backend.AI Console <span id="version-detail" class="detail"></span></li>
+        <li>Backend.AI Web UI <span id="version-detail" class="detail"></span></li>
         <li><span id="license-detail"></span></li>
         <li><span id="mode-detail" class="detail"></span> <span id="build-detail" class="detail"></span></li>
       </ul>
       <ul>
         <li>Powered by open-source software</li>
-        <li class="copyright">Copyright &copy; 2015-2020 Lablup Inc.</li>
+        <li class="copyright">Copyright &copy; 2015-2021 Lablup Inc.</li>
       </ul>
     </div>
     <div class="sk-folding-cube">
@@ -227,11 +227,11 @@
     </div>
     <div id="loading-message" class="loading-message">Loading components...</div>
   </div>
-</backend-ai-console>
+</backend-ai-webui>
 <noscript>
-  <p>Could not render Backend.AI console. Check that JavaScript is enabled.</p>
+  <p>Could not render Backend.AI Web UI. Check that JavaScript is enabled.</p>
 </noscript>
-<script src="./dist/components/backend-ai-console.js" type="module"></script>
+<script src="./dist/components/backend-ai-webui.js" type="module"></script>
 <script>
   document.getElementById('version-detail').innerText = globalThis.packageVersion;
   document.getElementById('build-detail').innerText = ' Build ' + globalThis.buildVersion;

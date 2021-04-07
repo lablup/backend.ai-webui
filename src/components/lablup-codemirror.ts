@@ -21,7 +21,7 @@ import {CodemirrorBaseStyle} from '../lib/codemirror/base-style.css';
 
  <lablup-codemirror></lablup-codemirror>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element lablup-codemirror
  */
 
@@ -104,8 +104,13 @@ export default class LablupCodemirror extends LitElement {
       CodemirrorBaseStyle,
       css`
         .CodeMirror {
-          height: auto;
+          height: auto !important;
           font-size: 15px;
+        }
+
+        .CodeMirror-code {
+          /* minimum margin to avoid overlapping with line numbers */
+          margin-left: 2px;
         }
       `,
     ];

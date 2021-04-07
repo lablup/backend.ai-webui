@@ -15,7 +15,7 @@ import {store} from '../store';
 import {navigate} from '../backend-ai-app';
 
 /**
- `<backend-ai-permission-denied-view>` is a blank panel of backend.ai console.
+ `<backend-ai-permission-denied-view>` is a blank panel of backend.ai web UI.
 
  Example:
  <backend-ai-permission-denied-view active></backend-ai-permission-denied-view>
@@ -130,8 +130,8 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
     <div class="page-layout">
       <img id="unauthorized-access" src="/resources/images/401_unauthorized_access.svg" />
       <div class="vertical layout desc">
-        <div class="title">${_tr('console.UNAUTHORIZEDACCESS')}</div>
-        <p class="description">${_tr('console.AdminOnlyPage')}</p>
+        <div class="title">${_tr('webui.UNAUTHORIZEDACCESS')}</div>
+        <p class="description">${_tr('webui.AdminOnlyPage')}</p>
         <div style="width:auto;">
           <mwc-button
               unelevated

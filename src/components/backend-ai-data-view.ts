@@ -50,7 +50,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
  ... content ...
  </backend-ai-data-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-data-view
  */
 

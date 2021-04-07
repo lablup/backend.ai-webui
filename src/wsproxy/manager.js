@@ -1,5 +1,5 @@
 /*
-Backend.AI Webapp proxy for console
+Backend.AI Webapp proxy for Web UI
 ===================================
 
 (C) Copyright 2016-2021 Lablup Inc.
@@ -67,7 +67,7 @@ class Manager extends EventEmitter {
         "endpoint": req.body.endpoint,
         "ext_proxy_url": this.extHttpProxyURL
       };
-      // Receive API version from console. Initialization timing is different so we use API information from requester.
+      // Receive API version from web UI. Initialization timing is different so we use API information from requester.
       if (req.body.api_version) {
         cf['_apiVersionMajor'] = req.body.api_version;
       } else {
@@ -127,6 +127,9 @@ class Manager extends EventEmitter {
       let args = req.query.args ? JSON.parse(decodeURI(req.query.args)) : {};
       let envs = req.query.envs ? JSON.parse(decodeURI(req.query.envs)) : {};
       let gateway;
+      // Show logger
+      logger.info(`App arguments: ${args}`);
+      logger.info(`App environments: ${envs}`);
       let ip = "127.0.0.1"; //FIXME: Update needed
       //let port = undefined;
       if (this.proxies.hasOwnProperty(p)) {

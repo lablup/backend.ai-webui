@@ -34,7 +34,7 @@ import './lablup-progress-bar';
  ... content ...
  </backend-ai-storage-proxy-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-storage-proxy-list
  */
 

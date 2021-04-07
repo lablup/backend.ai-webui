@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, customElement, html, property} from 'lit-element';
 
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
@@ -25,11 +25,11 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
  <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
 
- @group Backend.AI Console
+ @group Backend.AI Web UI
  @element backend-ai-app-launcher
  */
 
-@customElement("backend-ai-app-launcher")
+@customElement('backend-ai-app-launcher')
 export default class BackendAiAppLauncher extends BackendAIPage {
   public shadowRoot: any;
 
@@ -37,9 +37,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
   @property({type: Array}) appSupportList = Array();
+  @property({type: Array}) appSupportOption = Array();
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
-  @property({type: Array}) _selected_items = Array();
+  @property({type: Array}) _selected_items = [];
   @property({type: Boolean}) refreshing = false;
   @property({type: Object}) notification = Object();
   @property({type: Object}) spinner = Object();
@@ -48,6 +49,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
+  @property({type: String}) tensorboardPath = '';
+  @property({type: Boolean}) isPathConfigured = false;
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
   @property({type: Object}) appController = Object();
   @property({type: Object}) openPortToPublic = false;
@@ -71,6 +74,23 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           --mdc-icon-button-size: 48px;
           --mdc-icon-size: 36px;
           padding: 3px;
+        }
+
+        mwc-icon-button#tensorboard-button {
+          background-color: #e9852e;
+          color: white;
+          --mdc-icon-button-size: 24px;
+          --mdc-icon-size: 24px;
+          padding: 10px;
+          margin-left: 10px;
+          border-radius: 10px;
+        }
+
+        mwc-textfield#tensorboard-path {
+          width: 100%;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
         }
 
         #ssh-dialog {
@@ -188,16 +208,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this._initializeAppTemplate();
     this.refreshTimer = null;
     fetch('resources/image_metadata.json').then(
-      response => response.json()
+      (response) => response.json()
     ).then(
-      json => {
+      (json) => {
         this.imageInfo = json.imageInfo;
-        for (let key in this.imageInfo) {
-          this.kernel_labels[key] = [];
-          if ("label" in this.imageInfo[key]) {
-            this.kernel_labels[key] = this.imageInfo[key].label;
-          } else {
+        for (const key in this.imageInfo) {
+          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
             this.kernel_labels[key] = [];
+            if ('label' in this.imageInfo[key]) {
+              this.kernel_labels[key] = this.imageInfo[key].label;
+            } else {
+              this.kernel_labels[key] = [];
+            }
           }
         }
       }
@@ -210,9 +232,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const checkbox = this.shadowRoot.querySelector('#hide-guide');
     checkbox.addEventListener('change', (event) => {
       if (!event.target.checked) {
-        localStorage.setItem('backendaiconsole.terminalguide', 'true');
+        localStorage.setItem('backendaiwebui.terminalguide', 'true');
       } else {
-        localStorage.setItem('backendaiconsole.terminalguide', 'false');
+        localStorage.setItem('backendaiwebui.terminalguide', 'false');
       }
     });
   }
@@ -226,9 +248,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
   _initializeAppTemplate() {
     fetch('resources/app_template.json').then(
-      response => response.json()
+      (response) => response.json()
     ).then(
-      json => {
+      (json) => {
         this.appTemplate = json.appTemplate;
         const apps = Object.keys(this.appTemplate);
         apps.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
@@ -289,7 +311,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   /**
    * Display the app launcher.
    *
-   * @param detail
+   * @param {Object} detail
+   *
    */
   showLauncher(detail) {
     return this._showAppLauncher(detail);
@@ -304,6 +327,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const sessionUuid = controls['session-uuid'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
+    const appServicesOption = controls['app-services-option'];
     if ('runtime' in controls) {
       let param: Object = {};
       param['session-uuid'] = sessionUuid;
@@ -324,11 +348,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'name': 'ttyd',
         'title': 'Console',
         'category': '0.Default',
-        'redirect': "",
+        'redirect': '',
         'src': './resources/icons/terminal.svg'
       });
     }
-    /*if (!appServices.includes('filebrowser')) {
+    /* if (!appServices.includes('filebrowser')) {
       this.appSupportList.push({ // Force push filebrowser
         'name' : 'filebrowser',
         'title': 'FileBrowser',
@@ -351,6 +375,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     });
     appServices.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
     let interText = '';
+    if (Object.keys(appServicesOption).length > 0) {
+      this.appSupportOption = appServicesOption;
+    }
     appServices.forEach((elm) => {
       if (elm in this.appTemplate) {
         if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
@@ -431,7 +458,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.launcher.ProxyNotReady');
-      ;
+
       this.notification.show();
       return Promise.resolve(false);
     }
@@ -499,6 +526,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     if ('args' in param) {
       args = param['args'];
+    }
+
+    if (appName === 'tensorboard') {
+      this._openTensorboardDialog();
+      return;
     }
 
     if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
@@ -598,8 +630,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       urlPostfix = '';
     }
 
+    if (appName === 'tensorboard') {
+      this._openTensorboardDialog();
+      return;
+    }
     if (appName === 'ttyd') {
-      let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
+      let isVisible = localStorage.getItem('backendaiwebui.terminalguide');
       if (!isVisible || isVisible === 'true') {
         this._openTerminalGuideDialog();
       }
@@ -671,7 +707,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    */
   async runTerminal(sessionUuid: string) {
-    let isVisible = localStorage.getItem('backendaiconsole.terminalguide');
+    let isVisible = localStorage.getItem('backendaiwebui.terminalguide');
     if (!isVisible || isVisible === 'true') {
       this._openTerminalGuideDialog();
     }
@@ -705,7 +741,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * Open a SSH dialog.
    */
   _openSSHDialog() {
-    let dialog = this.shadowRoot.querySelector('#ssh-dialog');
+    const dialog = this.shadowRoot.querySelector('#ssh-dialog');
     dialog.show();
   }
 
@@ -713,8 +749,52 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * Open a VNC dialog.
    */
   _openVNCDialog() {
-    let dialog = this.shadowRoot.querySelector('#vnc-dialog');
+    const dialog = this.shadowRoot.querySelector('#vnc-dialog');
     dialog.show();
+  }
+
+  /**
+   * Open a Tensorboard dialog for path input.
+   */
+  _openTensorboardDialog() {
+    const dialog = this.shadowRoot.querySelector('#tensorboard-dialog');
+    dialog.show();
+  }
+
+  /**
+   * Close a Tensorboard dialog.
+   */
+  _hideTensorboardDialog() {
+    const dialog = this.shadowRoot.querySelector('#tensorboard-dialog');
+    dialog.hide();
+  }
+
+  /**
+   * add Tensorboard path and dispatch the event
+   */
+
+  async _addTensorboardPath() {
+    this.tensorboardPath = this.shadowRoot.querySelector('#tensorboard-path').value;
+    let port = null;
+    let appName = this.appController['app-name']
+    let sessionUuid = this.appController['session-uuid'];
+    let urlPostfix = this.appController['url-postfix'];
+    await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
+    this.indicator = await globalThis.lablupIndicator.start();
+    this.indicator.set(100, 'Prepared.');
+    // if tensorboard path is empty, --logdir will be '/home/work/logs'
+    this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
+    const path: Object = {'--logdir': this.tensorboardPath};
+    this._open_wsproxy(sessionUuid, appName, port, null, path).then(async (response) => {
+      await this._connectToProxyWorker(response.url, urlPostfix);
+      this._hideAppLauncher();
+      this._hideTensorboardDialog();
+      setTimeout(() => {
+        globalThis.open(response.url + urlPostfix, '_blank');
+        console.log(appName + " proxy loaded: ");
+        console.log(sessionUuid);
+      }, 1000);
+    });
   }
 
   /**
@@ -823,16 +903,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
             ${this.appSupportList.map(item => html`
               ${item.category === 'divider' ? html`
-              <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${item.title}</h3>
-              `:html`
-              <div class="vertical layout center center-justified app-icon">
-                <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
-                                 .url-postfix="${item.redirect}"
-                                 @click="${(e) => this._runThisAppWithConfirmationIfNeeded(e)}">
-                  <img src="${item.src}"/>
-                </mwc-icon-button>
-                <span class="label">${item.title}</span>
-              </div>`}
+                <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${item.title}</h3>
+              ` : html`
+                <div class="vertical layout center center-justified app-icon">
+                  <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
+                                   .url-postfix="${item.redirect}"
+                                   @click="${(e) => this._runThisAppWithConfirmationIfNeeded(e)}">
+                    <img src="${item.src}"/>
+                  </mwc-icon-button>
+                  <span class="label">${item.title}</span>
+                </div>`}
             `)}
           </div>
           <div style="padding:10px 20px 15px 20px">
@@ -867,6 +947,31 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               <mwc-button class="fg apps green">${_t("DownloadSSHKey")}</mwc-button>
             </a>
           </section>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="tensorboard-dialog" fixed>
+        <span slot="title">${_t("session.TensorboardPath")}</span>
+        <div slot="content" class="vertical layout" style="padding:15px 10px;">
+          <div>${_t('session.InputTensorboardPath')}</div>
+          <div class="fg red">${_t('session.WarningTensorboardPathCannotBeChanged')}</div>
+          <mwc-textfield id="tensorboard-path" value="${_t('session.DefaultTensorboardPath')}"></mwc-textfield>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button style="width:100%;" class="fg apps green" @click="${() => this._addTensorboardPath()}">
+            ${_t("session.UseThisPath")}
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="argument-dialog" fixed>
+        <span slot="title">${_t("session.Arguments")}</span>
+        <div slot="content" class="vertical layout" style="padding:15px 10px;">
+          <div>${_t('session.ModifyArguments')}</div>
+          <mwc-textfield value=""></mwc-textfield>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button style="width:100%;" class="fg apps green" @click="${() => this._addTensorboardPath()}">
+            ${_t("session.UseThisArguments")}
+          </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="vnc-dialog" fixed backdrop>
