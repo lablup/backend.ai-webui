@@ -1282,7 +1282,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <i class="fas fa-cloud-upload-alt" slot="graphic" id="data-menu-icon"></i>
               <span class="full-menu">${_t("webui.menu.Data&Storage")}</span>
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}" ?disabled="${this.blockedMenuitem.includes('pipeline')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}" ?disabled="${this.blockedMenuitem.includes('pipeline')}" style="display:none">
               <i class="fas fa-stream" slot="graphic" id="pipeline-menu-icon"></i>
               <span class="full-menu">${_t("webui.menu.Pipeline")}</span>
             </mwc-list-item>
