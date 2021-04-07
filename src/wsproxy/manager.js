@@ -102,28 +102,28 @@ class Manager extends EventEmitter {
       res.send(rtn);
     });
 
-    this.app.get('/proxy/local/:sessionName', (req, res) => {
-      let sessionName = req.params["sessionName"];
+    this.app.get('/proxy/local/:sessionId', (req, res) => {
+      let sessionId = req.params["sessionId"];
       if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      if (sessionName in this.proxies) {
+      if (sessionId in this.proxies) {
         res.send({"code": 200});
       } else {
         res.send({"code": 404});
       }
     });
 
-    this.app.get('/proxy/local/:sessionName/add', async (req, res) => {
+    this.app.get('/proxy/local/:sessionId/add', async (req, res) => {
       if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      let sessionName = req.params["sessionName"];
+      let sessionId = req.params["sessionId"];
       let app = req.query.app || "jupyter";
       let port = parseInt(req.query.port) || undefined;
-      let p = sessionName + "|" + app;
+      let p = sessionId + "|" + app;
       let args = req.query.args ? JSON.parse(decodeURI(req.query.args)) : {};
       let envs = req.query.envs ? JSON.parse(decodeURI(req.query.envs)) : {};
       let gateway;
@@ -147,7 +147,7 @@ class Manager extends EventEmitter {
         let maxtry = 5;
         for (let i = 0; i < maxtry; i++) {
           try {
-            await gateway.start_proxy(sessionName, app, ip, port, envs, args);
+            await gateway.start_proxy(sessionId, app, ip, port, envs, args);
             port = gateway.getPort();
             assigned = true;
             break;
@@ -198,39 +198,45 @@ class Manager extends EventEmitter {
       }
     });
 
-    this.app.get('/proxy/local/:sessionName/delete', (req, res) => {
+    this.app.get('/proxy/local/:sessionId/delete', (req, res) => {
       //find all and kill
       if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      logger.debug('deleting session');
 
-      let sessionName = req.params["sessionName"];
-      if (sessionName in this.proxies) {
-        logger.debug('exists');
-        this.proxies[sessionName].stop_proxy();
+      let sessionId = req.params["sessionId"];
+      let stopped = false;
+      for (const key in this.proxies) {
+        logger.debug(key.split("|", 1));
+        if (key.split("|", 1)[0] === sessionId) {
+          logger.info(`Found app to terminate in ${sessionId}`);
+          this.proxies[key].stop_proxy();
+          delete this.proxies[key];
+          stopped = true;
+        }
+      }
+      if (stopped) {
         res.send({"code": 200});
-        delete this.proxies[sessionName];
       } else {
-        logger.debug('epic fail');
         res.send({"code": 404});
       }
     });
 
-    this.app.get('/proxy/local/:sessionName/down', (req, res) => {
+    this.app.get('/proxy/local/:sessionId/down', (req, res) => {
       //find app in session and stop if possible
       if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      let sessionName = req.params["sessionName"];
+      let sessionId = req.params["sessionId"];
       let app = req.query.app || null;
-
-      if (sessionName in this.proxies && app !== null) {
-        this.proxies[sessionName].stop_proxy();
+      let p = sessionId + "|" + app;
+      if (p in this.proxies && app !== null) {
+        logger.info(`Found app to terminate in ${sessionId}`);
+        this.proxies[p].stop_proxy();
         res.send({"code": 200});
-        delete this.proxies[sessionName];
+        delete this.proxies[p];
       } else {
         res.send({"code": 404});
       }

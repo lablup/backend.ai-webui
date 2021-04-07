@@ -422,7 +422,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
 
     const fields = [
-      'id', 'name', 'image',
+      'id', 'session_id', 'name', 'image',
       'created_at', 'terminated_at', 'status', 'status_info',
       'service_ports', 'mounts',
       'occupied_slots', 'access_key'
@@ -462,7 +462,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         const previousSessionKeys: any = [];
         Object.keys(previousSessions).map((objectKey, index) => {
-          previousSessionKeys.push(previousSessions[objectKey]['id']);
+          previousSessionKeys.push(previousSessions[objectKey]['session_id']);
         });
         Object.keys(sessions).map((objectKey, index) => {
           const session = sessions[objectKey];
@@ -572,7 +572,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           } else {
             sessions[objectKey].baseversion = tag;
           }
-          if (this._selected_items.includes(sessions[objectKey]['id'])) {
+          if (this._selected_items.includes(sessions[objectKey]['session_id'])) {
             sessions[objectKey].checked = true;
           } else {
             sessions[objectKey].checked = false;
@@ -808,7 +808,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         if (response !== undefined && response.code !== 404) {
           const rqst = {
             method: 'GET',
-            uri: this._getProxyURL() + 'proxy/' + accessKey + '/' + sessionId + '/delete'
+            uri: this._getProxyURL() + 'proxy/local/' + sessionId + '/delete'
           };
           return this.sendRequest(rqst);
         }
@@ -982,7 +982,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   _terminateSelectedSessionsWithCheck(forced = false) {
     this.spinner.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
-      return this._terminateKernel(item['id'], item.access_key, forced);
+      return this._terminateKernel(item['session_id'], item.access_key, forced);
     });
     this._selected_items = [];
     return Promise.all(terminateSessionQueue).then((response) => {
@@ -1009,7 +1009,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   _terminateSelectedSessions() {
     this.spinner.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
-      return this._terminateKernel(item['id'], item.access_key);
+      return this._terminateKernel(item['session_id'], item.access_key);
     });
     return Promise.all(terminateSessionQueue).then((response) => {
       this.spinner.hide();
@@ -1236,7 +1236,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
-             .session-uuid="${rowData.item.id}"
+             .session-uuid="${rowData.item.session_id}"
              .session-name="${rowData.item[this.sessionNameField]}"
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
@@ -1493,7 +1493,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _toggleCheckbox(object) {
-    const exist = this._selected_items.findIndex((x) => x['id'] == object['id']);
+    const exist = this._selected_items.findIndex((x) => x['session_id'] == object['session_id']);
     if (exist === -1) {
       this._selected_items.push(object);
     } else {
