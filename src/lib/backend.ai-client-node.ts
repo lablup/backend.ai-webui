@@ -904,6 +904,15 @@ class Client {
     return this.execute(sessionId, runId, mode, code, {});
   }
 
+  async shutdown_service(sessionId, service_name) {
+    let params = {
+      'service_name': service_name
+    };
+    const q = querystring.stringify(params);
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/shutdown-service?${q}`, null);
+    return this._wrapWithPromise(rqst, true);
+  }
+
   async upload(sessionId, path, fs) {
     const formData = new FormData();
     //formData.append('src', fs, {filepath: path});
