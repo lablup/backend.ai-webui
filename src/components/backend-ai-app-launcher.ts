@@ -779,8 +779,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let appName = this.appController['app-name']
     let sessionUuid = this.appController['session-uuid'];
     let urlPostfix = this.appController['url-postfix'];
-    await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
     this.indicator = await globalThis.lablupIndicator.start();
+    this.indicator.set(50, 'Shutdown TensorBoard instance if exist...');
+    await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
     this.indicator.set(100, 'Prepared.');
     // if tensorboard path is empty, --logdir will be '/home/work/logs'
     this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
