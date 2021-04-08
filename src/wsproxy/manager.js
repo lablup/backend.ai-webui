@@ -197,7 +197,7 @@ class Manager extends EventEmitter {
       }
     });
 
-    this.app.get('/proxy/:token/:sessionId/delete_all', (req, res) => {
+    this.app.get('/proxy/:token/:sessionId/delete', (req, res) => {
       //find all and kill
       if (!this._config) {
         res.send({"code": 401});
@@ -205,40 +205,36 @@ class Manager extends EventEmitter {
       }
 
       let sessionId = req.params["sessionId"];
-      let stopped = false;
-      for (const key in this.proxies) {
-        logger.debug(key.split("|", 1));
-        if (key.split("|", 1)[0] === sessionId) {
-          logger.info(`Found app to terminate in ${sessionId}`);
-          this.proxies[key].stop_proxy();
-          delete this.proxies[key];
-          stopped = true;
-        }
-      }
-      logger.info(`Total connections: ${Object.keys(this.proxies).length}`);
-      if (stopped) {
-        res.send({"code": 200});
-      } else {
-        res.send({"code": 404});
-      }
-    });
-
-    this.app.get('/proxy/:token/:sessionId/delete', (req, res) => {
-      //find app in session and stop if possible
-      if (!this._config) {
-        res.send({"code": 401});
-        return;
-      }
-      let sessionId = req.params["sessionId"];
       let app = req.query.app || null;
-      let p = sessionId + "|" + app;
-      if (p in this.proxies && app !== null) {
-        logger.debug(`Found ${app} to terminate in ${sessionId}`);
-        this.proxies[p].stop_proxy();
-        res.send({"code": 200});
-        delete this.proxies[p];
+
+      if (app === null) {
+        let stopped = false;
+        for (const key in this.proxies) {
+          logger.debug(key.split("|", 1));
+          if (key.split("|", 1)[0] === sessionId) {
+            logger.info(`Found app to terminate in ${sessionId}`);
+            this.proxies[key].stop_proxy();
+            delete this.proxies[key];
+            stopped = true;
+          }
+        }
+        logger.info(`Total connections: ${Object.keys(this.proxies).length}`);
+        if (stopped) {
+          res.send({"code": 200});
+        } else {
+          res.send({"code": 404});
+        }
       } else {
-        res.send({"code": 404});
+        let p = sessionId + "|" + app;
+        if (p in this.proxies && app !== null) {
+          logger.debug(`Found ${app} to terminate in ${sessionId}`);
+          this.proxies[p].stop_proxy();
+          logger.info(`Total connections: ${Object.keys(this.proxies).length}`);
+          res.send({"code": 200});
+          delete this.proxies[p];
+        } else {
+          res.send({"code": 404});
+        }
       }
     });
 
