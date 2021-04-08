@@ -102,20 +102,22 @@ class Manager extends EventEmitter {
       res.send(rtn);
     });
 
-    this.app.get('/proxy/local/:sessionId', (req, res) => {
+    this.app.get('/proxy/:token/:sessionId', (req, res) => {
       let sessionId = req.params["sessionId"];
       if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      if (sessionId in this.proxies) {
-        res.send({"code": 200});
-      } else {
-        res.send({"code": 404});
+      for (const key in this.proxies) {
+        if (key.split("|", 1)[0] === sessionId) {
+          res.send({"code": 200});
+          return;
+        }
       }
+      res.send({"code": 404});
     });
 
-    this.app.get('/proxy/local/:sessionId/add', async (req, res) => {
+    this.app.get('/proxy/:token/:sessionId/add', async (req, res) => {
       if (!this._config) {
         res.send({"code": 401});
         return;
@@ -195,7 +197,7 @@ class Manager extends EventEmitter {
       }
     });
 
-    this.app.get('/proxy/local/:sessionId/delete', (req, res) => {
+    this.app.get('/proxy/:token/:sessionId/delete', (req, res) => {
       //find all and kill
       if (!this._config) {
         res.send({"code": 401});

@@ -796,21 +796,31 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _terminateApp(sessionId) {
-    try {
-      this.total_session_count -= 1;
-      const rqst = {
-        method: 'GET',
-        uri: this._getProxyURL() + 'proxy/local/' + sessionId + '/delete' // TODO: change local to meaningful token
-      };
-      return this.sendRequest(rqst);
-    } catch (err) {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    }
+    const token = globalThis.backendaiclient._config.accessKey;
+    const rqst = {
+     method: 'GET',
+     uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId
+    };
+    return this.sendRequest(rqst)
+     .then((response) => {
+       this.total_session_count -= 1;
+       const token = globalThis.backendaiclient._config.accessKey;
+       if (response !== undefined && response.code !== 404) {
+         const rqst = {
+           method: 'GET',
+           uri: this._getProxyURL() + 'proxy/'+ token + '/' + sessionId + '/delete'
+         };
+         return this.sendRequest(rqst);
+       }
+       return Promise.resolve(true);
+     }).catch((err) => {
+       console.log(err);
+       if (err && err.message) {
+         this.notification.text = PainKiller.relieve(err.title);
+         this.notification.detail = err.message;
+         this.notification.show(true, err);
+       }
+     });
   }
 
   _getProxyURL() {
