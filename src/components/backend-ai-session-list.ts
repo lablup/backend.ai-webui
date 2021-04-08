@@ -808,7 +808,7 @@ export default class BackendAiSessionList extends BackendAIPage {
        if (response !== undefined && response.code !== 404) {
          const rqst = {
            method: 'GET',
-           uri: this._getProxyURL() + 'proxy/'+ token + '/' + sessionId + '/delete'
+           uri: this._getProxyURL() + 'proxy/'+ token + '/' + sessionId + '/delete_all'
          };
          return this.sendRequest(rqst);
        }

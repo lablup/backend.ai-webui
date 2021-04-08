@@ -505,6 +505,28 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       throw err;
     }
   }
+  /**
+   * Close a WsProxy with session and app.
+   *
+   * @param {string} sessionUuid
+   * @param {string} app
+   * @param {number} port
+   * @param {object | null} envs
+   * @param {object | null} args
+   */
+  async _close_wsproxy(sessionUuid, app = 'jupyter') {
+    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      return false;
+    }
+    const token = globalThis.backendaiclient._config.accessKey;
+    let uri = this._getProxyURL() + `proxy/${token}/${sessionUuid}/delete?app=${app}`;
+    const rqst_proxy = {
+      method: 'GET',
+      app: app,
+      uri: uri
+    };
+    return await this.sendRequest(rqst_proxy);
+  }
 
   /**
    * Run backend.ai app.
@@ -782,7 +804,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this.indicator = await globalThis.lablupIndicator.start();
     this.indicator.set(50, 'Shutdown TensorBoard instance if exist...');
     await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
-    this.indicator.set(100, 'Prepared.');
+    this.indicator.set(70, 'Clean up TensorBoard proxy...');
+    await this._close_wsproxy(sessionUuid, 'tensorboard');
+    this.indicator.set(100, 'Proxy is ready.');
     // if tensorboard path is empty, --logdir will be '/home/work/logs'
     this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
     const path: Object = {'--logdir': this.tensorboardPath};

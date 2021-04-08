@@ -197,7 +197,7 @@ class Manager extends EventEmitter {
       }
     });
 
-    this.app.get('/proxy/:token/:sessionId/delete', (req, res) => {
+    this.app.get('/proxy/:token/:sessionId/delete_all', (req, res) => {
       //find all and kill
       if (!this._config) {
         res.send({"code": 401});
@@ -223,7 +223,7 @@ class Manager extends EventEmitter {
       }
     });
 
-    this.app.get('/proxy/local/:sessionId/down', (req, res) => {
+    this.app.get('/proxy/:token/:sessionId/delete', (req, res) => {
       //find app in session and stop if possible
       if (!this._config) {
         res.send({"code": 401});
