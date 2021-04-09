@@ -2480,7 +2480,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 id="vfolder-select-expansion" name="vfolder-group"
                 style="--expansion-header-padding:16px;--expansion-content-padding:0;"
                 @change=${(e) => this.toggleUnselectAllVfoldersButton(e)}>
-            <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
+            <span slot="title" style="font-size:12px;color:rgba(0, 0, 0, 0.6)!important;font-weight:400;">${_t("session.launcher.FolderToMount")}</span>
             <mwc-list fullwidth multi id="vfolder"
               @selected="${() => this._updateSelectedFolder()}">
             ${this.vfolders.length === 0 ? html`
@@ -2531,7 +2531,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <p>GB</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t("session.launcher.SharedMemory")}</p>
+                <p>${_t("session.launcher.SharedMemoryAbbr")}</p>
                 <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
                 <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
               </div>
