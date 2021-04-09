@@ -2536,9 +2536,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t("session.launcher.Accelerator")}</p>
-                <span>${this.gpu_request}</span>
                 <p>${_t("session.launcher.GPU")}</p>
+                <span>${this.gpu_request}</span>
+                <p>${_t("session.launcher.GPUSlot")}</p>
               </div>
             </div>
             <div class="vertical layout center center-justified cluster-allocated">
