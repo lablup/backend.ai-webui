@@ -382,10 +382,10 @@ export default class BackendAIData extends BackendAIPage {
             </div>
           ` : html``}
           ${this.enableStorageProxy ?
-          html`
+    html`
           <div class="horizontal layout flex wrap center justified">
               <p style="color:rgba(0, 0, 0, 0.6);">
-                ${_t("data.folders.Cloneable")}
+                ${_t('data.folders.Cloneable')}
               </p>
               <mwc-switch id="add-folder-cloneable" style="margin-right:10px;">
               </mwc-switch>
@@ -406,16 +406,16 @@ export default class BackendAIData extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="clone-folder-dialog" fixed backdrop>
-        <span slot="title">${_t("data.folders.CloneAFolder")}</span>
+        <span slot="title">${_t('data.folders.CloneAFolder')}</span>
         <div slot="content" style="width:100%;">
-          <mwc-textfield id="clone-folder-src" label="${_t("data.FolderToCopy")}" value="${this.cloneFolderName}"
+          <mwc-textfield id="clone-folder-src" label="${_t('data.FolderToCopy')}" value="${this.cloneFolderName}"
               disabled></mwc-textfield>
-          <mwc-textfield id="clone-folder-name" label="${_t("data.Foldername")}"
+          <mwc-textfield id="clone-folder-name" label="${_t('data.Foldername')}"
               @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
-              required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}" maxLength="64"
+              required validationMessage="${_t('data.Allowslettersnumbersand-_dot')}" maxLength="64"
               placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
           <div class="horizontal layout">
-            <mwc-multi-select id="clone-folder-host" label="${_t("data.Host")}">
+            <mwc-multi-select id="clone-folder-host" label="${_t('data.Host')}">
               ${this.vhosts.map((item, idx) => html`
                 <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
                   <span>${item}</span>
@@ -425,32 +425,32 @@ export default class BackendAIData extends BackendAIPage {
                 </mwc-list-item>
               `)}
             </mwc-multi-select>
-            <mwc-multi-select id="clone-folder-type" label="${_t("data.Type")}">
-              ${(this.allowed_folder_type as String[]).includes('user') ? html`
-                <mwc-list-item value="user" selected>${_t("data.User")}</mwc-list-item>
+            <mwc-multi-select id="clone-folder-type" label="${_t('data.Type')}">
+              ${(this.allowed_folder_type as string[]).includes('user') ? html`
+                <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
-              ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
-                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as String[]).includes('user')}">${_t("data.Group")}</mwc-list-item>
+              ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
+                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Group')}</mwc-list-item>
               ` : html``}
             </mwc-multi-select>
           </div>
           ${this._vfolderInnatePermissionSupport ? html`
             <div class="horizontal layout">
-              <mwc-multi-select id="clone-folder-usage-mode" label="${_t("data.UsageMode")}">
+              <mwc-multi-select id="clone-folder-usage-mode" label="${_t('data.UsageMode')}">
                 ${this.usageModes.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
               </mwc-multi-select>
-              <mwc-multi-select id="clone-folder-permission" label="${_t("data.Type")}">
+              <mwc-multi-select id="clone-folder-permission" label="${_t('data.Type')}">
                 ${this.permissions.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
               </mwc-multi-select>
             </div>
           ` : html``}
-          ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
+          ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
             <div class="horizontal layout">
-              <mwc-multi-select id="clone-folder-group" label="${_t("data.Group")}">
+              <mwc-multi-select id="clone-folder-group" label="${_t('data.Group')}">
                 ${(this.allowedGroups as any).map((item, idx) => html`
                   <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
@@ -458,17 +458,17 @@ export default class BackendAIData extends BackendAIPage {
             </div>
           ` : html``}
           ${this.enableStorageProxy ?
-          html`
+    html`
           <div class="horizontal layout flex wrap center justified">
               <p style="color:rgba(0, 0, 0, 0.6);">
-                ${_t("data.folders.Cloneable")}
+                ${_t('data.folders.Cloneable')}
               </p>
               <mwc-switch id="clone-folder-cloneable" style="margin-right:10px;">
               </mwc-switch>
             </div>
             ` : html``}
           <div style="font-size:11px;">
-            ${_t("data.DialogFolderStartingWithDotAutomount")}
+            ${_t('data.DialogFolderStartingWithDotAutomount')}
           </div>
         </div>
         <div slot="footer" class="horizontal flex">
@@ -476,7 +476,7 @@ export default class BackendAIData extends BackendAIPage {
               unelevated
               id="clone-button"
               icon="file_copy"
-              label="${_t("data.Create")}"
+              label="${_t('data.Create')}"
               style="width:100%;"
               @click="${() => this._cloneFolder()}"></mwc-button>
         </div>
@@ -547,7 +547,7 @@ export default class BackendAIData extends BackendAIPage {
     });
     document.addEventListener('backend-ai-vfolder-cloning', (e: any) => {
       if (e.detail) {
-        let selectedItems = e.detail;
+        const selectedItems = e.detail;
         this.cloneFolderName = selectedItems.name;
         this._cloneFolderDialog();
       }
@@ -647,12 +647,12 @@ export default class BackendAIData extends BackendAIPage {
    * Clone folder dialog.
    */
   async _cloneFolderDialog() {
-    let vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
-    let nameEl = this.shadowRoot.querySelector('#add-folder-name');
+    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    const nameEl = this.shadowRoot.querySelector('#add-folder-name');
     nameEl.value = ''; // reset folder name
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
-    if ((this.allowed_folder_type as String[]).includes('group')) {
+    if ((this.allowed_folder_type as string[]).includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
     }
@@ -723,7 +723,7 @@ export default class BackendAIData extends BackendAIPage {
     const cloneableEl = this.shadowRoot.querySelector('#add-folder-cloneable');
     let usageMode = '';
     let permission = '';
-    let cloneable: boolean = false;
+    let cloneable = false;
     if (['user', 'group'].includes(ownershipType) === false) {
       ownershipType = 'user';
     }
@@ -757,11 +757,7 @@ export default class BackendAIData extends BackendAIPage {
     }
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {
-<<<<<<< HEAD
-      const job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission);
-=======
-      let job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission, cloneable);
->>>>>>> main
+      const job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission, cloneable);
       job.then((value) => {
         this.notification.text = _text('data.folders.FolderCreated');
         this.notification.show();
@@ -780,28 +776,28 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   /**
-   * 
+   *
    */
   async _cloneFolder() {
-    let nameEl = this.shadowRoot.querySelector('#clone-folder-name');
-    let name = await this._checkFolderNameAlreadyExists(nameEl.value, true);
-    let host = this.shadowRoot.querySelector('#clone-folder-host').value;
+    const nameEl = this.shadowRoot.querySelector('#clone-folder-name');
+    const name = await this._checkFolderNameAlreadyExists(nameEl.value, true);
+    const host = this.shadowRoot.querySelector('#clone-folder-host').value;
     let ownershipType = this.shadowRoot.querySelector('#clone-folder-type').value;
-    let group;
     const usageModeEl = this.shadowRoot.querySelector('#clone-folder-usage-mode');
     const permissionEl = this.shadowRoot.querySelector('#clone-folder-permission');
     const cloneableEl = this.shadowRoot.querySelector('#clone-folder-cloneable');
     let usageMode = '';
     let permission = '';
-    let cloneable: boolean = false;
+    let cloneable = false;
     if (['user', 'group'].includes(ownershipType) === false) {
       ownershipType = 'user';
     }
-    if (ownershipType === 'user') {
-      group = '';
-    } else {
-      group = this.is_admin ? this.shadowRoot.querySelector('#add-folder-group').value : globalThis.backendaiclient.current_group;
-    }
+    // let group;
+    // if (ownershipType === 'user') {
+    //   group = '';
+    // } else {
+    //   group = this.is_admin ? this.shadowRoot.querySelector('#add-folder-group').value : globalThis.backendaiclient.current_group;
+    // }
     if (usageModeEl) {
       usageMode = usageModeEl.value;
       usageMode = usageMode.toLowerCase();
@@ -809,35 +805,35 @@ export default class BackendAIData extends BackendAIPage {
     if (permissionEl) {
       permission = permissionEl.value;
       switch (permission) {
-        case 'Read-Write':
-          permission = 'rw';
-          break;
-        case 'Read-Only':
-          permission = 'ro';
-          break;
-        case 'Delete':
-          permission = 'wd';
-          break;
-        default:
-          permission = 'rw';
+      case 'Read-Write':
+        permission = 'rw';
+        break;
+      case 'Read-Only':
+        permission = 'ro';
+        break;
+      case 'Delete':
+        permission = 'wd';
+        break;
+      default:
+        permission = 'rw';
       }
     }
     cloneable = cloneableEl ? cloneableEl.checked : false;
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {
-      let input = {
+      const input = {
         'cloneable': cloneable,
         'permission': permission,
         'target_host': host,
         'target_name': name,
         'usage_mode': usageMode
       };
-      let job = globalThis.backendaiclient.vfolder.clone(input, this.cloneFolderName);
+      const job = globalThis.backendaiclient.vfolder.clone(input, this.cloneFolderName);
       job.then((value) => {
         this.notification.text = _text('data.folders.FolderCloned');
         this.notification.show();
         this._refreshFolderList();
-      }).catch(err => {
+      }).catch((err) => {
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.message);
           this.notification.detail = err.message;
@@ -847,7 +843,7 @@ export default class BackendAIData extends BackendAIPage {
       this.closeDialog('clone-folder-dialog');
     } else {
       return;
-    } 
+    }
   }
 
   /**
@@ -900,15 +896,15 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   async _checkFolderNameAlreadyExists(name, showMessage = false) {
-    let groupId = globalThis.backendaiclient.current_group_id();
-    let folderList = await globalThis.backendaiclient.vfolder.list(groupId);
-    let folders= folderList.map(value => value.name);
+    const groupId = globalThis.backendaiclient.current_group_id();
+    const folderList = await globalThis.backendaiclient.vfolder.list(groupId);
+    const folders= folderList.map((value) => value.name);
     if (folders.includes(name)) {
       if (showMessage) {
         this.notification.text = _text('import.FolderAlreadyExists');
         this.notification.show();
       }
-      let i: number = 1;
+      let i = 1;
       let newName: string = name;
       while (folders.includes(newName)) {
         newName = name + '_' + i;

@@ -36,12 +36,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Boolean}) active = true;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
-<<<<<<< HEAD
   @property({type: Array}) appSupportList;
-=======
-  @property({type: Array}) appSupportList = Array();
-  @property({type: Array}) appSupportOption = Array();
->>>>>>> main
+  @property({type: Array}) appSupportOption;
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Array}) _selected_items = [];
@@ -66,6 +62,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   constructor() {
     super();
     this.appSupportList = [];
+    this.appSupportOption = [];
   }
 
   static get styles(): CSSResultOrNative | CSSResultArray {
@@ -529,16 +526,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       args = param['args'];
     }
 
-<<<<<<< HEAD
-    if (typeof globalThis.backendaiwsproxy === 'undefined' || globalThis.backendaiwsproxy === null) {
-=======
     if (appName === 'tensorboard') {
       this._openTensorboardDialog();
       return;
     }
 
-    if (typeof globalThis.backendaiwsproxy === "undefined" || globalThis.backendaiwsproxy === null) {
->>>>>>> main
+    if (typeof globalThis.backendaiwsproxy === 'undefined' || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
       let port = null;
@@ -782,24 +775,24 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
   async _addTensorboardPath() {
     this.tensorboardPath = this.shadowRoot.querySelector('#tensorboard-path').value;
-    let port = null;
-    let appName = this.appController['app-name']
-    let sessionUuid = this.appController['session-uuid'];
-    let urlPostfix = this.appController['url-postfix'];
+    const port = null;
+    const appName = this.appController['app-name'];
+    const sessionUuid = this.appController['session-uuid'];
+    const urlPostfix = this.appController['url-postfix'];
     this.indicator = await globalThis.lablupIndicator.start();
     this.indicator.set(50, 'Shutdown TensorBoard instance if exist...');
     await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
     this.indicator.set(100, 'Prepared.');
     // if tensorboard path is empty, --logdir will be '/home/work/logs'
     this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
-    const path: Object = {'--logdir': this.tensorboardPath};
+    const path: Record<string, unknown> = {'--logdir': this.tensorboardPath};
     this._open_wsproxy(sessionUuid, appName, port, null, path).then(async (response) => {
       await this._connectToProxyWorker(response.url, urlPostfix);
       this._hideAppLauncher();
       this._hideTensorboardDialog();
       setTimeout(() => {
         globalThis.open(response.url + urlPostfix, '_blank');
-        console.log(appName + " proxy loaded: ");
+        console.log(appName + ' proxy loaded: ');
         console.log(sessionUuid);
       }, 1000);
     });
@@ -958,7 +951,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="tensorboard-dialog" fixed>
-        <span slot="title">${_t("session.TensorboardPath")}</span>
+        <span slot="title">${_t('session.TensorboardPath')}</span>
         <div slot="content" class="vertical layout" style="padding:15px 10px;">
           <div>${_t('session.InputTensorboardPath')}</div>
           <div class="fg red">${_t('session.WarningTensorboardPathCannotBeChanged')}</div>
@@ -966,19 +959,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button style="width:100%;" class="fg apps green" @click="${() => this._addTensorboardPath()}">
-            ${_t("session.UseThisPath")}
+            ${_t('session.UseThisPath')}
           </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="argument-dialog" fixed>
-        <span slot="title">${_t("session.Arguments")}</span>
+        <span slot="title">${_t('session.Arguments')}</span>
         <div slot="content" class="vertical layout" style="padding:15px 10px;">
           <div>${_t('session.ModifyArguments')}</div>
           <mwc-textfield value=""></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button style="width:100%;" class="fg apps green" @click="${() => this._addTensorboardPath()}">
-            ${_t("session.UseThisArguments")}
+            ${_t('session.UseThisArguments')}
           </mwc-button>
         </div>
       </backend-ai-dialog>
