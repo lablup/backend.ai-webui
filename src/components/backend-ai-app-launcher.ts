@@ -330,7 +330,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const sessionUuid = controls['session-uuid'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
-    const appServicesOption = controls['app-services-option'];
+    const appServicesOption: Record<string, unknown> = ('app-services-option' in controls) ? controls['app-services-option'] : {};
     if ('runtime' in controls) {
       const param: Record<string, unknown> = {};
       param['session-uuid'] = sessionUuid;
