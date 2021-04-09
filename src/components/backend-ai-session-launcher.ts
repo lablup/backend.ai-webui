@@ -2118,6 +2118,32 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Get MB value when input is less than 1 GB.
+   *
+   * @param {number} value - value with GB unit.
+   * @return {number} MB value if input is smaller than 1GB. Otherwise, GB value.
+   * */
+  _conditionalGBtoMB(value) {
+    if (value < 1.0) {
+      return (value * 1024).toFixed(0);
+    }
+    return value;
+  }
+
+  /**
+   * Get MB unit when input is less than 1 GB.
+   *
+   * @param {number} value - value with GB unit.
+   * @return {string} MB if input is smaller than 1GB. Otherwise, GB.
+   * */
+  _conditionalGBtoMBunit(value) {
+    if (value < 1.0) {
+      return 'MB';
+    }
+    return 'GB';
+  }
+
+  /**
    * Get version information - Version, Language, Additional information.
    *
    * @param {any} version
@@ -2476,7 +2502,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           ${this.selectedVfolders.length > 0 ? html`
             <div class="horizontal layout end-justified" style="margin-bottom:10px;">
               <mwc-button
-<<<<<<< HEAD
                 outlined
                 label="${_t("session.launcher.UnSelectAllVFolders")}"
                 style="width:auto;margin-right:10px;"
@@ -2507,8 +2532,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               </div>
               <div class="vertical layout center center-justified resource-allocated">
                 <p>${_t("session.launcher.SharedMemory")}</p>
-                <span>${this.shmem_request}</span>
-                <p>GB</p>
+                <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
+                <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
               </div>
               <div class="vertical layout center center-justified resource-allocated">
                 <p>${_t("session.launcher.Accelerator")}</p>
@@ -2525,11 +2550,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </div>
             <div class="vertical layout center center-justified cluster-allocated">
               <div class="horizontal layout">
-                <p>${_t("session.launcher.AllocateNode")}</p>
                 <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
-                <span>${this.cluster_mode === 'single-node' ? 'Single' : 'multi'}</span>
+                <span>${this.cluster_mode === 'single-node' ? _t("session.launcher.SingleNode") : _t("session.launcher.MultiNode")}</span>
               </div>
-              <p class="small">${_t("session.launcher.Node")}</p>
+              <p class="small">${_t("session.launcher.AllocateNode")}</p>
             </div>
           </div>
           <div style="display:none;" class="horizontal layout center center-justified allocation-check">
