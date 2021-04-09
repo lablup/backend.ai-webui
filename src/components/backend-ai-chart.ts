@@ -3,13 +3,12 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {customElement, html, LitElement, property} from "lit-element";
+import {customElement, html, LitElement, property} from 'lit-element';
 
-import "../plastics/chart-js";
-import format from 'date-fns/format';
-
-import {BackendAiStyles} from "./backend-ai-general-styles";
-import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+import '../plastics/chart-js';
+import format from 'date-fns/esm/format';
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 const ByteConverter = {
   toB: bytes => bytes,
@@ -48,7 +47,7 @@ const capitalize = (s) => {
 /**
  Backend.AI Chart
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-chart
  */
 
@@ -135,7 +134,7 @@ export default class BackendAIChart extends LitElement {
             },
             font: function (context) {
               let width = context.chart.width;
-              let size = Math.round(width / 64);
+              let size = Math.round(width / 64) < 12 ? Math.round(width / 64) : 12;
               return {
                 size: size,
               };
@@ -158,7 +157,7 @@ export default class BackendAIChart extends LitElement {
             },
             font: function (context) {
               let height = context.chart.height;
-              let size = Math.round(height / 16);
+              let size = Math.round(height / 16) < 12 ? Math.round(height / 16) : 12;
               return {
                 size: size,
               };

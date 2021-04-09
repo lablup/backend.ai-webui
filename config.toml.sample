@@ -2,7 +2,7 @@
 #apiEndpoint =
 #apiEndpointText =
 #defaultSessionEnvironment =
-siteDescription = "Console"
+siteDescription = "Web UI"
 connectionMode = "SESSION" #connectionMode = API
 allowChangeSigninMode = false # Allows user to change signin mode
 allowSignout = true
@@ -29,7 +29,7 @@ autoPortSelection = true
 disableCertCheck = true
 
 [server]
-consoleServerURL =
+webServerURL =
 
 [plugin]
 #login = "signup-cloud.js"

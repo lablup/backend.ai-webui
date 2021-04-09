@@ -43,7 +43,7 @@ import {
 
  <backend-ai-session-launcher active></backend-ai-session-launcher>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-session-launcher
  */
 
@@ -156,11 +156,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Number}) max_cpu_core_per_session = 64;
-  @property({type: Number}) max_cuda_device_per_session = 16;
-  @property({type: Number}) max_shm_per_session = 2;
+  @property({type: Number}) max_cuda_device_per_container = 16;
+  @property({type: Number}) max_cuda_shares_per_container = 16;
+  @property({type: Number}) max_shm_per_container = 2;
   @property({type: Object}) resourceBroker;
   @property({type: Number}) cluster_size = 1;
   @property({type: String}) cluster_mode;
+  @property({type: Object}) deleteEnvInfo = Object();
+  @property({type: Object}) deleteEnvRow = Object();
+  @property({type: Array}) environ = Array();
+  @property({type: Object}) environ_values = Object();
+  @property({type: Object}) vfolder_select_expansion = Object();
+
   @property({type: Boolean}) _debug = false;
 
   constructor() {
@@ -531,7 +538,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding: 5px !important;
         }
 
-        #launch-confirmation-dialog {
+        #launch-confirmation-dialog, #env-config-confirmation {
           --component-width: 400px;
           --component-font-size: 14px;
         }
@@ -557,6 +564,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-size: 12px;
           font-weight: 200;
           color: #404040;
+        }
+
+        #modify-env-dialog {
+          --component-max-height: 550px;
+          --component-width: 400px;
+        }
+
+        #modify-env-dialog div.container {
+          display: flex;
+          flex-direction: column;
+          padding: 0px 30px;
+        }
+
+        #modify-env-dialog div.row {
+          display: grid;
+          grid-template-columns: 4fr 4fr 1fr;
+          margin-bottom: 10px;
         }
 
         @media screen and (max-width: 375px) {
@@ -661,26 +685,73 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
-        this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
-        this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+        this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
+        this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
+        this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
         if (globalThis.backendaiclient.supports('multi-container')) {
           this.cluster_support = true;
         }
         this.is_connected = true;
-        this._debug = globalThis.backendaiconsole.debug;
+        this._debug = globalThis.backendaiwebui.debug;
         this._enableLaunchButton();
       }, {once: true});
     } else {
       this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
-      this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
-      this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+      this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
+      this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
+      this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
       if (globalThis.backendaiclient.supports('multi-container')) {
         this.cluster_support = true;
       }
       this.is_connected = true;
-      this._debug = globalThis.backendaiconsole.debug;
+      this._debug = globalThis.backendaiwebui.debug;
       this._enableLaunchButton();
     }
+    let modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    modifyEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
+      let currentEnv = {};
+      const container = this.shadowRoot.querySelector("#modify-env-container");
+      const rows = container.querySelectorAll(".row:not(.header)");
+
+      // allow any input in variable or value
+      const nonempty = row => Array.prototype.filter.call(
+        row.querySelectorAll("wl-textfield"), (tf, idx) => tf.value === ""
+      ).length <= 1;
+
+      const encodeRow = row => {
+        let items: Array<any> = Array.prototype.map.call(row.querySelectorAll("wl-textfield"), tf => tf.value);
+        currentEnv[items[0]] = items[1];
+        return items;
+      }
+      Array.prototype.filter.call(rows, row => nonempty(row)).map(row => encodeRow(row));
+
+      // check if there's any changes occurred
+      let isEquivalent = (a, b) => {
+        // create arrays of property names
+        let aProps = Object.getOwnPropertyNames(a);
+        let bProps = Object.getOwnPropertyNames(b);
+
+        if (aProps.length != bProps.length) {
+          return false;
+        }
+
+        for (let i = 0; i < aProps.length; i++) {
+          let propName = aProps[i];
+
+          if (a[propName] !== b[propName]) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      if (!isEquivalent(currentEnv, this.environ_values)) {
+        this.openDialog('env-config-confirmation');
+      } else {
+        modifyEnvDialog.closeWithConfirmation = false;
+        this.closeDialog('modify-env-dialog');
+      }
+    });
   }
 
   _enableLaunchButton() {
@@ -692,6 +763,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       setTimeout(() => {
         this._enableLaunchButton();
       }, 1000);
+    }
+  }
+
+  /**
+   * Toggle visibility of unselect all vfolders button
+   *
+   * @param {Event} e
+   */
+  toggleUnselectAllVfoldersButton(e) {
+    let expansion = e.target;
+    let unselectAllVfolderBtn = this.shadowRoot.querySelector('#unselect-all-vfolders');
+    if (unselectAllVfolderBtn) {
+      unselectAllVfolderBtn.style.display = expansion.checked ? 'block' : 'none';
     }
   }
 
@@ -842,6 +926,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       //this.notification.text = _text('session.launcher.PleaseWaitInitializing');
       //this.notification.show();
     } else {
+      this._resetEnvironmentVariables();
       await this.selectDefaultLanguage();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
@@ -992,6 +1077,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.mode === 'import' && this.importScript !== '') {
       config['bootstrap_script'] = this.importScript;
     }
+    if (this.environ_values !== {}) {
+      config['env'] = this.environ_values;
+    }
     let kernelName: string;
     if (this._debug && this.manualImageName.value !== "") {
       kernelName = this.manualImageName.value;
@@ -1021,6 +1109,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
+      this._resetEnvironmentVariables();
       setTimeout(() => {
         this.metadata_updating = true;
         this.aggregateResource('session-creation');
@@ -1239,6 +1328,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         //this.version_selector.selectedText = this.version_selector.value;
         this._updateVersionSelectorText(this.version_selector.value);
         this.version_selector.disabled = false;
+        this.environ_values = {};
         this.updateResourceAllocationPane('update versions');
       });
     }
@@ -1266,7 +1356,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (var i = 0; i < 8; i++)
       text += possible.charAt(Math.floor(Math.random() * possible.length));
-    return text + "-console";
+    return text + "-session";
   }
 
   async _updateVirtualFolderList() {
@@ -1466,15 +1556,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           cuda_device_metric.min = parseInt(cuda_device_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
             if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && cuda_device_metric.max !== NaN) {
-              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_shares'], this.max_cuda_device_per_session);
+              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device'], this.max_cuda_device_per_container);
             } else {
-              cuda_device_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device'], this.max_cuda_device_per_session);
+              cuda_device_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
             }
           } else {
-            if (parseInt(cuda_device_metric.max) !== 0) {
-              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), available_slot['cuda_device'], this.max_cuda_device_per_session);
+            if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && cuda_device_metric.max !== NaN) {
+              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
             } else {
-              cuda_device_metric.max = this.available_slot['cuda_device'];
+              cuda_device_metric.max = Math.min(parseInt(this.available_slot['cuda_device']), this.max_cuda_device_per_container);
             }
           }
           if (cuda_device_metric.min >= cuda_device_metric.max) {
@@ -1491,13 +1581,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           cuda_shares_metric.min = parseFloat(cuda_shares_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
             if (parseFloat(cuda_shares_metric.max) !== 0 && cuda_shares_metric.max !== 'Infinity' && cuda_shares_metric.max !== NaN) {
-              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares']);
+              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares'], this.max_cuda_shares_per_container);
             } else {
-              cuda_shares_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares']);
+              cuda_shares_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares'], this.max_cuda_shares_per_container);
             }
           } else {
             if (parseFloat(cuda_shares_metric.max) !== 0) {
-              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), available_slot['cuda_shares']);
+              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), available_slot['cuda_shares'], this.max_cuda_shares_per_container);
             } else {
               cuda_shares_metric.max = 0;
             }
@@ -1575,7 +1665,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
       });
       // Shared memory setting
-      shmem_metric.max = this.max_shm_per_session;
+      shmem_metric.max = this.max_shm_per_container;
       shmem_metric.min = 0.0625; // 64m
       if (shmem_metric.min >= shmem_metric.max) {
         if (shmem_metric.min > shmem_metric.max) {
@@ -1968,6 +2058,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
+  _showEnvConfigDescription(e) {
+    e.stopPropagation();
+    this._helpDescriptionTitle = _text("session.launcher.EnvironmentVariableTitle");
+    this._helpDescription = _text("session.launcher.DescSetEnv");
+    let desc = this.shadowRoot.querySelector('#help-description');
+    desc.show();
+  }
+
   _resourceTemplateToCustom() {
     this.shadowRoot.querySelector('#resource-templates').selectedText = _text('session.launcher.CustomResourceApplied');
   }
@@ -2011,7 +2109,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let shmem_value = shmemEl.value;
     this.shmem_metric.max = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
-    this.shadowRoot.querySelector('#shmem-resource').max = Math.min(this.max_shm_per_session, this.shmem_metric.max);
+    this.shadowRoot.querySelector('#shmem-resource').max = Math.min(this.max_shm_per_container, this.shmem_metric.max);
     if (parseFloat(shmem_value) > this.shmem_metric.max) {
       shmem_value = this.shmem_metric.max;
       this.shmem_request = shmem_value;
@@ -2079,6 +2177,192 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
   }
 
+  /**
+   * Append a row to the environment variable list.
+   *
+   * @param {string} name - environment variable name
+   * @param {string} value - environment variable value
+   */
+  _appendEnvRow(name = "", value = "") {
+    const container = this.shadowRoot.querySelector("#modify-env-container");
+    const lastChild = container.children[container.children.length - 1];
+    const div = this._createEnvRow(name, value);
+    container.insertBefore(div, lastChild.nextSibling);
+  }
+  /**
+   * Create a row in the environment variable list.
+   *
+   * @param {string} name - environment variable name
+   * @param {string} value - environment variable value
+   *
+   */
+  _createEnvRow(name = "", value = "") {
+    const div = document.createElement("div");
+    div.setAttribute("class", "row extra");
+
+    const env = document.createElement("wl-textfield");
+    env.setAttribute("type", "text");
+    env.setAttribute("value", name);
+
+    const val = document.createElement("wl-textfield");
+    val.setAttribute("type", "text");
+    val.setAttribute("value", value);
+
+    const button = document.createElement("wl-button");
+    button.setAttribute("class", "fg pink");
+    button.setAttribute("fab", "");
+    button.setAttribute("flat", "");
+    button.addEventListener("click", (e) => this._removeEnvItem(e));
+
+    const icon = document.createElement("wl-icon");
+    icon.innerHTML = "remove";
+    button.appendChild(icon);
+
+    div.appendChild(env);
+    div.appendChild(val);
+    div.appendChild(button);
+    return div;
+  }
+
+  /**
+   * Check whether delete operation will proceed or not.
+   *
+   * @param e - Dispatches from the native input event each time the input changes.
+   */
+  _removeEnvItem(e) {
+    // htmlCollection should be converted to Array.
+    this.deleteEnvRow = e.target.parentNode;
+    this.deleteEnvRow.remove();
+  }
+
+  /**
+   * Remove empty env input fields
+   */
+  _removeEmptyEnv() {
+    const container = this.shadowRoot.querySelector('#modify-env-container');
+    const rows = container.querySelectorAll(".row.extra");
+    const empty = row => Array.prototype.filter.call(
+      row.querySelectorAll("wl-textfield"), (tf, idx) => tf.value === ""
+    ).length === 2;
+    Array.prototype.filter.call(rows, row => empty(row)).map(row => row.parentNode.removeChild(row));
+  }
+
+  /**
+   * Modify environment variables for current session.
+   */
+  modifyEnv() {
+    this._parseEnvVariableList();
+    this._saveEnvVariableList();
+    let modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    modifyEnvDialog.closeWithConfirmation = false;
+    modifyEnvDialog.hide();
+    this.notification.text = _text("session.launcher.EnvironmentVariableConfigurationDone");
+    this.notification.show();
+  }
+
+  /**
+   * load environment variables for current session
+   */
+  _loadEnv() {
+    this.environ.forEach((item, index) => {
+      const firstIndex = 0;
+      if (index === firstIndex) {
+        const container = this.shadowRoot.querySelector("#modify-env-container");
+        const firstRow = container.querySelector(".row:not(.header)");
+        const envFields = firstRow.querySelectorAll('wl-textfield');
+        Array.prototype.forEach.call(envFields, (elem, index) => {
+          elem.value = (index === firstIndex) ? item.name : item.value;
+        });
+      } else {
+        this._appendEnvRow(item.name, item.value);
+      }
+    });
+  }
+
+  /**
+   * Show environment variable modification popup.
+   */
+  _showEnvDialog() {
+    this._removeEmptyEnv();
+    let modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    modifyEnvDialog.closeWithConfirmation = true;
+    modifyEnvDialog.show();
+  }
+
+  /**
+   * Close confirmation dialog and environment variable dialog and reset the environment variable and value
+   *
+   */
+  _closeAndResetEnvInput() {
+    this._clearRows();
+    this._loadEnv();
+    this.closeDialog('env-config-confirmation');
+    let modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    modifyEnvDialog.closeWithConfirmation = false;
+    modifyEnvDialog.hide();
+  }
+
+  /**
+   * Parse environment variables on UI.
+   */
+  _parseEnvVariableList() {
+    this.environ_values = {};
+    const container = this.shadowRoot.querySelector("#modify-env-container");
+    const rows = container.querySelectorAll(".row:not(.header)");
+    const nonempty = row => Array.prototype.filter.call(
+      row.querySelectorAll("wl-textfield"), (tf, idx) => tf.value === ""
+    ).length === 0;
+    const encodeRow = row => {
+      let items: Array<any> = Array.prototype.map.call(row.querySelectorAll("wl-textfield"), tf => tf.value);
+      this.environ_values[items[0]] = items[1];
+      return items;
+    }
+    Array.prototype.filter.call(rows, row => nonempty(row)).map(row => encodeRow(row));
+  }
+
+  /**
+   * Save Environment variables
+   */
+  _saveEnvVariableList() {
+    this.environ = Object.entries(this.environ_values).map(([name, value]) => ({name, value}));
+  }
+
+  _resetEnvironmentVariables() {
+    this.environ = [];
+    this.environ_values = {};
+    let dialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    if (dialog !== null) {
+      this._clearRows();
+    }
+  }
+
+  /**
+   * Clear rows from the environment variable.
+   */
+  _clearRows() {
+    const container = this.shadowRoot.querySelector("#modify-env-container");
+    const rows = container.querySelectorAll(".row:not(.header)");
+    const firstRow = rows[0];
+
+    // remain first row element and clear values
+    firstRow.querySelectorAll("wl-textfield").forEach(tf => {
+      tf.value = "";
+    });
+
+    // delete extra rows
+    container.querySelectorAll(".row.extra").forEach(e => {
+      e.remove();
+    });
+  }
+
+  openDialog(id) {
+    this.shadowRoot.querySelector('#' + id).show();
+  }
+
+  closeDialog(id) {
+    this.shadowRoot.querySelector('#' + id).hide();
+  }
+
   render() {
     // language=HTML
     return html`
@@ -2099,7 +2383,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ` : html`
                     <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
                       <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
-                      <div class="horizontal justified center flex layout" style="width:293px;">
+                      <div class="horizontal justified center flex layout" style="width:283px;">
                         <div style="padding-right:5px;">${item.basename}</div>
                         <div class="flex"></div>
                         <div class="horizontal layout end-justified center flex">
@@ -2166,10 +2450,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            style="margin-left:5px;">
             </mwc-textfield>
           </div>
-          <wl-expansion id="vfolder-select-expansion" name="vfolder-group"
-                        style="--expansion-header-padding:16px;--expansion-content-padding:0;">
-            <span slot="title"
-                  style="font-size:12px;font-weight:400;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
+          <wl-expansion
+                id="vfolder-select-expansion" name="vfolder-group"
+                style="--expansion-header-padding:16px;--expansion-content-padding:0;"
+                @change=${(e) => this.toggleUnselectAllVfoldersButton(e)}>
+            <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
             <mwc-list fullwidth multi id="vfolder"
               @selected="${() => this._updateSelectedFolder()}">
             ${this.vfolders.length === 0 ? html`
@@ -2189,14 +2474,24 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `)}
           </ul>
           ${this.selectedVfolders.length > 0 ? html`
-            <div class="horizontal layout end-justified">
+            <div class="horizontal layout end-justified" style="margin-bottom:10px;">
               <mwc-button
+<<<<<<< HEAD
                 outlined
                 label="${_t("session.launcher.UnSelectAllVFolders")}"
                 style="width:auto;margin-right:10px;"
                 @click=${() => this._unselectAllSelectedFolder()}></mwc-button>
             </div>
           ` : html``}
+          <div class="horizontal layout center justified">
+            <span style="color:rgba(0, 0, 0, 0.6);font-size:12px;padding-left:16px;">${_t("session.launcher.SetEnvironmentVariable")}</span>
+            <mwc-button
+              unelevated
+              icon="rule"
+              label="${_t("session.launcher.Config")}"
+              style="width:auto;margin-right:15px;"
+              @click="${()=>this._showEnvDialog()}"></mwc-button>
+          </div>
           <p class="title" style="font-weight:400;">${_t("session.launcher.TotalAllocation")}</p>
           <div class="horizontal layout center center-justified allocation-check">
             <div class="horizontal layout resource-allocated-box">
@@ -2291,8 +2586,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div style="display:none"> (</div>
                   <div style="width:50px;text-align:right;">${item.cpu}<span style="display:none">CPU</span></div>
                   <div style="width:50px;text-align:right;">${item.mem}GB</div>
-                  <div style="width:50px;text-align:right;">${item.shmem ? html`${item.shmem}GB` : html`64MB`}</div>
-                  <div style="width:90px;text-align:right;">
+                  <div style="width:60px;text-align:right;">${item.shmem ?
+                      html`
+                        ${parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g')).toFixed(2)} GB` :
+                      html`
+                        64MB
+                        `}</div>
+                  <div style="width:80px;text-align:right;">
                     ${item.cuda_device && item.cuda_device > 0 ? html`${item.cuda_device} CUDA GPU` : html``}
                     ${item.cuda_shares && item.cuda_shares > 0 ? html`${item.cuda_shares} GPU` : html``}
                     ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} ROCM GPU` : html``}
@@ -2376,7 +2676,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
-              <div class="resource-type">${_t("console.menu.Sessions")}</div>
+              <div class="resource-type">${_t("webui.menu.Sessions")}</div>
               <lablup-slider id="session-resource" class="session"
                              pin snaps editable markers step="1"
                              @click="${(e) => this._applyResourceValueChanges(e)}"
@@ -2484,6 +2784,61 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         </mwc-button>
       </div>
     </backend-ai-dialog>
+    <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent closeWithConfirmation>
+      <span slot="title">${_t("session.launcher.SetEnvironmentVariable")}</span>
+      <span slot="action">
+        <mwc-icon-button icon="info" @click="${(e) => this._showEnvConfigDescription(e)}" style="pointer-events: auto;"></mwc-icon-button>
+      </span>
+      <div slot="content" id="modify-env-container">
+        <div class="row header">
+          <div> ${_t("session.launcher.EnvironmentVariable")} </div>
+          <div> ${_t("session.launcher.EnvironmentVariableValue")} </div>
+        </div>
+        ${this.environ.forEach((item, index) =>
+          html`
+        <div class="row">
+          <wl-textfield
+            type="text"
+            value=${item.name}
+          ></wl-textfield>
+          <wl-textfield
+            type="text"
+            value=${item.value}
+          ></wl-textfield>
+          <wl-button
+            fab flat
+            class="fg pink"
+            @click=${e => this._removeEnvItem(e)}
+          >
+            <wl-icon>remove</wl-icon>
+          </wl-button>
+        </div>
+        `)}
+        <div class="row">
+          <wl-textfield type="text"></wl-textfield>
+          <wl-textfield type="text"></wl-textfield>
+          <wl-button
+            fab flat
+            class="fg pink"
+            @click=${()=>this._appendEnvRow()}
+          >
+            <wl-icon>add</wl-icon>
+          </wl-button>
+        </div>
+      </div>
+      <div slot="footer" class="horizontal end-justified flex layout">
+        <mwc-button
+            icon="delete"
+            label="${_t("button.DeleteAll")}"
+            @click="${()=>this._clearRows()}"></mwc-button>
+        <mwc-button
+            unelevated
+            slot="footer"
+            icon="check"
+            label="${_t("button.Save")}"
+            @click="${()=>this.modifyEnv()}"></mwc-button>
+      </div>
+    </backend-ai-dialog>
     <backend-ai-dialog id="help-description" fixed backdrop>
       <span slot="title">${this._helpDescriptionTitle}</span>
       <div slot="content" class="horizontal layout center" style="margin:5px;">
@@ -2508,6 +2863,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             icon="rowing"
             @click="${() => this._newSession()}">
           <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+        </mwc-button>
+      </div>
+    </backend-ai-dialog>
+    <backend-ai-dialog id="env-config-confirmation" warning fixed>
+      <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
+      <div slot="content">
+        <p>${_t('session.launcher.EnvConfigWillDisappear')}</p>
+        <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+      </div>
+      <div slot="footer" class="horizontal end-justified flex layout">
+        <mwc-button
+            unelevated
+            id="env-config-reset-button"
+            style="width:auto;margin-right:10px;"
+            @click="${() => this._closeAndResetEnvInput()}">
+          <span id="launch-button-msg">${_t('button.DismissAndProceed')}</span>
+        </mwc-button>
+        <mwc-button
+            outlined
+            id="env-config-remain-button"
+            style="width:auto;"
+            @click="${() => this.closeDialog('env-config-confirmation')}">
+          <span id="launch-button-msg">${_t('button.Cancel')}</span>
         </mwc-button>
       </div>
     </backend-ai-dialog>

@@ -8,7 +8,7 @@ import {css, customElement, html, property} from "lit-element";
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
@@ -42,7 +42,7 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 
  <backend-ai-scaling-group-list active></backend-ai-scaling-group-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-scaling-group-list
  */
 
@@ -476,7 +476,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           <mwc-select
             id="modify-scaling-group-scheduler"
             label="${_t('resourceGroup.SelectScheduler')}"
-            value="${this.scalingGroups.length === 0 ? "" 
+            value="${this.scalingGroups.length === 0 ? ""
                 : this.scalingGroups[this.selectedIndex].scheduler}">
             ${this.schedulerTypes.map(sched => html`
             <mwc-list-item value="${sched}">${sched}</mwc-list-item>

@@ -3,7 +3,7 @@
 Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.8.1)
 ====================================================================
 
-(C) Copyright 2016-2020 Lablup Inc.
+(C) Copyright 2016-2021 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
@@ -19,7 +19,7 @@ class ClientConfig {
      * @param {string} accessKey - access key to connect Backend.AI manager
      * @param {string} secretKey - secret key to connect Backend.AI manager
      * @param {string} endpoint  - endpoint of Backend.AI manager
-     * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires console-server.
+     * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires webserver.
      */
     constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
         // default configs.
@@ -326,10 +326,10 @@ class Client {
                 description: errorDesc
             };
         }
-        let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs'));
+        let previous_log = JSON.parse(localStorage.getItem('backendaiwebui.logs'));
         if (previous_log) {
-            if (previous_log.length > 5000) {
-                previous_log = previous_log.slice(1, 5000);
+            if (previous_log.length > 3000) {
+                previous_log = previous_log.slice(1, 3000);
             }
         }
         let log_stack = Array();
@@ -355,7 +355,23 @@ class Client {
         if (previous_log) {
             log_stack = log_stack.concat(previous_log);
         }
-        localStorage.setItem('backendaiconsole.logs', JSON.stringify(log_stack));
+        try {
+            localStorage.setItem('backendaiwebui.logs', JSON.stringify(log_stack));
+        }
+        catch (e) {
+            console.warn('Local storage is full. Clearing part of the logs.');
+            // localStorage is full, we will keep the recent 2/3 of the logs.
+            let webuiLogs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
+            webuiLogs = webuiLogs.slice(0, Math.round(webuiLogs.length * 2 / 3));
+            localStorage.setItem('backendaiwebui.logs', JSON.stringify(webuiLogs));
+            // Deprecated backendaiconsole.* should also be cleared here.
+            Object.entries(localStorage)
+                .map((x) => x[0]) // get key
+                .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiconsole
+                .map((x) => localStorage.removeItem(x)); // remove filtered keys
+            // Will not throw exception here since the request should be proceeded
+            // even if it is not possible to write log to localStorage.
+        }
         return body;
     }
     /**
@@ -465,7 +481,7 @@ class Client {
         return version <= apiVersion;
     }
     /**
-     * Check if console-server is authenticated. This requires additional console-server package.
+     * Check if webserver is authenticated. This requires additional webserver package.
      *
      */
     async check_login() {
@@ -489,7 +505,7 @@ class Client {
         return result.authenticated;
     }
     /**
-     * Login into console-server with given ID/Password. This requires additional console-server package.
+     * Login into webserver with given ID/Password. This requires additional webserver package.
      *
      */
     async login() {
@@ -514,7 +530,7 @@ class Client {
                 }
             }
         }
-        catch (err) { // Manager / console server down.
+        catch (err) { // Manager / webserver down.
             if ('statusCode' in err && err.statusCode === 429) {
                 throw {
                     "title": err.description,
@@ -532,7 +548,7 @@ class Client {
         }
     }
     /**
-     * Logout from console-server. This requires additional console-server package.
+     * Logout from webserver. This requires additional webserver package.
      *
      */
     logout() {
@@ -541,7 +557,7 @@ class Client {
         return this._wrapWithPromise(rqst);
     }
     /**
-     * Leave from manager user. This requires additional console-server package.
+     * Leave from manager user. This requires additional webserver package.
      *
      */
     async signout(userid, password) {
@@ -623,9 +639,6 @@ class Client {
             if (resources['tpu']) {
                 config['tpu.device'] = resources['tpu'];
             }
-            if (resources['env']) {
-                config['environ'] = resources['env'];
-            }
             if (resources['cluster_size']) {
                 params['cluster_size'] = resources['cluster_size'];
             }
@@ -637,6 +650,12 @@ class Client {
             }
             if (resources['domain']) {
                 params['domain'] = resources['domain'];
+            }
+            if (resources['type']) {
+                params['type'] = resources['type'];
+            }
+            if (resources['startsAt']) {
+                params['starts_at'] = resources['startsAt'];
             }
             if (resources['enqueueOnly']) {
                 params['enqueueOnly'] = resources['enqueueOnly'];
@@ -671,6 +690,9 @@ class Client {
                 params['config'].resource_opts = {};
                 params['config'].resource_opts.shmem = resources['shmem'];
             }
+            if (resources['env']) {
+                params['config'].environ = resources['env'];
+            }
         }
         let rqst;
         if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
@@ -696,7 +718,7 @@ class Client {
         return this._wrapWithPromise(rqst);
     }
     /**
-     * Obtain the session information by given sessionId.
+     * Obtain the session container logs by given sessionId.
      *
      * @param {string} sessionId - the sessionId given when created
      * @param {string | null} ownerKey - owner key to access
@@ -711,14 +733,29 @@ class Client {
         return this._wrapWithPromise(rqst, false, null, timeout);
     }
     /**
-     * Terminate and destroy the kernel session.
+     * Obtain the batch session (task) logs by given sessionId.
      *
      * @param {string} sessionId - the sessionId given when created
      */
-    async destroy(sessionId, ownerKey = null) {
+    getTaskLogs(sessionId) {
+        const queryString = `${this.kernelPrefix}/_/logs?session_name=${sessionId}`;
+        let rqst = this.newSignedRequest('GET', queryString, null);
+        return this._wrapWithPromise(rqst);
+    }
+    /**
+     * Terminate and destroy the kernel session.
+     *
+     * @param {string} sessionId - the sessionId given when created
+     * @param {string|null} ownerKey - owner key when terminating other users' session
+     * @param {boolean} forced - force destroy session. Requires admin privilege.
+     */
+    async destroy(sessionId, ownerKey = null, forced = false) {
         let queryString = `${this.kernelPrefix}/${sessionId}`;
-        if (ownerKey != null) {
-            queryString = `${queryString}?owner_access_key=${ownerKey}`;
+        if (ownerKey !== null) {
+            queryString = `${queryString}?owner_access_key=${ownerKey}${forced ? '&forced=true' : ''}`;
+        }
+        else {
+            queryString = `${queryString}${forced ? '?forced=true' : ''}`;
         }
         let rqst = this.newSignedRequest('DELETE', queryString, null);
         return this._wrapWithPromise(rqst, false, null, 15000, 2); // 15 sec., two trial when error occurred.
@@ -771,6 +808,14 @@ class Client {
     // legacy aliases (DO NOT USE for new codes)
     runCode(code, sessionId, runId, mode) {
         return this.execute(sessionId, runId, mode, code, {});
+    }
+    async shutdown_service(sessionId, service_name) {
+        let params = {
+            'service_name': service_name
+        };
+        const q = querystring.stringify(params);
+        let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/shutdown-service?${q}`, null);
+        return this._wrapWithPromise(rqst, true);
     }
     async upload(sessionId, path, fs) {
         const formData = new FormData();
@@ -965,12 +1010,25 @@ class Client {
         let k2 = this.sign(k1, 'binary', this._config.endpointHost, 'binary');
         return k2;
     }
-    generateSessionId() {
+    generateSessionId(length = 8, nosuffix = false) {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (var i = 0; i < 8; i++)
+        for (var i = 0; i < length; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
-        return text + "-jsSDK";
+        return nosuffix ? text : text + "-jsSDK";
+    }
+    slugify(text) {
+        const a = 'àáäâèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;';
+        const b = 'aaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh------';
+        const p = new RegExp(a.split('').join('|'), 'g');
+        return text.toString().toLowerCase()
+            .replace(/\s+/g, '-') // Replace spaces with -
+            .replace(p, c => b.charAt(a.indexOf(c))) // Replace special chars
+            .replace(/&/g, '-and-') // Replace & with 'and'
+            .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+            .replace(/\-\-+/g, '-') // Replace multiple - with single -
+            .replace(/^-+/, '') // Trim - from start of text
+            .replace(/-+$/, ''); // Trim - from end of text
     }
     /**
      * fetch existing pubic key of SSH Keypair from container
@@ -1115,8 +1173,9 @@ class VFolder {
      * @param {string} group - Virtual folder group name.
      * @param {string} usageMode - Virtual folder's purpose of use. Can be "general" (normal folders), "data" (data storage), and "model" (pre-trained model storage).
      * @param {string} permission - Virtual folder's innate permission.
+     * @param {boolean} cloneable - Whether Virtual folder is cloneable or not.
      */
-    async create(name, host = '', group = '', usageMode = 'general', permission = 'rw') {
+    async create(name, host = '', group = '', usageMode = 'general', permission = 'rw', cloneable = false) {
         let body;
         if (host !== '') {
             body = {
@@ -1139,7 +1198,36 @@ class VFolder {
                 body['permission'] = permission;
             }
         }
+        if (this.client.supports('storage-proxy')) {
+            body['cloneable'] = cloneable;
+        }
         let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Clone selected Virtual folder
+     *
+     * @param {json} input - parameters for cloning Vfolder
+     * @param {boolean} input.cloneable - whether new cloned Vfolder is cloneable or not
+     * @param {string} input.permission - permission for new cloned Vfolder. permission should one of the following: 'ro', 'rw', 'wd'
+     * @param {string} input.target_host - target_host for new cloned Vfolder
+     * @param {string} input.target_name - name for new cloned Vfolder
+     * @param {string} input.usage_mode - Cloned virtual folder's purpose of use. Can be "general" (normal folders), "data" (data storage), and "model" (pre-trained model storage).
+     * @param name - source Vfolder name
+     */
+    async clone(input, name = null) {
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/clone`, input);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     *
+     * @param {json} input - parameters for updating folder options of Vfolder
+     * @param {boolean} input.cloneable - whether Vfolder is cloneable or not
+     * @param {string} input.permission - permission for Vfolder. permission should one of the following: 'ro', 'rw', 'wd'
+     * @param name - source Vfolder name
+     */
+    async update_folder(input, name = null) {
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/update-options`, input);
         return this.client._wrapWithPromise(rqst);
     }
     /**
@@ -1192,6 +1280,18 @@ class VFolder {
             name = this.name;
         }
         let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}`, null);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Leave an invited Virtual folder.
+     *
+     * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
+     */
+    async leave_invited(name = null) {
+        if (name == null) {
+            name = this.name;
+        }
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/leave`, null);
         return this.client._wrapWithPromise(rqst);
     }
     /**
@@ -1263,15 +1363,23 @@ class VFolder {
      *
      * @param {string} path - Directory path to create.
      * @param {string} name - Virtual folder name.
+     * @param {string} parents - create parent folders when not exists (>=APIv6).
+     * @param {string} exist_ok - Do not raise error when the folder already exists (>=APIv6).
      */
-    async mkdir(path, name = null) {
+    async mkdir(path, name = null, parents = null, exist_ok = null) {
         if (name == null) {
             name = this.name;
         }
-        let body = {
+        const body = {
             'path': path
         };
-        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
+        if (parents) {
+            body['parents'] = parents;
+        }
+        if (exist_ok) {
+            body['exist_ok'] = exist_ok;
+        }
+        const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
         return this.client._wrapWithPromise(rqst);
     }
     /**
@@ -1280,12 +1388,19 @@ class VFolder {
      * @param {string} target_path - path to the target file or directory (with old name).
      * @param {string} new_name - new name of the target.
      * @param {string} name - Virtual folder name that target file exists.
+     * @param {string} is_dir - True when the object is directory, false when it is file
      */
-    async rename_file(target_path, new_name, name = null) {
+    async rename_file(target_path, new_name, name = null, is_dir = false) {
         if (name == null) {
             name = this.name;
         }
-        const body = { target_path, new_name };
+        let body;
+        if (this.client.isAPIVersionCompatibleWith('v6.20200815')) {
+            body = { target_path, new_name, is_dir };
+        }
+        else {
+            body = { target_path, new_name };
+        }
         let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/rename_file`, body);
         return this.client._wrapWithPromise(rqst);
     }
@@ -1311,26 +1426,32 @@ class VFolder {
         return this.client._wrapWithPromise(rqst);
     }
     /**
-     * Download file in a Virtual folder.
+     * Download file from a Virtual folder.
      *
      * @param {string} file - File to download. Should contain full path.
      * @param {string} name - Virtual folder name that files are in.
+     * @param {boolean} archive - Download target directory as an archive.
+     * @param {boolean} noCache - If true, do not store the file response in any cache. New in API v6.
      */
-    async download(file, name = false, archive = false) {
-        let params = {
-            file,
-            archive
-        };
-        let q = querystring.stringify(params);
-        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
-        return this.client._wrapWithPromise(rqst, true);
+    async download(file, name = false, archive = false, noCache = false) {
+        const params = { file, archive };
+        const q = querystring.stringify(params);
+        if (this.client._apiVersionMajor < 6) {
+            const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
+            return this.client._wrapWithPromise(rqst, true);
+        }
+        else {
+            const res = await this.request_download_token(file, name);
+            const downloadUrl = `${res.url}?token=${res.token}&archive=${archive}&no_cache=${noCache}`;
+            return fetch(downloadUrl);
+        }
     }
     /**
      * Request a download and get the token for direct download.
      *
      * @param {string} file - File to download. Should contain full path.
      * @param {string} name - Virtual folder name that files are in.
-     * @param {string} archive - Download target directory as an archive.
+     * @param {boolean} archive - Download target directory as an archive.
      */
     async request_download_token(file, name = false, archive = false) {
         let body = {
@@ -1899,7 +2020,7 @@ class ContainerImage {
      *
      * @param {array} fields - fields to query. Default fields are: ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]
      * @param {boolean} installed_only - filter images to installed / not installed. true to query installed images only.
-     * @param {boolean} system_images - filter images to get system images such as console, SFTP server. true to query system images only.
+     * @param {boolean} system_images - filter images to get system images such as web UI, SFTP server. true to query system images only.
      */
     async list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false, system_images = false) {
         let q, v;
@@ -2131,23 +2252,17 @@ class ComputeSession {
      * get compute session with specific condition.
      *
      * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
-     * @param {string} sessionName - session name to query specific compute session.
-     * @param {string} domainName - domain name to query specific compute session.
-     * @param {string} accessKey - access key that is used to start compute sessions.
+     * @param {string} sessionUuid - session ID to query specific compute session.
      */
-    async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], sessionName = '', domainName = '', accessKey = '') {
+    async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], sessionUuid = '') {
         fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
         let q, v;
-        q = `query($ak:String, $domain_name:String, $session_name:String!) {
-      compute_session(access_key:$ak, domain_name:$domain_name, sess_id:$session_name) {
+        q = `query($session_uuid: UUID!) {
+      compute_session(id:$session_uuid) {
         ${fields.join(" ")}
       }
     }`;
-        v = {
-            'ak': accessKey,
-            'domain_name': domainName,
-            'session_name': sessionName
-        };
+        v = { session_uuid: sessionUuid };
         return this.client.query(q, v);
     }
 }

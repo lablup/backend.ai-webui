@@ -38,7 +38,7 @@ import {
  ... content ...
  </backend-ai-experiment-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-experiment-view
  */
 
