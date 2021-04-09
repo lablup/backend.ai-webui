@@ -10,6 +10,7 @@ import {BackendAIPage} from './backend-ai-page';
 import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
+import "./backend-ai-monthly-usage-panel";
 
 import {
   IronFlex,
@@ -284,6 +285,7 @@ export default class BackendAIUsageList extends BackendAIPage {
     // language=HTML
     return html`
       <div class="card" elevation="0">
+        <!--<backend-ai-monthly-usage-panel></backend-ai-monthly-usage-panel>-->
         <h3 class="horizontal center layout">
           <mwc-select label="${_t('statistics.SelectPeriod')}"
               id="period-selector" style="width:130px; border:1px solid #ccc;"

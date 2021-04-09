@@ -132,9 +132,15 @@ export default class BackendAIChart extends LitElement {
             callback: function(value) {
               return value.slice(0, -2) + '00';
             },
+<<<<<<< HEAD
             font: function(context) {
               const width = context.chart.width;
               const size = Math.round(width / 64);
+=======
+            font: function (context) {
+              let width = context.chart.width;
+              let size = Math.round(width / 64) < 12 ? Math.round(width / 64) : 12;
+>>>>>>> main
               return {
                 size: size,
               };
@@ -155,9 +161,15 @@ export default class BackendAIChart extends LitElement {
             callback: function(value) {
               return Math.round(value);
             },
+<<<<<<< HEAD
             font: function(context) {
               const height = context.chart.height;
               const size = Math.round(height / 16);
+=======
+            font: function (context) {
+              let height = context.chart.height;
+              let size = Math.round(height / 16) < 12 ? Math.round(height / 16) : 12;
+>>>>>>> main
               return {
                 size: size,
               };

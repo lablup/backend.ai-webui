@@ -130,7 +130,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Number}) sidepanelWidth = 250;
   @property({type: Object}) supports = Object();
   @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job',
-    'data', 'statistics', 'usersettings', 'credential',
+    'data', 'pipeline', 'statistics', 'usersettings', 'credential',
     'environment', 'agent', 'settings', 'maintenance',
     'information', 'github', 'import', 'unauthorized'];
   @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent',
@@ -857,6 +857,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     case 'data':
       this.menuTitle = _text('webui.menu.Data&Storage');
       break;
+    case 'pipeline':
+      this.menuTitle = _text('webui.menu.Pipeline');
+      break;
     case 'statistics':
       this.menuTitle = _text('webui.menu.Statistics');
       break;
@@ -1167,6 +1170,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this._createPopover('#sessions-menu-icon', _text('webui.menu.Sessions'));
     this._createPopover('#data-menu-icon', _text('webui.menu.Data&Storage'));
     this._createPopover('#import-menu-icon', _text('webui.menu.Import&Run'));
+    this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
     this._createPopover('#statistics-menu-icon', _text('webui.menu.Statistics'));
     this._createPopover('#usersettings-menu-icon', _text('webui.menu.Settings'));
     this._createPopover('backend-ai-help-button', _text('webui.menu.Help'));
@@ -1283,6 +1287,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}" ?disabled="${this.blockedMenuitem.includes('data')}">
               <i class="fas fa-cloud-upload-alt" slot="graphic" id="data-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Data&Storage')}</span>
+            </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}" ?disabled="${this.blockedMenuitem.includes('pipeline')}" style="display:none">
+              <i class="fas fa-stream" slot="graphic" id="pipeline-menu-icon"></i>
+              <span class="full-menu">${_t('webui.menu.Pipeline')}</span>
             </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}" ?disabled="${this.blockedMenuitem.includes('statistics')}">
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
@@ -1472,6 +1480,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
                     <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
                     <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
+                    <backend-ai-pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>
                     <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view>
                     <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-settings-view>
                     <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>

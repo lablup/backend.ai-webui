@@ -64,6 +64,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) enableStorageProxy = false;
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) renameFolderId = '';
   @property({type: String}) deleteFolderId = '';
@@ -101,9 +102,12 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) _boundFileNameRenderer = Object();
   @property({type: Object}) _boundCreatedTimeRenderer = Object();
   @property({type: Object}) _boundPermissionRenderer = Object();
+  @property({type: Object}) _boundCloneableRenderer = Object();
   @property({type: Boolean}) _uploadFlag = true;
   @property({type: Boolean}) isWritable = false;
+  @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
   @property({type: Number}) _maxFileUploadSize = -1;
+  @property({type: Number}) selectAreaHeight;
   @property({type: String}) oldFileExtension = '';
   @property({type: String}) newFileExtension = '';
   @property({type: Boolean}) is_dir = false;
@@ -120,6 +124,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundControlFolderListRenderer = this.controlFolderListRenderer.bind(this);
     this._boundControlFileListRenderer = this.controlFileListRenderer.bind(this);
     this._boundPermissionViewRenderer = this.permissionViewRenderer.bind(this);
+    this._boundCloneableRenderer = this.CloneableRenderer.bind(this);
     this._boundOwnerRenderer = this.OwnerRenderer.bind(this);
     this._boundFileNameRenderer = this.fileNameRenderer.bind(this);
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
@@ -202,6 +207,10 @@ export default class BackendAiStorageList extends BackendAIPage {
         mwc-icon-button.tiny {
           width: 35px;
           height: 35px;
+        }
+
+        mwc-icon.cloneable {
+          padding-top: 10px;
         }
 
         .warning {
@@ -475,23 +484,46 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid-column width="45px" flex-grow="0" resizable header="${_t('data.folders.Type')}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="85px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
         <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.Owner')}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
+        ${this.enableStorageProxy ? html`
+          <vaadin-grid-column
+              auto-width flex-grow="0" resizable header="${_t('data.folders.Cloneable')}"
+              .renderer="${this._boundCloneableRenderer}"></vaadin-grid-column>` : html``}
         <vaadin-grid-column auto-width resizable header="${_t('data.folders.Control')}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
       </vaadin-grid>
 
-      <backend-ai-dialog id="rename-folder-dialog" fixed backdrop>
-        <span slot="title">${_t('data.folders.RenameAFolder')}</span>
-        <div slot="content">
+      <backend-ai-dialog id="folder-setting-dialog" fixed backdrop>
+        <span slot="title">${_t('data.folders.FolderOptionUpdate')}</span>
+        <div slot="content" class="vertical layout">
+        <mwc-textfield id="clone-folder-src" label="${_t('data.ExistingFolderName')}" value="${this.renameFolderId}"
+          disabled></mwc-textfield>
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
-           pattern="^[a-zA-Z0-9\._-]*$"
-           required autoValidate validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
-           style="width:320px;" maxLength="64" placeholder="${_text('maxLength.64chars')}"
-           @change="${() => {
+            pattern="^[a-zA-Z0-9\._-]*$" autoValidate validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
+            style="width:320px;" maxLength="64" placeholder="${_text('maxLength.64chars')}"
+            @change="${() => {
     this._validateFolderName(true);
   }}"></mwc-textfield>
+          <div class="vertical center layout" id="dropdown-area">
+            <mwc-select id="update-folder-permission" style="width:100%;" label="${_t('data.Type')}"
+              @opened="${() => this._controlHeightByPermissionCount(true)}"
+              @closed="${() => this._controlHeightByPermissionCount()}">
+              ${this.permissions.map((item, idx) => html`
+                <mwc-list-item value="${item}">${item}</mwc-list-item>
+              `)}
+            </mwc-select>
+          </div>
+          ${this.enableStorageProxy ? html`
+          <div class="horizontal layout flex wrap center justified">
+            <p style="color:rgba(0, 0, 0, 0.6);">
+              ${_t('data.folders.Cloneable')}
+            </p>
+            <mwc-switch id="update-folder-cloneable" style="margin-right:10px;">
+            </mwc-switch>
+          </div>
+          ` : html``}
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button unelevated class="fullwidth bg-blue button" type="submit" icon="edit" id="rename-button" outlined @click="${() => this._renameFolder()}">
-            ${_t('data.folders.Rename')}
+          <mwc-button unelevated class="fullwidth bg-blue button" type="submit" icon="edit" id="update-button" outlined @click="${() => this._updateFolder()}">
+            ${_t('data.Update')}
           </mwc-button>
         </div>
       </backend-ai-dialog>
@@ -563,6 +595,19 @@ export default class BackendAiStorageList extends BackendAIPage {
                                     description="D" ui="flat"></lablup-shields>` : html``}` : html``}
               </div>
             </mwc-list-item>
+            ${this.enableStorageProxy ? html`
+              <mwc-list-item twoline>
+                <span><strong>${_t('data.folders.Cloneable')}</strong></span>
+                <span class="monospace" slot="secondary">
+                    ${this.folderInfo.cloneable ? html`
+                    <mwc-icon class="cloneable" style="color:green;">check_circle</mwc-icon>
+                    ` : html`
+                    <mwc-icon class="cloneable" style="color:red;">block</mwc-icon>
+                    `}
+                </span>
+              </mwc-list-item>
+            ` : html``}
+
           </mwc-list>
         </div>
       </backend-ai-dialog>
@@ -885,6 +930,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({'detail': {'mini-ui': globalThis.mini_ui}});
+    // monkeypatch for height calculation.
+    this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '56px';
   }
 
   _modifySharedFolderPermissions() {
@@ -943,6 +990,24 @@ export default class BackendAiStorageList extends BackendAIPage {
         <div class="indicator" @click="[[_folderExplorer()]]" .folder-id="${rowData.item.name}">${rowData.item.name}</div>
       `, root
     );
+  }
+
+  /**
+   *
+   * Expand or Shrink the dialog height by the number of items in the dropdown.
+   *
+   * @param {boolean} isOpened - true if dialog is opened.
+   */
+  _controlHeightByPermissionCount(isOpened = false) {
+    if (!isOpened) {
+      this.shadowRoot.querySelector('#dropdown-area').style.height = this.selectAreaHeight;
+      return;
+    }
+    const itemCount = this.shadowRoot.querySelector('#update-folder-permission').items.length;
+    const actualHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight;
+    if (itemCount > 0) {
+      this.shadowRoot.querySelector('#dropdown-area').style.height = (actualHeight + itemCount * 52) +'px';
+    }
   }
 
   /**
@@ -1012,6 +1077,16 @@ export default class BackendAiStorageList extends BackendAIPage {
             ` :
     html``
 }
+          ${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
+    html`
+            <mwc-icon-button
+              class="fg blue controls-running"
+              icon="content_copy"
+              ?disabled=${!rowData.item.cloneable}
+              @click="${() => {
+    this._requestCloneFolder(rowData.item);
+  }}"></mwc-icon-button>
+            ` : html``}
           ${rowData.item.is_owner && rowData.item.type == 'user' ?
     html`
               <mwc-icon-button
@@ -1037,8 +1112,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     html`
               <mwc-icon-button
                 class="fg blue controls-running"
-                icon="edit"
-                @click="${(e) => this._renameFolderDialog(e)}"
+                icon="settings"
+                @click="${(e) => this._folderSettingsDialog(e)}"
               ></mwc-icon-button>
             ` : html``}
           ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd') || (rowData.item.type === 'group' && this.is_admin) ?
@@ -1166,6 +1241,25 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
+   * Render whether the vfolder is cloneable or not
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  CloneableRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        ${rowData.item.cloneable ? html`
+          <div class="horizontal center-justified center layout">
+            <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
+          </div>`: html``}
+        `, root
+    );
+  }
+
+  /**
    * Render created time.
    *
    * @param {Element} root - the row details content DOM element
@@ -1267,6 +1361,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = globalThis.backendaiclient.is_admin;
+        this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
         this.authenticated = true;
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
@@ -1275,6 +1370,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       }, true);
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
+      this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
       this.authenticated = true;
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
@@ -1363,41 +1459,119 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
-   * Open rename-folder-dialog to rename folder name.
+   * Open folder-setting-dialog to rename folder name.
    *
-   * @param {Event} e - click the edit icon button
+   * @param {Event} e - click the settings icon button
    * */
-  _renameFolderDialog(e) {
+  _folderSettingsDialog(e) {
     this.renameFolderId = this._getControlId(e);
-    this.shadowRoot.querySelector('#new-folder-name').value = '';
-    this.openDialog('rename-folder-dialog');
+    const job = globalThis.backendaiclient.vfolder.info(this.renameFolderId);
+    job.then((value) => {
+      this.folderInfo = value;
+      this.shadowRoot.querySelector('#new-folder-name').value = '';
+      let permission = this.folderInfo.permission;
+      switch (permission) {
+      case 'rw':
+        permission = 'Read-Write';
+        break;
+      case 'ro':
+        permission = 'Read-Only';
+        break;
+      case 'wd':
+        permission = 'Delete';
+        break;
+      default:
+        permission = this.folderInfo.is_owner ? 'Read-Write' : 'Read-Only';
+      }
+      this.shadowRoot.querySelector('#update-folder-permission').select(this.permissions.indexOf(permission));
+      const cloneableEl = this.shadowRoot.querySelector('#update-folder-cloneable');
+      if (cloneableEl) {
+        cloneableEl.checked = this.folderInfo.cloneable;
+      }
+      this.openDialog('folder-setting-dialog');
+    }).catch((err) => {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
   }
 
   /**
-   * Rename the folder with the name on the new-folder-name.
+   * Update the folder with the name on the new-folder-name and options such as "permission" and "cloneable"
    * */
-  _renameFolder() {
+  _updateFolder() {
     globalThis.backendaiclient.vfolder.name = this.renameFolderId;
     const newNameEl = this.shadowRoot.querySelector('#new-folder-name');
     const newName = newNameEl.value;
     newNameEl.reportValidity();
-    if (newNameEl.checkValidity()) {
-      const job = globalThis.backendaiclient.vfolder.rename(newName);
-      this.closeDialog('rename-folder-dialog');
-      job.then((value) => {
-        this.notification.text = _text('data.folders.FolderRenamed');
-        this.notification.show();
-        this._refreshFolderList();
-      }).catch((err) => {
-        console.log(err);
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      });
-    } else {
-      return;
+
+    const permissionEl = this.shadowRoot.querySelector('#update-folder-permission');
+    const cloneableEl = this.shadowRoot.querySelector('#update-folder-cloneable');
+    let isErrorOccurred = false;
+    let permission = '';
+    let cloneable = false;
+    const input = {};
+    if (permissionEl) {
+      permission = permissionEl.value;
+      switch (permission) {
+      case 'Read-Write':
+        permission = 'rw';
+        break;
+      case 'Read-Only':
+        permission = 'ro';
+        break;
+      case 'Delete':
+        permission = 'wd';
+        break;
+      default:
+        permission = 'rw';
+      }
+      input['permission'] = permission;
+    }
+    if (cloneableEl) {
+      cloneable = cloneableEl.checked;
+      input['cloneable'] = cloneable;
+    }
+
+    if (newName) {
+      if (newNameEl.checkValidity()) {
+        const job = globalThis.backendaiclient.vfolder.rename(newName);
+        job.then((value) => {
+          this.notification.text = _text('data.folders.FolderRenamed');
+          this.notification.show();
+        }).catch((err) => {
+          console.log(err);
+          if (err && err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          }
+        });
+      } else {
+        // return when new folder name is invalid
+        return;
+      }
+    }
+
+    const job = globalThis.backendaiclient.vfolder.update_folder(input, this.renameFolderId);
+    job.then((value) => {
+      this.notification.text = _text('data.folders.FolderUpdated');
+      this.notification.show();
+      this._refreshFolderList();
+    }).catch((err) => {
+      console.log(err);
+      if (err && err.message) {
+        isErrorOccurred = true;
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+    if (!isErrorOccurred) {
+      this.closeDialog('folder-setting-dialog');
     }
   }
 
@@ -1446,6 +1620,16 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+  }
+
+  /**
+   * Clone folder
+   *
+   * @param {HTMLElement} selectedItem - selected Vfolder to clone
+   */
+  _requestCloneFolder(selectedItem) {
+    const event = new CustomEvent('backend-ai-vfolder-cloning', {'detail': selectedItem});
+    document.dispatchEvent(event);
   }
 
   /**

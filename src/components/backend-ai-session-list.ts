@@ -522,8 +522,15 @@ export default class BackendAiSessionList extends BackendAIPage {
           const service_info = JSON.parse(sessions[objectKey].service_ports);
           if (Array.isArray(service_info) === true) {
             sessions[objectKey].app_services = service_info.map((a) => a.name);
+            sessions[objectKey].app_services_option = {};
+            service_info.forEach(elm => {
+              if ('allowed_arguments' in elm) {
+                sessions[objectKey].app_services_option[elm.name] = elm.allowed_arguments;
+              }
+            });
           } else {
             sessions[objectKey].app_services = [];
+            sessions[objectKey].app_services_option = {};
           }
           if (sessions[objectKey].app_services.length === 0 || this.condition != 'running') {
             sessions[objectKey].appSupport = false;
@@ -1223,7 +1230,8 @@ export default class BackendAiSessionList extends BackendAIPage {
              .session-name="${rowData.item[this.sessionNameField]}"
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
-             .app-services="${rowData.item.app_services}">
+             .app-services="${rowData.item.app_services}"
+             .app-services-option="${rowData.item.app_services_option}">
           ${rowData.item.appSupport ? html`
             <mwc-icon-button class="fg controls-running green"
                                @click="${(e) => this._showAppLauncher(e)}"

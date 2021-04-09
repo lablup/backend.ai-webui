@@ -8,13 +8,15 @@ import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 
 import {BackendAIPage} from './backend-ai-page';
 
+import '@material/mwc-button';
+import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
 import '../plastics/mwc/mwc-multi-select';
-import '@material/mwc-textfield';
-import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-switch';
 import '@material/mwc-tab/mwc-tab';
-import '@material/mwc-icon-button';
-import '@material/mwc-button';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-textfield';
+
 
 import 'weightless/button';
 import 'weightless/card';
@@ -59,6 +61,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) enableStorageProxy = false;
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) deleteFolderId = '';
   @property({type: String}) vhost = '';
@@ -83,6 +86,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) invitedCount;
   @property({type: Number}) totalCount;
   @property({type: Number}) capacity;
+  @property({type: String}) cloneFolderName = '';
 
   constructor() {
     super();
@@ -183,8 +187,9 @@ export default class BackendAIData extends BackendAIPage {
           color: var(--paper-orange-900);
         }
 
-        #add-folder-dialog {
-          --component-width: 400px;
+        #add-folder-dialog,
+        #clone-folder-dialog {
+          --component-width: 375px;
         }
 
         backend-ai-dialog wl-textfield,
@@ -211,8 +216,8 @@ export default class BackendAIData extends BackendAIPage {
         }
 
         mwc-multi-select {
-          width: 180px;
-          --mdc-select-min-width: 180px;
+          width: 173px;
+          --mdc-select-min-width: 173px;
           margin-bottom: 10px;
           --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-select-fill-color: transparent;
@@ -376,6 +381,16 @@ export default class BackendAIData extends BackendAIPage {
               </mwc-multi-select>
             </div>
           ` : html``}
+          ${this.enableStorageProxy ?
+          html`
+          <div class="horizontal layout flex wrap center justified">
+              <p style="color:rgba(0, 0, 0, 0.6);">
+                ${_t("data.folders.Cloneable")}
+              </p>
+              <mwc-switch id="add-folder-cloneable" style="margin-right:10px;">
+              </mwc-switch>
+            </div>
+            ` : html``}
           <div style="font-size:11px;">
             ${_t('data.DialogFolderStartingWithDotAutomount')}
           </div>
@@ -388,6 +403,82 @@ export default class BackendAIData extends BackendAIPage {
               label="${_t('data.Create')}"
               style="width:100%;"
               @click="${() => this._addFolder()}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="clone-folder-dialog" fixed backdrop>
+        <span slot="title">${_t("data.folders.CloneAFolder")}</span>
+        <div slot="content" style="width:100%;">
+          <mwc-textfield id="clone-folder-src" label="${_t("data.FolderToCopy")}" value="${this.cloneFolderName}"
+              disabled></mwc-textfield>
+          <mwc-textfield id="clone-folder-name" label="${_t("data.Foldername")}"
+              @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
+              required validationMessage="${_t("data.Allowslettersnumbersand-_dot")}" maxLength="64"
+              placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
+          <div class="horizontal layout">
+            <mwc-multi-select id="clone-folder-host" label="${_t("data.Host")}">
+              ${this.vhosts.map((item, idx) => html`
+                <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
+                  <span>${item}</span>
+                  <mwc-icon-button slot="meta" icon="info"
+                      @click="${(e) => this._showStorageDescription(e, item)}">
+                  </mwc-icon-button>
+                </mwc-list-item>
+              `)}
+            </mwc-multi-select>
+            <mwc-multi-select id="clone-folder-type" label="${_t("data.Type")}">
+              ${(this.allowed_folder_type as String[]).includes('user') ? html`
+                <mwc-list-item value="user" selected>${_t("data.User")}</mwc-list-item>
+              ` : html``}
+              ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
+                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as String[]).includes('user')}">${_t("data.Group")}</mwc-list-item>
+              ` : html``}
+            </mwc-multi-select>
+          </div>
+          ${this._vfolderInnatePermissionSupport ? html`
+            <div class="horizontal layout">
+              <mwc-multi-select id="clone-folder-usage-mode" label="${_t("data.UsageMode")}">
+                ${this.usageModes.map((item, idx) => html`
+                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+                `)}
+              </mwc-multi-select>
+              <mwc-multi-select id="clone-folder-permission" label="${_t("data.Type")}">
+                ${this.permissions.map((item, idx) => html`
+                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+                `)}
+              </mwc-multi-select>
+            </div>
+          ` : html``}
+          ${this.is_admin && (this.allowed_folder_type as String[]).includes('group') ? html`
+            <div class="horizontal layout">
+              <mwc-multi-select id="clone-folder-group" label="${_t("data.Group")}">
+                ${(this.allowedGroups as any).map((item, idx) => html`
+                  <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                `)}
+              </mwc-multi-select>
+            </div>
+          ` : html``}
+          ${this.enableStorageProxy ?
+          html`
+          <div class="horizontal layout flex wrap center justified">
+              <p style="color:rgba(0, 0, 0, 0.6);">
+                ${_t("data.folders.Cloneable")}
+              </p>
+              <mwc-switch id="clone-folder-cloneable" style="margin-right:10px;">
+              </mwc-switch>
+            </div>
+            ` : html``}
+          <div style="font-size:11px;">
+            ${_t("data.DialogFolderStartingWithDotAutomount")}
+          </div>
+        </div>
+        <div slot="footer" class="horizontal flex">
+          <mwc-button
+              unelevated
+              id="clone-button"
+              icon="file_copy"
+              label="${_t("data.Create")}"
+              style="width:100%;"
+              @click="${() => this._cloneFolder()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="help-description" fixed backdrop>
@@ -454,6 +545,13 @@ export default class BackendAIData extends BackendAIPage {
       // this.shadowRoot.querySelector('#storage-status').updateChart();
       this._createStorageChart();
     });
+    document.addEventListener('backend-ai-vfolder-cloning', (e: any) => {
+      if (e.detail) {
+        let selectedItems = e.detail;
+        this.cloneFolderName = selectedItems.name;
+        this._cloneFolderDialog();
+      }
+    });
   }
 
   /**
@@ -470,6 +568,7 @@ export default class BackendAIData extends BackendAIPage {
     const _init = () => {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
+      this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
         this._vfolderInnatePermissionSupport = true;
@@ -545,6 +644,23 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   /**
+   * Clone folder dialog.
+   */
+  async _cloneFolderDialog() {
+    let vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    let nameEl = this.shadowRoot.querySelector('#add-folder-name');
+    nameEl.value = ''; // reset folder name
+    this.vhosts = vhost_info.allowed;
+    this.vhost = vhost_info.default;
+    if ((this.allowed_folder_type as String[]).includes('group')) {
+      const group_info = await globalThis.backendaiclient.group.list();
+      this.allowedGroups = group_info.groups;
+    }
+    this.shadowRoot.querySelector('#clone-folder-name').value = await this._checkFolderNameAlreadyExists(this.cloneFolderName);
+    this.openDialog('clone-folder-dialog');
+  }
+
+  /**
    * Add folder dialog.
    */
   async _addFolderDialog() {
@@ -604,8 +720,10 @@ export default class BackendAIData extends BackendAIPage {
     let group;
     const usageModeEl = this.shadowRoot.querySelector('#add-folder-usage-mode');
     const permissionEl = this.shadowRoot.querySelector('#add-folder-permission');
+    const cloneableEl = this.shadowRoot.querySelector('#add-folder-cloneable');
     let usageMode = '';
     let permission = '';
+    let cloneable: boolean = false;
     if (['user', 'group'].includes(ownershipType) === false) {
       ownershipType = 'user';
     }
@@ -634,9 +752,16 @@ export default class BackendAIData extends BackendAIPage {
         permission = 'rw';
       }
     }
+    if (cloneableEl) {
+      cloneable = cloneableEl.checked;
+    }
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {
+<<<<<<< HEAD
       const job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission);
+=======
+      let job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission, cloneable);
+>>>>>>> main
       job.then((value) => {
         this.notification.text = _text('data.folders.FolderCreated');
         this.notification.show();
@@ -652,6 +777,77 @@ export default class BackendAIData extends BackendAIPage {
     } else {
       return;
     }
+  }
+
+  /**
+   * 
+   */
+  async _cloneFolder() {
+    let nameEl = this.shadowRoot.querySelector('#clone-folder-name');
+    let name = await this._checkFolderNameAlreadyExists(nameEl.value, true);
+    let host = this.shadowRoot.querySelector('#clone-folder-host').value;
+    let ownershipType = this.shadowRoot.querySelector('#clone-folder-type').value;
+    let group;
+    const usageModeEl = this.shadowRoot.querySelector('#clone-folder-usage-mode');
+    const permissionEl = this.shadowRoot.querySelector('#clone-folder-permission');
+    const cloneableEl = this.shadowRoot.querySelector('#clone-folder-cloneable');
+    let usageMode = '';
+    let permission = '';
+    let cloneable: boolean = false;
+    if (['user', 'group'].includes(ownershipType) === false) {
+      ownershipType = 'user';
+    }
+    if (ownershipType === 'user') {
+      group = '';
+    } else {
+      group = this.is_admin ? this.shadowRoot.querySelector('#add-folder-group').value : globalThis.backendaiclient.current_group;
+    }
+    if (usageModeEl) {
+      usageMode = usageModeEl.value;
+      usageMode = usageMode.toLowerCase();
+    }
+    if (permissionEl) {
+      permission = permissionEl.value;
+      switch (permission) {
+        case 'Read-Write':
+          permission = 'rw';
+          break;
+        case 'Read-Only':
+          permission = 'ro';
+          break;
+        case 'Delete':
+          permission = 'wd';
+          break;
+        default:
+          permission = 'rw';
+      }
+    }
+    cloneable = cloneableEl ? cloneableEl.checked : false;
+    nameEl.reportValidity();
+    if (nameEl.checkValidity()) {
+      let input = {
+        'cloneable': cloneable,
+        'permission': permission,
+        'target_host': host,
+        'target_name': name,
+        'usage_mode': usageMode
+      };
+      let job = globalThis.backendaiclient.vfolder.clone(input, this.cloneFolderName);
+      job.then((value) => {
+        this.notification.text = _text('data.folders.FolderCloned');
+        this.notification.show();
+        this._refreshFolderList();
+      }).catch(err => {
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.message);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
+      this.closeDialog('clone-folder-dialog');
+    } else {
+      return;
+    } 
   }
 
   /**
@@ -701,6 +897,26 @@ export default class BackendAIData extends BackendAIPage {
     for (const list of this.folderLists) {
       list.refreshFolderList();
     }
+  }
+
+  async _checkFolderNameAlreadyExists(name, showMessage = false) {
+    let groupId = globalThis.backendaiclient.current_group_id();
+    let folderList = await globalThis.backendaiclient.vfolder.list(groupId);
+    let folders= folderList.map(value => value.name);
+    if (folders.includes(name)) {
+      if (showMessage) {
+        this.notification.text = _text('import.FolderAlreadyExists');
+        this.notification.show();
+      }
+      let i: number = 1;
+      let newName: string = name;
+      while (folders.includes(newName)) {
+        newName = name + '_' + i;
+        i++;
+      }
+      name = newName;
+    }
+    return name;
   }
 }
 

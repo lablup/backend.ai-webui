@@ -1,4 +1,5 @@
 const Server = require("../lib/console-appproxy.js");
+const logger = require('../lib/logger')(__filename);
 
 module.exports = (proxy = class Proxy {
   constructor(env) {

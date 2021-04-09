@@ -64,6 +64,7 @@
     "markty-toml": "0.1.1",
     "tus-js-client": "^2.2.0",
     "utf-8-validate": "^5.0.4",
+    "vis-network": "^8.5.4",
     "weightless": "^0.0.37",
     "winston": "^3.3.3"
   },
