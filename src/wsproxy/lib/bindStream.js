@@ -9,7 +9,7 @@ module.exports = function(s1, s2) {
     logger.debug(`${n} ${name(stream)} ${msg}`);
   };
   const error_log = (stream, msg) => {
-    logger.warn(`LOGGGGGG ${n} ${name(stream)} ${msg}`);
+    logger.warn(`LOG ${n} ${name(stream)} ${msg}`);
   };
 
   // add stop:  end() once wrapper
