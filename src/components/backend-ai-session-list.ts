@@ -422,7 +422,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
 
     const fields = [
-      'id', 'name', 'image',
+      'id', 'session_id', 'name', 'image',
       'created_at', 'terminated_at', 'status', 'status_info',
       'service_ports', 'mounts',
       'occupied_slots', 'access_key'
@@ -462,7 +462,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         const previousSessionKeys: any = [];
         Object.keys(previousSessions).map((objectKey, index) => {
-          previousSessionKeys.push(previousSessions[objectKey][this.sessionNameField]);
+          previousSessionKeys.push(previousSessions[objectKey]['session_id']);
         });
         Object.keys(sessions).map((objectKey, index) => {
           const session = sessions[objectKey];
@@ -572,7 +572,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           } else {
             sessions[objectKey].baseversion = tag;
           }
-          if (this._selected_items.includes(sessions[objectKey][this.sessionNameField])) {
+          if (this._selected_items.includes(sessions[objectKey]['session_id'])) {
             sessions[objectKey].checked = true;
           } else {
             sessions[objectKey].checked = false;
@@ -795,32 +795,32 @@ export default class BackendAiSessionList extends BackendAIPage {
     return body;
   }
 
-  _terminateApp(sessionName) {
-    const accessKey = globalThis.backendaiclient._config.accessKey;
+  _terminateApp(sessionId) {
+    const token = globalThis.backendaiclient._config.accessKey;
     const rqst = {
-      method: 'GET',
-      uri: this._getProxyURL() + 'proxy/' + accessKey + '/' + sessionName
+     method: 'GET',
+     uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId
     };
     return this.sendRequest(rqst)
-      .then((response) => {
-        this.total_session_count -= 1;
-        const accessKey = globalThis.backendaiclient._config.accessKey;
-        if (response !== undefined && response.code !== 404) {
-          const rqst = {
-            method: 'GET',
-            uri: this._getProxyURL() + 'proxy/' + accessKey + '/' + sessionName + '/delete'
-          };
-          return this.sendRequest(rqst);
-        }
-        return Promise.resolve(true);
-      }).catch((err) => {
-        console.log(err);
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      });
+     .then((response) => {
+       this.total_session_count -= 1;
+       const token = globalThis.backendaiclient._config.accessKey;
+       if (response !== undefined && response.code !== 404) {
+         const rqst = {
+           method: 'GET',
+           uri: this._getProxyURL() + 'proxy/'+ token + '/' + sessionId + '/delete'
+         };
+         return this.sendRequest(rqst);
+       }
+       return Promise.resolve(true);
+     }).catch((err) => {
+       console.log(err);
+       if (err && err.message) {
+         this.notification.text = PainKiller.relieve(err.title);
+         this.notification.detail = err.message;
+         this.notification.show(true, err);
+       }
+     });
   }
 
   _getProxyURL() {
@@ -831,6 +831,14 @@ export default class BackendAiSessionList extends BackendAIPage {
       url = globalThis.backendaiclient._config.proxyURL;
     }
     return url;
+  }
+
+  _getProxyToken() {
+    let token = 'local';
+    if (globalThis.backendaiclient._config.proxyToken !== undefined) {
+      token = globalThis.backendaiclient._config.proxyToken;
+    }
+    return token;
   }
 
   /**
@@ -907,33 +915,35 @@ export default class BackendAiSessionList extends BackendAIPage {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const sessionName = controls['session-name'];
+    const sessionId = controls['session-uuid'];
     const accessKey = controls['access-key'];
     this.terminateSessionDialog.sessionName = sessionName;
+    this.terminateSessionDialog.sessionId = sessionId;
     this.terminateSessionDialog.accessKey = accessKey;
     this.terminateSessionDialog.show();
   }
 
   _terminateSession(e) {
     const controls = e.target.closest('#controls');
-    const sessionName = controls['session-name'];
+    const sessionId = controls['session-uuid'];
     const accessKey = controls['access-key'];
 
-    if (this.terminationQueue.includes(sessionName)) {
+    if (this.terminationQueue.includes(sessionId)) {
       this.notification.text = 'Already terminating the session.';
       this.notification.show();
       return false;
     }
-    return this._terminateKernel(sessionName, accessKey);
+    return this._terminateKernel(sessionId, accessKey);
   }
 
   _terminateSessionWithCheck(forced = false) {
-    if (this.terminationQueue.includes(this.terminateSessionDialog.sessionName)) {
+    if (this.terminationQueue.includes(this.terminateSessionDialog.sessionId)) {
       this.notification.text = 'Already terminating the session.';
       this.notification.show();
       return false;
     }
     this.spinner.show();
-    return this._terminateKernel(this.terminateSessionDialog.sessionName, this.terminateSessionDialog.accessKey, forced).then((response) => {
+    return this._terminateKernel(this.terminateSessionDialog.sessionId, this.terminateSessionDialog.accessKey, forced).then((response) => {
       this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
@@ -972,7 +982,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   _terminateSelectedSessionsWithCheck(forced = false) {
     this.spinner.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
-      return this._terminateKernel(item[this.sessionNameField], item.access_key, forced);
+      return this._terminateKernel(item['session_id'], item.access_key, forced);
     });
     this._selected_items = [];
     return Promise.all(terminateSessionQueue).then((response) => {
@@ -999,7 +1009,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   _terminateSelectedSessions() {
     this.spinner.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
-      return this._terminateKernel(item[this.sessionNameField], item.access_key);
+      return this._terminateKernel(item['session_id'], item.access_key);
     });
     return Promise.all(terminateSessionQueue).then((response) => {
       this.spinner.hide();
@@ -1023,10 +1033,10 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   // General closing
 
-  async _terminateKernel(sessionName, accessKey, forced = false) {
-    this.terminationQueue.push(sessionName);
-    return this._terminateApp(sessionName).then(() => {
-      globalThis.backendaiclient.destroy(sessionName, accessKey, forced).then((req) => {
+  async _terminateKernel(sessionId, accessKey, forced = false) {
+    this.terminationQueue.push(sessionId);
+    return this._terminateApp(sessionId).then(() => {
+      globalThis.backendaiclient.destroy(sessionId, accessKey, forced).then((req) => {
         setTimeout(async () => {
           this.terminationQueue = [];
           // await this.refreshList(true, false); // Will be called from session-view from the event below
@@ -1226,7 +1236,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
-             .session-uuid="${rowData.item.id}"
+             .session-uuid="${rowData.item.session_id}"
              .session-name="${rowData.item[this.sessionNameField]}"
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
@@ -1483,7 +1493,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _toggleCheckbox(object) {
-    const exist = this._selected_items.findIndex((x) => x[this.sessionNameField] == object[this.sessionNameField]);
+    const exist = this._selected_items.findIndex((x) => x['session_id'] == object['session_id']);
     if (exist === -1) {
       this._selected_items.push(object);
     } else {

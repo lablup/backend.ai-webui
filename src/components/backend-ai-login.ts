@@ -856,6 +856,7 @@ export default class BackendAILogin extends BackendAIPage {
         return globalThis.backendaiclient.groupIds[globalThis.backendaiclient.current_group];
       };
       globalThis.backendaiclient._config._proxyURL = this.proxy_url;
+      globalThis.backendaiclient._config._proxyToken = '';
       globalThis.backendaiclient._config.domainName = this.domain_name;
       globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
       globalThis.backendaiclient._config.default_import_environment = this.default_import_environment;
