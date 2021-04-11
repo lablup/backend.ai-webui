@@ -1,7 +1,9 @@
 node_modules
+./node_modules
 dist
 docs
 ./src/plugins
+./src/lib
 ./src/lib/backend.ai-client-es6.js
 ./src/lib/backend.ai-client-ingen.js
 ./src/lib/backend.ai-client-ingen-es6.js
