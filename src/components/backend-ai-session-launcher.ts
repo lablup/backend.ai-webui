@@ -567,6 +567,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           color: #404040;
         }
 
+        .launcher-item-title {
+          font-size: 12px;
+          color: #404040;
+          font-weight: 400;
+        }
+
         #modify-env-dialog {
           --component-max-height: 550px;
           --component-width: 400px;
@@ -2492,7 +2498,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 id="vfolder-select-expansion" name="vfolder-group"
                 style="--expansion-header-padding:16px;--expansion-content-padding:0;"
                 @change=${(e) => this.toggleUnselectAllVfoldersButton(e)}>
-            <span slot="title" style="font-size:12px;color:#404040;">${_t('session.launcher.FolderToMount')}</span>
+            <span slot="title" class="launcher-item-title">${_t('session.launcher.FolderToMount')}</span>
             <mwc-list fullwidth multi id="vfolder"
               @selected="${() => this._updateSelectedFolder()}">
             ${this.vfolders.length === 0 ? html`
@@ -2522,7 +2528,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </div>
           ` : html``}
           <div class="horizontal layout center justified">
-            <span style="color:rgba(0, 0, 0, 0.6);font-size:12px;padding-left:16px;">${_t('session.launcher.SetEnvironmentVariable')}</span>
+            <span class="launcher-item-title" style="padding-left:16px;">${_t('session.launcher.SetEnvironmentVariable')}</span>
             <mwc-button
               unelevated
               icon="rule"
@@ -2651,8 +2657,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </mwc-select>
           </div>
           <wl-expansion name="resource-group" open style="--expansion-header-padding:16px;">
-            <span slot="title" style="font-size:12px;color:#404040;">${_t('session.launcher.CustomAllocation')}</span>
-            <span slot="description" style="font-size:12px;color:#646464;"></span>
+            <span slot="title" style="font-size:12px;color: rgb(64, 64, 64);font-weight:400;">${_t('session.launcher.CustomAllocation')}</span>
+            <span slot="description" class="launcher-item-title"></span>
             <div class="vertical center layout">
               <div class="horizontal center layout" style="margin-top:15px;">
                 <div class="resource-type" style="width:70px;">CPU</div>
