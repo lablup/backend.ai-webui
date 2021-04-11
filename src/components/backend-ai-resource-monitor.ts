@@ -671,6 +671,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       return Promise.resolve(true);
       // return this.available_slot;
     }).then(() => {
+      return Promise.resolve(true);
     }).catch((err) => {
       if (err && err.message) {
         console.log(err);
@@ -697,7 +698,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   /**
    * show/hide resource monitor gauge by switch on/off.
    *
-   * @param e {event}
+   * @param {event} e - EventEmitter
    */
   _toggleResourceGauge(e) {
     const legend = this.shadowRoot.querySelector('#resource-legend');
