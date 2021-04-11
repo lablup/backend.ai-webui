@@ -45,7 +45,7 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
       this.pipelineSelectedName = localStorage.getItem('backendaiconsole.pipeline.selectedName') || '';
       this.pipelineSelectedConfig = JSON.parse(localStorage.getItem('backendaiconsole.pipeline.selectedConfig') || '{}');
     } catch (e) {
-      console.log(e)
+      console.log(e);
       localStorage.removeItem('backendaiconsole.pipeline.selectedName');
       localStorage.removeItem('backendaiconsole.pipeline.selectedConfig');
     }
@@ -60,7 +60,7 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
         this._fetchPipelineFolders();
       }, true);
@@ -133,10 +133,10 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
       folders.forEach((folder) => {
         if (folder.name.startsWith('pipeline-')) {
           const job = this._downloadPipelineConfig(folder.name)
-              .then((resp) => {
-                folder.config = resp;
-                pipelines[folder.name] = folder;
-              });
+            .then((resp) => {
+              folder.config = resp;
+              pipelines[folder.name] = folder;
+            });
           downloadJobs.push(job);
         }
       });

@@ -10,7 +10,7 @@ import '@material/mwc-button/mwc-button';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select/mwc-select';
 
-import {Network} from "vis-network/standalone";
+import {Network} from 'vis-network/standalone';
 
 import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -47,10 +47,10 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
   @property({type: Array}) network = Object();
   @property({type: Array}) networkOptions = Object();
   @property({type: Object}) networkContainer = Object();
-  @property({type: Array}) nodes = Array();
-  @property({type: Array}) edges = Array();
+  @property({type: Array}) nodes = [];
+  @property({type: Array}) edges = [];
   @property({type: Object}) nodeInfo = Object();
-  @property({type: Array}) componentsSelected = Array();
+  @property({type: Array}) componentsSelected = [];
 
   constructor() {
     super();
@@ -116,7 +116,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
       }, true);
     } else {
@@ -129,7 +129,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
       this.nodes = e.detail.nodes.slice();
       this.edges = e.detail.edges.slice();
       this.network.setData({nodes: this.nodes, edges: this.edges});
-    }
+    };
     this.componentCreate.addEventListener('backend-ai-pipeline-component-created', (e) => {
       _updateNetwork(e);
     });
@@ -202,7 +202,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
       const config = await res.json();
       return config;
     } catch (err) {
-      console.error(err)
+      console.error(err);
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true);

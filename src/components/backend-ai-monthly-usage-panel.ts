@@ -3,8 +3,8 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, LitElement, property} from "lit-element";
-import {translate as _t} from "lit-translate";
+import {css, customElement, html, LitElement, property} from 'lit-element';
+import {translate as _t} from 'lit-translate';
 
 import 'weightless/title';
 
@@ -13,7 +13,7 @@ import {
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning
-} from "../plastics/layout/iron-flex-layout-classes";
+} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
  Backend.AI Monthly Usage Panel
@@ -22,7 +22,7 @@ import {
  @element backend-ai-monthly-usage-panel
  */
 
-@customElement("backend-ai-monthly-usage-panel")
+@customElement('backend-ai-monthly-usage-panel')
 export default class BackendAIMonthlyUsagePanel extends LitElement {
   @property({type: Number}) num_sessions = 0;
   @property({type: String}) used_time = '0:00:00.00';
@@ -57,7 +57,7 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
           padding: 0px 15px 20px 15px;
         }
       `
-    ]
+    ];
   }
 
   firstUpdated() {
@@ -70,16 +70,16 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
     this.gpu_used_time = this.usedTimeFormatting(this.gpu_used_time);
 
     this.disk_used = Math.floor(this.disk_used / (1024 * 1024 * 1024)); // bytes to GB
-    this.traffic_used = Math.floor(this.traffic_used / (1024 * 1024));  // bytes to MB
+    this.traffic_used = Math.floor(this.traffic_used / (1024 * 1024)); // bytes to MB
   }
 
   /**
    * @param {String} time - [days]:[hours]:[minutes].[seconds]
    * */
   usedTimeFormatting(time) {
-    let days = parseInt(time.substring(0, time.indexOf(':')));
+    const days = parseInt(time.substring(0, time.indexOf(':')));
     let hours = parseInt(time.substring(time.indexOf(':') + 1, time.lastIndexOf(':')));
-    let minutes = time.substring(time.lastIndexOf(':') + 1, time.indexOf('.'));
+    const minutes = time.substring(time.lastIndexOf(':') + 1, time.indexOf('.'));
     hours = days * 24 + hours;
     return hours + 'h ' + minutes + 'm';
   }
@@ -88,31 +88,31 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
     // language=HTML
     return html`
       <wl-card>
-        <wl-title level="3">${_t("usagepanel.StatisticsForThisMonth")}</wl-title>
+        <wl-title level="3">${_t('usagepanel.StatisticsForThisMonth')}</wl-title>
         <div class="horizontal layout">
           <div class="vertical center layout">
             <span class="value">${this.num_sessions}</span>
-            <span class="desc">${_t("usagepanel.NumSessions")}</span>
+            <span class="desc">${_t('usagepanel.NumSessions')}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.used_time}</span>
-            <span class="desc">${_t("usagepanel.UsedTime")}</span>
+            <span class="desc">${_t('usagepanel.UsedTime')}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.cpu_used_time}</span>
-            <span class="desc">${_t("usagepanel.CpuUsedTime")}</span>
+            <span class="desc">${_t('usagepanel.CpuUsedTime')}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.gpu_used_time}</span>
-            <span class="desc">${_t("usagepanel.GpuUsedTime")}</span>
+            <span class="desc">${_t('usagepanel.GpuUsedTime')}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.disk_used}GB</span>
-            <span class="desc">${_t("usagepanel.DiskUsed")}</span>
+            <span class="desc">${_t('usagepanel.DiskUsed')}</span>
           </div>
           <div class="vertical center layout">
             <span class="value">${this.traffic_used}MB</span>
-            <span class="desc">${_t("usagepanel.TrafficUsed")}</span>
+            <span class="desc">${_t('usagepanel.TrafficUsed')}</span>
           </div>
         </div>
       </wl-card>
@@ -122,6 +122,6 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-monthly-usage-panel": BackendAIMonthlyUsagePanel;
+    'backend-ai-monthly-usage-panel': BackendAIMonthlyUsagePanel;
   }
 }

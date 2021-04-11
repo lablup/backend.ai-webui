@@ -455,7 +455,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       param['mode'] = 'SESSION';
       param['session'] = globalThis.backendaiclient._config._session_id;
     } else {
-      param['mode'] = "API";
+      param['mode'] = 'API';
       param['access_key'] = globalThis.backendaiclient._config.accessKey;
       param['secret_key'] = globalThis.backendaiclient._config.secretKey;
     }
@@ -516,11 +516,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {object | null} args
    */
   async _close_wsproxy(sessionUuid, app = 'jupyter') {
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
     const token = globalThis.backendaiclient._config.accessKey;
-    let uri = this._getProxyURL() + `proxy/${token}/${sessionUuid}/delete?app=${app}`;
+    const uri = this._getProxyURL() + `proxy/${token}/${sessionUuid}/delete?app=${app}`;
     const rqst_proxy = {
       method: 'GET',
       app: app,
@@ -803,10 +803,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const button = e.target;
     button.setAttribute('disabled', true);
     try {
-      let port = null;
-      let appName = this.appController['app-name'];
-      let sessionUuid = this.appController['session-uuid'];
-      let urlPostfix = this.appController['url-postfix'];
+      const port = null;
+      const appName = this.appController['app-name'];
+      const sessionUuid = this.appController['session-uuid'];
+      const urlPostfix = this.appController['url-postfix'];
       this.indicator = await globalThis.lablupIndicator.start();
       this.indicator.set(50, 'Shutdown TensorBoard instance if exist...');
       await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
@@ -823,7 +823,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         button.removeAttribute('disabled');
         setTimeout(() => {
           globalThis.open(response.url + urlPostfix, '_blank');
-          console.log(appName + " proxy loaded: ");
+          console.log(appName + ' proxy loaded: ');
           console.log(sessionUuid);
         }, 1000);
       });
@@ -985,7 +985,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="tensorboard-dialog" fixed>
-        <span slot="title">${_t("session.TensorboardPath")}</span>
+        <span slot="title">${_t('session.TensorboardPath')}</span>
         <div slot="content" class="vertical layout">
           <div>${_t('session.InputTensorboardPath')}</div>
           <mwc-textfield id="tensorboard-path" value="${_t('session.DefaultTensorboardPath')}"></mwc-textfield>
@@ -993,7 +993,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified center flex layout">
           <mwc-button unelevated
               icon="rowing" class="bg green" @click="${(e) => this._addTensorboardPath(e)}">
-            ${_t("session.UseThisPath")}
+            ${_t('session.UseThisPath')}
           </mwc-button>
         </div>
       </backend-ai-dialog>

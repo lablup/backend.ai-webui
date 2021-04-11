@@ -10,7 +10,7 @@ import {BackendAIPage} from './backend-ai-page';
 import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
-import "./backend-ai-monthly-usage-panel";
+import './backend-ai-monthly-usage-panel';
 
 import {
   IronFlex,

@@ -77,7 +77,8 @@ export class BackendAIPipelineCommon extends BackendAIPage {
   @property({type: String}) pipelineComponentDetailPath = 'components.json';
 
   constructor() {
-    super(); }
+    super();
+  }
 
   firstUpdated() {
   }
@@ -90,7 +91,7 @@ export class BackendAIPipelineCommon extends BackendAIPage {
   async _downloadPipelineConfig(folderName) {
     try {
       const res = await window.backendaiclient.vfolder.download(
-          this.pipelineConfigPath, folderName, false, true);
+        this.pipelineConfigPath, folderName, false, true);
       return await res.json();
     } catch (err) {
       console.error(err);
@@ -110,35 +111,35 @@ export class BackendAIPipelineCommon extends BackendAIPage {
   async _uploadFile(vfpath, blob, folderName) {
     return new Promise((resolve, reject) => {
       globalThis.backendaiclient.vfolder.create_upload_session(vfpath, blob, folderName)
-          .then((uploadUrl) => {
-            const uploader = new tus.Upload(blob, {
-              endpoint: uploadUrl,
-              retryDelays: [0, 3000, 5000, 10000, 20000],
-              uploadUrl: uploadUrl,
-              chunksize: 15728640,
-              metadata: {
-                filename: vfpath,
-                filetype: blob.type,
-              },
-              onError: (err) => {
-                console.error("upload failed:" + err);
-                this.notification.text = err;
-                this.notification.show(true);
-                reject(new Error(err));
-              },
-              onSuccess: () => {
-                console.log(`${vfpath} uploaded`);
-                resolve(true);
-              }
-            });
-            uploader.start();
-          })
-          .catch((err) => {
-            console.error(err)
-            this.notification.text = err;
-            this.notification.show(true);
-            reject(new Error(err));
+        .then((uploadUrl) => {
+          const uploader = new tus.Upload(blob, {
+            endpoint: uploadUrl,
+            retryDelays: [0, 3000, 5000, 10000, 20000],
+            uploadUrl: uploadUrl,
+            chunksize: 15728640,
+            metadata: {
+              filename: vfpath,
+              filetype: blob.type,
+            },
+            onError: (err) => {
+              console.error('upload failed:' + err);
+              this.notification.text = err;
+              this.notification.show(true);
+              reject(new Error(err));
+            },
+            onSuccess: () => {
+              console.log(`${vfpath} uploaded`);
+              resolve(true);
+            }
           });
+          uploader.start();
+        })
+        .catch((err) => {
+          console.error(err);
+          this.notification.text = err;
+          this.notification.show(true);
+          reject(new Error(err));
+        });
     });
   }
 }

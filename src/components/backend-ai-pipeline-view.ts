@@ -3,8 +3,8 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@material/mwc-icon';
@@ -30,7 +30,7 @@ import './backend-ai-session-list';
 import './lablup-codemirror';
 import './lablup-loading-spinner';
 
-@customElement("backend-ai-pipeline-view")
+@customElement('backend-ai-pipeline-view')
 export default class BackendAIPipelineView extends BackendAIPage {
   // Elements
   @property({type: Object}) notification = Object();
@@ -44,9 +44,9 @@ export default class BackendAIPipelineView extends BackendAIPage {
   // Properties for selected pipeline
   @property({type: String}) pipelineFolderName = '';
   @property({type: Object}) pipelineConfig = Object();
-  @property({type: Array}) pipelineComponents = Array();
+  @property({type: Array}) pipelineComponents = [];
   @property({type: Number}) selectedComponentIndex = -1;
-  @property({type: Array}) componentsToBeRun = Array();
+  @property({type: Array}) componentsToBeRun = [];
 
   @property({type: Object}) _dragSource = Object();
   @property({type: Object}) _dragTarget = Object();
@@ -121,7 +121,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
       }, true);
     } else {
@@ -166,15 +166,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
   _openPipelineDeleteDialog() {
     this.pipelineCreate._openPipelineDeleteDialog(this.pipelineList.pipelineSelectedName);
   }
-
-
-
-
-
-
-
-
-
 
 
   async _saveCode() {
@@ -231,10 +222,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
       this.pipelineComponents = this.pipelineComponents.slice();
 
       execSuccess = true;
-    })
+    });
     sse.addEventListener('session_failure', (e) => {
       execSuccess = false;
-    })
+    });
     sse.addEventListener('session_terminated', async (e) => {
       const data = JSON.parse((<any>e).data);
 
@@ -293,7 +284,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     const pipeline = this.pipelineConfig;
     const component = this.pipelineComponents[idx];
     const image = `${pipeline.environment}:${pipeline.version}`;
-    let opts = {
+    const opts = {
       domain: window.backendaiclient._config.domainName,
       group_name: window.backendaiclient.current_group,
       type: 'batch',
@@ -309,7 +300,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
       cpu: component.cpu,
       mem: component.mem + 'g', // memeory in GiB
       fgpu: component.gpu,
-    }
+    };
     let sse; // EventSource object for kernel stream
 
     /* Start batch session and monitor events. */
@@ -328,7 +319,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
           kernelId = kinfo.compute_session.id;
           break;
         }
-        await new Promise(r => setTimeout(r, 1000)); // wait 1 second
+        await new Promise((r) => setTimeout(r, 1000)); // wait 1 second
       }
       if (kernelId) {
         sse = this._subscribeKernelEventStream(sessionName, idx, component, kernelId);
@@ -336,7 +327,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
         throw new Error('Unable to get information on compute session');
       }
     } catch (err) {
-      console.error(err)
+      console.error(err);
       if (sse) sse.close();
       this.componentsToBeRun = [];
       this.spinner.hide();
@@ -360,10 +351,10 @@ export default class BackendAIPipelineView extends BackendAIPage {
       const logs = await blob.text();
       const newWindow = window.open('', `Component ${idx} log`, 'width=800,height=600');
       if (newWindow) {
-        newWindow.document.body.innerHTML = `<pre style="color:#ccc; background:#222; padding:1em; overflow:auto;">${logs}</pre>`
+        newWindow.document.body.innerHTML = `<pre style="color:#ccc; background:#222; padding:1em; overflow:auto;">${logs}</pre>`;
       }
     } catch (err) {
-      console.error(err)
+      console.error(err);
       if (err.title && err.title.split(' ')[0] === '404') {
         this.notification.text = 'No logs for this component';
         this.notification.detail = err.message;
@@ -495,6 +486,6 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-pipeline-view": BackendAIPipelineView;
+    'backend-ai-pipeline-view': BackendAIPipelineView;
   }
 }
