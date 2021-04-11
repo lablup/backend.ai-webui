@@ -4,7 +4,7 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, customElement, html, property} from 'lit-element';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -98,7 +98,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.endpoints = [];
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,

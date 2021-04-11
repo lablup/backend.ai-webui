@@ -3,14 +3,14 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
 import '@material/mwc-button';
-import {BackendAiStyles} from "./backend-ai-general-styles";
-import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 import {store} from '../store';
 import {navigate} from '../backend-ai-app';
 
@@ -24,7 +24,7 @@ import {navigate} from '../backend-ai-app';
  @element backend-ai-permission-denied-view
  */
 
-@customElement("backend-ai-permission-denied-view")
+@customElement('backend-ai-permission-denied-view')
 export default class BackendAIPermissionDeniedView extends BackendAIPage {
   @property({type: Number}) error_code = 401;
 
@@ -32,7 +32,7 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -46,7 +46,7 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
         color: var(--general-navbar-footer-color, #424242);
         line-height: 1em;
       }
-      
+
       .description {
         font-size: 1em;
         font-weight: normal;
@@ -104,9 +104,6 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
     ];
   }
 
-  firstUpdated() {
-  }
-
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
@@ -115,11 +112,11 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
   }
 
   /**
-   * 
-   * @param url - page to redirect from the current page.
+   *
+   * @param {string} url - page to redirect from the current page.
    */
   _moveTo(url = '') {
-    let page = url !== '' ? url : 'summary';
+    const page = url !== '' ? url : 'summary';
     globalThis.history.pushState({}, '', '/summary');
     store.dispatch(navigate(decodeURIComponent('/' + page), {}));
   }
@@ -136,7 +133,7 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
           <mwc-button
               unelevated
               id="go-to-summary"
-              label="${_t("button.GoBackToSummaryPage")}"
+              label="${_t('button.GoBackToSummaryPage')}"
               @click="${() => this._moveTo('summary')}"></mwc-button>
         </div>
       </div>
@@ -147,6 +144,6 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-permission-denied-view": BackendAIPermissionDeniedView;
+    'backend-ai-permission-denied-view': BackendAIPermissionDeniedView;
   }
 }

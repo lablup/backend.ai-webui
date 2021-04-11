@@ -523,7 +523,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           if (Array.isArray(service_info) === true) {
             sessions[objectKey].app_services = service_info.map((a) => a.name);
             sessions[objectKey].app_services_option = {};
-            service_info.forEach(elm => {
+            service_info.forEach((elm) => {
               if ('allowed_arguments' in elm) {
                 sessions[objectKey].app_services_option[elm.name] = elm.allowed_arguments;
               }
@@ -798,29 +798,29 @@ export default class BackendAiSessionList extends BackendAIPage {
   _terminateApp(sessionId) {
     const token = globalThis.backendaiclient._config.accessKey;
     const rqst = {
-     method: 'GET',
-     uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId
+      method: 'GET',
+      uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId
     };
     return this.sendRequest(rqst)
-     .then((response) => {
-       this.total_session_count -= 1;
-       const token = globalThis.backendaiclient._config.accessKey;
-       if (response !== undefined && response.code !== 404) {
-         const rqst = {
-           method: 'GET',
-           uri: this._getProxyURL() + 'proxy/'+ token + '/' + sessionId + '/delete'
-         };
-         return this.sendRequest(rqst);
-       }
-       return Promise.resolve(true);
-     }).catch((err) => {
-       console.log(err);
-       if (err && err.message) {
-         this.notification.text = PainKiller.relieve(err.title);
-         this.notification.detail = err.message;
-         this.notification.show(true, err);
-       }
-     });
+      .then((response) => {
+        this.total_session_count -= 1;
+        const token = globalThis.backendaiclient._config.accessKey;
+        if (response !== undefined && response.code !== 404) {
+          const rqst = {
+            method: 'GET',
+            uri: this._getProxyURL() + 'proxy/'+ token + '/' + sessionId + '/delete'
+          };
+          return this.sendRequest(rqst);
+        }
+        return Promise.resolve(true);
+      }).catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
   }
 
   _getProxyURL() {

@@ -30,9 +30,6 @@ export default class BackendAiSettingsStore extends BackendAIPage {
     this.readSettings();
   }
 
-  firstUpdated() {
-  }
-
   readSettings() {
     this._readSettings();
   }

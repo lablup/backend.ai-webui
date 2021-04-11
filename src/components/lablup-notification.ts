@@ -4,7 +4,7 @@
  */
 
 import {get as _text} from 'lit-translate';
-import {css, customElement, html, LitElement, property} from 'lit-element';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 import 'weightless/snackbar';
 import 'weightless/button';
 import 'weightless/icon';
@@ -37,8 +37,8 @@ export default class LablupNotification extends LitElement {
   @property({type: String}) status = '';
   @property({type: String}) timestamp = '';
   @property({type: Object}) indicator;
-  @property({type: Array}) notifications = [];
-  @property({type: Array}) notificationstore = [];
+  @property({type: Array}) notifications;
+  @property({type: Array}) notificationstore;
   @property({type: Boolean}) active = true;
   @property({type: Boolean}) supportDesktopNotification = false;
   @property({type: Number}) step = 0;
@@ -50,13 +50,15 @@ export default class LablupNotification extends LitElement {
     this.options = {
       desktop_notification: true
     };
+    this.notifications = [];
+    this.notificationstore = [];
   }
 
   static get is() {
     return 'lablup-notification';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       // language=CSS
       css`
@@ -114,16 +116,11 @@ export default class LablupNotification extends LitElement {
     super.disconnectedCallback();
   }
 
-  async getMoreState() {
-
-  }
-
-  async ladder() {
-
-  }
-
   /**
    * Get user settings and set options according to user settings.
+   *
+   * @param {string} name - name of user setting
+   * @param {string | boolean} default_value - Default value if setting does not exist
    * */
   _readUserSetting(name, default_value = true) {
     const value: string | null = localStorage.getItem('backendaiwebui.usersetting.' + name);
@@ -168,7 +165,7 @@ export default class LablupNotification extends LitElement {
     //   this._createCloseButton(notification);
     // }
     this._hideNotification(e);
-    const currentPage = globalThis.location.toString().split(/[\/]+/).pop();
+    const currentPage = globalThis.location.toString().split(/[/]+/).pop();
     globalThis.history.pushState({}, '', '/usersettings');
     store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
     if (currentPage && currentPage === 'usersettings') {
@@ -179,6 +176,8 @@ export default class LablupNotification extends LitElement {
 
   /**
    * Create close_button that bind with function '_hideNotification(e)'
+   *
+   * @param{HTMLElement} notification - Notification webcomponent
    * */
   _createCloseButton(notification) {
     const button = document.createElement('wl-button');
@@ -194,35 +193,20 @@ export default class LablupNotification extends LitElement {
    * Show notifications
    *
    * @param {boolean} persistent - if persistent is false, the snackbar is hidden automatically after 3000ms
-   * @param {object} log
+   * @param {object} log - Log object that contains detail information
    * */
-  async show(persistent = false, log: object = Object()) {
+  async show(persistent = false, log: Record<string, unknown> = Object()) {
     const snackbar = document.querySelector('wl-snackbar[persistent=\'true\']');
     if (snackbar) {
       this.notifications = [] as any; // Reset notifications
       document.body.removeChild(snackbar);
     }
     this.gc();
-    // let notification_message: string;
-    // let notification_detail: string;
     const notification = document.createElement('wl-snackbar');
-    // if (message === '') {
     notification.innerHTML = '<span style="overflow-x:hidden">' + this.text + '</span>';
     if (this.detail != '') {
       notification.innerHTML = notification.innerHTML + '<div style="display:none;"> : ' + this.detail + '</div>';
     }
-    // notification_message = this.text;
-    // notification_detail = this.detail;
-    // } else {
-    //   notification.innerHTML = '<span style="overflow-x:hidden">' + message + '</span>';
-    //   this.text = message;
-    //   if (this.detail != '') {
-    //     notification.innerHTML = notification.innerHTML + '<div style="display:none;"> : ' + this.detail + '</div>';
-    //   }
-    //   notification_message = message;
-    //   notification_detail = this.detail;
-    // }
-    // this.notificationstore.push(log);
     if (Object.keys(log).length !== 0) {
       console.log(log);
       this._saveToLocalStorage('backendaiwebui.logs', log);
@@ -266,7 +250,6 @@ export default class LablupNotification extends LitElement {
     const d = new Date();
     notification.setAttribute('created', d.toLocaleString());
     document.body.appendChild(notification);
-    // @ts-ignore
     this.notifications.push(notification);
     await this.updateComplete;
     notification.show();

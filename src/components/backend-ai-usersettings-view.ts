@@ -3,8 +3,8 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 import {store} from '../store';
 
@@ -48,7 +48,7 @@ import './backend-ai-usersettings-general-list';
  @element backend-ai-usersettings-view
  */
 
-@customElement("backend-ai-usersettings-view")
+@customElement('backend-ai-usersettings-view')
 export default class BackendAiUserSettingsView extends BackendAIPage {
   public spinner: any;
 
@@ -67,14 +67,14 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       rocm_gpu: false,
       tpu: false,
       scheduler: 'fifo'
-    }
+    };
   }
 
   static get is() {
     return 'backend-ai-usersettings-view';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -181,9 +181,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
             <mwc-tab-bar>
-              <mwc-tab title="general" label="${_t("usersettings.General")}"
+              <mwc-tab title="general" label="${_t('usersettings.General')}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="logs" label="${_t("usersettings.Logs")}"
+              <mwc-tab title="logs" label="${_t('usersettings.Logs')}"
                   @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
           </h3>
@@ -192,22 +192,22 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           </div>
           <div id="logs" class="item tab-content" style="display:none;">
             <h3 class="horizontal center layout outer-space">
-              <span>${_t("logs.LogMessages")}</span>
-              <span class="mini" style="font-size:13px;padding-left:15px;">${_t("logs.UpTo3000Logs")}</span>
+              <span>${_t('logs.LogMessages')}</span>
+              <span class="mini" style="font-size:13px;padding-left:15px;">${_t('logs.UpTo3000Logs')}</span>
               <span class="flex"></span>
               <mwc-button
                   class="log"
                   icon="refresh"
                   outlined
                   @click="${() => this._refreshLogs()}">
-                <span>${_t("button.Refresh")}</span>
+                <span>${_t('button.Refresh')}</span>
               </mwc-button>
               <mwc-button
                   class="log"
                   icon="delete"
                   outlined
                   @click="${() => this._showClearLogsDialog()}">
-                <span>${_t("button.ClearLogs")}</span>
+                <span>${_t('button.ClearLogs')}</span>
               </mwc-button>
             </h3>
             <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
@@ -215,19 +215,19 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         </div>
       </lablup-activity-panel>
       <backend-ai-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling>
-        <span slot="title">${_t("dialog.warning.LogDeletion")}</span>
-        <div slot="content">${_t("dialog.warning.CannotBeUndone")}</div>
+        <span slot="title">${_t('dialog.warning.LogDeletion')}</span>
+        <div slot="content">${_t('dialog.warning.CannotBeUndone')}</div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               class="operation"
               id="discard-removal"
-              label="${_t("button.No")}"
+              label="${_t('button.No')}"
               @click="${() => this._hideClearLogsDialog()}"></mwc-button>
           <mwc-button
               unelevated
               class="operation"
               id="apply-removal"
-              label="${_t("button.Yes")}"
+              label="${_t('button.Yes')}"
               @click="${() => this._removeLogMessage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -235,7 +235,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   }
 
   firstUpdated() {
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateSettings();
       }, true);
@@ -251,7 +251,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     });
     document.addEventListener('backend-ai-usersettings', () => {
       this._viewStateChanged(true);
-    })
+    });
   }
 
   /**
@@ -276,6 +276,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   }
 
   updateSettings() {
+    return;
   }
 
   /**
@@ -289,11 +290,11 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
    * Remove log message.
    * */
   _removeLogMessage() {
-    let currentLogs = localStorage.getItem('backendaiwebui.logs');
+    const currentLogs = localStorage.getItem('backendaiwebui.logs');
     if (currentLogs) {
       localStorage.removeItem('backendaiwebui.logs');
     }
-    let event = new CustomEvent("log-message-clear", {});
+    const event = new CustomEvent('log-message-clear', {});
     document.dispatchEvent(event);
     localStorage.getItem('backendaiwebui.logs');
     this.clearLogsDialog.hide();
@@ -314,7 +315,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
    * */
   _refreshLogs() {
     this.logGrid = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '{}');
-    let event = new CustomEvent("log-message-refresh", this.logGrid);
+    const event = new CustomEvent('log-message-refresh', this.logGrid);
     document.dispatchEvent(event);
   }
 
@@ -324,7 +325,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
    * @param {EventTarget} tab - clicked tab
    * */
   _showTab(tab) {
-    let els = this.shadowRoot.querySelectorAll(".tab-content");
+    const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
@@ -338,6 +339,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-usersettings-view": BackendAiUserSettingsView;
+    'backend-ai-usersettings-view': BackendAiUserSettingsView;
   }
 }

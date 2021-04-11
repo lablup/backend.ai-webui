@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
@@ -42,7 +42,7 @@ import {
  @element backend-ai-experiment-view
  */
 
-@customElement("backend-ai-experiment-view")
+@customElement('backend-ai-experiment-view')
 export default class BackendAIExperimentView extends BackendAIPage {
   public supports: any;
   public resourceLimits: any;
@@ -132,7 +132,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
     return 'backend-ai-experiment-view';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -245,8 +245,8 @@ export default class BackendAIExperimentView extends BackendAIPage {
    * @param tab
    */
   _showTab(tab) {
-    var els = this.shadowRoot.querySelectorAll(".tab-content");
-    for (var x = 0; x < els.length; x++) {
+    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
     this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
@@ -258,8 +258,8 @@ export default class BackendAIExperimentView extends BackendAIPage {
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('wl-dialog');
+    const hideButton = e.target;
+    const dialog = hideButton.closest('wl-dialog');
     dialog.hide();
   }
 
@@ -487,6 +487,6 @@ export default class BackendAIExperimentView extends BackendAIPage {
 }
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-experiment-view": BackendAIExperimentView;
+    'backend-ai-experiment-view': BackendAIExperimentView;
   }
 }

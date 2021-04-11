@@ -3,8 +3,8 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
@@ -22,9 +22,9 @@ import './backend-ai-chart';
 import './backend-ai-resource-monitor';
 import './backend-ai-session-launcher';
 import '../plastics/lablup-shields/lablup-shields';
-import {BackendAiStyles} from "./backend-ai-general-styles";
-import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
-import {default as PainKiller} from "./backend-ai-painkiller";
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
+import {default as PainKiller} from './backend-ai-painkiller';
 
 /**
  `<backend-ai-import-view>` is a import feature of backend.ai web UI.
@@ -36,7 +36,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
  @element backend-ai-import-view
  */
 
-@customElement("backend-ai-import-view")
+@customElement('backend-ai-import-view')
 export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Boolean}) authenticated = false;
@@ -54,7 +54,7 @@ export default class BackendAIImport extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -118,7 +118,7 @@ export default class BackendAIImport extends BackendAIPage {
       return;
     }
     this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.authenticated = true;
         if (this.activeConnected) {
@@ -132,11 +132,11 @@ export default class BackendAIImport extends BackendAIPage {
     // Given URL via URL path parameter.
     this.requestURL = globalThis.currentPageParams.requestURL;
     let queryString = globalThis.currentPageParams.queryString;
-    queryString = queryString.substring(queryString.indexOf("?") + 1);
+    queryString = queryString.substring(queryString.indexOf('?') + 1);
     this.queryString = queryString;
     this.importMessage = this.queryString;
     this.environment = this.guessEnvironment(this.queryString);
-    if (queryString !== "") {
+    if (queryString !== '') {
       let downloadURL = 'https://raw.githubusercontent.com/' + this.queryString;
       downloadURL = downloadURL.replace('/blob/', '/');
       this.fetchNotebookURLResource(downloadURL);
@@ -144,8 +144,8 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   getNotebookFromURL() {
-    let url = this.shadowRoot.querySelector("#notebook-url").value;
-    if (url !== "") {
+    const url = this.shadowRoot.querySelector('#notebook-url').value;
+    if (url !== '') {
       this.queryString = this.regularizeGithubURL(url);
       this.fetchNotebookURLResource(this.queryString);
     }
@@ -158,7 +158,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   fetchNotebookURLResource(downloadURL): void {
-    this.shadowRoot.querySelector("#notebook-url").value = downloadURL;
+    this.shadowRoot.querySelector('#notebook-url').value = downloadURL;
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._fetchNotebookURLResource(downloadURL);
@@ -174,7 +174,7 @@ export default class BackendAIImport extends BackendAIPage {
       this.importMessage = this.notification.text;
       this.notification.show();
       this.sessionLauncher.selectDefaultLanguage(true, this.environment);
-      this.sessionLauncher.importScript = "#!/bin/sh\ncurl -O " + downloadURL;
+      this.sessionLauncher.importScript = '#!/bin/sh\ncurl -O ' + downloadURL;
       this.sessionLauncher.importFilename = downloadURL.split('/').pop();
       this.sessionLauncher._launchSessionDialog();
     }).catch((err) => {
@@ -185,7 +185,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   getGitHubRepoFromURL() {
-    let url = this.shadowRoot.querySelector("#github-repo-url").value;
+    let url = this.shadowRoot.querySelector('#github-repo-url').value;
     let tree = 'master';
     let name = '';
     // if contains .git extension, then remove it.
@@ -194,8 +194,8 @@ export default class BackendAIImport extends BackendAIPage {
     }
 
     if (url.includes('/tree')) { // Branch.
-      let version = (/\/tree\/[.a-zA-Z.0-9_-]+/.exec(url) || [''])[0];
-      let nameWithVersion = (/\/[.a-zA-Z0-9_-]+\/tree\//.exec(url) || [''])[0];
+      const version = (/\/tree\/[.a-zA-Z.0-9_-]+/.exec(url) || [''])[0];
+      const nameWithVersion = (/\/[.a-zA-Z0-9_-]+\/tree\//.exec(url) || [''])[0];
       url = url.replace(version, '');
       tree = version.replace('/tree/', '');
       name = nameWithVersion.replace('/tree/', '').substring(1);
@@ -204,7 +204,7 @@ export default class BackendAIImport extends BackendAIPage {
     }
     url = url.replace('https://github.com', 'https://codeload.github.com');
     url = url + '/zip/' + tree;
-    let protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+    const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
     if (['http', 'https'].includes(protocol)) {
       return this.importRepoFromURL(url, name);
     } else {
@@ -217,20 +217,20 @@ export default class BackendAIImport extends BackendAIPage {
 
   async importRepoFromURL(url, folderName) {
     // Create folder to
-    let imageResource: Object = {};
+    const imageResource: Object = {};
     imageResource['cpu'] = 1;
     imageResource['mem'] = '0.5g';
     imageResource['domain'] = globalThis.backendaiclient._config.domainName;
     imageResource['group_name'] = globalThis.backendaiclient.current_group;
-    let indicator = await this.indicator.start('indeterminate');
+    const indicator = await this.indicator.start('indeterminate');
     indicator.set(10, _text('import.Preparing'));
     folderName = await this._checkFolderNameAlreadyExists(folderName);
     await this._addFolderWithName(folderName);
     indicator.set(20, _text('import.FolderCreated'));
     imageResource['mounts'] = [folderName];
-    imageResource['bootstrap_script'] = "#!/bin/sh\ncurl -o repo.zip " + url + "\ncd /home/work/" + folderName + "\nunzip -u /home/work/repo.zip";
+    imageResource['bootstrap_script'] = '#!/bin/sh\ncurl -o repo.zip ' + url + '\ncd /home/work/' + folderName + '\nunzip -u /home/work/repo.zip';
     return globalThis.backendaiclient.get_resource_slots().then((response) => {
-      //let results = response;
+      // let results = response;
       indicator.set(50, _text('import.Downloading'));
       return globalThis.backendaiclient.createIfNotExists(globalThis.backendaiclient._config.default_import_environment, null, imageResource, 60000);
     }).then(async (response) => {
@@ -238,7 +238,7 @@ export default class BackendAIImport extends BackendAIPage {
       await globalThis.backendaiclient.destroy(response.sessionId);
       indicator.set(100, _text('import.ImportFinished'));
       indicator.end(1000);
-    }).catch(err => {
+    }).catch((err) => {
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
@@ -247,15 +247,15 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   async _addFolderWithName(name) {
-    let permission = 'rw';
-    let usageMode = 'general';
-    let group = ''; // user ownership
-    let vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
-    let host = vhost_info.default;
+    const permission = 'rw';
+    const usageMode = 'general';
+    const group = ''; // user ownership
+    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    const host = vhost_info.default;
     name = await this._checkFolderNameAlreadyExists(name);
     return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
       this.importMessage = _text('import.FolderName') + name;
-    }).catch(err => {
+    }).catch((err) => {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -266,15 +266,15 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   async _checkFolderNameAlreadyExists(name) {
-    let vfolderObj = await globalThis.backendaiclient.vfolder.list();
-    let vfolders = vfolderObj.map(function (value) {
+    const vfolderObj = await globalThis.backendaiclient.vfolder.list();
+    const vfolders = vfolderObj.map(function(value) {
       return value.name;
     });
     if (vfolders.includes(name)) {
       this.notification.text = _text('import.FolderAlreadyExists');
       this.importMessage = this.notification.text;
       this.notification.show();
-      let i: number = 1;
+      let i = 1;
       let newName: string = name;
       while (vfolders.includes(newName)) {
         newName = name + '_' + i;
@@ -298,10 +298,10 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   createNotebookBadge() {
-    let url = this.shadowRoot.querySelector('#notebook-badge-url').value;
-    let rawURL = this.regularizeGithubURL(url);
-    let badgeURL = rawURL.replace('https://raw.githubusercontent.com/', '');
-    let baseURL: string = '';
+    const url = this.shadowRoot.querySelector('#notebook-badge-url').value;
+    const rawURL = this.regularizeGithubURL(url);
+    const badgeURL = rawURL.replace('https://raw.githubusercontent.com/', '');
+    let baseURL = '';
 
     if (url === '') {
       this.notification.text = _text('import.NoNotebookCode');
@@ -310,7 +310,7 @@ export default class BackendAIImport extends BackendAIPage {
       this.shadowRoot.querySelector('#notebook-badge-code-markdown').value = '';
     } else {
       if (globalThis.isElectron) {
-        baseURL = "https://cloud.backend.ai/github?";
+        baseURL = 'https://cloud.backend.ai/github?';
       } else {
         baseURL = window.location.protocol + '//' + window.location.hostname;
         if (window.location.port) {
@@ -318,8 +318,8 @@ export default class BackendAIImport extends BackendAIPage {
         }
         baseURL = baseURL + '/github?';
       }
-      let fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
-      let fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
+      const fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
+      const fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
       this.shadowRoot.querySelector('#notebook-badge-code').value = fullText;
       this.shadowRoot.querySelector('#notebook-badge-code-markdown').value = fullTextMarkdown;
     }
@@ -331,33 +331,33 @@ export default class BackendAIImport extends BackendAIPage {
    * @param id - text-area htmlElement for copying
    */
   _copyTextArea(e) {
-    let copyText = "";
+    let copyText = '';
     if ('value' in e.target) {
       copyText = e.target.value;
     }
-    if (copyText !== "") {
-      //let copyText: string = this.shadowRoot.querySelector(id).value;
+    if (copyText !== '') {
+      // let copyText: string = this.shadowRoot.querySelector(id).value;
       if (copyText.length === 0) {
-        this.notification.text = _text("import.NoNotebookCode");
+        this.notification.text = _text('import.NoNotebookCode');
         this.notification.show();
       } else {
         if (navigator.clipboard !== undefined) { // for Chrome, Safari
           navigator.clipboard.writeText(copyText).then( () => {
-            this.notification.text = _text("import.NotebookBadgeCodeCopied");
+            this.notification.text = _text('import.NotebookBadgeCodeCopied');
             this.notification.show();
           }, (err) => {
             console.error(_text('import.CouldNotCopyText'), err);
           });
         } else { // other browsers
-          let tmpInputElement = document.createElement("input");
-          tmpInputElement.type = "text";
+          const tmpInputElement = document.createElement('input');
+          tmpInputElement.type = 'text';
           tmpInputElement.value = copyText;
 
           document.body.appendChild(tmpInputElement);
           tmpInputElement.select();
-          document.execCommand("copy"); // copy operation
+          document.execCommand('copy'); // copy operation
           document.body.removeChild(tmpInputElement);
-          this.notification.text = _text("import.NotebookBadgeCodeCopied");
+          this.notification.text = _text('import.NotebookBadgeCodeCopied');
           this.notification.show();
         }
       }
@@ -426,6 +426,6 @@ export default class BackendAIImport extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-import-view": BackendAIImport;
+    'backend-ai-import-view': BackendAIImport;
   }
 }

@@ -40,9 +40,9 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
   // Pipeline components prpoerties
   @property({type: String}) pipelineSelectedName = '';
   @property({type: String}) componentCreateMode = 'create';
-  @property({type: Array}) componentNodes = Array();
-  @property({type: Array}) componentEdges = Array();
-  @property({type: Array}) selectedNodes = Array();  // List of IDs of components
+  @property({type: Array}) componentNodes = [];
+  @property({type: Array}) componentEdges = [];
+  @property({type: Array}) selectedNodes = []; // List of IDs of components
 
   constructor() {
     super();
@@ -58,7 +58,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
       }, true);
     } else {
@@ -165,7 +165,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     }
     let index = -1;
     const nid0 = selectedNodes[0];
-    const nid1 = selectedNodes[1]
+    const nid1 = selectedNodes[1];
     for (let i = 0; i < edges.length; i++) {
       if ((edges[i].from === nid0 && edges[i].to === nid1) ||
           (edges[i].from === nid1 && edges[i].to === nid0)) {
@@ -212,8 +212,8 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
       return;
     }
     const sluggedPath = window.backendaiclient.slugify(path);
-    let cpu = this.shadowRoot.querySelector('#component-cpu').value;
-    let mem = this.shadowRoot.querySelector('#component-mem').value;
+    const cpu = this.shadowRoot.querySelector('#component-cpu').value;
+    const mem = this.shadowRoot.querySelector('#component-mem').value;
     let gpu = this.shadowRoot.querySelector('#component-gpu').value;
     if (cpu < 1) {
       this.notification.text = _text('pipeline.ComponentDialog.CPUNotEnough');
@@ -240,7 +240,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
       const cid = `component-${window.backendaiclient.generateSessionId(8, true)}`;
       cinfo.id = cid;
       // Create a component and an edge if there is a selected component (parent).
-      this.componentNodes.push(cinfo)
+      this.componentNodes.push(cinfo);
       if (this.selectedNodes && this.selectedNodes.length > 0) {
         this.selectedNodes.forEach((nid) => {
           this.componentEdges.push({from: nid, to: cinfo.id});
@@ -306,7 +306,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     try {
       await this._uploadFile(this.pipelineComponentDetailPath, blob, folderName);
     } catch (err) {
-      console.error(err)
+      console.error(err);
       this.spinner.hide();
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;

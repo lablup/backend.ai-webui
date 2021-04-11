@@ -51,7 +51,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
       }, true);
     } else {
@@ -70,13 +70,13 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
   }
 
   async _ensureComponentMainCode(nodeInfo) {
-    await this._ensureComponentFolder(nodeInfo)
+    await this._ensureComponentFolder(nodeInfo);
     const filepath = `${nodeInfo.path}/main.py`; // TODO: hard-coded file name
     try {
       const res = await window.backendaiclient.vfolder.download(filepath, this.pipelineFolderName, false, true);
       return await res.text();
     } catch (err) {
-      console.error(err)
+      console.error(err);
       if (err.title && err.title.split(' ')[0] === '404') {
         // Code file not found. upload empty code.
         const blob = new Blob([''], {type: 'plain/text'});
@@ -98,7 +98,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
       if (err && err.message && err.message.includes('already exists')) {
         // silently pass if the target folder alrady exists
       } else {
-        console.error(err)
+        console.error(err);
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true);

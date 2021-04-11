@@ -36,13 +36,13 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
   @property({type: Object}) notification = Object();
   // Environments
   @property({type: Object}) tags = Object();
-  @property({type: Array}) languages = Array();
+  @property({type: Array}) languages = [];
   @property({type: String}) defaultLanguage = '';
-  @property({type: Array}) versions = Array();
+  @property({type: Array}) versions = [];
   @property({type: String}) scalingGroup = '';
-  @property({type: Array}) scalingGroups = Array();
+  @property({type: Array}) scalingGroups = [];
   @property({type: String}) vhost = '';
-  @property({type: Array}) vhosts = Array();
+  @property({type: Array}) vhosts = [];
   @property({type: Object}) images = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Object}) imageNames = Object();
@@ -71,42 +71,42 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     this.notification = globalThis.lablupNotification;
 
     fetch('resources/image_metadata.json')
-        .then(
-          (resp) => resp.json()
-        )
-        .then((json) => {
-          this.imageInfo = json.imageInfo;
-          for (let key in this.imageInfo) {
-            this.tags[key] = [];
-            if ("name" in this.imageInfo[key]) {
-              this.aliases[key] = this.imageInfo[key].name;
-              this.imageNames[key] = this.imageInfo[key].name;
-            }
-            if ("label" in this.imageInfo[key]) {
-              this.imageInfo[key].label.forEach((item)=>{
-                if (!("category" in item)) {
-                  this.tags[key].push(item.tag);
-                }
-              });
-            }
+      .then(
+        (resp) => resp.json()
+      )
+      .then((json) => {
+        this.imageInfo = json.imageInfo;
+        for (const key in this.imageInfo) {
+          this.tags[key] = [];
+          if ('name' in this.imageInfo[key]) {
+            this.aliases[key] = this.imageInfo[key].name;
+            this.imageNames[key] = this.imageInfo[key].name;
           }
-        });
+          if ('label' in this.imageInfo[key]) {
+            this.imageInfo[key].label.forEach((item)=>{
+              if (!('category' in item)) {
+                this.tags[key].push(item.tag);
+              }
+            });
+          }
+        }
+      });
     this.shadowRoot.querySelector('#pipeline-environment').addEventListener(
-        'selected', this.updateLanguage.bind(this));
+      'selected', this.updateLanguage.bind(this));
     this._refreshImageList();
   }
 
   updateLanguage() {
     const selectedItem = this.shadowRoot.querySelector('#pipeline-environment').selected;
     if (selectedItem === null) return;
-    let kernel = selectedItem.id;
+    const kernel = selectedItem.id;
     this._updateVersions(kernel);
   }
 
   _updateVersions(kernel) {
     const tagEl = this.shadowRoot.querySelector('#pipeline-environment-tag');
     if (kernel in this.supports) {
-      let versions = this.supports[kernel];
+      const versions = this.supports[kernel];
       versions.sort();
       versions.reverse(); // New version comes first.
       this.versions = versions;
@@ -120,7 +120,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
 
   async _fetchResourceGroup() {
     const currentGroup = window.backendaiclient.current_group || null;
-    let sgs = await window.backendaiclient.scalingGroup.list(currentGroup);
+    const sgs = await window.backendaiclient.scalingGroup.list(currentGroup);
     this.scalingGroups = sgs.scaling_groups;
     this.scalingGroup = sgs.scaling_groups[0].name;
   }
@@ -155,7 +155,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
       this._updateEnvironment();
     }).catch((err) => {
       // this.metadata_updating = false;
-      console.error(err)
+      console.error(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -180,9 +180,9 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
           this.aliases[item] = item;
         }
       }
-      let specs = item.split('/');
-      let registry = specs[0];
-      let prefix, kernelName;
+      const specs = item.split('/');
+      const registry = specs[0];
+      let prefix; let kernelName;
       if (specs.length == 2) {
         prefix = '';
         kernelName = specs[1];
@@ -218,7 +218,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
   }
 
   selectDefaultLanguage() {
-    if (typeof window.backendaiclient === "undefined" || window.backendaiclient === null || window.backendaiclient.ready === false) {
+    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._selectDefaultLanguage();
       }, true);
@@ -246,7 +246,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     let humanizedName = null;
     let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
     Object.keys(candidate).forEach((item, index) => {
-      let specs = kernelName.split('/');
+      const specs = kernelName.split('/');
       if (specs.length == 2) {
         imageName = specs[1];
       } else {
@@ -264,7 +264,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
   }
 
   _initAliases() {
-    for (let item in this.aliases) {
+    for (const item in this.aliases) {
       this.aliases[this.aliases[item]] = item;
     }
   }
@@ -278,20 +278,20 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     this._fillPipelineCreateDialogFields(null);
     this.pipelineCreateMode = 'create';
     window.backendaiclient.vfolder.list_hosts()
-        .then((resp) => {
-          const folderHostEl = this.shadowRoot.querySelector('#pipeline-folder-host');
-          this.vhosts = resp.allowed.slice();
-          this.vhost = resp.default;
-          folderHostEl.value = this.vhost;
-        })
-        .catch((err) => {
-          console.error(err)
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true);
-          }
-        });
+      .then((resp) => {
+        const folderHostEl = this.shadowRoot.querySelector('#pipeline-folder-host');
+        this.vhosts = resp.allowed.slice();
+        this.vhost = resp.default;
+        folderHostEl.value = this.vhost;
+      })
+      .catch((err) => {
+        console.error(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true);
+        }
+      });
     this.shadowRoot.querySelector('#pipeline-create-dialog').show();
   }
 
@@ -311,22 +311,22 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     const config = await this._downloadPipelineConfig(this.pipelineFolderName);
     this.pipelineCreateMode = 'update';
     window.backendaiclient.vfolder.list_hosts()
-        .then((resp) => {
-          const folderHostEl = this.shadowRoot.querySelector('#pipeline-folder-host');
-          this.vhosts = resp.allowed.slice();
-          this.vhost = config.folder_host;
-          folderHostEl.value = this.vhost;
-          // Ensure version field is updated correctly
-          this._fillPipelineCreateDialogFields(config);
-        })
-        .catch((err) => {
-          console.error(err)
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true);
-          }
-        });
+      .then((resp) => {
+        const folderHostEl = this.shadowRoot.querySelector('#pipeline-folder-host');
+        this.vhosts = resp.allowed.slice();
+        this.vhost = config.folder_host;
+        folderHostEl.value = this.vhost;
+        // Ensure version field is updated correctly
+        this._fillPipelineCreateDialogFields(config);
+      })
+      .catch((err) => {
+        console.error(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true);
+        }
+      });
     this._fillPipelineCreateDialogFields(config);
     this.shadowRoot.querySelector('#pipeline-create-dialog').show();
   }
@@ -399,11 +399,11 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     }
     const configObj = {
       title, description, environment, version, scaling_group, folder_host
-    }
+    };
     this.spinner.show();
     if (this.pipelineCreateMode === 'create') {
       try {
-        await window.backendaiclient.vfolder.create(sluggedTitle,folder_host);
+        await window.backendaiclient.vfolder.create(sluggedTitle, folder_host);
         const uploadPipelineTask = this._uploadPipelineConfig(sluggedTitle, configObj);
         const uploadComponentsTask = this._uploadPipelineComponents(sluggedTitle, {});
         await Promise.all([uploadPipelineTask, uploadComponentsTask]);
@@ -414,7 +414,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
         this.notification.text = _text('pipeline.PipelineCreated');
         this.notification.show();
       } catch (err) {
-        console.error(err)
+        console.error(err);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
@@ -430,7 +430,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
         this._hidePipelineCreateDialog();
         this.spinner.hide();
       } catch (err) {
-        console.error(err)
+        console.error(err);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
@@ -484,7 +484,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
       await this._uploadFile(vfpath, blob, folderName);
       this.spinner.hide();
     } catch (err) {
-      console.error(err)
+      console.error(err);
       this.spinner.hide();
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
@@ -526,13 +526,13 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
               label="${_t('pipeline.PipelineDialog.Description')}" maxLength="200">
           </mwc-textfield>
           <mwc-select id="pipeline-environment" label="${_t('pipeline.PipelineDialog.Environment')}">
-            <mwc-list-item style="display:none;" value="None">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
+            <mwc-list-item style="display:none;" value="None">${_t('session.launcher.ChooseEnvironment')}</mwc-list-item>
             ${this.languages.map((item) => html`
               <mwc-list-item id="${item.name}" value="${item.name}"
                   ?selected="${item.name === this.defaultLanguage}">
                 <div class="layout horizontal">
                   ${item.basename}
-                  ${item.tags ? item.tags.map(item => html`
+                  ${item.tags ? item.tags.map((item) => html`
                     <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
                   `) : ''}
                 </div>
@@ -562,7 +562,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
-          <mwc-button label="${_t("button.Cancel")}" @click="${this._hideDialog}"></mwc-button>
+          <mwc-button label="${_t('button.Cancel')}" @click="${this._hideDialog}"></mwc-button>
           <mwc-button unelevated
               label="${this.pipelineCreateMode === 'create' ? _t('button.Create') : _t('button.Update')}"
               @click="${this._createPipeline}"></mwc-button>
@@ -577,9 +577,9 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <div class="flex"></div>
-          <mwc-button label="${_t("button.Cancel")}" @click="${this._hideDialog}"></mwc-button>
+          <mwc-button label="${_t('button.Cancel')}" @click="${this._hideDialog}"></mwc-button>
           <mwc-button unelevated @click="${this._deletePipeline}">
-            ${_t("button.Delete")}
+            ${_t('button.Delete')}
           </mwc-button>
         </div>
       </backend-ai-dialog>

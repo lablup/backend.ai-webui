@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text} from "lit-translate";
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {get as _text} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 
 import 'weightless/button';
 import 'weightless/dialog';
@@ -24,7 +24,7 @@ import 'weightless/icon';
 @group Backend.AI Web UI
  @element backend-ai-splash
  */
-@customElement("backend-ai-splash")
+@customElement('backend-ai-splash')
 export default class BackendAISplash extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) dialog = Object();
@@ -39,7 +39,7 @@ export default class BackendAISplash extends LitElement {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       // language=CSS
       css`
@@ -107,13 +107,13 @@ export default class BackendAISplash extends LitElement {
     this.version = globalThis.packageVersion;
     this.managerVersion = globalThis.backendaiclient.managerVersion;
     if (this.edition !== 'Open Source') {
-      if (globalThis.packageValidUntil === "2099-12-31" || this.validUntil === '""' || this.validUntil == "") {
-        this.license = _text("license.Perpetual");
+      if (globalThis.packageValidUntil === '2099-12-31' || this.validUntil === '""' || this.validUntil == '') {
+        this.license = _text('license.Perpetual');
       } else {
-        this.license = _text("license.Subscription");
+        this.license = _text('license.Subscription');
       }
     } else {
-      this.license = _text("license.OpenSource");
+      this.license = _text('license.OpenSource');
     }
     this.dialog.show();
   }
@@ -137,8 +137,8 @@ export default class BackendAISplash extends LitElement {
             <li>Backend.AI Web UI <span id="version-detail" class="detail">${globalThis.packageVersion}</span></li>
             <li><span id="license-detail">${this.edition} Edition</span></li>
             <li><span id="valid-until" class="detail">
-              ${this.license === "Subscription" ? html`Subscription is active until ${this.validUntil}` : html``}
-              ${this.license === "Perpetual" ? html`Perpetual License` : html``}
+              ${this.license === 'Subscription' ? html`Subscription is active until ${this.validUntil}` : html``}
+              ${this.license === 'Perpetual' ? html`Perpetual License` : html``}
               </span></li>
             <li style="margin-top:15px;"><span id="mode-detail" class="detail">Backend.AI Cluster</span> <span id="manager-build-detail" class="detail">${this.managerVersion}</span></li>
             <li><span id="mode-detail" class="detail">${globalThis.isElectron ? 'App' : 'WebServer'}</span> <span id="build-detail" class="detail">Build ${globalThis.buildVersion}</span></li>
@@ -160,6 +160,6 @@ export default class BackendAISplash extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-splash": BackendAISplash;
+    'backend-ai-splash': BackendAISplash;
   }
 }

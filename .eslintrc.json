@@ -32,6 +32,7 @@
     "camelcase": "off",
     "no-empty": "off",
     "no-empty-function": "off",
-    "no-invalid-this": "off"
+    "no-invalid-this": "off",
+    "wc/guard-super-call": "off"
   }
 }

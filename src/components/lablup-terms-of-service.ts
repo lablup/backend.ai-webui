@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, customElement, html, LitElement, property} from 'lit-element';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -59,7 +59,7 @@ export default class LablupTermsOfService extends LitElement {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
