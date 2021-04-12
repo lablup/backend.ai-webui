@@ -66,9 +66,9 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) enableStorageProxy = false;
   @property({type: Boolean}) authenticated = false;
-  @property({type: String}) renameFolderId = '';
-  @property({type: String}) deleteFolderId = '';
-  @property({type: String}) leaveFolderId = '';
+  @property({type: String}) renameFolderName = '';
+  @property({type: String}) deleteFolderName = '';
+  @property({type: String}) leaveFolderName = '';
   @property({type: Object}) explorer = Object();
   @property({type: Array}) explorerFiles = [];
   @property({type: String}) existingFile = '';
@@ -494,7 +494,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="folder-setting-dialog" fixed backdrop>
         <span slot="title">${_t('data.folders.FolderOptionUpdate')}</span>
         <div slot="content" class="vertical layout">
-        <mwc-textfield id="clone-folder-src" label="${_t('data.ExistingFolderName')}" value="${this.renameFolderId}"
+        <mwc-textfield id="clone-folder-src" label="${_t('data.ExistingFolderName')}" value="${this.renameFolderName}"
           disabled></mwc-textfield>
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
             pattern="^[a-zA-Z0-9\._-]*$" autoValidate validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
@@ -1056,7 +1056,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         <div
           id="controls"
           class="layout flex center wrap"
-          folder-id="${rowData.item.name}"
+          folder-id="${rowData.item.id}"
+          folder-name="${rowData.item.name}"
         >
           <mwc-icon-button
             class="fg green controls-running"
@@ -1430,7 +1431,14 @@ export default class BackendAiStorageList extends BackendAIPage {
     return false;
   }
 
-  _getControlId(e) {
+  _getControlName(e) {
+    const controller = e.target;
+    const controls = controller.closest('#controls');
+    const folderName = controls.getAttribute('folder-name');
+    return folderName;
+  }
+
+    _getControlId(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const folderId = controls.getAttribute('folder-id');
@@ -1443,8 +1451,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the info icon button
    * */
   _infoFolder(e) {
-    const folderId = this._getControlId(e);
-    const job = globalThis.backendaiclient.vfolder.info(folderId);
+    const folderName = this._getControlName(e);
+    const job = globalThis.backendaiclient.vfolder.info(folderName);
     job.then((value) => {
       this.folderInfo = value;
       this.openDialog('info-folder-dialog');
@@ -1464,8 +1472,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the settings icon button
    * */
   _folderSettingsDialog(e) {
-    this.renameFolderId = this._getControlId(e);
-    const job = globalThis.backendaiclient.vfolder.info(this.renameFolderId);
+    this.renameFolderName = this._getControlName(e);
+    const job = globalThis.backendaiclient.vfolder.info(this.renameFolderName);
     job.then((value) => {
       this.folderInfo = value;
       this.shadowRoot.querySelector('#new-folder-name').value = '';
@@ -1503,7 +1511,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Update the folder with the name on the new-folder-name and options such as "permission" and "cloneable"
    * */
   _updateFolder() {
-    globalThis.backendaiclient.vfolder.name = this.renameFolderId;
+    globalThis.backendaiclient.vfolder.name = this.renameFolderName;
     const newNameEl = this.shadowRoot.querySelector('#new-folder-name');
     const newName = newNameEl.value;
     newNameEl.reportValidity();
@@ -1556,7 +1564,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     }
 
-    const job = globalThis.backendaiclient.vfolder.update_folder(input, this.renameFolderId);
+    const job = globalThis.backendaiclient.vfolder.update_folder(input, this.renameFolderName);
     job.then((value) => {
       this.notification.text = _text('data.folders.FolderUpdated');
       this.notification.show();
@@ -1580,10 +1588,17 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    * @param {Event} e - click the delete icon button
    * */
-  _deleteFolderDialog(e) {
-    this.deleteFolderId = this._getControlId(e);
+  async _deleteFolderDialog(e) {
+    this.deleteFolderName = this._getControlName(e);
+    let deleteFolderId = this._getControlId(e);
     this.shadowRoot.querySelector('#delete-folder-name').value = '';
-    this.openDialog('delete-folder-dialog');
+    let isDelible = await this._checkVfolderMounted(deleteFolderId);
+    if (isDelible) {
+      this.openDialog('delete-folder-dialog');
+    } else {
+      this.notification.text = _text('data.folders.CannotDeleteFolder');
+      this.notification.show(true);
+    }
   }
 
   /**
@@ -1591,22 +1606,22 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _deleteFolderWithCheck() {
     const typedDeleteFolderName = this.shadowRoot.querySelector('#delete-folder-name').value;
-    if (typedDeleteFolderName !== this.deleteFolderId) {
+    if (typedDeleteFolderName !== this.deleteFolderName) {
       this.notification.text = _text('data.folders.FolderNameMismatched');
       this.notification.show();
       return;
     }
     this.closeDialog('delete-folder-dialog');
-    this._deleteFolder(this.deleteFolderId);
+    this._deleteFolder(this.deleteFolderName);
   }
 
   /**
    * Delete folder and notice.
    *
-   * @param {string} folderId
+   * @param {string} folderName
    * */
-  _deleteFolder(folderId) {
-    const job = globalThis.backendaiclient.vfolder.delete(folderId);
+  _deleteFolder(folderName) {
+    const job = globalThis.backendaiclient.vfolder.delete(folderName);
     job.then((value) => {
       this.notification.text = _text('data.folders.FolderDeleted');
       this.notification.show();
@@ -1621,6 +1636,45 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     });
   }
+
+  /**
+   * Check whether this vfolder is delible or not
+   * 
+   * @param {string} folderId
+   * 
+   */
+  async _checkVfolderMounted(folderId = '') {
+    let fields: Array<string>= ['name', 'mounts'];
+    let status: string = ['RUNNING', 'RESTARTING', 'PENDING', 'PREPARING', 'PULLING', 'TERMINATING'].join();
+    let queryLimit: number = 100;
+    let offset: number = 0;
+    let response = await globalThis.backendaiclient.computeSession.list(fields, status, globalThis.backendaiclient._config.accessKey, queryLimit, offset, null, 1000);
+    let sessionList: Array<any> = response.compute_session_list.items;
+    let mountedFolderInfo: Array<any> = sessionList.filter(session => session.mounts.length > 0).map(session => 
+        session.mounts.map(mountsInfoStr => { 
+          // remove single quote, hyphen and any space
+          let mountInfo = mountsInfoStr.slice(1,-1).split(',')[2].replace(/['-\s]/g, '');
+
+          /**
+           * refine the legacy mount info which includes whole path
+           */
+          if (mountInfo.includes('/')) {
+            mountInfo = mountInfo.split('/');
+            let length = mountInfo.length;
+            // refine string according to folder id rules
+            mountInfo = mountInfo.slice(length - 3, length).join('');
+          }
+          return mountInfo;
+        })
+    )
+    mountedFolderInfo = Array.prototype.concat.apply([], mountedFolderInfo);
+    let mountedFolderInfoSet = new Set(mountedFolderInfo);
+    if (mountedFolderInfoSet.has(folderId)) {
+      return false;
+    }
+    return true; 
+  }
+
 
   /**
    * Clone folder
@@ -1638,7 +1692,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the delete icon button
    */
   _leaveInvitedFolderDialog(e) {
-    this.leaveFolderId = this._getControlId(e);
+    this.leaveFolderName = this._getControlName(e);
     this.shadowRoot.querySelector('#leave-folder-name').value = '';
     this.openDialog('leave-folder-dialog');
   }
@@ -1649,13 +1703,13 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _leaveFolderWithCheck() {
     const typedDeleteFolderName = this.shadowRoot.querySelector('#leave-folder-name').value;
-    if (typedDeleteFolderName !== this.leaveFolderId) {
+    if (typedDeleteFolderName !== this.leaveFolderName) {
       this.notification.text = _text('data.folders.FolderNameMismatched');
       this.notification.show();
       return;
     }
     this.closeDialog('leave-folder-dialog');
-    this._leaveFolder(this.leaveFolderId);
+    this._leaveFolder(this.leaveFolderName);
   }
 
   /**
@@ -1765,7 +1819,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         const regex = /[`~!@#$%^&*()|+=?;:'",<>{}[\]\\/\s]/gi;
         // if renaming its name, then compare old name and new name.
         if (isModifying) {
-          if (folderName.value === this.renameFolderId) {
+          if (folderName.value === this.renameFolderName) {
             folderName.validationMessage = _text('data.EnterDifferentValue');
             isValid = false;
             return {
@@ -1855,9 +1909,9 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {boolean} isWritable - check whether write operation is allowed or not
    * */
   _folderExplorer(e, isWritable) {
-    const folderId = this._getControlId(e);
+    const folderName = this._getControlName(e);
     const explorer = {
-      id: folderId,
+      id: folderName,
       breadcrumb: ['.'],
     };
 
@@ -2556,7 +2610,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the share button
    * */
   _shareFolderDialog(e) {
-    this.selectedFolder = this._getControlId(e);
+    this.selectedFolder = this._getControlName(e);
     this._initializeSharingFolderDialogLayout();
     this.openDialog('share-folder-dialog');
   }
