@@ -31,6 +31,7 @@ compile_wsproxy:
 	#cd ./src/wsproxy; rollup -c rollup.config.ts
 all: dep mac win linux
 dep:
+	cp -u ./scripts/pre-commit ./.git/hooks/pre-commit && chmod 755 ./.git/hooks/pre-commit
 	cd ./src/plastics/weightless && bash ./patch-input-behavior.sh
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \

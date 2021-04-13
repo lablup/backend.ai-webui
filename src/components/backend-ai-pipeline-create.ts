@@ -4,7 +4,7 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, customElement, html, property} from 'lit-element';
+import {css, CSSResultOrNative, CSSResultArray, customElement, html, property} from 'lit-element';
 
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select/mwc-select';
@@ -497,7 +497,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     }
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
