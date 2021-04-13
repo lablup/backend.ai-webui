@@ -373,6 +373,8 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Check currecnt condition is running.
+   *
+   * @return {boolean} true if condition is 'running'
    */
   _isRunning() {
     return this.condition === 'running';
@@ -382,6 +384,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    * Convert the value byte to MB.
    *
    * @param {number} value
+   * @return {number} converted value from byte to MB.
    */
   _byteToMB(value) {
     return Math.floor(value / 1000000);
@@ -391,6 +394,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    * Convert the value MB to GB.
    *
    * @param {number} value
+   * @return {number} converted value from MB to GB.
    */
   _MBtoGB(value) {
     return Math.floor(value / 1024);
@@ -401,6 +405,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    *
    * @param {Date} start - Start time of backend.ai client.
    * @param {Date} end - End time of backend.ai client.
+   * @return {number | string} Elasped time with guide text.
    */
   _elapsed(start, end) {
     const startDate = new Date(start);
@@ -423,6 +428,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    * Covert start date to human readable date.
    *
    * @param {Date} start
+   * @return {string} Human-readable date string.
    */
   _humanReadableDate(start) {
     const d = new Date(start);
@@ -433,6 +439,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    * Increase index by 1.
    *
    * @param {number} index
+   * @return {number} index + 1 (for table index)
    */
   _indexFrom1(index: number) {
     return index + 1;
@@ -442,6 +449,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    * Return the heartbeat status.
    *
    * @param {string} state
+   * @return {string} state
    */
   _heartbeatStatus(state: string) {
     return state;
@@ -451,6 +459,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    * Change heartbeat color according to heartbeat status.
    *
    * @param {string} state
+   * @return {string} color of state. 'gree' if ALIVE, 'red' if TERMINATED. 'blue' for other states
    */
   _heartbeatColor(state: string) {
     switch (state) {
@@ -571,6 +580,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    *
    * @param {any} start - start time
    * @param {any} end - end time
+   * @return {any} elapsedTime text (lazy evaluation via backendaiclient.utils)
    * */
   _elapsed2(start, end) {
     return globalThis.backendaiclient.utils.elapsedTime(start, end);
@@ -734,9 +744,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Show detailed agent information as dialog form.
    *
-   * @param {DOMelement} root
-   * @param {object} column (<vaadin-grid-column> element)
-   * @param {object} rowData
+   * @param {string} agentId - ID of agent to show
    */
   showAgentDetailDialog(agentId) {
     this.agentDetail = this.agentsObject[agentId];
