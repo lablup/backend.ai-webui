@@ -36,7 +36,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
   @property({type: Object}) notification = Object();
   // Environments
   @property({type: Object}) tags = Object();
-  @property({type: Array}) languages = [];
+  @property({type: Array}) languages;
   @property({type: String}) defaultLanguage = '';
   @property({type: Array}) versions = [];
   @property({type: String}) scalingGroup = '';
@@ -64,6 +64,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
       'Lablup Research Env.': 'python-ff',
       'Python': 'python',
     };
+    this.languages = [];
   }
 
   firstUpdated() {
@@ -77,17 +78,19 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
       .then((json) => {
         this.imageInfo = json.imageInfo;
         for (const key in this.imageInfo) {
-          this.tags[key] = [];
-          if ('name' in this.imageInfo[key]) {
-            this.aliases[key] = this.imageInfo[key].name;
-            this.imageNames[key] = this.imageInfo[key].name;
-          }
-          if ('label' in this.imageInfo[key]) {
-            this.imageInfo[key].label.forEach((item)=>{
-              if (!('category' in item)) {
-                this.tags[key].push(item.tag);
-              }
-            });
+          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
+            this.tags[key] = [];
+            if ('name' in this.imageInfo[key]) {
+              this.aliases[key] = this.imageInfo[key].name;
+              this.imageNames[key] = this.imageInfo[key].name;
+            }
+            if ('label' in this.imageInfo[key]) {
+              this.imageInfo[key].label.forEach((item) => {
+                if (!('category' in item)) {
+                  this.tags[key].push(item.tag);
+                }
+              });
+            }
           }
         }
       });
@@ -131,7 +134,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
       'resource_limits { key min max }'
     ];
     window.backendaiclient.image.list(fields, true).then((response) => {
-      const images: Array<object> = [];
+      const images: Array<Record<string, unknown>> = [];
       Object.keys(response.images).map((objectKey, index) => {
         const item = response.images[objectKey];
         if (item.installed === true) {
@@ -265,7 +268,9 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
 
   _initAliases() {
     for (const item in this.aliases) {
-      this.aliases[this.aliases[item]] = item;
+      if ({}.hasOwnProperty.call(this.aliases, item)) {
+        this.aliases[this.aliases[item]] = item;
+      }
     }
   }
 
@@ -547,7 +552,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
             `)}
           </mwc-select>
           <mwc-select id="pipeline-scaling-group" label="${_t('session.launcher.OwnerResourceGroup')}">
-            ${this.scalingGroups.map((item) => html`
+            ${this.scalingGroups.map((item: Record<string, unknown>) => html`
               <mwc-list-item id="${item.name}" value="${item.name}"
                   ?selected="${item.name === this.scalingGroup}">
                 ${item.name}

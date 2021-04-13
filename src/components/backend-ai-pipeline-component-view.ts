@@ -4,7 +4,7 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, customElement, html, property} from 'lit-element';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-list/mwc-list-item';
@@ -118,6 +118,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     }
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
+        return;
       }, true);
     } else {
     }
@@ -181,7 +182,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
 
     // Mapping component ID and its information
     const nodeInfo = {};
-    this.nodes.forEach((node) => nodeInfo[node.id] = node);
+    this.nodes.forEach((node: Record<string, number>) => nodeInfo[node.id] = node);
     this.nodeInfo = nodeInfo;
   }
 
@@ -212,7 +213,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
   }
 
   _openComponentAddDialog() {
-    let selectedNodes = null;
+    let selectedNodes: any = null;
     if (this.componentsSelected.length > 0) {
       selectedNodes = this.componentsSelected;
     }
@@ -269,7 +270,12 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     this.pipelineRunner.editCode(this.pipelineSelectedName, nodeInfo);
   }
 
-  static get styles() {
+  _runPipeline() {
+    // TODO: fix this function.
+    return;
+  }
+
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
