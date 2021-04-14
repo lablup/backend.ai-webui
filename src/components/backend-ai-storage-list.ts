@@ -1592,13 +1592,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.deleteFolderName = this._getControlName(e);
     let deleteFolderId = this._getControlId(e);
     this.shadowRoot.querySelector('#delete-folder-name').value = '';
-    let isDelible = await this._checkVfolderMounted(deleteFolderId);
-    if (isDelible) {
+    // let isDelible = await this._checkVfolderMounted(deleteFolderId);
+    // if (isDelible) {
       this.openDialog('delete-folder-dialog');
-    } else {
-      this.notification.text = _text('data.folders.CannotDeleteFolder');
-      this.notification.show(true);
-    }
+    //} else {
+    //   this.notification.text = _text('data.folders.CannotDeleteFolder');
+    //   this.notification.show(true);
+    // }
   }
 
   /**
@@ -1622,11 +1622,18 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _deleteFolder(folderName) {
     const job = globalThis.backendaiclient.vfolder.delete(folderName);
-    job.then((value) => {
-      this.notification.text = _text('data.folders.FolderDeleted');
-      this.notification.show();
-      this.refreshFolderList();
-      this._triggerFolderListChanged();
+    job.then((resp) => {
+      console.log(resp);
+      if (resp.msg) {
+        console.log(resp);
+        this.notification.text = _text('data.folders.CannotDeleteFolder');
+        this.notification.show(true);
+      } else {
+        this.notification.text = _text('data.folders.FolderDeleted');
+        this.notification.show();
+        this.refreshFolderList();
+        this._triggerFolderListChanged();
+      }
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
@@ -1644,35 +1651,10 @@ export default class BackendAiStorageList extends BackendAIPage {
    * 
    */
   async _checkVfolderMounted(folderId = '') {
-    let fields: Array<string>= ['name', 'mounts'];
-    let status: string = ['RUNNING', 'RESTARTING', 'PENDING', 'PREPARING', 'PULLING', 'TERMINATING'].join();
-    let queryLimit: number = 100;
-    let offset: number = 0;
-    let response = await globalThis.backendaiclient.computeSession.list(fields, status, globalThis.backendaiclient._config.accessKey, queryLimit, offset, null, 1000);
-    let sessionList: Array<any> = response.compute_session_list.items;
-    let mountedFolderInfo: Array<any> = sessionList.filter(session => session.mounts.length > 0).map(session => 
-        session.mounts.map(mountsInfoStr => { 
-          // remove single quote, hyphen and any space
-          let mountInfo = mountsInfoStr.slice(1,-1).split(',')[2].replace(/['-\s]/g, '');
-
-          /**
-           * refine the legacy mount info which includes whole path
-           */
-          if (mountInfo.includes('/')) {
-            mountInfo = mountInfo.split('/');
-            let length = mountInfo.length;
-            // refine string according to folder id rules
-            mountInfo = mountInfo.slice(length - 3, length).join('');
-          }
-          return mountInfo;
-        })
-    )
-    mountedFolderInfo = Array.prototype.concat.apply([], mountedFolderInfo);
-    let mountedFolderInfoSet = new Set(mountedFolderInfo);
-    if (mountedFolderInfoSet.has(folderId)) {
-      return false;
-    }
-    return true; 
+    /** 
+     * TODO: check whether the folder is mounted in one or more sessions or not
+     *       by requests.
+     */
   }
 
 
