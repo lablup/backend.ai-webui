@@ -324,13 +324,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           margin: 0 auto;
           font-size: 8px;
         }
-
+        .resource-allocated-box {
+          z-index:10;
+          position: relative;
+        }
         .resource-allocated-box-shadow {
           position:relative;
           z-index:1;
-          top: -70px;
+          top: -65px;
           height:200px;
-          width:60px;
+          width:70px;
           opacity: 1;
         }
 
@@ -586,12 +589,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .allocation-shadow {
-          height: 60px;
+          height: 70px;
           width: 200px;
           position: absolute;
           top: -5px;
           left: 5px;
-          background-color: #eee;
+          border: 1px solid #ccc;
         }
 
         #modify-env-dialog {
@@ -2154,13 +2157,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         item.style.position = 'absolute';
         item.style.top = '-' + (5 + 5 * i) + 'px';
         item.style.left = (5 + 5 * i) + 'px';
-        item.style.backgroundColor = 'rgba(245,245,245,'+ (0.7 - i*0.1) +')';
+        const intensity = 245 + i*2;
+        item.style.backgroundColor = 'rgb(' + intensity +',' + intensity +',' +intensity +')';
+        item.style.borderColor = 'rgb(' + (intensity-10) +',' + (intensity-10) +',' +(intensity-10) +')';
         item.style.zIndex = (6 - i).toString();
         container.appendChild(item);
       }
       this.shadowRoot.querySelector('#total-allocation-pane').appendChild(container);
-    } else {
-
     }
   }
 
@@ -2589,7 +2592,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <p class="title" style="font-weight:400;">${_t('session.launcher.TotalAllocation')}</p>
           <div class="horizontal layout center center-justified allocation-check">
             <div id="total-allocation-pane" style="position:relative;">
-              <div class="horizontal layout resource-allocated-box" style="z-index:10!important;">
+              <div class="horizontal layout resource-allocated-box">
                 <div class="vertical layout center center-justified resource-allocated">
                   <p>${_t('session.launcher.CPU')}</p>
                   <span>${this.cpu_request}</span>
