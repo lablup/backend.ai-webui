@@ -2136,7 +2136,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const cluster_size = this.shadowRoot.querySelector('#cluster-size').value;
     if (cluster_size > 1) {
       const container = this.shadowRoot.querySelector('#resource-allocated-box-shadow');
-      for (let i = 0; i < this.cluster_size; i = i + 1) {
+      for (let i = 0; i < Math.min(6, cluster_size-1); i = i + 1) {
         const item = document.createElement('div');
         item.classList.add('horizontal', 'layout', 'center', 'center-justified', 'resource-allocated-box', 'allocation-shadow');
         item.style.top = '-' + (5 + 5 * i) + 'px';
@@ -2575,7 +2575,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
           <p class="title" style="font-weight:400;">${_t('session.launcher.TotalAllocation')}</p>
           <div class="horizontal layout center center-justified allocation-check">
-            <div id="total-allocation-pane" style="position:relative;">
+            <div id="total-allocation-pane" style="position:relative;z-index:10;">
               <div class="horizontal layout resource-allocated-box" style="z-index:10;">
                 <div class="vertical layout center center-justified resource-allocated">
                   <p>${_t('session.launcher.CPU')}</p>
@@ -2598,16 +2598,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <p>${_t('session.launcher.GPUSlot')}</p>
                 </div>
               </div>
-              <div id="resource-allocated-box-shadow" style="z-index:9"></div>
+              <div id="resource-allocated-box-shadow" style="z-index:9;height:0;width:0;"></div>
             </div>
-            <div class="vertical layout center center-justified cluster-allocated">
+            <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
               <div class="horizontal layout">
                 <p>×</p>
                 <span>${this.cluster_size <= 1 ? this.session_request : this.cluster_size}</span>
               </div>
               <p class="small">${_t('session.launcher.Container')}</p>
             </div>
-            <div class="vertical layout center center-justified cluster-allocated">
+            <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
               <div class="horizontal layout">
                 <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
                 <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
