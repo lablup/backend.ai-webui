@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {LitElement} from "lit-element";
+import {LitElement} from 'lit-element';
 
 /**
  Backend.AI Message handler
@@ -13,7 +13,7 @@ import {LitElement} from "lit-element";
 
  <backend-ai-message></backend-ai-message>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  */
 class BackendAiMessage extends LitElement {
   constructor() {
@@ -22,9 +22,6 @@ class BackendAiMessage extends LitElement {
 
   static get is() {
     return 'backend-ai-message';
-  }
-
-  firstUpdated() {
   }
 
   connectedCallback() {

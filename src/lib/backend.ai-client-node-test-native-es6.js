@@ -21,7 +21,7 @@ class ClientConfig {
    * @param {string} accessKey - access key to connect Backend.AI manager
    * @param {string} secretKey - secret key to connect Backend.AI manager
    * @param {string} endpoint  - endpoint of Backend.AI manager
-   * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires console-server.
+   * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires webserver.
    */
   constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
     // fixed configs with this implementation
@@ -264,7 +264,7 @@ class Client {
   }
 
   /**
-   * Check if console-server is authenticated. This requires additional console-server package.
+   * Check if webserver is authenticated. This requires additional webserver package.
    *
    */
   async check_login() {
@@ -284,7 +284,7 @@ class Client {
   }
 
   /**
-   * Login into console-server with given ID/Password. This requires additional console-server package.
+   * Login into webserver with given ID/Password. This requires additional webserver package.
    *
    */
   async login() {
@@ -307,7 +307,7 @@ class Client {
   }
 
   /**
-   * Logout from console-server. This requires additional console-server package.
+   * Logout from webserver. This requires additional webserver package.
    *
    */
   logout() {

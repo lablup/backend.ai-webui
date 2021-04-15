@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {customElement, html, LitElement, property} from "lit-element";
-import {get as _text, translate as _t} from "lit-translate";
+import {CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {get as _text} from 'lit-translate';
 
 import 'weightless/dialog';
 import 'weightless/banner';
@@ -15,16 +15,16 @@ import './backend-ai-indicator';
 /**
  Backend.AI Indicator pool for Console
 
- `backend-ai-indicator-pool` is a global indicator pool for console.
+ `backend-ai-indicator-pool` is a global indicator pool for web UI.
 
  Example:
 
  <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-indicator-pool
  */
-@customElement("backend-ai-indicator-pool")
+@customElement('backend-ai-indicator-pool')
 export default class BackendAIIndicatorPool extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Number}) value = 0;
@@ -33,13 +33,14 @@ export default class BackendAIIndicatorPool extends LitElement {
   @property({type: String}) text = '';
   @property({type: String}) mode = 'determinate';
   @property({type: Object}) dialog;
-  @property({type: Array}) pool = Array();
+  @property({type: Array}) pool;
 
   constructor() {
     super();
+    this.pool = [];
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [];
   }
 
@@ -58,7 +59,7 @@ export default class BackendAIIndicatorPool extends LitElement {
    */
   async start(mode = 'determinate') {
     this.gc();
-    let indicator = document.createElement('backend-ai-indicator');
+    const indicator = document.createElement('backend-ai-indicator');
     indicator.value = 0;
     indicator.text = _text('notification.Initializing');
     indicator.mode = mode;
@@ -77,11 +78,11 @@ export default class BackendAIIndicatorPool extends LitElement {
    * @param {backend-ai-indicator} indicator - Indicator to remove.
    */
   removeIndicator(indicator) {
-    let result = this.pool.filter(obj => {
+    const result = this.pool.filter((obj) => {
       return obj === indicator;
     });
     if (result.length > 0) {
-      let index = this.pool.indexOf(result[0]);
+      const index = this.pool.indexOf(result[0]);
       if (index > -1) {
         this.pool.splice(index, 1);
       }
@@ -92,7 +93,7 @@ export default class BackendAIIndicatorPool extends LitElement {
   }
 
   gc() {
-    let finished: Array<any> = [];
+    const finished: Array<any> = [];
     this.pool.forEach((indicator) => {
       console.log(indicator.value);
       if (indicator.value >= 1) {
@@ -115,6 +116,6 @@ export default class BackendAIIndicatorPool extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-indicator-pool": BackendAIIndicatorPool;
+    'backend-ai-indicator-pool': BackendAIIndicatorPool;
   }
 }

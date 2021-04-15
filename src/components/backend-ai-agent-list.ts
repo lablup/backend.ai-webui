@@ -3,14 +3,14 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid-column';
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid-sort-column';
+import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-column';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '../plastics/lablup-shields/lablup-shields';
 
 import '@material/mwc-linear-progress';
@@ -19,9 +19,9 @@ import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon/mwc-icon';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
-import {BackendAiStyles} from "./backend-ai-general-styles";
-import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+import {default as PainKiller} from './backend-ai-painkiller';
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
@@ -34,15 +34,15 @@ import './lablup-progress-bar';
  ... content ...
  </backend-ai-agent-list>
 
- @group Backend.AI Console
+ @group Backend.AI Web UI
  @element backend-ai-agent-list
  */
 
-@customElement("backend-ai-agent-list")
+@customElement('backend-ai-agent-list')
 export default class BackendAIAgentList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Boolean}) useHardwareMetadata = false;
-  @property({type: Array}) agents = Array();
+  @property({type: Array}) agents = [];
   @property({type: Object}) agentsObject = Object();
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
@@ -59,7 +59,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -98,12 +98,13 @@ export default class BackendAIAgentList extends BackendAIPage {
           margin-right: 5px;
         }
 
-        #agent-detail {
+        backend-ai-dialog#agent-detail {
           --component-max-width: 90%;
+          --component-min-width: 350px;
         }
 
         lablup-progress-bar {
-          width: 100px;
+          --progress-bar-width: 100px;
           border-radius: 3px;
           height: 10px;
           --mdc-theme-primary: #3677eb;
@@ -122,7 +123,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
         lablup-progress-bar.mem {
           --progress-bar-height: 15px;
-          width: 100px;
+          --progress-bar-width: 100%;
           margin-bottom: 0;
         }
 
@@ -151,19 +152,19 @@ export default class BackendAIAgentList extends BackendAIPage {
    *
    * @param {Boolean} active - The component will work if active is true.
    */
-  async _viewStateChanged(active: Boolean) {
+  async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
       return;
     }
     // If disconnected
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        let status = 'ALIVE';
+        const status = 'ALIVE';
         this._loadAgentList(status);
       }, true);
     } else { // already connected
-      let status = 'ALIVE';
+      const status = 'ALIVE';
       this._loadAgentList(status);
     }
   }
@@ -173,48 +174,48 @@ export default class BackendAIAgentList extends BackendAIPage {
    *
    * @param {string} status - The agent's backend.ai client status.
    */
-  _loadAgentList(status: string = 'running') {
+  _loadAgentList(status = 'running') {
     if (this.active !== true) {
       return;
     }
-    let fields: Array<String>;
+    let fields: Array<string>;
     switch (this.condition) {
-      case 'running':
-        status = 'ALIVE';
-        fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
-          'lost_at', 'status_changed', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
-        break;
-      case 'terminated':
-        status = 'TERMINATED';
-        fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
-          'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
-        break;
-      case 'archived':
-      default:
-        status = 'ALIVE';
-        fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
-          'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
+    case 'running':
+      status = 'ALIVE';
+      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+        'lost_at', 'status_changed', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
+      break;
+    case 'terminated':
+      status = 'TERMINATED';
+      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+        'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
+      break;
+    case 'archived':
+    default:
+      status = 'ALIVE';
+      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+        'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     }
     if (this.useHardwareMetadata && globalThis.backendaiclient.supports('hardware-metadata')) {
       fields.push('hardware_metadata');
     }
 
-    globalThis.backendaiclient.agent.list(status, fields, 10 * 1000).then(response => {
-      let agents = response.agents;
+    globalThis.backendaiclient.agent.list(status, fields, 10 * 1000).then((response) => {
+      const agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
         let filter;
         if (this.filter !== '') {
-          filter = this.filter.split(":");
+          filter = this.filter.split(':');
         }
         Object.keys(agents).map((objectKey, index) => {
-          let agent: any = agents[objectKey];
+          const agent: any = agents[objectKey];
           if (this.filter === '' || (filter[0] in agent && agent[filter[0]] === filter[1])) {
-            let occupied_slots = JSON.parse(agent.occupied_slots);
-            let available_slots = JSON.parse(agent.available_slots);
-            let compute_plugins = JSON.parse(agent.compute_plugins);
+            const occupied_slots = JSON.parse(agent.occupied_slots);
+            const available_slots = JSON.parse(agent.available_slots);
+            const compute_plugins = JSON.parse(agent.compute_plugins);
             ['cpu', 'mem'].forEach((slot) => { // Fallback routine when occupied slots are not present
               if (slot in occupied_slots === false) {
-                occupied_slots[slot] = "0";
+                occupied_slots[slot] = '0';
               }
             });
             if ('live_stat' in agent) {
@@ -272,72 +273,72 @@ export default class BackendAIAgentList extends BackendAIPage {
               agents[objectKey].used_rocm_gpu_slots_ratio = agents[objectKey].used_rocm_gpu_slots / agents[objectKey].rocm_gpu_slots;
             }
             if ('cuda' in compute_plugins) {
-              let cuda_plugin = compute_plugins['cuda'];
+              const cuda_plugin = compute_plugins['cuda'];
               agents[objectKey].cuda_plugin = cuda_plugin;
             }
-            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cpu_util' in agents[objectKey].live_stat.devices) {
-              let cpu_util: Array<any> = [];
+            if (agents[objectKey].live_stat?.devices?.cpu_util) {
+              const cpu_util: Array<any> = [];
               Object.entries(agents[objectKey].live_stat.devices.cpu_util).forEach(([k, v]) => {
-                let agentInfo = Object.assign({}, v, {num: k});
+                const agentInfo = Object.assign({}, v, {num: k});
                 cpu_util.push(agentInfo);
               });
               agents[objectKey].cpu_util_live = cpu_util;
             }
-            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_util' in agents[objectKey].live_stat.devices) {
-              let cuda_util: Array<any> = [];
-              let i: number = 1;
+            if (agents[objectKey].live_stat?.devices?.cuda_util) {
+              const cuda_util: Array<any> = [];
+              let i = 1;
               Object.entries(agents[objectKey].live_stat.devices.cuda_util).forEach(([k, v]) => {
-                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                const agentInfo = Object.assign({}, v, {num: k, idx: i});
                 i = i + 1;
                 cuda_util.push(agentInfo);
               });
               agents[objectKey].cuda_util_live = cuda_util;
             }
-            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'cuda_mem' in agents[objectKey].live_stat.devices) {
-              let cuda_mem: Array<any> = [];
-              let i: number = 1;
+            if (agents[objectKey].live_stat?.devices?.cuda_mem) {
+              const cuda_mem: Array<any> = [];
+              let i = 1;
               Object.entries(agents[objectKey].live_stat.devices.cuda_mem).forEach(([k, v]) => {
-                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                const agentInfo = Object.assign({}, v, {num: k, idx: i});
                 i = i + 1;
                 cuda_mem.push(agentInfo);
               });
               agents[objectKey].cuda_mem_live = cuda_mem;
             }
-            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_util' in agents[objectKey].live_stat.devices) {
-              let rocm_util: Array<any> = [];
-              let i: number = 1;
+            if (agents[objectKey].live_stat?.devices?.rocm_util) {
+              const rocm_util: Array<any> = [];
+              let i = 1;
               Object.entries(agents[objectKey].live_stat.devices.rocm_util).forEach(([k, v]) => {
-                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                const agentInfo = Object.assign({}, v, {num: k, idx: i});
                 i = i + 1;
                 rocm_util.push(agentInfo);
               });
               agents[objectKey].rocm_util_live = rocm_util;
             }
-            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'rocm_mem' in agents[objectKey].live_stat.devices) {
-              let rocm_mem: Array<any> = [];
-              let i: number = 1;
+            if (agents[objectKey].live_stat?.devices?.rocm_mem) {
+              const rocm_mem: Array<any> = [];
+              let i = 1;
               Object.entries(agents[objectKey].live_stat.devices.rocm_mem).forEach(([k, v]) => {
-                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                const agentInfo = Object.assign({}, v, {num: k, idx: i});
                 i = i + 1;
                 rocm_mem.push(agentInfo);
               });
               agents[objectKey].rocm_mem_live = rocm_mem;
             }
-            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_util' in agents[objectKey].live_stat.devices) {
-              let tpu_util: Array<any> = [];
-              let i: number = 1;
+            if (agents[objectKey].live_stat?.devices?.tpu_util) {
+              const tpu_util: Array<any> = [];
+              let i = 1;
               Object.entries(agents[objectKey].live_stat.devices.tpu_util).forEach(([k, v]) => {
-                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                const agentInfo = Object.assign({}, v, {num: k, idx: i});
                 i = i + 1;
                 tpu_util.push(agentInfo);
               });
               agents[objectKey].tpu_util_live = tpu_util;
             }
-            if ('live_stat' in agents[objectKey] && 'devices' in agents[objectKey].live_stat && 'tpu_mem' in agents[objectKey].live_stat.devices) {
-              let tpu_mem: Array<any> = [];
-              let i: number = 1;
+            if (agents[objectKey].live_stat?.devices?.tpu_mem) {
+              const tpu_mem: Array<any> = [];
+              let i = 1;
               Object.entries(agents[objectKey].live_stat.devices.tpu_mem).forEach(([k, v]) => {
-                let agentInfo = Object.assign({}, v, {num: k, idx: i});
+                const agentInfo = Object.assign({}, v, {num: k, idx: i});
                 i = i + 1;
                 tpu_mem.push(agentInfo);
               });
@@ -358,10 +359,10 @@ export default class BackendAIAgentList extends BackendAIPage {
 
       if (this.active === true) {
         setTimeout(() => {
-          this._loadAgentList(status)
+          this._loadAgentList(status);
         }, 15000);
       }
-    }).catch(err => {
+    }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -372,6 +373,8 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Check currecnt condition is running.
+   *
+   * @return {boolean} true if condition is 'running'
    */
   _isRunning() {
     return this.condition === 'running';
@@ -381,6 +384,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    * Convert the value byte to MB.
    *
    * @param {number} value
+   * @return {number} converted value from byte to MB.
    */
   _byteToMB(value) {
     return Math.floor(value / 1000000);
@@ -390,6 +394,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    * Convert the value MB to GB.
    *
    * @param {number} value
+   * @return {number} converted value from MB to GB.
    */
   _MBtoGB(value) {
     return Math.floor(value / 1024);
@@ -400,16 +405,17 @@ export default class BackendAIAgentList extends BackendAIPage {
    *
    * @param {Date} start - Start time of backend.ai client.
    * @param {Date} end - End time of backend.ai client.
+   * @return {number | string} Elasped time with guide text.
    */
   _elapsed(start, end) {
-    let startDate = new Date(start);
+    const startDate = new Date(start);
     let endDate: Date;
     if (this.condition === 'running') {
       endDate = new Date();
     } else {
       endDate = new Date(end);
     }
-    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+    const seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
     if (this.condition === 'running') {
       return 'Running ' + seconds + 'sec.';
     } else {
@@ -422,9 +428,10 @@ export default class BackendAIAgentList extends BackendAIPage {
    * Covert start date to human readable date.
    *
    * @param {Date} start
+   * @return {string} Human-readable date string.
    */
   _humanReadableDate(start) {
-    let d = new Date(start);
+    const d = new Date(start);
     return d.toLocaleString();
   }
 
@@ -432,6 +439,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    * Increase index by 1.
    *
    * @param {number} index
+   * @return {number} index + 1 (for table index)
    */
   _indexFrom1(index: number) {
     return index + 1;
@@ -441,6 +449,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    * Return the heartbeat status.
    *
    * @param {string} state
+   * @return {string} state
    */
   _heartbeatStatus(state: string) {
     return state;
@@ -450,15 +459,16 @@ export default class BackendAIAgentList extends BackendAIPage {
    * Change heartbeat color according to heartbeat status.
    *
    * @param {string} state
+   * @return {string} color of state. 'gree' if ALIVE, 'red' if TERMINATED. 'blue' for other states
    */
   _heartbeatColor(state: string) {
     switch (state) {
-      case 'ALIVE':
-        return 'green';
-      case 'TERMINATED':
-        return 'red';
-      default:
-        return 'blue';
+    case 'ALIVE':
+      return 'green';
+    case 'TERMINATED':
+      return 'red';
+    default:
+      return 'blue';
     }
   }
 
@@ -470,7 +480,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    * @param {object} rowData
    */
   _indexRenderer(root, column, rowData) {
-    let idx = rowData.index + 1;
+    const idx = rowData.index + 1;
     render(
       html`
         <div>${idx}</div>
@@ -509,49 +519,49 @@ export default class BackendAIAgentList extends BackendAIPage {
     let location: string;
     let color: string;
     let icon: string;
-    let regionData = rowData.item.region.split('/');
+    const regionData = rowData.item.region.split('/');
     if (regionData.length > 1) {
       platform = regionData[0];
       location = regionData[1];
     } else {
       platform = regionData[0];
-      location = "";
+      location = '';
     }
     switch (platform) {
-      case "aws":
-      case "amazon":
-        color = 'orange';
-        icon = 'aws';
-        break;
-      case "azure":
-        color = 'blue';
-        icon = 'azure';
-        break;
-      case "gcp":
-      case "google":
-        color = 'lightblue';
-        icon = 'gcp';
-        break;
-      case "nbp":
-      case "naver":
-        color = 'green';
-        icon = 'nbp';
-        break;
-      case "openstack":
-        color = 'red';
-        icon = 'openstack';
-        break;
-      case "dgx":
-        color = 'green';
-        icon = 'local';
-        break;
-      case "local":
-        color = 'yellow';
-        icon = 'local';
-        break;
-      default:
-        color = 'yellow';
-        icon = 'local';
+    case 'aws':
+    case 'amazon':
+      color = 'orange';
+      icon = 'aws';
+      break;
+    case 'azure':
+      color = 'blue';
+      icon = 'azure';
+      break;
+    case 'gcp':
+    case 'google':
+      color = 'lightblue';
+      icon = 'gcp';
+      break;
+    case 'nbp':
+    case 'naver':
+      color = 'green';
+      icon = 'nbp';
+      break;
+    case 'openstack':
+      color = 'red';
+      icon = 'openstack';
+      break;
+    case 'dgx':
+      color = 'green';
+      icon = 'local';
+      break;
+    case 'local':
+      color = 'yellow';
+      icon = 'local';
+      break;
+    default:
+      color = 'yellow';
+      icon = 'local';
     }
     render(
       // language=HTML
@@ -570,6 +580,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    *
    * @param {any} start - start time
    * @param {any} end - end time
+   * @return {any} elapsedTime text (lazy evaluation via backendaiclient.utils)
    * */
   _elapsed2(start, end) {
     return globalThis.backendaiclient.utils.elapsedTime(start, end);
@@ -628,7 +639,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               <div class="layout horizontal start resource-indicator">
                 <mwc-icon class="fg green">developer_board</mwc-icon>
                 <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
-                <span class="indicator">${_t("general.cores")}</span>
+                <span class="indicator">${_t('general.cores')}</span>
               </div>
               <span class="flex"></span>
               <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
@@ -720,13 +731,12 @@ export default class BackendAIAgentList extends BackendAIPage {
               <lablup-shields app="" color="blue"
                               description="Fractional GPU™" ui="round"></lablup-shields>
             ` : html``}
-            ${'cuda_version' in rowData.item.cuda_plugin ? html`
+            ${rowData.item.cuda_plugin?.cuda_version ? html`
                 <lablup-shields app="CUDA" color="green"
-                                description="${rowData.item.cuda_plugin['cuda_version']}" ui="round"></lablup-shields>`
-              : html`
+                                description="${rowData.item.cuda_plugin['cuda_version']}" ui="round"></lablup-shields>` :
+    html`
                 <lablup-shields app="CUDA Disabled" color="green"
                                 description="" ui="flat"></lablup-shields>`}` : html``}
-
         </div>`, root
     );
   }
@@ -734,9 +744,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   /**
    * Show detailed agent information as dialog form.
    *
-   * @param {DOMelement} root
-   * @param {object} column (<vaadin-grid-column> element)
-   * @param {object} rowData
+   * @param {string} agentId - ID of agent to show
    */
   showAgentDetailDialog(agentId) {
     this.agentDetail = this.agentsObject[agentId];
@@ -759,13 +767,15 @@ export default class BackendAIAgentList extends BackendAIPage {
           <mwc-icon-button class="fg blue controls-running" icon="assignment"
                            @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
-            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running"
+            <mwc-icon-button class="temporarily-hide fg green controls-running" icon="refresh"
+                             @click="${() => this._loadAgentList()}"></mwc-icon-button>
+            <mwc-icon-button class="temporarily-hide fg controls-running" disabled
                              icon="build"></mwc-icon-button>
-            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running"
+            <mwc-icon-button class="temporarily-hide fg controls-running" disabled
                              icon="alarm"></mwc-icon-button>
-            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running"
+            <mwc-icon-button class="temporarily-hide fg controls-running" disabled
                              icon="pause"></mwc-icon-button>
-            <mwc-icon-button class="temporarily-hide" disabled class="fg controls-running"
+            <mwc-icon-button class="temporarily-hide fg controls-running" disabled
                              icon="delete"></mwc-icon-button>
           ` : html``}
         </div>`, root
@@ -783,33 +793,33 @@ export default class BackendAIAgentList extends BackendAIPage {
                    .items="${this.agents}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="80px" header="${_t("agent.Endpoint")}" .renderer="${this._boundEndpointRenderer}">
+        <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="100px" resizable header="${_t("agent.Region")}"
+        <vaadin-grid-column width="100px" resizable header="${_t('agent.Region')}"
                             .renderer="${this._boundRegionRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t("agent.Starts")}" .renderer="${this._boundContactDateRenderer}">
+        <vaadin-grid-column resizable header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable width="140px" header="${_t("agent.Resources")}"
+        <vaadin-grid-column resizable width="140px" header="${_t('agent.Resources')}"
                             .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-sort-column width="100px" resizable path="scaling_group"
-                                 header="${_t("general.ResourceGroup")}"></vaadin-grid-sort-column>
-        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t("agent.Status")}"
+                                 header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
+        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Status')}"
                             .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t("general.Control")}"
+        <vaadin-grid-column resizable header="${_t('general.Control')}"
                             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
-        <span slot="title">${_t("agent.DetailedInformation")}</span>
+        <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">
           <div class="horizontal start start-justified layout">
-            ${'cpu_util_live' in this.agentDetail ?
-              html`
+            ${this.agentDetail?.cpu_util_live ?
+    html`
                 <div>
                   <h3>CPU</h3>
                   <div class="horizontal wrap layout" style="max-width:600px;">
-                    ${this.agentDetail.cpu_util_live.map(item => html`
+                    ${this.agentDetail.cpu_util_live.map((item) => html`
                       <div class="horizontal start-justified center layout" style="padding:0 5px;">
                         <div style="font-size:8px;width:35px;">CPU${item.num}</div>
                         <lablup-progress-bar class="cpu"
@@ -819,7 +829,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                       </div>`)}
                   </div>
                 </div>` : html``}
-            <div style="margin-left:10px;">
+            <div>
               <h3>Memory</h3>
               <div>
                 <lablup-progress-bar class="mem"
@@ -828,17 +838,19 @@ export default class BackendAIAgentList extends BackendAIPage {
                 ></lablup-progress-bar>
               </div>
               <h3>Network</h3>
-              ${'live_stat' in this.agentDetail && 'node' in this.agentDetail.live_stat ? html`
+              ${this.agentDetail?.live_stat?.node ? html`
                 <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
                 <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
-              ` : html``}
+              ` : html`
+                <p>${_t('agent.NoNetworkSignal')}</p>
+              `}
             </div>
-            ${'cuda_util_live' in this.agentDetail ?
-              html`
+            ${this.agentDetail?.cuda_util_live ?
+    html`
                 <div style="margin-left:10px;">
                   <h3>CUDA Devices</h3>
                   <h4>Utilization</h4>
-                  ${this.agentDetail.cuda_util_live.map(item => html`
+                  ${this.agentDetail.cuda_util_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
                       <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
                       <div class="horizontal start-justified center layout">
@@ -849,7 +861,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                       </div>
                     </div>`)}
                   <h4>Memory</h4>
-                  ${this.agentDetail.cuda_mem_live.map(item => html`
+                  ${this.agentDetail.cuda_mem_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
                       <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
                       <div class="horizontal start-justified center layout">
@@ -861,12 +873,12 @@ export default class BackendAIAgentList extends BackendAIPage {
                     </div>`)}
 
                 </div>` : html``}
-            ${'rocm_util_live' in this.agentDetail ?
-              html`
+            ${this.agentDetail?.rocm_util_live ?
+    html`
                 <div style="margin-left:10px;">
                   <h3>ROCm Devices</h3>
                   <h4>Utilization</h4>
-                  ${this.agentDetail.rocm_util_live.map(item => html`
+                  ${this.agentDetail.rocm_util_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
                       <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
                       <div class="horizontal start-justified center layout">
@@ -877,7 +889,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                       </div>
                     </div>`)}
                   <h4>Memory</h4>
-                  ${this.agentDetail.rocm_mem_live.map(item => html`
+                  ${this.agentDetail.rocm_mem_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
                       <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
                       <div class="horizontal start-justified center layout">
@@ -889,12 +901,12 @@ export default class BackendAIAgentList extends BackendAIPage {
                     </div>`)}
 
                 </div>` : html``}
-            ${'tpu_util_live' in this.agentDetail ?
-              html`
+            ${this.agentDetail?.tpu_util_live ?
+    html`
                 <div style="margin-left:10px;">
                   <h3>TPU Devices</h3>
                   <h4>Utilization</h4>
-                  ${this.agentDetail.tpu_util_live.map(item => html`
+                  ${this.agentDetail.tpu_util_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
                       <div style="font-size:8px;width:35px;">TPU${item.num}</div>
                       <div class="horizontal start-justified center layout">
@@ -905,7 +917,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                       </div>
                     </div>`)}
                   <h4>Memory</h4>
-                  ${this.agentDetail.tpu_mem_live.map(item => html`
+                  ${this.agentDetail.tpu_mem_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
                       <div style="font-size:8px;width:35px;">TPU${item.num}</div>
                       <div class="horizontal start-justified center layout">
@@ -924,7 +936,7 @@ export default class BackendAIAgentList extends BackendAIPage {
             unelevated
             id="close-button"
             icon="check"
-            label="${_t("button.Close")}"
+            label="${_t('button.Close')}"
             @click="${(e) => this._hideDialog(e)}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -933,6 +945,6 @@ export default class BackendAIAgentList extends BackendAIPage {
 }
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-agent-list": BackendAIAgentList;
+    'backend-ai-agent-list': BackendAIAgentList;
   }
 }

@@ -2,49 +2,49 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import '../plastics/mwc/mwc-drawer';
 import '@material/mwc-icon';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 
 import {BackendAIPage} from './backend-ai-page';
-import {BackendAiConsoleStyles} from './backend-ai-console-styles';
+import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning
-} from "../plastics/layout/iron-flex-layout-classes";
+} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
- Backend.AI Sidepanel task viewer for Console
+ Backend.AI Sidepanel task viewer for Web UI
 
- `backend-ai-sidepanel-task` is a sidepanel task viewer for console.
+ `backend-ai-sidepanel-task` is a sidepanel task viewer for web UI.
 
  Example:
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-sidepanel-task
  */
-@customElement("backend-ai-sidepanel-task")
+@customElement('backend-ai-sidepanel-task')
 export default class BackendAiSidepanelTask extends BackendAIPage {
   public shadowRoot: any;
 
   @property({type: Boolean}) active = true;
-  @property({type: Array}) tasks = Array();
+  @property({type: Array}) tasks = [];
 
   /**
-   *  Backend.AI Task manager for Console
+   *  Backend.AI Task manager for Web UI
    *
    */
   constructor() {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
-      BackendAiConsoleStyles,
+      BackendAIWebUIStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
@@ -78,19 +78,19 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
 
   _taskIcon(type: string) {
     switch (type) {
-      case "session":
-        return 'subject';
-        break;
-      case "database":
-        return 'dns';
-        break;
-      case "image":
-        return 'extension';
-        break;
-      case "general":
-      default:
-        return 'widget';
-        break;
+    case 'session':
+      return 'subject';
+      break;
+    case 'database':
+      return 'dns';
+      break;
+    case 'image':
+      return 'extension';
+      break;
+    case 'general':
+    default:
+      return 'widget';
+      break;
     }
   }
 
@@ -98,19 +98,19 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
     // language=HTML
     return html`
       <div id="container">
-        <h3>${_t("sidepanel.BackgroundTasks")}</h3>
+        <h3>${_t('sidepanel.BackgroundTasks')}</h3>
         <mwc-list>
-        ${this.tasks.map(item =>
-      html`
+        ${this.tasks.map((item: any) =>
+    html`
           <mwc-list-item graphic="icon" twoline>
             <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg black">${this._taskIcon(item.tasktype)}</mwc-icon>
             <span>${item.tasktitle}</span>
-            <span slot="secondary">${_t("sidepanel.Running")}</span>
+            <span slot="secondary">${_t('sidepanel.Running')}</span>
           </mwc-list-item>
           <li divider role="separator"></li>`)}
           ${this.tasks.length === 0 ? html`
             <div style="padding:15px 0;width:100%;text-align:center;">
-              ${_t("sidepanel.NoBackgroundTask")}
+              ${_t('sidepanel.NoBackgroundTask')}
             </div>
         ` : html``}
         </mwc-list>
@@ -139,10 +139,9 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
     this.tasks = globalThis.tasker.taskstore;
     await this.requestUpdate();
   }
-
 }
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-task-view": BackendAiSidepanelTask;
+    'backend-ai-task-view': BackendAiSidepanelTask;
   }
 }

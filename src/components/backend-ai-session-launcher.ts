@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property, query} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property, query} from 'lit-element';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -25,7 +25,7 @@ import '@material/mwc-linear-progress';
 import './lablup-slider';
 import './backend-ai-dialog';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
+import {default as PainKiller} from './backend-ai-painkiller';
 
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -43,11 +43,11 @@ import {
 
  <backend-ai-session-launcher active></backend-ai-session-launcher>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-session-launcher
  */
 
-@customElement("backend-ai-session-launcher")
+@customElement('backend-ai-session-launcher')
 export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#image-name') manualImageName;
   @property({type: Boolean}) is_connected = false;
@@ -99,8 +99,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'max': '1'
   };
   @property({type: Object}) cluster_metric = {
-    'min' : 1,
-    'max' : 1
+    'min': 1,
+    'max': 1
   };
   @property({type: Array}) cluster_mode_list = [
     'single-node', 'multi-node'
@@ -156,11 +156,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Number}) max_cpu_core_per_session = 64;
-  @property({type: Number}) max_cuda_device_per_session = 16;
-  @property({type: Number}) max_shm_per_session = 2;
+  @property({type: Number}) max_cuda_device_per_container = 16;
+  @property({type: Number}) max_cuda_shares_per_container = 16;
+  @property({type: Number}) max_shm_per_container = 2;
   @property({type: Object}) resourceBroker;
   @property({type: Number}) cluster_size = 1;
   @property({type: String}) cluster_mode;
+  @property({type: Object}) deleteEnvInfo = Object();
+  @property({type: Object}) deleteEnvRow = Object();
+  @property({type: Array}) environ;
+  @property({type: Object}) environ_values = Object();
+  @property({type: Object}) vfolder_select_expansion = Object();
+
   @property({type: Boolean}) _debug = false;
 
   constructor() {
@@ -171,6 +178,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.ownerScalingGroups = [];
     this.resourceBroker = globalThis.resourceBroker;
     this.notification = globalThis.lablupNotification;
+    this.environ = [];
     this.init_resource();
   }
 
@@ -178,7 +186,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return 'backend-ai-session-launcher';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -301,6 +309,71 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           margin: 5px;
           padding: 0;
           font-size: 14px;
+        }
+
+        .resource-allocated {
+          width: 40px;
+          height: 60px;
+          font-size: 16px;
+          margin: 5px;
+          opacity: 1;
+          z-index:11;
+        }
+
+        .resource-allocated > p {
+          margin: 0 auto;
+          font-size: 8px;
+        }
+        .resource-allocated-box {
+          z-index:10;
+          position: relative;
+        }
+        .resource-allocated-box-shadow {
+          position:relative;
+          z-index:1;
+          top: -65px;
+          height:200px;
+          width:70px;
+          opacity: 1;
+        }
+
+        .cluster-allocated {
+          min-width: 40px;
+          min-height: 40px;
+          width: auto;
+          height: 70px;
+          border-radius: 5px;
+          font-size: 1rem;
+          margin: 5px;
+          padding: 0px 5px;
+          background-color: var(--general-button-background-color);
+          color: white;
+        }
+
+        .cluster-allocated > div.horizontal > p {
+          font-size: 1rem;
+          margin: 0px;
+        }
+
+        .cluster-allocated > p.small {
+          font-size: 8px;
+          margin: 0px;
+        }
+
+        .resource-allocated > span,
+        .cluster-allocated > div.horizontal > span {
+          font-weight: bolder;
+        }
+
+        .allocation-check {
+          margin-bottom: 10px;
+        }
+
+        .resource-allocated-box {
+          background-color: var(--paper-grey-300);
+          border-radius: 5px;
+          margin: 5px;
+          z-index:10;
         }
 
         #new-session-dialog {
@@ -481,7 +554,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding: 5px !important;
         }
 
-        #launch-confirmation-dialog {
+        #launch-confirmation-dialog, #env-config-confirmation {
           --component-width: 400px;
           --component-font-size: 14px;
         }
@@ -500,6 +573,45 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         mwc-button > mwc-icon {
           display: none;
+        }
+
+        p.title {
+          padding: 10px 15px;
+          font-size: 12px;
+          font-weight: 200;
+          color: #404040;
+        }
+
+        .launcher-item-title {
+          font-size: 12px;
+          color: #404040;
+          font-weight: 400;
+        }
+
+        .allocation-shadow {
+          height: 70px;
+          width: 200px;
+          position: absolute;
+          top: -5px;
+          left: 5px;
+          border: 1px solid #ccc;
+        }
+
+        #modify-env-dialog {
+          --component-max-height: 550px;
+          --component-width: 400px;
+        }
+
+        #modify-env-dialog div.container {
+          display: flex;
+          flex-direction: column;
+          padding: 0px 30px;
+        }
+
+        #modify-env-dialog div.row {
+          display: grid;
+          grid-template-columns: 4fr 4fr 1fr;
+          margin-bottom: 10px;
         }
 
         @media screen and (max-width: 375px) {
@@ -557,7 +669,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
-    this.cluster_size = 0;
+    this.cluster_size = 1; // cluster_size must be equal or greater than 1.
     this.cluster_mode = 'single-node';
     /* Parameters required to launch a session on behalf of other user */
     this.ownerFeatureInitialized = false;
@@ -591,10 +703,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
     });
-    document.addEventListener("backend-ai-group-changed", (e) => {
+    document.addEventListener('backend-ai-group-changed', (e) => {
       this._updatePageVariables(true);
     });
-    document.addEventListener("backend-ai-resource-broker-updated", (e) => {
+    document.addEventListener('backend-ai-resource-broker-updated', (e) => {
       // Fires when broker is updated.
     });
     if (this.hideLaunchButton === true) {
@@ -604,26 +716,73 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
-        this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
-        this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+        this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
+        this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
+        this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
         if (globalThis.backendaiclient.supports('multi-container')) {
           this.cluster_support = true;
         }
         this.is_connected = true;
-        this._debug = globalThis.backendaiconsole.debug;
+        this._debug = globalThis.backendaiwebui.debug;
         this._enableLaunchButton();
       }, {once: true});
     } else {
       this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
-      this.max_cuda_device_per_session = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
-      this.max_shm_per_session = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+      this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
+      this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
+      this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
       if (globalThis.backendaiclient.supports('multi-container')) {
         this.cluster_support = true;
       }
       this.is_connected = true;
-      this._debug = globalThis.backendaiconsole.debug;
+      this._debug = globalThis.backendaiwebui.debug;
       this._enableLaunchButton();
     }
+    const modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    modifyEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
+      const currentEnv = {};
+      const container = this.shadowRoot.querySelector('#modify-env-container');
+      const rows = container.querySelectorAll('.row:not(.header)');
+
+      // allow any input in variable or value
+      const nonempty = (row) => Array.prototype.filter.call(
+        row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
+      ).length <= 1;
+
+      const encodeRow = (row) => {
+        const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf) => tf.value);
+        currentEnv[items[0]] = items[1];
+        return items;
+      };
+      Array.prototype.filter.call(rows, (row) => nonempty(row)).map((row) => encodeRow(row));
+
+      // check if there's any changes occurred
+      const isEquivalent = (a, b) => {
+        // create arrays of property names
+        const aProps = Object.getOwnPropertyNames(a);
+        const bProps = Object.getOwnPropertyNames(b);
+
+        if (aProps.length != bProps.length) {
+          return false;
+        }
+
+        for (let i = 0; i < aProps.length; i++) {
+          const propName = aProps[i];
+
+          if (a[propName] !== b[propName]) {
+            return false;
+          }
+        }
+        return true;
+      };
+
+      if (!isEquivalent(currentEnv, this.environ_values)) {
+        this.openDialog('env-config-confirmation');
+      } else {
+        modifyEnvDialog.closeWithConfirmation = false;
+        this.closeDialog('modify-env-dialog');
+      }
+    });
   }
 
   _enableLaunchButton() {
@@ -639,20 +798,33 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Toggle visibility of unselect all vfolders button
+   *
+   * @param {Event} e
+   */
+  toggleUnselectAllVfoldersButton(e) {
+    const expansion = e.target;
+    const unselectAllVfolderBtn = this.shadowRoot.querySelector('#unselect-all-vfolders');
+    if (unselectAllVfolderBtn) {
+      unselectAllVfolderBtn.style.display = expansion.checked ? 'block' : 'none';
+    }
+  }
+
+  /**
    * Update selected scaling groups.
    * An element should update based on some state not triggered by setting a property.
    * */
   _updateSelectedScalingGroup() {
-    let Sgroups = this.shadowRoot.querySelector('#scaling-groups');
+    const Sgroups = this.shadowRoot.querySelector('#scaling-groups');
     this.scaling_groups = this.resourceBroker.scaling_groups;
-    let selectedSgroup = Sgroups.items.find(item => item.value === this.resourceBroker.scaling_group);
+    const selectedSgroup = Sgroups.items.find((item) => item.value === this.resourceBroker.scaling_group);
     if (this.resourceBroker.scaling_group === '' || typeof selectedSgroup == 'undefined') {
       setTimeout(() => {
         this._updateSelectedScalingGroup();
       }, 500);
       return;
     }
-    let idx = Sgroups.items.indexOf(selectedSgroup);
+    const idx = Sgroups.items.indexOf(selectedSgroup);
     Sgroups.select(-1);
     Sgroups.select(idx);
     Sgroups.value = selectedSgroup.value;
@@ -686,11 +858,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
   _updateSelectedFolder(forceInitialize = false) {
-    let folders = this.shadowRoot.querySelector('#vfolder');
-    let selectedFolderItems = folders.selected;
-    let selectedFolders: String[] = [];
+    const folders = this.shadowRoot.querySelector('#vfolder');
+    const selectedFolderItems = folders.selected;
+    let selectedFolders: string[] = [];
     if (selectedFolderItems.length > 0) {
-      selectedFolders = selectedFolderItems.map(item => item.value);
+      selectedFolders = selectedFolderItems.map((item) => item.value);
 
       if (forceInitialize) {
         this._unselectAllSelectedFolder();
@@ -700,7 +872,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _unselectAllSelectedFolder() {
-    let folders = this.shadowRoot.querySelector('#vfolder');
+    const folders = this.shadowRoot.querySelector('#vfolder');
     if (folders.selected) {
       folders.items.forEach((item, index) => {
         if (item.selected) {
@@ -760,7 +932,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.gpu_modes = this.resourceBroker.gpu_modes;
       this.updateResourceAllocationPane('refresh resource policy');
     }).catch((err) => {
-      //console.log(err);
+      // console.log(err);
       this.metadata_updating = false;
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -778,16 +950,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Else, launch session dialog.
    * */
   async _launchSessionDialog() {
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false || this.resourceBroker.image_updating === true) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false || this.resourceBroker.image_updating === true) {
       setTimeout(() => {
         this._launchSessionDialog();
       }, 1000);
-      //this.notification.text = _text('session.launcher.PleaseWaitInitializing');
-      //this.notification.show();
+      // this.notification.text = _text('session.launcher.PleaseWaitInitializing');
+      // this.notification.show();
     } else {
+      this._resetEnvironmentVariables();
       await this.selectDefaultLanguage();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
-      //this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
+      // this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
       if (gpu_resource.value > 0) {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
       } else {
@@ -816,12 +989,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   /**
    * If vfolder has not any items, show launch-confirmation-dialog.
    * Else, make new session by call _newSession().
+   *
+   * @return {void}
    * */
   _newSessionWithConfirmation() {
     const vfolderItems = this.shadowRoot.querySelector('#vfolder').selected;
     const vfolders = vfolderItems.map((el) => el.value);
     if (vfolders.length === 0) {
-      let confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
+      const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
       confirmationDialog.show();
     } else {
       return this._newSession();
@@ -832,14 +1007,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Make a new session.
    * */
   _newSession() {
-    let confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
+    const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
     confirmationDialog.hide();
-    let selectedItem = this.shadowRoot.querySelector('#environment').selected;
-    let kernel = selectedItem.id;
-    let version = this.shadowRoot.querySelector('#version').value;
+    const selectedItem = this.shadowRoot.querySelector('#environment').selected;
+    const kernel = selectedItem.id;
+    const version = this.shadowRoot.querySelector('#version').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
-    let isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
-    let vfolder = this.selectedVfolders;
+    const isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
+    const vfolder = this.selectedVfolders;
     this.cpu_request = parseInt(this.shadowRoot.querySelector('#cpu-resource').value);
     this.mem_request = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
     this.shmem_request = parseFloat(this.shadowRoot.querySelector('#shmem-resource').value);
@@ -852,18 +1027,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return;
     }
     if (!isSessionNameValid) {
-      this.notification.text = _text("session.launcher.SessionNameAllowCondition");
+      this.notification.text = _text('session.launcher.SessionNameAllowCondition');
       this.notification.show();
       return;
     }
 
-    if (kernel === "" || version === "" || version === "Not Selected") {
-      this.notification.text = _text("session.launcher.MustSpecifyVersion");
+    if (kernel === '' || version === '' || version === 'Not Selected') {
+      this.notification.text = _text('session.launcher.MustSpecifyVersion');
       this.notification.show();
       return;
     }
     this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
-    let config = {};
+    const config = {};
     config['group_name'] = globalThis.backendaiclient.current_group;
     config['domain'] = globalThis.backendaiclient._config.domainName;
     config['scaling_group'] = this.scaling_group;
@@ -879,39 +1054,39 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').value;
       config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').value;
       if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
-        this.notification.text = _text("session.launcher.NotEnoughOwnershipInfo");
+        this.notification.text = _text('session.launcher.NotEnoughOwnershipInfo');
         this.notification.show();
         return;
       }
     }
     config['cpu'] = this.cpu_request;
     switch (this.gpu_request_type) {
-      case 'cuda.shares':
-        config['cuda.shares'] = this.gpu_request;
-        break;
-      case 'cuda.device':
-        config['cuda.device'] = this.gpu_request;
-        break;
-      case 'rocm.device':
-        config['rocm.device'] = this.gpu_request;
-        break;
-      case 'tpu.device':
-        config['tpu.device'] = this.gpu_request;
-        break;
-      default:
-        // Fallback to current gpu mode if there is a gpu request, but without gpu type.
-        if (this.gpu_request > 0 && this.gpu_mode) {
-          config[this.gpu_mode] = this.gpu_request;
-        }
+    case 'cuda.shares':
+      config['cuda.shares'] = this.gpu_request;
+      break;
+    case 'cuda.device':
+      config['cuda.device'] = this.gpu_request;
+      break;
+    case 'rocm.device':
+      config['rocm.device'] = this.gpu_request;
+      break;
+    case 'tpu.device':
+      config['tpu.device'] = this.gpu_request;
+      break;
+    default:
+      // Fallback to current gpu mode if there is a gpu request, but without gpu type.
+      if (this.gpu_request > 0 && this.gpu_mode) {
+        config[this.gpu_mode] = this.gpu_request;
+      }
     }
-    if (String(this.shadowRoot.querySelector('#mem-resource').value) === "Infinity") {
+    if (String(this.shadowRoot.querySelector('#mem-resource').value) === 'Infinity') {
       config['mem'] = String(this.shadowRoot.querySelector('#mem-resource').value);
     } else {
       config['mem'] = String(this.mem_request) + 'g';
     }
     if (this.shmem_request > this.mem_request) { // To prevent overflow of shared memory
       this.shmem_request = this.mem_request;
-      this.notification.text = _text("session.launcher.SharedMemorySettingIsReduced");
+      this.notification.text = _text('session.launcher.SharedMemorySettingIsReduced');
       this.notification.show();
     }
     if (this.mem_request > 4 && this.shmem_request < 1) { // Automatically increase shared memory to 1GB
@@ -935,44 +1110,48 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.mode === 'import' && this.importScript !== '') {
       config['bootstrap_script'] = this.importScript;
     }
+    if (this.environ_values !== {}) {
+      config['env'] = this.environ_values;
+    }
     let kernelName: string;
-    if (this._debug && this.manualImageName.value !== "") {
+    if (this._debug && this.manualImageName.value !== '') {
       kernelName = this.manualImageName.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
     }
     this.shadowRoot.querySelector('#launch-button').disabled = true;
     this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.Preparing');
-    this.notification.text =  _text('session.PreparingSession');
+    this.notification.text = _text('session.PreparingSession');
     this.notification.show();
 
-    let sessions: any = [];
+    const sessions: any = [];
     const randStr = this._getRandomString();
 
     if (this.num_sessions > 1) {
       for (let i = 1; i <= this.num_sessions; i++) {
-        let add_session = {'kernelName': kernelName, 'sessionName': `${sessionName}-${randStr}-${i}`, config};
+        const add_session = {'kernelName': kernelName, 'sessionName': `${sessionName}-${randStr}-${i}`, config};
         sessions.push(add_session);
       }
     } else {
       sessions.push({'kernelName': kernelName, 'sessionName': sessionName, config});
     }
-    const createSessionQueue = sessions.map(item => {
-      return this.tasker.add("Creating " + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', "session");
+    const createSessionQueue = sessions.map((item) => {
+      return this.tasker.add('Creating ' + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', 'session');
     });
     Promise.all(createSessionQueue).then((res: any) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
+      this._resetEnvironmentVariables();
       setTimeout(() => {
         this.metadata_updating = true;
         this.aggregateResource('session-creation');
         this.metadata_updating = false;
       }, 1500);
-      let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+      const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
       if (res.length === 1) {
-        res[0].taskobj.then(res => {
+        res[0].taskobj.then((res) => {
           let appOptions;
           if ('kernelId' in res) { // API v4
             appOptions = {
@@ -986,9 +1165,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               'access-key': ''
             };
           }
-          let service_info = res.servicePorts;
+          const service_info = res.servicePorts;
           if (Array.isArray(service_info) === true) {
-            appOptions['app-services'] = service_info.map(a => a.name);
+            appOptions['app-services'] = service_info.map((a) => a.name);
           } else {
             appOptions['app-services'] = [];
           }
@@ -1010,7 +1189,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._updateSelectedFolder(false);
     }).catch((err) => {
       // this.metadata_updating = false;
-      //console.log(err);
+      // console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.message);
         if (err.description) {
@@ -1023,7 +1202,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.show(true, err);
       }
-      let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+      const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
@@ -1038,7 +1217,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       else return String.fromCharCode(97 + num - 26);
     };
 
-    let randstr = "";
+    let randstr = '';
 
     for (let i = 0; i < 3; i++) {
       randstr += parseNum(randnum % 52);
@@ -1051,10 +1230,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _createKernel(kernelName, sessionName, config) {
     const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000);
     task.catch((err) => {
-      //console.log(err);
+      // console.log(err);
       if (err && err.message) {
         if ('statusCode' in err && err.statusCode === 408) {
-          this.notification.text = _text("session.launcher.sessionStillPreparing");
+          this.notification.text = _text('session.launcher.sessionStillPreparing');
         } else {
           if (err.description) {
             this.notification.text = PainKiller.relieve(err.description);
@@ -1077,7 +1256,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _aliasName(value) {
-    let alias = {
+    const alias = {
       'python': 'Python',
       'tensorflow': 'TensorFlow',
       'pytorch': 'PyTorch',
@@ -1163,7 +1342,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _updateVersions(kernel) {
     if (kernel in this.resourceBroker.supports) {
       this.version_selector.disabled = true;
-      let versions = this.resourceBroker.supports[kernel];
+      const versions = this.resourceBroker.supports[kernel];
       versions.sort();
       versions.reverse(); // New version comes first.
       this.versions = versions;
@@ -1179,9 +1358,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         // there are available resources for the selected image.
         this.version_selector.select(1);
         this.version_selector.value = this.versions[0];
-        //this.version_selector.selectedText = this.version_selector.value;
+        // this.version_selector.selectedText = this.version_selector.value;
         this._updateVersionSelectorText(this.version_selector.value);
         this.version_selector.disabled = false;
+        this.environ_values = {};
         this.updateResourceAllocationPane('update versions');
       });
     }
@@ -1193,9 +1373,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {any} text - version
    * */
   _updateVersionSelectorText(text) {
-    let res = this._getVersionInfo(text);
-    let resultArray: string[] = [];
-    res.forEach(item => {
+    const res = this._getVersionInfo(text);
+    const resultArray: string[] = [];
+    res.forEach((item) => {
       resultArray.push(item.tag);
     });
     this.version_selector.selectedText = resultArray.join(' / ');
@@ -1203,13 +1383,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Rondomly generate session ID
+   *
+   * @return {string} Generated session ID
    * */
   generateSessionId() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < 8; i++)
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 8; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
-    return text + "-console";
+    }
+    return text + '-session';
   }
 
   async _updateVirtualFolderList() {
@@ -1223,10 +1406,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    * @param {string} from - set the value for debugging purpose
    * */
-  async _aggregateResourceUse(from: string = '') {
+  async _aggregateResourceUse(from = '') {
     return this.resourceBroker._aggregateCurrentResource(from).then(async (res) => {
       if (res === false) {
-        /*setTimeout(()=>{
+        /* setTimeout(()=>{
           this._aggregateResourceUse(from);
         }, 1500);
         return Promise.resolve(false);  // retry later
@@ -1250,7 +1433,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
       await this.updateComplete;
       return Promise.resolve(true);
-    }).catch(err => {
+    }).catch((err) => {
       if (err && err.message) {
         if (err.description) {
           this.notification.text = PainKiller.relieve(err.description);
@@ -1265,8 +1448,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   // Get available / total resources from manager
-  aggregateResource(from: string = '') {
-    //console.log('aggregate resource called - ', from);
+  aggregateResource(from = '') {
+    // console.log('aggregate resource called - ', from);
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._aggregateResourceUse(from);
@@ -1282,33 +1465,33 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    * @param {string} from
    * */
-  async updateResourceAllocationPane(from: string = '') {
+  async updateResourceAllocationPane(from = '') {
     if (this.metric_updating == true) {
-      //console.log('update metric blocked');
+      // console.log('update metric blocked');
       return;
     }
     if (from === 'refresh resource policy') {
-      //console.log('refreshing resource policy');
+      // console.log('refreshing resource policy');
       this.metric_updating = false;
       return this._aggregateResourceUse('update-metric').then(() => {
         return this.updateResourceAllocationPane('after refresh resource policy');
       });
     }
-    let selectedItem = this.shadowRoot.querySelector('#environment').selected;
-    let selectedVersionItem = this.version_selector.selected;
+    const selectedItem = this.shadowRoot.querySelector('#environment').selected;
+    const selectedVersionItem = this.version_selector.selected;
     // Pulldown is not ready yet.
     if (selectedVersionItem === null) {
       this.metric_updating = false;
       return;
     }
-    let selectedVersionValue = selectedVersionItem.value;
+    const selectedVersionValue = selectedVersionItem.value;
     this._updateVersionSelectorText(selectedVersionValue);
     // Environment is not selected yet.
-    if (typeof selectedItem === 'undefined' || selectedItem === null || selectedItem.getAttribute("disabled")) {
+    if (typeof selectedItem === 'undefined' || selectedItem === null || selectedItem.getAttribute('disabled')) {
       this.metric_updating = false;
       return;
     }
-    //console.log('update metric from', from);
+    // console.log('update metric from', from);
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateResourceAllocationPane(from);
@@ -1319,20 +1502,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       await this._updateVirtualFolderList();
       // Resource limitation is not loaded yet.
       if (Object.keys(this.resourceBroker.resourceLimits).length === 0) {
-        //console.log("No resource limit loaded");
+        // console.log("No resource limit loaded");
         this.metric_updating = false;
         return;
       }
-      let kernel = selectedItem.id;
-      let kernelVersion = selectedVersionValue;
+      const kernel = selectedItem.id;
+      const kernelVersion = selectedVersionValue;
       // Kernel or Kernel version information is missing
       if (kernel === '' || kernelVersion === '') {
-        //console.log("No kernel / version");
+        // console.log("No kernel / version");
         this.metric_updating = false;
         return;
       }
-      let kernelName = kernel + ':' + kernelVersion;
-      let currentResource = this.resourceBroker.resourceLimits[kernelName];
+      const kernelName = kernel + ':' + kernelVersion;
+      const currentResource = this.resourceBroker.resourceLimits[kernelName];
       if (!currentResource) {
         this.metric_updating = false;
         return;
@@ -1345,12 +1528,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.gpu_step = 1;
         }
       }
-      let available_slot = this.resourceBroker.available_slot;
+      const available_slot = this.resourceBroker.available_slot;
 
       // Post-UI markup to disable unchangeable values
       this.shadowRoot.querySelector('#cpu-resource').disabled = false;
       this.shadowRoot.querySelector('#mem-resource').disabled = false;
       this.shadowRoot.querySelector('#gpu-resource').disabled = false;
+      if (globalThis.backendaiclient.supports('multi-container')) { // initialize cluster_size
+        this.cluster_size = 1;
+        this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
+      }
       this.shadowRoot.querySelector('#session-resource').disabled = false;
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
@@ -1366,17 +1553,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       };
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
-          let cpu_metric = {...item};
+          const cpu_metric = {...item};
           cpu_metric.min = parseInt(cpu_metric.min);
           if ('cpu' in this.userResourceLimit) {
-            if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
+            if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && !isNaN(cpu_metric.max)) {
               cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu'], this.max_cpu_core_per_session);
             } else {
               cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu'], this.max_cpu_core_per_session);
             }
-
           } else {
-            if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && cpu_metric.max !== NaN) {
+            if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && !isNaN(cpu_metric.max)) {
               cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu'], this.max_cpu_core_per_session);
             } else {
               cpu_metric.max = Math.min(this.available_slot['cpu'], this.max_cpu_core_per_session);
@@ -1392,7 +1578,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.cpu_metric = cpu_metric;
           // monkeypatch for cluster_metric max size
           if (this.cluster_support && this.cluster_mode === 'single-node') {
-            this.cluster_metric.max = Math.min(cpu_metric.max , this.max_containers_per_session);
+            this.cluster_metric.max = Math.min(cpu_metric.max, this.max_containers_per_session);
             if (this.cluster_metric.min > this.cluster_metric.max) {
               this.cluster_metric.min = this.cluster_metric.max;
             } else {
@@ -1401,19 +1587,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           }
         }
         if (item.key === 'cuda.device' && this.gpu_mode == 'cuda.device') {
-          let cuda_device_metric = {...item};
+          const cuda_device_metric = {...item};
           cuda_device_metric.min = parseInt(cuda_device_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
-            if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && cuda_device_metric.max !== NaN) {
-              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_shares'], this.max_cuda_device_per_session);
+            if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && !isNaN(cuda_device_metric.max)) {
+              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device'], this.max_cuda_device_per_container);
             } else {
-              cuda_device_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device'], this.max_cuda_device_per_session);
+              cuda_device_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
             }
           } else {
-            if (parseInt(cuda_device_metric.max) !== 0) {
-              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), available_slot['cuda_device'], this.max_cuda_device_per_session);
+            if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && !isNaN(cuda_device_metric.max)) {
+              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
             } else {
-              cuda_device_metric.max = this.available_slot['cuda_device'];
+              cuda_device_metric.max = Math.min(parseInt(this.available_slot['cuda_device']), this.max_cuda_device_per_container);
             }
           }
           if (cuda_device_metric.min >= cuda_device_metric.max) {
@@ -1426,17 +1612,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.cuda_device_metric = cuda_device_metric;
         }
         if (item.key === 'cuda.shares' && this.gpu_mode === 'cuda.shares') {
-          let cuda_shares_metric = {...item};
+          const cuda_shares_metric = {...item};
           cuda_shares_metric.min = parseFloat(cuda_shares_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
-            if (parseFloat(cuda_shares_metric.max) !== 0 && cuda_shares_metric.max !== 'Infinity' && cuda_shares_metric.max !== NaN) {
-              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares']);
+            if (parseFloat(cuda_shares_metric.max) !== 0 && cuda_shares_metric.max !== 'Infinity' && !isNaN(cuda_shares_metric.max)) {
+              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares'], this.max_cuda_shares_per_container);
             } else {
-              cuda_shares_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares']);
+              cuda_shares_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares'], this.max_cuda_shares_per_container);
             }
           } else {
             if (parseFloat(cuda_shares_metric.max) !== 0) {
-              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), available_slot['cuda_shares']);
+              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), available_slot['cuda_shares'], this.max_cuda_shares_per_container);
             } else {
               cuda_shares_metric.max = 0;
             }
@@ -1455,7 +1641,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           }
         }
         if (item.key === 'rocm.device' && this.gpu_mode === 'rocm.device') {
-          let rocm_metric = {...item};
+          const rocm_metric = {...item};
           rocm_metric.min = parseInt(rocm_metric.min);
           rocm_metric.max = parseInt(rocm_metric.max);
           if (rocm_metric.min > rocm_metric.max) {
@@ -1464,7 +1650,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.rocm_device_metric = rocm_metric;
         }
         if (item.key === 'tpu.device') {
-          let tpu_device_metric = {...item};
+          const tpu_device_metric = {...item};
           tpu_device_metric.min = parseInt(tpu_device_metric.min);
           tpu_device_metric.max = parseInt(tpu_device_metric.max);
           if (tpu_device_metric.min > tpu_device_metric.max) {
@@ -1473,14 +1659,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.tpu_device_metric = tpu_device_metric;
         }
         if (item.key === 'mem') {
-          let mem_metric = {...item};
+          const mem_metric = {...item};
           mem_metric.min = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g');
           if (mem_metric.min < 0.1) {
             mem_metric.min = 0.1;
           }
-          let image_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
+          const image_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
           if ('mem' in this.userResourceLimit) {
-            let user_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g');
+            const user_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g');
             if (parseInt(image_mem_max) !== 0) {
               mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem']);
             } else {
@@ -1514,7 +1700,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
       });
       // Shared memory setting
-      shmem_metric.max = this.max_shm_per_session;
+      shmem_metric.max = this.max_shm_per_container;
       shmem_metric.min = 0.0625; // 64m
       if (shmem_metric.min >= shmem_metric.max) {
         if (shmem_metric.min > shmem_metric.max) {
@@ -1533,7 +1719,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').value = 0;
         if (this.resource_templates !== [] && this.resource_templates.length > 0) { // Remove mismatching templates
-          let new_resource_templates: any = [];
+          const new_resource_templates: any = [];
           for (let i = 0; i < this.resource_templates.length; i++) {
             if (!('cuda_device' in this.resource_templates[i]) &&
               !('cuda_shares' in this.resource_templates[i])) {
@@ -1558,7 +1744,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       // Refresh with resource template
       if (this.resource_templates_filtered !== [] && this.resource_templates_filtered.length > 0) {
-        let resource = this.resource_templates_filtered[0];
+        const resource = this.resource_templates_filtered[0];
         this._chooseResourceTemplate(resource);
         this.shadowRoot.querySelector('#resource-templates').layout(true).then(() => {
           this.shadowRoot.querySelector('#resource-templates').select(1);
@@ -1573,10 +1759,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.shadowRoot.querySelector('#session-resource').disabled = true;
         this.shadowRoot.querySelector('#shmem-resource').disabled = true;
         this.shadowRoot.querySelector('#launch-button').disabled = true;
+        this.shadowRoot.querySelector('.allocation-check').display = 'none';
         if (this.cluster_support) {
           this.shadowRoot.querySelector('#cluster-size').disabled = true;
         }
-        this.shadowRoot.querySelector('#launch-button-msg').textContent = _text("session.launcher.NotEnoughResource");
+        this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.NotEnoughResource');
       } else {
         this.shadowRoot.querySelector('#cpu-resource').disabled = false;
         this.shadowRoot.querySelector('#mem-resource').disabled = false;
@@ -1584,6 +1771,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.shadowRoot.querySelector('#session-resource').disabled = false;
         this.shadowRoot.querySelector('#shmem-resource').disabled = false;
         this.shadowRoot.querySelector('#launch-button').disabled = false;
+        this.shadowRoot.querySelector('.allocation-check').display = 'block';
         if (this.cluster_support) {
           this.shadowRoot.querySelector('#cluster-size').disabled = false;
         }
@@ -1601,9 +1789,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   updateLanguage() {
-    let selectedItem = this.shadowRoot.querySelector('#environment').selected;
+    const selectedItem = this.shadowRoot.querySelector('#environment').selected;
     if (selectedItem === null) return;
-    let kernel = selectedItem.id;
+    const kernel = selectedItem.id;
     this._updateVersions(kernel);
   }
 
@@ -1639,12 +1827,33 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _setClusterSize(e) {
     this.cluster_size = e.target.value > 0 ? Math.round(e.target.value) : 0;
     this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
+    let maxSessionCount = 1;
     if (globalThis.backendaiclient.supports('multi-container')) {
       if (this.cluster_size > 1) {
         this.gpu_step = 1;
       } else {
+        maxSessionCount = 0;
         this.gpu_step = this.resourceBroker.gpu_step;
       }
+      this._setSessionLimit(maxSessionCount);
+    }
+  }
+
+  /**
+   * Set session count limit to value
+   *
+   * @param {Number} maxValue - max value to limit session in multi-container mode
+   *
+   */
+  _setSessionLimit(maxValue = 1) {
+    const sessionSlider = this.shadowRoot.querySelector('#session-resource');
+    if (maxValue > 0) {
+      sessionSlider.value = maxValue;
+      this.session_request = maxValue;
+      sessionSlider.disabled = true;
+    } else {
+      sessionSlider.max = this.concurrency_limit;
+      sessionSlider.disabled = false;
     }
   }
 
@@ -1667,7 +1876,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const cuda_shares = button.cuda_shares;
     const rocm_device = button.rocm_device;
     const tpu_device = button.tpu_device;
-    let gpu_type, gpu_value;
+    let gpu_type; let gpu_value;
     if ((typeof cuda_device !== 'undefined' || typeof cuda_shares !== 'undefined')) {
       if (typeof cuda_device === 'undefined') { // FGPU
         gpu_type = 'cuda.shares';
@@ -1692,7 +1901,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (typeof shmem !== 'number') {
       this.shmem_request = shmem.preferred;
     } else {
-      this.shmem_request = shmem ? shmem : 0.0625;  // 64MB as default. Enough for single core CPU.
+      this.shmem_request = shmem ? shmem : 0.0625; // 64MB as default. Enough for single core CPU.
       // this.shmem_metric.preferred = this.shmem_request;
     }
     this.shmem_metric.max = button.mem; // resource preset value of shared memory must be smaller than memory
@@ -1712,8 +1921,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Select default_language and then set _default_language_updated to true.
+   *
+   * @param {boolean} forceUpdate - Force update language
+   * @param {string} language - Target language
    * */
-  async selectDefaultLanguage(forceUpdate: boolean = false, language: string = '') {
+  async selectDefaultLanguage(forceUpdate = false, language = '') {
     if (this._default_language_updated === true && forceUpdate === false) {
       return;
     }
@@ -1730,9 +1942,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       this.default_language = 'index.docker.io/lablup/ngc-tensorflow';
     }
-    let environment = this.shadowRoot.querySelector('#environment');
-    //await environment.updateComplete; async way.
-    let obj = environment.items.find(o => o.value === this.default_language);
+    const environment = this.shadowRoot.querySelector('#environment');
+    // await environment.updateComplete; async way.
+    const obj = environment.items.find((o) => o.value === this.default_language);
     if (typeof obj === 'undefined' && typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient.ready === false) { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
@@ -1740,7 +1952,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }, 500);
       return Promise.resolve(true);
     }
-    let idx = environment.items.indexOf(obj);
+    const idx = environment.items.indexOf(obj);
     environment.select(idx);
     this._default_language_updated = true;
     return Promise.resolve(true);
@@ -1762,7 +1974,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const ownerEmail = this.shadowRoot.querySelector('#owner-email');
     const email = ownerEmail.value;
     if (!ownerEmail.checkValidity()) {
-      this.notification.text = _text("credential.validation.InvalidEmailAddress");
+      this.notification.text = _text('credential.validation.InvalidEmailAddress');
       this.notification.show();
       this.ownerKeypairs = [];
       this.ownerGroups = [];
@@ -1773,7 +1985,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const keypairs = await globalThis.backendaiclient.keypair.list(email, ['access_key']);
     this.ownerKeypairs = keypairs.keypairs;
     if (this.ownerKeypairs.length < 1) {
-      this.notification.text = _text("session.launcher.NoActiveKeypair")
+      this.notification.text = _text('session.launcher.NoActiveKeypair');
       this.notification.show();
       this.ownerKeypairs = [];
       this.ownerGroups = [];
@@ -1826,9 +2038,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _showKernelDescription(e, item) {
     e.stopPropagation();
-    let name = item.kernelname;
+    const name = item.kernelname;
     if (name in this.resourceBroker.imageInfo && 'description' in this.resourceBroker.imageInfo[name]) {
-      let desc = this.shadowRoot.querySelector('#help-description');
+      const desc = this.shadowRoot.querySelector('#help-description');
       this._helpDescriptionTitle = this.resourceBroker.imageInfo[name].name;
       this._helpDescription = this.resourceBroker.imageInfo[name].description;
       this._helpDescriptionIcon = item.icon;
@@ -1839,7 +2051,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       } else {
         this._helpDescriptionTitle = name;
       }
-      this._helpDescription = _text("session.launcher.NoDescriptionFound");
+      this._helpDescription = _text('session.launcher.NoDescriptionFound');
     }
   }
 
@@ -1847,74 +2059,174 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     e.stopPropagation();
     const resource_description = {
       'cpu': {
-        'name': _text("session.launcher.CPU"),
-        'desc': _text("session.launcher.DescCPU")
+        'name': _text('session.launcher.CPU'),
+        'desc': _text('session.launcher.DescCPU')
       },
       'mem': {
-        'name': _text("session.launcher.Memory"),
-        'desc': _text("session.launcher.DescMemory")
+        'name': _text('session.launcher.Memory'),
+        'desc': _text('session.launcher.DescMemory')
       },
       'shmem': {
-        'name': _text("session.launcher.SharedMemory"),
-        'desc': _text("session.launcher.DescSharedMemory")
+        'name': _text('session.launcher.SharedMemory'),
+        'desc': _text('session.launcher.DescSharedMemory')
       },
       'gpu': {
-        'name': _text("session.launcher.GPU"),
-        'desc': _text("session.launcher.DescGPU")
+        'name': _text('session.launcher.GPU'),
+        'desc': _text('session.launcher.DescGPU')
       },
       'session': {
-        'name': _text("session.launcher.TitleSession"),
-        'desc': _text("session.launcher.DescSession")
+        'name': _text('session.launcher.TitleSession'),
+        'desc': _text('session.launcher.DescSession')
       },
       'single-node': {
-        'name': _text("session.launcher.SingleNode"),
-        'desc': _text("session.launcher.DescSingleNode")
+        'name': _text('session.launcher.SingleNode'),
+        'desc': _text('session.launcher.DescSingleNode')
       },
       'multi-node': {
-        'name': _text("session.launcher.MultiNode"),
-        'desc': _text("session.launcher.DescMultiNode")
+        'name': _text('session.launcher.MultiNode'),
+        'desc': _text('session.launcher.DescMultiNode')
       }
     };
     if (item in resource_description) {
       this._helpDescriptionTitle = resource_description[item].name;
       this._helpDescription = resource_description[item].desc;
       this._helpDescriptionIcon = '';
-      let desc = this.shadowRoot.querySelector('#help-description');
+      const desc = this.shadowRoot.querySelector('#help-description');
       desc.show();
     }
+  }
+
+  _showEnvConfigDescription(e) {
+    e.stopPropagation();
+    this._helpDescriptionTitle = _text('session.launcher.EnvironmentVariableTitle');
+    this._helpDescription = _text('session.launcher.DescSetEnv');
+    const desc = this.shadowRoot.querySelector('#help-description');
+    desc.show();
   }
 
   _resourceTemplateToCustom() {
     this.shadowRoot.querySelector('#resource-templates').selectedText = _text('session.launcher.CustomResourceApplied');
   }
 
+  /**
+   *
+   * @param {Event} e - Click EventEmitter
+   * @param {Boolean} isResourceClicked - true if resource is clicked
+   */
+  _applyResourceValueChanges(e, isResourceClicked = true) {
+    const value = e.target.value;
+    const id = e.target.id.split('-')[0];
+    switch (id) {
+    case 'cpu':
+      this.cpu_request = value;
+      break;
+    case 'mem':
+      this.mem_request = value;
+      break;
+    case 'shmem':
+      this.shmem_request = value;
+      break;
+    case 'gpu':
+      this.gpu_request = value;
+      break;
+    case 'session':
+      this.session_request = value;
+      break;
+    case 'cluster':
+      this._changeTotalAllocationPane();
+      break;
+    default:
+      break;
+    }
+    this.requestUpdate();
+    if (isResourceClicked) { // resource allocation
+      this._resourceTemplateToCustom();
+    } else { // cluster mode
+      this._setClusterSize(e);
+    }
+  }
+
+  _changeTotalAllocationPane() {
+    this._deleteAllocationPaneShadow();
+    const cluster_size = this.shadowRoot.querySelector('#cluster-size').value;
+    if (cluster_size > 1) {
+      const container = this.shadowRoot.querySelector('#resource-allocated-box-shadow');
+      for (let i = 0; i < Math.min(6, cluster_size-1); i = i + 1) {
+        const item = document.createElement('div');
+        item.classList.add('horizontal', 'layout', 'center', 'center-justified', 'resource-allocated-box', 'allocation-shadow');
+        item.style.position = 'absolute';
+        item.style.top = '-' + (5 + 5 * i) + 'px';
+        item.style.left = (5 + 5 * i) + 'px';
+        const intensity = 245 + i*2;
+        item.style.backgroundColor = 'rgb(' + intensity +',' + intensity +',' +intensity +')';
+        item.style.borderColor = 'rgb(' + (intensity-10) +',' + (intensity-10) +',' +(intensity-10) +')';
+        item.style.zIndex = (6 - i).toString();
+        container.appendChild(item);
+      }
+      this.shadowRoot.querySelector('#total-allocation-pane').appendChild(container);
+    }
+  }
+
+  _deleteAllocationPaneShadow() {
+    const container = this.shadowRoot.querySelector('#resource-allocated-box-shadow');
+    container.innerHTML = '';
+  }
+
   _updateShmemLimit() {
-    let shmemEl = this.shadowRoot.querySelector('#shmem-resource');
+    const shmemEl = this.shadowRoot.querySelector('#shmem-resource');
     let shmem_value = shmemEl.value;
     this.shmem_metric.max = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
-    this.shadowRoot.querySelector('#shmem-resource').max = Math.min(this.max_shm_per_session, this.shmem_metric.max);
+    this.shadowRoot.querySelector('#shmem-resource').max = Math.min(this.max_shm_per_container, this.shmem_metric.max);
     if (parseFloat(shmem_value) > this.shmem_metric.max) {
       shmem_value = this.shmem_metric.max;
+      this.shmem_request = shmem_value;
       shmemEl.syncToSlider(); // explicitly call method of the slider component to avoid value mismatching
     }
+  }
+
+  /**
+   * Get MB value when input is less than 1 GB.
+   *
+   * @param {number} value - value with GB unit.
+   * @return {number} MB value if input is smaller than 1GB. Otherwise, GB value.
+   * */
+  _conditionalGBtoMB(value) {
+    if (value < 1.0) {
+      return (value * 1024).toFixed(0);
+    }
+    return value;
+  }
+
+  /**
+   * Get MB unit when input is less than 1 GB.
+   *
+   * @param {number} value - value with GB unit.
+   * @return {string} MB if input is smaller than 1GB. Otherwise, GB.
+   * */
+  _conditionalGBtoMBunit(value) {
+    if (value < 1.0) {
+      return 'MB';
+    }
+    return 'GB';
   }
 
   /**
    * Get version information - Version, Language, Additional information.
    *
    * @param {any} version
+   * @return {Record<string, unknown>} Array containing information object
    * */
   _getVersionInfo(version) {
-    let info: any = [];
-    let fragment = version.split('-');
+    const info: any = [];
+    const fragment = version.split('-');
     info.push({ // Version
       tag: this._aliasName(fragment[0]),
       color: 'blue',
       size: '80px'
     });
     if (fragment.length > 1) {
-      //Image requirement overrides language information.
+      // Image requirement overrides language information.
       if (this.kernel + ':' + version in this.imageRequirements && 'framework' in this.imageRequirements[this.kernel + ':' + version]) {
         info.push({ // Language
           tag: this.imageRequirements[this.kernel + ':' + version]['framework'],
@@ -1930,7 +2242,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
     }
     if (fragment.length > 2) {
-      let requirements = this._aliasName(fragment[2]).split(':');
+      const requirements = this._aliasName(fragment[2]).split(':');
       if (requirements.length > 1) {
         info.push({ // Additional information
           tag: requirements[1],
@@ -1950,14 +2262,201 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _disableEnterKey() {
-    this.shadowRoot.querySelectorAll('wl-expansion').forEach(element => {
+    this.shadowRoot.querySelectorAll('wl-expansion').forEach((element) => {
       element.onKeyDown = (e) => {
-        let enterKey = 13;
+        const enterKey = 13;
         if (e.keyCode === enterKey) {
           e.preventDefault();
         }
+      };
+    });
+  }
+
+  /**
+   * Append a row to the environment variable list.
+   *
+   * @param {string} name - environment variable name
+   * @param {string} value - environment variable value
+   */
+  _appendEnvRow(name = '', value = '') {
+    const container = this.shadowRoot.querySelector('#modify-env-container');
+    const lastChild = container.children[container.children.length - 1];
+    const div = this._createEnvRow(name, value);
+    container.insertBefore(div, lastChild.nextSibling);
+  }
+  /**
+   * Create a row in the environment variable list.
+   *
+   * @param {string} name - environment variable name
+   * @param {string} value - environment variable value
+   * @return {HTMLElement} Generated division element
+   *
+   */
+  _createEnvRow(name = '', value = '') {
+    const div = document.createElement('div');
+    div.setAttribute('class', 'row extra');
+
+    const env = document.createElement('wl-textfield');
+    env.setAttribute('type', 'text');
+    env.setAttribute('value', name);
+
+    const val = document.createElement('wl-textfield');
+    val.setAttribute('type', 'text');
+    val.setAttribute('value', value);
+
+    const button = document.createElement('wl-button');
+    button.setAttribute('class', 'fg pink');
+    button.setAttribute('fab', '');
+    button.setAttribute('flat', '');
+    button.addEventListener('click', (e) => this._removeEnvItem(e));
+
+    const icon = document.createElement('wl-icon');
+    icon.innerHTML = 'remove';
+    button.appendChild(icon);
+
+    div.appendChild(env);
+    div.appendChild(val);
+    div.appendChild(button);
+    return div;
+  }
+
+  /**
+   * Check whether delete operation will proceed or not.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
+  _removeEnvItem(e) {
+    // htmlCollection should be converted to Array.
+    this.deleteEnvRow = e.target.parentNode;
+    this.deleteEnvRow.remove();
+  }
+
+  /**
+   * Remove empty env input fields
+   */
+  _removeEmptyEnv() {
+    const container = this.shadowRoot.querySelector('#modify-env-container');
+    const rows = container.querySelectorAll('.row.extra');
+    const empty = (row) => Array.prototype.filter.call(
+      row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
+    ).length === 2;
+    Array.prototype.filter.call(rows, (row) => empty(row)).map((row) => row.parentNode.removeChild(row));
+  }
+
+  /**
+   * Modify environment variables for current session.
+   */
+  modifyEnv() {
+    this._parseEnvVariableList();
+    this._saveEnvVariableList();
+    const modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    modifyEnvDialog.closeWithConfirmation = false;
+    modifyEnvDialog.hide();
+    this.notification.text = _text('session.launcher.EnvironmentVariableConfigurationDone');
+    this.notification.show();
+  }
+
+  /**
+   * load environment variables for current session
+   */
+  _loadEnv() {
+    this.environ.forEach((item: any, index) => {
+      const firstIndex = 0;
+      if (index === firstIndex) {
+        const container = this.shadowRoot.querySelector('#modify-env-container');
+        const firstRow = container.querySelector('.row:not(.header)');
+        const envFields = firstRow.querySelectorAll('wl-textfield');
+        Array.prototype.forEach.call(envFields, (elem: any, index) => {
+          elem.value = (index === firstIndex) ? item.name : item.value;
+        });
+      } else {
+        this._appendEnvRow(item.name, item.value);
       }
     });
+  }
+
+  /**
+   * Show environment variable modification popup.
+   */
+  _showEnvDialog() {
+    this._removeEmptyEnv();
+    const modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    modifyEnvDialog.closeWithConfirmation = true;
+    modifyEnvDialog.show();
+  }
+
+  /**
+   * Close confirmation dialog and environment variable dialog and reset the environment variable and value
+   *
+   */
+  _closeAndResetEnvInput() {
+    this._clearRows();
+    this._loadEnv();
+    this.closeDialog('env-config-confirmation');
+    const modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    modifyEnvDialog.closeWithConfirmation = false;
+    modifyEnvDialog.hide();
+  }
+
+  /**
+   * Parse environment variables on UI.
+   */
+  _parseEnvVariableList() {
+    this.environ_values = {};
+    const container = this.shadowRoot.querySelector('#modify-env-container');
+    const rows = container.querySelectorAll('.row:not(.header)');
+    const nonempty = (row) => Array.prototype.filter.call(
+      row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
+    ).length === 0;
+    const encodeRow = (row) => {
+      const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf) => tf.value);
+      this.environ_values[items[0]] = items[1];
+      return items;
+    };
+    Array.prototype.filter.call(rows, (row) => nonempty(row)).map((row) => encodeRow(row));
+  }
+
+  /**
+   * Save Environment variables
+   */
+  _saveEnvVariableList() {
+    this.environ = Object.entries(this.environ_values).map(([name, value]) => ({name, value}));
+  }
+
+  _resetEnvironmentVariables() {
+    this.environ = [];
+    this.environ_values = {};
+    const dialog = this.shadowRoot.querySelector('#modify-env-dialog');
+    if (dialog !== null) {
+      this._clearRows();
+    }
+  }
+
+  /**
+   * Clear rows from the environment variable.
+   */
+  _clearRows() {
+    const container = this.shadowRoot.querySelector('#modify-env-container');
+    const rows = container.querySelectorAll('.row:not(.header)');
+    const firstRow = rows[0];
+
+    // remain first row element and clear values
+    firstRow.querySelectorAll('wl-textfield').forEach((tf) => {
+      tf.value = '';
+    });
+
+    // delete extra rows
+    container.querySelectorAll('.row.extra').forEach((e) => {
+      e.remove();
+    });
+  }
+
+  openDialog(id) {
+    this.shadowRoot.querySelector('#' + id).show();
+  }
+
+  closeDialog(id) {
+    this.shadowRoot.querySelector('#' + id).hide();
   }
 
   render() {
@@ -1965,33 +2464,34 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return html`
       <wl-button raised class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}" @click="${() => this._launchSessionDialog()}">
         <wl-icon>power_settings_new</wl-icon>
-        <span>${_t("session.launcher.Start")}</span>
+        <span>${_t('session.launcher.Start')}</span>
       </wl-button>
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent>
-        <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t("session.launcher.StartNewSession")}</span>
+        <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
         <form slot="content" id="launch-session-form" class="centered">
           <div class="vertical center layout" style="padding-top:15px;">
-            <mwc-select id="environment" label="${_t("session.launcher.Environments")}" fullwidth required
+            <mwc-select id="environment" label="${_t('session.launcher.Environments')}" fullwidth required
               value="${this.default_language}">
-              <mwc-list-item selected style="dispxlay:none!important;">${_t("session.launcher.ChooseEnvironment")}</mwc-list-item>
-                ${this.languages.map(item => html`
+              <mwc-list-item selected style="dispxlay:none!important;">${_t('session.launcher.ChooseEnvironment')}</mwc-list-item>
+                ${this.languages.map((item) => html`
                   ${item.clickable === false ? html`
                     <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true">${item.basename}</h5>
                   ` : html`
                     <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
                       <img slot="graphic" src="resources/icons/${item.icon}" style="width:32px;height:32px;" />
-                      <div class="horizontal justified center flex layout" style="width:293px;">
+                      <div class="horizontal justified center flex layout" style="width:283px;">
                         <div style="padding-right:5px;">${item.basename}</div>
                         <div class="flex"></div>
                         <div class="horizontal layout end-justified center flex">
-                        ${item.tags ? item.tags.map(item => html`
+                        ${item.tags ? item.tags.map((item) => html`
                           <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}" description="${item.tag}"></lablup-shields>
                           <span style="display:none">(${item.tag})</span>
                         `) : ''}
                           <mwc-icon-button icon="info"
                                            class="fg blue info"
                                            @click="${(e) => {
-                                             this._showKernelDescription(e, item);}}">
+    this._showKernelDescription(e, item);
+  }}">
                           </mwc-icon-button>
                         </div>
                       </div>
@@ -1999,21 +2499,21 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   `}
                 `)}
             </mwc-select>
-            <mwc-select id="version" label="${_t("session.launcher.Version")}" fullwidth required>
+            <mwc-select id="version" label="${_t('session.launcher.Version')}" fullwidth required>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
                 <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout">
-                  <div style="width:80px;">${_t("session.launcher.Version")}</div>
-                  <div style="width:120px;">${_t("session.launcher.Base")}</div>
-                  <div style="width:150px;">${_t("session.launcher.Requirements")}</div>
+                  <div style="width:80px;">${_t('session.launcher.Version')}</div>
+                  <div style="width:120px;">${_t('session.launcher.Base')}</div>
+                  <div style="width:150px;">${_t('session.launcher.Requirements')}</div>
                 </h5>
-            ${this.versions.map(item => html`
+            ${this.versions.map((item) => html`
               <mwc-list-item id="${item}" value="${item}">
                 <span style="display:none">${item}</span>
                 <div class="horizontal layout end-justified">
-                  ${this._getVersionInfo(item).map(item => html`
+                  ${this._getVersionInfo(item).map((item) => html`
                     <lablup-shields style="width:${item.size}!important;"
                                     color="${item.color}"
-                                    app="${typeof item.app != 'undefined' && item.app != "" && item.app != " " ? item.app : ''}"
+                                    app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
                                     description="${item.tag}">
                     </lablup-shields>
                   `)}
@@ -2023,16 +2523,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </mwc-select>
             ${this._debug ? html`
             <mwc-textfield id="image-name" type="text" class="flex" value=""
-              label="${_t("session.launcher.ManualImageName")}"></mwc-textfield>
+              label="${_t('session.launcher.ManualImageName')}"></mwc-textfield>
             `:html``}
           </div>
           <div style="display:none;">
-            <wl-checkbox id="use-gpu-checkbox">${_t("session.launcher.UseGPU")}</wl-checkbox>
+            <wl-checkbox id="use-gpu-checkbox">${_t('session.launcher.UseGPU')}</wl-checkbox>
           </div>
           <div class="horizontal center layout">
-            <mwc-select id="scaling-groups" label="${_t("session.launcher.ResourceGroup")}" required
+            <mwc-select id="scaling-groups" label="${_t('session.launcher.ResourceGroup')}" required
                         @selected="${(e) => this.updateScalingGroup(false, e)}">
-              ${this.scaling_groups.map(item => html`
+              ${this.scaling_groups.map((item) => html`
                 <mwc-list-item class="scaling-group-dropdown"
                                id="${item.name}"
                                value="${item.name}">
@@ -2040,56 +2540,138 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </mwc-list-item>
               `)}
             </mwc-select>
-            <mwc-textfield id="session-name" placeholder="${_t("session.launcher.SessionNameOptional")}"
+            <mwc-textfield id="session-name" placeholder="${_t('session.launcher.SessionNameOptional')}"
                            pattern="[a-zA-Z0-9_-]{4,}" fullwidth maxLength="64"
                            helper="${_t('maxLength.64chars')}"
-                           validationMessage="${_t("session.launcher.SessionNameAllowCondition")}"
+                           validationMessage="${_t('session.launcher.SessionNameAllowCondition')}"
                            style="margin-left:5px;">
             </mwc-textfield>
           </div>
-
-          <wl-expansion id="vfolder-select-expansion" name="vfolder-group" style="--expansion-header-padding:16px;--expansion-content-padding:0;">
-            <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.FolderToMount")}</span>
+          <wl-expansion
+                id="vfolder-select-expansion" name="vfolder-group"
+                style="--expansion-header-padding:16px;--expansion-content-padding:0;"
+                @change=${(e) => this.toggleUnselectAllVfoldersButton(e)}>
+            <span slot="title" class="launcher-item-title">${_t('session.launcher.FolderToMount')}</span>
             <mwc-list fullwidth multi id="vfolder"
               @selected="${() => this._updateSelectedFolder()}">
             ${this.vfolders.length === 0 ? html`
-              <mwc-list-item value="" disabled="true">${_t("session.launcher.NoFolderExists")}</mwc-list-item>
+              <mwc-list-item value="" disabled="true">${_t('session.launcher.NoFolderExists')}</mwc-list-item>
             `:html``}
-            ${this.vfolders.map(item => html`
-              <mwc-check-list-item value="${item.name}" ?disabled="${item.disabled}">${item.name}</mwc-check-list-item>
+            ${this.vfolders.map((item) => html`
+              <mwc-check-list-item
+                  value="${item.name}"
+                  ?selected="${this.selectedVfolders.includes(item.name)}"
+                  ?disabled="${item.disabled}">${item.name}</mwc-check-list-item>
             `)}
             </mwc-list>
           </wl-expansion>
           <ul style="color:#646464;font-size:12px;">
-          ${this.selectedVfolders.map(item => html`
+          ${this.selectedVfolders.map((item) => html`
                 <li><mwc-icon>folder_open</mwc-icon>${item}</li>
               `)}
           </ul>
           ${this.selectedVfolders.length > 0 ? html`
-            <div class="horizontal layout end-justified">
+            <div class="horizontal layout end-justified" style="margin-bottom:10px;">
               <mwc-button
                   outlined
-                  label="${_t("session.launcher.UnSelectAllVFolders")}"
+                  label="${_t('session.launcher.UnSelectAllVFolders')}"
+                  id="unselect-all-vfolders"
                   style="width:auto;margin-right:10px;"
                   @click=${() => this._unselectAllSelectedFolder()}></mwc-button>
             </div>
           ` : html``}
+          <div class="horizontal layout center justified">
+            <span class="launcher-item-title" style="padding-left:16px;">${_t('session.launcher.SetEnvironmentVariable')}</span>
+            <mwc-button
+              unelevated
+              icon="rule"
+              label="${_t('session.launcher.Config')}"
+              style="width:auto;margin-right:15px;"
+              @click="${()=>this._showEnvDialog()}"></mwc-button>
+          </div>
+          <p class="title" style="font-weight:400;">${_t('session.launcher.TotalAllocation')}</p>
+          <div class="horizontal layout center center-justified allocation-check">
+            <div id="total-allocation-pane" style="position:relative;">
+              <div class="horizontal layout resource-allocated-box">
+                <div class="vertical layout center center-justified resource-allocated">
+                  <p>${_t('session.launcher.CPU')}</p>
+                  <span>${this.cpu_request}</span>
+                  <p>Core</p>
+                </div>
+                <div class="vertical layout center center-justified resource-allocated">
+                  <p>${_t('session.launcher.Memory')}</p>
+                  <span>${this.mem_request}</span>
+                  <p>GB</p>
+                </div>
+                <div class="vertical layout center center-justified resource-allocated">
+                  <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
+                  <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
+                  <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
+                </div>
+                <div class="vertical layout center center-justified resource-allocated">
+                  <p>${_t('session.launcher.GPU')}</p>
+                  <span>${this.gpu_request}</span>
+                  <p>${_t('session.launcher.GPUSlot')}</p>
+                </div>
+              </div>
+              <div id="resource-allocated-box-shadow"></div>
+            </div>
+            <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
+              <div class="horizontal layout">
+                <p>×</p>
+                <span>${this.cluster_size <= 1 ? this.session_request : this.cluster_size}</span>
+              </div>
+              <p class="small">${_t('session.launcher.Container')}</p>
+            </div>
+            <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
+              <div class="horizontal layout">
+                <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
+                <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
+              </div>
+              <p class="small">${_t('session.launcher.AllocateNode')}</p>
+            </div>
+          </div>
+          <div style="display:none;" class="horizontal layout center center-justified allocation-check">
+            <div style="font-size:22px;">=</div>
+            <div class="horizontal layout resource-allocated-box">
+              <div class="vertical layout center center-justified resource-allocated">
+                <p>${_t('session.launcher.CPU')}</p>
+                <span>${this.cpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
+                <p>Core</p>
+              </div>
+              <div class="vertical layout center center-justified resource-allocated">
+                <p>${_t('session.launcher.Memory')}</p>
+                <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
+                <p>GB</p>
+              </div>
+              <div class="vertical layout center center-justified resource-allocated">
+                <p>${_t('session.launcher.SharedMemory')}</p>
+                <span>${this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
+                <p>GB</p>
+              </div>
+              <div class="vertical layout center center-justified resource-allocated">
+                <p>${_t('session.launcher.Accelerator')}</p>
+                <span>${this.gpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
+                <p>${_t('session.launcher.GPU')}</p>
+              </div>
+            </div>
+          </div>
           <div class="vertical center layout" style="padding-top:15px;">
-            <mwc-select id="resource-templates" label="${_t("session.launcher.ResourceAllocation")}" fullwidth required>
+            <mwc-select id="resource-templates" label="${_t('session.launcher.ResourceAllocation')}" fullwidth required>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
                 <h5 style="font-size:12px;padding: 0 10px 3px 25px;margin:0; border-bottom:1px solid #ccc;" role="separator" disabled="true" class="horizontal layout center">
                   <div style="width:110px;">Name</div>
                   <div style="width:50px;text-align:right;">CPU</div>
                   <div style="width:50px;text-align:right;">RAM</div>
-                  <div style="width:50px;text-align:right;">${_t("session.launcher.SharedMemory")}</div>
-                  <div style="width:90px;text-align:right;">${_t("session.launcher.Accelerator")}</div>
+                  <div style="width:50px;text-align:right;">${_t('session.launcher.SharedMemory')}</div>
+                  <div style="width:90px;text-align:right;">${_t('session.launcher.Accelerator')}</div>
                 </h5>
-            ${this.resource_templates_filtered.map(item => html`
+            ${this.resource_templates_filtered.map((item) => html`
               <mwc-list-item value="${item.name}"
                            id="${item.name}-button"
                            @click="${(e) => {
-                             this._chooseResourceTemplate(e);
-                            }}"
+    this._chooseResourceTemplate(e);
+  }}"
                            .cpu="${item.cpu}"
                            .mem="${item.mem}"
                            .cuda_device="${item.cuda_device}"
@@ -2102,8 +2684,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div style="display:none"> (</div>
                   <div style="width:50px;text-align:right;">${item.cpu}<span style="display:none">CPU</span></div>
                   <div style="width:50px;text-align:right;">${item.mem}GB</div>
-                  <div style="width:50px;text-align:right;">${item.shmem ? html`${item.shmem}GB` : html`64MB`}</div>
-                  <div style="width:90px;text-align:right;">
+                  <div style="width:60px;text-align:right;">${item.shmem ?
+    html`
+                        ${parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g')).toFixed(2)} GB` :
+    html`
+                        64MB
+                        `}</div>
+                  <div style="width:80px;text-align:right;">
                     ${item.cuda_device && item.cuda_device > 0 ? html`${item.cuda_device} CUDA GPU` : html``}
                     ${item.cuda_shares && item.cuda_shares > 0 ? html`${item.cuda_shares} GPU` : html``}
                     ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} ROCM GPU` : html``}
@@ -2115,132 +2702,143 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             `)}
             ${this.isEmpty(this.resource_templates_filtered) ? html`
               <mwc-list-item class="resource-button vertical center start layout" role="option"
-                         style="height:140px;width:350px;" type="button"
-                         flat inverted outlined disabled>
+                             style="height:140px;width:350px;" type="button"
+                             flat inverted outlined disabled>
                 <div>
-                  <h4>${_t("session.launcher.NoSuitablePreset")}</h4>
+                  <h4>${_t('session.launcher.NoSuitablePreset')}</h4>
                   <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
                 </div>
               </mwc-list-item>
-              ` : html``}
+            ` : html``}
             </mwc-select>
           </div>
-          <wl-expansion name="resource-group" open style="--expansion-header-padding:16px;">
-            <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.CustomAllocation")}</span>
-            <span slot="description" style="font-size:12px;color:#646464;"></span>
+          <wl-expansion name="resource-group" style="--expansion-header-padding:16px;">
+            <span slot="title" style="font-size:12px;color: rgb(64, 64, 64);font-weight:400;">${_t('session.launcher.CustomAllocation')}</span>
+            <span slot="description" class="launcher-item-title"></span>
             <div class="vertical center layout">
               <div class="horizontal center layout" style="margin-top:15px;">
                 <div class="resource-type" style="width:70px;">CPU</div>
                 <lablup-slider id="cpu-resource" class="cpu"
                                pin snaps expand editable markers
-                               @click="${this._resourceTemplateToCustom}"
+                               @click="${(e) => this._applyResourceValueChanges(e)}"
+                               @focusout="${(e) => this._applyResourceValueChanges(e)}"
                                marker_limit="${this.marker_limit}"
                                min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                                value="${this.cpu_request}"></lablup-slider>
-                <span class="caption">${_t("session.launcher.Core")}</span>
+                <span class="caption">${_t('session.launcher.Core')}</span>
                 <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
-      this._showResourceDescription(e, 'cpu');
-    }}"></mwc-icon-button>
+    this._showResourceDescription(e, 'cpu');
+  }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
               <div class="resource-type">RAM</div>
               <lablup-slider id="mem-resource" class="mem"
                              pin snaps step=0.05 editable markers
                               @click="${() => {
-                                this._resourceTemplateToCustom();
-                              }}"
+    this._resourceTemplateToCustom();
+  }}"
                               @changed="${() => {
-                                this._updateShmemLimit();
-                              }}"
+    this._updateShmemLimit();
+  }}"
                              marker_limit="${this.marker_limit}"
                              min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                              value="${this.mem_request}"></lablup-slider>
               <span class="caption">GB</span>
               <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
-      this._showResourceDescription(e, 'mem');
-    }}"></mwc-icon-button>
+    this._showResourceDescription(e, 'mem');
+  }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
-              <div class="resource-type">${_t("session.launcher.SharedMemory")}</div>
+              <div class="resource-type">${_t('session.launcher.SharedMemory')}</div>
               <lablup-slider id="shmem-resource" class="mem"
                              pin snaps step="0.0025" editable markers
-                             @click="${this._resourceTemplateToCustom}"
+                             @click="${(e) => this._applyResourceValueChanges(e)}"
+                             @focusout="${(e) => this._applyResourceValueChanges(e)}"
                              marker_limit="${this.marker_limit}"
                              min="0.0625" max="${this.shmem_metric.max}"
                              value="${this.shmem_request}"></lablup-slider>
               <span class="caption">GB</span>
               <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
-      this._showResourceDescription(e, 'shmem');
-    }}"></mwc-icon-button>
+    this._showResourceDescription(e, 'shmem');
+  }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
               <div class="resource-type">GPU</div>
               <lablup-slider id="gpu-resource" class="gpu"
                              pin snaps editable markers step="${this.gpu_step}"
-                             @click="${this._resourceTemplateToCustom}"
+                             @click="${(e) => this._applyResourceValueChanges(e)}"
+                             @focusout="${(e) => this._applyResourceValueChanges(e)}"
                              marker_limit="${this.marker_limit}"
                              min="0.0" max="${this.cuda_device_metric.max}" value="${this.gpu_request}"></lablup-slider>
               <span class="caption">GPU</span>
               <mwc-icon-button icon="info" class="fg blue info" @click="${(e) => {
-      this._showResourceDescription(e, 'gpu');
-    }}"></mwc-icon-button>
+    this._showResourceDescription(e, 'gpu');
+  }}"></mwc-icon-button>
             </div>
             <div class="horizontal center layout">
-              <div class="resource-type">${_t("console.menu.Sessions")}</div>
+              <div class="resource-type">${_t('webui.menu.Sessions')}</div>
               <lablup-slider id="session-resource" class="session"
                              pin snaps editable markers step="1"
-                             @click="${this._resourceTemplateToCustom}"
+                             @click="${(e) => this._applyResourceValueChanges(e)}"
+                             @focusout="${(e) => this._applyResourceValueChanges(e)}"
                              marker_limit="${this.marker_limit}"
                              min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
               <span class="caption">#</span>
               <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
-      this._showResourceDescription(e, 'session');
-    }}"></mwc-icon-button>
+    this._showResourceDescription(e, 'session');
+  }}"></mwc-icon-button>
             </div>
           </div>
         </wl-expansion>
         ${this.cluster_support ? html`
-        <mwc-select id="cluster-mode" label="${_t("session.launcher.ClusterMode")}" fullwidth required
-              value="${this.cluster_mode}" @change="${(e) => this._setClusterMode(e)}">
-          ${this.cluster_mode_list.map(item => html`
-            <mwc-list-item
-                class="cluster-mode-dropdown"
-                id="${item}"
-                value="${item}">
-              <div class="horizontal layout center" style="width:100%;">
-                <p style="width:300px;margin-left:21px;">${_t('session.launcher.'+ item)}</p>
-                <mwc-icon-button
-                    icon="info"
-                    @click="${(e) => this._showResourceDescription(e, item)}">
+          <mwc-select id="cluster-mode" label="${_t('session.launcher.ClusterMode')}" fullwidth required
+                value="${this.cluster_mode}" @change="${(e) => this._setClusterMode(e)}">
+            ${this.cluster_mode_list.map((item) => html`
+              <mwc-list-item
+                  class="cluster-mode-dropdown"
+                  id="${item}"
+                  value="${item}">
+                <div class="horizontal layout center" style="width:100%;">
+                  <p style="width:300px;margin-left:21px;">${_t('session.launcher.'+ item)}</p>
+                  <mwc-icon-button
+                      icon="info"
+                      @click="${(e) => this._showResourceDescription(e, item)}">
+                  </mwc-icon-button>
+                </div>
+              </mwc-list-item>
+            `)}
+          </mwc-select>
+          <div class="horizontal layout center" style="padding:0 24px 24px 24px;">
+            <div class="resource-type">${_t('session.launcher.ClusterSize')}</div>
+            <lablup-slider id="cluster-size" class="cluster"
+                           pin snaps expand editable markers
+                           marker_limit="${this.marker_limit}"
+                           min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
+                           value="${this.cluster_size}"
+                           @click="${(e) => this._applyResourceValueChanges(e, false)}"
+                           @focusout="${(e) => this._applyResourceValueChanges(e, false)}"></lablup-slider>
+            ${this.cluster_mode === 'single-node' ? html`
+              <span class="caption">${_t('session.launcher.Container')}</span>
+            ` : html`
+              <span class="caption">${_t('session.launcher.Node')}</span>
+            `}
+          </div>
+        ` : html``}
+          <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
+            <span slot="title"
+                  style="font-size:12px;font-weight:400;color:#404040;">${_t('session.launcher.SetSessionOwner')}</span>
+            <span slot="description"></span>
+            <div class="vertical layout">
+              <div class="horizontal center layout">
+                <mwc-textfield id="owner-email" type="email" class="flex" value=""
+                               pattern="^.+@.+\..+$"
+                               label="${_t('session.launcher.OwnerEmail')}" size="40"></mwc-textfield>
+                <mwc-icon-button icon="refresh" class="blue"
+                                 @click="${() => this._fetchSessionOwnerGroups()}">
                 </mwc-icon-button>
               </div>
-            </mwc-list-item>
-          `)}
-        </mwc-select>
-        <div class="horizontal layout center" style="padding:0 24px 24px 24px;">
-          <div class="resource-type">${_t("session.launcher.ClusterSize")}</div>
-          <lablup-slider id="cluster-size" class="cluster"
-                         pin snaps expand editable markers
-                         marker_limit="${this.marker_limit}"
-                         min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
-                         value="${this.cluster_size}"
-                         @change="${(e) => this._setClusterSize(e)}"></lablup-slider>
-          <span class="caption">${_t("session.launcher.Node")}</span>
-        </div>`: html``}
-        <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
-          <span slot="title" style="font-size:12px;color:#404040;">${_t("session.launcher.SetSessionOwner")}</span>
-          <span slot="description"></span>
-          <div class="vertical layout">
-            <div class="horizontal center layout">
-              <mwc-textfield id="owner-email" type="email" class="flex" value=""
-                pattern="^.+@.+\..+$"
-                label="${_t("session.launcher.OwnerEmail")}" size="40"></mwc-textfield>
-              <mwc-icon-button icon="refresh" class="blue"
-                @click="${() => this._fetchSessionOwnerGroups()}">
-              </mwc-icon-button>
-            </div>
-            <mwc-select id="owner-accesskey" label="${_t("session.launcher.OwnerAccessKey")}">
-              ${this.ownerKeypairs.map(item => html`
+            <mwc-select id="owner-accesskey" label="${_t('session.launcher.OwnerAccessKey')}">
+              ${this.ownerKeypairs.map((item) => html`
                 <mwc-list-item class="owner-group-dropdown"
                                id="${item.access_key}"
                                value="${item.access_key}">
@@ -2249,8 +2847,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `)}
             </mwc-select>
             <div class="horizontal center layout">
-              <mwc-select id="owner-group" label="${_t("session.launcher.OwnerGroup")}">
-                ${this.ownerGroups.map(item => html`
+              <mwc-select id="owner-group" label="${_t('session.launcher.OwnerGroup')}">
+                ${this.ownerGroups.map((item) => html`
                   <mwc-list-item class="owner-group-dropdown"
                                  id="${item.name}"
                                  value="${item.name}">
@@ -2258,8 +2856,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </mwc-list-item>
                 `)}
               </mwc-select>
-              <mwc-select id="owner-scaling-group" label="${_t("session.launcher.OwnerResourceGroup")}">
-                ${this.ownerScalingGroups.map(item => html`
+              <mwc-select id="owner-scaling-group" label="${_t('session.launcher.OwnerResourceGroup')}">
+                ${this.ownerScalingGroups.map((item) => html`
                   <mwc-list-item class="owner-group-dropdown"
                                  id="${item.name}"
                                  value="${item.name}">
@@ -2270,7 +2868,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </div>
             <wl-label style="padding:15px;">
               <wl-checkbox id="owner-enabled"></wl-checkbox>
-              ${_t("session.launcher.LaunchSessionWithAccessKey")}
+              ${_t('session.launcher.LaunchSessionWithAccessKey')}
             </wl-label>
           </div>
         </wl-expansion>
@@ -2284,6 +2882,61 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             @click="${() => this._newSessionWithConfirmation()}">
           <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
         </mwc-button>
+      </div>
+    </backend-ai-dialog>
+    <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent closeWithConfirmation>
+      <span slot="title">${_t('session.launcher.SetEnvironmentVariable')}</span>
+      <span slot="action">
+        <mwc-icon-button icon="info" @click="${(e) => this._showEnvConfigDescription(e)}" style="pointer-events: auto;"></mwc-icon-button>
+      </span>
+      <div slot="content" id="modify-env-container">
+        <div class="row header">
+          <div> ${_t('session.launcher.EnvironmentVariable')} </div>
+          <div> ${_t('session.launcher.EnvironmentVariableValue')} </div>
+        </div>
+        ${this.environ.forEach((item: any, index) =>
+    html`
+        <div class="row">
+          <wl-textfield
+            type="text"
+            value=${item.name}
+          ></wl-textfield>
+          <wl-textfield
+            type="text"
+            value=${item.value}
+          ></wl-textfield>
+          <wl-button
+            fab flat
+            class="fg pink"
+            @click=${(e) => this._removeEnvItem(e)}
+          >
+            <wl-icon>remove</wl-icon>
+          </wl-button>
+        </div>
+        `)}
+        <div class="row">
+          <wl-textfield type="text"></wl-textfield>
+          <wl-textfield type="text"></wl-textfield>
+          <wl-button
+            fab flat
+            class="fg pink"
+            @click=${()=>this._appendEnvRow()}
+          >
+            <wl-icon>add</wl-icon>
+          </wl-button>
+        </div>
+      </div>
+      <div slot="footer" class="horizontal end-justified flex layout">
+        <mwc-button
+            icon="delete"
+            label="${_t('button.DeleteAll')}"
+            @click="${()=>this._clearRows()}"></mwc-button>
+        <mwc-button
+            unelevated
+            slot="footer"
+            icon="check"
+            label="${_t('button.Save')}"
+            @click="${()=>this.modifyEnv()}"></mwc-button>
       </div>
     </backend-ai-dialog>
     <backend-ai-dialog id="help-description" fixed backdrop>
@@ -2313,12 +2966,35 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         </mwc-button>
       </div>
     </backend-ai-dialog>
+    <backend-ai-dialog id="env-config-confirmation" warning fixed>
+      <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
+      <div slot="content">
+        <p>${_t('session.launcher.EnvConfigWillDisappear')}</p>
+        <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+      </div>
+      <div slot="footer" class="horizontal end-justified flex layout">
+        <mwc-button
+            unelevated
+            id="env-config-reset-button"
+            style="width:auto;margin-right:10px;"
+            @click="${() => this._closeAndResetEnvInput()}">
+          <span id="launch-button-msg">${_t('button.DismissAndProceed')}</span>
+        </mwc-button>
+        <mwc-button
+            outlined
+            id="env-config-remain-button"
+            style="width:auto;"
+            @click="${() => this.closeDialog('env-config-confirmation')}">
+          <span id="launch-button-msg">${_t('button.Cancel')}</span>
+        </mwc-button>
+      </div>
+    </backend-ai-dialog>
 `;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-session-launcher": BackendAiSessionLauncher;
+    'backend-ai-session-launcher': BackendAiSessionLauncher;
   }
 }

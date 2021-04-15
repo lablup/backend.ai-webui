@@ -2,12 +2,13 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/icon';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+
 /**
  Lablup Activitiy Panel
 
@@ -19,11 +20,11 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  ...
  </lablup-activity-panel>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element lablup-activity-panel
  */
 
-@customElement("lablup-activity-panel")
+@customElement('lablup-activity-panel')
 export default class LablupActivityPanel extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: String}) title = '';
@@ -49,7 +50,7 @@ export default class LablupActivityPanel extends LitElement {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       IronFlex,
       IronFlexAlignment,
@@ -76,7 +77,6 @@ export default class LablupActivityPanel extends LitElement {
           margin: 0 0 10px 0;
           border-radius: 5px 5px 0 0;
           border-bottom: 1px solid #DDD;
-          @apply --layout-justified;
           display: flex;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -127,7 +127,7 @@ export default class LablupActivityPanel extends LitElement {
     // language=HTML
     return html`
       <div class="card" id="activity" elevation="${this.elevation}" ?disabled="${this.disabled}">
-        <h4 id="header" class="horizontal center layout" style="font-weight:bold">
+        <h4 id="header" class="horizontal center justified layout" style="font-weight:bold">
           <span>${this.title}</span>
           <div class="flex"></div>
           <wl-button id="button" fab flat inverted @click="${() => this._removePanel()}">
@@ -147,42 +147,42 @@ export default class LablupActivityPanel extends LitElement {
       this.shadowRoot.querySelector('h4').removeChild(button);
     }
     if (this.autowidth) {
-      (this.shadowRoot.querySelector('.card') as any).style.width = "auto";
+      (this.shadowRoot.querySelector('.card') as any).style.width = 'auto';
     } else {
-      (this.shadowRoot.querySelector('.card') as any).style.width = this.widthpct !== 0 ? this.widthpct + "%" : this.width + "px";
+      (this.shadowRoot.querySelector('.card') as any).style.width = this.widthpct !== 0 ? this.widthpct + '%' : this.width + 'px';
     }
 
 
     if (this.minwidth) {
-      (this.shadowRoot.querySelector('.card') as any).style.minWidth = this.minwidth + "px";
+      (this.shadowRoot.querySelector('.card') as any).style.minWidth = this.minwidth + 'px';
     }
     if (this.maxwidth) {
-      (this.shadowRoot.querySelector('.card') as any).style.minWidth = this.maxwidth + "px";
+      (this.shadowRoot.querySelector('.card') as any).style.minWidth = this.maxwidth + 'px';
     }
     if (this.horizontalsize) {
       if (this.horizontalsize == '2x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 2 + 32) + "px";
+        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 2 + 32) + 'px';
       }
       if (this.horizontalsize == '3x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 3 + 64) + "px";
+        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 3 + 64) + 'px';
       }
       if (this.horizontalsize == '4x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 4 + 96) + "px";
+        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 4 + 96) + 'px';
       }
     }
-    (this.shadowRoot.querySelector('.card') as any).style.margin = this.marginWidth + "px";
+    (this.shadowRoot.querySelector('.card') as any).style.margin = this.marginWidth + 'px';
     if (this.headerColor !== '') {
-      this.shadowRoot.querySelector("#header").style.backgroundColor = this.headerColor;
+      this.shadowRoot.querySelector('#header').style.backgroundColor = this.headerColor;
     }
     if (this.narrow === true) {
-      this.shadowRoot.querySelector("div.card > div").style.margin = '0';
-      this.shadowRoot.querySelector("div.card > h4").style.marginBottom = '0';
+      this.shadowRoot.querySelector('div.card > div').style.margin = '0';
+      this.shadowRoot.querySelector('div.card > h4').style.marginBottom = '0';
     }
     if (this.height > 0) {
-      this.shadowRoot.querySelector("div.card").style.height = this.height + 'px';
+      this.shadowRoot.querySelector('div.card').style.height = this.height + 'px';
     }
     if (this.noheader === true) {
-      this.shadowRoot.querySelector("#header").style.display = 'none';
+      this.shadowRoot.querySelector('#header').style.display = 'none';
     }
     if (this.scrollableY) {
       this.shadowRoot.querySelector('.card').style.overflowY = 'auto';
@@ -194,11 +194,12 @@ export default class LablupActivityPanel extends LitElement {
   }
 
   _removePanel() {
+    return;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "lablup-activity-panel": LablupActivityPanel;
+    'lablup-activity-panel': LablupActivityPanel;
   }
 }

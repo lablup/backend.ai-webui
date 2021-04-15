@@ -1,7 +1,7 @@
 import {css} from 'lit-element';
-import {BackendAiStyles} from "./backend-ai-general-styles";
+import {BackendAiStyles} from './backend-ai-general-styles';
 
-export const BackendAiConsoleStyles = [
+export const BackendAIWebUIStyles = [
   BackendAiStyles,
   // language=CSS
   css`
@@ -16,6 +16,8 @@ export const BackendAiConsoleStyles = [
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: top left;
+      -webkit-user-select: none !important;
+      -webkit-app-region: drag !important;
     }
 
     .loading-background[inactive] {
@@ -187,7 +189,7 @@ export const BackendAiConsoleStyles = [
     }
 
     mwc-button[unelevate--mdc-theme-primary] {
-      : var(--general-button-background-color);
+      --mdc-theme-primary: var(--general-button-background-color);
       --mdc-on-theme-primary: var(--general-button-background-color);
     }
 

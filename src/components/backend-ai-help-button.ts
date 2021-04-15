@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-//import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+// import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import '@material/mwc-icon-button';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -16,10 +16,10 @@ import {BackendAIPage} from './backend-ai-page';
 
  <backend-ai-help></backend-ai-help>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-help
  */
-@customElement("backend-ai-help-button")
+@customElement('backend-ai-help-button')
 export default class BackendAiHelpButton extends BackendAIPage {
   @property({type: String}) lang = 'default';
   @property({type: String}) manualURL = '';
@@ -45,7 +45,7 @@ export default class BackendAiHelpButton extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [css`
     mwc-icon-button {
       color: white;
@@ -62,7 +62,7 @@ export default class BackendAiHelpButton extends BackendAIPage {
   }
 
   get currentPage() {
-    let page: string | undefined = globalThis.location.toString().split(/[\/]+/).pop();
+    const page: string | undefined = globalThis.location.toString().split(/[/]+/).pop();
     if (typeof this.page == 'undefined') {
       this.page = 'error';
     } else {
@@ -75,14 +75,14 @@ export default class BackendAiHelpButton extends BackendAIPage {
    * Show help page with current language(Korean or English).
    */
   showHelpPage() {
-    let postfix: string = '';
+    let postfix = '';
     if (this.manualURL !== '') {
       postfix = this.manualURL;
     } else {
       if (this.currentPage in this.URLmatchingTable) {
         postfix = this.URLmatchingTable[this.currentPage];
-        let lang = globalThis.backendaioptions.get('current_language');
-        if (["ko", 'en'].includes(lang)) {
+        const lang = globalThis.backendaioptions.get('current_language');
+        if (['ko', 'en'].includes(lang)) {
           this.lang = lang;
         } else {
           this.lang = 'en';
@@ -94,8 +94,8 @@ export default class BackendAiHelpButton extends BackendAIPage {
 
   /**
    * Open the online help page.
-   * 
-   * @param {string} postfix 
+   *
+   * @param {string} postfix
    */
   showOnlineHelpPage(postfix: string) {
     window.open(`https://console.docs.backend.ai/${this.lang}/latest/` + postfix, '_blank');
@@ -111,6 +111,6 @@ export default class BackendAiHelpButton extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-help-button": BackendAiHelpButton;
+    'backend-ai-help-button': BackendAiHelpButton;
   }
 }

@@ -3,8 +3,8 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {get as _text, translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -15,7 +15,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 
 import '@material/mwc-switch/mwc-switch';
@@ -23,7 +23,7 @@ import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
 import './lablup-activity-panel';
-import {default as PainKiller} from "./backend-ai-painkiller";
+import {default as PainKiller} from './backend-ai-painkiller';
 
 /**
  Backend AI Settings View
@@ -34,19 +34,19 @@ import {default as PainKiller} from "./backend-ai-painkiller";
  ...
  </backend-ai-settings-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-storage-list
  */
 
-@customElement("backend-ai-settings-view")
+@customElement('backend-ai-settings-view')
 export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
   @property({type: Object}) options = Object();
   @property({type: Object}) notification = Object();
   @property({type: Array}) imagePullingBehavior = [
-    {name: _text("settings.image.digest"), behavior: "digest"},
-    {name: _text("settings.image.tag"), behavior: "tag"},
-    {name: _text("settings.image.none"), behavior: "none"}
+    {name: _text('settings.image.digest'), behavior: 'digest'},
+    {name: _text('settings.image.tag'), behavior: 'tag'},
+    {name: _text('settings.image.none'), behavior: 'none'}
   ];
   @property({type: Array}) jobschedulerType = [
     'fifo', 'lifo', 'drf'];
@@ -54,20 +54,20 @@ export default class BackendAiSettingsView extends BackendAIPage {
   constructor() {
     super();
     this.options = {
-      image_pulling_behavior: "digest",
+      image_pulling_behavior: 'digest',
       cuda_gpu: false,
       cuda_fgpu: false,
       rocm_gpu: false,
       tpu: false,
       scheduler: 'fifo'
-    }
+    };
   }
 
   static get is() {
     return 'backend-ai-settings-view';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -173,7 +173,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           div.description-shrink {
             width: auto;
           }
-          
+
         }
 
         @media screen and (min-width: 1400px) {
@@ -188,12 +188,12 @@ export default class BackendAiSettingsView extends BackendAIPage {
     // language=HTML
     return html`
       <div class="horizontal layout wrap">
-        <lablup-activity-panel title="${_t("settings.Image")}" autowidth>
+        <lablup-activity-panel title="${_t('settings.Image')}" autowidth>
           <div slot="message" class="horizontal wrap layout">
             <div class="horizontal layout setting-item">
               <div class="vertical center-justified layout setting-desc">
-                <div class="title">${_t("settings.RegisterNewImagesFromRepo")}</div>
-                <div class="description">${_t("settings.DescRegisterNewImagesFromRepo")}
+                <div class="title">${_t('settings.RegisterNewImagesFromRepo')}</div>
+                <div class="description">${_t('settings.DescRegisterNewImagesFromRepo')}
                 </div>
               </div>
               <div class="vertical center-justified layout setting-button">
@@ -202,9 +202,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
             </div>
             <div class="horizontal layout setting-item">
               <div class="vertical center-justified layout setting-desc-select">
-                <div class="title">${_t("settings.ImagePullBehavior")}</div>
-                <div class="description-extra">${_tr("settings.DescImagePullBehavior")}<br />
-                    ${_t("settings.Require2003orAbove")}
+                <div class="title">${_t('settings.ImagePullBehavior')}</div>
+                <div class="description-extra">${_tr('settings.DescImagePullBehavior')}<br />
+                    ${_t('settings.Require2003orAbove')}
                 </div>
               </div>
               <div class="vertical center-justified layout">
@@ -213,7 +213,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                             outlined
                             style="width:120px;"
                             @selected="${(e) => this.setImagePullingBehavior(e)}">
-                ${this.imagePullingBehavior.map(item => html`
+                ${this.imagePullingBehavior.map((item) => html`
                   <mwc-list-item value="${item.behavior}"
                                  ?selected=${this.options['image_pulling_behavior'] === item.behavior}>
                     ${item.name}
@@ -223,12 +223,12 @@ export default class BackendAiSettingsView extends BackendAIPage {
             </div>
           </div>
         </lablup-activity-panel>
-        <lablup-activity-panel title="${_t("settings.GUI")}" autowidth>
+        <lablup-activity-panel title="${_t('settings.GUI')}" autowidth>
           <div slot="message" class="horizontal wrap layout">
             <div class="horizontal layout setting-item">
               <div class="vertical center-justified layout setting-desc-shrink">
-                <div class="title">${_t("settings.UseCLIonGUI")}</div>
-                <div class="description-shrink">${_tr("settings.DescUseCLIonGUI")}
+                <div class="title">${_t('settings.UseCLIonGUI')}</div>
+                <div class="description-shrink">${_tr('settings.DescUseCLIonGUI')}
                 </div>
               </div>
               <div class="vertical center-justified layout setting-button">
@@ -237,8 +237,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
             </div>
             <div class="horizontal layout setting-item">
               <div class="vertical center-justified layout setting-desc-shrink">
-                <div class="title">${_t("settings.UseGUIonWeb")}</div>
-                <div class="description-shrink">${_tr("settings.DescUseGUIonWeb")}
+                <div class="title">${_t('settings.UseGUIonWeb')}</div>
+                <div class="description-shrink">${_tr('settings.DescUseGUIonWeb')}
                 </div>
               </div>
               <div class="vertical center-justified layout setting-button">
@@ -247,23 +247,23 @@ export default class BackendAiSettingsView extends BackendAIPage {
             </div>
           </div>
         </lablup-activity-panel>
-        <lablup-activity-panel title="${_t("settings.Scaling")} & ${_t("settings.Plugins")}" narrow autowidth>
+        <lablup-activity-panel title="${_t('settings.Scaling')} & ${_t('settings.Plugins')}" narrow autowidth>
           <div slot="message" class="vertical wrap layout">
             <div class="horizontal wrap layout note" style="background-color:#FFFBE7;width:100%;padding:10px 0px;">
               <p style="margin:auto 10px;">
-                ${_t("settings.NoteAboutFixedSetup")}
+                ${_t('settings.NoteAboutFixedSetup')}
               </p>
             </div>
             <div style="margin:auto 16px;">
                 <h3 class="horizontal center layout">
-                <span>${_t("settings.Scaling")}</span>
+                <span>${_t('settings.Scaling')}</span>
                 <span class="flex"></span>
               </h3>
               <div class="horizontal wrap layout">
                 <div class="horizontal layout wrap setting-item">
                   <div class="vertical center-justified layout setting-desc-shrink">
-                    <div class="title">${_t("settings.AllowAgentSideRegistration")}</div>
-                    <div class="description-shrink">${_tr("settings.DescAllowAgentSideRegistration")}
+                    <div class="title">${_t('settings.AllowAgentSideRegistration')}</div>
+                    <div class="description-shrink">${_tr('settings.DescAllowAgentSideRegistration')}
                     </div>
                   </div>
                   <div class="vertical center-justified layout setting-button">
@@ -272,16 +272,16 @@ export default class BackendAiSettingsView extends BackendAIPage {
                 </div>
               </div>
               <h3 class="horizontal center layout">
-                <span>${_t("settings.Plugins")}</span>
+                <span>${_t('settings.Plugins')}</span>
                 <span class="flex"></span>
               </h3>
               <div class="vertical layout wrap">
                 <div class="horizontal layout wrap start start-justified">
                   <div class="horizontal layout setting-item">
                     <div class="vertical center-justified layout setting-desc-shrink">
-                      <div class="title">${_t("settings.CUDAGPUsupport")}</div>
-                      <div class="description-shrink">${_tr("settings.DescCUDAGPUsupport")}
-                        ${this.options['cuda_fgpu'] ? html`<br />${_t("settings.CUDAGPUdisabledByFGPUsupport")}` : html``}
+                      <div class="title">${_t('settings.CUDAGPUsupport')}</div>
+                      <div class="description-shrink">${_tr('settings.DescCUDAGPUsupport')}
+                        ${this.options['cuda_fgpu'] ? html`<br />${_t('settings.CUDAGPUdisabledByFGPUsupport')}` : html``}
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
@@ -290,8 +290,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
                   </div>
                   <div class="horizontal layout setting-item">
                     <div class="vertical center-justified layout setting-desc-shrink">
-                      <div class="title">${_t("settings.ROCMGPUsupport")}</div>
-                      <div class="description-shrink">${_tr("settings.DescROCMGPUsupport")}<br />${_t("settings.Require1912orAbove")}
+                      <div class="title">${_t('settings.ROCMGPUsupport')}</div>
+                      <div class="description-shrink">${_tr('settings.DescROCMGPUsupport')}<br />${_t('settings.Require1912orAbove')}
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
@@ -300,9 +300,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                   </div>
                   <div class="horizontal layout setting-item">
                     <div class="vertical center-justified layout setting-desc-select" style="margin: 15px 0px;">
-                      <div class="title">${_t("settings.Scheduler")}</div>
-                      <div class="description-shrink">${_t("settings.JobScheduler")}<br/>
-                          ${_t("settings.Require1912orAbove")}
+                      <div class="title">${_t('settings.Scheduler')}</div>
+                      <div class="description-shrink">${_t('settings.JobScheduler')}<br/>
+                          ${_t('settings.Require1912orAbove')}
                       </div>
                     </div>
                     <div class="vertical layout center-justified">
@@ -312,7 +312,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                                   @selected="${(e) => this.changeScheduler(e)}"
                                   label=""
                                   style="width:130px;">
-                        ${this.jobschedulerType.map(item => html`
+                        ${this.jobschedulerType.map((item) => html`
                           <mwc-list-item value="${item}"
                                         ?selected=${this.options['scheduler'] === item}>
                             ${item}
@@ -322,14 +322,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
                   </div>
                 </div>
                 <h3 class="horizontal center layout">
-                  <span>${_t("settings.EnterpriseFeatures")}</span>
+                  <span>${_t('settings.EnterpriseFeatures')}</span>
                   <span class="flex"></span>
                 </h3>
                 <div class="horizontal wrap layout">
                   <div class="horizontal layout setting-item">
                     <div class="vertical center-justified layout setting-desc-shrink">
-                      <div class="title">${_t("settings.FractionalGPU")}</div>
-                      <div class="description-shrink">${_t("settings.DescFractionalGPU")} <br/> ${_t("settings.RequireFGPUPlugin")}
+                      <div class="title">${_t('settings.FractionalGPU')}</div>
+                      <div class="description-shrink">${_t('settings.DescFractionalGPU')} <br/> ${_t('settings.RequireFGPUPlugin')}
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
@@ -338,8 +338,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
                   </div>
                   <div class="horizontal layout setting-item">
                     <div class="vertical center-justified layout setting-desc-shrink">
-                      <div class="title">${_t("settings.TPU")}</div>
-                      <div class="description-shrink">${_t("settings.DescTPU")} <br/>${_t("settings.RequireTPUPlugin")}
+                      <div class="title">${_t('settings.TPU')}</div>
+                      <div class="description-shrink">${_t('settings.DescTPU')} <br/>${_t('settings.RequireTPUPlugin')}
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
@@ -357,7 +357,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateSettings();
       }, true);
@@ -413,6 +413,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
   /**
    * Set image pulling behavior and notify.
+   *
+   * @param {HTMLElement} e - component that contains image data for pulling
+   * @return {boolean} true when set
    * */
   setImagePullingBehavior(e) {
     if (e.target.selected === null) return false;
@@ -420,7 +423,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     if (value !== this.options['image_pulling_behavior'] && ['none', 'digest', 'tag'].includes(value)) {
       globalThis.backendaiclient.setting.set('docker/image/auto_pull', value).then((response) => {
         this.options['image_pulling_behavior'] = value;
-        this.notification.text = _text("notification.SuccessfullyUpdated");
+        this.notification.text = _text('notification.SuccessfullyUpdated');
         this.notification.show();
         this.update(this.options);
         console.log(response);
@@ -431,13 +434,15 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
   /**
    * Change Scheduler and notify.
+   *
+   * @param {HTMLElement} e - scheduler setting component
    * */
   changeScheduler(e) {
     if (['fifo', 'lifo', 'drf'].includes(e.target.value)) {
-      let scheduler = `{${e.target.value}}`;
+      const scheduler = `{${e.target.value}}`;
       globalThis.backendaiclient.setting.set('plugins/scheduler', scheduler).then((response) => {
         console.log(response);
-      }).catch(err => {
+      }).catch((err) => {
         this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');
         this.notification.detail = err;
         this.notification.show(true, err);
@@ -448,6 +453,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-settings-view": BackendAiSettingsView;
+    'backend-ai-settings-view': BackendAiSettingsView;
   }
 }

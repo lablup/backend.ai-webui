@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t, translateUnsafeHTML as _tr} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -32,17 +32,16 @@ import './lablup-loading-spinner';
  ... content ...
  </backend-ai-information-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-information-view
  */
 
-@customElement("backend-ai-information-view")
+@customElement('backend-ai-information-view')
 export default class BackendAiInformationView extends BackendAIPage {
-
   @property({type: Object}) notification = Object();
   @property({type: String}) manager_version = '';
   @property({type: String}) manager_version_latest = '';
-  @property({type: String}) console_version = '';
+  @property({type: String}) webui_version = '';
   @property({type: String}) api_version = '';
   @property({type: String}) docker_version = '';
   @property({type: String}) pgsql_version = '';
@@ -60,7 +59,7 @@ export default class BackendAiInformationView extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -156,21 +155,21 @@ export default class BackendAiInformationView extends BackendAIPage {
     return html`
       <div class="horizontal layout flex wrap">
         <div class="vertical layout">
-          <lablup-activity-panel title="${_t("information.Core")}" horizontalsize="1x">
+          <lablup-activity-panel title="${_t('information.Core')}" horizontalsize="1x">
             <div slot="message">
               <div class="horizontal flex layout wrap setting-item">
                 <div class="vertical center-justified layout setting-desc-shrink" style="margin-right: 65px;">
-                  <div class="title">${_t("information.ManagerVersion")}</div>
+                  <div class="title">${_t('information.ManagerVersion')}</div>
                 </div>
                 <div class="vertical center-justified layout">
                   Backend.AI ${this.manager_version}
-                  <lablup-shields app="${_t("information.Installation")}" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
-                  <lablup-shields app="${_t("information.LatestRelease")}" color="darkgreen" description="${this.manager_version_latest}" ui="flat"></lablup-shields>
+                  <lablup-shields app="${_t('information.Installation')}" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
+                  <lablup-shields app="${_t('information.LatestRelease')}" color="darkgreen" description="${this.manager_version_latest}" ui="flat"></lablup-shields>
                 </div>
               </div>
               <div class="horizontal flex layout wrap setting-item">
                 <div class="vertical center-justified layout setting-desc">
-                  <div class="title">${_t("information.APIVersion")}</div>
+                  <div class="title">${_t('information.APIVersion')}</div>
                 </div>
                 <div class="horizontal center end-justified layout setting-label">
                   ${this.api_version}
@@ -178,12 +177,12 @@ export default class BackendAiInformationView extends BackendAIPage {
               </div>
             </div>
           </lablup-activity-panel>
-          <lablup-activity-panel title="${_t("information.Security")}">
+          <lablup-activity-panel title="${_t('information.Security')}">
             <div slot="message">
               <div class="horizontal flex layout wrap setting-item">
                 <div class="vertical center-justified layout setting-desc">
-                  <div class="title">${_t("information.DefaultAdministratorAccountChanged")}</div>
-                  <div class="description">${_t("information.DescDefaultAdministratorAccountChanged")}
+                  <div class="title">${_t('information.DefaultAdministratorAccountChanged')}</div>
+                  <div class="description">${_t('information.DescDefaultAdministratorAccountChanged')}
                   </div>
                 </div>
                 <div class="horizontal center end-justified layout" style="width:30%;">
@@ -192,8 +191,8 @@ export default class BackendAiInformationView extends BackendAIPage {
               </div>
               <div class="horizontal flex layout wrap setting-item">
                 <div class="vertical center-justified layout setting-desc">
-                  <div class="title">${_t("information.UsesSSL")}</div>
-                  <div class="description">${_t("information.DescUsesSSL")}
+                  <div class="title">${_t('information.UsesSSL')}</div>
+                  <div class="description">${_t('information.DescUsesSSL')}
                   </div>
                 </div>
                 <div class="horizontal center end-justified layout" style="width:30%;">
@@ -203,12 +202,12 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
           </lablup-activity-panel>
         </div>
-        <lablup-activity-panel title="${_t("information.Component")}">
+        <lablup-activity-panel title="${_t('information.Component')}">
           <div slot="message">
             <div class="horizontal flex layout wrap setting-item-bottom-expand">
               <div class="vertical center-justified layout setting-desc">
-                <div class="title">${_t("information.DockerVersion")}</div>
-                <div class="description">${_tr("information.DescDockerVersion")}
+                <div class="title">${_t('information.DockerVersion')}</div>
+                <div class="description">${_tr('information.DescDockerVersion')}
                 </div>
               </div>
               <div class="horizontal center end-justified layout setting-label">
@@ -217,8 +216,8 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
             <div class="horizontal flex layout wrap setting-item-bottom-expand">
               <div class="vertical center-justified layout setting-desc">
-                <div class="title">${_t("information.PostgreSQLVersion")}</div>
-                <div class="description">${_tr("information.DescPostgreSQLVersion")}
+                <div class="title">${_t('information.PostgreSQLVersion')}</div>
+                <div class="description">${_tr('information.DescPostgreSQLVersion')}
                 </div>
               </div>
               <div class="horizontal center end-justified layout setting-label">
@@ -227,8 +226,8 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
             <div class="horizontal flex layout wrap setting-item-bottom-expand">
               <div class="vertical center-justified layout setting-desc">
-                <div class="title">${_t("information.ETCDVersion")}</div>
-                <div class="description">${_tr("information.DescETCDVersion")}
+                <div class="title">${_t('information.ETCDVersion')}</div>
+                <div class="description">${_tr('information.DescETCDVersion')}
                 </div>
               </div>
               <div class="horizontal center end-justified layout setting-label">
@@ -237,8 +236,8 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
             <div class="horizontal flex layout wrap setting-item-bottom-expand">
               <div class="vertical center-justified layout setting-desc">
-                <div class="title">${_t("information.RedisVersion")}</div>
-                <div class="description">${_tr("information.DescRedisVersion")}
+                <div class="title">${_t('information.RedisVersion')}</div>
+                <div class="description">${_tr('information.DescRedisVersion')}
                 </div>
               </div>
               <div class="horizontal center end-justified layout setting-label">
@@ -247,12 +246,12 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
           </div>
         </lablup-activity-panel>
-        <lablup-activity-panel title="${_t("information.License")}" horizontalsize="2x">
+        <lablup-activity-panel title="${_t('information.License')}" horizontalsize="2x">
           <div slot="message">
             <div class="horizontal flex layout wrap setting-item">
               <div class="vertical center-justified layout setting-desc">
-                <div class="title">${_t("information.IsLicenseValid")}</div>
-                <div class="description">${_t("information.DescIsLicenseValid")}
+                <div class="title">${_t('information.IsLicenseValid')}</div>
+                <div class="description">${_t('information.DescIsLicenseValid')}
                 </div>
               </div>
               <div class="horizontal center end-justified layout" style="width:30%;">
@@ -261,8 +260,8 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
             <div class="horizontal flex layout wrap setting-item">
               <div class="vertical center-justified layout setting-desc">
-                <div class="title">${_t("information.LicenseType")}</div>
-                <div class="description">${_tr("information.DescLicenseType")}
+                <div class="title">${_t('information.LicenseType')}</div>
+                <div class="description">${_tr('information.DescLicenseType')}
                 </div>
               </div>
               <div class="horizontal center end-justified layout setting-label">
@@ -273,8 +272,8 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
             <div class="horizontal flex layout wrap setting-item">
               <div class="vertical center-justified layout setting-desc">
-                <div class="title">${_t("information.Licensee")}</div>
-                <div class="description">${_t("information.DescLicensee")}
+                <div class="title">${_t('information.Licensee')}</div>
+                <div class="description">${_t('information.DescLicensee')}
                 </div>
               </div>
               <div class="horizontal center end-justified layout setting-label">
@@ -283,8 +282,8 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
             <div class="horizontal flex layout wrap setting-item">
               <div class="vertical center-justified layout setting-desc">
-                <div class="title">${_t("information.LicenseKey")}</div>
-                <div class="description">${_t("information.DescLicenseKey")}
+                <div class="title">${_t('information.LicenseKey')}</div>
+                <div class="description">${_t('information.DescLicenseKey')}
                 </div>
               </div>
               <div class="horizontal center end-justified layout setting-label monospace indicator">
@@ -293,8 +292,8 @@ export default class BackendAiInformationView extends BackendAIPage {
             </div>
             <div class="horizontal flex layout wrap setting-item">
               <div class="vertical center-justified layout setting-desc">
-                <div class="title">${_t("information.Expiration")}</div>
-                <div class="description">${_t("information.DescExpiration")}
+                <div class="title">${_t('information.Expiration')}</div>
+                <div class="description">${_t('information.DescExpiration')}
                 </div>
               </div>
               <div class="horizontal center end-justified layout setting-label">
@@ -310,7 +309,7 @@ export default class BackendAiInformationView extends BackendAIPage {
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
 
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateInformation();
       }, true);
@@ -347,13 +346,13 @@ export default class BackendAiInformationView extends BackendAIPage {
    */
   updateInformation() {
     this.manager_version = globalThis.backendaiclient.managerVersion;
-    this.console_version = globalThis.packageVersion;
+    this.webui_version = globalThis.packageVersion;
     this.api_version = globalThis.backendaiclient.apiVersion;
     this.docker_version = _text('information.Compatible'); // It uses 20.03 API. So blocked now.
     this.pgsql_version = _text('information.Compatible');
     this.redis_version = _text('information.Compatible');
     this.etcd_version = _text('information.Compatible');
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._updateLicenseInfo();
       }, true);
@@ -371,6 +370,6 @@ export default class BackendAiInformationView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-information-view": BackendAiInformationView;
+    'backend-ai-information-view': BackendAiInformationView;
   }
 }

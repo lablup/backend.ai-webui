@@ -3,8 +3,8 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
@@ -33,19 +33,19 @@ import {
  ...
  </backend-ai-statistics-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-statistics-view
  */
 
-@customElement("backend-ai-statistics-view")
+@customElement('backend-ai-statistics-view')
 export default class BackendAIStatisticsView extends BackendAIPage {
-  @property({type: String}) _status = "inactive";
+  @property({type: String}) _status = 'inactive';
 
   constructor() {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -92,7 +92,7 @@ export default class BackendAIStatisticsView extends BackendAIPage {
           width: 100%;
         }
       `
-    ]
+    ];
   }
 
   /**
@@ -104,11 +104,11 @@ export default class BackendAIStatisticsView extends BackendAIPage {
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
-      this._status = "inactive";
+      this._status = 'inactive';
       return;
     }
-    this.shadowRoot.querySelector("#usage-list").setAttribute("active", true);
-    this._status = "active";
+    this.shadowRoot.querySelector('#usage-list').setAttribute('active', true);
+    this._status = 'active';
   }
 
   /**
@@ -117,7 +117,7 @@ export default class BackendAIStatisticsView extends BackendAIPage {
    * @param {EventTarget} tab - usage tab to want to show
    * */
   _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll(".tab-content");
+    const els = this.shadowRoot.querySelectorAll('.tab-content');
 
     for (const el of els) {
       el.style.display = 'none';
@@ -125,10 +125,10 @@ export default class BackendAIStatisticsView extends BackendAIPage {
 
     this.shadowRoot.querySelector('#' + tab.title + '-stat').style.display = 'block';
 
-    els.forEach(e => {
-      e.children[0].removeAttribute("active");
+    els.forEach((e) => {
+      e.children[0].removeAttribute('active');
     });
-    this.shadowRoot.querySelector(`#${tab.title}-list`).setAttribute("active", true);
+    this.shadowRoot.querySelector(`#${tab.title}-list`).setAttribute('active', true);
   }
 
   render() {
@@ -139,7 +139,7 @@ export default class BackendAIStatisticsView extends BackendAIPage {
             <div slot="message">
               <h3 class="tab horizontal center layout">
                 <mwc-tab-bar>
-                  <mwc-tab title="usage" label="${_t("statistics.Usage")}"></mwc-tab>
+                  <mwc-tab title="usage" label="${_t('statistics.Usage')}"></mwc-tab>
                 </mwc-tab-bar>
               </h3>
               <div class="horizontal wrap layout">
@@ -156,6 +156,6 @@ export default class BackendAIStatisticsView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-statistics-view": BackendAIStatisticsView;
+    'backend-ai-statistics-view': BackendAIStatisticsView;
   }
 }

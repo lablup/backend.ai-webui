@@ -3,8 +3,8 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 
 import './backend-ai-resource-monitor';
 import './backend-ai-session-list';
@@ -14,11 +14,11 @@ import 'weightless/icon';
 import 'weightless/textfield';
 
 import '@material/mwc-textfield/mwc-textfield';
-import "@material/mwc-list/mwc-list-item";
-import "@material/mwc-icon-button/mwc-icon-button";
-import "@material/mwc-menu/mwc-menu";
-import "@material/mwc-tab-bar/mwc-tab-bar";
-import "@material/mwc-tab/mwc-tab";
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-icon-button/mwc-icon-button';
+import '@material/mwc-menu/mwc-menu';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
 
 import './lablup-activity-panel';
 import './backend-ai-session-launcher';
@@ -41,11 +41,11 @@ import {
  ...
  </backend-ai-settings-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-storage-list
  */
 
-@customElement("backend-ai-session-view")
+@customElement('backend-ai-session-view')
 export default class BackendAiSessionView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean}) active = true;
@@ -62,7 +62,7 @@ export default class BackendAiSessionView extends BackendAIPage {
     this._status = 'inactive';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -73,7 +73,7 @@ export default class BackendAiSessionView extends BackendAIPage {
       css`
         h3.tab {
           background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0px 0px;
+          border-radius: 5px 5px 0 0;
         }
         mwc-tab-bar {
           --mdc-theme-primary: var(--general-sidebar-selected-color);
@@ -89,7 +89,7 @@ export default class BackendAiSessionView extends BackendAIPage {
         }
 
         wl-label.unlimited {
-          margin: 12px 0px;
+          margin: 12px 0;
         }
 
         wl-label.warning {
@@ -107,7 +107,7 @@ export default class BackendAiSessionView extends BackendAIPage {
         }
 
         backend-ai-dialog wl-textfield {
-          padding: 10px 0px;
+          padding: 10px 0;
           --input-font-family: Roboto, Noto, sans-serif;
           --input-font-size: 12px;
           --input-color-disabled: #bbbbbb;
@@ -126,7 +126,7 @@ export default class BackendAiSessionView extends BackendAIPage {
           left: -170px;
           top: 50px;
         }
-        
+
         mwc-list-item {
           font-size : 14px;
         }
@@ -163,12 +163,12 @@ export default class BackendAiSessionView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this._lists = this.shadowRoot.querySelectorAll("backend-ai-session-list");
+    this._lists = this.shadowRoot.querySelectorAll('backend-ai-session-list');
     this.notification = globalThis.lablupNotification;
     document.addEventListener('backend-ai-session-list-refreshed', () => {
       this.shadowRoot.querySelector('#running-jobs').refreshList(true, false);
     });
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = globalThis.backendaiclient.is_admin;
         this._connectionMode = globalThis.backendaiclient._config._connectionMode;
@@ -195,22 +195,22 @@ export default class BackendAiSessionView extends BackendAIPage {
     this._status = 'active';
   }
 
-    /**
+  /**
    * Toggle dateFrom and dateTo checkbox
    *
    * @param {Event} e - click the export-csv-checkbox switch
    * */
   _toggleDialogCheckbox(e) {
-    let checkbox = e.target;
-    let dateFrom = this.shadowRoot.querySelector('#date-from');
-    let dateTo = this.shadowRoot.querySelector('#date-to');
+    const checkbox = e.target;
+    const dateFrom = this.shadowRoot.querySelector('#date-from');
+    const dateTo = this.shadowRoot.querySelector('#date-to');
 
     dateFrom.disabled = checkbox.checked;
     dateTo.disabled = checkbox.checked;
   }
 
   _showTab(tab) {
-    let els = this.shadowRoot.querySelectorAll(".tab-content");
+    const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
@@ -223,12 +223,12 @@ export default class BackendAiSessionView extends BackendAIPage {
 
   /**
    * toggle dropdown menu (admin-only)
-   * 
-   * @param e {event}
+   *
+   * @param {Event} e - Toggle event
    */
   _toggleDropdown(e) {
-    let menu = this.shadowRoot.querySelector("#dropdown-menu");
-    let button = e.target;
+    const menu = this.shadowRoot.querySelector('#dropdown-menu');
+    const button = e.target;
     menu.anchor = button;
     if (!menu.open) {
       menu.show();
@@ -236,23 +236,23 @@ export default class BackendAiSessionView extends BackendAIPage {
   }
 
   _openExportToCsvDialog() {
-    let menu = this.shadowRoot.querySelector("#dropdown-menu");
+    const menu = this.shadowRoot.querySelector('#dropdown-menu');
     if (menu.open) {
       menu.close();
     }
-    console.log("Downloading CSV File...");
+    console.log('Downloading CSV File...');
     this._defaultFileName = this._getDefaultCSVFileName();
     this.exportToCsvDialog.show();
   }
 
   _getFirstDateOfMonth() {
-    let date = new Date();
+    const date = new Date();
     return new Date(date.getFullYear(), date.getMonth(), 2).toISOString().substring(0, 10);
   }
 
   _getDefaultCSVFileName() {
-    let date = new Date().toISOString().substring(0, 10);
-    let time = new Date().toTimeString().slice(0, 8).replace(/:/gi, '-');
+    const date = new Date().toISOString().substring(0, 10);
+    const time = new Date().toTimeString().slice(0, 8).replace(/:/gi, '-');
     return date + '_' + time;
   }
 
@@ -260,12 +260,12 @@ export default class BackendAiSessionView extends BackendAIPage {
    * Check date-to < date-from.
    * */
   _validateDateRange() {
-    let dateTo = this.shadowRoot.querySelector('#date-to');
-    let dateFrom = this.shadowRoot.querySelector('#date-from');
+    const dateTo = this.shadowRoot.querySelector('#date-to');
+    const dateFrom = this.shadowRoot.querySelector('#date-from');
 
     if (dateTo.value && dateFrom.value) {
-      let to = new Date(dateTo.value).getTime();
-      let from = new Date(dateFrom.value).getTime();
+      const to = new Date(dateTo.value).getTime();
+      const from = new Date(dateFrom.value).getTime();
       if (to < from) {
         dateTo.value = dateFrom.value;
       }
@@ -276,11 +276,12 @@ export default class BackendAiSessionView extends BackendAIPage {
    * Scale the time in units of D, H, M, S, and MS.
    *
    * @param {number} value - time to want to scale
+   * @return {Record<string, unknown>} result - data containing the scaled time
    * */
   _automaticScaledTime(value: number) { // number: msec.
     let result = Object();
-    let unitText = ['D', 'H', 'M', 'S'];
-    let unitLength = [(1000 * 60 * 60 * 24), (1000 * 60 * 60), (1000 * 60), 1000];
+    const unitText = ['D', 'H', 'M', 'S'];
+    const unitLength = [(1000 * 60 * 60 * 24), (1000 * 60 * 60), (1000 * 60), 1000];
 
     for (let i = 0; i < unitLength.length; i++) {
       if (Math.floor(value / unitLength[i]) > 0) {
@@ -315,18 +316,18 @@ export default class BackendAiSessionView extends BackendAIPage {
     const exportList: any = [];
 
     // Parameters
-    let status: any = ["RUNNING", "RESTARTING", "TERMINATING",  "PENDING", "PREPARING", "PULLING", "TERMINATED", "CANCELLED", "ERROR"];
+    let status: any = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'PREPARING', 'PULLING', 'TERMINATED', 'CANCELLED', 'ERROR'];
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }
-    const fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "access_key"];
-    if (this._connectionMode === "SESSION") {
-      fields.push("user_email");
+    const fields = ['id', 'name', 'image', 'created_at', 'terminated_at', 'status', 'status_info', 'access_key'];
+    if (this._connectionMode === 'SESSION') {
+      fields.push('user_email');
     }
     if (globalThis.backendaiclient.is_superadmin) {
-      fields.push("containers {container_id agent occupied_slots live_stat last_stat}");
+      fields.push('containers {container_id agent occupied_slots live_stat last_stat}');
     } else {
-      fields.push("containers {container_id occupied_slots live_stat last_stat}");
+      fields.push('containers {container_id occupied_slots live_stat last_stat}');
     }
     const groupId = globalThis.backendaiclient.current_group_id();
     const limit = 100;
@@ -335,7 +336,7 @@ export default class BackendAiSessionView extends BackendAIPage {
     globalThis.backendaiclient.computeSession.listAll(fields, status, this.filterAccessKey, limit, 0, groupId).then((response) => {
       const sessions = response;
       if (sessions.length === 0) {
-        this.notification.text = _text("session.NoSession");
+        this.notification.text = _text('session.NoSession');
         this.notification.show();
         this.exportToCsvDialog.hide();
         return;
@@ -397,7 +398,7 @@ export default class BackendAiSessionView extends BackendAIPage {
       });
 
       JsonToCsv.exportToCsv(fileNameEl.value, exportList);
-      this.notification.text = _text("session.DownloadingCSVFile");
+      this.notification.text = _text('session.DownloadingCSVFile');
       this.notification.show();
       this.exportToCsvDialog.hide();
     });
@@ -438,9 +439,9 @@ export default class BackendAiSessionView extends BackendAIPage {
           <h3 class="tab horizontal center layout">
             <div class="horizontal layout flex start-justified">
             <mwc-tab-bar>
-              <mwc-tab title="running" label="${_t("session.Running")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="finished" label="${_t("session.Finished")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="others" label="${_t("session.Others")}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="running" label="${_t('session.Running')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="finished" label="${_t('session.Finished')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="others" label="${_t('session.Others')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
             ${this.is_admin ? html`
               <div style="position: relative;">
@@ -450,7 +451,7 @@ export default class BackendAiSessionView extends BackendAIPage {
                     <mwc-list-item>
                       <a class="horizontal layout start center" @click="${() => this._openExportToCsvDialog()}">
                         <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
-                        ${_t("session.exportCSV")}
+                        ${_t('session.exportCSV')}
                       </a>
                     </mwc-list-item>
                   </mwc-menu>
@@ -473,7 +474,7 @@ export default class BackendAiSessionView extends BackendAIPage {
         </div>
       </lablup-activity-panel>
       <backend-ai-dialog id="export-to-csv" fixed backdrop>
-        <span slot="title">${_t("session.ExportSessionListToCSVFile")}</span>
+        <span slot="title">${_t('session.ExportSessionListToCSVFile')}</span>
         <div slot="content">
           <mwc-textfield id="export-file-name" label="File name"
                           validationMessage="${_t('data.explorer.ValueRequired')}"
@@ -499,7 +500,7 @@ export default class BackendAiSessionView extends BackendAIPage {
             <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
             @click="${this._exportToCSV}">
               <wl-icon>get_app</wl-icon>
-              ${_t("session.ExportCSVFile")}
+              ${_t('session.ExportCSVFile')}
             </wl-button>
           </div>
         </div>
@@ -510,6 +511,6 @@ export default class BackendAiSessionView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-session-view": BackendAiSessionView;
+    'backend-ai-session-view': BackendAiSessionView;
   }
 }

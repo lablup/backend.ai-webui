@@ -3,9 +3,9 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {get as _text, translate as _t} from "lit-translate";
+import {get as _text, translate as _t} from 'lit-translate';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
-import {css, customElement, html, property} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
@@ -25,14 +25,14 @@ import './backend-ai-session-launcher';
 import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
 import '../plastics/lablup-piechart/lablup-piechart';
-import marked from "marked/lib/marked.esm.js";
+import marked from 'marked/lib/marked.esm.js';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
-import {BackendAiStyles} from "./backend-ai-general-styles";
-import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
+import {default as PainKiller} from './backend-ai-painkiller';
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
- `<backend-ai-summary-view>` is a Summary panel of backend.ai console.
+ `<backend-ai-summary-view>` is a Summary panel of backend.ai web UI.
 
  Example:
  <backend-ai-summary-view active></backend-ai-summary-view>
@@ -41,7 +41,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
  @element backend-ai-summary-view
  */
 
-@customElement("backend-ai-summary-view")
+@customElement('backend-ai-summary-view')
 export default class BackendAISummary extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Number}) sessions = 0;
@@ -53,7 +53,7 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Object}) update_checker = Object();
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) manager_version = '';
-  @property({type: String}) console_version = '';
+  @property({type: String}) webui_version = '';
   @property({type: Number}) cpu_total = 0;
   @property({type: Number}) cpu_used = 0;
   @property({type: String}) cpu_percent = '0';
@@ -85,7 +85,7 @@ export default class BackendAISummary extends BackendAIPage {
     this.invitations = [];
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -284,7 +284,7 @@ export default class BackendAISummary extends BackendAIPage {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.update_checker = this.shadowRoot.querySelector('#update-checker');
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._readAnnouncement();
       }, true);
@@ -294,7 +294,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _refreshConsoleUpdateInformation() {
-    if (this.is_superadmin && globalThis.backendaioptions.get("automatic_update_check", true)) {
+    if (this.is_superadmin && globalThis.backendaioptions.get('automatic_update_check', true)) {
       this.update_checker.checkRelease();
     }
   }
@@ -306,13 +306,13 @@ export default class BackendAISummary extends BackendAIPage {
       return;
     }
     this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_superadmin = globalThis.backendaiclient.is_superadmin;
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.authenticated = true;
         this.manager_version = globalThis.backendaiclient.managerVersion;
-        this.console_version = globalThis.packageVersion;
+        this.webui_version = globalThis.packageVersion;
 
         if (this.activeConnected) {
           this._refreshConsoleUpdateInformation();
@@ -324,11 +324,11 @@ export default class BackendAISummary extends BackendAIPage {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
       this.manager_version = globalThis.backendaiclient.managerVersion;
-      this.console_version = globalThis.packageVersion;
+      this.webui_version = globalThis.packageVersion;
       this._refreshConsoleUpdateInformation();
       this._refreshInvitations();
-      //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
-      //document.dispatchEvent(event);
+      // let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
+      // document.dispatchEvent(event);
     }
   }
 
@@ -337,19 +337,20 @@ export default class BackendAISummary extends BackendAIPage {
       return;
     }
     globalThis.backendaiclient.service.get_announcement()
-      .then(res => {
+      .then((res) => {
         if ('message' in res) {
           this.announcement = marked(res.message);
         }
-      }).catch(err=>{
-    });
+      }).catch((err)=>{
+        return;
+      });
   }
 
   _toInt(value: number) {
     return Math.ceil(value);
   }
 
-  _countObject(obj: object) {
+  _countObject(obj: Record<string, unknown>) {
     return Object.keys(obj).length;
   }
 
@@ -357,7 +358,7 @@ export default class BackendAISummary extends BackendAIPage {
     if (num === undefined) {
       return '';
     }
-    var regexp = /\B(?=(\d{3})+(?!\d))/g;
+    const regexp = /\B(?=(\d{3})+(?!\d))/g;
     return num.toString().replace(regexp, ',');
   }
 
@@ -370,7 +371,7 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    globalThis.backendaiclient.vfolder.invitations().then(res => {
+    globalThis.backendaiclient.vfolder.invitations().then((res) => {
       this.invitations = res.invitations;
 
       // refresh invitation lists every 10sec
@@ -392,7 +393,7 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    let panel = e.target.closest('lablup-activity-panel');
+    const panel = e.target.closest('lablup-activity-panel');
     try {
       panel.setAttribute('disabled', 'true');
       panel.querySelectorAll('wl-button').forEach((btn) => {
@@ -402,7 +403,7 @@ export default class BackendAISummary extends BackendAIPage {
       this.notification.text = _text('summary.AcceptSharedVFolder') + `${invitation.vfolder_name}`;
       this.notification.show();
       this._refreshInvitations();
-    } catch(err) {
+    } catch (err) {
       panel.setAttribute('disabled', 'false');
       panel.querySelectorAll('wl-button').forEach((btn) => {
         btn.setAttribute('disabled', 'false');
@@ -423,7 +424,7 @@ export default class BackendAISummary extends BackendAIPage {
     if (!this.activeConnected) {
       return;
     }
-    let panel = e.target.closest('lablup-activity-panel');
+    const panel = e.target.closest('lablup-activity-panel');
 
     try {
       panel.setAttribute('disabled', 'true');
@@ -431,10 +432,10 @@ export default class BackendAISummary extends BackendAIPage {
         btn.setAttribute('disabled', 'true');
       });
       await globalThis.backendaiclient.vfolder.delete_invitation(invitation.id);
-      this.notification.text =  _text('summary.DeclineSharedVFolder') + `${invitation.vfolder_name}`;
+      this.notification.text = _text('summary.DeclineSharedVFolder') + `${invitation.vfolder_name}`;
       this.notification.show();
       this._refreshInvitations();
-    } catch(err) {
+    } catch (err) {
       panel.setAttribute('disabled', 'false');
       panel.querySelectorAll('wl-button').forEach((btn) => {
         btn.setAttribute('disabled', 'false');
@@ -446,7 +447,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   _stripHTMLTags(str) {
-    return str.replace(/(<([^>]+)>)/gi, "");
+    return str.replace(/(<([^>]+)>)/gi, '');
   }
 
   render() {
@@ -505,29 +506,30 @@ export default class BackendAISummary extends BackendAIPage {
                         <div slot="message">
                           <div class="wrap layout">
                           <h3 style="padding-top:10px;">From ${invitation.inviter}</h3>
-                          <span class="invitation_folder_name">${_t("summary.FolderName")}: ${invitation.vfolder_name}</span>
+                          <span class="invitation_folder_name">${_t('summary.FolderName')}: ${invitation.vfolder_name}</span>
                           <div class="horizontal center layout">
-                            ${_t("summary.Permission")}:
-                            ${[...invitation.perm].map(c => {
-                              return html`
+                            ${_t('summary.Permission')}:
+                            ${[...invitation.perm].map((c) => {
+    return html`
                                 <lablup-shields app="" color="${['green', 'blue', 'red'][['r', 'w', 'd'].indexOf(c)]}"
-                                        description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;})}
+                                        description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;
+  })}
                           </div>
                           <div style="margin:15px auto;" class="horizontal layout justified">
                             <mwc-button
                                 unelevated
                                 label="${_t('summary.Accept')}"
-                                @click="${e => this._acceptInvitation(e, invitation)}"></mwc-button>
+                                @click="${(e) => this._acceptInvitation(e, invitation)}"></mwc-button>
                             <span class="flex"></span>
                             <mwc-button
                                 outlined
                                 label="${_t('summary.Decline')}"
-                                @click="${e => this._deleteInvitation(e, invitation)}"></mwc-button>
+                                @click="${(e) => this._deleteInvitation(e, invitation)}"></mwc-button>
                           </div>
                         </div>
                       </lablup-activity-panel>`) : html`
                       <p>${_text('summary.NoInvitations')}</p>`
-                  }
+}
                   </div>
                 </div>
               </lablup-activity-panel>
@@ -541,16 +543,18 @@ export default class BackendAISummary extends BackendAIPage {
                   <div class="horizontal layout flex wrap center-justified">
                     <lablup-activity-panel class="footer-menu" noheader autowidth style="display: none;">
                       <div slot="message" class="vertical layout center start-justified flex upper-space">
-                        <h3 style="margin-top:0px;">${_t("summary.CurrentVersion")}</h3>
+                        <h3 style="margin-top:0px;">${_t('summary.CurrentVersion')}</h3>
                         ${this.is_superadmin ? html`
                           <div class="layout vertical center center-justified flex" style="margin-bottom:5px;">
                             <lablup-shields app="Manager version" color="darkgreen" description="${this.manager_version}" ui="flat"></lablup-shields>
                             <div class="layout horizontal center flex" style="margin-top:4px;">
-                              <lablup-shields app="Console version" color="${this.update_checker.updateNeeded ? 'red' : 'darkgreen'}" description="${this.console_version}" ui="flat"></lablup-shields>
+                              <lablup-shields app="Console version" color="${this.update_checker.updateNeeded ? 'red' : 'darkgreen'}" description="${this.webui_version}" ui="flat"></lablup-shields>
                               ${this.update_checker.updateNeeded ? html`
                                 <mwc-icon-button class="update-button" icon="new_releases"
-                                  @click="${() => {window.open(this.update_checker.updateURL, '_blank')}}"></mwc-icon-button>`
-                                  : html`
+                                  @click="${() => {
+    window.open(this.update_checker.updateURL, '_blank');
+  }}"></mwc-icon-button>` :
+    html`
                                     <mwc-icon class="update-icon">done</mwc-icon>
                                   `}
                             </div>
@@ -592,7 +596,7 @@ export default class BackendAISummary extends BackendAIPage {
                         </a>
                     </div>
                   </lablup-activity-panel>` : html``}
-                    
+
                     <lablup-activity-panel class="footer-menu" noheader autowidth>
                       <div slot="message" class="layout horizontal center center-justified flex upper-space">
                           <a href="/maintenance">
@@ -617,6 +621,6 @@ export default class BackendAISummary extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-summary-view": BackendAISummary;
+    'backend-ai-summary-view': BackendAISummary;
   }
 }

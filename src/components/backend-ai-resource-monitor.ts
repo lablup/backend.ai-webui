@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@material/mwc-select';
@@ -22,7 +22,7 @@ import './lablup-progress-bar';
 import './lablup-slider';
 import './backend-ai-dialog';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
+import {default as PainKiller} from './backend-ai-painkiller';
 
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -33,10 +33,10 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-@customElement("backend-ai-resource-monitor")
+@customElement('backend-ai-resource-monitor')
 export default class BackendAiResourceMonitor extends BackendAIPage {
   @property({type: Boolean}) is_connected = false;
-  @property({type: String}) direction = "horizontal";
+  @property({type: String}) direction = 'horizontal';
   @property({type: String}) location = '';
   @property({type: Object}) aliases = Object();
   @property({type: Object}) total_slot;
@@ -78,7 +78,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return 'backend-ai-resource-monitor';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -403,7 +403,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   firstUpdated() {
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
     this._updateToggleResourceMonitorDisplay();
-    document.addEventListener("backend-ai-group-changed", (e) => {
+    document.addEventListener('backend-ai-group-changed', (e) => {
       this.scaling_group = '';
       this._updatePageVariables(true);
     });
@@ -433,9 +433,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _updateSelectedScalingGroup() {
-    let Sgroups = this.shadowRoot.querySelector('#scaling-groups');
-    let selectedSgroup = Sgroups.items.find(item => item.value === this.resourceBroker.scaling_group);
-    let idx = Sgroups.items.indexOf(selectedSgroup);
+    const Sgroups = this.shadowRoot.querySelector('#scaling-groups');
+    const selectedSgroup = Sgroups.items.find((item) => item.value === this.resourceBroker.scaling_group);
+    const idx = Sgroups.items.indexOf(selectedSgroup);
     Sgroups.select(idx);
   }
 
@@ -509,16 +509,16 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       scaling_select.id = 'scaling-group-select';
       scaling_select.value = this.scaling_group;
       scaling_select.setAttribute('fullwidth', 'true');
-      scaling_select.style.margin= "1px solid #ccc";
+      scaling_select.style.margin= '1px solid #ccc';
       // scaling_select.setAttribute('outlined', 'true');
       scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
       let opt = document.createElement('mwc-list-item');
       opt.setAttribute('disabled', 'true');
       opt.innerHTML = _text('session.launcher.SelectResourceGroup');
-      opt.style.borderBottom = "1px solid #ccc";
+      opt.style.borderBottom = '1px solid #ccc';
       scaling_select.appendChild(opt);
-      let currentSelectedResourceGroup = scaling_select.value ? scaling_select.value : this.resourceBroker.scaling_group;
-      this.resourceBroker.scaling_groups.map(group => {
+      const currentSelectedResourceGroup = scaling_select.value ? scaling_select.value : this.resourceBroker.scaling_group;
+      this.resourceBroker.scaling_groups.map((group) => {
         opt = document.createElement('mwc-list-item');
         opt.value = group.name;
         opt.setAttribute('graphic', 'icon');
@@ -530,7 +530,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         opt.innerHTML = group.name;
         scaling_select.appendChild(opt);
       });
-      //scaling_select.updateOptions();
+      // scaling_select.updateOptions();
       scaling_group_selection_box.appendChild(scaling_select);
     }
   }
@@ -542,14 +542,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
    *
    */
   async _refreshResourcePolicy(refreshOnly = false) {
-    if(!this.active) {
+    if (!this.active) {
       return Promise.resolve(true);
     }
     return this.resourceBroker._refreshResourcePolicy().then(() => {
       this.concurrency_used = this.resourceBroker.concurrency_used;
-      //this.userResourceLimit = this.resourceBroker.userResourceLimit;
+      // this.userResourceLimit = this.resourceBroker.userResourceLimit;
       this.concurrency_max = this.concurrency_used > this.resourceBroker.concurrency_max ? this.concurrency_used : this.resourceBroker.concurrency_max;
-      //this.updateResourceAllocationPane('refresh resource policy');
+      // this.updateResourceAllocationPane('refresh resource policy');
       return Promise.resolve(true);
     }).catch((err) => {
       this.metadata_updating = false;
@@ -566,7 +566,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _aliasName(value) {
-    let alias = {
+    const alias = {
       'python': 'Python',
       'tensorflow': 'TensorFlow',
       'pytorch': 'PyTorch',
@@ -646,7 +646,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  async _aggregateResourceUse(from: string = '') {
+  async _aggregateResourceUse(from = '') {
     return this.resourceBroker._aggregateCurrentResource(from).then((res) => {
       if (res === false) {
         return setTimeout(() => {
@@ -667,11 +667,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.available_slot = this.resourceBroker.available_slot;
       this.used_slot_percent = this.resourceBroker.used_slot_percent;
       this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
-      //this.requestUpdate();
+      // this.requestUpdate();
       return Promise.resolve(true);
-      //return this.available_slot;
+      // return this.available_slot;
     }).then(() => {
-    }).catch(err => {
+      return Promise.resolve(true);
+    }).catch((err) => {
       if (err && err.message) {
         console.log(err);
         this.notification.text = PainKiller.relieve(err.title);
@@ -683,8 +684,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   // Get available / total resources from manager
-  aggregateResource(from: string = '') {
-    //console.log('aggregate resource called - ', from);
+  aggregateResource(from = '') {
+    // console.log('aggregate resource called - ', from);
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._aggregateResourceUse(from);
@@ -697,10 +698,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   /**
    * show/hide resource monitor gauge by switch on/off.
    *
-   * @param e {event}
+   * @param {event} e - EventEmitter
    */
   _toggleResourceGauge(e) {
-    let legend = this.shadowRoot.querySelector('#resource-legend');
+    const legend = this.shadowRoot.querySelector('#resource-legend');
     if (e.target.checked) {
       this.resourceGauge.style.display = 'flex';
       if (legend) {
@@ -719,13 +720,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _disableEnterKey() {
-    this.shadowRoot.querySelectorAll('wl-expansion').forEach(element => {
+    this.shadowRoot.querySelectorAll('wl-expansion').forEach((element) => {
       element.onKeyDown = (e) => {
-        let enterKey = 13;
+        const enterKey = 13;
         if (e.keyCode === enterKey) {
           e.preventDefault();
         }
-      }
+      };
     });
   }
   _numberWithPostfix(str, postfix = '') {
@@ -758,8 +759,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
                 description="${this.used_slot.cpu}/${this.total_slot.cpu}"></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">
-              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.cpu,'%')}</span>
-              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.cpu,'%')}</span>
+              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.cpu, '%')}</span>
+              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.cpu, '%')}</span>
             </div>
           </div>
           <div class="layout horizontal center-justified monitor">
@@ -781,7 +782,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>
           ${this.total_slot.cuda_device ?
-      html`
+    html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">GPU</span>
@@ -801,9 +802,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.cuda_device, '%')}</span>
             </div>
           </div>` :
-      html``}
+    html``}
           ${ ((this.resourceBroker.total_slot.cuda_shares) && (this.resourceBroker.total_slot.cuda_shares > 0)) ?
-      html`
+    html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">FGPU</span>
@@ -819,13 +820,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               ></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">
-              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.cuda_shares,  '%')}</span>
+              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.cuda_shares, '%')}</span>
               <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.cuda_shares, '%')}</span>
             </div>
           </div>` :
-      html``}
+    html``}
           ${this.total_slot.rocm_device_slot ?
-      html`
+    html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <img class="resource-type-icon fg green" src="/resources/icons/ROCm.png" />
@@ -842,13 +843,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             ></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">
-              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.rocm_device_slot,'%')}</span>
+              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.rocm_device_slot, '%')}</span>
               <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.rocm_device_slot, '%')}</span>
             </div>
           </div>` :
-      html``}
+    html``}
           ${this.total_slot.tpu_device_slot ?
-      html`
+    html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">TPU</span>
@@ -868,7 +869,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.tpu_device_slot, '%')}</span>
             </div>
           </div>` :
-      html``}
+    html``}
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">${_t('session.launcher.Sessions')}</span>
@@ -996,6 +997,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-resource-monitor": BackendAiResourceMonitor;
+    'backend-ai-resource-monitor': BackendAiResourceMonitor;
   }
 }

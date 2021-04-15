@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, LitElement, property, query} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property, query} from 'lit-element';
 import '@material/mwc-slider';
 import 'weightless/textfield';
 
@@ -12,8 +12,8 @@ import {
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning
-} from "../plastics/layout/iron-flex-layout-classes";
-import {BackendAiStyles} from "./backend-ai-general-styles";
+} from '../plastics/layout/iron-flex-layout-classes';
+import {BackendAiStyles} from './backend-ai-general-styles';
 
 /**
  Lablup Slider
@@ -24,11 +24,11 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
 
  <lablup-slider></lablup-slider>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element lablup-slider
  */
 
-@customElement("lablup-slider")
+@customElement('lablup-slider')
 export default class LablupSlider extends LitElement {
   public shadowRoot: any; // ShadowRoot
 
@@ -44,7 +44,7 @@ export default class LablupSlider extends LitElement {
   @property({type: Object}) textfield;
   @query('#slider', true) slider;
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -129,7 +129,7 @@ export default class LablupSlider extends LitElement {
         this.checkMarkerDisplay();
       }
     });
-    let event = new CustomEvent('changed', {"detail": ''});
+    const event = new CustomEvent('changed', {'detail': ''});
     this.dispatchEvent(event);
   }
 
@@ -146,12 +146,12 @@ export default class LablupSlider extends LitElement {
    * */
   syncToSlider() {
     this.textfield.step = this.step;
-    let rounded = Math.round(this.textfield.value / this.step) * this.step;
+    const rounded = Math.round(this.textfield.value / this.step) * this.step;
     this.textfield.value = rounded.toFixed(((decimal_places: number) => {
       if (Math.floor(decimal_places) === decimal_places) {
         return 0;
       }
-      return decimal_places.toString().split(".")[1].length || 0;
+      return decimal_places.toString().split('.')[1].length || 0;
     })(this.step));
 
     if (this.textfield.value > this.max) {
@@ -199,6 +199,6 @@ export default class LablupSlider extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "lablup-slider": LablupSlider;
+    'lablup-slider': LablupSlider;
   }
 }
