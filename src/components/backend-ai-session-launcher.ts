@@ -316,11 +316,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           height: 60px;
           font-size: 16px;
           margin: 5px;
+          opacity: 1;
+          z-index:11;
         }
 
         .resource-allocated > p {
-          margin: 0px auto;
+          margin: 0 auto;
           font-size: 8px;
+        }
+
+        .resource-allocated-box-shadow {
+          position:relative;
+          z-index:1;
+          top: -70px;
+          height:200px;
+          width:60px;
+          opacity: 1;
         }
 
         .cluster-allocated {
@@ -359,6 +370,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           background-color: var(--paper-grey-300);
           border-radius: 5px;
           margin: 5px;
+          z-index:10;
         }
 
         #new-session-dialog {
@@ -2139,6 +2151,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       for (let i = 0; i < Math.min(6, cluster_size-1); i = i + 1) {
         const item = document.createElement('div');
         item.classList.add('horizontal', 'layout', 'center', 'center-justified', 'resource-allocated-box', 'allocation-shadow');
+        item.style.position = 'absolute';
         item.style.top = '-' + (5 + 5 * i) + 'px';
         item.style.left = (5 + 5 * i) + 'px';
         item.style.backgroundColor = 'rgba(245,245,245,'+ (0.7 - i*0.1) +')';
@@ -2575,8 +2588,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
           <p class="title" style="font-weight:400;">${_t('session.launcher.TotalAllocation')}</p>
           <div class="horizontal layout center center-justified allocation-check">
-            <div id="total-allocation-pane" style="position:relative;z-index:10;">
-              <div class="horizontal layout resource-allocated-box" style="z-index:10;">
+            <div id="total-allocation-pane" style="position:relative;">
+              <div class="horizontal layout resource-allocated-box" style="z-index:10!important;">
                 <div class="vertical layout center center-justified resource-allocated">
                   <p>${_t('session.launcher.CPU')}</p>
                   <span>${this.cpu_request}</span>
@@ -2598,7 +2611,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <p>${_t('session.launcher.GPUSlot')}</p>
                 </div>
               </div>
-              <div id="resource-allocated-box-shadow" style="z-index:9;height:0;width:0;"></div>
+              <div id="resource-allocated-box-shadow"></div>
             </div>
             <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
               <div class="horizontal layout">
@@ -2696,7 +2709,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             ` : html``}
             </mwc-select>
           </div>
-          <wl-expansion name="resource-group" open style="--expansion-header-padding:16px;">
+          <wl-expansion name="resource-group" style="--expansion-header-padding:16px;">
             <span slot="title" style="font-size:12px;color: rgb(64, 64, 64);font-weight:400;">${_t('session.launcher.CustomAllocation')}</span>
             <span slot="description" class="launcher-item-title"></span>
             <div class="vertical center layout">
