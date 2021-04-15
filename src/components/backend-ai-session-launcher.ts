@@ -355,7 +355,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           margin-bottom: 10px;
         }
 
-        .allocation-check > .resource-allocated-box {
+        .resource-allocated-box {
           background-color: var(--paper-grey-300);
           border-radius: 5px;
           margin: 5px;
@@ -571,6 +571,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-size: 12px;
           color: #404040;
           font-weight: 400;
+        }
+
+        .allocation-shadow {
+          height: 60px;
+          width: 200px;
+          position: absolute;
+          top: -5px;
+          left: 5px;
+          background-color: #eee;
         }
 
         #modify-env-dialog {
@@ -2108,6 +2117,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     case 'session':
       this.session_request = value;
       break;
+    case 'cluster':
+      this._changeTotalAllocationPane();
+      break;
     default:
       break;
     }
@@ -2117,6 +2129,31 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else { // cluster mode
       this._setClusterSize(e);
     }
+  }
+
+  _changeTotalAllocationPane() {
+    this._deleteAllocationPaneShadow();
+    const cluster_size = this.shadowRoot.querySelector('#cluster-size').value;
+    if (cluster_size > 1) {
+      const container = this.shadowRoot.querySelector('#resource-allocated-box-shadow');
+      for (let i = 0; i < this.cluster_size; i = i + 1) {
+        const item = document.createElement('div');
+        item.classList.add('horizontal', 'layout', 'center', 'center-justified', 'resource-allocated-box', 'allocation-shadow');
+        item.style.top = '-' + (5 + 5 * i) + 'px';
+        item.style.left = (5 + 5 * i) + 'px';
+        item.style.backgroundColor = 'rgba(245,245,245,'+ (0.7 - i*0.1) +')';
+        item.style.zIndex = (6 - i).toString();
+        container.appendChild(item);
+      }
+      this.shadowRoot.querySelector('#total-allocation-pane').appendChild(container);
+    } else {
+
+    }
+  }
+
+  _deleteAllocationPaneShadow() {
+    const container = this.shadowRoot.querySelector('#resource-allocated-box-shadow');
+    container.innerHTML = '';
   }
 
   _updateShmemLimit() {
@@ -2538,27 +2575,30 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
           <p class="title" style="font-weight:400;">${_t('session.launcher.TotalAllocation')}</p>
           <div class="horizontal layout center center-justified allocation-check">
-            <div class="horizontal layout resource-allocated-box">
-              <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t('session.launcher.CPU')}</p>
-                <span>${this.cpu_request}</span>
-                <p>Core</p>
+            <div id="total-allocation-pane" style="position:relative;">
+              <div class="horizontal layout resource-allocated-box" style="z-index:10;">
+                <div class="vertical layout center center-justified resource-allocated">
+                  <p>${_t('session.launcher.CPU')}</p>
+                  <span>${this.cpu_request}</span>
+                  <p>Core</p>
+                </div>
+                <div class="vertical layout center center-justified resource-allocated">
+                  <p>${_t('session.launcher.Memory')}</p>
+                  <span>${this.mem_request}</span>
+                  <p>GB</p>
+                </div>
+                <div class="vertical layout center center-justified resource-allocated">
+                  <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
+                  <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
+                  <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
+                </div>
+                <div class="vertical layout center center-justified resource-allocated">
+                  <p>${_t('session.launcher.GPU')}</p>
+                  <span>${this.gpu_request}</span>
+                  <p>${_t('session.launcher.GPUSlot')}</p>
+                </div>
               </div>
-              <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t('session.launcher.Memory')}</p>
-                <span>${this.mem_request}</span>
-                <p>GB</p>
-              </div>
-              <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
-                <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
-              </div>
-              <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t('session.launcher.GPU')}</p>
-                <span>${this.gpu_request}</span>
-                <p>${_t('session.launcher.GPUSlot')}</p>
-              </div>
+              <div id="resource-allocated-box-shadow" style="z-index:9"></div>
             </div>
             <div class="vertical layout center center-justified cluster-allocated">
               <div class="horizontal layout">
