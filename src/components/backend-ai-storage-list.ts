@@ -1089,7 +1089,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._requestCloneFolder(rowData.item);
   }}"></mwc-icon-button>
             ` : html``}
-          ${rowData.item.is_owner?
+          ${rowData.item.is_owner ?
     html`
               <mwc-icon-button
                 class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
