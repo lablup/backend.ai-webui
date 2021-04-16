@@ -1729,6 +1729,37 @@ class VFolder {
     let rqst = this.client.newSignedRequest('POST', '/folders/_/shared', input);
     return this.client._wrapWithPromise(rqst);
   }
+
+  /**
+   * Share specific users a group-type virtual folder with overriding permission.
+   *
+   * @param {string} perm - Permission to give to. `rw` or `ro`.
+   * @param {array} emails - User E-mail(s) to share.
+   * @param {string} name - A group virtual folder name to share.
+   */
+  async share(permission, emails, name = null) {
+    if (!name) {
+      name = this.name;
+    }
+    const body = {permission, emails};
+    const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/share`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Unshare a group-type virtual folder from given users.
+   *
+   * @param {array} emails - User E-mail(s) to unshare.
+   * @param {string} name - A group virtual folder name to unshare.
+   */
+  async unshare(emails, name = null) {
+    if (!name) {
+      name = this.name;
+    }
+    const body = {emails};
+    const rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}/unshare`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class Agent {
