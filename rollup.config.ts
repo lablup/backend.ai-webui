@@ -1,10 +1,9 @@
-import resolve from '@rollup/plugin-node-resolve';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
-//import babel from 'rollup-plugin-babel'; // To support legacy browsers. Disabled by default.
-//import typescript from 'rollup-plugin-typescript';
 import typescript from '@rollup/plugin-typescript';
 import { generateSW } from 'rollup-plugin-workbox';
 import { terser } from "rollup-plugin-terser";
+//import babel from 'rollup-plugin-babel'; // To support legacy browsers. Disabled by default.
 
 export default {
   input: ['src/components/backend-ai-webui.ts'],
@@ -14,14 +13,15 @@ export default {
     sourcemap: false
   },
   plugins: [
+    nodeResolve(),
     typescript({
-      tsconfig: "./tsconfig.json"
+      tsconfig: "./tsconfig.json",
+      outDir: "build/rollup/dist/components"
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
     terser(),
-    resolve(),
     generateSW( {
       swDest: 'build/rollup/sw.js',
       globDirectory: 'build/rollup/',
