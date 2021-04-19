@@ -74,7 +74,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: String}) existingFile = '';
   @property({type: Array}) invitees = [];
   @property({type: String}) selectedFolder = '';
-  @property({type: String}) selectedType= '';
+  @property({type: String}) selectedFolderType= '';
   @property({type: String}) downloadURL = '';
   @property({type: Array}) uploadFiles = [];
   @property({type: Array}) fileUploadQueue = [];
