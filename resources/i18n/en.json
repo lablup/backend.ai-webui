@@ -513,7 +513,7 @@
       "InvitationError": "Invitation failed. User may already be invited.",
       "Shared": "Successfully shared the group folder",
       "NoOneWasShared": "Failed to share the group folder",
-      "SharingError": "Sharing failed. User may already be shared."
+      "SharingError": "Sharing failed. User may already be shared or does not belong to approprite project."
     },
     "permission": {
       "NoChanges": "No changes made",
