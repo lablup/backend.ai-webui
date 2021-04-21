@@ -2469,7 +2469,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent>
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
         <form slot="content" id="launch-session-form" class="centered">
-          <div class="vertical center layout" style="padding-top:15px;">
+          <div class="vertical center layout" style="padding-top:15px;position:relative;z-index:11;">
             <mwc-select id="environment" label="${_t('session.launcher.Environments')}" fullwidth required
               value="${this.default_language}">
               <mwc-list-item selected style="dispxlay:none!important;">${_t('session.launcher.ChooseEnvironment')}</mwc-list-item>
