@@ -506,7 +506,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-theme-primary: var(--paper-red-600);
         }
 
-
         mwc-textfield#session-name {
           width: 50%;
           padding-top: 20px;
@@ -2498,8 +2497,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                         <mwc-icon-button icon="info"
                                          class="fg blue info"
                                          @click="${(e) => {
-                                           this._showKernelDescription(e, item);
-                                         }}">
+    this._showKernelDescription(e, item);
+  }}">
                         </mwc-icon-button>
                       </div>
                     </div>
