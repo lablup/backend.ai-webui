@@ -242,7 +242,7 @@
       "Prepared": "Prepared"
     },
     "TensorboardPath": "Log directory for TensorBoard",
-    "InputTensorboardPath": "Please input log directory that TensorBoard will refer to.",
+    "InputTensorboardPath": "Please input log directory that TensorBoard will refer to. Note that the log directory will not be automatically created..",
     "DefaultTensorboardPath": "/home/work/logs",
     "SessionTerminated": "Session terminated.",
     "SessionsTerminated": "Sessions terminated.",
