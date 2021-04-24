@@ -524,7 +524,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const rqst_proxy = {
       method: 'GET',
       app: app,
-      uri: uri
+      uri: uri,
+      credentials: 'include',
+      mode: 'cors'
     };
     return await this.sendRequest(rqst_proxy);
   }
