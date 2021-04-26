@@ -155,6 +155,7 @@ class Client {
   public image: ContainerImage;
   public utils: utils;
   public computeSession: ComputeSession;
+  public sessionTemplate: SessionTemplate;
   public resourcePolicy: ResourcePolicy;
   public user: User;
   public group: Group;
@@ -211,6 +212,7 @@ class Client {
     this.image = new ContainerImage(this);
     this.utils = new utils(this);
     this.computeSession = new ComputeSession(this);
+    this.sessionTemplate = new SessionTemplate(this);
     this.resourcePolicy = new ResourcePolicy(this);
     this.user = new User(this);
     this.group = new Group(this);
@@ -791,6 +793,14 @@ class Client {
     }
     //return this._wrapWithPromise(rqst);
     return this._wrapWithPromise(rqst, false, null, timeout);
+  }
+
+  /**
+   * Create a session with a session template.
+   *
+   * @param {string} sessionId - the sessionId given when created
+   */
+  async createSesisonFromTemplate(kernelType, sessionId, resources = {}, timeout: number = 0) {
   }
 
   /**
@@ -2481,6 +2491,48 @@ class ComputeSession {
     }`;
     v = {session_uuid: sessionUuid};
     return this.client.query(q, v);
+  }
+}
+
+class SessionTemplate {
+  public client: any;
+  public urlPrefix: string;
+
+  /**
+   * The Computate session template API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+    this.urlPrefix = '/template/session';
+  }
+
+  /**
+   * list session templates with specific conditions.
+   *
+   * @param {array} fields - fields to query. Default fields are: ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
+   * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+   * @param {string} accessKey - access key that is used to start compute sessions.
+   * @param {number} limit - limit number of query items.
+   * @param {number} offset - offset for item query. Useful for pagination.
+   * @param {string} group - project group id to query. Default returns sessions from all groups.
+   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
+   */
+  async list(listall=false, groupId=null) {
+    let reqUrl = this.urlPrefix;
+    if (listall) {
+      const params = {all: listall};
+      const q = querystring.stringify(params);
+      reqUrl += `?${q}`;
+    }
+    if (groupId) {
+      const params = {group_id: groupId};
+      const q = querystring.stringify(params);
+      reqUrl += `?${q}`;
+    }
+    let rqst = this.client.newSignedRequest('GET', reqUrl, null);
+    return this.client._wrapWithPromise(rqst);
   }
 }
 
