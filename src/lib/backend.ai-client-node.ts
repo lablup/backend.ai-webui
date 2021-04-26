@@ -672,6 +672,18 @@ class Client {
   }
 
   /**
+  * Update user's full_name.
+  * */
+  async update_full_name(userId, fullName) {
+    let body = {
+      'email': userId,
+      'full_name': fullName
+    };
+    let rqst = this.newSignedRequest('POST', `/auth/update-full-name`, body);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
    * Return the resource slots.
    */
   async get_resource_slots() {
