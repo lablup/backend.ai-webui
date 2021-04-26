@@ -74,6 +74,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: String}) existingFile = '';
   @property({type: Array}) invitees = [];
   @property({type: String}) selectedFolder = '';
+  @property({type: String}) selectedFolderType = '';
   @property({type: String}) downloadURL = '';
   @property({type: Array}) uploadFiles = [];
   @property({type: Array}) fileUploadQueue = [];
@@ -1057,6 +1058,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           id="controls"
           class="layout flex center wrap"
           folder-id="${rowData.item.name}"
+          folder-type="${rowData.item.type}"
         >
           <mwc-icon-button
             class="fg green controls-running"
@@ -1087,10 +1089,10 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._requestCloneFolder(rowData.item);
   }}"></mwc-icon-button>
             ` : html``}
-          ${rowData.item.is_owner && rowData.item.type == 'user' ?
+          ${rowData.item.is_owner ?
     html`
               <mwc-icon-button
-                class="fg blue controls-running"
+                class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
                 icon="share"
                 @click="${(e) => this._shareFolderDialog(e)}"
               ></mwc-icon-button>
@@ -1291,7 +1293,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         ${rowData.item.type == 'user' ? html`
           <wl-icon>person</wl-icon>
         ` : html`
-          <wl-icon>group</wl-icon>
+          <wl-icon class="fg green">group</wl-icon>
         `}
         </div>`, root
     );
@@ -1434,6 +1436,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const folderId = controls.getAttribute('folder-id');
+    return folderId;
+  }
+
+  _getControlType(e) {
+    const controller = e.target;
+    const controls = controller.closest('#controls');
+    const folderId = controls.getAttribute('folder-type');
     return folderId;
   }
 
@@ -2557,6 +2566,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _shareFolderDialog(e) {
     this.selectedFolder = this._getControlId(e);
+    this.selectedFolderType = this._getControlType(e);
     this._initializeSharingFolderDialogLayout();
     this.openDialog('share-folder-dialog');
   }
@@ -2596,13 +2606,27 @@ export default class BackendAiStorageList extends BackendAIPage {
       return;
     }
 
-    globalThis.backendaiclient.vfolder.invite(permission, emailArray, this.selectedFolder)
+    let rqstJob;
+    if (this.selectedFolderType === 'user') {
+      rqstJob = globalThis.backendaiclient.vfolder.invite(permission, emailArray, this.selectedFolder);
+    } else {
+      rqstJob = globalThis.backendaiclient.vfolder.share(permission, emailArray, this.selectedFolder);
+    }
+    rqstJob
       .then((res) => {
         let msg;
-        if (res.invited_ids && res.invited_ids.length > 0) {
-          msg = _text('data.invitation.Invited');
+        if (this.selectedFolderType === 'user') {
+          if (res.invited_ids && res.invited_ids.length > 0) {
+            msg = _text('data.invitation.Invited');
+          } else {
+            msg = _text('data.invitation.NoOneWasInvited');
+          }
         } else {
-          msg = _text('data.invitation.NoOneWasInvited');
+          if (res.shared_emails && res.shared_emails.length > 0) {
+            msg = _text('data.invitation.Shared');
+          } else {
+            msg = _text('data.invitation.NoOneWasShared');
+          }
         }
         this.notification.text = msg;
         this.notification.show();
@@ -2612,7 +2636,11 @@ export default class BackendAiStorageList extends BackendAIPage {
           element.parentElement.removeChild(element);
         }
       }).catch((err) => {
-        this.notification.text = _text('data.invitation.InvitationError');
+        if (this.selectedFolderType === 'user') {
+          this.notification.text = _text('data.invitation.InvitationError');
+        } else {
+          this.notification.text = _text('data.invitation.SharingError');
+        }
         if (err && err.message) {
           this.notification.detail = err.message;
         }

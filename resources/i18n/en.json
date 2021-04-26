@@ -510,7 +510,10 @@
       "NoValidEmails": "No valid emails were entered",
       "Invited": "Successfully invited",
       "NoOneWasInvited": "No one invited since invitation already exists",
-      "InvitationError": "Invitation failed. User may already be invited."
+      "InvitationError": "Invitation failed. User may already be invited.",
+      "Shared": "Successfully shared the group folder",
+      "NoOneWasShared": "Failed to share the group folder",
+      "SharingError": "Sharing failed. User may already be shared or does not belong to appropriate project."
     },
     "permission": {
       "NoChanges": "No changes made",
