@@ -42,10 +42,6 @@ import './lablup-loading-spinner';
 export default class BackendAiEduApplauncher extends BackendAIPage {
   @property({type: Object}) notification = Object();
 
-  constructor() {
-    super();
-  }
-
   static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
@@ -67,6 +63,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.notification = globalThis.lablupNotification;
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this._createEduSession();
@@ -97,32 +94,58 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   }
 
   async _createEduSession() {
-    // Check if there is existing compute session
+    // Query current user's compute session in the current group.
     const fields = [
-      'session_id', 'name', 'status', 'status_info', 'service_ports', 'mounts',
+      'session_id', 'name', 'access_key', 'status', 'status_info', 'service_ports', 'mounts',
     ];
     const statuses = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'PREPARING', 'PULLING'].join(',');
-    const accessKey = '';
-    // const groupId = globalThis.backendaiclient.current_group_id();
+    const accessKey = globalThis.backendaiclient._config.accessKey;
+    // NOTE: There is no way to change the default group.
+    //       This API should be used when there is only one group, 'default'.
+    const groupId = globalThis.backendaiclient.current_group_id();
     const sessions = await globalThis.backendaiclient.computeSession.list(
-      fields, statuses, accessKey, 10 * 1000
+      fields, statuses, accessKey, 30, 0 , groupId
     );
 
+    // URL Parameter parsing.
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const requestedApp = urlParams.get('app') || 'jupyter';
+
+    // Create or select an existing compute session before lauching app.
     let sessionId;
-    let servicePorts;
     if (sessions.compute_session_list.total_count > 0) {
-      console.log('reusing an existing session...');
-      // TODO: different response depending on existing session's status
-      //       how to deal with if there are multiple sessions?
+      console.log('Reusing an existing session ...');
       const sessionStatus = sessions.compute_session_list.items[0].status;
       if (sessionStatus !== 'RUNNING') {
-        this.notification.text = `Your session is in status ${sessionStatus}. Please retry after some time by reloading`;
+        this.notification.text = `Your session is ${sessionStatus}. Please reload after some time.`;
         this.notification.show(true);
+        return;
       }
-      sessionId = sessions.compute_session_list.items[0].session_id;
-      servicePorts = JSON.parse(sessions.compute_session_list.items[0].service_ports || '{}');
+      let sess = null;
+      for (let i = 0; i < sessions.compute_session_list.items.length; i++) {
+        const _sess = sessions.compute_session_list.items[i];
+        const servicePorts = JSON.parse(_sess.service_ports || '{}');
+        const services = servicePorts.map((s) => s.name);
+        if (services.includes(requestedApp)) {
+          sess = _sess;
+          break;
+        }
+      }
+      if (!sess) {
+        this.notification.text = `No existing session can launch ${requestedApp}`;
+        this.notification.show(true);
+        return;
+      }
+      sessionId = sess.session_id;
     } else { // no existing compute session. create one.
-      console.log('creating a new session...');
+      console.log('Creating a new session ...');
+      let sessionTemplates = await globalThis.backendaiclient.sessionTemplate.list(false, groupId);
+      // Assume that session templates' name match requsetedApp name.
+      sessionTemplates = sessionTemplates.filter((t) => t.name === requestedApp);
+      const templateId = sessionTemplates[0].id;
+      return;
+
       // TODO: hard-coded parameters -> replace session-template API call
       const imageName = 'cr.backend.ai/testing/ngc-tensorflow:20.11-tf2-py3';
       const sessionName = this.generateSessionId();
@@ -130,7 +153,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         domain: 'default',
         group_name: 'default',
         scaling_group: 'default',
-        maxWaitSeconds: 30,
+        maxWaitSeconds: 0, // wait indefinitely
         cpu: 1,
         mem: '2g',
         // mounts: [],
@@ -140,7 +163,6 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
           imageName, sessionName, config, 30000
         );
         sessionId = response.sessionId;
-        servicePorts = response.servicePorts;
       } catch (err) {
         console.error(err);
         if (err && err.message) {
@@ -163,15 +185,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     }
 
     // Launch app.
-    const availableServiceNames = servicePorts.map((s) => s.name);
-    if (availableServiceNames.includes('rstudio')) {
-      this._openServiceApp(sessionId, 'rstudio');
-    } else if (availableServiceNames.includes('jupyter')) {
-      this._openServiceApp(sessionId, 'jupyter');
-    } else {
-      // TODO: how to deal with else?
-      console.log('how to deal?');
-    }
+    // TODO: launch 'jupyterlab' if the browser is not IE.
+    this._openServiceApp(sessionId, requestedApp);
   }
 
   async _openServiceApp(sessionId, appName) {
