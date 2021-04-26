@@ -1488,6 +1488,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view>
                     <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
                     <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${this._page === 'change-password'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>
+                    <backend-ai-edu-applauncher class="page" name="edu-applauncher" ?active="${this._page === 'edu-applauncher'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-edu-applauncher>
                     <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view>
                     <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${this._page === 'unauthorized'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view>
                   </div>
