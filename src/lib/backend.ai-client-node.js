@@ -53,7 +53,6 @@ class ClientConfig {
             this._password = secretKey;
         }
         this._proxyURL = null;
-        this._proxyToken = null;
         this._connectionMode = connectionMode;
     }
     get accessKey() {
@@ -73,9 +72,6 @@ class ClientConfig {
     }
     get proxyURL() {
         return this._proxyURL;
-    }
-    get proxyToken() {
-        return this._proxyToken;
     }
     get endpointHost() {
         return this._endpointHost;
@@ -2194,7 +2190,7 @@ class ComputeSession {
     /**
      * list compute sessions with specific conditions.
      *
-     * @param {array} fields - fields to query. Default fields are: ["id", "name", "imageㅁ", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
+     * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
      * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
      * @param {string} accessKey - access key that is used to start compute sessions.
      * @param {number} limit - limit number of query items.
