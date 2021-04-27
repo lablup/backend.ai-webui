@@ -108,7 +108,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     //       This API should be used when there is only one group, 'default'.
     const groupId = globalThis.backendaiclient.current_group_id();
     const sessions = await globalThis.backendaiclient.computeSession.list(
-      fields, statuses, accessKey, 30, 0 , groupId
+      fields, statuses, accessKey, 30, 0, groupId
     );
 
     // URL Parameter parsing.
@@ -158,8 +158,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         const resources = {
           scaling_group: scalingGroup,
           mounts: [],
-        }
-        const response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources)
+        };
+        const response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources);
         sessionId = response.sessionId;
       } catch (err) {
         console.error(err);
