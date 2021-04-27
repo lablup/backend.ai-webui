@@ -2665,7 +2665,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               </div>
             </div>
           </div>
-          <div class="vertical center layout" style="padding-top:15px;">
+          <div class="vertical center layout" style="padding-top:15px;position:relative;z-index:11;">
             <mwc-select id="resource-templates" label="${_t('session.launcher.ResourceAllocation')}"
                         icon="dashboard_customize" fullwidth required>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
