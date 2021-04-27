@@ -769,8 +769,8 @@ class Client {
       if (resources['owner_access_key']) {
         params['owner_access_key'] = resources['owner_access_key'];
       }
-      //params['config'] = {};
-      params['config'] = {resources: config};
+      params['config'] = {};
+      // params['config'] = {resources: config};
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
       }
@@ -800,7 +800,105 @@ class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  async createSesisonFromTemplate(kernelType, sessionId, resources = {}, timeout: number = 0) {
+  async createSessionFromTemplate(templateId, image = null, sessionName = null, resources = {}, timeout: number = 0) {
+    if (typeof sessionName === 'undefined' || sessionName === null)
+      sessionName = this.generateSessionId();
+    const params = {template_id: templateId};
+    if (image) {
+      params['image'] = image;
+    }
+    if (sessionName) {
+      params['name'] = sessionName;
+    }
+    if (resources != {}) {
+      let config = {};
+      if (resources['cpu']) {
+        config['cpu'] = resources['cpu'];
+      }
+      if (resources['mem']) {
+        config['mem'] = resources['mem'];
+      }
+      if (resources['cuda.device']) {
+        config['cuda.device'] = parseInt(resources['cuda.device']);
+      }
+      if (resources['fgpu']) {
+        config['cuda.shares'] = parseFloat(resources['fgpu']).toFixed(2); // 19.09 and above
+      }
+      if (resources['cuda.shares']) {
+        config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
+      }
+      if (resources['rocm']) {
+        config['rocm.device'] = resources['rocm'];
+      }
+      if (resources['tpu']) {
+        config['tpu.device'] = resources['tpu'];
+      }
+      if (resources['cluster_size']) {
+        params['cluster_size'] = resources['cluster_size'];
+      }
+      if (resources['cluster_mode']) {
+        params['cluster_mode'] = resources['cluster_mode'];
+      }
+      if (resources['group_name']) {
+        params['group_name'] = resources['group_name'];
+      }
+      if (resources['domain']) {
+        params['domain'] = resources['domain'];
+      }
+      if (resources['type']) {
+        params['type'] = resources['type'];
+      }
+      if (resources['starts_at']) {
+        params['starts_at'] = resources['startsAt'];
+      }
+      if (resources['enqueueOnly']) {
+        params['enqueueOnly'] = resources['enqueueOnly'];
+      }
+      if (resources['maxWaitSeconds']) {
+        params['maxWaitSeconds'] = resources['maxWaitSeconds'];
+      }
+      if (resources['reuseIfExists']) {
+        params['reuseIfExists'] = resources['reuseIfExists'];
+      }
+      if (resources['startupCommand']) {
+        params['startupCommand'] = resources['startupCommand'];
+      }
+      if (resources['bootstrap_script']) {
+        params['bootstrap_script'] = resources['bootstrap_script'];
+      }
+      if (resources['owner_access_key']) {
+        params['owner_access_key'] = resources['owner_access_key'];
+      }
+      // params['config'] = {};
+      params['config'] = {resources: config};
+      if (resources['mounts']) {
+        params['config'].mounts = resources['mounts'];
+      }
+      if (resources['scaling_group']) {
+        params['config'].scaling_group = resources['scaling_group'];
+      }
+      if (resources['shmem']) {
+        params['config'].resource_opts = {};
+        params['config'].resource_opts.shmem = resources['shmem'];
+      }
+      if (resources['env']) {
+        params['config'].environ = resources['env'];
+      }
+    }
+    // TODO: not working if config is set (Manager should be fixed)
+    // const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params);
+
+    const params2 = {
+      template_id: templateId,
+      name: sessionName,
+      config: {},
+    };
+    const config2 = {
+      scaling_group: 'default',
+    }
+    params2.config = config2;
+    const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params2);
+    return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
   /**

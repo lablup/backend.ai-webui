@@ -26,7 +26,11 @@ import './lablup-activity-panel';
 import './lablup-loading-spinner';
 
 /**
- Backend.AI Education App Launcher
+ Backend.AI Education App Launcher.
+
+ Available url parameters:
+ - app: str = 'jupyter' (app name to launch)
+ - scaling_group: str = 'default' (scaling group to create a new session)
 
  Example:
 
@@ -111,6 +115,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const requestedApp = urlParams.get('app') || 'jupyter';
+    const scalingGroup = urlParams.get('scaling_group') || 'default';
 
     // Create or select an existing compute session before lauching app.
     let sessionId;
@@ -143,31 +148,24 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       let sessionTemplates = await globalThis.backendaiclient.sessionTemplate.list(false, groupId);
       // Assume that session templates' name match requsetedApp name.
       sessionTemplates = sessionTemplates.filter((t) => t.name === requestedApp);
-      const templateId = sessionTemplates[0].id;
-      return;
-
-      // TODO: hard-coded parameters -> replace session-template API call
-      const imageName = 'cr.backend.ai/testing/ngc-tensorflow:20.11-tf2-py3';
-      const sessionName = this.generateSessionId();
-      const config = {
-        domain: 'default',
-        group_name: 'default',
-        scaling_group: 'default',
-        maxWaitSeconds: 0, // wait indefinitely
-        cpu: 1,
-        mem: '2g',
-        // mounts: [],
-      };
+      if (sessionTemplates.length < 1) {
+        this.notification.text = 'No appropriate session templates';
+        this.notification.show(true);
+        return;
+      }
+      const templateId = sessionTemplates[0].id; // NOTE: use the first template. will it be okay?
       try {
-        const response = await globalThis.backendaiclient.createIfNotExists(
-          imageName, sessionName, config, 30000
-        );
+        const resources = {
+          scaling_group: scalingGroup,
+          mounts: [],
+        }
+        const response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources)
         sessionId = response.sessionId;
       } catch (err) {
         console.error(err);
         if (err && err.message) {
           if ('statusCode' in err && err.statusCode === 408) {
-            this.notification.text = _text('session.launcher.sessionStillPreparing');
+            this.notification.text = 'Session is still in preparing. Reload after a while.';
           } else {
             if (err.description) {
               this.notification.text = PainKiller.relieve(err.description);
