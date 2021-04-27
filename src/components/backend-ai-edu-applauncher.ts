@@ -120,7 +120,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     const scalingGroup = urlParams.get('scaling_group') || 'default';
 
     // Create or select an existing compute session before lauching app.
-    let sessionId;
+    let sessionId: string | null | unknown;
     if (sessions.compute_session_list.total_count > 0) {
       console.log('Reusing an existing session ...');
       const sessionStatus = sessions.compute_session_list.items[0].status;
@@ -129,7 +129,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         this.notification.show(true);
         return;
       }
-      let sess = null;
+      let sess: Record<string, unknown> = {};
       for (let i = 0; i < sessions.compute_session_list.items.length; i++) {
         const _sess = sessions.compute_session_list.items[i];
         const servicePorts = JSON.parse(_sess.service_ports || '{}');
@@ -144,7 +144,11 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         this.notification.show(true);
         return;
       }
-      sessionId = sess.session_id;
+      if ('session_id' in sess) {
+        sessionId = sess.session_id;
+      } else {
+        sessionId = null;
+      }
     } else { // no existing compute session. create one.
       console.log('Creating a new session ...');
       let sessionTemplates = await globalThis.backendaiclient.sessionTemplate.list(false, groupId);
@@ -186,7 +190,9 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
     // Launch app.
     // TODO: launch 'jupyterlab' if the browser is not IE.
-    this._openServiceApp(sessionId, requestedApp);
+    if (sessionId) {
+      this._openServiceApp(sessionId, requestedApp);
+    }
   }
 
   async _openServiceApp(sessionId, appName) {
