@@ -963,42 +963,15 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   permissionRenderer(root, column?, rowData?) {
-    // Check if wl-select(permission list) exist
-    if (this.shadowRoot.querySelector('wl-select')) {
-      // user didnt select a new permission
-      if (this.shadowRoot.querySelector('wl-select').hasAttribute('pristine')) {
-        render(
-          html`
-            <div class="vertical layout">
-              <wl-select label="${_t('data.folders.SelectPermission')}">
-                <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
-                <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
-                <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
-                <option value=kickout>${_t('data.folders.KickOut')}</option>
-              </wl-select>`, root);
-      } else { //  user changed permission from the list so we generate the list again
-        render(
-          html`
-          <div class="vertical layout">
-            <wl-select label="${_t('data.folders.SelectPermission')}">
-              <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
-              <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
-              <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
-              <option value=kickout>${_t('data.folders.KickOut')}</option>
-            </wl-select>`, root);
-        this.shadowRoot.querySelector('wl-select').setAttribute('pristine', '');
-      }
-    } else {
-      render(
-        html`
-            <div class="vertical layout">
-              <wl-select label="${_t('data.folders.SelectPermission')}">
-                <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
-                <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
-                <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
-                <option value=kickout>${_t('data.folders.KickOut')}</option>
-              </wl-select>`, root);
-    }
+    render(
+      html`
+        <div class="vertical layout">
+          <wl-select label="${_t('data.folders.SelectPermission')}" >
+            <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
+            <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
+            <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
+            <option value="kickout">${_t('data.folders.KickOut')}</option>
+          </wl-select>`, root);
   }
 
 
@@ -1420,7 +1393,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   openDialog(id) {
     // var body = document.querySelector('body');
-    // body.appendChild(this.$[id]);                                           
+    // body.appendChild(this.$[id]);
     this.shadowRoot.querySelector('#' + id).show();
   }
 
@@ -2254,7 +2227,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       } else {
         const a = document.createElement('a');
         a.style.display = 'none';
-        a.addEventListener('click', function (e) {
+        a.addEventListener('click', function(e) {
           e.stopPropagation();
         });
         a.href = url;
@@ -2590,7 +2563,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     globalThis.backendaiclient.vfolder.list_invitees(vfolder_id)
       .then((res) => {
         this.invitees = res.shared;
-        this.openDialog('modify-permission-dialog');
+        this.shadowRoot.querySelector('#modify-permission-dialog').requestUpdate().then(()=>{
+          this.openDialog('modify-permission-dialog');
+        });
       });
   }
 
