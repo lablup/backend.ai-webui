@@ -202,7 +202,7 @@
       "EnvironmentVariableValue": "값",
       "EnvironmentVariableConfigurationDone": "환경변수가 설정되었습니다.",
       "EnvConfigWillDisappear": "저장되지 않은 환경변수 설정값은 사라집니다.",
-      "SharedMemoryAbbr": "공유 메모리",
+      "SharedMemoryAbbr": "공유메모리",
       "GPUSlot": "슬롯"
     },
     "Preparing": "준비중...",

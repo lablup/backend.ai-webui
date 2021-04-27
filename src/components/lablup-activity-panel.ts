@@ -179,8 +179,8 @@ export default class LablupActivityPanel extends LitElement {
       this.shadowRoot.querySelector('div.card > h4').style.marginBottom = '0';
     }
     if (this.height > 0) {
-      this.height == 130 ? 
-        this.shadowRoot.querySelector('div.card').style.height = "fit-content" : 
+      this.height == 130 ?
+        this.shadowRoot.querySelector('div.card').style.height = 'fit-content' :
         this.shadowRoot.querySelector('div.card').style.height = this.height + 'px';
     }
     if (this.noheader === true) {

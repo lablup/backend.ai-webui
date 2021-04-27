@@ -132,6 +132,7 @@ class Client {
         this.image = new ContainerImage(this);
         this.utils = new utils(this);
         this.computeSession = new ComputeSession(this);
+        this.sessionTemplate = new SessionTemplate(this);
         this.resourcePolicy = new ResourcePolicy(this);
         this.user = new User(this);
         this.group = new Group(this);
@@ -693,8 +694,8 @@ class Client {
             if (resources['owner_access_key']) {
                 params['owner_access_key'] = resources['owner_access_key'];
             }
-            //params['config'] = {};
-            params['config'] = { resources: config };
+            params['config'] = {};
+            // params['config'] = {resources: config};
             if (resources['mounts']) {
                 params['config'].mounts = resources['mounts'];
             }
@@ -717,6 +718,109 @@ class Client {
             rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
         }
         //return this._wrapWithPromise(rqst);
+        return this._wrapWithPromise(rqst, false, null, timeout);
+    }
+    /**
+     * Create a session with a session template.
+     *
+     * @param {string} sessionId - the sessionId given when created
+     */
+    async createSessionFromTemplate(templateId, image = null, sessionName = null, resources = {}, timeout = 0) {
+        if (typeof sessionName === 'undefined' || sessionName === null)
+            sessionName = this.generateSessionId();
+        const params = { template_id: templateId };
+        if (image) {
+            params['image'] = image;
+        }
+        if (sessionName) {
+            params['name'] = sessionName;
+        }
+        if (resources != {}) {
+            let config = {};
+            if (resources['cpu']) {
+                config['cpu'] = resources['cpu'];
+            }
+            if (resources['mem']) {
+                config['mem'] = resources['mem'];
+            }
+            if (resources['cuda.device']) {
+                config['cuda.device'] = parseInt(resources['cuda.device']);
+            }
+            if (resources['fgpu']) {
+                config['cuda.shares'] = parseFloat(resources['fgpu']).toFixed(2); // 19.09 and above
+            }
+            if (resources['cuda.shares']) {
+                config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
+            }
+            if (resources['rocm']) {
+                config['rocm.device'] = resources['rocm'];
+            }
+            if (resources['tpu']) {
+                config['tpu.device'] = resources['tpu'];
+            }
+            if (resources['cluster_size']) {
+                params['cluster_size'] = resources['cluster_size'];
+            }
+            if (resources['cluster_mode']) {
+                params['cluster_mode'] = resources['cluster_mode'];
+            }
+            if (resources['group_name']) {
+                params['group_name'] = resources['group_name'];
+            }
+            if (resources['domain']) {
+                params['domain'] = resources['domain'];
+            }
+            if (resources['type']) {
+                params['type'] = resources['type'];
+            }
+            if (resources['starts_at']) {
+                params['starts_at'] = resources['startsAt'];
+            }
+            if (resources['enqueueOnly']) {
+                params['enqueueOnly'] = resources['enqueueOnly'];
+            }
+            if (resources['maxWaitSeconds']) {
+                params['maxWaitSeconds'] = resources['maxWaitSeconds'];
+            }
+            if (resources['reuseIfExists']) {
+                params['reuseIfExists'] = resources['reuseIfExists'];
+            }
+            if (resources['startupCommand']) {
+                params['startupCommand'] = resources['startupCommand'];
+            }
+            if (resources['bootstrap_script']) {
+                params['bootstrap_script'] = resources['bootstrap_script'];
+            }
+            if (resources['owner_access_key']) {
+                params['owner_access_key'] = resources['owner_access_key'];
+            }
+            // params['config'] = {};
+            params['config'] = { resources: config };
+            if (resources['mounts']) {
+                params['config'].mounts = resources['mounts'];
+            }
+            if (resources['scaling_group']) {
+                params['config'].scaling_group = resources['scaling_group'];
+            }
+            if (resources['shmem']) {
+                params['config'].resource_opts = {};
+                params['config'].resource_opts.shmem = resources['shmem'];
+            }
+            if (resources['env']) {
+                params['config'].environ = resources['env'];
+            }
+        }
+        const params2 = {
+            template_id: templateId,
+            name: sessionName,
+            config: {},
+        };
+        const config2 = {
+            scaling_group: 'default',
+        };
+        params2.config = config2;
+        // const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params);
+        const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params2);
         return this._wrapWithPromise(rqst, false, null, timeout);
     }
     /**
@@ -2308,6 +2412,43 @@ class ComputeSession {
     }`;
         v = { session_uuid: sessionUuid };
         return this.client.query(q, v);
+    }
+}
+class SessionTemplate {
+    /**
+     * The Computate session template API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+        this.urlPrefix = '/template/session';
+    }
+    /**
+     * list session templates with specific conditions.
+     *
+     * @param {array} fields - fields to query. Default fields are: ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
+     * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+     * @param {string} accessKey - access key that is used to start compute sessions.
+     * @param {number} limit - limit number of query items.
+     * @param {number} offset - offset for item query. Useful for pagination.
+     * @param {string} group - project group id to query. Default returns sessions from all groups.
+     * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
+     */
+    async list(listall = false, groupId = null) {
+        let reqUrl = this.urlPrefix;
+        if (listall) {
+            const params = { all: listall };
+            const q = querystring.stringify(params);
+            reqUrl += `?${q}`;
+        }
+        if (groupId) {
+            const params = { group_id: groupId };
+            const q = querystring.stringify(params);
+            reqUrl += `?${q}`;
+        }
+        let rqst = this.client.newSignedRequest('GET', reqUrl, null);
+        return this.client._wrapWithPromise(rqst);
     }
 }
 class Resources {
