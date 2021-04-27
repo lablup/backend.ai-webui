@@ -9,7 +9,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import {render} from 'lit-html';
+import {render} from 'lit';
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
 

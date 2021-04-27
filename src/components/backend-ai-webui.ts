@@ -1455,7 +1455,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       <div class="vertical-line" style="height:35px;"></div>
                       <div class="horizontal layout center" style="margin:auto 10px;padding-top:10px;">
                         <span class="log_out" style="font-size:12px;margin:auto 0px;color:#8c8484;">
-                          ${_text('webui.menu.LogOut')}
+                          ${_t('webui.menu.LogOut')}
                         </span>
                         <mwc-icon-button @click="${() => this.logout()}" style="padding-bottom:5px;">
                           <i class="fas fa-sign-out-alt fa-xs" style="color:#8c8484;"></i>

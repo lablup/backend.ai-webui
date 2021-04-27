@@ -7,7 +7,7 @@ import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import {render} from 'lit-html';
+import {render} from 'lit';
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
