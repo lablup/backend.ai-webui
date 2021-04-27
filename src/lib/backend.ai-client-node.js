@@ -810,6 +810,8 @@ class Client {
                 params['config'].environ = resources['env'];
             }
         }
+        // TODO: not working if config is set (Manager should be fixed)
+        // const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params);
         const params2 = {
             template_id: templateId,
             name: sessionName,
@@ -819,7 +821,6 @@ class Client {
             scaling_group: 'default',
         };
         params2.config = config2;
-        // const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params);
         const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params2);
         return this._wrapWithPromise(rqst, false, null, timeout);
     }
