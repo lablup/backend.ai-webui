@@ -660,6 +660,18 @@ class Client {
   }
 
   /**
+   * Update user's full_name.
+   */
+  async update_full_name(email, fullName) {
+    let body = {
+      'email': email,
+      'full_name': fullName
+    };
+    let rqst = this.newSignedRequest('POST', `/auth/update-full-name`, body);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
    * Update user's password.
    *
    */
