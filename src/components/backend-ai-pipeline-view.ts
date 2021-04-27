@@ -4,7 +4,9 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, customElement, html, property} from 'lit-element';
+import {css, html} from 'lit';
+import {customElement, property} from 'lit/decorators';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import '@material/mwc-icon';

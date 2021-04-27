@@ -1,4 +1,4 @@
-import {css} from 'lit-element';
+import {css} from 'lit';
 import {PaperColor} from './paper-color';
 
 export const BackendAiStyles = [

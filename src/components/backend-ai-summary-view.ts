@@ -4,8 +4,10 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {unsafeHTML} from 'lit-html/directives/unsafe-html';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {unsafeHTML} from 'lit/directives/unsafe-html';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
@@ -85,7 +87,7 @@ export default class BackendAISummary extends BackendAIPage {
     this.invitations = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,

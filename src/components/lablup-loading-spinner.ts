@@ -3,7 +3,9 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators';
+
 import 'weightless/progress-spinner';
 
 /**
@@ -29,7 +31,7 @@ export default class LablupLoadingSpinner extends LitElement {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       // language=CSS
       css`

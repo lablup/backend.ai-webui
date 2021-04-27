@@ -4,7 +4,8 @@
 @group Backend.AI Web UI
  */
 import {get as _text, LanguageIdentifier, registerTranslateConfig} from 'lit-translate';
-import {LitElement, property} from 'lit-element';
+import {LitElement} from 'lit';
+import {property} from 'lit/decorators';
 
 /**
  Backend AI Page

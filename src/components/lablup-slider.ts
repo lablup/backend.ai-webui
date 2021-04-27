@@ -3,7 +3,9 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property, query} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property, query} from 'lit/decorators';
+
 import '@material/mwc-slider';
 import 'weightless/textfield';
 
@@ -44,7 +46,7 @@ export default class LablupSlider extends LitElement {
   @property({type: Object}) textfield;
   @query('#slider', true) slider;
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,

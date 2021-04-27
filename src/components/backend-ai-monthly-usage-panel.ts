@@ -3,7 +3,9 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, LitElement, property} from 'lit-element';
+import {css, html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators';
+
 import {translate as _t} from 'lit-translate';
 
 import 'weightless/title';

@@ -3,7 +3,9 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators';
+
 import {BackendAIPage} from './backend-ai-page';
 import {render} from 'lit-html';
 
@@ -88,7 +90,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.servicePorts = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     // noinspection CssInvalidPropertyValue
     return [
       BackendAiStyles,

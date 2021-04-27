@@ -2,8 +2,11 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
+import {LitElement, html, CSSResultGroup} from 'lit';
+import {customElement, property} from 'lit/decorators';
+
 import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
 import {installOfflineWatcher} from 'pwa-helpers/network';
@@ -144,15 +147,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.blockedMenuitem = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAIWebUIStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
-      IronPositioning,
-      css`
-    `];
+      IronPositioning
+    ];
   }
 
   firstUpdated() {

@@ -3,7 +3,9 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultArray, CSSResultOrNative, customElement, html} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement} from 'lit/decorators';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
@@ -132,7 +134,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
     return 'backend-ai-experiment-view';
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,

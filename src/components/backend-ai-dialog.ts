@@ -3,7 +3,9 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 // import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property, query} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property, query} from 'lit/decorators';
+
 import {BackendAiStyles} from './backend-ai-general-styles';
 import 'weightless/button';
 import 'weightless/card';
@@ -48,7 +50,7 @@ export default class BackendAiDialog extends LitElement {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
