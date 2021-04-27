@@ -40,12 +40,15 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
   // Pipeline components prpoerties
   @property({type: String}) pipelineSelectedName = '';
   @property({type: String}) componentCreateMode = 'create';
-  @property({type: Array}) componentNodes = [];
-  @property({type: Array}) componentEdges = [];
-  @property({type: Array}) selectedNodes = []; // List of IDs of components
+  @property({type: Array}) componentNodes;
+  @property({type: Array}) componentEdges;
+  @property({type: Array}) selectedNodes; // List of IDs of components
 
   constructor() {
     super();
+    this.componentNodes = [];
+    this.componentEdges = [];
+    this.selectedNodes = [];
   }
 
   firstUpdated() {
@@ -60,6 +63,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     }
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
+        return;
       }, true);
     } else {
     }
@@ -68,7 +72,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
   /**
    * Set properties for a new component and open dialog.
    *
-   * @param {String} pipelinName - Virtual folder name to add a new pipeline component.
+   * @param {String} pipelineName - Virtual folder name to add a new pipeline component.
    * @param {Array} nodes - current nodes information.
    * @param {Array} edges - current edge information.
    * @param {Array} selectedNodes - parent component IDs (add edges from this node, if exist).
@@ -90,7 +94,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
   /**
    * Set properties for updating component and open dialog.
    *
-   * @param {String} pipelinName - Virtual folder name to update pipeline component.
+   * @param {String} pipelineName - Virtual folder name to update pipeline component.
    * @param {Array} nodes - current nodes information.
    * @param {Array} edges - current edge information.
    * @param {Object} cinfo - detailed information of the component to be updated.
@@ -118,7 +122,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
   /**
    * Set properties for deleting component and open dialog
    *
-   * @param {String} pipelinName - Virtual folder name to delete pipeline component.
+   * @param {String} pipelineName - Virtual folder name to delete pipeline component.
    * @param {Array} nodes - current nodes information.
    * @param {Array} edges - current edge information.
    * @param {Array} selectedNodes - component Ids to delete
@@ -152,7 +156,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
   /**
    * Connect/disconnect two components.
    *
-   * @param {String} pipelinName - Virtual folder name to delete pipeline component.
+   * @param {String} pipelineName - Virtual folder name to delete pipeline component.
    * @param {Array} nodes - current nodes information.
    * @param {Array} edges - current edge information.
    * @param {Array} selectedNodes - component Ids to delete
@@ -277,7 +281,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
           break;
         }
       }
-      const indexes = [];
+      const indexes: number[] = [];
       for (let i = 0; i < this.componentEdges.length; i++) {
         if (nid === this.componentEdges[i].from || nid == this.componentEdges[i].to) {
           indexes.push(i);

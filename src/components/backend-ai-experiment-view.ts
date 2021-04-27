@@ -242,7 +242,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
   /**
    * Dislplay tabs.
    *
-   * @param tab
+   * @param {HTMLElement} tab - tab element
    */
   _showTab(tab) {
     const els = this.shadowRoot.querySelectorAll('.tab-content');

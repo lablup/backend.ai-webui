@@ -80,9 +80,6 @@ export class BackendAIPipelineCommon extends BackendAIPage {
     super();
   }
 
-  firstUpdated() {
-  }
-
   /**
    * Download pipeline config file and return it.
    *

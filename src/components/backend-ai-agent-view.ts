@@ -47,8 +47,8 @@ export default class BackendAIAgentView extends BackendAIPage {
       css`
         h3.tab {
           background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0px 0px;
-          margin: 0px auto;
+          border-radius: 5px 5px 0 0;
+          margin: 0 auto;
         }
 
         mwc-tab-bar {
@@ -83,7 +83,7 @@ export default class BackendAIAgentView extends BackendAIPage {
    */
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
-    if (active === false) {
+    if (!active) {
       this.shadowRoot.querySelector('#running-agents').active = false;
       this.shadowRoot.querySelector('#terminated-agents').active = false;
       this.shadowRoot.querySelector('#scaling-groups').active = false;

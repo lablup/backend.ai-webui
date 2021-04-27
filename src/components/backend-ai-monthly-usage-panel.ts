@@ -74,7 +74,10 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
   }
 
   /**
-   * @param {String} time - [days]:[hours]:[minutes].[seconds]
+   * Time formatting for statistics panel
+   *
+   * @param {string} time - [days]:[hours]:[minutes].[seconds]
+   * @return {string} [hours]h [minutes]m
    * */
   usedTimeFormatting(time) {
     const days = parseInt(time.substring(0, time.indexOf(':')));

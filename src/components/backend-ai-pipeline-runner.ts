@@ -30,12 +30,13 @@ import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
  @element backend-ai-pipeline-runner
  */
 @customElement('backend-ai-pipeline-runner')
-export default class BackendAIPipelineComponentView extends BackendAIPipelineCommon {
+export default class BackendAIPipelineRunner extends BackendAIPipelineCommon {
   // Elements
   @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
   // Pipeline components prpoerties
   @property({type: String}) pipelineSelectedName = '';
+  @property({type: String}) pipelineFolderName = '';
 
   constructor() {
     super();
@@ -53,6 +54,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     }
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
+        return;
       }, true);
     } else {
     }
@@ -64,7 +66,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     const dialog = this.shadowRoot.querySelector('#codemirror-dialog');
     const editor = this.shadowRoot.querySelector('#codemirror-editor');
     editor.setValue(code);
-    dialog.querySelector('span[slot="title"]').textContent = component.title;
+    // dialog.querySelector('span[slot="title"]').textContent = component.title;
     dialog.show();
     this.spinner.hide();
   }

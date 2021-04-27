@@ -89,8 +89,9 @@ export default class LablupActivityPanel extends LitElement {
 
         div.card > div {
           margin: 20px;
-          padding-bottom: 20px;
+          padding-bottom: .5rem;
           font-size: 12px;
+          overflow-wrap:break-word;
         }
 
         ul {
@@ -109,7 +110,6 @@ export default class LablupActivityPanel extends LitElement {
 
         @media screen and (max-width: 750px) {
           div.card {
-            min-width: 350px;
             width: auto;
             height: auto !important;
           }
@@ -179,7 +179,9 @@ export default class LablupActivityPanel extends LitElement {
       this.shadowRoot.querySelector('div.card > h4').style.marginBottom = '0';
     }
     if (this.height > 0) {
-      this.shadowRoot.querySelector('div.card').style.height = this.height + 'px';
+      this.height == 130 ?
+        this.shadowRoot.querySelector('div.card').style.height = 'fit-content' :
+        this.shadowRoot.querySelector('div.card').style.height = this.height + 'px';
     }
     if (this.noheader === true) {
       this.shadowRoot.querySelector('#header').style.display = 'none';

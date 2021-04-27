@@ -217,7 +217,7 @@ export default class BackendAIImport extends BackendAIPage {
 
   async importRepoFromURL(url, folderName) {
     // Create folder to
-    const imageResource: Object = {};
+    const imageResource: Record<string, unknown> = {};
     imageResource['cpu'] = 1;
     imageResource['mem'] = '0.5g';
     imageResource['domain'] = globalThis.backendaiclient._config.domainName;
@@ -328,7 +328,7 @@ export default class BackendAIImport extends BackendAIPage {
   /**
    * Copy textarea when user clicks the element.
    *
-   * @param id - text-area htmlElement for copying
+   * @param {Event} e - Click event. e.target points text-area htmlElement for copying
    */
   _copyTextArea(e) {
     let copyText = '';

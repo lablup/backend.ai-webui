@@ -736,7 +736,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     // if user input in full name is not null and not same as the original full name, then it updates.
     if (globalThis.backendaiclient.supports('change-user-name')) {
       if (newFullname && (newFullname !== this.full_name)) {
-        globalThis.backendaiclient.user.update(this.user_id, {'full_name': newFullname}).then((resp) => {
+        globalThis.backendaiclient.update_full_name(this.user_id, newFullname).then((resp) => {
           this.notification.text = _text('webui.menu.FullnameUpdated');
           this.notification.show();
           this.full_name = globalThis.backendaiclient.full_name = newFullname;
@@ -1360,7 +1360,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">21.03.2.210402</small>
+                <small class="sidebar-footer" style="font-size:9px;">21.03.3.210419</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1384,7 +1384,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">21.03.2.210402</small>
+              <small class="sidebar-footer" style="font-size:9px;">21.03.3.210419</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1488,6 +1488,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view>
                     <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
                     <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${this._page === 'change-password'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>
+                    <backend-ai-edu-applauncher class="page" name="edu-applauncher" ?active="${this._page === 'edu-applauncher'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-edu-applauncher>
                     <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view>
                     <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${this._page === 'unauthorized'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view>
                   </div>

@@ -44,9 +44,9 @@ export default class BackendAIPipelineView extends BackendAIPage {
   // Properties for selected pipeline
   @property({type: String}) pipelineFolderName = '';
   @property({type: Object}) pipelineConfig = Object();
-  @property({type: Array}) pipelineComponents = [];
+  @property({type: Array}) pipelineComponents;
   @property({type: Number}) selectedComponentIndex = -1;
-  @property({type: Array}) componentsToBeRun = [];
+  @property({type: Array}) componentsToBeRun;
 
   @property({type: Object}) _dragSource = Object();
   @property({type: Object}) _dragTarget = Object();
@@ -54,6 +54,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
   constructor() {
     super();
     this.active = false;
+    this.pipelineComponents = [];
+    this.componentsToBeRun = [];
   }
 
   static get styles() {
@@ -123,6 +125,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     }
     if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
+        return;
       }, true);
     } else {
     }
@@ -185,6 +188,21 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this.pipelineComponents = this.pipelineComponents.slice();
     await this._uploadPipelineComponents(this.pipelineFolderName, this.pipelineComponents);
     this.spinner.hide();
+  }
+
+  _uploadFile(dummy1, dummy2, dummy3) {
+    // TODO: Missing during refactor. It does not exist. Maybe in other components?
+    return;
+  }
+
+  _uploadPipelineComponents(dummy1, dummy2) {
+    // TODO: Missing during refactor. It does not exist. Maybe in other components?
+    return;
+  }
+
+  _ensureComponentMainCode(dummy1) {
+    // TODO: Missing during refactor. It does not exist. Maybe in other components?
+    return;
   }
 
   _hideCodeDialog() {
