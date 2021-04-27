@@ -4,7 +4,7 @@
  */
 
 import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators';
+import {customElement, property} from 'lit/decorators.js';
 
 import {
   IronFlex,

@@ -44,6 +44,7 @@
     "@material/mwc-textarea": "^0.20.0",
     "@material/mwc-textfield": "^0.20.0",
     "@material/mwc-top-app-bar-fixed": "^0.20.0",
+    "@types/hammerjs": "^2.0.39",
     "@vaadin/vaadin-grid": "^6.0.1",
     "@vaadin/vaadin-icons": "^4.3.2",
     "@vaadin/vaadin-item": "^3.0.0",

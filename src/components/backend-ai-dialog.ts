@@ -4,7 +4,7 @@
  */
 // import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
 import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property, query} from 'lit/decorators';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import 'weightless/button';

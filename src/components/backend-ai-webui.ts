@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {LitElement, html, CSSResultGroup} from 'lit';
-import {customElement, property} from 'lit/decorators';
+import {customElement, property} from 'lit/decorators.js';
 
 import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from 'lit-translate';
 

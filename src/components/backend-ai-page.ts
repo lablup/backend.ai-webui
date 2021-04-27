@@ -5,7 +5,7 @@
  */
 import {get as _text, LanguageIdentifier, registerTranslateConfig} from 'lit-translate';
 import {LitElement} from 'lit';
-import {property} from 'lit/decorators';
+import {property} from 'lit/decorators.js';
 
 /**
  Backend AI Page

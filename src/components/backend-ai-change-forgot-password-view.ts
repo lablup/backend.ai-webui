@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators';
+import {customElement, property} from 'lit/decorators.js';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';

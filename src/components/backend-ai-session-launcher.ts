@@ -4,8 +4,8 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators';
-import {unsafeHTML} from 'lit/directives/unsafe-html';
+import {customElement, property, query} from 'lit/decorators.js';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
 import {BackendAIPage} from './backend-ai-page';
 

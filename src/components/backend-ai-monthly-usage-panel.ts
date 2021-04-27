@@ -4,7 +4,7 @@
  */
 
 import {css, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators';
+import {customElement, property} from 'lit/decorators.js';
 
 import {translate as _t} from 'lit-translate';
 

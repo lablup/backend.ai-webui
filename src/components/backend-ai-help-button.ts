@@ -4,7 +4,7 @@
  */
 // import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators';
+import {customElement, property} from 'lit/decorators.js';
 
 import '@material/mwc-icon-button';
 import {BackendAIPage} from './backend-ai-page';

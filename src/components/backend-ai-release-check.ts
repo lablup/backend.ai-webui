@@ -5,7 +5,7 @@
 
 import {get as _text} from 'lit-translate';
 import {CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators';
+import {customElement, property} from 'lit/decorators.js';
 
 /**
  Backend AI Release Check

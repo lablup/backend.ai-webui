@@ -4,7 +4,7 @@
  */
 
 import {CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators';
+import {customElement, property} from 'lit/decorators.js';
 
 import '../plastics/chart-js';
 import format from 'date-fns/esm/format';

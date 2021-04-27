@@ -4,7 +4,7 @@
  */
 
 import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property, query} from 'lit/decorators';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import '@material/mwc-slider';
 import 'weightless/textfield';
