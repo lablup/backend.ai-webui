@@ -163,11 +163,6 @@ export default class LablupTermsOfService extends LitElement {
     }
   }
 
-  attributeChangedCallback(name, oldval, newval) {
-    // eslint-disable-next-line wc/guard-super-call
-    super.attributeChangedCallback(name, oldval, newval);
-  }
-
   _syncOpenState() {
     this.show = this.dialog.open;
   }

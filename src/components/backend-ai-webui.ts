@@ -280,10 +280,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     super.disconnectedCallback();
   }
 
-  attributeChangedCallback(name, oldval, newval) {
-    super.attributeChangedCallback(name, oldval, newval);
-  }
-
   shouldUpdate(changedProperties) {
     return this.hasLoadedStrings && super.shouldUpdate(changedProperties);
   }

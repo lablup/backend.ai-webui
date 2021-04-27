@@ -31,10 +31,6 @@ class BackendAiMessage extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
   }
-
-  attributeChangedCallback(name, oldval, newval) {
-    super.attributeChangedCallback(name, oldval, newval);
-  }
 }
 
 customElements.define(BackendAiMessage.is, BackendAiMessage);
