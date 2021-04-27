@@ -736,7 +736,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     // if user input in full name is not null and not same as the original full name, then it updates.
     if (globalThis.backendaiclient.supports('change-user-name')) {
       if (newFullname && (newFullname !== this.full_name)) {
-        globalThis.backendaiclient.user.update(this.user_id, {'full_name': newFullname}).then((resp) => {
+        globalThis.backendaiclient.update_full_name(this.user_id, newFullname).then((resp) => {
           this.notification.text = _text('webui.menu.FullnameUpdated');
           this.notification.show();
           this.full_name = globalThis.backendaiclient.full_name = newFullname;
