@@ -853,6 +853,7 @@
     "DescROCMGPUsupport": "AMD ROCm GPU 지원을 추가합니다. <br/>Backend.AI ROCm 플러그인이 필요합니다.",
     "Scheduler": "스케쥴러",
     "JobScheduler": "기본 잡 스케쥴러를 지정합니다.",
+    "JobSchedulerUpdated": "잡 스케줄러 설정이 변경되었습니다.",
     "Require1912orAbove": "Backend.AI 19.12 이상의 버전이 필요합니다.",
     "Require2003orAbove": "Backend.AI 20.03 이상의 버전이 필요합니다.",
     "EnterpriseFeatures": "엔터프라이즈 기능",
