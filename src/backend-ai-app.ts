@@ -102,6 +102,9 @@ const loadPage = (page, params: Record<string, unknown> = {}) => (dispatch) => {
   case 'import':
     import('./components/backend-ai-import-view.js');
     break;
+  case 'edu-applauncher':
+    import('./components/backend-ai-edu-applauncher.js');
+    break;
   case 'unauthorized':
     import('./components/backend-ai-permission-denied-view.js');
     break;

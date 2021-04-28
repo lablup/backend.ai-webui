@@ -202,7 +202,7 @@
       "EnvironmentVariableValue": "값",
       "EnvironmentVariableConfigurationDone": "환경변수가 설정되었습니다.",
       "EnvConfigWillDisappear": "저장되지 않은 환경변수 설정값은 사라집니다.",
-      "SharedMemoryAbbr": "공유 메모리",
+      "SharedMemoryAbbr": "공유메모리",
       "GPUSlot": "슬롯"
     },
     "Preparing": "준비중...",
@@ -506,7 +506,10 @@
       "NoValidEmails": "정상적인 이메일을 입력해주세요",
       "Invited": "초대장을 보냈습니다",
       "NoOneWasInvited": "초대장이 이미 존재하여 초대에 실패했습니다",
-      "InvitationError": "초대가 실패했습니다. 이미 초대된 사용자일 수 있습니다."
+      "InvitationError": "초대가 실패했습니다. 이미 초대된 사용자일 수 있습니다.",
+      "Shared": "그룹 폴더를 공유했습니다",
+      "NoOneWasShared": "그룹 폴더 공유에 실패했습니다",
+      "SharingError": "공유에 실패했습니다. 이미 공유받은 사용자거나 프로젝트 소속 사용자가 아닐 수 있습니다."
     },
     "permission": {
       "NoChanges": "변경 사항이 없습니다",
