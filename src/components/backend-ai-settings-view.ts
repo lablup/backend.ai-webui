@@ -438,10 +438,17 @@ export default class BackendAiSettingsView extends BackendAIPage {
    * @param {HTMLElement} e - scheduler setting component
    * */
   changeScheduler(e) {
-    if (['fifo', 'lifo', 'drf'].includes(e.target.value)) {
-      const scheduler = `{${e.target.value}}`;
-      globalThis.backendaiclient.setting.set('plugins/scheduler', scheduler).then((response) => {
-        console.log(response);
+    const scheduler = e.target.value;
+    if (['fifo', 'lifo', 'drf'].includes(scheduler)) {
+      const detail = {
+        scheduler: {
+          'num_retries_to_skip': 0
+        }
+      };
+      globalThis.backendaiclient.setting.set(`plugins/scheduler`, detail).then((response) => {
+        this.notification.text = _text('settings.JobSchedulerUpdated');
+        this.notification.show();
+        // console.log(response);
       }).catch((err) => {
         this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');
         this.notification.detail = err;
