@@ -15,7 +15,6 @@ import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 
-import 'weightless/textfield';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/expansion';
@@ -181,13 +180,6 @@ export default class BackendAICredentialView extends BackendAIPage {
           width: 100%;
         }
 
-        wl-textfield {
-          width: 100%;
-          --input-state-color-invalid: red;
-          --input-padding-top-bottom: 0px;
-          --input-font-family: Roboto, Noto, sans-serif;
-        }
-
         wl-checkbox {
           --checkbox-size: 10px;
           --checkbox-border-radius: 2px;
@@ -203,16 +195,16 @@ export default class BackendAICredentialView extends BackendAIPage {
           --mdc-typography-font-family: var(--general-font-family);
         }
 
+        mwc-textfield.resource-input {
+          width: 5rem;
+        }
+
         mwc-textfield#export-file-name {
           margin-bottom: 10px;
         }
 
         mwc-textfield#id_user_name {
           margin-bottom: 18px;
-        }
-
-        #new-user-dialog wl-textfield {
-          margin-bottom: 15px;
         }
 
         mwc-menu {
@@ -695,18 +687,18 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   /**
-   * Set a wlTextEl value according to toggle checkbox checked state.
+   * Set a TextEl value according to toggle checkbox checked state.
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
-  _toggleCheckbox(e) {
+   _toggleCheckbox(e) {
     const checkEl = e.target;
     const checked = checkEl.checked;
-    const wlTextEl = checkEl.closest('div').querySelector('wl-textfield');
-    wlTextEl.disabled = checked;
-    if (!wlTextEl.disabled) {
-      if (wlTextEl.value === '') {
-        wlTextEl.value = 0;
+    const TextEl = checkEl.closest('div').querySelector('mwc-textfield');
+    TextEl.disabled = checked;
+    if (!TextEl.disabled) {
+      if (TextEl.value === '') {
+        TextEl.value = 0;
       }
     }
   }
@@ -717,45 +709,39 @@ export default class BackendAICredentialView extends BackendAIPage {
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _validateResourceInput(e) {
-    const textfield = e.target.closest('wl-textfield');
-    const checkbox_el = textfield.closest('div').querySelector('.unlimited');
-    let checkbox;
-    if (checkbox_el) {
-      checkbox = checkbox_el.querySelector('wl-checkbox');
-    } else {
-      checkbox = null;
-    }
+    const textfield = e.target.closest('mwc-textfield');
+    const checkbox_el = textfield.closest('div').querySelector('wl-label.unlimited');
+    let checkbox = checkbox_el ? checkbox_el.querySelector('wl-checkbox') : null;
+    const countDecimals = (value: number) => { 
+      return value % 1 ? value.toString().split(".")[1].length : 0;
+    };
 
-    if (textfield.value <= 0 ) {
-      // concurrency job limit must be upper than 0.
-      textfield.value = textfield.id === 'concurrency-limit' ? 1 : 0;
-    }
-    if (textfield.min && textfield.value < textfield.min) {
-      textfield.value = textfield.min;
-    }
-    if (textfield.max && textfield.value > textfield.max) {
-      textfield.value = textfield.max;
-    }
-
-    if (textfield.className === 'discrete') {
+    if (textfield.classList.contains('discrete')) {
       textfield.value = Math.round(textfield.value);
     }
 
-    if (textfield.value === '') {
-      try {
-        if (!checkbox || !checkbox['checked']) {
-          textfield['required'] = true;
-          textfield.focus();
-          throw new Error(_text('resourcePolicy.PleaseInputValue'));
-        } else {
-          textfield['required'] = false;
-          textfield.value = '';
-        }
-      } catch (err) {
-        this.notification.text = err.message;
-        this.notification.show();
-      }
+    if (textfield.value <= 0) {
+      // concurrency job and container-per-session limit must be upper than 0.
+      textfield.value = ((textfield.id === 'concurrency-limit') || (textfield.id === 'container-per-session-limit')) ? 1 : 0;
     }
+
+    if (!textfield.valid) {
+      const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
+      textfield.value = (decimal_point > 0) ? parseFloat(textfield.value).toFixed(decimal_point) : Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
+    }
+    // automatically check when textfield is min
+    if (checkbox) {
+      textfield.disabled = checkbox.checked = (textfield.value == parseFloat(textfield.min)); 
+    }
+  }
+
+  /**
+   * update if value is Unlimited or zero to empty
+   * 
+   * @param {string} value
+   */
+  _updateUnlimitedValue(value) {
+    return ['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value) ? '' : value;
   }
 
   /**
@@ -1143,37 +1129,37 @@ export default class BackendAICredentialView extends BackendAIPage {
                          required></mwc-textfield>
           <h4>${_t('resourcePolicy.ResourcePolicy')}</h4>
           <div class="horizontal center layout distancing">
-            <div class="vertical layout" style="margin: 0 10px 0 0;">
+            <div class="vertical layout">
               <wl-label>CPU</wl-label>
-              <wl-textfield class="discrete" id="cpu-resource" type="number" max="512"
-                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <mwc-textfield class="discrete resource-input" id="cpu-resource" type="number" min="0" max="512"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                   ${_t('resourcePolicy.Unlimited')}
                 </wl-label>
             </div>
-            <div class="vertical layout" style="margin: 0px 10px 0px 10px;">
+            <div class="vertical layout">
               <wl-label>RAM(GB)</wl-label>
-              <wl-textfield id="ram-resource" type="number" max="1024"
-                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max="1024" step="0.01"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                 ${_t('resourcePolicy.Unlimited')}
               </wl-label>
             </div>
-            <div class="vertical layout" style="margin: 0px 10px 0px 10px;">
+            <div class="vertical layout">
               <wl-label>GPU</wl-label>
-              <wl-textfield id="gpu-resource" type="number" max="64"
-                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <mwc-textfield class="resource-input" id="gpu-resource" type="number" min="0" max="64"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                 ${_t('resourcePolicy.Unlimited')}
               </wl-label>
             </div>
-            <div class="vertical layout" style="margin: 0px 0px 0px 10px;">
+            <div class="vertical layout">
               <wl-label>fGPU</wl-label>
-              <wl-textfield id="fgpu-resource" type="number" max="256"
-                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <mwc-textfield class="resource-input" id="fgpu-resource" type="number" min="0" max="256" step="0.1"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                 ${_t('resourcePolicy.Unlimited')}
@@ -1181,20 +1167,20 @@ export default class BackendAICredentialView extends BackendAIPage {
             </div>
           </div>
           <h4>${_t('resourcePolicy.Sessions')}</h4>
-          <div class="horizontal center layout distancing">
+          <div class="horizontal justified layout distancing">
             <div class="vertical left layout">
                 <wl-label>${_t('resourcePolicy.ContainerPerSession')}</wl-label>
-                <wl-textfield class="discrete" id="container-per-session-limit" type="number" max="100"
-                    @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <mwc-textfield class="discrete" id="container-per-session-limit" type="number" min="0" max="100"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                   ${_t('resourcePolicy.Unlimited')}
                 </wl-label>
               </div>
-              <div class="vertical left layout" style="margin: 0px 15px;">
+              <div class="vertical left layout">
                 <wl-label>${_t('resourcePolicy.IdleTimeoutSec')}</wl-label>
-                <wl-textfield class="discrete" id="idle-timeout" type="number" max="1552000"
-                  @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <mwc-textfield class="discrete" id="idle-timeout" type="number" min="0" max="1552000"
+                  @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                   ${_t('resourcePolicy.Unlimited')}
@@ -1202,8 +1188,8 @@ export default class BackendAICredentialView extends BackendAIPage {
               </div>
               <div class="vertical left layout">
                   <wl-label>${_t('resourcePolicy.ConcurrentJobs')}</wl-label>
-                  <wl-textfield class="discrete" id="concurrency-limit" type="number" max="100"
-                      @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                  <mwc-textfield class="discrete" id="concurrency-limit" type="number" min="0" max="100"
+                      @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                    ${_t('resourcePolicy.Unlimited')}
@@ -1223,20 +1209,20 @@ export default class BackendAICredentialView extends BackendAIPage {
                 </mwc-list-item>
               `)}
             </mwc-select>
-            <div class="horizontal layout">
-              <div class="vertical layout" style="margin-right: 10px;">
+            <div class="horizontal layout justified" style="width:100%;">
+              <div class="vertical layout flex">
                 <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GB)</wl-label>
-                <wl-textfield id="vfolder-capacity-limit" type="number" max="1024"
-                    @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <mwc-textfield class="discrete" id="vfolder-capacity-limit" type="number" min="0" max="1024"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                   ${_t('resourcePolicy.Unlimited')}
                 </wl-label>
               </div>
-              <div class="vertical layout" style="margin-left: 10px;">
+              <div class="vertical layout flex">
                 <wl-label class="folders">${_t('credential.Max#')}</wl-label>
-                <wl-textfield id="vfolder-count-limit" type="number" max="50"
-                    @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <mwc-textfield class="discrete" id="vfolder-count-limit" type="number" min="0" max="50"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               </div>
             </div>
           </div>
