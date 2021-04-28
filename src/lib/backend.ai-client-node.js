@@ -694,8 +694,7 @@ class Client {
             if (resources['owner_access_key']) {
                 params['owner_access_key'] = resources['owner_access_key'];
             }
-            params['config'] = {};
-            // params['config'] = {resources: config};
+            params['config'] = { resources: config };
             if (resources['mounts']) {
                 params['config'].mounts = resources['mounts'];
             }
