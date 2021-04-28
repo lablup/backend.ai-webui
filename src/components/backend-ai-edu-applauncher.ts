@@ -161,8 +161,11 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     const urlParams = new URLSearchParams(queryString);
     const requestedApp = urlParams.get('app') || 'jupyter';
 
+    let launchNewSession = true;
+
     // Create or select an existing compute session before lauching app.
     let sessionId: string | null | unknown;
+    console.log(sessions)
     if (sessions.compute_session_list.total_count > 0) {
       console.log('Reusing an existing session ...');
       const sessionStatus = sessions.compute_session_list.items[0].status;
@@ -171,7 +174,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         this.notification.show(true);
         return;
       }
-      let sess: Record<string, unknown> = {};
+      let sess: Record<string, unknown> = null;
       for (let i = 0; i < sessions.compute_session_list.items.length; i++) {
         const _sess = sessions.compute_session_list.items[i];
         const servicePorts = JSON.parse(_sess.service_ports || '{}');
@@ -181,17 +184,22 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
           break;
         }
       }
-      if (!sess) {
-        this.notification.text = `No existing session can launch ${requestedApp}`;
-        this.notification.show(true);
-        return;
-      }
-      if ('session_id' in sess) {
-        sessionId = sess.session_id;
+      if (sess) {
+        launchNewSession = false;
+        if ('session_id' in sess) {
+          sessionId = sess.session_id;
+        } else {
+          sessionId = null;
+        }
       } else {
-        sessionId = null;
+        // this.notification.text = `You have existing session can launch ${requestedApp}`;
+        // this.notification.show(true);
+        // return;
+        launchNewSession = true; // no existing session can launch the requested app
       }
-    } else { // no existing compute session. create one.
+    }
+
+    if (launchNewSession) { // no existing compute session. create one.
       console.log('Creating a new session ...');
       let sessionTemplates;
       try {
