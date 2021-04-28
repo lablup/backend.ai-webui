@@ -647,6 +647,42 @@ class Client {
   }
 
   /**
+   * Login into webserver with auth cookie token. This requires additional webserver package.
+   *
+   */
+  async token_login() {
+    const body = {};
+    const rqst = this.newSignedRequest('POST', `/server/token-login`, body);
+    try {
+      const result = await this._wrapWithPromise(rqst);
+      if (result.authenticated === true) {
+        await this.get_manager_version();
+        return this.check_login();
+      } else if (result.authenticated === false) { // Authentication failed.
+        if (result.data && result.data.details) {
+          return Promise.resolve({fail_reason: result.data.details});
+        } else {
+          return Promise.resolve(false);
+        }
+      }
+    } catch (err) { // Manager / webserver down.
+      if ('statusCode' in err && err.statusCode === 429) {
+        throw {
+          "title": err.description,
+          "message": "Too many failed login attempts."
+        };
+      } else {
+        throw {
+          "title": "No manager found at API Endpoint.",
+          "message": "Authentication failed. Check information and manager status."
+        };
+      }
+      //console.log(err);
+      //return false;
+    }
+  }
+
+  /**
    * Leave from manager user. This requires additional webserver package.
    *
    */

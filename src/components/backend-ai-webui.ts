@@ -206,6 +206,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           window.setTimeout(() => {
             changePasswordView.open(this.loginPanel.api_endpoint);
           }, 1000);
+        } else if (this._page === 'edu-applauncher') {
+          const eduApplauncherView = this.shadowRoot.querySelector('backend-ai-edu-applauncher');
+          window.setTimeout(() => {
+            eduApplauncherView.launch(this.loginPanel.api_endpoint);
+          }, 1000);
         } else {
           const tabcount = new TabCount();
           const isPageReloaded = (

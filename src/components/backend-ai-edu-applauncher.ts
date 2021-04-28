@@ -1,5 +1,5 @@
 /**
-u@license
+@license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
@@ -44,6 +44,9 @@ import './lablup-loading-spinner';
 
 @customElement('backend-ai-edu-applauncher')
 export default class BackendAiEduApplauncher extends BackendAIPage {
+  @property({type: Object}) webUIShell = Object();
+  @property({type: Object}) clientConfig = Object();
+  @property({type: Object}) client = Object();
   @property({type: Object}) notification = Object();
 
   static get styles(): CSSResultOrNative | CSSResultArray {
@@ -59,27 +62,61 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     ];
   }
 
-  render() {
-    // language=HTML
-    return html`
-      <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
-    `;
-  }
-
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._createEduSession();
-      }, true);
-    } else { // already connected
+  }
+
+  async launch(apiEndpoint: string) {
+    await this._initClient(apiEndpoint);
+    const loginSuccess = await this._token_login();
+    if (loginSuccess) {
+      await this._createEduSession();
     }
   }
 
-  async _viewStateChanged(active) {
-    await this.updateComplete;
-    if (!this.active) {
-      return;
+  /**
+   * Initialize the client.
+   *
+   * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
+   */
+  async _initClient(apiEndpoint: string) {
+    if (!apiEndpoint) {
+      apiEndpoint = this.apiEndpoint
+    }
+    this.notification = globalThis.lablupNotification;
+    const webUIShell = document.querySelector('#webui-shell');
+    webUIShell.appBody.style.visibility = 'visible';
+    this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
+    globalThis.backendaiclient = new ai.backend.Client(
+      this.clientConfig,
+      'Backend.AI Web UI.'
+    );
+    const configPath = '../../config.toml';
+    await webUIShell._parseConfig(configPath);
+    globalThis.backendaiclient._config._proxyURL = webUIShell.config.wsproxy.proxyURL;
+    await globalThis.backendaiclient.get_manager_version();
+    globalThis.backendaiclient.ready = true;
+  }
+
+  async _token_login() {
+    try {
+      const alreadyLoggedIn = await globalThis.backendaiclient.check_login();
+      if (!alreadyLoggedIn) {
+        console.log('logging with (cookie) token...')
+        const loginSuccess = await globalThis.backendaiclient.token_login();
+        if (!loginSuccess) {
+          this.notification.text = 'Unable to authorize your session. Login to the portal first.'
+          this.notification.show(true, err);
+          return false;
+        }
+      } else {
+        console.log('already logged-in session')
+      }
+      return true;
+    } catch (e) {
+      this.notification.text = 'Unable to authorize your session. Login to the portal first.'
+      this.notification.show(true, err);
+      return false;
     }
   }
 
@@ -106,10 +143,25 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     const accessKey = globalThis.backendaiclient._config.accessKey;
     // NOTE: There is no way to change the default group.
     //       This API should be used when there is only one group, 'default'.
-    const groupId = globalThis.backendaiclient.current_group_id();
-    const sessions = await globalThis.backendaiclient.computeSession.list(
-      fields, statuses, accessKey, 30, 0, groupId
-    );
+    let sessions;
+    try {
+      sessions = await globalThis.backendaiclient.computeSession.list(fields, statuses, accessKey, 30, 0;
+    } catch (err) {
+      console.error(err);
+      if (err && err.message) {
+        if (err.description) {
+          this.notification.text = PainKiller.relieve(err.description);
+        } else {
+          this.notification.text = PainKiller.relieve(err.message);
+        }
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
+      }
+      return;
+    }
 
     // URL Parameter parsing.
     const queryString = window.location.search;
@@ -149,7 +201,25 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       }
     } else { // no existing compute session. create one.
       console.log('Creating a new session ...');
-      let sessionTemplates = await globalThis.backendaiclient.sessionTemplate.list(false, groupId);
+      let sessionTemplates;
+      try {
+        sessionTemplates = await globalThis.backendaiclient.sessionTemplate.list(false);
+      } catch (err) {
+        console.error(err);
+        if (err && err.message) {
+          if (err.description) {
+            this.notification.text = PainKiller.relieve(err.description);
+          } else {
+            this.notification.text = PainKiller.relieve(err.message);
+          }
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        } else if (err && err.title) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.show(true, err);
+        }
+        return;
+      }
       // Assume that session templates' name match requsetedApp name.
       sessionTemplates = sessionTemplates.filter((t) => t.name === requestedApp);
       if (sessionTemplates.length < 1) {
@@ -163,7 +233,25 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
           scaling_group: scalingGroup,
           mounts: [],
         };
-        const response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources);
+        let response
+        try {
+          response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources)
+        } catch (err) {
+          console.error(err);
+          if (err && err.message) {
+            if (err.description) {
+              this.notification.text = PainKiller.relieve(err.description);
+            } else {
+              this.notification.text = PainKiller.relieve(err.message);
+            }
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          } else if (err && err.title) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.show(true, err);
+          }
+          return;
+        }
         sessionId = response.sessionId;
       } catch (err) {
         console.error(err);
@@ -196,9 +284,9 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   async _openServiceApp(sessionId, appName) {
     const appLauncher = this.shadowRoot.querySelector('#app-launcher');
     appLauncher.indicator = await globalThis.lablupIndicator.start();
+    console.log(`launching ${appName} from session ${sessionId} ...`)
     appLauncher._open_wsproxy(sessionId, appName, null, null)
       .then(async (resp) => {
-        console.log(resp);
         if (resp.url) {
           await appLauncher._connectToProxyWorker(resp.url, '');
           appLauncher.indicator.set(100, _text('session.applauncher.Prepared'));
@@ -209,6 +297,13 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         } else {
         }
       });
+  }
+
+  render() {
+    // language=HTML
+    return html`
+      <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
+    `;
   }
 }
 
