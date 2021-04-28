@@ -691,7 +691,7 @@ export default class BackendAICredentialView extends BackendAIPage {
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
-   _toggleCheckbox(e) {
+  _toggleCheckbox(e) {
     const checkEl = e.target;
     const checked = checkEl.checked;
     const TextEl = checkEl.closest('div').querySelector('mwc-textfield');
@@ -711,9 +711,9 @@ export default class BackendAICredentialView extends BackendAIPage {
   _validateResourceInput(e) {
     const textfield = e.target.closest('mwc-textfield');
     const checkbox_el = textfield.closest('div').querySelector('wl-label.unlimited');
-    let checkbox = checkbox_el ? checkbox_el.querySelector('wl-checkbox') : null;
-    const countDecimals = (value: number) => { 
-      return value % 1 ? value.toString().split(".")[1].length : 0;
+    const checkbox = checkbox_el ? checkbox_el.querySelector('wl-checkbox') : null;
+    const countDecimals = (value: number) => {
+      return value % 1 ? value.toString().split('.')[1].length : 0;
     };
 
     if (textfield.classList.contains('discrete')) {
@@ -731,15 +731,10 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
     // automatically check when textfield is min
     if (checkbox) {
-      textfield.disabled = checkbox.checked = (textfield.value == parseFloat(textfield.min)); 
+      textfield.disabled = checkbox.checked = (textfield.value == parseFloat(textfield.min));
     }
   }
 
-  /**
-   * update if value is Unlimited or zero to empty
-   * 
-   * @param {string} value
-   */
   _updateUnlimitedValue(value) {
     return ['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value) ? '' : value;
   }
