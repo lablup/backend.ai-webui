@@ -441,7 +441,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     const scheduler = e.target.value;
     if (['fifo', 'lifo', 'drf'].includes(scheduler)) {
       const detail = {
-        'num_retries_to_skip': '0'
+        'num_retries_to_skip': 0
       };
       globalThis.backendaiclient.setting.set(`plugins/scheduler/${scheduler}`, detail).then((response) => {
         this.notification.text = _text('settings.JobSchedulerUpdated');
