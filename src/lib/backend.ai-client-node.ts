@@ -857,7 +857,7 @@ class Client {
     if (sessionName) {
       params['name'] = sessionName;
     }
-    if (resources != {}) {
+    if (resources && Object.keys(resources).length > 0) {
       let config = {};
       if (resources['cpu']) {
         config['cpu'] = resources['cpu'];
@@ -932,19 +932,7 @@ class Client {
         params['config'].environ = resources['env'];
       }
     }
-    // TODO: not working if config is set (Manager should be fixed)
-    // const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params);
-
-    const params2 = {
-      template_id: templateId,
-      name: sessionName,
-      config: {},
-    };
-    const config2 = {
-      scaling_group: 'default',
-    }
-    params2.config = config2;
-    const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params2);
+    const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params);
     return this._wrapWithPromise(rqst, false, null, timeout);
   }
 

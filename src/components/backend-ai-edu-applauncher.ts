@@ -14,15 +14,8 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import 'weightless/button';
-import 'weightless/icon';
-import 'weightless/card';
-
-import '@material/mwc-icon/mwc-icon';
-
 import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-app-launcher';
-import './lablup-activity-panel';
 import './lablup-loading-spinner';
 
 /**
@@ -85,7 +78,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     }
     this.notification = globalThis.lablupNotification;
     const webUIShell = document.querySelector('#webui-shell');
-    webUIShell.appBody.style.visibility = 'visible';
+    // webUIShell.appBody.style.visibility = 'visible';
     this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
     globalThis.backendaiclient = new ai.backend.Client(
       this.clientConfig,
@@ -106,14 +99,14 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         const loginSuccess = await globalThis.backendaiclient.token_login();
         if (!loginSuccess) {
           this.notification.text = 'Unable to authorize your session. Login to the portal first.'
-          this.notification.show(true, err);
+          this.notification.show(true);
           return false;
         }
       } else {
         console.log('already logged-in session')
       }
       return true;
-    } catch (e) {
+    } catch (err) {
       this.notification.text = 'Unable to authorize your session. Login to the portal first.'
       this.notification.show(true, err);
       return false;
@@ -167,7 +160,6 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const requestedApp = urlParams.get('app') || 'jupyter';
-    const scalingGroup = urlParams.get('scaling_group') || 'default';
 
     // Create or select an existing compute session before lauching app.
     let sessionId: string | null | unknown;
@@ -229,13 +221,10 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       }
       const templateId = sessionTemplates[0].id; // NOTE: use the first template. will it be okay?
       try {
-        const resources = {
-          scaling_group: scalingGroup,
-          mounts: [],
-        };
-        let response
+        let response;
+        const resources = {}
         try {
-          response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources)
+          response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources);
         } catch (err) {
           console.error(err);
           if (err && err.message) {
@@ -291,8 +280,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
           await appLauncher._connectToProxyWorker(resp.url, '');
           appLauncher.indicator.set(100, _text('session.applauncher.Prepared'));
           setTimeout(() => {
-            // globalThis.open(resp.url, '_self');
-            globalThis.open(resp.url);
+            globalThis.open(resp.url, '_self');
+            // globalThis.open(resp.url);
           });
         } else {
         }
