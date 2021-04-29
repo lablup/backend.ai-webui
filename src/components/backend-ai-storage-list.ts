@@ -1084,7 +1084,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             <mwc-icon-button
               class="fg blue controls-running"
               icon="content_copy"
-              ?disabled=${!rowData.item.cloneable}
+              disabled
               @click="${() => {
     this._requestCloneFolder(rowData.item);
   }}"></mwc-icon-button>
@@ -1637,8 +1637,9 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {HTMLElement} selectedItem - selected Vfolder to clone
    */
   _requestCloneFolder(selectedItem) {
-    const event = new CustomEvent('backend-ai-vfolder-cloning', {'detail': selectedItem});
-    document.dispatchEvent(event);
+    // temporary diable cloning folder until the logic of cloning large size of virtual folder is optimized
+    /* const event = new CustomEvent('backend-ai-vfolder-cloning', {'detail': selectedItem});
+    document.dispatchEvent(event); */
   }
 
   /**
