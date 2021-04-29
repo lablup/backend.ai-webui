@@ -91,7 +91,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     try {
       const alreadyLoggedIn = await globalThis.backendaiclient.check_login();
       if (!alreadyLoggedIn) {
-        console.log('logging with (cookie) token...')
+        console.log('logging with (cookie) token...');
         const loginSuccess = await globalThis.backendaiclient.token_login();
         if (!loginSuccess) {
           this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
@@ -99,7 +99,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
           return false;
         }
       } else {
-        console.log('already logged-in session')
+        console.log('already logged-in session');
       }
       return true;
     } catch (err) {
@@ -285,7 +285,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   async _openServiceApp(sessionId, appName) {
     const appLauncher = this.shadowRoot.querySelector('#app-launcher');
     appLauncher.indicator = await globalThis.lablupIndicator.start();
-    console.log(`launching ${appName} from session ${sessionId} ...`)
+    console.log(`launching ${appName} from session ${sessionId} ...`);
     appLauncher._open_wsproxy(sessionId, appName, null, null)
       .then(async (resp) => {
         if (resp.url) {
