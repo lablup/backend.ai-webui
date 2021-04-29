@@ -66,6 +66,28 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     }
   }
 
+  detectIE() {
+    try {
+      var isIE = /*@cc_on!@*/false || !!document.documentMode;
+      if (! isIE) {
+        // Fallback to UserAgent detection for IE
+        if (
+          navigator.userAgent.indexOf('MSIE') > 0 ||
+          navigator.userAgent.indexOf('WOW') > 0 ||
+          navigator.userAgent.indexOf('.NET') > 0
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      return true;
+    } catch(e) {
+      var error = e.toString();
+      console.log(error);
+    }
+  };
+
   /**
    * Initialize the client.
    *
@@ -159,7 +181,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     // URL Parameter parsing.
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const requestedApp = urlParams.get('app') || 'jupyter';
+    let requestedApp = urlParams.get('app') || 'jupyter';
 
     let launchNewSession = true;
 
@@ -276,8 +298,10 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     appLauncher.indicator.set(100, _text('eduapi.ComputeSessionPrepared'));
 
     // Launch app.
-    // TODO: launch 'jupyterlab' if the browser is not IE.
     if (sessionId) {
+      if (requestedApp.startsWith('jupyter') && !this.detectIE()) {
+        requestedApp = 'jupyterlab';
+      }
       this._openServiceApp(sessionId, requestedApp);
     }
   }
