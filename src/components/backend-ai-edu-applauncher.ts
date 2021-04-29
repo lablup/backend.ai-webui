@@ -72,9 +72,6 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
    * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   async _initClient(apiEndpoint: string) {
-    if (!apiEndpoint) {
-      apiEndpoint = this.apiEndpoint
-    }
     this.notification = globalThis.lablupNotification;
     const webUIShell = document.querySelector('#webui-shell');
     // webUIShell.appBody.style.visibility = 'visible';
@@ -141,7 +138,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     let sessions;
     try {
       appLauncher.indicator.set(20, _text('eduapi.QueryingExisitingComputeSession'));
-      sessions = await globalThis.backendaiclient.computeSession.list(fields, statuses, accessKey, 30, 0;
+      sessions = await globalThis.backendaiclient.computeSession.list(fields, statuses, accessKey, 30, 0);
     } catch (err) {
       console.error(err);
       if (err && err.message) {
@@ -176,7 +173,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         this.notification.show(true);
         return;
       }
-      let sess: Record<string, unknown> = null;
+      let sess: Record<string, unknown> | null = null;
       for (let i = 0; i < sessions.compute_session_list.items.length; i++) {
         const _sess = sessions.compute_session_list.items[i];
         const servicePorts = JSON.parse(_sess.service_ports || '{}');
