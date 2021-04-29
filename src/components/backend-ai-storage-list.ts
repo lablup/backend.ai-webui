@@ -486,10 +486,10 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid-column width="85px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
         <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.Owner')}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
         ${this.enableStorageProxy ? html`
-          <vaadin-grid-column
+          <!--<vaadin-grid-column
               auto-width flex-grow="0" resizable header="${_t('data.folders.Cloneable')}"
               .renderer="${this._boundCloneableRenderer}"></vaadin-grid-column>` : html``}
-        <vaadin-grid-column auto-width resizable header="${_t('data.folders.Control')}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column auto-width resizable header="${_t('data.folders.Control')}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>-->
       </vaadin-grid>
 
       <backend-ai-dialog id="folder-setting-dialog" fixed backdrop>
@@ -513,13 +513,13 @@ export default class BackendAiStorageList extends BackendAIPage {
             </mwc-select>
           </div>
           ${this.enableStorageProxy ? html`
-          <div class="horizontal layout flex wrap center justified">
+          <!--<div class="horizontal layout flex wrap center justified">
             <p style="color:rgba(0, 0, 0, 0.6);">
               ${_t('data.folders.Cloneable')}
             </p>
             <mwc-switch id="update-folder-cloneable" style="margin-right:10px;">
             </mwc-switch>
-          </div>
+          </div>-->
           ` : html``}
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
