@@ -1079,7 +1079,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             ` :
     html``
 }
-          ${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
+          <!--${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
     html`
             <mwc-icon-button
               class="fg blue controls-running"
@@ -1088,7 +1088,7 @@ export default class BackendAiStorageList extends BackendAIPage {
               @click="${() => {
     this._requestCloneFolder(rowData.item);
   }}"></mwc-icon-button>
-            ` : html``}
+            ` : html``}-->
           ${rowData.item.is_owner ?
     html`
               <mwc-icon-button
