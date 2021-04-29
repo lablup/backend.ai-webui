@@ -168,6 +168,7 @@ class Client {
   public setting: Setting;
   public userConfig: UserConfig;
   public cloud: Cloud;
+  public eduApp: EduApp;
   public service: Service;
   public enterprise: Enterprise;
   public _features: any;
@@ -228,6 +229,7 @@ class Client {
     this.domain = new Domain(this);
     this.enterprise = new Enterprise(this);
     this.cloud = new Cloud(this);
+    this.eduApp = new EduApp(this);
 
     this._features = {}; // feature support list
     this.abortController = new AbortController();
@@ -3688,6 +3690,37 @@ class Cloud {
   async change_password(email: string, password: string, token: string) {
     const body = {email, password, token};
     const rqst = this.client.newSignedRequest("POST", "/cloud/change-password", body);
+    return this.client._wrapWithPromise(rqst);
+  }
+}
+
+class EduApp {
+  public client: any;
+  public config: any;
+
+  /**
+   * Setting API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client: Client) {
+    this.client = client;
+    this.config = null;
+  }
+
+  /**
+   * Check if EduApp endpoint is available.
+   */
+  async ping() {
+    const rqst = this.client.newSignedRequest('GET', '/eduapp/ping');
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Get mount folders for auto-mount.
+   */
+  async get_mount_folders() {
+    const rqst = this.client.newSignedRequest('GET', '/eduapp/mounts');
     return this.client._wrapWithPromise(rqst);
   }
 }

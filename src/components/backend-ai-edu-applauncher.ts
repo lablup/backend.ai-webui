@@ -165,7 +165,6 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
     // Create or select an existing compute session before lauching app.
     let sessionId: string | null | unknown;
-    console.log(sessions)
     if (sessions.compute_session_list.total_count > 0) {
       console.log('Reusing an existing session ...');
       const sessionStatus = sessions.compute_session_list.items[0].status;
@@ -229,8 +228,9 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       }
       const templateId = sessionTemplates[0].id; // NOTE: use the first template. will it be okay?
       try {
+        const mounts = await globalThis.backendaiclient.eduApp.get_mount_folders();
+        const resources = mounts ? {mounts} : {};
         let response;
-        const resources = {}
         try {
           response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources);
         } catch (err) {
