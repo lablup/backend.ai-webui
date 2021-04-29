@@ -967,23 +967,24 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       html`
       <div class="vertical layout">
-        <wl-select label="${_t('data.folders.SelectPermission')}" >
+        <wl-select label="${_t('data.folders.SelectPermission')}">
           <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
           <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
           <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
           <option value="kickout">${_t('data.folders.KickOut')}</option>
-        </wl-select>`, root);
-
+        </wl-select>
+      </div>`, root);
     this.shadowRoot.querySelector('wl-select').requestUpdate().then(()=>{
       render(
         html`
         <div class="vertical layout">
-          <wl-select label="${_t('data.folders.SelectPermission')}" >
+          <wl-select label="${_t('data.folders.SelectPermission')}">
             <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
             <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
             <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
             <option value="kickout">${_t('data.folders.KickOut')}</option>
-          </wl-select>`, root);
+          </wl-select>
+        </div>`, root);
     });
   }
 
