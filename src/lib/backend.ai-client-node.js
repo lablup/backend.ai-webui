@@ -148,6 +148,7 @@ class Client {
         this.domain = new Domain(this);
         this.enterprise = new Enterprise(this);
         this.cloud = new Cloud(this);
+        this.eduApp = new EduApp(this);
         this._features = {}; // feature support list
         this.abortController = new AbortController();
         this.abortSignal = this.abortController.signal;
@@ -562,6 +563,45 @@ class Client {
         return this._wrapWithPromise(rqst);
     }
     /**
+     * Login into webserver with auth cookie token. This requires additional webserver package.
+     *
+     */
+    async token_login() {
+        const body = {};
+        const rqst = this.newSignedRequest('POST', `/server/token-login`, body);
+        try {
+            const result = await this._wrapWithPromise(rqst);
+            if (result.authenticated === true) {
+                await this.get_manager_version();
+                return this.check_login();
+            }
+            else if (result.authenticated === false) { // Authentication failed.
+                if (result.data && result.data.details) {
+                    return Promise.resolve({ fail_reason: result.data.details });
+                }
+                else {
+                    return Promise.resolve(false);
+                }
+            }
+        }
+        catch (err) { // Manager / webserver down.
+            if ('statusCode' in err && err.statusCode === 429) {
+                throw {
+                    "title": err.description,
+                    "message": "Too many failed login attempts."
+                };
+            }
+            else {
+                throw {
+                    "title": "No manager found at API Endpoint.",
+                    "message": "Authentication failed. Check information and manager status."
+                };
+            }
+            //console.log(err);
+            //return false;
+        }
+    }
+    /**
      * Leave from manager user. This requires additional webserver package.
      *
      */
@@ -734,7 +774,7 @@ class Client {
         if (sessionName) {
             params['name'] = sessionName;
         }
-        if (resources != {}) {
+        if (resources && Object.keys(resources).length > 0) {
             let config = {};
             if (resources['cpu']) {
                 config['cpu'] = resources['cpu'];
@@ -809,18 +849,7 @@ class Client {
                 params['config'].environ = resources['env'];
             }
         }
-        // TODO: not working if config is set (Manager should be fixed)
-        // const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params);
-        const params2 = {
-            template_id: templateId,
-            name: sessionName,
-            config: {},
-        };
-        const config2 = {
-            scaling_group: 'default',
-        };
-        params2.config = config2;
-        const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params2);
+        const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params);
         return this._wrapWithPromise(rqst, false, null, timeout);
     }
     /**
@@ -3386,6 +3415,31 @@ class Cloud {
     async change_password(email, password, token) {
         const body = { email, password, token };
         const rqst = this.client.newSignedRequest("POST", "/cloud/change-password", body);
+        return this.client._wrapWithPromise(rqst);
+    }
+}
+class EduApp {
+    /**
+     * Setting API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+        this.config = null;
+    }
+    /**
+     * Check if EduApp endpoint is available.
+     */
+    async ping() {
+        const rqst = this.client.newSignedRequest('GET', '/eduapp/ping');
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Get mount folders for auto-mount.
+     */
+    async get_mount_folders() {
+        const rqst = this.client.newSignedRequest('GET', '/eduapp/mounts');
         return this.client._wrapWithPromise(rqst);
     }
 }
