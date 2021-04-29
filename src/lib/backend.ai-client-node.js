@@ -3184,7 +3184,7 @@ class Setting {
      * Set a setting
      *
      * @param {string} key - key to add.
-     * @param {string} value - value to add.
+     * @param {object} value - value to add.
      */
     async set(key, value) {
         key = `config/${key}`;

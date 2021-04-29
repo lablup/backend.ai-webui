@@ -855,6 +855,7 @@
     "DescROCMGPUsupport": "AMD ROCm GPU support. <br/>Requires Backend.AI ROCm Plugin.",
     "Scheduler": "Scheduler",
     "JobScheduler": "Choose default job scheduler",
+    "JobSchedulerUpdated": "Default job scheduler has been updated.",
     "Require1912orAbove": "Requires Backend.AI 19.12 or above.",
     "Require2003orAbove": "Requires Backend.AI 20.03 or above.",
     "EnterpriseFeatures": "Enterprise Features",
