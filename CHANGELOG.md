@@ -1,5 +1,24 @@
 # Changelog
 
+## v21.03.3 (30/04/2021)
+
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**good first issue**] the text in the total resource quota is broken. [#963](https://github.com/lablup/backend.ai-webui/issues/963)
+- [**enhancement**][**library / SDK**][**minor**][**need confirmation**] Share a group folder directly with overriding permission [#956](https://github.com/lablup/backend.ai-webui/issues/956)
+- [**enhancement**] Spring cleanup [#940](https://github.com/lablup/backend.ai-webui/issues/940)
+- [**UI / UX**][**enhancement**] Provide cloning Vfolder feature [#899](https://github.com/lablup/backend.ai-webui/issues/899)
+- [**UI / UX**][**enhancement**] Provide total resource allocation explicitly in session launcher [#891](https://github.com/lablup/backend.ai-webui/issues/891)
+- [**UI / UX**][**enhancement**][**library / SDK**][**urgency**] Enable Tensorboard path [#680](https://github.com/lablup/backend.ai-webui/issues/680)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**easy**] Cannot update decimal points in FGPU input field of resource policy. [#971](https://github.com/lablup/backend.ai-webui/issues/971)
+- [**UI / UX**][**bug**][**easy**][**good first issue**] Sometimes the invitation card and the button inside it overlap. [#950](https://github.com/lablup/backend.ai-webui/issues/950)
+- [**UI / UX**][**blocker**][**bug**][**urgency**] Inhibit deleting Folders mounted in one or more sessions. [#921](https://github.com/lablup/backend.ai-webui/issues/921)
+
+
 ## v21.03.2 (02/04/2021)
 
 #### Enhancements:
