@@ -16,7 +16,6 @@ import {
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-app-launcher';
-import './lablup-loading-spinner';
 
 /**
  Backend.AI Education App Launcher.
@@ -98,7 +97,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         console.log('logging with (cookie) token...')
         const loginSuccess = await globalThis.backendaiclient.token_login();
         if (!loginSuccess) {
-          this.notification.text = 'Unable to authorize your session. Login to the portal first.'
+          this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
           this.notification.show(true);
           return false;
         }
@@ -107,7 +106,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       }
       return true;
     } catch (err) {
-      this.notification.text = 'Unable to authorize your session. Login to the portal first.'
+      this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
       this.notification.show(true, err);
       return false;
     }
@@ -128,6 +127,9 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   }
 
   async _createEduSession() {
+    const appLauncher = this.shadowRoot.querySelector('#app-launcher');
+    appLauncher.indicator = await globalThis.lablupIndicator.start();
+
     // Query current user's compute session in the current group.
     const fields = [
       'session_id', 'name', 'access_key', 'status', 'status_info', 'service_ports', 'mounts',
@@ -138,6 +140,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     //       This API should be used when there is only one group, 'default'.
     let sessions;
     try {
+      appLauncher.indicator.set(20, _text('eduapi.QueryingExisitingComputeSession'));
       sessions = await globalThis.backendaiclient.computeSession.list(fields, statuses, accessKey, 30, 0;
     } catch (err) {
       console.error(err);
@@ -169,7 +172,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       console.log('Reusing an existing session ...');
       const sessionStatus = sessions.compute_session_list.items[0].status;
       if (sessionStatus !== 'RUNNING') {
-        this.notification.text = `Your session is ${sessionStatus}. Please reload after some time.`;
+        this.notification.text = _text('eduapi.sessionStatusIs') + `${sessionStatus}. ` + _text('eduapi.PleaseReload');
         this.notification.show(true);
         return;
       }
@@ -190,6 +193,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         } else {
           sessionId = null;
         }
+        appLauncher.indicator.set(50, _text('eduapi.FoudnExistingComputeSession'));
       } else {
         // this.notification.text = `You have existing session can launch ${requestedApp}`;
         // this.notification.show(true);
@@ -200,6 +204,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
     if (launchNewSession) { // no existing compute session. create one.
       console.log('Creating a new session ...');
+      appLauncher.indicator.set(40, _text('eduapi.FindingSessionTemplate'));
       let sessionTemplates;
       try {
         sessionTemplates = await globalThis.backendaiclient.sessionTemplate.list(false);
@@ -222,7 +227,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       // Assume that session templates' name match requsetedApp name.
       sessionTemplates = sessionTemplates.filter((t) => t.name === requestedApp);
       if (sessionTemplates.length < 1) {
-        this.notification.text = 'No appropriate session templates';
+        this.notification.text = _text('eduapi.NoSessionTemplate');
         this.notification.show(true);
         return;
       }
@@ -232,6 +237,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         const resources = mounts ? {mounts} : {};
         let response;
         try {
+          appLauncher.indicator.set(60, _text('eduapi.CreatingComputeSession'));
           response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources);
         } catch (err) {
           console.error(err);
@@ -254,7 +260,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         console.error(err);
         if (err && err.message) {
           if ('statusCode' in err && err.statusCode === 408) {
-            this.notification.text = 'Session is still in preparing. Reload after a while.';
+            this.notification.text = _text('eduapi.SessionStillPreparing');
           } else {
             if (err.description) {
               this.notification.text = PainKiller.relieve(err.description);
@@ -270,6 +276,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         }
       }
     }
+    appLauncher.indicator.set(100, _text('eduapi.ComputeSessionPrepared'));
 
     // Launch app.
     // TODO: launch 'jupyterlab' if the browser is not IE.

@@ -1052,6 +1052,18 @@
     "Subscription": "Subscription",
     "OpenSource": "Open Source"
   },
+  "eduapi": {
+    "CannotAuthorizeSessionByToken": "Unable to authorize your session. Login to the portal first.",
+    "QueryingExisitingComputeSession": "Querying existing compute session ...",
+    "SessionStatusId": "Your session is ",
+    "PleaseReload": "Please reload after some time.",
+    "FoundExistingComputeSession": "Found existing compute session",
+    "FindingSessionTemplate": "Finding session template ...",
+    "NoSessionTemplate": "No appropriate session templates",
+    "CreatingComputeSession": "Creating compute session ...",
+    "SessionStillPreparing": "Session is still in preparing. Reload after a while",
+    "ComputeSessionPrepared": "Compute session prepared"
+  },
   "error": {
     "UpdateError": "Update error",
     "APIEndpointIsEmpty": "API Endpoint is empty. Please specify Backend.AI API endpoint to signup.",
