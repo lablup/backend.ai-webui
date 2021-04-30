@@ -874,7 +874,12 @@
       "digest": "Digest",
       "tag": "Tag",
       "none": "None"
-    }
+    },
+    "SessionCreationRetries" : "Session creation retries",
+    "SessionCreationRetriesDescription": "If the session creation fails, the session creation is retried for the value specified in here. If the session cannot be created within the trials, the request will be ignored and Backend.AI will process the next request.",
+    "FifoOnly": "Currently, it is only supported when the scheduler is FIFO.",
+    "NumbersOnly": "Allows numbers only",
+    "Save": "Save"
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",

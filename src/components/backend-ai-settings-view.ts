@@ -59,7 +59,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
       cuda_fgpu: false,
       rocm_gpu: false,
       tpu: false,
-      scheduler: 'fifo'
+      scheduler: 'fifo',
+      num_retries_to_skip: '0'
     };
   }
 
@@ -320,6 +321,26 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </mwc-select>
                     </div>
                   </div>
+                  <div class="horizontal layout setting-item">
+                    <div class="vertical center-justified layout setting-desc-select" style="margin: 15px 0px;">
+                      <div class="title">${_t('settings.SessionCreationRetries')}</div>
+                      <div class="description-shrink">${_t('settings.SessionCreationRetriesDescription')}<br/>
+                        <div style="font-weight: bold">${_t('settings.FifoOnly')}</div>
+                      </div>
+                    </div>
+                    <div class="vertical layout center-justified">
+                      <mwc-textfield id="num-retries"
+                                    outlined
+                                    charCounter
+                                    autoValidate
+                                    maxLength="3"
+                                    value="${this.options['num_retries_to_skip']}"
+                                    pattern="[0-9]+"
+                                    style="width:130px;"
+                                    @blur="${() => this.changeNumRetriesToSkip()}">
+                      </mwc-textfield>
+                    </div>         
+                  </div>
                 </div>
                 <h3 class="horizontal center layout">
                   <span>${_t('settings.EnterpriseFeatures')}</span>
@@ -394,6 +415,15 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       this.update(this.options);
     });
+    globalThis.backendaiclient.setting.get(`plugins/scheduler/${this.options['scheduler']}/num_retries_to_skip`)
+    .then((response) => {
+      if (response['result'] === null) {
+        this.options['num_retries_to_skip'] = '0';
+      } else {
+        this.options['num_retries_to_skip'] = response['result'];
+      }
+      this.update(this.options);
+    })
     globalThis.backendaiclient.get_resource_slots().then((response) => {
       if ('cuda.device' in response) {
         this.options['cuda_gpu'] = true;
@@ -452,6 +482,40 @@ export default class BackendAiSettingsView extends BackendAIPage {
         this.notification.detail = err;
         this.notification.show(true, err);
       });
+    }
+  }
+
+  /**
+   * Change numRetriesToSkip.
+   * */
+  changeNumRetriesToSkip() {
+    let num_retries = this.shadowRoot.querySelector('#num-retries').value;
+    num_retries = num_retries === '' ? '0' : num_retries;
+    // update only when num_retries is Number.
+    if (num_retries.match(/^[0-9]*$/)) {
+      // currently, only support when scheduler type is fifo.
+      if (this.options['scheduler'] === 'fifo') {
+        num_retries = parseInt(num_retries).toString();
+        globalThis.backendaiclient.setting.set(`plugins/scheduler/${this.options['scheduler']}/num_retries_to_skip`, num_retries)
+        .then((response) => {
+          this.notification.text = _text('notification.SuccessfullyUpdated');
+          this.notification.show();
+        })
+        .catch((err) => {
+            this.notification.text = PainKiller.relieve('Couldn\'t update session setting.');
+            this.notification.detail = err;
+            this.notification.show(true, err);
+        })
+      } else if (num_retries !== '0') {
+        this.notification.text = _text('settings.FifoOnly');
+        this.notification.show();
+        num_retries = '0';
+      }
+      this.options['num_retries_to_skip'] = this.shadowRoot.querySelector('#num-retries').value = num_retries;
+      this.update(this.options);
+    } else {
+      this.notification.text = _text('settings.NumbersOnly');
+      this.notification.show();
     }
   }
 }
