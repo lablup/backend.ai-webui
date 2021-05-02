@@ -405,7 +405,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     status = 'RUNNING';
     switch (this.condition) {
     case 'running':
-      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'PREPARING', 'PULLING'];
+      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
       break;
     case 'finished':
       status = ['TERMINATED', 'CANCELLED']; // TERMINATED, CANCELLED
@@ -415,7 +415,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
       break;
     default:
-      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'PREPARING', 'PULLING'];
+      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
     }
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
