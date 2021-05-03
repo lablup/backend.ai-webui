@@ -1,25 +1,17 @@
 [general]
-#apiEndpoint =
-#apiEndpointText =
-#defaultSessionEnvironment =
+#apiEndpoint = "[Default API Endpoint. If blank, user input field will be shown.]"
+#apiEndpointText = "[Placeholder text instead of API endpoint input field.]"
+#defaultSessionEnvironment = "[Default session kernel. If blank, alphabetically first kernel will be default.]"
+#defaultImportEnvironment = "[Default kernel to use import features. If blank, index.docker.io/lablup/python:3.8-ubuntu18.04 will be used.]"
 siteDescription = "Web UI"
 connectionMode = "SESSION" #connectionMode = API
-allowChangeSigninMode = false # Allows user to change signin mode
-allowSignout = true
+allowChangeSigninMode = false
 signupSupport = false
+allowSignout = false
 allowAnonymousChangePassword = false
+allowProjectResourceMonitor = true
+autoLogout = false
 debug = false
-allowProjectResourceMonitor = false
-AllowBetaFeatures = false
-
-[resources]
-openPortToPublic = false
-maxCPUCoresPerSession = 64
-maxCUDADevicesPerSession = 16
-maxShmPerSession = 2
-
-[menu]
-blocklist = "summary,statistics" # Separated by comma.
 
 [wsproxy]
 proxyURL = "http://127.0.0.1:5050/"
@@ -28,9 +20,23 @@ proxyURL = "http://127.0.0.1:5050/"
 autoPortSelection = true
 disableCertCheck = true
 
+[resources]
+openPortToPublic = true # Show option to open app proxy port to anyone.
+maxCPUCoresPerContainer = 256 # Maximum CPU per container.
+maxCUDADevicesPerContainer = 16  # Maximum CUDA devices per container.
+maxShmPerContainer = 1 # Maximum shared memory per container.
+maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
+
+[menu]
+#blocklist = "summary,statistics" # Separated by comma.
+
 [server]
-webServerURL =
+webServerURL = 
 
 [plugin]
+# Reserved to load plugins
 #login = "signup-cloud.js"
 #sidebar = "report-cloud.js"
+
+
+
