@@ -50,16 +50,24 @@ export default class BackendAiSettingsView extends BackendAIPage {
   ];
   @property({type: Array}) jobschedulerType = [
     'fifo', 'lifo', 'drf'];
+  @property({type: String}) scheduler = 'fifo';
 
   constructor() {
     super();
+    try {
+      this.scheduler = localStorage.getItem('backendaiclient.settings.scheduler') || 'fifo';
+    } catch (e) {
+      console.log(e);
+      localStorage.removeItem('backendaiclient.settings.scheduler');
+    }
+
     this.options = {
       image_pulling_behavior: 'digest',
       cuda_gpu: false,
       cuda_fgpu: false,
       rocm_gpu: false,
       tpu: false,
-      scheduler: 'fifo',
+      scheduler: this.scheduler,
       num_retries_to_skip: '0'
     };
   }
@@ -407,16 +415,16 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       this.update(this.options);
     });
-    globalThis.backendaiclient.setting.get('plugins/scheduler').then((response) => {
-      if (response['result'] === null || response['result'] === 'fifo') { // digest mode
+    globalThis.backendaiclient.setting.list('plugins/scheduler').then((response) => {
+      if (response['result'] === null || Object.keys(response['result']).length === 0) { // digest mode
         this.options['scheduler'] = 'fifo';
       } else {
-        this.options['scheduler'] = response['result'];
+        this.options['scheduler'] = this.scheduler;
       }
       this.update(this.options);
     });
-    globalThis.backendaiclient.setting.get(`plugins/scheduler/${this.options['scheduler']}/num_retries_to_skip`)
-    .then((response) => {
+    globalThis.backendaiclient.setting.get(`plugins/scheduler/${this.scheduler}/num_retries_to_skip`)
+    .then((response) =>{ 
       if (response['result'] === null) {
         this.options['num_retries_to_skip'] = '0';
       } else {
@@ -476,6 +484,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
       globalThis.backendaiclient.setting.set(`plugins/scheduler/${scheduler}`, detail).then((response) => {
         this.notification.text = _text('settings.JobSchedulerUpdated');
         this.notification.show();
+        this.scheduler = scheduler;
+        localStorage.setItem('backendaiclient.settings.scheduler', this.scheduler);
         // console.log(response);
       }).catch((err) => {
         this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');
@@ -494,9 +504,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
     // update only when num_retries is Number.
     if (num_retries.match(/^[0-9]*$/)) {
       // currently, only support when scheduler type is fifo.
-      if (this.options['scheduler'] === 'fifo') {
+      if (this.scheduler === 'fifo') {
         num_retries = parseInt(num_retries).toString();
-        globalThis.backendaiclient.setting.set(`plugins/scheduler/${this.options['scheduler']}/num_retries_to_skip`, num_retries)
+        globalThis.backendaiclient.setting.set(`plugins/scheduler/${this.scheduler}/num_retries_to_skip`, num_retries)
         .then((response) => {
           this.notification.text = _text('notification.SuccessfullyUpdated');
           this.notification.show();
