@@ -56,7 +56,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
   constructor() {
     super();
-
     this.options = {
       image_pulling_behavior: 'digest',
       cuda_gpu: false,
@@ -140,18 +139,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
         .setting-pulldown {
           width: 70px;
-        }
-
-        .session-item-title {
-          font-size: 12px;
-          color: #404040;
-          font-weight: 400;
-        }
-
-        .subheading {
-          width: 100%;
-          margin-top: 20px;
-          padding-left: 15px;
         }
 
         #help-description {
@@ -559,7 +546,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   /**
-   * Change this.selectedSchedulerType value and 
+   * Change this.selectedSchedulerType value and the num-retries value.
    * 
    * @param {HTMLElement} e - scheduler setting component
    */
