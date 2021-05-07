@@ -50,16 +50,12 @@ export default class BackendAiSettingsView extends BackendAIPage {
   ];
   @property({type: Array}) jobschedulerType = [
     'fifo', 'lifo', 'drf'];
-  @property({type: String}) scheduler = 'fifo';
+  @property({type: String}) selectedSchedulerType = 'fifo';
+  @property({type: String}) _helpDescriptionTitle = '';
+  @property({type: String}) _helpDescription = '';
 
   constructor() {
     super();
-    try {
-      this.scheduler = localStorage.getItem('backendaiclient.settings.scheduler') || 'fifo';
-    } catch (e) {
-      console.log(e);
-      localStorage.removeItem('backendaiclient.settings.scheduler');
-    }
 
     this.options = {
       image_pulling_behavior: 'digest',
@@ -67,7 +63,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       cuda_fgpu: false,
       rocm_gpu: false,
       tpu: false,
-      scheduler: this.scheduler,
+      scheduler: 'fifo',
       num_retries_to_skip: '0'
     };
   }
@@ -144,6 +140,27 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
         .setting-pulldown {
           width: 70px;
+        }
+
+        .session-item-title {
+          font-size: 12px;
+          color: #404040;
+          font-weight: 400;
+        }
+
+        .subheading {
+          width: 100%;
+          margin-top: 20px;
+          padding-left: 15px;
+        }
+
+        #help-description {
+          --component-width: 350px;
+        }
+
+        #env-dialog {
+          --component-max-height: 800px;
+          --component-width: 400px;
         }
 
         lablup-activity-panel {
@@ -310,44 +327,18 @@ export default class BackendAiSettingsView extends BackendAIPage {
                   <div class="horizontal layout setting-item">
                     <div class="vertical center-justified layout setting-desc-select" style="margin: 15px 0px;">
                       <div class="title">${_t('settings.Scheduler')}</div>
-                      <div class="description-shrink">${_t('settings.JobScheduler')}<br/>
+                      <div class="description-shrink">${_t('settings.SchedulerConfiguration')}<br/>
                           ${_t('settings.Require1912orAbove')}
                       </div>
                     </div>
-                    <div class="vertical layout center-justified">
-                      <mwc-select id="scheduler-switch"
-                                  required
-                                  outlined
-                                  @selected="${(e) => this.changeScheduler(e)}"
-                                  label=""
-                                  style="width:130px;">
-                        ${this.jobschedulerType.map((item) => html`
-                          <mwc-list-item value="${item}"
-                                        ?selected=${this.options['scheduler'] === item}>
-                            ${item}
-                          </mwc-list-item>`)}
-                      </mwc-select>
+                    <div class="vertical center-justified layout">
+                      <mwc-button
+                        unelevated
+                        icon="rule"
+                        label="${_t('settings.Config')}"
+                        style="float:right; width:85px;"
+                        @click="${()=>this._showDialog()}"></mwc-button>
                     </div>
-                  </div>
-                  <div class="horizontal layout setting-item">
-                    <div class="vertical center-justified layout setting-desc-select" style="margin: 15px 0px;">
-                      <div class="title">${_t('settings.SessionCreationRetries')}</div>
-                      <div class="description-shrink">${_t('settings.SessionCreationRetriesDescription')}<br/>
-                        <div style="font-weight: bold">${_t('settings.FifoOnly')}</div>
-                      </div>
-                    </div>
-                    <div class="vertical layout center-justified">
-                      <mwc-textfield id="num-retries"
-                                    outlined
-                                    charCounter
-                                    autoValidate
-                                    maxLength="3"
-                                    value="${this.options['num_retries_to_skip']}"
-                                    pattern="[0-9]+"
-                                    style="width:130px;"
-                                    @blur="${() => this.changeNumRetriesToSkip()}">
-                      </mwc-textfield>
-                    </div>         
                   </div>
                 </div>
                 <h3 class="horizontal center layout">
@@ -380,6 +371,55 @@ export default class BackendAiSettingsView extends BackendAIPage {
             </div>
           </div>
         </lablup-activity-panel>
+        <backend-ai-dialog id="env-dialog" fixed backdrop persistent>
+          <span slot="title" class="horizontal layout center">${_t('settings.SchedulerDefault')}</span>
+          <span slot="action">
+            <mwc-icon-button icon="info" @click="${(e) => this._showConfigDescription(e, 'default')}" style="pointer-events:auto;"></mwc-icon-button>
+          </span>
+          <div slot="content" class="vertical layout" style="width: 100%;">
+            <mwc-select id="scheduler-switch" required label="${_t('settings.SchedulerType')}" 
+              style="margin-bottom: 10px;" @selected="${(e) => this.changeSelectedScheduleType(e)}">
+              ${this.jobschedulerType.map((item) => html`
+                <mwc-list-item value="${item}">
+                  ${item}
+                </mwc-list-item>`)}
+            </mwc-select>
+            <h4>${_t('settings.SchedulerOptions')}</h4>
+            <div class="horizontal center layout flex">
+              <span slot="title">${_t('settings.SessionCreationRetries')}</span>
+              <mwc-icon-button icon="info" @click="${(e) => this._showConfigDescription(e, 'retries')}" style="pointer-events:auto;"></mwc-icon-button>
+              <mwc-textfield  id="num-retries"
+                              outlined
+                              charCounter
+                              autoValidate
+                              maxLength="3"
+                              value="${this.options['num_retries_to_skip']}"
+                              pattern="[0-9]+"
+                              style="margin-left:auto;">
+              </mwc-textfield>
+            </div>
+            <div slot="footer" class="horizontal end-justified flex layout" style="margin-top: 20px;">
+              <mwc-button
+                  unelevated
+                  id="config-cancel-button"
+                  style="width:auto;margin-right:10px;"
+                  @click="${() => this._closeDialog()}">
+                <span>${_t('button.Cancel')}</span>
+              </mwc-button>
+              <mwc-button
+                  outlined
+                  id="config-save-button"
+                  style="width:auto;"
+                  @click="${() => this.saveAndCloseDialog()}">
+                <span>${_t('button.Save')}</span>
+              </mwc-button>
+            </div>
+          </div>
+        </backend-ai-dialog>
+        <backend-ai-dialog id="help-description" fixed backdrop>
+          <span slot="title">${this._helpDescriptionTitle}</span>
+          <div slot="content" class="horizontal layout">${this._helpDescription}</div>
+        </backend-ai-dialog>
       </div>
     `;
   }
@@ -415,23 +455,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       this.update(this.options);
     });
-    globalThis.backendaiclient.setting.list('plugins/scheduler').then((response) => {
-      if (response['result'] === null || Object.keys(response['result']).length === 0) { // digest mode
-        this.options['scheduler'] = 'fifo';
-      } else {
-        this.options['scheduler'] = this.scheduler;
-      }
-      this.update(this.options);
-    });
-    globalThis.backendaiclient.setting.get(`plugins/scheduler/${this.scheduler}/num_retries_to_skip`)
-    .then((response) =>{ 
-      if (response['result'] === null) {
-        this.options['num_retries_to_skip'] = '0';
-      } else {
-        this.options['num_retries_to_skip'] = response['result'];
-      }
-      this.update(this.options);
-    })
     globalThis.backendaiclient.get_resource_slots().then((response) => {
       if ('cuda.device' in response) {
         this.options['cuda_gpu'] = true;
@@ -470,63 +493,85 @@ export default class BackendAiSettingsView extends BackendAIPage {
     return true;
   }
 
-  /**
-   * Change Scheduler and notify.
-   *
-   * @param {HTMLElement} e - scheduler setting component
-   * */
-  changeScheduler(e) {
-    const scheduler = e.target.value;
-    if (['fifo', 'lifo', 'drf'].includes(scheduler)) {
-      const detail = {
-        'num_retries_to_skip': 0
-      };
-      globalThis.backendaiclient.setting.set(`plugins/scheduler/${scheduler}`, detail).then((response) => {
-        this.notification.text = _text('settings.JobSchedulerUpdated');
-        this.notification.show();
-        this.scheduler = scheduler;
-        localStorage.setItem('backendaiclient.settings.scheduler', this.scheduler);
-        // console.log(response);
-      }).catch((err) => {
-        this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');
-        this.notification.detail = err;
-        this.notification.show(true, err);
-      });
+  _showDialog() {
+    const modifyEnvDialog = this.shadowRoot.querySelector('#env-dialog');
+    modifyEnvDialog.show();
+  }
+
+  _closeDialog() {
+    const modifyEnvDialog = this.shadowRoot.querySelector('#env-dialog');
+    modifyEnvDialog.hide();
+  }
+
+  _showConfigDescription(e, item) {
+    e.stopPropagation();
+    const schedulerConfigDescription = {
+      'default': {
+        'title': _text('settings.SchedulerDefault'),
+        'desc': _text('settings.SchedulerDefaultDescription')
+      },
+      'retries': {
+        'title': _text('settings.SessionCreationRetries'),
+        'desc': _text('settings.SessionCreationRetriesDescription')
+      }
+    };
+    if (item in schedulerConfigDescription) {
+      this._helpDescriptionTitle = schedulerConfigDescription[item].title;
+      this._helpDescription = schedulerConfigDescription[item].desc;
+      const desc = this.shadowRoot.querySelector('#help-description');
+      desc.show();
     }
   }
 
   /**
-   * Change numRetriesToSkip.
-   * */
-  changeNumRetriesToSkip() {
-    let num_retries = this.shadowRoot.querySelector('#num-retries').value;
-    num_retries = num_retries === '' ? '0' : num_retries;
-    // update only when num_retries is Number.
-    if (num_retries.match(/^[0-9]*$/)) {
+   * Update etcd scheduler options(num_retries_to_skip) and close the dialog.
+   */
+  saveAndCloseDialog() {
+    let tempNumRetries = this.shadowRoot.querySelector('#num-retries').value;
+    tempNumRetries = tempNumRetries === '' ? '0' : tempNumRetries;
+    if (['fifo', 'lifo', 'drf'].includes(this.selectedSchedulerType) && tempNumRetries.match(/^[0-9]*$/)) {
       // currently, only support when scheduler type is fifo.
-      if (this.scheduler === 'fifo') {
-        num_retries = parseInt(num_retries).toString();
-        globalThis.backendaiclient.setting.set(`plugins/scheduler/${this.scheduler}/num_retries_to_skip`, num_retries)
+      if (this.selectedSchedulerType === 'fifo' || (this.selectedSchedulerType !== 'fifo' && tempNumRetries === '0')) {
+        const numRetries = parseInt(tempNumRetries).toString();
+        globalThis.backendaiclient.setting.set(`plugins/scheduler/${this.selectedSchedulerType}/num_retries_to_skip`, numRetries)
         .then((response) => {
           this.notification.text = _text('notification.SuccessfullyUpdated');
           this.notification.show();
+          this.options['scheduler'] = this.selectedSchedulerType;
+          this.options['num_retries_to_skip'] = numRetries;
+          this.update(this.options);
+          this._closeDialog();
         })
         .catch((err) => {
-            this.notification.text = PainKiller.relieve('Couldn\'t update session setting.');
-            this.notification.detail = err;
-            this.notification.show(true, err);
+          this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');
+          this.notification.detail = err;
+          this.notification.show(true, err);
         })
-      } else if (num_retries !== '0') {
+      } else if (tempNumRetries !== '0') {
         this.notification.text = _text('settings.FifoOnly');
         this.notification.show();
-        num_retries = '0';
+        this.shadowRoot.querySelector('#num-retries').value = '0';
       }
-      this.options['num_retries_to_skip'] = this.shadowRoot.querySelector('#num-retries').value = num_retries;
-      this.update(this.options);
     } else {
-      this.notification.text = _text('settings.NumbersOnly');
+      this.notification.text = _text('settings.InvalidValue');
       this.notification.show();
     }
+  }
+
+  /**
+   * Change this.selectedSchedulerType value and 
+   * 
+   * @param {HTMLElement} e - scheduler setting component
+   */
+  changeSelectedScheduleType(e) {
+    this.selectedSchedulerType = e.target.value;
+    globalThis.backendaiclient.setting.get(`plugins/scheduler/${this.selectedSchedulerType}/num_retries_to_skip`).then((response) => { 
+      if (response['result'] === null) {
+        this.shadowRoot.querySelector('#num-retries').value = '0';
+      } else {
+        this.shadowRoot.querySelector('#num-retries').value = response['result'];
+      }
+    });
   }
 }
 
