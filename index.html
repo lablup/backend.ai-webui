@@ -241,11 +241,11 @@
   } else {
     document.getElementById('mode-detail').innerText = 'WebServer';
   }
-  /*if (globalThis.isIE) {
+  if (globalThis.isIE) {
     alert('Internet Explorer is not supported. Please visit with modern browsers.');
     document.getElementById('loading-message').innerText = 'Not supported browser.';
     document.getElementById('loading-message').style.color = 'red';
-  }*/
+  }
   if (!['127.0.0.1', 'localhost'].includes(window.location.hostname) &&
     'enableSW' in globalThis &&
     globalThis.enableSW === true) {
