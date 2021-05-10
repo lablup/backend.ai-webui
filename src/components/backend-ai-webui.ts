@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
+import 'core-js';
 import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from 'lit-translate';
 import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 // PWA components

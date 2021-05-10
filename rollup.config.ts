@@ -3,7 +3,7 @@ import replace from '@rollup/plugin-replace';
 import typescript from '@rollup/plugin-typescript';
 import { generateSW } from 'rollup-plugin-workbox';
 import { terser } from "rollup-plugin-terser";
-//import babel from 'rollup-plugin-babel'; // To support legacy browsers. Disabled by default.
+import { babel, getBabelOutputPlugin } from '@rollup/plugin-babel';
 
 export default {
   input: ['src/components/backend-ai-webui.ts'],
@@ -20,6 +20,10 @@ export default {
     }),
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),
+    }),
+    //babel({ babelHelpers: 'runtime' }),
+    getBabelOutputPlugin({
+      presets: ['@babel/preset-env']
     }),
     terser(),
     generateSW( {

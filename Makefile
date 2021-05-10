@@ -52,6 +52,9 @@ dep:
 	cp -Rp ./node_modules/markty ./build/electron-app/node_modules
 	cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules
 	cp ./preload.js ./build/electron-app/preload.js
+ie11: dep
+	sed -i -E 's/globalThis/window/g' build/rollup/index.html
+	sed -i -E 's/globalThis/window/g' build/rollup/manifest/app.js
 web:
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
