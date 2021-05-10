@@ -1440,7 +1440,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     return folderName;
   }
 
-    _getControlId(e) {
+  _getControlId(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const folderId = controls.getAttribute('folder-id');
@@ -1599,12 +1599,12 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   async _deleteFolderDialog(e) {
     this.deleteFolderName = this._getControlName(e);
-    let deleteFolderId = this._getControlId(e);
+    const deleteFolderId = this._getControlId(e);
     this.shadowRoot.querySelector('#delete-folder-name').value = '';
     // let isDelible = await this._checkVfolderMounted(deleteFolderId);
     // if (isDelible) {
-      this.openDialog('delete-folder-dialog');
-    //} else {
+    this.openDialog('delete-folder-dialog');
+    // } else {
     //   this.notification.text = _text('data.folders.CannotDeleteFolder');
     //   this.notification.show(true);
     // }
@@ -1655,12 +1655,12 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Check whether this vfolder is delible or not
-   * 
+   *
    * @param {string} folderId
-   * 
+   *
    */
   async _checkVfolderMounted(folderId = '') {
-    /** 
+    /**
      * TODO: check whether the folder is mounted in one or more sessions or not
      *       by requests.
      */

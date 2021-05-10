@@ -68,7 +68,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
   detectIE() {
     try {
-      var isIE = /*@cc_on!@*/false || !!document.documentMode;
+      const isIE = /* @cc_on!@*/false || !!document.documentMode;
       if (! isIE) {
         // Fallback to UserAgent detection for IE
         if (
@@ -82,11 +82,11 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         }
       }
       return true;
-    } catch(e) {
-      var error = e.toString();
+    } catch (e) {
+      const error = e.toString();
       console.log(error);
     }
-  };
+  }
 
   /**
    * Initialize the client.
