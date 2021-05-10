@@ -499,7 +499,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       },
       'retries': {
         'title': _text('settings.SessionCreationRetries'),
-        'desc': _text('settings.SessionCreationRetriesDescription')
+        'desc': _text('settings.SessionCreationRetriesDescription') + _text('settings.FifoOnly')
       }
     };
     if (item in schedulerConfigDescription) {
