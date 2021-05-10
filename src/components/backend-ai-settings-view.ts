@@ -50,7 +50,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   ];
   @property({type: Array}) jobschedulerType = [
     'fifo', 'lifo', 'drf'];
-  @property({type: String}) selectedSchedulerType = 'fifo';
+  @property({type: String}) selectedSchedulerType = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescription = '';
 
@@ -323,7 +323,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         unelevated
                         icon="rule"
                         label="${_t('settings.Config')}"
-                        style="float:right; width:85px;"
+                        style="float: right;"
                         @click="${()=>this._showDialog()}"></mwc-button>
                     </div>
                   </div>
@@ -363,7 +363,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           <span slot="action">
             <mwc-icon-button icon="info" @click="${(e) => this._showConfigDescription(e, 'default')}" style="pointer-events:auto;"></mwc-icon-button>
           </span>
-          <div slot="content" class="vertical layout" style="width: 100%;">
+          <div slot="content" class="vertical layout centered" style="width: 100%;">
             <mwc-select id="scheduler-switch" required label="${_t('settings.SchedulerType')}" 
               style="margin-bottom: 10px;" @selected="${(e) => this.changeSelectedScheduleType(e)}">
               ${this.jobschedulerType.map((item) => html`
@@ -380,9 +380,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
                               charCounter
                               autoValidate
                               maxLength="3"
-                              value="${this.options['num_retries_to_skip']}"
                               pattern="[0-9]+"
-                              style="margin-left:auto;">
+                              style="margin-top: 18px">
               </mwc-textfield>
             </div>
             <div slot="footer" class="horizontal end-justified flex layout" style="margin-top: 20px;">
@@ -515,12 +514,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
    */
   saveAndCloseDialog() {
     let tempNumRetries = this.shadowRoot.querySelector('#num-retries').value;
-    tempNumRetries = tempNumRetries === '' ? '0' : tempNumRetries;
     if (['fifo', 'lifo', 'drf'].includes(this.selectedSchedulerType) && tempNumRetries.match(/^[0-9]*$/)) {
       // currently, only support when scheduler type is fifo.
       if (this.selectedSchedulerType === 'fifo' || (this.selectedSchedulerType !== 'fifo' && tempNumRetries === '0')) {
         const numRetries = parseInt(tempNumRetries).toString();
-        globalThis.backendaiclient.setting.set(`plugins/scheduler/${this.selectedSchedulerType}/num_retries_to_skip`, numRetries)
+        const options = {
+          'num_retries_to_skip': numRetries
+        };
+        globalThis.backendaiclient.setting.set(`plugins/scheduler/${this.selectedSchedulerType}`, options)
         .then((response) => {
           this.notification.text = _text('notification.SuccessfullyUpdated');
           this.notification.show();
