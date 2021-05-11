@@ -869,6 +869,7 @@
     "FifoOnly": "Currently, changes are only possible when the scheduler is FIFO.",
     "NumbersOnly": "Allows numbers only",
     "InvalidValue": "Please put the correct input value.",
+    "EnvConfigWillDisappear": "Any unsaved Environment variable and value will be disappeared.",
     "EnterpriseFeatures": "Enterprise Features",
     "FractionalGPU": "Fractional GPU",
     "DescFractionalGPU": "Use Fractional GPU feature with GPU virtualization.",

@@ -867,6 +867,7 @@
     "FifoOnly": "현재는 스케줄러가 FIFO일 때만 변경 가능합니다.",
     "NumbersOnly": "숫자만 입력 가능합니다.",
     "InvalidValue": "올바른 입력값을 넣어주세요.",
+    "EnvConfigWillDisappear": "저장되지 않은 환경변수 설정값은 사라집니다.",
     "EnterpriseFeatures": "엔터프라이즈 기능",
     "FractionalGPU": "부분 GPU 가상화",
     "DescFractionalGPU": "GPU 가상화와 함께 Fractional GPU 기능을 사용합니다.",
