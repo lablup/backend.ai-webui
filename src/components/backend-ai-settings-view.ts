@@ -580,6 +580,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
    * Close confirmation dialog and environment variable dialog and reset the option values.
    */
   closeAndResetEnvInput() {
+    const schedulerSwitch = this.shadowRoot.querySelector('#scheduler-switch');
+    schedulerSwitch.value = null;
     this._clearOptions();
     this.closeDialog('env-config-confirmation');
     this._hideEnvDialog();
