@@ -71,11 +71,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
     };
     this.schedulerOptions = {
       num_retries_to_skip: '0'
-    }
+    };
     // Stores scheduler option keys and id.
     this.schedulerOptionsAndId = [
       {option: 'num_retries_to_skip', id: 'num-retries'}
-    ]
+    ];
   }
 
   static get is() {
@@ -552,22 +552,22 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
   /**
    * find id in html by scheduler option key.
-   * 
-   * @param option - scheduler option key 
-   * @returns id
+   *
+   * @param {object} option - scheduler option key
+   * @return {string} - id of scheduler
    */
   _findIdByOption(option) {
-    return this.schedulerOptionsAndId.find(elm => elm.option === option).id;
+    return this.schedulerOptionsAndId.find((elm) => elm.option === option).id;
   }
 
   /**
    * find scheduler option key by id in html.
-   * 
-   * @param id - id in html
-   * @returns option
+   *
+   * @param {string} id - id of scheduler
+   * @return {object} - options in scheduler
    */
   _findOptionById(id) {
-    return this.schedulerOptionsAndId.find(elm => elm.id === id).option;
+    return this.schedulerOptionsAndId.find((elm) => elm.id === id).option;
   }
 
   /**
@@ -634,14 +634,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
   /**
    * Update etcd scheduler options and close the dialog.
-   * 
+   *
    */
   saveAndCloseDialog() {
     const scheduler = this.shadowRoot.querySelector('#scheduler-switch');
     const numRetriesPerSchedulerEl = this.shadowRoot.querySelector('#num-retries');
     const tempNumRetries = numRetriesPerSchedulerEl.value;
     const inputValidationArr = [scheduler, numRetriesPerSchedulerEl];
-    if (inputValidationArr.filter(elem => elem.reportValidity()).length < inputValidationArr.length) {
+    if (inputValidationArr.filter((elem) => elem.reportValidity()).length < inputValidationArr.length) {
       return;
     }
     if (['fifo', 'lifo', 'drf'].includes(this.selectedSchedulerType)) {
@@ -653,20 +653,20 @@ export default class BackendAiSettingsView extends BackendAIPage {
           'num_retries_to_skip': numRetries
         };
         globalThis.backendaiclient.setting.set(`plugins/scheduler/${this.selectedSchedulerType}`, options)
-        .then((response) => {
-          this.notification.text = _text('notification.SuccessfullyUpdated');
-          this.notification.show();
-          this.options['scheduler'] = this.selectedSchedulerType;
-          this.schedulerOptions = {...this.schedulerOptions, ...options};
-          this.update(this.options);
-          this.update(this.schedulerOptions);
-          this._hideEnvDialog();
-        })
-        .catch((err) => {
-          this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');
-          this.notification.detail = err;
-          this.notification.show(true, err);
-        })
+          .then((response) => {
+            this.notification.text = _text('notification.SuccessfullyUpdated');
+            this.notification.show();
+            this.options['scheduler'] = this.selectedSchedulerType;
+            this.schedulerOptions = {...this.schedulerOptions, ...options};
+            this.update(this.options);
+            this.update(this.schedulerOptions);
+            this._hideEnvDialog();
+          })
+          .catch((err) => {
+            this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');
+            this.notification.detail = err;
+            this.notification.show(true, err);
+          });
       } else if (tempNumRetries !== '0') {
         this.notification.text = _text('settings.FifoOnly');
         this.notification.show();
@@ -677,7 +677,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
   /**
    * Change this.selectedSchedulerType value and the scheduler options
-   * 
+   *
    * @param {HTMLElement} e - scheduler setting component
    */
   changeSelectedScheduleType(e) {
@@ -690,7 +690,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
         } else {
           this.shadowRoot.querySelector('#' + this._findIdByOption(key)).value = response['result'];
         }
-      })
+      });
     }
   }
 
@@ -699,7 +699,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
-   _validateInput(e) {
+  _validateInput(e) {
     const textfield = e.target.closest('mwc-textfield');
     const clamp = (value: number, min: number, max: number) => {
       return Math.max(min, Math.min(value, max));
@@ -712,7 +712,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
   /**
    * customize validation message.
-   * 
+   *
    * @param {Event}  e - Dispatches from the native input event when input event occurs.
    */
   _customizeValidationMessage(e) {
@@ -731,8 +731,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
           };
-        }
-        else {
+        } else {
           textfield.validationMessage = _text('settings.InvalidValue');
           return {
             valid: nativeValidity.valid,
