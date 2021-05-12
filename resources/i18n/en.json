@@ -759,7 +759,9 @@
     "ResourceGroupCreated": "Resource group succesfully created",
     "ResourceGroupModified": "Resource group successfully modified",
     "ResourceGroupDeleted": "Resource group successfully deleted",
-    "EnterValidResourceGroupName": "Enter valid Resource group name"
+    "EnterValidResourceGroupName": "Enter valid Resource group name",
+    "ResourceGroupNameRequired": "Resource group name is required.",
+    "ResourceGroupAlreadyExist": "A scaling group with the same name already exists."
   },
   "maintenance": {
     "General": "General",
