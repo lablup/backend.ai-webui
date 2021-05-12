@@ -55,7 +55,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: String}) selectedSchedulerType = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescription = '';
-
+  @property({type: Object}) numRetriesRange = {
+    'min': 0,
+    'max': 100
+  }
   constructor() {
     super();
     this.options = {
@@ -180,6 +183,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
           --mdc-list-item__primary-text: {
             height: 20px;
           };
+        }
+
+        mwc-textfield#num-retries {
+          width: 10rem;
         }
 
         @media screen and (max-width: 750px) {
@@ -367,13 +374,18 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
         </lablup-activity-panel>
         <backend-ai-dialog id="env-dialog" fixed backdrop persistent closeWithConfirmation>
-          <span slot="title" class="horizontal layout center">${_t('settings.SchedulerDefault')}</span>
+          <span slot="title" class="horizontal layout center">${_tr('settings.ConfigPerJobSchduler')}</span>
           <span slot="action">
             <mwc-icon-button icon="info" @click="${(e) => this._showConfigDescription(e, 'default')}" style="pointer-events:auto;"></mwc-icon-button>
           </span>
           <div slot="content" id="env-container" class="vertical layout centered" style="width: 100%;">
-            <mwc-select id="scheduler-switch" required label="${_t('settings.SchedulerType')}" 
-              style="margin-bottom: 10px;" @selected="${(e) => this.changeSelectedScheduleType(e)}">
+            <mwc-select
+              id="scheduler-switch"
+              required
+              label="${_t('settings.Scheduler')}" 
+              style="margin-bottom: 10px;"
+              validationMessage="${_t('settings.SchedulerRequired')}"
+              @selected="${(e) => this.changeSelectedScheduleType(e)}">
               ${this.jobschedulerType.map((item) => html`
                 <mwc-list-item value="${item}">
                   ${item}
@@ -385,11 +397,16 @@ export default class BackendAiSettingsView extends BackendAIPage {
               <mwc-icon-button icon="info" @click="${(e) => this._showConfigDescription(e, 'retries')}" style="pointer-events:auto;"></mwc-icon-button>
               <mwc-textfield  id="num-retries"
                               outlined
-                              charCounter
+                              required
                               autoValidate
-                              maxLength="3"
+                              validationMessage="${_t('settings.InputRequired')}"
+                              type="number"
                               pattern="[0-9]+"
-                              style="margin-top: 18px"></mwc-textfield>
+                              min="${this.numRetriesRange.min}"
+                              max="${this.numRetriesRange.max}"
+                              style="margin-top: 18px"
+                              @change="${(e) => this._validateInput(e)}"
+                              @input="${(e) => this._customizeValidationMessage(e)}"></mwc-textfield>
             </div>
             <div slot="footer" class="horizontal end-justified flex layout" style="margin-top: 20px;">
               <mwc-button
@@ -462,7 +479,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           this._hideEnvDialog();
         }
       }
-    })
+    });
   }
 
   async _viewStateChanged(active) {
@@ -591,12 +608,12 @@ export default class BackendAiSettingsView extends BackendAIPage {
     e.stopPropagation();
     const schedulerConfigDescription = {
       'default': {
-        'title': _text('settings.SchedulerDefault'),
-        'desc': _text('settings.SchedulerDefaultDescription')
+        'title': _tr('settings.ConfigPerJobSchduler'),
+        'desc': _text('settings.ConfigPerJobSchdulerDescription')
       },
       'retries': {
         'title': _text('settings.SessionCreationRetries'),
-        'desc': _text('settings.SessionCreationRetriesDescription') + _text('settings.FifoOnly')
+        'desc': _text('settings.SessionCreationRetriesDescription') + '\n' + _text('settings.FifoOnly')
       }
     };
     if (item in schedulerConfigDescription) {
@@ -620,8 +637,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
    * 
    */
   saveAndCloseDialog() {
-    const tempNumRetries = this.shadowRoot.querySelector('#num-retries').value;
-    if (['fifo', 'lifo', 'drf'].includes(this.selectedSchedulerType) && tempNumRetries.match(/^[0-9]+$/)) {
+    const scheduler = this.shadowRoot.querySelector('#scheduler-switch');
+    const numRetriesPerSchedulerEl = this.shadowRoot.querySelector('#num-retries');
+    const tempNumRetries = numRetriesPerSchedulerEl.value;
+    const inputValidationArr = [scheduler, numRetriesPerSchedulerEl];
+    if (inputValidationArr.filter(elem => elem.reportValidity()).length < inputValidationArr.length) {
+      return;
+    }
+    if (['fifo', 'lifo', 'drf'].includes(this.selectedSchedulerType)) {
       // currently, only support when scheduler type is fifo.
       if (this.selectedSchedulerType === 'fifo' || (this.selectedSchedulerType !== 'fifo' && tempNumRetries === '0')) {
         // handle scheduler options
@@ -649,9 +672,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
         this.notification.show();
         this.shadowRoot.querySelector('#num-retries').value = '0';
       }
-    } else {
-      this.notification.text = _text('settings.InvalidValue');
-      this.notification.show();
     }
   }
 
@@ -672,6 +692,60 @@ export default class BackendAiSettingsView extends BackendAIPage {
         }
       })
     }
+  }
+
+  /**
+   * Check validation of input.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
+   _validateInput(e) {
+    const textfield = e.target.closest('mwc-textfield');
+    const clamp = (value: number, min: number, max: number) => {
+      return Math.max(min, Math.min(value, max));
+    };
+    if (textfield.value) {
+      textfield.value = Math.round(textfield.value);
+      textfield.value = clamp(textfield.value, textfield.min, textfield.max);
+    }
+  }
+
+  /**
+   * customize validation message.
+   * 
+   * @param {Event}  e - Dispatches from the native input event when input event occurs.
+   */
+  _customizeValidationMessage(e) {
+    const textfield = e.target.closest('mwc-textfield');
+    textfield.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          textfield.validationMessage = _text('settings.InputRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else if (nativeValidity.rangeOverflow || nativeValidity.rangeUnderflow) {
+          textfield.validationMessage = _text('settings.InputRange0to100');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+        else {
+          textfield.validationMessage = _text('settings.InvalidValue');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        return {
+          valid: nativeValidity.valid,
+          customError: !nativeValidity.valid
+        };
+      }
+    };
   }
 }
 
