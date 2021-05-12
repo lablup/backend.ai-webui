@@ -242,7 +242,7 @@
       "Prepared": "Prepared"
     },
     "TensorboardPath": "Log directory for TensorBoard",
-    "InputTensorboardPath": "Please input log directory that TensorBoard will refer to.",
+    "InputTensorboardPath": "Please input log directory that TensorBoard will refer to. Note that the log directory will not be automatically created..",
     "DefaultTensorboardPath": "/home/work/logs",
     "SessionTerminated": "Session terminated.",
     "SessionsTerminated": "Sessions terminated.",
@@ -459,7 +459,8 @@
       "View": "View",
       "Edit": "Edit",
       "EditDelete": "Edit+Delete",
-      "KickOut": "Kick out user"
+      "KickOut": "Kick out user",
+      "CannotDeleteFolder": "Cannot delete folder mounted in one or more sessions. Please terminate the session first."
     },
     "explorer": {
       "Delete": "Delete...",
@@ -855,6 +856,7 @@
     "DescROCMGPUsupport": "AMD ROCm GPU support. <br/>Requires Backend.AI ROCm Plugin.",
     "Scheduler": "Scheduler",
     "JobScheduler": "Choose default job scheduler",
+    "JobSchedulerUpdated": "Default job scheduler has been updated.",
     "Require1912orAbove": "Requires Backend.AI 19.12 or above.",
     "Require2003orAbove": "Requires Backend.AI 20.03 or above.",
     "EnterpriseFeatures": "Enterprise Features",
@@ -1051,6 +1053,18 @@
     "Perpetual": "Perpetual",
     "Subscription": "Subscription",
     "OpenSource": "Open Source"
+  },
+  "eduapi": {
+    "CannotAuthorizeSessionByToken": "Unable to authorize your session. Login to the portal first.",
+    "QueryingExisitingComputeSession": "Querying existing compute session ...",
+    "SessionStatusId": "Your session is ",
+    "PleaseReload": "Please reload after some time.",
+    "FoundExistingComputeSession": "Found existing compute session",
+    "FindingSessionTemplate": "Finding session template ...",
+    "NoSessionTemplate": "No appropriate session templates",
+    "CreatingComputeSession": "Creating compute session ...",
+    "SessionStillPreparing": "Session is still in preparing. Reload after a while",
+    "ComputeSessionPrepared": "Compute session prepared"
   },
   "error": {
     "UpdateError": "Update error",

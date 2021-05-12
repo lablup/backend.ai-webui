@@ -804,11 +804,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     return this.sendRequest(rqst)
       .then((response) => {
         this.total_session_count -= 1;
-        const token = globalThis.backendaiclient._config.accessKey;
         if (response !== undefined && response.code !== 404) {
           const rqst = {
             method: 'GET',
-            uri: this._getProxyURL() + 'proxy/'+ token + '/' + sessionId + '/delete'
+            uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId + '/delete',
+            credentials: 'include',
+            mode: 'cors'
           };
           return this.sendRequest(rqst);
         }

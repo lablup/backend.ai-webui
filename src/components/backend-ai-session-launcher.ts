@@ -1382,7 +1382,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * Rondomly generate session ID
+   * Randomly generate session ID
    *
    * @return {string} Generated session ID
    * */
