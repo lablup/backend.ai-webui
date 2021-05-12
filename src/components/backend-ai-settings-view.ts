@@ -57,7 +57,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: Object}) numRetriesRange = {
     'min': 0,
-    'max': 100
+    'max': 1000
   }
   constructor() {
     super();
@@ -726,7 +726,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
             customError: !nativeValidity.valid
           };
         } else if (nativeValidity.rangeOverflow || nativeValidity.rangeUnderflow) {
-          textfield.validationMessage = _text('settings.InputRange0to100');
+          textfield.validationMessage = _text('settings.InputRange0to1000');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid

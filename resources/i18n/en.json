@@ -868,7 +868,7 @@
     "SessionCreationRetriesDescription": "If the session creation fails, the session creation is retried for the value specified in here. If the session cannot be created within the trials, the request will be ignored and Backend.AI will process the next request.",
     "FifoOnly": "Currently, changes are only possible when the scheduler is FIFO.",
     "InputRequired": "This field is required.",
-    "InputRange0to100":"Enter values between 0 to 100.",
+    "InputRange0to1000":"Enter values between 0 to 1000.",
     "SchedulerRequired": "Scheduler is required.",
     "InvalidValue": "Please put the correct input value.",
     "EnvConfigWillDisappear": "Any unsaved Environment variable and value will be disappeared.",
