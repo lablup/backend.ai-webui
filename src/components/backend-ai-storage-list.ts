@@ -525,7 +525,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           ` : html``}
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button unelevated class="fullwidth bg-blue button" type="submit" icon="edit" id="update-button" outlined @click="${() => this._updateFolder()}">
+          <mwc-button class="fullwidth button" type="submit" icon="edit" id="update-button" outlined @click="${() => this._updateFolder()}">
             ${_t('data.Update')}
           </mwc-button>
         </div>
@@ -935,6 +935,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._refreshFolderUI({'detail': {'mini-ui': globalThis.mini_ui}});
     // monkeypatch for height calculation.
     this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '56px';
+    this._triggerFolderListChanged();
   }
 
   _modifySharedFolderPermissions() {
