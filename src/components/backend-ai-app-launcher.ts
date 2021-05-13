@@ -375,7 +375,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           'title': elm,
           'category': '99.',
           'redirect': '',
-          'src': ''
+          'src': './resources/icons/default_app.svg'
         });
       }
     });
