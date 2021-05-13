@@ -1599,7 +1599,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   async _deleteFolderDialog(e) {
     this.deleteFolderName = this._getControlName(e);
-    const deleteFolderId = this._getControlId(e);
+    //const deleteFolderId = this._getControlId(e);
     this.shadowRoot.querySelector('#delete-folder-name').value = '';
     // let isDelible = await this._checkVfolderMounted(deleteFolderId);
     // if (isDelible) {
