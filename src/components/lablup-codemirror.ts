@@ -47,6 +47,7 @@ export default class LablupCodemirror extends LitElement {
       indentUnit: 2,
       cursorScrollMargin: 50,
       lineNumbers: true,
+      lineWrapping: true,
       // lineNumberFormatter: (line) => (line % 5 === 0 || line === 1) ? line : '',
       matchBrackets: true,
       styleActiveLine: true,
@@ -109,6 +110,11 @@ export default class LablupCodemirror extends LitElement {
         .CodeMirror {
           height: auto !important;
           font-size: 15px;
+        }
+
+        .CodeMirror-code {
+          /* minimum margin to avoid overlapping with line numbers */
+          margin-left: 2px;
         }
       `,
     ];
