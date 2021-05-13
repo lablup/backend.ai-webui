@@ -919,7 +919,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </span>
           <div class="flex layout center-justified vertical center">
             <p>${_text('webTerminalUsageGuide.CopyGuideFour')}</p>
-            <a href="https://console.docs.backend.ai/${lang}/latest/session_use/session_use.html#advanced-web-terminal-usage"
+            <a href="https://console.docs.backend.ai/${lang}/latest/sessions_all/sessions_all.html#copy-terminal-contents"
                target="_blank" style="width:100%;text-align:right;">
               <p>${_text('webTerminalUsageGuide.LearnMore')}</p>
             </a>
