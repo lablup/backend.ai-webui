@@ -258,7 +258,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _validateResourceGroupName() {
-    const scalingGroupNames = this.scalingGroups.map(scalingGroup => scalingGroup['name']);
+    const scalingGroupNames = this.scalingGroups.map((scalingGroup) => scalingGroup['name']);
     const scalingGroupInfo = this.shadowRoot.querySelector('#scaling-group-name');
     scalingGroupInfo.validityTransform = (value, nativeValidity) => {
       if (!nativeValidity.valid) {
@@ -291,7 +291,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   /**
    * Create scaling group and associate scaling group with domain.
    * */
-  _createScalingGroup() {   
+  _createScalingGroup() {
     const scalingGroupEl = this.shadowRoot.querySelector('#scaling-group-name');
     if (scalingGroupEl.checkValidity()) {
       const scalingGroup = this.shadowRoot.querySelector('#scaling-group-name').value;
@@ -327,7 +327,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           this.notification.detail = err;
           this._hideDialogById('#create-scaling-group-dialog');
           this.notification.show(true, err);
-        }); 
+        });
     } else {
       scalingGroupEl.reportValidity();
       return;
