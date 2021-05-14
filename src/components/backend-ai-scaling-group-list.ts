@@ -257,52 +257,81 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     );
   }
 
+  _validateResourceGroupName() {
+    const scalingGroupNames = this.scalingGroups.map((scalingGroup) => scalingGroup['name']);
+    const scalingGroupInfo = this.shadowRoot.querySelector('#scaling-group-name');
+    scalingGroupInfo.validityTransform = (value, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          scalingGroupInfo.validationMessage = _text('resourceGroup.ResourceGroupNameRequired');
+          return {
+            valid: nativeValidity.valid,
+            valueMissing: !nativeValidity.valid
+          };
+        } else {
+          scalingGroupInfo.validationMessage = _text('resourceGroup.EnterValidResourceGroupName');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        const isValid = !scalingGroupNames.includes(value);
+        if (!isValid) {
+          scalingGroupInfo.validationMessage = _text('resourceGroup.ResourceGroupAlreadyExist');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
+    };
+  }
+
   /**
    * Create scaling group and associate scaling group with domain.
    * */
   _createScalingGroup() {
-    const scalingGroup = this.shadowRoot.querySelector('#scaling-group-name').value;
-    const description = this.shadowRoot.querySelector('#scaling-group-description').value;
-    const domain = this.shadowRoot.querySelector('#scaling-group-domain').value;
-
-    if (scalingGroup === '') {
-      this.notification.text = _text('resourceGroup.EnterValidResourceGroupName');
-      this.notification.show();
-      this._hideDialogById('#create-scaling-group-dialog');
+    const scalingGroupEl = this.shadowRoot.querySelector('#scaling-group-name');
+    if (scalingGroupEl.checkValidity()) {
+      const scalingGroup = this.shadowRoot.querySelector('#scaling-group-name').value;
+      const description = this.shadowRoot.querySelector('#scaling-group-description').value;
+      const domain = this.shadowRoot.querySelector('#scaling-group-domain').value;
+      globalThis.backendaiclient.scalingGroup.create(scalingGroup, description)
+        .then(({create_scaling_group: res}) => {
+          if (res.ok) {
+            return globalThis.backendaiclient.scalingGroup.associate_domain(domain, scalingGroup);
+          } else {
+            /* error message will be handled in catch statement */
+            // this.notification.text = PainKiller.relieve(res.title);
+            // this.notification.detail = res.msg;
+            // this.notification.show();
+            return Promise.reject(res.msg);
+          }
+        })
+        .then(({associate_scaling_group_with_domain: res}) => {
+          if (res.ok) {
+            this.notification.text = _text('resourceGroup.ResourceGroupCreated');
+            this._refreshList();
+            this.shadowRoot.querySelector('#scaling-group-name').value = '';
+            this.shadowRoot.querySelector('#scaling-group-description').value = '';
+          } else {
+            this.notification.text = PainKiller.relieve(res.title);
+            this.notification.detail = res.msg;
+          }
+          this._hideDialogById('#create-scaling-group-dialog');
+          this.notification.show();
+        })
+        .catch((err) => {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err;
+          this._hideDialogById('#create-scaling-group-dialog');
+          this.notification.show(true, err);
+        });
+    } else {
+      scalingGroupEl.reportValidity();
       return;
     }
-
-    globalThis.backendaiclient.scalingGroup.create(scalingGroup, description)
-      .then(({create_scaling_group: res}) => {
-        if (res.ok) {
-          return globalThis.backendaiclient.scalingGroup.associate_domain(domain, scalingGroup);
-        } else {
-          /* error message will be handled in catch statement */
-          // this.notification.text = PainKiller.relieve(res.title);
-          // this.notification.detail = res.msg;
-          // this.notification.show();
-          return Promise.reject(res.msg);
-        }
-      })
-      .then(({associate_scaling_group_with_domain: res}) => {
-        if (res.ok) {
-          this.notification.text = _text('resourceGroup.ResourceGroupCreated');
-          this._refreshList();
-          this.shadowRoot.querySelector('#scaling-group-name').value = '';
-          this.shadowRoot.querySelector('#scaling-group-description').value = '';
-        } else {
-          this.notification.text = PainKiller.relieve(res.title);
-          this.notification.detail = res.msg;
-        }
-        this._hideDialogById('#create-scaling-group-dialog');
-        this.notification.show();
-      })
-      .catch((err) => {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err;
-        this._hideDialogById('#create-scaling-group-dialog');
-        this.notification.show(true, err);
-      });
   }
 
   /**
@@ -445,6 +474,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             label="${_t('resourceGroup.ResourceGroupName')}"
             maxLength="64"
             placeholder="${_t('maxLength.64chars')}"
+            validationMessage="${_t('data.explorer.ValueRequired')}"
+            required
+            autoValidate
+            @input="${() => this._validateResourceGroupName()}"
           ></mwc-textfield>
           <mwc-textarea
             name="description"

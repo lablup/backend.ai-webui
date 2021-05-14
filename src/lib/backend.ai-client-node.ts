@@ -3268,7 +3268,7 @@ class ScalingGroup {
    */
   async create(name, description = "") {
     const input = {
-      description,
+      description: description,
       is_active: true,
       driver: "static",
       scheduler: "fifo",
@@ -3276,7 +3276,7 @@ class ScalingGroup {
       scheduler_opts: "{}"
     };
     // if (this.client.is_admin === true) {
-    let q = `mutation($name: String!, $input: ScalingGroupInput!) {` +
+    let q = `mutation($name: String!, $input: CreateScalingGroupInput!) {` +
       `  create_scaling_group(name: $name, props: $input) {` +
       `    ok msg` +
       `  }` +
