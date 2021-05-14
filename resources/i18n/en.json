@@ -761,7 +761,7 @@
     "ResourceGroupDeleted": "Resource group successfully deleted",
     "EnterValidResourceGroupName": "Enter valid Resource group name",
     "ResourceGroupNameRequired": "Resource group name is required.",
-    "ResourceGroupAlreadyExist": "A scaling group with the same name already exists."
+    "ResourceGroupAlreadyExist": "A resource group with the same name already exists."
   },
   "maintenance": {
     "General": "General",
@@ -1083,7 +1083,7 @@
     "NetworkConnectionFailed": "Network connection failed. Check network status.",
     "TooManyLoginFailures": "There have been too many login failures in a short time. Login is blocked for a while.",
     "ResourcePolicyAlreadyExist": "A resource policy with the same name already exists.",
-    "ScalingGroupAlreadyExist": "A scaling group with the same name already exists.",
+    "ScalingGroupAlreadyExist": "A resource group with the same name already exists.",
     "ResourceLimitExceed": "Resource limit exceed. Check your free resources.",
     "SmallerResourceThenImageRequires": "Your resource request is smaller than the minimum required by the image. Try more resources.",
     "LoginSucceededManagerNotResponding": "Login succeed but manager is not responding.",
