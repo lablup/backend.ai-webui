@@ -44,6 +44,7 @@ import tus from '../lib/tus';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 
+
 /**
  Backend AI Storage List
 
@@ -835,7 +836,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             type="button"
             class="fullwidth button"
             unelevated
-            @click=${()=>this._modifySharedFolderPermissions()}
+            @click=${() => this._modifySharedFolderPermissions()}
           >
             ${_t('button.SaveChanges')}
           </mwc-button>
@@ -967,24 +968,27 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   permissionRenderer(root, column?, rowData?) {
     render(
-      // language=HTML
       html`
+      <div class="vertical layout">
+        <wl-select label="${_t('data.folders.SelectPermission')}">
+          <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
+          <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
+          <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
+          <option value="kickout">${_t('data.folders.KickOut')}</option>
+        </wl-select>
+      </div>`, root);
+    this.shadowRoot.querySelector('wl-select').requestUpdate().then(()=>{
+      render(
+        html`
         <div class="vertical layout">
           <wl-select label="${_t('data.folders.SelectPermission')}">
             <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
             <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
             <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
-            <option value=kickout>${_t('data.folders.KickOut')}</option>
+            <option value="kickout">${_t('data.folders.KickOut')}</option>
           </wl-select>
-          <!--<mwc-select outlined label="${_t('data.folders.SelectPermission')}">
-            <mwc-list-item ?selected=${rowData.item.perm === 'ro'} value="ro">
-            <mwc-list-item ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</mwc-list-item>
-            <mwc-list-item ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</mwc-list-item>
-            <mwc-list-item value="kickout">${_t('data.folders.KickOut')}</mwc-list-item>
-          </mwc-select>-->
-        </div>
-      `, root
-    );
+        </div>`, root);
+    });
   }
 
   folderListRenderer(root, column?, rowData?) {
@@ -1010,7 +1014,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const itemCount = this.shadowRoot.querySelector('#update-folder-permission').items.length;
     const actualHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight;
     if (itemCount > 0) {
-      this.shadowRoot.querySelector('#dropdown-area').style.height = (actualHeight + itemCount * 52) +'px';
+      this.shadowRoot.querySelector('#dropdown-area').style.height = (actualHeight + itemCount * 52) + 'px';
     }
   }
 
@@ -1077,8 +1081,8 @@ export default class BackendAiStorageList extends BackendAIPage {
                 icon="folder_open"
                 @click="${(e) =>
     this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') ||
-                    rowData.item.is_owner ||
-                    (rowData.item.type === 'group' && this.is_admin)))}"
+                rowData.item.is_owner ||
+                (rowData.item.type === 'group' && this.is_admin)))}"
                 .folder-id="${rowData.item.name}"></mwc-icon-button>
             ` :
     html``
@@ -1109,7 +1113,7 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-icon-button
                 class="fg cyan controls-running"
                 icon="perm_identity"
-                @click=${(e) => this._modifyPermissionDialog(rowData.item.id)}
+                @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
               ></mwc-icon-button>
             ` :
     html``
@@ -1762,7 +1766,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
       } else {
         const regex = /[`~!@#$%^&*()|+=?;:'",<>{}[\]\\/]/gi;
-        let isValid : boolean;
+        let isValid: boolean;
         // compare old name and new name.
         if (filename.value === this.renameFileDialog.querySelector('#old-file-name').textContent) {
           filename.validationMessage = _text('data.EnterDifferentValue');
@@ -1811,7 +1815,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           };
         }
       } else {
-        let isValid : boolean;
+        let isValid: boolean;
         const regex = /[`~!@#$%^&*()|+=?;:'",<>{}[\]\\/\s]/gi;
         // if renaming its name, then compare old name and new name.
         if (isModifying) {
@@ -2130,7 +2134,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.show();
         return;
       } else {
-        const reUploadFile = this.explorerFiles.find( (elem: any) => elem.filename === file.name);
+        const reUploadFile = this.explorerFiles.find((elem: any) => elem.filename === file.name);
         if (reUploadFile) {
           // plain javascript modal to confirm whether proceed to overwrite operation or not
           /*
@@ -2497,6 +2501,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    * @param {Event} e - click the Okay button
    * */
+
   _deleteFileWithCheck(e) {
     const files = this.deleteFileDialog.files;
     if (files.length > 0) {
@@ -2590,7 +2595,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    */
   _initializeSharingFolderDialogLayout() {
-    const emailInputList= this.shadowRoot.querySelectorAll('#share-folder-dialog mwc-textfield.share-email');
+    const emailInputList = this.shadowRoot.querySelectorAll('#share-folder-dialog mwc-textfield.share-email');
     if (emailInputList.length > 1) {
       Array.prototype.forEach.call(emailInputList, (elem, index) => {
         if (elem.id !== 'first-email') {
@@ -2621,7 +2626,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     globalThis.backendaiclient.vfolder.list_invitees(vfolder_id)
       .then((res) => {
         this.invitees = res.shared;
-        this.openDialog('modify-permission-dialog');
+        this.shadowRoot.querySelector('#modify-permission-dialog').requestUpdate().then(()=>{
+          this.openDialog('modify-permission-dialog');
+        });
       });
   }
 
