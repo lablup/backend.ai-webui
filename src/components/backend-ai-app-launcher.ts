@@ -205,6 +205,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           padding: 0px 3px;
           display: inline-block;
         }
+        
+        @media screen and (max-width: 810px) {
+          #terminal-guide {
+            --component-width: calc(100% - 50px);
+          }
+        }
       `];
   }
 
