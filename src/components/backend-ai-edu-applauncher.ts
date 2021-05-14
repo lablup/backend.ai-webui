@@ -2,7 +2,7 @@
 @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
+import {get as _text} from 'lit-translate';
 import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -68,6 +68,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
   detectIE() {
     try {
+      // @ts-ignore
       const isIE = /* @cc_on!@*/false || !!document.documentMode;
       if (! isIE) {
         // Fallback to UserAgent detection for IE
@@ -85,6 +86,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     } catch (e) {
       const error = e.toString();
       console.log(error);
+      return false;
     }
   }
 
