@@ -378,7 +378,7 @@ export default class BackendAISummary extends BackendAIPage {
       if (this.active && !refreshOnly) {
         setTimeout(() => {
           this._refreshInvitations();
-        }, 10000);
+        }, 60000);
       }
     });
   }
