@@ -105,6 +105,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) _boundPermissionRenderer = Object();
   @property({type: Object}) _boundCloneableRenderer = Object();
   @property({type: Boolean}) _uploadFlag = true;
+  @property({type: Boolean}) _folderRefreshing = false;
+  @property({type: Number}) lastQueryTime = 0;
   @property({type: Boolean}) isWritable = false;
   @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
   @property({type: Number}) _maxFileUploadSize = -1;
@@ -523,7 +525,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           ` : html``}
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button unelevated class="fullwidth bg-blue button" type="submit" icon="edit" id="update-button" outlined @click="${() => this._updateFolder()}">
+          <mwc-button class="fullwidth button" type="submit" icon="edit" id="update-button" outlined @click="${() => this._updateFolder()}">
             ${_t('data.Update')}
           </mwc-button>
         </div>
@@ -928,11 +930,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     } else {
       this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 185px)';
     }
-    document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList());
+    document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList(true, 'group-changed'));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({'detail': {'mini-ui': globalThis.mini_ui}});
     // monkeypatch for height calculation.
     this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '56px';
+    this._triggerFolderListChanged();
   }
 
   _modifySharedFolderPermissions() {
@@ -1302,20 +1305,29 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   refreshFolderList() {
     this._triggerFolderListChanged();
-    return this._refreshFolderList();
+    return this._refreshFolderList(true, 'refreshFolderList');
   }
 
   /**
    * If both refreshOnly and activeConnected are true, refresh folderlists.
    *
    * @param {boolean} refreshOnly
+   * @param {string} source
    */
-  _refreshFolderList(refreshOnly = false) {
+  _refreshFolderList(refreshOnly = false, source = 'unknown') {
+    // Skip if it is already refreshing OR is not on the page.
+    if (this._folderRefreshing || !this.active) {
+      return;
+    }
+    if (Date.now() - this.lastQueryTime < 1000) {
+      return;
+    }
+    this._folderRefreshing = true;
+    this.lastQueryTime = Date.now();
     this.spinner.show();
     let groupId = null;
     groupId = globalThis.backendaiclient.current_group_id();
-    const l = globalThis.backendaiclient.vfolder.list(groupId);
-    l.then((value) => {
+    globalThis.backendaiclient.vfolder.list(groupId).then((value) => {
       this.spinner.hide();
       const folders = value.filter((item) => {
         if (this.storageType === 'general' && !item.name.startsWith('.')) {
@@ -1325,13 +1337,16 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
       });
       this.folders = folders;
+      this._folderRefreshing = false;
+    }).catch(()=>{
+      this._folderRefreshing = false;
     });
     globalThis.backendaiclient.vfolder.list_hosts().then((res) => {
-      // refresh folder list every 10sec
+      // refresh folder list every 30sec
       if (this.active && !refreshOnly) {
         setTimeout(() => {
-          this._refreshFolderList();
-        }, 10000);
+          this._refreshFolderList(false, 'loop');
+        }, 30000);
       }
     });
   }
@@ -1369,7 +1384,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
         this._checkFilebrowserSupported();
-        this._refreshFolderList();
+        this._refreshFolderList(false, 'viewStatechanged');
       }, true);
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
@@ -1378,19 +1393,8 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
       this._checkFilebrowserSupported();
-      this._refreshFolderList();
+      this._refreshFolderList(false, 'viewStatechanged');
     }
-  }
-
-  async _addFolderDialog() {
-    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
-    this.vhosts = vhost_info.allowed;
-    this.vhost = vhost_info.default;
-    if ((this.allowed_folder_type as string[]).includes('group')) {
-      const group_info = await globalThis.backendaiclient.group.list();
-      this.allowedGroups = group_info.groups;
-    }
-    this.openDialog('add-folder-dialog');
   }
 
   _folderExplorerDialog() {
@@ -1577,7 +1581,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     job.then((value) => {
       this.notification.text = _text('data.folders.FolderUpdated');
       this.notification.show();
-      this._refreshFolderList();
+      this._refreshFolderList(true, 'updateFolder');
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
@@ -1599,7 +1603,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   async _deleteFolderDialog(e) {
     this.deleteFolderName = this._getControlName(e);
-    //const deleteFolderId = this._getControlId(e);
+    // const deleteFolderId = this._getControlId(e);
     this.shadowRoot.querySelector('#delete-folder-name').value = '';
     // let isDelible = await this._checkVfolderMounted(deleteFolderId);
     // if (isDelible) {
