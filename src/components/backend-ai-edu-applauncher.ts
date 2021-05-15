@@ -112,6 +112,14 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   }
 
   async _token_login() {
+    // If token is delivered as a querystring, just save it as cookie.
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const sToken = urlParams.get('sToken') || null;
+    if (sToken !== null) {
+      document.cookie = `sToken=${sToken}; expires=Session; path=/`
+    }
+
     try {
       const alreadyLoggedIn = await globalThis.backendaiclient.check_login();
       if (!alreadyLoggedIn) {
