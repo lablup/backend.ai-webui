@@ -1081,8 +1081,8 @@
     "CreatingComputeSession": "연산 세션 생성 중 ...",
     "SessionStillPreparing": "연산 세션이 계속 준비중입니다. 잠시 후 리로드 하십시오.",
     "ComputeSessionPrepared": "연산 세션이 준비되었습니다",
-    "sessionStatusIs": "__NOT_TRANSLATED__",
-    "FoudnExistingComputeSession": "__NOT_TRANSLATED__"
+    "sessionStatusIs": "세션 상태는 ",
+    "FoundExistingComputeSession": "실행 중인 계산 세션이 발견되었습니다."
   },
   "error": {
     "UpdateError": "업데이트 에러",

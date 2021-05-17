@@ -1081,8 +1081,8 @@
     "CreatingComputeSession": "Creating compute session ...",
     "SessionStillPreparing": "Session is still in preparing. Reload after a while",
     "ComputeSessionPrepared": "Compute session prepared",
-    "sessionStatusIs": "sessionStatusIs",
-    "FoudnExistingComputeSession": "FoudnExistingComputeSession"
+    "sessionStatusIs": "Session status is",
+    "FoundExistingComputeSession": "Found existing compute session"
   },
   "error": {
     "UpdateError": "Update error",
