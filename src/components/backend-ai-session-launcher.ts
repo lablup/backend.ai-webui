@@ -2474,7 +2474,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <span
           slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
         <form slot="content" id="launch-session-form" class="centered">
-          <div class="vertical center layout" style="padding-top:15px;position:relative;z-index:11;">
+          <div class="vertical center layout" style="padding-top:15px;position:relative;z-index:12;">
             <mwc-select id="environment" icon="code" label="${_t('session.launcher.Environments')}" fullwidth required
                         value="${this.default_language}">
               <mwc-list-item selected graphic="icon" style="display:none!important;">

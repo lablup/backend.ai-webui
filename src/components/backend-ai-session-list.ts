@@ -407,7 +407,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     status = 'RUNNING';
     switch (this.condition) {
     case 'running':
-      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'PREPARING', 'PULLING'];
+      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
       break;
     case 'finished':
       status = ['TERMINATED', 'CANCELLED']; // TERMINATED, CANCELLED
@@ -417,7 +417,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
       break;
     default:
-      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'PREPARING', 'PULLING'];
+      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
     }
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
@@ -1648,32 +1648,39 @@ export default class BackendAiSessionList extends BackendAIPage {
                 style="border-style: none;display: none;width: 100%;"></iframe>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminate-session-dialog" fixed backdrop>
-         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
-         <div slot="content">
-            <p>${_t('usersettings.SessionTerminationDialog')}</p>
-         </div>
-         <div slot="footer" class="horizontal end-justified flex layout">
-           ${globalThis.backendaiclient.is_admin ? html`
-            <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">${_t('button.ForceTerminate')}</wl-button>
-            <span class="flex"></span>`:html``}
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}</wl-button>
-            <wl-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</wl-button>
-         </div>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
+        <div slot="content">
+          <p>${_t('usersettings.SessionTerminationDialog')}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          ${this.is_admin ? html`
+            <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">
+              ${_t('button.ForceTerminate')}
+            </wl-button>
+            <span class="flex"></span>` : html``}
+          <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
+          </wl-button>
+          <wl-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</wl-button>
+        </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
-         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
-         <div slot="content">
-            <p>${_t('usersettings.SessionTerminationDialog')}</p>
-         </div>
-         <div slot="footer" class="horizontal end-justified flex layout">
-           ${globalThis.backendaiclient.is_admin ? html`
-            <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}</wl-button>
-            <span class="flex"></span>`:html``}
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}</wl-button>
-            <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}</wl-button>
-         </div>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
+        <div slot="content">
+          <p>${_t('usersettings.SessionTerminationDialog')}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          ${this.is_admin ? html`
+            <wl-button class="warning fg red" inverted flat
+                       @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}
+            </wl-button>
+            <span class="flex"></span>` : html``}
+          <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
+          </wl-button>
+          <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}
+          </wl-button>
+        </div>
       </backend-ai-dialog>
-      `;
+    `;
   }
 
   _updateSessionPage(e) {

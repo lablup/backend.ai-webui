@@ -1,7 +1,33 @@
 # Changelog
 
-## v21.03.3 (30/04/2021)
+## v21.03.4 (17/05/2021)
 
+#### Enhancements:
+
+- [**enhancement**][**minor**] Display SCHEDULED session status [#977](https://github.com/lablup/backend.ai-webui/issues/977)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Support force terminating 'PREPARING', 'TERMINATING' and 'PENDING' session on GUI [#948](https://github.com/lablup/backend.ai-webui/issues/948)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**minor**] Language of "Project" on top bar does not live change [#1003](https://github.com/lablup/backend.ai-webui/issues/1003)
+- [**UI / UX**][**blocker**][**bug**][**minor**] Session list is not refreshing at the first visit [#1002](https://github.com/lablup/backend.ai-webui/issues/1002)
+- [**UI / UX**][**blocker**][**bug**][**urgency**] Environment dropdown overlaps when there are more than eight options. [#999](https://github.com/lablup/backend.ai-webui/issues/999)
+- [**UI / UX**][**bug**][**easy**][**good first issue**] login panel height gets jagged when the user inputs invalid account. [#995](https://github.com/lablup/backend.ai-webui/issues/995)
+- [**UI / UX**][**blocker**][**bug**][**enterprise**][**library / SDK**][**major**] Reduce folder refresh calls to keep user query limit [#990](https://github.com/lablup/backend.ai-webui/issues/990)
+- [**UI / UX**][**bug**][**good first issue**] the Web Terminal guide dialog is not changed according to the window size [#988](https://github.com/lablup/backend.ai-webui/issues/988)
+- [**UI / UX**][**bug**][**good first issue**] not being able to check the contents of the right end of the screen when writing contents beyond the screen width. [#983](https://github.com/lablup/backend.ai-webui/issues/983)
+- [**bug**][**easy**][**minor**] we cannot enable auto logout feature in Backend.AI Cloud [#978](https://github.com/lablup/backend.ai-webui/issues/978)
+- [**UI / UX**][**bug**][**library / SDK**][**urgency**] creation new resource group is failed [#975](https://github.com/lablup/backend.ai-webui/issues/975)
+- [**blocker**][**bug**][**urgency**] 500 error during session creation [#968](https://github.com/lablup/backend.ai-webui/issues/968)
+- [**bug**][**easy**][**good first issue**] Learn more link in Web terminal guide is broken. [#961](https://github.com/lablup/backend.ai-webui/issues/961)
+- [**UI / UX**][**bug**][**easy**][**good first issue**] update operation in username does not reflect. [#957](https://github.com/lablup/backend.ai-webui/issues/957)
+
+#### UI / UX:
+
+- [**UI / UX**][**good first issue**] Default icon for non-recognized service apps [#985](https://github.com/lablup/backend.ai-webui/issues/985)
+
+
+## v21.03.3 (30/04/2021)
 
 #### Enhancements:
 

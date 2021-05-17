@@ -239,8 +239,9 @@ export default class BackendAISummary extends BackendAIPage {
           width: 90px;
         }
 
-        .upper-space {
+        .upper-lower-space {
           padding-top: 20px;
+          padding-bottom: 10px;
         }
 
         i.larger {
@@ -544,7 +545,7 @@ export default class BackendAISummary extends BackendAIPage {
                   <div class="line"></div>
                   <div class="horizontal layout flex wrap center-justified">
                     <lablup-activity-panel class="footer-menu" noheader autowidth style="display: none;">
-                      <div slot="message" class="vertical layout center start-justified flex upper-space">
+                      <div slot="message" class="vertical layout center start-justified flex upper-lower-space">
                         <h3 style="margin-top:0px;">${_t('summary.CurrentVersion')}</h3>
                         ${this.is_superadmin ? html`
                           <div class="layout vertical center center-justified flex" style="margin-bottom:5px;">
@@ -565,7 +566,7 @@ export default class BackendAISummary extends BackendAIPage {
                       </div>
                     </lablup-activity-panel>
                     <lablup-activity-panel class="footer-menu" noheader autowidth>
-                      <div slot="message" class="layout horizontal center center-justified flex upper-space">
+                      <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
                           <a href="/environment">
                             <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
                               <i class="fas fa-sync-alt larger left-end-icon"></i>
@@ -577,7 +578,7 @@ export default class BackendAISummary extends BackendAIPage {
                     </lablup-activity-panel>
                     ${this.is_superadmin ? html`
                     <lablup-activity-panel class="footer-menu" noheader autowidth>
-                    <div slot="message" class="layout horizontal center center-justified flex upper-space">
+                    <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
                       <a href="/agent">
                         <div class="layout horizontal center center-justified flex" style="font-size:14px;">
                           <i class="fas fa-box larger left-end-icon"></i>
@@ -588,7 +589,7 @@ export default class BackendAISummary extends BackendAIPage {
                     </div>
                   </lablup-activity-panel>
                   <lablup-activity-panel class="footer-menu" noheader autowidth>
-                    <div slot="message" class="layout horizontal center center-justified flex upper-space">
+                    <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
                         <a href="/settings">
                           <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
                             <i class="fas fa-desktop larger left-end-icon"></i>
@@ -600,7 +601,7 @@ export default class BackendAISummary extends BackendAIPage {
                   </lablup-activity-panel>` : html``}
 
                     <lablup-activity-panel class="footer-menu" noheader autowidth>
-                      <div slot="message" class="layout horizontal center center-justified flex upper-space">
+                      <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
                           <a href="/maintenance">
                             <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
                               <i class="fas fa-tools larger left-end-icon"></i>

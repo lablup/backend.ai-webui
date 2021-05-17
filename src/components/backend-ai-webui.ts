@@ -582,9 +582,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     }
     const div = document.createElement('div') as any;
     div.className = 'horizontal center center-justified layout';
-    const p = document.createElement('p') as any;
-    p.setAttribute('style', 'font-size:12px;color:#8c8484;');
-    p.innerHTML = `${_text('webui.menu.Project')}`;
     const select = document.createElement('mwc-select') as any;
     select.id = 'group-select';
     select.value = this.current_group;
@@ -608,7 +605,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       select.appendChild(opt);
     });
     // select.updateOptions();
-    div.appendChild(p);
     div.appendChild(select);
     groupSelectionBox.appendChild(div);
   }
@@ -1409,9 +1405,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <p>${_t('webui.menu.WelcomeMessage')}</p>
                   <p>&nbsp;${this._getUsername()}${_t('webui.menu.WelcomeMessage_2')}</p>
                 </div>
-                <div slot="actionItems" style="margin:0px;">
+                <div slot="actionItems" style="margin:0;">
                   <div class="horizontal flex center layout">
-                    <div id="group-select-box" style="height:48px;"></div>
+                    <div style="height:48px;">
+                      <div class="horizontal center center-justified layout">
+                        <p style="font-size:12px;color:#8c8484;">${_t('webui.menu.Project')}</p>
+                        <div id="group-select-box"></div>
+                      </div>
+                    </div>
                     <div class="vertical-line" style="height:35px;"></div>
                     <div class="horizontal center layout">
                       <div class="vertical layout center" style="position:relative;padding-top:10px;">

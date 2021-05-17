@@ -938,7 +938,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._refreshFolderUI({'detail': {'mini-ui': globalThis.mini_ui}});
     // monkeypatch for height calculation.
     this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '56px';
-    this._triggerFolderListChanged();
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._triggerFolderListChanged();
+      }, true);
+    } else { // already connected
+      this._triggerFolderListChanged();
+    }
   }
 
   _modifySharedFolderPermissions() {
