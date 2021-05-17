@@ -316,7 +316,7 @@ export default class BackendAiSessionView extends BackendAIPage {
     const exportList: any = [];
 
     // Parameters
-    let status: any = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'PREPARING', 'PULLING', 'TERMINATED', 'CANCELLED', 'ERROR'];
+    let status: any = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING', 'TERMINATED', 'CANCELLED', 'ERROR'];
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }

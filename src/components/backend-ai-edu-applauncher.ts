@@ -163,7 +163,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     const fields = [
       'session_id', 'name', 'access_key', 'status', 'status_info', 'service_ports', 'mounts',
     ];
-    const statuses = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'PREPARING', 'PULLING'].join(',');
+    const statuses = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'].join(',');
     const accessKey = globalThis.backendaiclient._config.accessKey;
     // NOTE: There is no way to change the default group.
     //       This API should be used when there is only one group, 'default'.
