@@ -112,7 +112,7 @@ export default class BackendAiDialog extends LitElement {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #DDD;
+          border-bottom: 1px solid #DDD !important;
         }
       `];
   }

@@ -222,7 +222,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         } else {
           sessionId = null;
         }
-        appLauncher.indicator.set(50, _text('eduapi.FoudnExistingComputeSession'));
+        appLauncher.indicator.set(50, _text('eduapi.FoundExistingComputeSession'));
       } else {
         // this.notification.text = `You have existing session can launch ${requestedApp}`;
         // this.notification.show(true);
