@@ -135,13 +135,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           width: 100%;
         }
 
-        wl-textfield {
-          width: 100%;
-          --input-state-color-invalid: red;
-          --input-padding-top-bottom: 0px;
-          --input-font-family: Roboto, Noto, sans-serif;
-        }
-
         wl-checkbox {
           --checkbox-size: 10px;
           --checkbox-border-radius: 2px;
@@ -155,6 +148,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-typography-font-family: var(--general-font-family);
+        }
+
+        mwc-textfield.resource-input {
+          width: 5rem;
         }
 
         mwc-button, mwc-button[unelevated] {
@@ -237,38 +234,38 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div slot="content">
           <mwc-textfield id="id_new_policy_name" label="${_t('resourcePolicy.PolicyName')}" disabled></mwc-textfield>
           <h4>${_t('resourcePolicy.ResourcePolicy')}</h4>
-          <div class="horizontal center layout distancing">
-            <div class="vertical layout" style="margin: 0 10px 0 0;">
+          <div class="horizontal justified layout distancing">
+            <div class="vertical layout">
               <wl-label>CPU</wl-label>
-              <wl-textfield class="discrete" id="cpu-resource" type="number" max="512"
-                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <mwc-textfield class="discrete resource-input" id="cpu-resource" type="number" min="0" max="512"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                   ${_t('resourcePolicy.Unlimited')}
                 </wl-label>
             </div>
-            <div class="vertical layout" style="margin: 0px 10px 0px 10px;">
+            <div class="vertical layout">
               <wl-label>RAM(GB)</wl-label>
-              <wl-textfield id="ram-resource" type="number" max="1024"
-                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max="1024" step="0.01"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                 ${_t('resourcePolicy.Unlimited')}
               </wl-label>
             </div>
-            <div class="vertical layout" style="margin: 0px 10px 0px 10px;">
+            <div class="vertical layout">
               <wl-label>GPU</wl-label>
-              <wl-textfield id="gpu-resource" type="number" max="64"
-                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <mwc-textfield class="discrete resource-input" id="gpu-resource" type="number" min="0" max="64"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                 ${_t('resourcePolicy.Unlimited')}
               </wl-label>
             </div>
-            <div class="vertical layout" style="margin: 0px 0px 0px 10px;">
+            <div class="vertical layout">
               <wl-label>fGPU</wl-label>
-              <wl-textfield id="fgpu-resource" type="number" max="256"
-                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <mwc-textfield class="resource-input" id="fgpu-resource" type="number" min="0" max="256" step="0.1"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                 ${_t('resourcePolicy.Unlimited')}
@@ -276,20 +273,20 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             </div>
           </div>
           <h4>${_t('resourcePolicy.Sessions')}</h4>
-          <div class="horizontal center layout distancing">
+          <div class="horizontal justified layout distancing">
             <div class="vertical left layout">
                 <wl-label>${_t('resourcePolicy.ContainerPerSession')}</wl-label>
-                <wl-textfield class="discrete" id="container-per-session-limit" type="number" max="100"
-                    @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <mwc-textfield class="discrete" id="container-per-session-limit" type="number" min="0" max="100"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                   ${_t('resourcePolicy.Unlimited')}
                 </wl-label>
               </div>
-              <div class="vertical left layout" style="margin: 0px 15px;">
+              <div class="vertical left layout">
                 <wl-label>${_t('resourcePolicy.IdleTimeoutSec')}</wl-label>
-                <wl-textfield class="discrete" id="idle-timeout" type="number" max="15552000"
-                    @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <mwc-textfield class="discrete" id="idle-timeout" type="number" min="0" max="15552000"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                   ${_t('resourcePolicy.Unlimited')}
@@ -297,8 +294,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               </div>
               <div class="vertical left layout">
                   <wl-label>${_t('resourcePolicy.ConcurrentJobs')}</wl-label>
-                  <wl-textfield class="discrete" id="concurrency-limit" type="number"  max="100"
-                      @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                  <mwc-textfield class="discrete" id="concurrency-limit" type="number" min="0" max="100"
+                      @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                    ${_t('resourcePolicy.Unlimited')}
@@ -318,20 +315,20 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                 </mwc-list-item>
               `)}
             </mwc-select>
-            <div class="horizontal layout">
-              <div class="vertical layout" style="margin-right: 10px;">
+            <div class="horizontal layout justified" style="width:100%;">
+              <div class="vertical layout flex">
                 <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GB)</wl-label>
-                <wl-textfield id="vfolder-capacity-limit" type="number" max="1024"
-                    @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <mwc-textfield class="discrete" id="vfolder-capacity-limit" type="number" min="0" max="1024"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
                   ${_t('resourcePolicy.Unlimited')}
                 </wl-label>
               </div>
-              <div class="vertical layout" style="margin-left: 10px;">
+              <div class="vertical layout flex">
                 <wl-label class="folders">${_t('credential.Max#')}</wl-label>
-                <wl-textfield id="vfolder-count-limit" type="number" max="50"
-                    @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <mwc-textfield class="discrete" id="vfolder-count-limit" type="number" min="0" max="50"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               </div>
             </div>
           </div>
@@ -498,14 +495,14 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
     this.current_policy_name = policyName;
-    this.cpu_resource['value'] = resourcePolicy.total_resource_slots['cpu'];
-    this.ram_resource['value'] = resourcePolicy.total_resource_slots['mem'];
-    this.gpu_resource['value'] = resourcePolicy.total_resource_slots['cuda_device'];
-    this.fgpu_resource['value'] = resourcePolicy.total_resource_slots['cuda_shares'];
-    this.concurrency_limit['value'] = resourcePolicy.max_concurrent_sessions;
-    this.idle_timeout['value'] = resourcePolicy.idle_timeout;
-    this.container_per_session_limit['value'] = resourcePolicy.max_containers_per_session;
-    this.vfolder_capacity['value'] = resourcePolicy.max_vfolder_size;
+    this.cpu_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cpu']);
+    this.ram_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['mem']);
+    this.gpu_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cuda_device']);
+    this.fgpu_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cuda_shares']);
+    this.concurrency_limit['value'] = this._updateUnlimitedValue(resourcePolicy.max_concurrent_sessions);
+    this.idle_timeout['value'] = this._updateUnlimitedValue(resourcePolicy.idle_timeout);
+    this.container_per_session_limit['value'] = this._updateUnlimitedValue(resourcePolicy.max_containers_per_session);
+    this.vfolder_capacity['value'] = this._updateUnlimitedValue(resourcePolicy.max_vfolder_size);
     this.allowed_vfolder_hosts = resourcePolicy.allowed_vfolder_hosts;
 
     this._updateInputStatus(this.cpu_resource);
@@ -685,29 +682,37 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       });
   }
 
+  /**
+   * Set a TextEl value according to toggle checkbox checked state.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _toggleCheckbox(e) {
     const checkEl = e.target;
     const checked = checkEl.checked;
-    const wlTextEl = checkEl.closest('div').querySelector('wl-textfield');
-    wlTextEl.disabled = checked;
-    if (!wlTextEl.disabled) {
-      if (wlTextEl.value === '') {
-        wlTextEl.value = 0;
+    const TextEl = checkEl.closest('div').querySelector('mwc-textfield');
+    TextEl.disabled = checked;
+    if (!TextEl.disabled) {
+      if (TextEl.value === '') {
+        TextEl.value = 0;
       }
     }
   }
 
+  /**
+   * Check validation of resource input.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _validateResourceInput(e) {
-    const textfield = e.target.closest('wl-textfield');
-    const checkbox_el = textfield.closest('div').querySelector('.unlimited');
-    let checkbox;
-    if (checkbox_el) {
-      checkbox = checkbox_el.querySelector('wl-checkbox');
-    } else {
-      checkbox = null;
-    }
+    const textfield = e.target.closest('mwc-textfield');
+    const checkbox_el = textfield.closest('div').querySelector('wl-label.unlimited');
+    const checkbox = checkbox_el ? checkbox_el.querySelector('wl-checkbox') : null;
+    const countDecimals = (value: number) => {
+      return value % 1 ? value.toString().split('.')[1].length : 0;
+    };
 
-    if (textfield.className === 'discrete' || !textfield.valid) {
+    if (textfield.classList.contains('discrete')) {
       textfield.value = Math.round(textfield.value);
     }
 
@@ -715,31 +720,26 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       // concurrency job and container-per-session limit must be upper than 0.
       textfield.value = ((textfield.id === 'concurrency-limit') || (textfield.id === 'container-per-session-limit')) ? 1 : 0;
     }
-    if (textfield.min && textfield.value < textfield.min) {
-      textfield.value = textfield.min;
-    }
-    if (textfield.max && textfield.value > textfield.max) {
-      textfield.value = textfield.max;
-    }
 
-    if (textfield.value === '') {
-      try {
-        if (!checkbox || !checkbox['checked']) {
-          textfield['required'] = true;
-          textfield.focus();
-          throw new Error(_text('resourcePolicy.CannotCreateResourcePolicy'));
-        } else {
-          textfield['required'] = false;
-          textfield.value = '';
-        }
-      } catch (err) {
-        this.notification.text = err.message;
-        this.notification.show();
-      }
+    if (!textfield.valid) {
+      const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
+      textfield.value = (decimal_point > 0) ? parseFloat(textfield.value).toFixed(decimal_point) : Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
+    }
+    // automatically check when textfield is min
+    if (checkbox) {
+      textfield.disabled = checkbox.checked = (textfield.value == parseFloat(textfield.min));
     }
   }
 
+  _updateUnlimitedValue(value) {
+    return ['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value) ? '' : value;
+  }
 
+  /**
+   * Check validation of user input.
+   *
+   * @param {object} resource
+   */
   _validateUserInput(resource) {
     if (resource.disabled) {
       resource.value = '';

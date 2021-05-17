@@ -80,6 +80,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Object}) _lists = Object();
   @property({type: Boolean}) _vfolderInnatePermissionSupport = false;
   @property({type: Object}) storageInfo = Object();
+  @property({type: String}) _activeTab = 'general';
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
@@ -311,10 +312,10 @@ export default class BackendAIData extends BackendAIPage {
           <div slot="message">
             <h3 class="horizontal center flex layout tab">
               <mwc-tab-bar>
-                <mwc-tab title="general-folder" label="${_t('data.Folders')}"
+                <mwc-tab title="general" label="${_t('data.Folders')}"
                     @click="${(e) => this._showTab(e.target)}">
                 </mwc-tab>
-                <mwc-tab title="automount-folder" label="${_t('data.AutomountFolders')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                <mwc-tab title="automount" label="${_t('data.AutomountFolders')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               </mwc-tab-bar>
               <span class="flex"></span>
               <mwc-button dense raised id="add-folder" icon="add" @click="${() => this._addFolderDialog()}" style="margin-right:15px;">
@@ -322,13 +323,13 @@ export default class BackendAIData extends BackendAIPage {
               </mwc-button>
             </h3>
             <div id="general-folder-lists" class="tab-content">
-              <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true}"></backend-ai-storage-list>
+              <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true && this._activeTab === 'general'}"></backend-ai-storage-list>
             </div>
             <div id="automount-folder-lists" class="tab-content" style="display:none;">
               <div class="horizontal layout">
                 <p>${_t('data.DialogFolderStartingWithDotAutomount')}</p>
               </div>
-              <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true}"></backend-ai-storage-list>
+              <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true && this._activeTab === 'automount'}"></backend-ai-storage-list>
             </div>
           </div>
         </lablup-activity-panel>
@@ -385,13 +386,13 @@ export default class BackendAIData extends BackendAIPage {
           ` : html``}
           ${this.enableStorageProxy ?
     html`
-          <div class="horizontal layout flex wrap center justified">
+          <!--<div class="horizontal layout flex wrap center justified">
               <p style="color:rgba(0, 0, 0, 0.6);">
                 ${_t('data.folders.Cloneable')}
               </p>
               <mwc-switch id="add-folder-cloneable" style="margin-right:10px;">
               </mwc-switch>
-            </div>
+            </div>-->
             ` : html``}
           <div style="font-size:11px;">
             ${_t('data.DialogFolderStartingWithDotAutomount')}
@@ -638,11 +639,8 @@ export default class BackendAIData extends BackendAIPage {
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.title + '-lists').style.display = 'block';
-    for (let x = 0; x < this._lists.length; x++) {
-      this._lists[x].removeAttribute('active');
-    }
-    this.shadowRoot.querySelector('#' + tab.title + '-storage').setAttribute('active', true);
+    this.shadowRoot.querySelector('#' + tab.title + '-folder-lists').style.display = 'block';
+    this._activeTab = tab.title;
   }
 
   /**

@@ -208,6 +208,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           window.setTimeout(() => {
             changePasswordView.open(this.loginPanel.api_endpoint);
           }, 1000);
+        } else if (this._page === 'edu-applauncher') {
+          const eduApplauncherView = this.shadowRoot.querySelector('backend-ai-edu-applauncher');
+          window.setTimeout(() => {
+            eduApplauncherView.launch(this.loginPanel.api_endpoint);
+          }, 1000);
         } else {
           const tabcount = new TabCount();
           const isPageReloaded = (
@@ -296,9 +301,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.connection_server = config.general.connectionServer;
       // console.log(this.connection_server);
     }
-    if (typeof config.general !== 'undefined' && 'autoLogout' in config.general) {
-      this.auto_logout = config.general.autoLogout;
-    }
+    this.auto_logout = (typeof config.general !== 'undefined' && 'autoLogout' in config.general) ? config.general.autoLogout : globalThis.backendaioptions.get('auto_logout', false);
     if (typeof config.license !== 'undefined' && 'edition' in config.license) {
       this.edition = config.license.edition;
     }
@@ -734,7 +737,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     // if user input in full name is not null and not same as the original full name, then it updates.
     if (globalThis.backendaiclient.supports('change-user-name')) {
       if (newFullname && (newFullname !== this.full_name)) {
-        globalThis.backendaiclient.user.update(this.user_id, {'full_name': newFullname}).then((resp) => {
+        globalThis.backendaiclient.update_full_name(this.user_id, newFullname).then((resp) => {
           this.notification.text = _text('webui.menu.FullnameUpdated');
           this.notification.show();
           this.full_name = globalThis.backendaiclient.full_name = newFullname;
@@ -1358,7 +1361,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">21.03.3.210419</small>
+                <small class="sidebar-footer" style="font-size:9px;">21.03.3.210510</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1382,7 +1385,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">21.03.3.210419</small>
+              <small class="sidebar-footer" style="font-size:9px;">21.03.3.210510</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>

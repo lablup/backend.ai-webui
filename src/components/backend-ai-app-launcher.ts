@@ -206,6 +206,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           padding: 0px 3px;
           display: inline-block;
         }
+        
+        @media screen and (max-width: 810px) {
+          #terminal-guide {
+            --component-width: calc(100% - 50px);
+          }
+        }
       `];
   }
 
@@ -376,7 +382,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           'title': elm,
           'category': '99.',
           'redirect': '',
-          'src': ''
+          'src': './resources/icons/default_app.svg'
         });
       }
     });
@@ -525,7 +531,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const rqst_proxy = {
       method: 'GET',
       app: app,
-      uri: uri
+      uri: uri,
+      credentials: 'include',
+      mode: 'cors'
     };
     return await this.sendRequest(rqst_proxy);
   }
@@ -918,7 +926,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </span>
           <div class="flex layout center-justified vertical center">
             <p>${_text('webTerminalUsageGuide.CopyGuideFour')}</p>
-            <a href="https://console.docs.backend.ai/${lang}/latest/session_use/session_use.html#advanced-web-terminal-usage"
+            <a href="https://console.docs.backend.ai/${lang}/latest/sessions_all/sessions_all.html#advanced-web-terminal-usage"
                target="_blank" style="width:100%;text-align:right;">
               <p>${_text('webTerminalUsageGuide.LearnMore')}</p>
             </a>
