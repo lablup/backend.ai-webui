@@ -2,7 +2,7 @@
 @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
+import {get as _text} from 'lit-translate';
 import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -68,7 +68,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
   detectIE() {
     try {
-      var isIE = /*@cc_on!@*/false || !!document.documentMode;
+      // @ts-ignore
+      const isIE = /* @cc_on!@*/false || !!document.documentMode;
       if (! isIE) {
         // Fallback to UserAgent detection for IE
         if (
@@ -82,11 +83,12 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         }
       }
       return true;
-    } catch(e) {
-      var error = e.toString();
+    } catch (e) {
+      const error = e.toString();
       console.log(error);
+      return false;
     }
-  };
+  }
 
   /**
    * Initialize the client.
@@ -110,6 +112,14 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   }
 
   async _token_login() {
+    // If token is delivered as a querystring, just save it as cookie.
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const sToken = urlParams.get('sToken') || null;
+    if (sToken !== null) {
+      document.cookie = `sToken=${sToken}; expires=Session; path=/`
+    }
+
     try {
       const alreadyLoggedIn = await globalThis.backendaiclient.check_login();
       if (!alreadyLoggedIn) {
@@ -212,7 +222,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         } else {
           sessionId = null;
         }
-        appLauncher.indicator.set(50, _text('eduapi.FoudnExistingComputeSession'));
+        appLauncher.indicator.set(50, _text('eduapi.FoundExistingComputeSession'));
       } else {
         // this.notification.text = `You have existing session can launch ${requestedApp}`;
         // this.notification.show(true);

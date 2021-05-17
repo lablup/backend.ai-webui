@@ -7,6 +7,7 @@
     "eslint:recommended",
     "google",
     "plugin:wc/recommended",
+    "plugin:lit-a11y/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:wc/best-practice"
   ],
@@ -21,6 +22,7 @@
   },
   "plugins": [
     "@typescript-eslint",
+    "lit-a11y",
     "wc"
   ],
   "rules": {

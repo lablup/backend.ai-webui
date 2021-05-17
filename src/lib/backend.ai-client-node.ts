@@ -849,7 +849,7 @@ class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  async createSessionFromTemplate(templateId, image = null, sessionName = null, resources = {}, timeout: number = 0) {
+  async createSessionFromTemplate(templateId, image = null, sessionName: undefined | string | null = null, resources = {}, timeout: number = 0) {
     if (typeof sessionName === 'undefined' || sessionName === null)
       sessionName = this.generateSessionId();
     const params = {template_id: templateId};
@@ -3271,7 +3271,7 @@ class ScalingGroup {
    */
   async create(name, description = "") {
     const input = {
-      description,
+      description: description,
       is_active: true,
       driver: "static",
       scheduler: "fifo",
@@ -3279,7 +3279,7 @@ class ScalingGroup {
       scheduler_opts: "{}"
     };
     // if (this.client.is_admin === true) {
-    let q = `mutation($name: String!, $input: ScalingGroupInput!) {` +
+    let q = `mutation($name: String!, $input: CreateScalingGroupInput!) {` +
       `  create_scaling_group(name: $name, props: $input) {` +
       `    ok msg` +
       `  }` +
