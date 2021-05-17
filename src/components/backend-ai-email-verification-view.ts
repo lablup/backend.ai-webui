@@ -1,9 +1,9 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
@@ -27,20 +27,20 @@ import {
  ... content ...
  </backend-ai-email-verification-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-email-verification-view
  */
 
-@customElement("backend-ai-email-verification-view")
+@customElement('backend-ai-email-verification-view')
 export default class BackendAIEmailVerificationView extends BackendAIPage {
-  @property({type: Object}) consoleShell = Object();
+  @property({type: Object}) webUIShell = Object();
   @property({type: Object}) clientConfig = Object();
   @property({type: Object}) client = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) successDialog = Object();
   @property({type: Object}) failDialog = Object();
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -65,8 +65,8 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
    * @param {string} apiEndpoint - Endpoint api of Backend.AI manager.
    */
   _initClient(apiEndpoint: string) {
-    this.consoleShell = document.querySelector('#console-shell');
-    this.consoleShell.appBody.style.visibility = 'visible';
+    this.webUIShell = document.querySelector('#webui-shell');
+    this.webUIShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
     this.successDialog = this.shadowRoot.querySelector('#verification-success-dialog');
     this.failDialog = this.shadowRoot.querySelector('#verification-fail-dialog');
@@ -74,14 +74,14 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
     this.client = new ai.backend.Client(
       this.clientConfig,
-      'Backend.AI Console.',
+      'Backend.AI Web UI.',
     );
     this.successDialog.addEventListener('didHide', () => {
       this._redirectToLoginPage();
-      });
+    });
     this.failDialog.addEventListener('didHide', () => {
       this._redirectToLoginPage();
-      });
+    });
   }
 
   /**
@@ -138,27 +138,27 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     // language=HTML
     return html`
       <backend-ai-dialog id="verification-success-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
-        <span slot="title">${_t("signup.EmailVerified")}</span>
+        <span slot="title">${_t('signup.EmailVerified')}</span>
 
         <div slot="content">
           <div class="horizontal layout center">
-            <p style="width:256px;">${_t("signup.EmailVerifiedMessage")}</p>
+            <p style="width:256px;">${_t('signup.EmailVerifiedMessage')}</p>
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               unelevated
-              label="${_t("login.Login")}"
+              label="${_t('login.Login')}"
               @click="${() => this._redirectToLoginPage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
 
       <backend-ai-dialog id="verification-fail-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
-        <span slot="title">${_t("signup.EmailVerificationFailed")}</span>
+        <span slot="title">${_t('signup.EmailVerificationFailed')}</span>
 
         <div slot="content">
           <div class="horizontal layout center">
-            <p style="width:256px;">${_t("signup.EmailVerificationFailedMessage")}</p>
+            <p style="width:256px;">${_t('signup.EmailVerificationFailedMessage')}</p>
           </div>
           <div style="margin:20px;">
             <mwc-textfield id="email" label="${_t('data.explorer.EnterEmailAddress')}"
@@ -171,7 +171,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
-              label="${_t("signup.SendEmail")}"
+              label="${_t('signup.SendEmail')}"
               @click="${() => this.sendVerificationCode()}"></mwc-button>
         </div>
       </backend-ai-dialog>

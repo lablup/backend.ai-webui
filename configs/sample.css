@@ -1,5 +1,5 @@
 /* This example changes sidebar to blue gray tone */
-backend-ai-console {
+backend-ai-webui {
     --sidebar-background-color: #344C5A;
     --sidebar-color: #EFEFEF;
     --sidebar-topbar-background-color: #344C5A;

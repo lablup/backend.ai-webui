@@ -1,6 +1,6 @@
 /*
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import Chart from '../lib/Chart.min';
 import {css, html, LitElement, property, TemplateResult} from 'lit-element';

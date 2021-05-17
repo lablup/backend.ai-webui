@@ -1,17 +1,17 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning
-} from "../plastics/layout/iron-flex-layout-classes";
-import {BackendAiStyles} from "./backend-ai-general-styles";
+} from '../plastics/layout/iron-flex-layout-classes';
+import {BackendAiStyles} from './backend-ai-general-styles';
 
 /**
  Lablup Progress Bar
@@ -22,11 +22,11 @@ import {BackendAiStyles} from "./backend-ai-general-styles";
 
  <lablup-progress-bar></lablup-progress-bar>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element lablup-progress-bar
  */
 
-@customElement("lablup-progress-bar")
+@customElement('lablup-progress-bar')
 export default class LablupProgressBar extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) progressBar;
@@ -35,7 +35,7 @@ export default class LablupProgressBar extends LitElement {
   @property({type: Number}) progress = 0;
   @property({type: String}) description = ''
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -130,9 +130,6 @@ export default class LablupProgressBar extends LitElement {
     super.disconnectedCallback();
   }
 
-  updated(changedProperties) {
-  }
-
   attributeChangedCallback(name, oldval, newval) {
     if (name == 'progress' && newval !== null && !isNaN(newval)) {
       this.changePct(newval);
@@ -146,6 +143,6 @@ export default class LablupProgressBar extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "lablup-progressbar": LablupProgressBar;
+    'lablup-progressbar': LablupProgressBar;
   }
 }

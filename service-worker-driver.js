@@ -29,8 +29,8 @@ window['isUpdateAvailable']
     .then((isAvailable) => {
       if (isAvailable) {
         document.addEventListener('backend-ai-connected', (e) => {
-          document.querySelector('#console-shell').showUpdateNotifier();
+          document.querySelector('#webui-shell').showUpdateNotifier();
         });
-        console.log('New console available. Please reload to update.');
+        console.log('New Web UI is available. Please reload to update.');
       }
     });

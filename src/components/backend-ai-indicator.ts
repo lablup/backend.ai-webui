@@ -1,8 +1,8 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 
 import 'weightless/dialog';
 import 'weightless/banner';
@@ -12,11 +12,11 @@ import 'weightless/title';
 /**
  Backend.AI Indicator
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-indicator
  */
 
-@customElement("backend-ai-indicator")
+@customElement('backend-ai-indicator')
 export default class BackendAIIndicator extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Number}) value = 0;
@@ -29,7 +29,7 @@ export default class BackendAIIndicator extends LitElement {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       // language=CSS
       css`
@@ -92,6 +92,6 @@ export default class BackendAIIndicator extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-indicator": BackendAIIndicator;
+    'backend-ai-indicator': BackendAIIndicator;
   }
 }

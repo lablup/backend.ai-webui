@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
 import {applyMiddleware, combineReducers, compose, createStore} from 'redux';
@@ -25,7 +25,7 @@ const devCompose = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 // section of the wiki for more details:
 // https://github.com/Polymer/pwa-starter-kit/wiki/4.-Redux-and-state-management
 export const store: any = createStore(
-  state => state,
+  (state) => state,
   devCompose(
     lazyReducerEnhancer(combineReducers),
     applyMiddleware(thunk))

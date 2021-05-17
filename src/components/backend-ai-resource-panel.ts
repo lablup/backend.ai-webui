@@ -1,10 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t, get as _text, translateUnsafeHTML as _tr} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/icon';
@@ -22,12 +22,12 @@ import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
 import '../plastics/lablup-piechart/lablup-piechart';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
-import {BackendAiStyles} from "./backend-ai-general-styles";
-import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/iron-flex-layout-classes";
+import {default as PainKiller} from './backend-ai-painkiller';
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
- `<backend-ai-resource-panel>` is a Summary panel of backend.ai console.
+ `<backend-ai-resource-panel>` is a Summary panel of backend.ai web UI.
 
  Example:
  <backend-ai-resource-panel active></backend-ai-resource-panel>
@@ -36,7 +36,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from "../plastics/layout/i
  @element backend-ai-resource-panel
  */
 
-@customElement("backend-ai-resource-panel")
+@customElement('backend-ai-resource-panel')
 export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Number}) sessions = 0;
@@ -46,7 +46,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: Object}) resources = Object();
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) manager_version = '';
-  @property({type: String}) console_version = '';
+  @property({type: String}) webui_version = '';
   @property({type: Number}) cpu_total = 0;
   @property({type: Number}) cpu_used = 0;
   @property({type: String}) cpu_percent = '0';
@@ -77,7 +77,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -212,15 +212,15 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.spinner.show();
     let status = 'RUNNING';
     switch (this.condition) {
-      case 'running':
-        status = 'RUNNING';
-        break;
-      case 'finished':
-        status = 'TERMINATED';
-        break;
-      case 'archived':
-      default:
-        status = 'RUNNING';
+    case 'running':
+      status = 'RUNNING';
+      break;
+    case 'finished':
+      status = 'TERMINATED';
+      break;
+    case 'archived':
+    default:
+      status = 'RUNNING';
     }
     globalThis.backendaiclient.computeSession.total_count(status).then((response) => {
       this.spinner.hide();
@@ -230,10 +230,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       this.sessions = response.compute_session_list.total_count;
       if (this.active) {
         setTimeout(() => {
-          this._refreshSessionInformation()
+          this._refreshSessionInformation();
         }, 15000);
       }
-    }).catch(err => {
+    }).catch((err) => {
       this.spinner.hide();
       this.sessions = 0;
       this.notification.text = _text('summary.connectingToCluster');
@@ -241,7 +241,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       this.notification.show(false, err);
       if (this.active) {
         setTimeout(() => {
-          this._refreshSessionInformation()
+          this._refreshSessionInformation();
         }, 15000);
       }
     });
@@ -252,25 +252,25 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       return;
     }
     return globalThis.backendaiclient.resourcePolicy.get(globalThis.backendaiclient.resource_policy).then((response) => {
-      let rp = response.keypair_resource_policies;
+      const rp = response.keypair_resource_policies;
       this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
     });
   }
 
-  _refreshAgentInformation(status: string = 'running') {
+  _refreshAgentInformation(status = 'running') {
     if (!this.activeConnected) {
       return;
     }
     switch (this.condition) {
-      case 'running':
-        status = 'ALIVE';
-        break;
-      case 'finished':
-        status = 'TERMINATED';
-        break;
-      case 'archived':
-      default:
-        status = 'ALIVE';
+    case 'running':
+      status = 'ALIVE';
+      break;
+    case 'finished':
+      status = 'TERMINATED';
+      break;
+    case 'archived':
+    default:
+      status = 'ALIVE';
     }
     this.spinner.show();
 
@@ -280,10 +280,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       this._sync_resource_values();
       if (this.active == true) {
         setTimeout(() => {
-          this._refreshAgentInformation(status)
+          this._refreshAgentInformation(status);
         }, 15000);
       }
-    }).catch(err => {
+    }).catch((err) => {
       this.spinner.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -315,14 +315,14 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.cpu_current_usage_ratio = 0;
     this.mem_total_usage_ratio = 0;
     this.mem_current_usage_ratio = 0;
-    this.mem_current_usage_percent = "0";
+    this.mem_current_usage_percent = '0';
     this.is_admin = false;
     this.is_superadmin = false;
   }
 
   _sync_resource_values() {
     this.manager_version = globalThis.backendaiclient.managerVersion;
-    this.console_version = globalThis.packageVersion;
+    this.webui_version = globalThis.packageVersion;
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
     if (isNaN(this.resources['cuda.device'].total)) {
@@ -357,7 +357,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     if (this.mem_total_usage_ratio === 0) { // Not allocated (no session presents)
       this.mem_current_usage_percent = '0.0';
     } else {
-      this.mem_current_usage_percent = this.mem_total_usage_ratio.toFixed(2);//(this.mem_allocated / this.mem_total_usage_ratio * 100.0).toFixed(2);
+      this.mem_current_usage_percent = this.mem_total_usage_ratio.toFixed(2);// (this.mem_allocated / this.mem_total_usage_ratio * 100.0).toFixed(2);
     }
     this.agents = this.resources.agents.total;
 
@@ -372,7 +372,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       return;
     }
     this._init_resource_values();
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_superadmin = globalThis.backendaiclient.is_superadmin;
         this.is_admin = globalThis.backendaiclient.is_admin;
@@ -380,8 +380,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         if (this.activeConnected) {
           this._refreshHealthPanel();
           this.requestUpdate();
-          //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
-          //document.dispatchEvent(event);
+          // let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
+          // document.dispatchEvent(event);
         }
       }, true);
     } else {
@@ -390,8 +390,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
       this.authenticated = true;
       this._refreshHealthPanel();
       this.requestUpdate();
-      //let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
-      //document.dispatchEvent(event);
+      // let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
+      // document.dispatchEvent(event);
     }
   }
 
@@ -399,7 +399,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     return Math.ceil(value);
   }
 
-  _countObject(obj: object) {
+  _countObject(obj) {
     return Object.keys(obj).length;
   }
 
@@ -407,7 +407,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     if (num === undefined) {
       return '';
     }
-    var regexp = /\B(?=(\d{3})+(?!\d))/g;
+    const regexp = /\B(?=(\d{3})+(?!\d))/g;
     return num.toString().replace(regexp, ',');
   }
 
@@ -563,6 +563,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-resource-panel": BackendAIResourcePanel;
+    'backend-ai-resource-panel': BackendAIResourcePanel;
   }
 }

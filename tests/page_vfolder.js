@@ -5,10 +5,10 @@ import {JSAction, ShadowSelector} from './helper';
 
 class VFolderAddDialog {
   constructor() {
-    this.dialog = ShadowSelector('backend-ai-console > backend-ai-data-view > #add-folder-dialog');
-    this.newFolderButton = ShadowSelector('backend-ai-console > backend-ai-data-view > #add-folder');
-    this.folderNameInput = ShadowSelector('backend-ai-console > backend-ai-data-view > #add-folder-name > paper-input-container');
-    this.confirmButton = ShadowSelector('backend-ai-console > backend-ai-data-view > #add-button');
+    this.dialog = ShadowSelector('backend-ai-webui > backend-ai-data-view > #add-folder-dialog');
+    this.newFolderButton = ShadowSelector('backend-ai-webui > backend-ai-data-view > #add-folder');
+    this.folderNameInput = ShadowSelector('backend-ai-webui > backend-ai-data-view > #add-folder-name > paper-input-container');
+    this.confirmButton = ShadowSelector('backend-ai-webui > backend-ai-data-view > #add-button');
   }
 
   async open() {
@@ -17,7 +17,7 @@ class VFolderAddDialog {
 
   async create(name, host, type) {
     // TODO: how to choose host and type dropdown?
-    const folderControls = ShadowSelector(`backend-ai-console > backend-ai-data-view > #controls[folder-id="${name}"]`);
+    const folderControls = ShadowSelector(`backend-ai-webui > backend-ai-data-view > #controls[folder-id="${name}"]`);
     await t
       .typeText(this.folderNameInput, name)
       .click(this.confirmButton)
@@ -27,20 +27,20 @@ class VFolderAddDialog {
 
 class VFolderDeleteDialog {
   constructor() {
-    this.dialog = ShadowSelector('backend-ai-console > backend-ai-data-view > #delete-folder-dialog');
-    this.folderNameInput = ShadowSelector('backend-ai-console > backend-ai-data-view > #delete-folder-name > paper-input-container');
-    this.confirmButton = ShadowSelector('backend-ai-console > backend-ai-data-view > #delete-button');
+    this.dialog = ShadowSelector('backend-ai-webui > backend-ai-data-view > #delete-folder-dialog');
+    this.folderNameInput = ShadowSelector('backend-ai-webui > backend-ai-data-view > #delete-folder-name > paper-input-container');
+    this.confirmButton = ShadowSelector('backend-ai-webui > backend-ai-data-view > #delete-button');
   }
 
   async open(name) {
-    const deleteButton = ShadowSelector(`backend-ai-console > backend-ai-data-view > #controls[folder-id="${name}"]`).child('paper-icon-button[icon="delete"]');
+    const deleteButton = ShadowSelector(`backend-ai-webui > backend-ai-data-view > #controls[folder-id="${name}"]`).child('paper-icon-button[icon="delete"]');
     await t
       // .click(deleteButton);
       .expect(JSAction.click(deleteButton)).ok()
   }
 
   async delete(name) {
-    const folderControls = ShadowSelector(`backend-ai-console > backend-ai-data-view > #controls[folder-id="${name}"]`);
+    const folderControls = ShadowSelector(`backend-ai-webui > backend-ai-data-view > #controls[folder-id="${name}"]`);
     await t
       .typeText(this.folderNameInput, name)
       .click(this.confirmButton)
@@ -65,7 +65,7 @@ class VFolderPage {
   }
 
   async checkVFolderExistence(name) {
-    const folderControls = ShadowSelector(`backend-ai-console > backend-ai-data-view > #controls[folder-id="${name}"]`);
+    const folderControls = ShadowSelector(`backend-ai-webui > backend-ai-data-view > #controls[folder-id="${name}"]`);
     await t.expect(folderControls.exists).ok();
   }
 }

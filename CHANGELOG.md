@@ -1,5 +1,158 @@
 # Changelog
 
+## v21.03.4 (17/05/2021)
+
+#### Enhancements:
+
+- [**enhancement**][**minor**] Display SCHEDULED session status [#977](https://github.com/lablup/backend.ai-webui/issues/977)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Support force terminating 'PREPARING', 'TERMINATING' and 'PENDING' session on GUI [#948](https://github.com/lablup/backend.ai-webui/issues/948)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**minor**] Language of "Project" on top bar does not live change [#1003](https://github.com/lablup/backend.ai-webui/issues/1003)
+- [**UI / UX**][**blocker**][**bug**][**minor**] Session list is not refreshing at the first visit [#1002](https://github.com/lablup/backend.ai-webui/issues/1002)
+- [**UI / UX**][**blocker**][**bug**][**urgency**] Environment dropdown overlaps when there are more than eight options. [#999](https://github.com/lablup/backend.ai-webui/issues/999)
+- [**UI / UX**][**bug**][**easy**][**good first issue**] login panel height gets jagged when the user inputs invalid account. [#995](https://github.com/lablup/backend.ai-webui/issues/995)
+- [**UI / UX**][**blocker**][**bug**][**enterprise**][**library / SDK**][**major**] Reduce folder refresh calls to keep user query limit [#990](https://github.com/lablup/backend.ai-webui/issues/990)
+- [**UI / UX**][**bug**][**good first issue**] the Web Terminal guide dialog is not changed according to the window size [#988](https://github.com/lablup/backend.ai-webui/issues/988)
+- [**UI / UX**][**bug**][**good first issue**] not being able to check the contents of the right end of the screen when writing contents beyond the screen width. [#983](https://github.com/lablup/backend.ai-webui/issues/983)
+- [**bug**][**easy**][**minor**] we cannot enable auto logout feature in Backend.AI Cloud [#978](https://github.com/lablup/backend.ai-webui/issues/978)
+- [**UI / UX**][**bug**][**library / SDK**][**urgency**] creation new resource group is failed [#975](https://github.com/lablup/backend.ai-webui/issues/975)
+- [**blocker**][**bug**][**urgency**] 500 error during session creation [#968](https://github.com/lablup/backend.ai-webui/issues/968)
+- [**bug**][**easy**][**good first issue**] Learn more link in Web terminal guide is broken. [#961](https://github.com/lablup/backend.ai-webui/issues/961)
+- [**UI / UX**][**bug**][**easy**][**good first issue**] update operation in username does not reflect. [#957](https://github.com/lablup/backend.ai-webui/issues/957)
+
+#### UI / UX:
+
+- [**UI / UX**][**good first issue**] Default icon for non-recognized service apps [#985](https://github.com/lablup/backend.ai-webui/issues/985)
+
+
+## v21.03.3 (30/04/2021)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**good first issue**] the text in the total resource quota is broken. [#963](https://github.com/lablup/backend.ai-webui/issues/963)
+- [**enhancement**][**library / SDK**][**minor**][**need confirmation**] Share a group folder directly with overriding permission [#956](https://github.com/lablup/backend.ai-webui/issues/956)
+- [**enhancement**] Spring cleanup [#940](https://github.com/lablup/backend.ai-webui/issues/940)
+- [**UI / UX**][**enhancement**] Provide cloning Vfolder feature [#899](https://github.com/lablup/backend.ai-webui/issues/899)
+- [**UI / UX**][**enhancement**] Provide total resource allocation explicitly in session launcher [#891](https://github.com/lablup/backend.ai-webui/issues/891)
+- [**UI / UX**][**enhancement**][**library / SDK**][**urgency**] Enable Tensorboard path [#680](https://github.com/lablup/backend.ai-webui/issues/680)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**easy**] Cannot update decimal points in FGPU input field of resource policy. [#971](https://github.com/lablup/backend.ai-webui/issues/971)
+- [**UI / UX**][**bug**][**easy**][**good first issue**] Sometimes the invitation card and the button inside it overlap. [#950](https://github.com/lablup/backend.ai-webui/issues/950)
+- [**UI / UX**][**blocker**][**bug**][**urgency**] Inhibit deleting Folders mounted in one or more sessions. [#921](https://github.com/lablup/backend.ai-webui/issues/921)
+
+
+## v21.03.2 (02/04/2021)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Disable (non-working) app / terminal button when admin lists other users' session list [#945](https://github.com/lablup/backend.ai-webui/issues/945)
+- [**app**][**enhancement**][**major**] Support Apple Silicon macs [#942](https://github.com/lablup/backend.ai-webui/issues/942)
+- [**enhancement**][**good first issue**][**minor**] Let users to change .vimrc and .tmux.conf for better customizability [#935](https://github.com/lablup/backend.ai-webui/issues/935)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**maintenance**][**minor**] It looks like the domain administrator can create the keypair resource policy, but it doesn't actually do it. [#946](https://github.com/lablup/backend.ai-webui/issues/946)
+
+
+## v21.03.1 (24/03/2021)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**enterprise**][**minor**] Easier custom logo for login screen [#941](https://github.com/lablup/backend.ai-webui/issues/941)
+- [**UI / UX**][**app**][**cloud**][**enhancement**][**enterprise**][**minor**] Support Apache Spark image [#932](https://github.com/lablup/backend.ai-webui/issues/932)
+- [**UI / UX**][**app**][**enhancement**] Move app window position before login to system [#925](https://github.com/lablup/backend.ai-webui/issues/925)
+
+#### Bug Fixes:
+
+- [**bug**] R container images are not displayed properly on environment list [#938](https://github.com/lablup/backend.ai-webui/issues/938)
+- [**bug**] GPU slider in session launch dialog is always fixed as zero when discrete mode is enabled [#937](https://github.com/lablup/backend.ai-webui/issues/937)
+- [**bug**][**major**] Unable to login when localStorage items exceeds size limit [#928](https://github.com/lablup/backend.ai-webui/issues/928)
+- [**bug**] Proxy is not working on desktop app from Electron 12 [#923](https://github.com/lablup/backend.ai-webui/issues/923)
+
+
+## v21.03.0 (08/03/2021)
+
+#### Enhancements:
+
+- [**easy**][**enhancement**][**good first issue**][**urgency**] Let's rename Backend.AI GUI console to Backend.AI Web UI [#919](https://github.com/lablup/backend.ai-webui/issues/919)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**good first issue**][**urgency**] Let's fix the floating point in shared memory value of resource preset [#917](https://github.com/lablup/backend.ai-webui/issues/917)
+
+
+## v21.02.3 (22/02/2021)
+
+#### Enhancements:
+
+- [**enhancement**] R studio support [#916](https://github.com/lablup/backend.ai-console/issues/916)
+- [**enhancement**] Swift For TensorFlow support [#916](https://github.com/lablup/backend.ai-console/issues/916)
+- [**enhancement**] FluxML support [#916](https://github.com/lablup/backend.ai-console/issues/916)
+
+## v21.02.2 (17/02/2021)
+
+#### Enhancements:
+
+- [**enhancement**] Update Julia with Flux.ji support for scientific computing [#913](https://github.com/lablup/backend.ai-console/issues/913)
+- [**UI / UX**][**enhancement**][**minor**] Support Swift language [#912](https://github.com/lablup/backend.ai-console/issues/912)
+- [**enhancement**] Adopt runtime environment parameter / argument feature [#910](https://github.com/lablup/backend.ai-console/issues/910)
+- [**UI / UX**][**enhancement**][**good first issue**] Filter for storage folders  [#909](https://github.com/lablup/backend.ai-console/issues/909)
+- [**UI / UX**][**enhancement**] Let's provide leaving the invited folder. [#907](https://github.com/lablup/backend.ai-console/issues/907)
+- [**UI / UX**][**enhancement**][**minor**] Support Swift for TensorFlow environment [#904](https://github.com/lablup/backend.ai-console/issues/904)
+- [**UI / UX**][**enhancement**] Let's show an alert message when user rename the file including file extension in the Vfolder. [#803](https://github.com/lablup/backend.ai-console/issues/803)
+- [**UI / UX**][**enhancement**][**library / SDK**] Storage resource tab on computation resources [#336](https://github.com/lablup/backend.ai-console/issues/336)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**major**] Queue file deletion [#572](https://github.com/lablup/backend.ai-console/issues/572)
+
+
+## v21.02.1 (03/02/2021)
+
+#### Enhancements:
+
+- [**enhancement**] Provide environment configuration on session launcher [#902](https://github.com/lablup/backend.ai-console/issues/902)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Adopt background task id [#898](https://github.com/lablup/backend.ai-console/issues/898)
+- [**enhancement**][**library / SDK**][**minor**] Change perSession scheme to perContainer [#889](https://github.com/lablup/backend.ai-console/issues/889)
+- [**UI / UX**][**enhancement**][**minor**] Let's support folder upload in vfolder [#885](https://github.com/lablup/backend.ai-console/issues/885)
+- [**enhancement**][**library / SDK**][**major**] add maxCUDASharesPerContainer to limit fGPU slice size [#788](https://github.com/lablup/backend.ai-console/issues/788)
+-
+
+## v21.02.0 (03/02/2021)
+
+#### Enhancements:
+
+- [**enhancement**] Provide environment configuration on session launcher [#902](https://github.com/lablup/backend.ai-console/issues/902)
+- [**UI / UX**][**enhancement**][**library / SDK**][**major**] Adopt background task id [#898](https://github.com/lablup/backend.ai-console/issues/898)
+- [**enhancement**][**library / SDK**][**minor**] Change perSession scheme to perContainer [#889](https://github.com/lablup/backend.ai-console/issues/889)
+- [**UI / UX**][**enhancement**][**minor**] Let's support folder upload in vfolder [#885](https://github.com/lablup/backend.ai-console/issues/885)
+
+
+## v21.01.1 (07/01/2021)
+
+#### Enhancements:
+
+- [**enhancement**][**enterprise**][**library / SDK**][**minor**] Query waiting margin to session list / node list [#886](https://github.com/lablup/backend.ai-console/issues/886)
+
+#### Bug Fixes:
+
+- [**bug**] Unable to explore virtual folder in data & storage page [#888](https://github.com/lablup/backend.ai-console/issues/888)
+- [**bug**][**invalid**] Image downloading tag disappears when the user redirects to other pages and come back. [#757](https://github.com/lablup/backend.ai-console/issues/757)
+- [**bug**] Increase compatibility with Backend.AI 20.03 [#887](https://github.com/lablup/backend.ai-console/pull/887)
+- [**UI / UX**][**bugfix**] Hide storage proxy features on Backend.AI 20.03/APIv5 (#869)
+
+
+## v21.01.0 (04/01/2021)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bugfix**] Rearrange layout (#883)
+
+
 ## v20.12.6 (30/12/2020)
 
 #### Bug Fixes:

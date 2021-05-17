@@ -1,9 +1,9 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import 'weightless/icon';
 import 'weightless/card';
 import '@material/mwc-checkbox';
@@ -13,16 +13,16 @@ import '@material/mwc-icon-button-toggle';
 import './lablup-terms-of-service';
 import './backend-ai-dialog';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
+import {default as PainKiller} from './backend-ai-painkiller';
 import '../lib/backend.ai-client-es6';
-import {BackendAiStyles} from "./backend-ai-general-styles";
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning
-} from "../plastics/layout/iron-flex-layout-classes";
-import {BackendAIPage} from "./backend-ai-page";
+} from '../plastics/layout/iron-flex-layout-classes';
+import {BackendAIPage} from './backend-ai-page';
 
 /**
  Backend.AI Signup feature for GUI Console
@@ -35,9 +35,9 @@ import {BackendAIPage} from "./backend-ai-page";
  ... content ...
  </backend-ai-signup>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  */
-@customElement("backend-ai-signup")
+@customElement('backend-ai-signup')
 export default class BackendAiSignup extends BackendAIPage {
   @property({type: String}) company_name = '';
   @property({type: String}) company_id = '';
@@ -56,7 +56,7 @@ export default class BackendAiSignup extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -89,6 +89,10 @@ export default class BackendAiSignup extends BackendAIPage {
             --mdc-text-field-fill-color: transparent;
             --mdc-theme-primary: var(--general-textfield-selected-color);
             --mdc-typography-font-family: var(--general-font-family);
+          }
+
+          mwc-textfield#id_user_name {
+            margin-bottom: 18px;
           }
 
           mwc-button.full {
@@ -126,7 +130,7 @@ export default class BackendAiSignup extends BackendAIPage {
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = globalThis.lablupNotification;
     this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
-    let textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
+    const textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {
       this._addInputValidator(textfield);
     }
@@ -137,14 +141,15 @@ export default class BackendAiSignup extends BackendAIPage {
    *
    * @param {Booelan} active - The component will work if active is true.
    */
-  async _viewStateChanged(active: Boolean) {
+  async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
       return;
     }
     // If disconnected
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        return true;
       }, true);
     } else { // already connected
     }
@@ -152,9 +157,9 @@ export default class BackendAiSignup extends BackendAIPage {
 
   receiveTOSAgreement() {
     if (this.TOSdialog.show === false) {
-      this.TOSdialog.tosContent = "";
-      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get("language");
-      this.TOSdialog.title = _t("console.menu.TermsOfService");
+      this.TOSdialog.tosContent = '';
+      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get('language');
+      this.TOSdialog.title = _t('webui.menu.TermsOfService');
       this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
     }
@@ -162,9 +167,9 @@ export default class BackendAiSignup extends BackendAIPage {
 
   receivePPAgreement() {
     if (this.TOSdialog.show === false) {
-      this.TOSdialog.tosContent = "";
-      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get("language");
-      this.TOSdialog.title = _t("console.menu.PrivacyPolicy");
+      this.TOSdialog.tosContent = '';
+      this.TOSdialog.tosLanguage = globalThis.backendaioptions.get('language');
+      this.TOSdialog.title = _t('webui.menu.PrivacyPolicy');
       this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();
     }
@@ -186,7 +191,7 @@ export default class BackendAiSignup extends BackendAIPage {
   init_client() {
     if (typeof this.client === 'undefined') {
       if (this.endpoint !== '' && this.client !== {}) {
-        let clientConfig = {
+        const clientConfig = {
           connectionMode: 'SESSION',
           apiVersionMajor: 'v4',
           apiVersion: 'v4.20190615',
@@ -216,14 +221,14 @@ export default class BackendAiSignup extends BackendAIPage {
   _clear_info() {
     this.company_name = '';
     this.user_name = '';
-    //this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
+    // this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
   }
 
   _clearUserInput() {
     this._toggleInputField(true);
-    const inputFields: Array<string> = ["#id_user_email", "#id_token", "#id_password1", "#id_password2"];
+    const inputFields: Array<string> = ['#id_user_email', '#id_token', '#id_password1', '#id_password2'];
     inputFields.map((el: string) => {
-      this.shadowRoot.querySelector(el).value = "";
+      this.shadowRoot.querySelector(el).value = '';
     });
     this.shadowRoot.querySelector('#signup-button-message').innerHTML = _text('signup.Signup');
   }
@@ -241,15 +246,15 @@ export default class BackendAiSignup extends BackendAIPage {
   }
 
   _signup() {
-    const inputFields: Array<string> = ["#id_user_email", "#id_token", "#id_password1", "#id_password2"];
-    let inputFieldsValidity: Array<boolean> = inputFields.map((el: string) => {
+    const inputFields: Array<string> = ['#id_user_email', '#id_token', '#id_password1', '#id_password2'];
+    const inputFieldsValidity: Array<boolean> = inputFields.map((el: string) => {
       this.shadowRoot.querySelector(el).reportValidity();
       return this.shadowRoot.querySelector(el).checkValidity();
     });
 
-    let approved = (this.shadowRoot.querySelector('#approve-terms-of-service') as HTMLInputElement).checked;
+    const approved = (this.shadowRoot.querySelector('#approve-terms-of-service') as HTMLInputElement).checked;
     if (approved === false) {
-      this.notification.text = _text("signup.RequestAgreementTermsOfService");
+      this.notification.text = _text('signup.RequestAgreementTermsOfService');
       this.notification.show();
       return;
     }
@@ -263,7 +268,7 @@ export default class BackendAiSignup extends BackendAIPage {
     const user_email = (this.shadowRoot.querySelector('#id_user_email') as HTMLInputElement).value;
     const user_name = (this.shadowRoot.querySelector('#id_user_name') as HTMLInputElement).value;
     const password = (this.shadowRoot.querySelector('#id_password1') as HTMLInputElement).value;
-    this.notification.text = _text("signup.Processing");
+    this.notification.text = _text('signup.Processing');
     this.notification.show();
     const body = {
       'email': user_email,
@@ -272,11 +277,11 @@ export default class BackendAiSignup extends BackendAIPage {
       'token': token
     };
     this.init_client();
-    let rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
+    const rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
     this.client._wrapWithPromise(rqst).then((response) => {
       this._toggleInputField(false);
       this.shadowRoot.querySelector('#signup-button-message').innerHTML = _text('signup.SignupSucceeded');
-      this.notification.text = _text("signup.SignupSucceeded");;
+      this.notification.text = _text('signup.SignupSucceeded');
       this.notification.show();
       setTimeout(() => {
         this.signupPanel.hide();
@@ -295,8 +300,8 @@ export default class BackendAiSignup extends BackendAIPage {
   // TODO: global error message patcher
   _politeErrorMessage(err) {
     const errorMsgSet = {
-      "Cannot read property 'map' of null": "User has no group. Please contact administrator to fix it.",
-      "Cannot read property 'split' of undefined": 'Wrong API server address.'
+      'Cannot read property \'map\' of null': 'User has no group. Please contact administrator to fix it.',
+      'Cannot read property \'split\' of undefined': 'Wrong API server address.'
     };
     console.log(err);
     if (err in errorMsgSet) {
@@ -330,8 +335,8 @@ export default class BackendAiSignup extends BackendAIPage {
         }
       } else {
         // custom validation for email address using regex
-        let regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        let isValid = regex.exec(emailInput.value);
+        const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const isValid = regex.exec(emailInput.value);
         if (!isValid) {
           emailInput.validationMessage = _text('signup.InvalidEmail');
         }
@@ -340,7 +345,7 @@ export default class BackendAiSignup extends BackendAIPage {
           customError: !isValid
         };
       }
-    }
+    };
   }
 
   _validatePassword1() {
@@ -354,21 +359,21 @@ export default class BackendAiSignup extends BackendAIPage {
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
-          }
+          };
         } else {
           passwordInput.validationMessage = _text('signup.PasswordInvalid');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
-          }
+          };
         }
       } else {
         return {
           valid: nativeValidity.valid,
           customError: !nativeValidity.valid
-        }
+        };
       }
-    }
+    };
   }
 
   _validatePassword2() {
@@ -380,27 +385,27 @@ export default class BackendAiSignup extends BackendAIPage {
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
-          }
+          };
         } else {
           password2Input.validationMessage = _text('signup.PasswordInvalid');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
-          }
+          };
         }
       } else {
         // custom validation for password input match
         const passwordInput = this.shadowRoot.querySelector('#id_password1');
-        let isMatched = (passwordInput.value === password2Input.value);
+        const isMatched = (passwordInput.value === password2Input.value);
         if (!isMatched) {
           password2Input.validationMessage = _text('signup.PasswordNotMatched');
         }
         return {
           valid: isMatched,
           customError: !isMatched
-        }
+        };
       }
-    }
+    };
   }
 
   _validatePassword() {
@@ -412,26 +417,25 @@ export default class BackendAiSignup extends BackendAIPage {
     // language=HTML
     return html`
       <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
-        <span slot="title">${_t("signup.SignupBETA")}</span>
+        <span slot="title">${_t('signup.SignupBETA')}</span>
         <div slot="content">
           <mwc-textfield type="email" name="user_email" id="id_user_email" autofocus
                        maxlength="64" placeholder="${_text('maxLength.64chars')}"
-                       label="${_t("signup.E-mail")}" validateOnInitialRender
+                       label="${_t('signup.E-mail')}" validateOnInitialRender
                        @change="${this._validateEmail}"
-                       validationMessage="${_t("signup.EmailInputRequired")}"
+                       validationMessage="${_t('signup.EmailInputRequired')}"
                        value="${this.user_email}" required></mwc-textfield>
           <mwc-textfield type="text" name="user_name" id="id_user_name"
                        maxlength="64" placeholder="${_text('maxLength.64chars')}"
-                       label="${_t("signup.UserName")}" value="${this.user_name}"
-                       validationMessage="${_t("signup.UserNameInputRequired")}"></mwc-textfield>
+                       label="${_t('signup.UserName')}" value="${this.user_name}"></mwc-textfield>
           <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
-                       label="${_t("signup.InvitationToken")}"
-                       validationMessage="${_t("signup.TokenInputRequired")}" required></mwc-textfield>
+                       label="${_t('signup.InvitationToken')}"
+                       validationMessage="${_t('signup.TokenInputRequired')}" required></mwc-textfield>
           <div class="horizontal flex layout">
             <mwc-textfield type="password" name="password1" id="id_password1"
-                        label="${_t("signup.Password")}" maxLength="64"
+                        label="${_t('signup.Password')}" maxLength="64"
                         pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                        validationMessage="${_t("signup.PasswordInputRequired")}"
+                        validationMessage="${_t('signup.PasswordInputRequired')}"
                         @change="${this._validatePassword}"
                         value="" required></mwc-textfield>
             <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
@@ -440,9 +444,9 @@ export default class BackendAiSignup extends BackendAIPage {
           </div>
           <div class="horizontal flex layout">
             <mwc-textfield type="password" name="password2" id="id_password2"
-                        label="${_t("signup.PasswordAgain")}" maxLength="64"
+                        label="${_t('signup.PasswordAgain')}" maxLength="64"
                         pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                        validationMessage="${_t("signup.PasswordInputRequired")}"
+                        validationMessage="${_t('signup.PasswordInputRequired')}"
                         @change="${this._validatePassword}"
                         value="" required></mwc-textfield>
             <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
@@ -454,11 +458,11 @@ export default class BackendAiSignup extends BackendAIPage {
             <p style="font-size:12px;">
               ${_text('signup.PolicyAgreement_1')}
               <a style="color:forestgreen;" @click="${() => this.receiveTOSAgreement()}">
-                ${_t("signup.TermsOfService")}
+                ${_t('signup.TermsOfService')}
               </a>
               ${_text('signup.PolicyAgreement_2')}
               <a style="color:forestgreen;" @click="${() => this.receivePPAgreement()}">
-                ${_t("signup.PrivacyPolicy")}
+                ${_t('signup.PrivacyPolicy')}
               </a>
               ${_text('signup.PolicyAgreement_3')}
             </p>
@@ -471,7 +475,7 @@ export default class BackendAiSignup extends BackendAIPage {
               class="full"
               icon="check"
               @click="${() => this._signup()}">
-                <span id="signup-button-message">${_text("signup.Signup")}</span>
+                <span id="signup-button-message">${_text('signup.Signup')}</span>
           </mwc-button>
         </div>
       </backend-ai-dialog>
@@ -482,14 +486,14 @@ export default class BackendAiSignup extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="email-sent-dialog" noclosebutton fixed backdrop blockscrolling persistent>
-        <span slot="title">${_t("signup.ThankYou")}</span>
+        <span slot="title">${_t('signup.ThankYou')}</span>
         <div slot="content">
-          <p style="max-width:350px">${_t("signup.VerificationMessage")}</p>
+          <p style="max-width:350px">${_t('signup.VerificationMessage')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               unelevated
-              label="${_t("button.Okay")}"
+              label="${_t('button.Okay')}"
               @click="${(e) => e.target.closest('backend-ai-dialog').hide()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -500,6 +504,6 @@ export default class BackendAiSignup extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-signup": BackendAiSignup;
+    'backend-ai-signup': BackendAiSignup;
   }
 }

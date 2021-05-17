@@ -1,5 +1,5 @@
 import {css} from 'lit-element';
-import {PaperColor} from "./paper-color";
+import {PaperColor} from './paper-color';
 
 export const BackendAiStyles = [
   PaperColor,
@@ -124,7 +124,7 @@ export const BackendAiStyles = [
     }
 
     #content {
-      padding: 0 auto;
+      padding: 0;
       margin: 0 auto 5px auto;
     }
 

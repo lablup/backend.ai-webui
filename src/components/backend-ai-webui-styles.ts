@@ -1,7 +1,7 @@
 import {css} from 'lit-element';
-import {BackendAiStyles} from "./backend-ai-general-styles";
+import {BackendAiStyles} from './backend-ai-general-styles';
 
-export const BackendAiConsoleStyles = [
+export const BackendAIWebUIStyles = [
   BackendAiStyles,
   // language=CSS
   css`
@@ -16,6 +16,8 @@ export const BackendAiConsoleStyles = [
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: top left;
+      -webkit-user-select: none !important;
+      -webkit-app-region: drag !important;
     }
 
     .loading-background[inactive] {
@@ -70,6 +72,7 @@ export const BackendAiConsoleStyles = [
       -ms-overflow-style: none;
       will-change: transform;
       background-color: var(--general-sidebar-background-color, #fafafa);
+      scrollbar-width: none;
     }
 
     .drawer-menu .portrait-bar {
@@ -156,16 +159,19 @@ export const BackendAiConsoleStyles = [
       display: none;
     }
 
-    .drawer-menu footer {
+    .drawer-menu footer,
+    footer#short-height {
       bottom: 0;
       color: var(--general-sidebar-footer-color, #aaaaaa);
       background-color: var(--general-sidebar-background-color);
       margin: 0;
       padding-bottom: 5px;
+      line-height: 1;
       font-size: 10px;
     }
 
-    .drawer-menu footer a {
+    .drawer-menu footer a,
+    footer#short-height a {
       color: var(--general-sidebar-footer-color, #aaaaaa) !important;
     }
 
@@ -183,7 +189,7 @@ export const BackendAiConsoleStyles = [
     }
 
     mwc-button[unelevate--mdc-theme-primary] {
-      : var(--general-button-background-color);
+      --mdc-theme-primary: var(--general-button-background-color);
       --mdc-on-theme-primary: var(--general-button-background-color);
     }
 
@@ -270,7 +276,8 @@ export const BackendAiConsoleStyles = [
       -webkit-app-region: drag !important;
     }
 
-    .drawer-menu footer {
+    .drawer-menu footer,
+    footer#short-height {
       width: 250px;
     }
 
@@ -456,6 +463,13 @@ export const BackendAiConsoleStyles = [
 
     .drawer-menu::-webkit-scrollbar {
       display: none !important;
+      -webkit-appearance: none;
+      width: 0 !important;
+      height: 0;
+    }
+
+    footer#short-height {
+      display: none;
     }
 
     #portrait-bar {
@@ -551,6 +565,16 @@ export const BackendAiConsoleStyles = [
       #sidebar-navbar-footer {
         background-color: var(--general-sidebar-background-color);
         color: var(--general-sidebar-color);
+      }
+    }
+
+    @media screen and (max-height: 953px) {
+      footer#short-height {
+        display: block;
+      }
+
+      footer {
+        display: none;
       }
     }
 

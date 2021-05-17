@@ -1,3 +1,9 @@
+/*
+Backend.AI Webapp proxy for Web UI
+===================================
+
+(C) Copyright 2016-2021 Lablup Inc.
+*/
 // Backend.AI Websocket proxy server for local runtime environment / app.
 const express = require('express'),
   EventEmitter = require('events'),
@@ -61,7 +67,7 @@ class Manager extends EventEmitter {
         "endpoint": req.body.endpoint,
         "ext_proxy_url": this.extHttpProxyURL
       };
-      // Receive API version from console. Initialization timing is different so we use API information from requester.
+      // Receive API version from web UI. Initialization timing is different so we use API information from requester.
       if (req.body.api_version) {
         cf['_apiVersionMajor'] = req.body.api_version;
       } else {
@@ -72,7 +78,7 @@ class Manager extends EventEmitter {
         cf['session'] = req.body.session;
         cf['endpoint'] = cf['endpoint'] + "/func";
       } else {
-        cf['mode'] = "DEFAULT";
+        cf['mode'] = "API";
         cf['access_key'] = req.body.access_key;
         cf['secret_key'] = req.body.secret_key;
         let config = new ai.backend.ClientConfig(
@@ -96,28 +102,32 @@ class Manager extends EventEmitter {
       res.send(rtn);
     });
 
-    this.app.get('/proxy/local/:sessionName', (req, res) => {
-      let sessionName = req.params["sessionName"];
+    this.app.get('/proxy/:token/:sessionId', (req, res) => {
+      let sessionId = req.params["sessionId"];
       if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      if (sessionName in this.proxies) {
-        res.send({"code": 200});
-      } else {
-        res.send({"code": 404});
+      for (const key in this.proxies) {
+        if (key.split("|", 1)[0] === sessionId) {
+          res.send({"code": 200});
+          return;
+        }
       }
+      res.send({"code": 404});
     });
 
-    this.app.get('/proxy/local/:sessionName/add', async (req, res) => {
+    this.app.get('/proxy/:token/:sessionId/add', async (req, res) => {
       if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      let sessionName = req.params["sessionName"];
+      let sessionId = req.params["sessionId"];
       let app = req.query.app || "jupyter";
       let port = parseInt(req.query.port) || undefined;
-      let p = sessionName + "|" + app;
+      let p = sessionId + "|" + app;
+      let args = req.query.args ? JSON.parse(decodeURI(req.query.args)) : {};
+      let envs = req.query.envs ? JSON.parse(decodeURI(req.query.envs)) : {};
       let gateway;
       let ip = "127.0.0.1"; //FIXME: Update needed
       //let port = undefined;
@@ -136,7 +146,7 @@ class Manager extends EventEmitter {
         let maxtry = 5;
         for (let i = 0; i < maxtry; i++) {
           try {
-            await gateway.start_proxy(sessionName, app, ip, port);
+            await gateway.start_proxy(sessionId, app, ip, port, envs, args);
             port = gateway.getPort();
             assigned = true;
             break;
@@ -154,6 +164,8 @@ class Manager extends EventEmitter {
             }
           }
         }
+        logger.debug(`proxies: ${p}`);
+        logger.info(`Total connections: ${Object.keys(this.proxies).length}`);
         if (!assigned) {
           res.send({"code": 500});
           return;
@@ -185,20 +197,44 @@ class Manager extends EventEmitter {
       }
     });
 
-    this.app.get('/proxy/local/:sessionName/delete', (req, res) => {
+    this.app.get('/proxy/:token/:sessionId/delete', (req, res) => {
       //find all and kill
-
-      let sessionName = req.params["sessionName"];
       if (!this._config) {
         res.send({"code": 401});
         return;
       }
-      if (sessionName in this.proxies) {
-        this.proxies[sessionName].stop_proxy();
-        res.send({"code": 200});
-        delete this.proxies[sessionName];
+
+      let sessionId = req.params["sessionId"];
+      let app = req.query.app || null;
+
+      if (app === null) {
+        let stopped = false;
+        for (const key in this.proxies) {
+          logger.debug(key.split("|", 1));
+          if (key.split("|", 1)[0] === sessionId) {
+            logger.info(`Found app to terminate in ${sessionId}`);
+            this.proxies[key].stop_proxy();
+            delete this.proxies[key];
+            stopped = true;
+          }
+        }
+        logger.info(`Total connections: ${Object.keys(this.proxies).length}`);
+        if (stopped) {
+          res.send({"code": 200});
+        } else {
+          res.send({"code": 404});
+        }
       } else {
-        res.send({"code": 404});
+        let p = sessionId + "|" + app;
+        if (p in this.proxies && app !== null) {
+          logger.debug(`Found ${app} to terminate in ${sessionId}`);
+          this.proxies[p].stop_proxy();
+          logger.info(`Total connections: ${Object.keys(this.proxies).length}`);
+          res.send({"code": 200});
+          delete this.proxies[p];
+        } else {
+          res.send({"code": 404});
+        }
       }
     });
 

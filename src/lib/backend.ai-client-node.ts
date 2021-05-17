@@ -3,7 +3,7 @@
 Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.8.1)
 ====================================================================
 
-(C) Copyright 2016-2020 Lablup Inc.
+(C) Copyright 2016-2021 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
@@ -30,6 +30,7 @@ class ClientConfig {
   public _userId: string;
   public _password: string;
   public _proxyURL: any;
+  public _proxyToken: any;
   public _connectionMode: string;
 
   /**
@@ -38,7 +39,7 @@ class ClientConfig {
    * @param {string} accessKey - access key to connect Backend.AI manager
    * @param {string} secretKey - secret key to connect Backend.AI manager
    * @param {string} endpoint  - endpoint of Backend.AI manager
-   * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires console-server.
+   * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires webserver.
    */
   constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
     // default configs.
@@ -71,6 +72,7 @@ class ClientConfig {
       this._password = secretKey;
     }
     this._proxyURL = null;
+    this._proxyToken = null;
     this._connectionMode = connectionMode;
   }
 
@@ -96,6 +98,9 @@ class ClientConfig {
 
   get proxyURL() {
     return this._proxyURL;
+  }
+  get proxyToken() {
+    return this._proxyToken;
   }
 
   get endpointHost() {
@@ -150,6 +155,7 @@ class Client {
   public image: ContainerImage;
   public utils: utils;
   public computeSession: ComputeSession;
+  public sessionTemplate: SessionTemplate;
   public resourcePolicy: ResourcePolicy;
   public user: User;
   public group: Group;
@@ -162,6 +168,7 @@ class Client {
   public setting: Setting;
   public userConfig: UserConfig;
   public cloud: Cloud;
+  public eduApp: EduApp;
   public service: Service;
   public enterprise: Enterprise;
   public _features: any;
@@ -206,6 +213,7 @@ class Client {
     this.image = new ContainerImage(this);
     this.utils = new utils(this);
     this.computeSession = new ComputeSession(this);
+    this.sessionTemplate = new SessionTemplate(this);
     this.resourcePolicy = new ResourcePolicy(this);
     this.user = new User(this);
     this.group = new Group(this);
@@ -221,6 +229,7 @@ class Client {
     this.domain = new Domain(this);
     this.enterprise = new Enterprise(this);
     this.cloud = new Cloud(this);
+    this.eduApp = new EduApp(this);
 
     this._features = {}; // feature support list
     this.abortController = new AbortController();
@@ -400,10 +409,10 @@ class Client {
       };
     }
 
-    let previous_log = JSON.parse(localStorage.getItem('backendaiconsole.logs') as any);
+    let previous_log = JSON.parse(localStorage.getItem('backendaiwebui.logs') as any);
     if (previous_log) {
-      if (previous_log.length > 5000) {
-        previous_log = previous_log.slice(1, 5000);
+      if (previous_log.length > 3000) {
+        previous_log = previous_log.slice(1, 3000);
       }
     }
     let log_stack = Array();
@@ -431,7 +440,23 @@ class Client {
     if(previous_log) {
       log_stack = log_stack.concat(previous_log);
     }
-    localStorage.setItem('backendaiconsole.logs', JSON.stringify(log_stack));
+    try {
+      localStorage.setItem('backendaiwebui.logs', JSON.stringify(log_stack));
+    } catch (e) {
+      console.warn('Local storage is full. Clearing part of the logs.');
+      // localStorage is full, we will keep the recent 2/3 of the logs.
+      let webuiLogs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
+      webuiLogs = webuiLogs.slice(0, Math.round(webuiLogs.length * 2 / 3));
+      localStorage.setItem('backendaiwebui.logs', JSON.stringify(webuiLogs));
+      // Deprecated backendaiconsole.* should also be cleared here.
+      Object.entries(localStorage)
+          .map((x) => x[0])                                // get key
+          .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiconsole
+          .map((x) => localStorage.removeItem(x));         // remove filtered keys
+
+      // Will not throw exception here since the request should be proceeded
+      // even if it is not possible to write log to localStorage.
+    }
 
     return body;
   }
@@ -523,6 +548,7 @@ class Client {
     if (this.isAPIVersionCompatibleWith('v6.20200815')) {
       this._features['multi-container'] = true;
       this._features['multi-node'] = true;
+      this._features['storage-proxy'] = true;
       this._features['hardware-metadata'] = true;
     }
   }
@@ -550,7 +576,7 @@ class Client {
   }
 
   /**
-   * Check if console-server is authenticated. This requires additional console-server package.
+   * Check if webserver is authenticated. This requires additional webserver package.
    *
    */
   async check_login() {
@@ -573,7 +599,7 @@ class Client {
   }
 
   /**
-   * Login into console-server with given ID/Password. This requires additional console-server package.
+   * Login into webserver with given ID/Password. This requires additional webserver package.
    *
    */
   async login() {
@@ -595,7 +621,7 @@ class Client {
           return Promise.resolve(false);
         }
       }
-    } catch (err) { // Manager / console server down.
+    } catch (err) { // Manager / webserver down.
       if ('statusCode' in err && err.statusCode === 429) {
         throw {
           "title": err.description,
@@ -613,7 +639,7 @@ class Client {
   }
 
   /**
-   * Logout from console-server. This requires additional console-server package.
+   * Logout from webserver. This requires additional webserver package.
    *
    */
   logout() {
@@ -623,7 +649,43 @@ class Client {
   }
 
   /**
-   * Leave from manager user. This requires additional console-server package.
+   * Login into webserver with auth cookie token. This requires additional webserver package.
+   *
+   */
+  async token_login() {
+    const body = {};
+    const rqst = this.newSignedRequest('POST', `/server/token-login`, body);
+    try {
+      const result = await this._wrapWithPromise(rqst);
+      if (result.authenticated === true) {
+        await this.get_manager_version();
+        return this.check_login();
+      } else if (result.authenticated === false) { // Authentication failed.
+        if (result.data && result.data.details) {
+          return Promise.resolve({fail_reason: result.data.details});
+        } else {
+          return Promise.resolve(false);
+        }
+      }
+    } catch (err) { // Manager / webserver down.
+      if ('statusCode' in err && err.statusCode === 429) {
+        throw {
+          "title": err.description,
+          "message": "Too many failed login attempts."
+        };
+      } else {
+        throw {
+          "title": "No manager found at API Endpoint.",
+          "message": "Authentication failed. Check information and manager status."
+        };
+      }
+      //console.log(err);
+      //return false;
+    }
+  }
+
+  /**
+   * Leave from manager user. This requires additional webserver package.
    *
    */
   async signout(userid, password) {
@@ -632,6 +694,18 @@ class Client {
       'password': password
     };
     let rqst = this.newSignedRequest('POST', `/auth/signout`, body);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Update user's full_name.
+   */
+  async update_full_name(email, fullName) {
+    let body = {
+      'email': email,
+      'full_name': fullName
+    };
+    let rqst = this.newSignedRequest('POST', `/auth/update-full-name`, body);
     return this._wrapWithPromise(rqst);
   }
 
@@ -706,9 +780,6 @@ class Client {
       if (resources['tpu']) {
         config['tpu.device'] = resources['tpu'];
       }
-      if (resources['env']) {
-        config['environ'] = resources['env'];
-      }
       if (resources['cluster_size']) {
         params['cluster_size'] = resources['cluster_size'];
       }
@@ -720,6 +791,12 @@ class Client {
       }
       if (resources['domain']) {
         params['domain'] = resources['domain'];
+      }
+      if (resources['type']) {
+        params['type'] = resources['type'];
+      }
+      if (resources['startsAt']) {
+        params['starts_at'] = resources['startsAt'];
       }
       if (resources['enqueueOnly']) {
         params['enqueueOnly'] = resources['enqueueOnly'];
@@ -742,7 +819,6 @@ class Client {
       if (resources['owner_access_key']) {
         params['owner_access_key'] = resources['owner_access_key'];
       }
-      //params['config'] = {};
       params['config'] = {resources: config};
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
@@ -754,6 +830,9 @@ class Client {
         params['config'].resource_opts = {};
         params['config'].resource_opts.shmem = resources['shmem'];
       }
+      if (resources['env']) {
+        params['config'].environ = resources['env'];
+      }
     }
     let rqst;
     if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
@@ -762,6 +841,100 @@ class Client {
       rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
     }
     //return this._wrapWithPromise(rqst);
+    return this._wrapWithPromise(rqst, false, null, timeout);
+  }
+
+  /**
+   * Create a session with a session template.
+   *
+   * @param {string} sessionId - the sessionId given when created
+   */
+  async createSessionFromTemplate(templateId, image = null, sessionName: undefined | string | null = null, resources = {}, timeout: number = 0) {
+    if (typeof sessionName === 'undefined' || sessionName === null)
+      sessionName = this.generateSessionId();
+    const params = {template_id: templateId};
+    if (image) {
+      params['image'] = image;
+    }
+    if (sessionName) {
+      params['name'] = sessionName;
+    }
+    if (resources && Object.keys(resources).length > 0) {
+      let config = {};
+      if (resources['cpu']) {
+        config['cpu'] = resources['cpu'];
+      }
+      if (resources['mem']) {
+        config['mem'] = resources['mem'];
+      }
+      if (resources['cuda.device']) {
+        config['cuda.device'] = parseInt(resources['cuda.device']);
+      }
+      if (resources['fgpu']) {
+        config['cuda.shares'] = parseFloat(resources['fgpu']).toFixed(2); // 19.09 and above
+      }
+      if (resources['cuda.shares']) {
+        config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
+      }
+      if (resources['rocm']) {
+        config['rocm.device'] = resources['rocm'];
+      }
+      if (resources['tpu']) {
+        config['tpu.device'] = resources['tpu'];
+      }
+      if (resources['cluster_size']) {
+        params['cluster_size'] = resources['cluster_size'];
+      }
+      if (resources['cluster_mode']) {
+        params['cluster_mode'] = resources['cluster_mode'];
+      }
+      if (resources['group_name']) {
+        params['group_name'] = resources['group_name'];
+      }
+      if (resources['domain']) {
+        params['domain'] = resources['domain'];
+      }
+      if (resources['type']) {
+        params['type'] = resources['type'];
+      }
+      if (resources['starts_at']) {
+        params['starts_at'] = resources['startsAt'];
+      }
+      if (resources['enqueueOnly']) {
+        params['enqueueOnly'] = resources['enqueueOnly'];
+      }
+      if (resources['maxWaitSeconds']) {
+        params['maxWaitSeconds'] = resources['maxWaitSeconds'];
+      }
+      if (resources['reuseIfExists']) {
+        params['reuseIfExists'] = resources['reuseIfExists'];
+      }
+      if (resources['startupCommand']) {
+        params['startupCommand'] = resources['startupCommand'];
+      }
+      if (resources['bootstrap_script']) {
+        params['bootstrap_script'] = resources['bootstrap_script'];
+      }
+      if (resources['owner_access_key']) {
+        params['owner_access_key'] = resources['owner_access_key'];
+      }
+      // params['config'] = {};
+      params['config'] = {resources: config};
+      if (resources['mounts']) {
+        params['config'].mounts = resources['mounts'];
+      }
+      if (resources['scaling_group']) {
+        params['config'].scaling_group = resources['scaling_group'];
+      }
+      if (resources['shmem']) {
+        params['config'].resource_opts = {};
+        params['config'].resource_opts.shmem = resources['shmem'];
+      }
+      if (resources['env']) {
+        params['config'].environ = resources['env'];
+      }
+    }
+    const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params);
     return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
@@ -780,7 +953,7 @@ class Client {
   }
 
   /**
-   * Obtain the session information by given sessionId.
+   * Obtain the session container logs by given sessionId.
    *
    * @param {string} sessionId - the sessionId given when created
    * @param {string | null} ownerKey - owner key to access
@@ -796,14 +969,29 @@ class Client {
   }
 
   /**
-   * Terminate and destroy the kernel session.
+   * Obtain the batch session (task) logs by given sessionId.
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  async destroy(sessionId, ownerKey = null) {
+  getTaskLogs(sessionId) {
+    const queryString = `${this.kernelPrefix}/_/logs?session_name=${sessionId}`;
+    let rqst = this.newSignedRequest('GET', queryString, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Terminate and destroy the kernel session.
+   *
+   * @param {string} sessionId - the sessionId given when created
+   * @param {string|null} ownerKey - owner key when terminating other users' session
+   * @param {boolean} forced - force destroy session. Requires admin privilege.
+   */
+  async destroy(sessionId, ownerKey = null, forced:boolean = false) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
-    if (ownerKey != null) {
-      queryString = `${queryString}?owner_access_key=${ownerKey}`;
+    if (ownerKey !== null) {
+      queryString = `${queryString}?owner_access_key=${ownerKey}${forced ? '&forced=true' : ''}`;
+    } else {
+      queryString = `${queryString}${forced ? '?forced=true' : ''}`;
     }
     let rqst = this.newSignedRequest('DELETE', queryString, null);
     return this._wrapWithPromise(rqst, false, null, 15000, 2); // 15 sec., two trial when error occurred.
@@ -864,6 +1052,15 @@ class Client {
   // legacy aliases (DO NOT USE for new codes)
   runCode(code, sessionId, runId, mode) {
     return this.execute(sessionId, runId, mode, code, {});
+  }
+
+  async shutdown_service(sessionId, service_name) {
+    let params = {
+      'service_name': service_name
+    };
+    const q = querystring.stringify(params);
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/shutdown-service?${q}`, null);
+    return this._wrapWithPromise(rqst, true);
   }
 
   async upload(sessionId, path, fs) {
@@ -1063,12 +1260,28 @@ class Client {
     return k2;
   }
 
-  generateSessionId() {
+  generateSessionId(length=8, nosuffix=false) {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < 8; i++)
+    for (var i = 0; i < length; i++)
       text += possible.charAt(Math.floor(Math.random() * possible.length));
-    return text + "-jsSDK";
+    return nosuffix ? text : text + "-jsSDK";
+  }
+
+  slugify(text) {
+    const a = 'àáäâèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;'
+    const b = 'aaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh------'
+    const p = new RegExp(a.split('').join('|'), 'g')
+
+    return text.toString().toLowerCase()
+      .replace(/\s+/g, '-')           // Replace spaces with -
+      .replace(p, c =>
+          b.charAt(a.indexOf(c)))     // Replace special chars
+      .replace(/&/g, '-and-')         // Replace & with 'and'
+      .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+      .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+      .replace(/^-+/, '')             // Trim - from start of text
+      .replace(/-+$/, '')             // Trim - from end of text
   }
 
   /**
@@ -1228,8 +1441,9 @@ class VFolder {
    * @param {string} group - Virtual folder group name.
    * @param {string} usageMode - Virtual folder's purpose of use. Can be "general" (normal folders), "data" (data storage), and "model" (pre-trained model storage).
    * @param {string} permission - Virtual folder's innate permission.
+   * @param {boolean} cloneable - Whether Virtual folder is cloneable or not.
    */
-  async create(name, host = '', group = '', usageMode = 'general', permission = 'rw') {
+  async create(name, host = '', group = '', usageMode = 'general', permission = 'rw', cloneable = false) {
     let body;
     if (host !== '') {
       body = {
@@ -1252,10 +1466,41 @@ class VFolder {
         body['permission'] = permission;
       }
     }
+    if (this.client.supports('storage-proxy')) {
+      body['cloneable'] = cloneable;
+    }
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * Clone selected Virtual folder
+   *
+   * @param {json} input - parameters for cloning Vfolder
+   * @param {boolean} input.cloneable - whether new cloned Vfolder is cloneable or not
+   * @param {string} input.permission - permission for new cloned Vfolder. permission should one of the following: 'ro', 'rw', 'wd'
+   * @param {string} input.target_host - target_host for new cloned Vfolder
+   * @param {string} input.target_name - name for new cloned Vfolder
+   * @param {string} input.usage_mode - Cloned virtual folder's purpose of use. Can be "general" (normal folders), "data" (data storage), and "model" (pre-trained model storage).
+   * @param name - source Vfolder name
+   */
+
+  async clone(input, name = null) {
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/clone`, input);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   *
+   * @param {json} input - parameters for updating folder options of Vfolder
+   * @param {boolean} input.cloneable - whether Vfolder is cloneable or not
+   * @param {string} input.permission - permission for Vfolder. permission should one of the following: 'ro', 'rw', 'wd'
+   * @param name - source Vfolder name
+   */
+  async update_folder(input, name = null) {
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/update-options`, input);
+    return this.client._wrapWithPromise(rqst);
+  }
 
   /**
    * List Virtual folders that requested accessKey has permission to.
@@ -1311,6 +1556,19 @@ class VFolder {
       name = this.name;
     }
     let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Leave an invited Virtual folder.
+   *
+   * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
+   */
+  async leave_invited(name = null) {
+    if (name == null) {
+      name = this.name;
+    }
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/leave`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1384,15 +1642,23 @@ class VFolder {
    *
    * @param {string} path - Directory path to create.
    * @param {string} name - Virtual folder name.
+   * @param {string} parents - create parent folders when not exists (>=APIv6).
+   * @param {string} exist_ok - Do not raise error when the folder already exists (>=APIv6).
    */
-  async mkdir(path, name = null) {
+  async mkdir(path, name = null, parents = null, exist_ok = null) {
     if (name == null) {
       name = this.name;
     }
-    let body = {
+    const body = {
       'path': path
     };
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
+    if (parents) {
+      body['parents'] = parents
+    }
+    if (exist_ok) {
+      body['exist_ok'] = exist_ok
+    }
+    const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -1402,12 +1668,18 @@ class VFolder {
    * @param {string} target_path - path to the target file or directory (with old name).
    * @param {string} new_name - new name of the target.
    * @param {string} name - Virtual folder name that target file exists.
+   * @param {string} is_dir - True when the object is directory, false when it is file
    */
-  async rename_file(target_path, new_name, name = null) {
+  async rename_file(target_path, new_name, name = null, is_dir = false) {
     if (name == null) {
       name = this.name;
     }
-    const body = {target_path, new_name};
+    let body;
+    if (this.client.isAPIVersionCompatibleWith('v6.20200815')) {
+      body = {target_path, new_name, is_dir};
+    } else {
+      body = {target_path, new_name};
+    }
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/rename_file`, body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1436,19 +1708,24 @@ class VFolder {
   }
 
   /**
-   * Download file in a Virtual folder.
+   * Download file from a Virtual folder.
    *
    * @param {string} file - File to download. Should contain full path.
    * @param {string} name - Virtual folder name that files are in.
+   * @param {boolean} archive - Download target directory as an archive.
+   * @param {boolean} noCache - If true, do not store the file response in any cache. New in API v6.
    */
-  async download(file, name = false, archive = false) {
-    let params = {
-      file,
-      archive
-    };
-    let q = querystring.stringify(params);
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
-    return this.client._wrapWithPromise(rqst, true);
+  async download(file, name = false, archive = false, noCache = false) {
+    const params = {file, archive};
+    const q = querystring.stringify(params);
+    if (this.client._apiVersionMajor < 6) {
+      const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
+      return this.client._wrapWithPromise(rqst, true);
+    } else {
+      const res = await this.request_download_token(file, name);
+      const downloadUrl = `${res.url}?token=${res.token}&archive=${archive}&no_cache=${noCache}`;
+      return fetch(downloadUrl);
+    }
   }
 
   /**
@@ -1456,7 +1733,7 @@ class VFolder {
    *
    * @param {string} file - File to download. Should contain full path.
    * @param {string} name - Virtual folder name that files are in.
-   * @param {string} archive - Download target directory as an archive.
+   * @param {boolean} archive - Download target directory as an archive.
    */
   async request_download_token(file, name = false, archive = false) {
     let body = {
@@ -1597,6 +1874,37 @@ class VFolder {
     let rqst = this.client.newSignedRequest('POST', '/folders/_/shared', input);
     return this.client._wrapWithPromise(rqst);
   }
+
+  /**
+   * Share specific users a group-type virtual folder with overriding permission.
+   *
+   * @param {string} perm - Permission to give to. `rw` or `ro`.
+   * @param {array} emails - User E-mail(s) to share.
+   * @param {string} name - A group virtual folder name to share.
+   */
+  async share(permission, emails, name = null) {
+    if (!name) {
+      name = this.name;
+    }
+    const body = {permission, emails};
+    const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/share`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Unshare a group-type virtual folder from given users.
+   *
+   * @param {array} emails - User E-mail(s) to unshare.
+   * @param {string} name - A group virtual folder name to unshare.
+   */
+  async unshare(emails, name = null) {
+    if (!name) {
+      name = this.name;
+    }
+    const body = {emails};
+    const rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}/unshare`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class Agent {
@@ -1616,8 +1924,9 @@ class Agent {
    *
    * @param {string} status - Status to query. Should be one of 'ALIVE', 'PREPARING', 'TERMINATING' and 'TERMINATED'.
    * @param {array} fields - Fields to query. Queryable fields are:  'id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'.
+   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots']) {
+  async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'], timeout:number = 0) {
     if (['ALIVE', 'TERMINATED'].includes(status) === false) {
       return Promise.resolve(false);
     }
@@ -1627,7 +1936,7 @@ class Agent {
       `  }` +
       `}`;
     let v = {'status': status};
-    return this.client.query(q, v);
+    return this.client.query(q, v, null, timeout);
   }
 }
 
@@ -2057,7 +2366,7 @@ class ContainerImage {
    *
    * @param {array} fields - fields to query. Default fields are: ["name", "tag", "registry", "digest", "installed", "resource_limits { key min max }"]
    * @param {boolean} installed_only - filter images to installed / not installed. true to query installed images only.
-   * @param {boolean} system_images - filter images to get system images such as console, SFTP server. true to query system images only.
+   * @param {boolean} system_images - filter images to get system images such as web UI, SFTP server. true to query system images only.
    */
   async list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false, system_images = false) {
     let q, v;
@@ -2194,7 +2503,8 @@ class ComputeSession {
   /**
    * Get the number of compute sessions with specific conditions.
    *
-   * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+   * @param {string or array} status - status to query. Default is 'RUNNING'.
+   *        Available statuses are: `PREPARING`, `BUILDING`, `PENDING`, `SCHEDULED`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
    * @param {string} accessKey - access key that is used to start compute sessions.
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
@@ -2224,15 +2534,17 @@ class ComputeSession {
   /**
    * list compute sessions with specific conditions.
    *
-   * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
-   * @param {string or array} status - status to query. Default is 'RUNNING'. Available statuses are: `PREPARING`, `BUILDING`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+   * @param {array} fields - fields to query. Default fields are: ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
+   * @param {string or array} status - status to query. Default is 'RUNNING'.
+   *        Available statuses are: `PREPARING`, `BUILDING`, `PENDING`, `SCHEDULED`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
    * @param {string} accessKey - access key that is used to start compute sessions.
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {string} group - project group id to query. Default returns sessions from all groups.
+   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
   async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"],
-             status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '') {
+             status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout: number = 0) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
@@ -2252,7 +2564,7 @@ class ComputeSession {
     if (group != '') {
       v['group_id'] = group;
     }
-    return this.client.query(q, v);
+    return this.client.query(q, v, null, timeout);
   }
 
   /**
@@ -2264,10 +2576,11 @@ class ComputeSession {
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {string} group - project group id to query. Default returns sessions from all groups.
+   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
   async listAll(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"],
-                status = "RUNNING,RESTARTING,TERMINATING,PENDING,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR",
-                accessKey = '', limit = 100, offset = 0, group = '') {
+                status = "RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR",
+                accessKey = '', limit = 100, offset = 0, group = '', timeout:number = 0) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
     let q, v;
     const sessions: any = [];
@@ -2288,7 +2601,7 @@ class ComputeSession {
       if (group != '') {
         v.group_id = group;
       }
-      const session = await this.client.query(q, v);
+      const session = await this.client.query(q, v, null, timeout);
       console.log(session.compute_session_list.total_count)
       sessions.push(...session.compute_session_list.items);
       if (offset >= session.compute_session_list.total_count) {
@@ -2302,28 +2615,63 @@ class ComputeSession {
    * get compute session with specific condition.
    *
    * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
-   * @param {string} sessionName - session name to query specific compute session.
-   * @param {string} domainName - domain name to query specific compute session.
-   * @param {string} accessKey - access key that is used to start compute sessions.
+   * @param {string} sessionUuid - session ID to query specific compute session.
    */
   async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
-            sessionName = '', domainName = '', accessKey = '') {
+            sessionUuid = '') {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
-    q = `query($ak:String, $domain_name:String, $session_name:String!) {
-      compute_session(access_key:$ak, domain_name:$domain_name, sess_id:$session_name) {
+    q = `query($session_uuid: UUID!) {
+      compute_session(id:$session_uuid) {
         ${fields.join(" ")}
       }
     }`;
-
-    v = {
-      'ak': accessKey,
-      'domain_name': domainName,
-      'session_name': sessionName
-    };
+    v = {session_uuid: sessionUuid};
     return this.client.query(q, v);
   }
+}
 
+class SessionTemplate {
+  public client: any;
+  public urlPrefix: string;
+
+  /**
+   * The Computate session template API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+    this.urlPrefix = '/template/session';
+  }
+
+  /**
+   * list session templates with specific conditions.
+   *
+   * @param {array} fields - fields to query. Default fields are: ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
+   * @param {string or array} status - status to query. Default is 'RUNNING'.
+   *        Available statuses are: `PREPARING`, `BUILDING`,`PENDING`, `SCHEDULED`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
+   * @param {string} accessKey - access key that is used to start compute sessions.
+   * @param {number} limit - limit number of query items.
+   * @param {number} offset - offset for item query. Useful for pagination.
+   * @param {string} group - project group id to query. Default returns sessions from all groups.
+   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
+   */
+  async list(listall=false, groupId=null) {
+    let reqUrl = this.urlPrefix;
+    if (listall) {
+      const params = {all: listall};
+      const q = querystring.stringify(params);
+      reqUrl += `?${q}`;
+    }
+    if (groupId) {
+      const params = {group_id: groupId};
+      const q = querystring.stringify(params);
+      reqUrl += `?${q}`;
+    }
+    let rqst = this.client.newSignedRequest('GET', reqUrl, null);
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class Resources {
@@ -2630,6 +2978,16 @@ class Maintenance {
   }
 
   /**
+   * Attach to the background task to listen to events
+   * @param {string} task_id - background task id.
+   */
+  attach_background_task(task_id: string) {
+    var urlStr = "/events/background-task?task_id=" + task_id;
+    let req = this.client.newSignedRequest("GET", urlStr, null);
+    return new EventSource(req.uri, {withCredentials:true});
+  }
+
+  /**
    * Rescan image from repository
    * @param {string} registry - registry. default is ''
    */
@@ -2640,7 +2998,7 @@ class Maintenance {
         registry = decodeURIComponent(registry);
         q = `mutation($registry: String) {` +
           `  rescan_images(registry: $registry) {` +
-          `    ok msg ` +
+          `    ok msg task_id ` +
           `  }` +
           `}`;
         v = {
@@ -2649,7 +3007,7 @@ class Maintenance {
       } else {
         q = `mutation {` +
           `  rescan_images {` +
-          `    ok msg ` +
+          `    ok msg task_id ` +
           `  }` +
           `}`;
         v = {};
@@ -2913,7 +3271,7 @@ class ScalingGroup {
    */
   async create(name, description = "") {
     const input = {
-      description,
+      description: description,
       is_active: true,
       driver: "static",
       scheduler: "fifo",
@@ -2921,7 +3279,7 @@ class ScalingGroup {
       scheduler_opts: "{}"
     };
     // if (this.client.is_admin === true) {
-    let q = `mutation($name: String!, $input: ScalingGroupInput!) {` +
+    let q = `mutation($name: String!, $input: CreateScalingGroupInput!) {` +
       `  create_scaling_group(name: $name, props: $input) {` +
       `    ok msg` +
       `  }` +
@@ -3074,7 +3432,7 @@ class Setting {
    * Set a setting
    *
    * @param {string} key - key to add.
-   * @param {string} value - value to add.
+   * @param {object} value - value to add.
    */
   async set(key, value) {
     key = `config/${key}`;
@@ -3335,6 +3693,37 @@ class Cloud {
   async change_password(email: string, password: string, token: string) {
     const body = {email, password, token};
     const rqst = this.client.newSignedRequest("POST", "/cloud/change-password", body);
+    return this.client._wrapWithPromise(rqst);
+  }
+}
+
+class EduApp {
+  public client: any;
+  public config: any;
+
+  /**
+   * Setting API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client: Client) {
+    this.client = client;
+    this.config = null;
+  }
+
+  /**
+   * Check if EduApp endpoint is available.
+   */
+  async ping() {
+    const rqst = this.client.newSignedRequest('GET', '/eduapp/ping');
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Get mount folders for auto-mount.
+   */
+  async get_mount_folders() {
+    const rqst = this.client.newSignedRequest('GET', '/eduapp/mounts');
     return this.client._wrapWithPromise(rqst);
   }
 }

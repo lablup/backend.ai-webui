@@ -1,17 +1,17 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
@@ -25,10 +25,10 @@ import './backend-ai-dialog';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-import {BackendAiStyles} from "./backend-ai-general-styles";
-import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
-@customElement("backend-ai-resource-policy-list")
+@customElement('backend-ai-resource-policy-list')
 export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) visible = false;
   @property({type: Object}) keypairs = {};
@@ -46,9 +46,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) vfolder_capacity = {};
   @property({type: Object}) vfolder_max_limit= {};
   @property({type: Object}) container_per_session_limit = {};
-  @property({type: Array}) allowed_vfolder_hosts = [];
+  @property({type: Array}) allowed_vfolder_hosts;
   @property({type: String}) default_vfolder_host = '';
-  @property({type: Array}) resource_policy_names = Array();
+  @property({type: Array}) resource_policy_names;
   @property({type: String}) current_policy_name = '';
   @property({type: Number}) selectAreaHeight;
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
@@ -57,9 +57,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   constructor() {
     super();
+    this.allowed_vfolder_hosts = [];
+    this.resource_policy_names = [];
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -115,7 +117,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         wl-label {
           width: 100%;
           min-width: 60px;
-          font-size: 11px;
+          font-size: 10px; // 11px;
           --label-font-family: Roboto, Noto, sans-serif;
         }
 
@@ -131,13 +133,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           width: 100%;
         }
 
-        wl-textfield {
-          width: 100%;
-          --input-state-color-invalid: red;
-          --input-padding-top-bottom: 0px;
-          --input-font-family: Roboto, Noto, sans-serif;
-        }
-
         wl-checkbox {
           --checkbox-size: 10px;
           --checkbox-border-radius: 2px;
@@ -151,6 +146,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-typography-font-family: var(--general-font-family);
+        }
+
+        mwc-textfield.resource-input {
+          width: 5rem;
         }
 
         mwc-button, mwc-button[unelevated] {
@@ -188,7 +187,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-column resizable>
           <template class="header">
-            <vaadin-grid-sorter path="name">${_t("resourcePolicy.Name")}</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="name">${_t('resourcePolicy.Name')}</vaadin-grid-sorter>
           </template>
           <template>
             <div class="layout horizontal center flex">
@@ -197,15 +196,15 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column width="150px" resizable header="${_t("resourcePolicy.Resources")}" .renderer="${this._boundResourceRenderer}">
+        <vaadin-grid-column width="150px" resizable header="${_t('resourcePolicy.Resources')}" .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable header="${_t("resourcePolicy.Concurrency")}" .renderer="${this._boundConcurrencyRenderer}">
+        <vaadin-grid-column resizable header="${_t('resourcePolicy.Concurrency')}" .renderer="${this._boundConcurrencyRenderer}">
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
           <template class="header">
-            <vaadin-grid-sorter path="max_containers_per_session">${_t("resourcePolicy.ClusterSize")}</vaadin-grid-sorter>
+            <vaadin-grid-sorter path="max_containers_per_session">${_t('resourcePolicy.ClusterSize')}</vaadin-grid-sorter>
           </template>
           <template>
             <div>[[item.max_containers_per_session]]</div>
@@ -213,7 +212,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         </vaadin-grid-column>
 
         <vaadin-grid-column resizable>
-          <template class="header">${_t("resourcePolicy.StorageNodes")}</template>
+          <template class="header">${_t('resourcePolicy.StorageNodes')}</template>
           <template>
             <div class="layout horizontal center flex">
               <div class="vertical start layout">
@@ -224,89 +223,89 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
 
-        <vaadin-grid-column resizable header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}">
+        <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
 
       </vaadin-grid>
       <backend-ai-dialog id="modify-policy-dialog" fixed backdrop blockscrolling narrowLayout>
-        <span slot="title">${_t("resourcePolicy.UpdateResourcePolicy")}</span>
+        <span slot="title">${_t('resourcePolicy.UpdateResourcePolicy')}</span>
         <div slot="content">
-          <mwc-textfield id="id_new_policy_name" label="${_t("resourcePolicy.PolicyName")}" disabled></mwc-textfield>
-          <h4>${_t("resourcePolicy.ResourcePolicy")}</h4>
-          <div class="horizontal center layout distancing">
-            <div class="vertical layout" style="margin: 0 10px 0 0;">
+          <mwc-textfield id="id_new_policy_name" label="${_t('resourcePolicy.PolicyName')}" disabled></mwc-textfield>
+          <h4>${_t('resourcePolicy.ResourcePolicy')}</h4>
+          <div class="horizontal justified layout distancing">
+            <div class="vertical layout">
               <wl-label>CPU</wl-label>
-              <wl-textfield class="discrete" id="cpu-resource" type="number" max="512"
-                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <mwc-textfield class="discrete resource-input" id="cpu-resource" type="number" min="0" max="512"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("resourcePolicy.Unlimited")}
+                  ${_t('resourcePolicy.Unlimited')}
                 </wl-label>
             </div>
-            <div class="vertical layout" style="margin: 0px 10px 0px 10px;">
+            <div class="vertical layout">
               <wl-label>RAM(GB)</wl-label>
-              <wl-textfield id="ram-resource" type="number" max="1024"
-                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max="1024" step="0.01"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                ${_t("resourcePolicy.Unlimited")}
+                ${_t('resourcePolicy.Unlimited')}
               </wl-label>
             </div>
-            <div class="vertical layout" style="margin: 0px 10px 0px 10px;">
+            <div class="vertical layout">
               <wl-label>GPU</wl-label>
-              <wl-textfield id="gpu-resource" type="number" max="64"
-                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <mwc-textfield class="discrete resource-input" id="gpu-resource" type="number" min="0" max="64"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                ${_t("resourcePolicy.Unlimited")}
+                ${_t('resourcePolicy.Unlimited')}
               </wl-label>
             </div>
-            <div class="vertical layout" style="margin: 0px 0px 0px 10px;">
+            <div class="vertical layout">
               <wl-label>fGPU</wl-label>
-              <wl-textfield id="fgpu-resource" type="number" max="256"
-                            @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <mwc-textfield class="resource-input" id="fgpu-resource" type="number" min="0" max="256" step="0.1"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                ${_t("resourcePolicy.Unlimited")}
+                ${_t('resourcePolicy.Unlimited')}
               </wl-label>
             </div>
           </div>
-          <h4>${_t("resourcePolicy.Sessions")}</h4>
-          <div class="horizontal center layout distancing">
+          <h4>${_t('resourcePolicy.Sessions')}</h4>
+          <div class="horizontal justified layout distancing">
             <div class="vertical left layout">
-                <wl-label>${_t("resourcePolicy.ContainerPerSession")}</wl-label>
-                <wl-textfield class="discrete" id="container-per-session-limit" type="number" max="100"
-                    @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label>${_t('resourcePolicy.ContainerPerSession')}</wl-label>
+                <mwc-textfield class="discrete" id="container-per-session-limit" type="number" min="0" max="100"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("resourcePolicy.Unlimited")}
-                </wl-label>
-              </div>
-              <div class="vertical left layout" style="margin: 0px 15px;">
-                <wl-label>${_t("resourcePolicy.IdleTimeoutSec")}</wl-label>
-                <wl-textfield class="discrete" id="idle-timeout" type="number" max="15552000"
-                    @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                <wl-label class="unlimited">
-                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("resourcePolicy.Unlimited")}
+                  ${_t('resourcePolicy.Unlimited')}
                 </wl-label>
               </div>
               <div class="vertical left layout">
-                  <wl-label>${_t("resourcePolicy.ConcurrentJobs")}</wl-label>
-                  <wl-textfield class="discrete" id="concurrency-limit" type="number"  max="100"
-                      @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+                <wl-label>${_t('resourcePolicy.IdleTimeoutSec')}</wl-label>
+                <mwc-textfield class="discrete" id="idle-timeout" type="number" min="0" max="15552000"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t('resourcePolicy.Unlimited')}
+                </wl-label>
+              </div>
+              <div class="vertical left layout">
+                  <wl-label>${_t('resourcePolicy.ConcurrentJobs')}</wl-label>
+                  <mwc-textfield class="discrete" id="concurrency-limit" type="number" min="0" max="100"
+                      @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                   ${_t("resourcePolicy.Unlimited")}
+                   ${_t('resourcePolicy.Unlimited')}
                   </wl-label>
               </div>
           </div>
-          <h4 style="margin-bottom:0px;">${_t("resourcePolicy.Folders")}</h4>
+          <h4 style="margin-bottom:0px;">${_t('resourcePolicy.Folders')}</h4>
           <div class="vertical center layout distancing" id="dropdown-area">
-            <mwc-select id="allowed_vfolder-hosts" label="${_t("resourcePolicy.AllowedHosts")}" style="width:100%;"
+            <mwc-select id="allowed_vfolder-hosts" label="${_t('resourcePolicy.AllowedHosts')}" style="width:100%;"
               @opened="${() => this._controlHeightByVfolderHostCount(true)}"
               @closed="${() => this._controlHeightByVfolderHostCount()}">
-              ${this.allowed_vfolder_hosts.map(item => html`
+              ${this.allowed_vfolder_hosts.map((item) => html`
                 <mwc-list-item class="owner-group-dropdown"
                                id="${item}"
                                value="${item}">
@@ -314,20 +313,20 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                 </mwc-list-item>
               `)}
             </mwc-select>
-            <div class="horizontal layout">
-              <div class="vertical layout" style="margin-right: 10px;">
-                <wl-label class="folders">${_t("resourcePolicy.Capacity")}(GB)</wl-label>
-                <wl-textfield id="vfolder-capacity-limit" type="number" max="1024"
-                    @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+            <div class="horizontal layout justified" style="width:100%;">
+              <div class="vertical layout flex">
+                <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GB)</wl-label>
+                <mwc-textfield class="discrete" id="vfolder-capacity-limit" type="number" min="0" max="1024"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("resourcePolicy.Unlimited")}
+                  ${_t('resourcePolicy.Unlimited')}
                 </wl-label>
               </div>
-              <div class="vertical layout" style="margin-left: 10px;">
-                <wl-label class="folders">${_t("credential.Max#")}</wl-label>
-                <wl-textfield id="vfolder-count-limit" type="number" max="50"
-                    @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+              <div class="vertical layout flex">
+                <wl-label class="folders">${_t('credential.Max#')}</wl-label>
+                <mwc-textfield class="discrete" id="vfolder-count-limit" type="number" min="0" max="50"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               </div>
             </div>
           </div>
@@ -338,27 +337,27 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               outlined
               id="create-policy-button"
               icon="check"
-              label="${_t("button.Update")}"
+              label="${_t('button.Update')}"
               style="width:100%;"
               @click="${() => this._modifyResourcePolicy()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-policy-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
-          <p>${_t("resourcePolicy.AboutToDeleteResourcePolicy")}</p>
+          <p>${_t('resourcePolicy.AboutToDeleteResourcePolicy')}</p>
           <p style="text-align:center;color:blue;">${this.current_policy_name}</p>
-          <p>${_t("dialog.warning.CannotBeUndone")} ${_t("dialog.ask.DoYouWantToProceed")}</p>
+          <p>${_t('dialog.warning.CannotBeUndone')} ${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
                 class="operation"
-                label="${_t("button.Cancel")}"
+                label="${_t('button.Cancel')}"
                 @click="${(e) => this._hideDialog(e)}"></mwc-button>
             <mwc-button
                 unelevated
                 class="operation"
-                label="${_t("button.Okay")}"
+                label="${_t('button.Okay')}"
                 @click="${() => this._deleteResourcePolicy()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -366,7 +365,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _indexRenderer(root, column, rowData) {
-    let idx = rowData.index + 1;
+    const idx = rowData.index + 1;
     render(
       html`
         <div>${idx}</div>
@@ -392,7 +391,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         </div>
         <div class="layout horizontal wrap center">
         ${rowData.item.total_resource_slots['cuda_device'] ?
-        html`
+    html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">view_module</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
@@ -400,7 +399,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           </div>
 ` : html``}
         ${rowData.item.total_resource_slots['cuda_shares'] ?
-        html`
+    html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">view_module</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
@@ -461,7 +460,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (active === false) {
       return;
     }
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshPolicyData();
         this._getResourceInfo();
@@ -489,19 +488,19 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   updateCurrentPolicyToDialog(e) {
     const controls = e.target.closest('#controls');
     const policyName = controls['policy-name'];
-    let resourcePolicies = globalThis.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
+    const resourcePolicies = globalThis.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     this.resource_policy_names = Object.keys(resourcePolicies);
-    let resourcePolicy = resourcePolicies[policyName];
+    const resourcePolicy = resourcePolicies[policyName];
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
     this.current_policy_name = policyName;
-    this.cpu_resource['value'] = resourcePolicy.total_resource_slots['cpu'];
-    this.ram_resource['value'] = resourcePolicy.total_resource_slots['mem'];
-    this.gpu_resource['value'] = resourcePolicy.total_resource_slots['cuda_device'];
-    this.fgpu_resource['value'] = resourcePolicy.total_resource_slots['cuda_shares'];
-    this.concurrency_limit['value'] = resourcePolicy.max_concurrent_sessions;
-    this.idle_timeout['value'] = resourcePolicy.idle_timeout;
-    this.container_per_session_limit['value'] = resourcePolicy.max_containers_per_session;
-    this.vfolder_capacity['value'] = resourcePolicy.max_vfolder_size;
+    this.cpu_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cpu']);
+    this.ram_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['mem']);
+    this.gpu_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cuda_device']);
+    this.fgpu_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cuda_shares']);
+    this.concurrency_limit['value'] = this._updateUnlimitedValue(resourcePolicy.max_concurrent_sessions);
+    this.idle_timeout['value'] = this._updateUnlimitedValue(resourcePolicy.idle_timeout);
+    this.container_per_session_limit['value'] = this._updateUnlimitedValue(resourcePolicy.max_containers_per_session);
+    this.vfolder_capacity['value'] = this._updateUnlimitedValue(resourcePolicy.max_vfolder_size);
     this.allowed_vfolder_hosts = resourcePolicy.allowed_vfolder_hosts;
 
     this._updateInputStatus(this.cpu_resource);
@@ -524,13 +523,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _refreshPolicyData() {
     return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
-      let rp = response.keypair_resource_policies;
-      //let resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
+      const rp = response.keypair_resource_policies;
+      // let resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
       return rp;
     }).then((response) => {
-      let resourcePolicies = response;
+      const resourcePolicies = response;
       Object.keys(resourcePolicies).map((objectKey, index) => {
-        var policy = resourcePolicies[objectKey];
+        const policy = resourcePolicies[objectKey];
         policy['total_resource_slots'] = JSON.parse(policy['total_resource_slots']);
         if ('cpu' in policy['total_resource_slots']) {
         } else if (policy['default_for_unspecified'] === 'UNLIMITED') {
@@ -561,7 +560,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         }
       });
       this.resourcePolicy = resourcePolicies;
-    }).catch(err => {
+    }).catch((err) => {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -580,23 +579,19 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _readResourcePolicyInput() {
-    let total_resource_slots = {};
-    let vfolder_hosts: Array<object> = [];
+    const total_resource_slots = {};
+    const vfolder_hosts: string[] | null = [];
     vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
 
-    try {
-      this._validateUserInput(this.cpu_resource);
-      this._validateUserInput(this.ram_resource);
-      this._validateUserInput(this.gpu_resource);
-      this._validateUserInput(this.fgpu_resource);
-      this._validateUserInput(this.concurrency_limit);
-      this._validateUserInput(this.idle_timeout);
-      this._validateUserInput(this.container_per_session_limit);
-      this._validateUserInput(this.vfolder_capacity);
-      this._validateUserInput(this.vfolder_max_limit);
-    } catch (err) {
-      throw err;
-    }
+    this._validateUserInput(this.cpu_resource);
+    this._validateUserInput(this.ram_resource);
+    this._validateUserInput(this.gpu_resource);
+    this._validateUserInput(this.fgpu_resource);
+    this._validateUserInput(this.concurrency_limit);
+    this._validateUserInput(this.idle_timeout);
+    this._validateUserInput(this.container_per_session_limit);
+    this._validateUserInput(this.vfolder_capacity);
+    this._validateUserInput(this.vfolder_max_limit);
 
     total_resource_slots['cpu'] = this.cpu_resource['value'];
     total_resource_slots['mem'] = this.ram_resource['value'] + 'g';
@@ -615,7 +610,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       }
     });
 
-    let input = {
+    const input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
       'max_concurrent_sessions': this.concurrency_limit['value'],
@@ -630,12 +625,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _modifyResourcePolicy() {
     try {
-      let input = this._readResourcePolicyInput();
+      const input = this._readResourcePolicyInput();
       globalThis.backendaiclient.resourcePolicy.mutate(this.current_policy_name, input)
         .then(({modify_keypair_resource_policy}) => {
           if (modify_keypair_resource_policy.ok) {
             this.shadowRoot.querySelector('#modify-policy-dialog').hide();
-            this.notification.text = _text("resourcePolicy.SuccessfullyUpdated");
+            this.notification.text = _text('resourcePolicy.SuccessfullyUpdated');
             this.notification.show();
             this.refresh();
           } else if (modify_keypair_resource_policy.msg) {
@@ -645,15 +640,15 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             this.refresh();
           }
         })
-        .catch(err => {
-            console.log(err);
-            if (err && err.message) {
-              this.shadowRoot.querySelector('#modify-policy-dialog').hide();
-              this.notification.text = PainKiller.relieve(err.title);
-              this.notification.detail = err.message;
-              this.notification.show(true, err);
-            }
-      });
+        .catch((err) => {
+          console.log(err);
+          if (err && err.message) {
+            this.shadowRoot.querySelector('#modify-policy-dialog').hide();
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          }
+        });
     } catch (err) {
       this.notification.text = err.message;
       this.notification.show();
@@ -661,11 +656,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _deleteResourcePolicy() {
-    let name = this.current_policy_name;
+    const name = this.current_policy_name;
     globalThis.backendaiclient.resourcePolicy.delete(name).then(({delete_keypair_resource_policy}) => {
       if (delete_keypair_resource_policy.ok) {
         this.shadowRoot.querySelector('#delete-policy-dialog').hide();
-        this.notification.text = _text("resourcePolicy.SuccessfullyDeleted");
+        this.notification.text = _text('resourcePolicy.SuccessfullyDeleted');
         this.notification.show();
         this.refresh();
       } else if (delete_keypair_resource_policy.msg) {
@@ -675,40 +670,47 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         this.refresh();
       }
     })
-    .catch(err => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
-
+      .catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
   }
 
+  /**
+   * Set a TextEl value according to toggle checkbox checked state.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _toggleCheckbox(e) {
     const checkEl = e.target;
     const checked = checkEl.checked;
-    const wlTextEl = checkEl.closest('div').querySelector('wl-textfield');
-    wlTextEl.disabled = checked;
-    if (!wlTextEl.disabled) {
-      if (wlTextEl.value === '') {
-        wlTextEl.value = 0;
+    const TextEl = checkEl.closest('div').querySelector('mwc-textfield');
+    TextEl.disabled = checked;
+    if (!TextEl.disabled) {
+      if (TextEl.value === '') {
+        TextEl.value = 0;
       }
     }
   }
 
+  /**
+   * Check validation of resource input.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _validateResourceInput(e) {
-    const textfield = e.target.closest('wl-textfield');
-    const checkbox_el = textfield.closest('div').querySelector('.unlimited');
-    let checkbox;
-    if (checkbox_el) {
-      checkbox = checkbox_el.querySelector('wl-checkbox');
-    } else {
-      checkbox = null;
-    }
+    const textfield = e.target.closest('mwc-textfield');
+    const checkbox_el = textfield.closest('div').querySelector('wl-label.unlimited');
+    const checkbox = checkbox_el ? checkbox_el.querySelector('wl-checkbox') : null;
+    const countDecimals = (value: number) => {
+      return value % 1 ? value.toString().split('.')[1].length : 0;
+    };
 
-    if (textfield.className === 'discrete' || !textfield.valid) {
+    if (textfield.classList.contains('discrete')) {
       textfield.value = Math.round(textfield.value);
     }
 
@@ -716,48 +718,43 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       // concurrency job and container-per-session limit must be upper than 0.
       textfield.value = ((textfield.id === 'concurrency-limit') || (textfield.id === 'container-per-session-limit')) ? 1 : 0;
     }
-    if (textfield.min && textfield.value < textfield.min) {
-      textfield.value = textfield.min;
-    }
-    if (textfield.max && textfield.value > textfield.max) {
-      textfield.value = textfield.max;
-    }
 
-    if (textfield.value === '') {
-      try {
-        if (!checkbox || !checkbox['checked']) {
-          textfield['required'] = true;
-          textfield.focus();
-          throw {"message": _text('resourcePolicy.CannotCreateResourcePolicy')};
-        } else {
-          textfield['required'] = false;
-          textfield.value = '';
-        }
-      } catch (err) {
-        this.notification.text = err.message;
-        this.notification.show();
-      }
+    if (!textfield.valid) {
+      const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
+      textfield.value = (decimal_point > 0) ? parseFloat(textfield.value).toFixed(decimal_point) : Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
+    }
+    // automatically check when textfield is min
+    if (checkbox) {
+      textfield.disabled = checkbox.checked = (textfield.value == parseFloat(textfield.min));
     }
   }
 
+  _updateUnlimitedValue(value) {
+    return ['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value) ? '' : value;
+  }
 
+  /**
+   * Check validation of user input.
+   *
+   * @param {object} resource
+   */
   _validateUserInput(resource) {
     if (resource.disabled) {
       resource.value = '';
     } else {
       if (resource.value === '') {
-        throw {"message": _text('resourcePolicy.CannotCreateResourcePolicy')};
+        throw new Error(_text('resourcePolicy.CannotCreateResourcePolicy'));
       }
     }
   }
 
   _updateInputStatus(resource) {
-    let textfield = resource;
-    let checkbox = textfield.closest('div').querySelector('wl-checkbox');
-    if (textfield.value === '' || textfield.value === "0") {
+    const textfield = resource;
+    const checkbox = textfield.closest('div').querySelector('wl-checkbox');
+    if (textfield.value === '' || textfield.value === '0') {
       textfield.disabled = true;
       checkbox.checked = true;
-    } else if (textfield.id === 'concurrency-limit' && textfield.value === "1000000") {
+    } else if (textfield.id === 'concurrency-limit' && textfield.value === '1000000') {
       textfield.disabled = true;
       checkbox.checked = true;
     } else {
@@ -792,25 +789,24 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
    *
    * Expand or Shrink the dialog height by the number of items in the dropdown.
    *
-   * @param isOpened
+   * @param {boolean} isOpened - true if opened.
    */
   _controlHeightByVfolderHostCount(isOpened = false) {
     if (!isOpened) {
       this.shadowRoot.querySelector('#dropdown-area').style.height = this.selectAreaHeight;
       return;
     }
-    let itemCount = this.shadowRoot.querySelector('#allowed_vfolder-hosts').items.length;
-    let actualHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight;
+    const itemCount = this.shadowRoot.querySelector('#allowed_vfolder-hosts').items.length;
+    const actualHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight;
     if (itemCount > 0) {
-    this.shadowRoot.querySelector('#dropdown-area').style.height = (actualHeight + itemCount * 14) +'px';
+      this.shadowRoot.querySelector('#dropdown-area').style.height = (actualHeight + itemCount * 14) +'px';
     }
   }
-
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-resource-policy-list": BackendAIResourcePolicyList;
+    'backend-ai-resource-policy-list': BackendAIResourcePolicyList;
   }
 }
 
