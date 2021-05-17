@@ -864,7 +864,7 @@
     "Config": "Config",
     "JobSchedulerUpdated": "Default job scheduler has been updated.",
     "ConfigPerJobSchduler": "Scheduler settings",
-    "ConfigPerJobSchdulerDescription": "The input value in the scheduler setting is the default value to use when there is no scheduler setting value in RESOURCE GROUP. If there is a RESOURCE GROUP value, this value is ignored.",
+    "ConfigPerJobSchdulerDescription": "The values in the scheduler setting is the defaults to use when there is no scheduler setting in each resource group. If there is a resource group-specific setting, this value will be ignored.",
     "SchedulerOptions": "Scheduler Options",
     "SchedulerType": "Scheduler Type",
     "SessionCreationRetries": "Session creation retries",

@@ -862,7 +862,7 @@
     "Config": "설정",
     "JobSchedulerUpdated": "잡 스케줄러 설정이 변경되었습니다.",
     "ConfigPerJobSchduler": "스케줄러 별 설정",
-    "ConfigPerJobSchdulerDescription": "스케줄러 설정에서 입력한 값은 자원 그룹의 스케줄러 설정 값이 없을 때에 사용하는 기본 값으로, 자원 그룹 값이 있을 경우 이 값은 무시됩니다.",
+    "ConfigPerJobSchdulerDescription": "스케줄러 설정에서 지정한 값은 자원 그룹의 스케줄러 설정 값이 없을 경우 사용하는 기본 값입니다. 자원 그룹에 설정한 값이 있을 경우 이 값은 무시됩니다.",
     "SchedulerOptions": "스케줄러 옵션",
     "SchedulerType": "스케줄러 타입",
     "SessionCreationRetries": "세션 재시도 횟수",
