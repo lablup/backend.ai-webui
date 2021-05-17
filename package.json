@@ -58,7 +58,7 @@
     "chartjs-adapter-date-fns": "^2.0.0",
     "date-fns": "^2.21.3",
     "https-proxy-agent": "^5.0.0",
-    "lit": "^2.0.0-rc.1",
+    "lit": "^2.0.0-rc.2",
     "lit-translate": "github:andreasbm/lit-translate#lit-2",
     "log": "^6.0.0",
     "macro-carousel": "^1.0.0",
