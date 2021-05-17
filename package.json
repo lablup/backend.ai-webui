@@ -27,7 +27,7 @@
     "update": "./node_modules/typescript/bin/tsc",
     "postinstall": "npm run patch:weightless && npm run patch:lit-translate",
     "patch:weightless": "cd ./src/plastics/weightless && bash ./patch-input-behavior.sh",
-    "patch:lit-translate": "unzip ./scripts/lit-translate.zip -d ./node_modules/lit-translate && cp ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js"
+    "patch:lit-translate": "unzip -f ./scripts/lit-translate.zip -d ./node_modules/lit-translate && cp ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js"
   },
   "dependencies": {
     "@material/mwc-button": "^0.21.0",
