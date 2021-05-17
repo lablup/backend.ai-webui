@@ -188,7 +188,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
         mwc-textfield#num-retries {
           width: 10rem;
         }
-
         @media screen and (max-width: 750px) {
           .setting-desc, .setting-desc-shrink {
             width: 275px;
@@ -330,7 +329,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                     <div class="vertical center-justified layout setting-desc-select" style="margin: 15px 0px;">
                       <div class="title">${_t('settings.Scheduler')}</div>
                       <div class="description-shrink">${_t('settings.SchedulerConfiguration')}<br/>
-                          ${_t('settings.Require1912orAbove')}
+                          ${_t('settings.Require2009orAbove')}
                       </div>
                     </div>
                     <div class="vertical center-justified layout">
@@ -382,13 +381,13 @@ export default class BackendAiSettingsView extends BackendAIPage {
             <mwc-select
               id="scheduler-switch"
               required
-              label="${_t('settings.Scheduler')}" 
+              label="${_t('settings.Scheduler')}"
               style="margin-bottom: 10px;"
               validationMessage="${_t('settings.SchedulerRequired')}"
               @selected="${(e) => this.changeSelectedScheduleType(e)}">
               ${this.jobschedulerType.map((item) => html`
                 <mwc-list-item value="${item}">
-                  ${item}
+                  ${item.toUpperCase()}
                 </mwc-list-item>`)}
             </mwc-select>
             <h4>${_t('settings.SchedulerOptions')}</h4>
@@ -408,21 +407,21 @@ export default class BackendAiSettingsView extends BackendAIPage {
                               @change="${(e) => this._validateInput(e)}"
                               @input="${(e) => this._customizeValidationMessage(e)}"></mwc-textfield>
             </div>
-            <div slot="footer" class="horizontal end-justified flex layout" style="margin-top: 20px;">
-              <mwc-button
-                id="config-cancel-button"
-                style="width:auto;margin-right:10px;"
-                icon="delete"
-                @click="${() => this._clearOptions()}"
-                label="${_t('button.DeleteAll')}"></mwc-button>
-              <mwc-button
-                unelevated
-                id="config-save-button"
-                style="width:auto;"
-                icon="check"
-                @click="${() => this.saveAndCloseDialog()}"
-                label="${_t('button.Save')}"></mwc-button>
-            </div>
+          </div>
+          <div slot="footer" class="horizontal end-justified flex layout" style="margin-top: 20px;">
+            <mwc-button
+              id="config-cancel-button"
+              style="width:auto;margin-right:10px;"
+              icon="delete"
+              @click="${() => this._clearOptions()}"
+              label="${_t('button.DeleteAll')}"></mwc-button>
+            <mwc-button
+              unelevated
+              id="config-save-button"
+              style="width:auto;"
+              icon="check"
+              @click="${() => this.saveAndCloseDialog()}"
+              label="${_t('button.Save')}"></mwc-button>
           </div>
         </backend-ai-dialog>
         <backend-ai-dialog id="help-description" fixed backdrop>
