@@ -118,7 +118,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           width: 100%;
           min-width: 60px;
           font-size: 10px; // 11px;
-          --label-font-family: Roboto, Noto, sans-serif;
+          --label-font-family: 'Ubuntu', 'Quicksand', Roboto;
         }
 
         wl-label.folders {

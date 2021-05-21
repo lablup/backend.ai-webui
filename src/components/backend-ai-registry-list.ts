@@ -88,7 +88,7 @@ class BackendAIRegistryList extends BackendAIPage {
         }
 
         backend-ai-dialog wl-textfield {
-          --input-font-family: Roboto, Noto, sans-serif;
+          --input-font-family: var(--general-font-family);
           --input-state-color-invalid: #b00020;
           margin-bottom: 20px;
         }
@@ -105,13 +105,9 @@ class BackendAIRegistryList extends BackendAIPage {
           --input-label-space: 20px;
         }
 
-        wl-textfield#add-registry-password {
-          --input-font-family: Noto, Roboto, sans-serif;
-        }
-
         wl-label.helper-text {
           --label-color: #b00020;
-          --label-font-family: Roboto, Noto, sans-serif;
+          --label-font-family: 'Ubuntu', 'Quicksand', Roboto;
           --label-font-size: 11px;
         }
 

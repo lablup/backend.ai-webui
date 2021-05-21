@@ -367,7 +367,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         wl-label {
-          --label-font-family: Roboto, Noto, sans-serif;
+          --label-font-family: 'Ubuntu', 'Quicksand', Roboto;
           --label-color: black;
         }
         wl-checkbox {
