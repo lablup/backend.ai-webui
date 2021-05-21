@@ -181,6 +181,11 @@ export const BackendAIWebUIStyles = [
       top: 20px;
     }
 
+    .dropdown-menu-name {
+      position: absolute;
+      margin-top: 4px;
+    }
+
     mwc-button {
       margin: auto 10px;
       background-image: none;
@@ -403,6 +408,7 @@ export const BackendAIWebUIStyles = [
     mwc-menu.user-menu {
       --mdc-theme-surface: #f1f1f1;
       --mdc-menu-item-height: 28px;
+      --mdc-menu-min-width: 200px;
       box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     }
 
@@ -555,8 +561,7 @@ export const BackendAIWebUIStyles = [
     }
 
     @media screen and (max-width: 1030px) {
-      span.email, #group-select-box > div > p
-       {
+      span.email, #group-select-box > div > p {
         display: none;
       }
     }

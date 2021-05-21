@@ -1411,7 +1411,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <div class="horizontal flex center layout">
                     <div style="height:48px;">
                       <div class="horizontal center center-justified layout">
-                        <p style="font-size:12px;color:#8c8484;">${_t('webui.menu.Project')}</p>
+                        <p style="font-size:12px;color:#8c8484;padding-right:8px;">${_t('webui.menu.Project')}</p>
                         <div id="group-select-box"></div>
                       </div>
                     </div>
@@ -1432,23 +1432,23 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
                               <mwc-icon class="dropdown-menu">info</mwc-icon>
-                              ${_t('webui.menu.AboutBackendAI')}
+                              <span class="dropdown-menu-name">${_t('webui.menu.AboutBackendAI')}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                               <mwc-icon class="dropdown-menu">lock</mwc-icon>
-                              ${_t('webui.menu.ChangeUserInfo')}
+                              <span class="dropdown-menu-name">${_t('webui.menu.ChangeUserInfo')}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
                               <mwc-icon class="dropdown-menu">drag_indicator</mwc-icon>
-                              ${_t('webui.menu.Preferences')}
+                              <span class="dropdown-menu-name">${_t('webui.menu.Preferences')}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
                               <mwc-icon class="dropdown-menu">assignment</mwc-icon>
-                              ${_t('webui.menu.LogsErrors')}
+                              <span class="dropdown-menu-name">${_t('webui.menu.LogsErrors')}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
                               <mwc-icon class="dropdown-menu">logout</mwc-icon>
-                              ${_t('webui.menu.LogOut')}
+                              <span class="dropdown-menu-name">${_t('webui.menu.LogOut')}</span>
                           </mwc-list-item>
                         </mwc-menu>
                       </div>
