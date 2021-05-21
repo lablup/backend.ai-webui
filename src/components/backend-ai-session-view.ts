@@ -108,7 +108,7 @@ export default class BackendAiSessionView extends BackendAIPage {
 
         backend-ai-dialog wl-textfield {
           padding: 10px 0;
-          --input-font-family: Roboto, Noto, sans-serif;
+          --input-font-family: var(--general-font-family);
           --input-font-size: 12px;
           --input-color-disabled: #bbbbbb;
           --input-label-color-disabled: #222222;

@@ -92,7 +92,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         backend-ai-dialog wl-textarea,
         backend-ai-dialog wl-select {
           margin-bottom: 20px;
-          --input-font-family: Roboto, Noto, sans-serif;
+          --input-font-family: var(--general-font-family);
         }
 
         backend-ai-dialog mwc-textfield,
@@ -104,7 +104,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         }
 
         backend-ai-dialog wl-label {
-          --label-font-family: var(--general-font-family);
+          --label-font-family: 'Ubuntu', Roboto;
           --label-color: #282828;
           margin-bottom: 5px;
         }

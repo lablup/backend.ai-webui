@@ -246,7 +246,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           background-color: var(--paper-grey-500);
           min-width: 60px;
           font-size: 12px;
-          --label-font-family: Roboto, Noto, sans-serif;
+          --label-font-family: 'Ubuntu', Roboto;
         }
 
         lablup-progress-bar.usage {
@@ -258,7 +258,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         div.filters #access-key-filter {
           --input-font-size: small;
           --input-label-font-size: small;
-          --input-font-family: Roboto, Noto, sans-serif;
+          --input-font-family: var(--general-font-family);
         }
 
         .mount-button,

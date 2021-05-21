@@ -195,7 +195,7 @@ export default class BackendAIData extends BackendAIPage {
 
         backend-ai-dialog wl-textfield,
         backend-ai-dialog wl-select {
-          --input-font-family: Roboto, Noto, sans-serif;
+          --input-font-family: var(--general-font-family);
           --input-color-disabled: #222222;
           --input-label-color-disabled: #222222;
           --input-label-font-size: 12px;
@@ -212,7 +212,7 @@ export default class BackendAIData extends BackendAIPage {
         }
 
         wl-label {
-          --label-font-family: Roboto, Noto, sans-serif;
+          --label-font-family: 'Ubuntu', Roboto;
           --label-color: black;
         }
 
