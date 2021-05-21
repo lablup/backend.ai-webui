@@ -683,6 +683,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   firstUpdated() {
     this.shadowRoot.querySelector('#environment').addEventListener('selected', this.updateLanguage.bind(this));
     this.version_selector = this.shadowRoot.querySelector('#version');
+    this.disableLaunch = false;
     this.version_selector.addEventListener('selected', () => {
       this.updateResourceAllocationPane();
     });
