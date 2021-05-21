@@ -107,7 +107,7 @@ class BackendAIRegistryList extends BackendAIPage {
 
         wl-label.helper-text {
           --label-color: #b00020;
-          --label-font-family: 'Ubuntu', 'Quicksand', Roboto;
+          --label-font-family: 'Ubuntu', Roboto;
           --label-font-size: 11px;
         }
 

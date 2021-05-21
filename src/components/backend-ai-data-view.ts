@@ -212,7 +212,7 @@ export default class BackendAIData extends BackendAIPage {
         }
 
         wl-label {
-          --label-font-family: 'Ubuntu', 'Quicksand', Roboto;
+          --label-font-family: 'Ubuntu', Roboto;
           --label-color: black;
         }
 

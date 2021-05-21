@@ -165,7 +165,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           width: 100%;
           min-width: 60px;
           font-size: 10px; // 11px;
-          --label-font-family: 'Ubuntu', 'Quicksand', Roboto;
+          --label-font-family: 'Ubuntu', Roboto;
         }
 
         wl-label.folders {

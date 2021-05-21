@@ -246,7 +246,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           background-color: var(--paper-grey-500);
           min-width: 60px;
           font-size: 12px;
-          --label-font-family: 'Ubuntu', 'Quicksand', Roboto;
+          --label-font-family: 'Ubuntu', Roboto;
         }
 
         lablup-progress-bar.usage {
