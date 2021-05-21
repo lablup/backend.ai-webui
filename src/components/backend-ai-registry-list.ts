@@ -106,7 +106,7 @@ class BackendAIRegistryList extends BackendAIPage {
         }
 
         wl-textfield#add-registry-password {
-          --input-font-family: Noto, sans-serif, Roboto;
+          --input-font-family: Noto, Roboto, sans-serif;
         }
 
         wl-label.helper-text {
