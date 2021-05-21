@@ -53,6 +53,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
   @property({type: Boolean}) hideLaunchButton = false;
+  @property({type: Boolean}) disableLaunch = false;
   @property({type: String}) location = '';
   @property({type: String}) mode = 'normal';
   @property({type: String}) newSessionDialogTitle = '';
@@ -1541,7 +1542,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.shadowRoot.querySelector('#session-resource').disabled = false;
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
-      let disableLaunch = false;
       let shmem_metric: any = {
         'min': 0.0625,
         'max': 2,
@@ -1571,7 +1571,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (cpu_metric.min >= cpu_metric.max) {
             if (cpu_metric.min > cpu_metric.max) {
               cpu_metric.min = cpu_metric.max;
-              disableLaunch = true;
+              this.disableLaunch = true;
             }
             this.shadowRoot.querySelector('#cpu-resource').disabled = true;
           }
@@ -1605,7 +1605,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (cuda_device_metric.min >= cuda_device_metric.max) {
             if (cuda_device_metric.min > cuda_device_metric.max) {
               cuda_device_metric.min = cuda_device_metric.max;
-              disableLaunch = true;
+              this.disableLaunch = true;
             }
             this.shadowRoot.querySelector('#gpu-resource').disabled = true;
           }
@@ -1630,7 +1630,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (cuda_shares_metric.min >= cuda_shares_metric.max) {
             if (cuda_shares_metric.min > cuda_shares_metric.max) {
               cuda_shares_metric.min = cuda_shares_metric.max;
-              disableLaunch = true;
+              this.disableLaunch = true;
             }
             this.shadowRoot.querySelector('#gpu-resource').disabled = true;
           }
@@ -1682,7 +1682,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (mem_metric.min >= mem_metric.max) {
             if (mem_metric.min > mem_metric.max) {
               mem_metric.min = mem_metric.max;
-              disableLaunch = true;
+              this.disableLaunch = true;
             }
             this.shadowRoot.querySelector('#mem-resource').disabled = true;
           }
@@ -1705,7 +1705,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (shmem_metric.min >= shmem_metric.max) {
         if (shmem_metric.min > shmem_metric.max) {
           shmem_metric.min = shmem_metric.max;
-          disableLaunch = true;
+          this.disableLaunch = true;
         }
         this.shadowRoot.querySelector('#shmem-resource').disabled = true;
       }
@@ -1752,7 +1752,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       } else {
         this._updateResourceIndicator(this.cpu_metric.min, this.mem_metric.min, 'none', 0);
       }
-      if (disableLaunch) {
+      if (this.disableLaunch) {
         this.shadowRoot.querySelector('#cpu-resource').disabled = true; // Not enough CPU. so no session.
         this.shadowRoot.querySelector('#mem-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
@@ -2105,7 +2105,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _resourceTemplateToCustom() {
-    this.shadowRoot.querySelector('#resource-templates').selectedText = _text('session.launcher.CustomResourceApplied');
+    if (!this.disableLaunch) {
+      this.shadowRoot.querySelector('#resource-templates').selectedText = _text('session.launcher.CustomResourceApplied');
+    }
   }
 
   /**
