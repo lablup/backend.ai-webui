@@ -569,7 +569,7 @@ export const BackendAIWebUIStyles = [
     }
 
     @media screen and (max-width: 1030px) {
-      span.email, #group-select-box > div > p {
+      span.email, p#project {
         display: none;
       }
     }
