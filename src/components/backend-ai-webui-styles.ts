@@ -189,7 +189,7 @@ export const BackendAIWebUIStyles = [
 
     .dropdown-menu-name {
       position: absolute;
-      margin-top: 4px;
+      margin-top: 3px;
     }
 
     mwc-button {
