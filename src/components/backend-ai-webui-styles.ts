@@ -175,6 +175,12 @@ export const BackendAIWebUIStyles = [
       color: var(--general-sidebar-footer-color, #aaaaaa) !important;
     }
 
+    #project {
+      font-size: 12px;
+      color: #8c8484;
+      padding-right: 8px;
+    }
+
     mwc-menu#dropdown-menu {
       position: relative;
       left: 170px;
@@ -557,7 +563,9 @@ export const BackendAIWebUIStyles = [
       mwc-select#group-select {
         display: none;
       }
-
+      #project {
+        padding-top: 10px;
+      }
     }
 
     @media screen and (max-width: 1030px) {

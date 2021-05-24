@@ -1411,7 +1411,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <div class="horizontal flex center layout">
                     <div style="height:48px;">
                       <div class="horizontal center center-justified layout">
-                        <p style="font-size:12px;color:#8c8484;padding-right:8px;">${_t('webui.menu.Project')}</p>
+                        <p id="project">${_t('webui.menu.Project')}</p>
                         <div id="group-select-box"></div>
                       </div>
                     </div>
