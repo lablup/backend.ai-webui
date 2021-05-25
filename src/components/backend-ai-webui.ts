@@ -587,8 +587,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     const select = document.createElement('mwc-select') as any;
     select.id = 'group-select';
     select.value = this.current_group;
-    select.style.width = 'auto';
-    // select.setAttribute('naturalMenuWidth', 'true');
+    select.style = 'width: 20vw;max-width: 200px;'
     select.addEventListener('selected', (e) => this.changeGroup(e));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
@@ -1405,7 +1404,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 <div slot="navigationIcon" class="vertical-line" style="height:35px;"></div>
                 <div class="horizontal layout" slot="title" style="font-size:12px;margin-left:10px;padding-top:10px;">
                   <p>${_t('webui.menu.WelcomeMessage')}</p>
-                  <p>&nbsp;${this._getUsername()}${_t('webui.menu.WelcomeMessage_2')}</p>
+                  <p class="user-name">${this._getUsername()}</p>
+                  <p>${_t('webui.menu.WelcomeMessage_2')}</p>
                 </div>
                 <div slot="actionItems" style="margin:0;">
                   <div class="horizontal flex center layout">
@@ -1452,7 +1452,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                           </mwc-list-item>
                         </mwc-menu>
                       </div>
-                      <span class="full_name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0px auto 10px; padding-top:10px;">
+                      <span class="full_name user-name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0px auto 10px; padding-top:10px;">
                         ${this.full_name}
                       </span>
                       <mwc-icon-button id="dropdown-button" @click="${() => this._toggleDropdown()}" style="font-size: 0.5rem;">

@@ -175,6 +175,13 @@ export const BackendAIWebUIStyles = [
       color: var(--general-sidebar-footer-color, #aaaaaa) !important;
     }
 
+    .user-name {
+      max-width: 10vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     #project {
       font-size: 12px;
       color: #8c8484;
@@ -556,15 +563,6 @@ export const BackendAIWebUIStyles = [
       }
       mwc-top-app-bar-fixed {
         --mdc-top-app-bar-width: 410px !important;
-      }
-    }
-
-    @media screen and (max-width: 889px) {
-      mwc-select#group-select {
-        display: none;
-      }
-      #project {
-        padding-top: 10px;
       }
     }
 
