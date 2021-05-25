@@ -1,5 +1,5 @@
-import {css} from 'lit-element';
-import {BackendAiStyles} from './backend-ai-general-styles';
+import { css } from "lit-element";
+import { BackendAiStyles } from "./backend-ai-general-styles";
 
 export const BackendAIWebUIStyles = [
   BackendAiStyles,
@@ -570,6 +570,10 @@ export const BackendAIWebUIStyles = [
       span.email, p#project {
         display: none;
       }
+
+      div#welcome-message {
+        display: none;
+      }
     }
 
     @media screen and (min-width: 450px) {
@@ -592,4 +596,5 @@ export const BackendAIWebUIStyles = [
     .temporarily-hide {
       display: none !important;
     }
-  `];
+  `,
+];

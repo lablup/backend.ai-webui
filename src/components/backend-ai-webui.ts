@@ -587,7 +587,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     const select = document.createElement('mwc-select') as any;
     select.id = 'group-select';
     select.value = this.current_group;
-    select.style = 'width: 20vw;max-width: 200px;'
+    select.style = 'width: auto;max-width: 200px;'
     select.addEventListener('selected', (e) => this.changeGroup(e));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
@@ -1402,7 +1402,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
                 </div>
                 <div slot="navigationIcon" class="vertical-line" style="height:35px;"></div>
-                <div class="horizontal layout" slot="title" style="font-size:12px;margin-left:10px;padding-top:10px;">
+                <div class="horizontal layout" slot="title" id="welcome-message" style="font-size:12px;margin-left:10px;padding-top:10px;">
                   <p>${_t('webui.menu.WelcomeMessage')}</p>
                   <p class="user-name">${this._getUsername()}</p>
                   <p>${_t('webui.menu.WelcomeMessage_2')}</p>
