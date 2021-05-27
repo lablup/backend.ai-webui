@@ -129,6 +129,7 @@
       "Environments": "Environments",
       "Start": "Start",
       "FolderToMount": "Folder to mount",
+      "MountedFolders": "Mounted folders",
       "ResourceAllocation": "Resource allocation",
       "NoSuitablePreset": "No suitable preset",
       "Advanced": "Advanced",
