@@ -2451,10 +2451,6 @@ export default class BackendAiSessionLauncherCarousel extends BackendAIPage {
     this.shadowRoot.querySelector('#' + id).hide();
   }
 
-  plusSlides(n) {
-
-  }
-
   render() {
     // language=HTML
     return html`
