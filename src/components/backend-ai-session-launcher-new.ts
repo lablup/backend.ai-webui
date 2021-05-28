@@ -495,6 +495,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           --mdc-select-min-width: 190px;
         }
 
+        mwc-select > mwc-list-item {
+          width: 370px; // default width
+        }
+
         mwc-select > mwc-list-item.cluster-mode-dropdown {
           --mdc-list-side-padding: auto 0px;
         }
@@ -2516,7 +2520,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
         <form slot="content" id="launch-session-form" class="centered" style="position:relative;">
           <div id="progress-01" class="progress center layout fade active">
-            <mwc-select id="environment" icon="code" label="${_t('session.launcher.Environments')}" fullwidth required
+            <mwc-select id="environment" icon="code" label="${_t('session.launcher.Environments')}" required fixedMenuPosition
                         value="${this.default_language}">
               <mwc-list-item selected graphic="icon" style="display:none!important;">
                 ${_t('session.launcher.ChooseEnvironment')}
@@ -2549,7 +2553,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                 `}
               `)}
             </mwc-select>
-            <mwc-select id="version" icon="architecture" label="${_t('session.launcher.Version')}" fullwidth required>
+            <mwc-select id="version" icon="architecture" label="${_t('session.launcher.Version')}" required fixedMenuPosition>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
               <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
                   role="separator" disabled="true" class="horizontal layout">
@@ -2580,7 +2584,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
               <wl-checkbox id="use-gpu-checkbox">${_t('session.launcher.UseGPU')}</wl-checkbox>
             </div>
             <mwc-textfield id="session-name" placeholder="${_t('session.launcher.SessionNameOptional')}"
-                           pattern="[a-zA-Z0-9_-]{4,}" fullwidth maxLength="64" icon="label"
+                           pattern="[a-zA-Z0-9_-]{4,}" maxLength="64" icon="label"
                            helper="${_t('maxLength.64chars')}"
                            validationMessage="${_t('session.launcher.SessionNameAllowCondition')}">
             </mwc-textfield>
@@ -2600,7 +2604,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                   style="--expansion-header-padding:16px;--expansion-content-padding:0;"
                   @change=${(e) => this.toggleUnselectAllVfoldersButton(e)}>
               <span slot="title" class="launcher-item-title">${_t('session.launcher.FolderToMount')}</span>
-              <mwc-list fullwidth multi id="vfolder"
+              <mwc-list multi id="vfolder"
                 @selected="${() => this._updateSelectedFolder()}">
               ${this.vfolders.length === 0 ? html`
                 <mwc-list-item value="" disabled="true">${_t('session.launcher.NoFolderExists')}</mwc-list-item>
@@ -2632,7 +2636,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           <div id="progress-03" class="progress center layout fade">
             <div class="horizontal center layout">
               <mwc-select id="scaling-groups" label="${_t('session.launcher.ResourceGroup')}" 
-                          icon="storage" fullwidth required
+                          icon="storage" required fixedMenuPosition
                           @selected="${(e) => this.updateScalingGroup(false, e)}">
                 ${this.scaling_groups.map((item) => html`
                   <mwc-list-item class="scaling-group-dropdown"
@@ -2645,7 +2649,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
             </div>
             <div class="vertical center layout" style="position:relative;">
               <mwc-select id="resource-templates" label="${_t('session.launcher.ResourceAllocation')}"
-                          icon="dashboard_customize" fullwidth required>
+                          icon="dashboard_customize" required fixedMenuPosition>
                 <mwc-list-item selected style="display:none!important"></mwc-list-item>
                 <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
                     role="separator" disabled="true" class="horizontal layout center">
@@ -2804,8 +2808,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
               </div>
             </wl-expansion>
             ${this.cluster_support ? html`
-              <mwc-select id="cluster-mode" label="${_t('session.launcher.ClusterMode')}" fullwidth required
-                          icon="account_tree"
+              <mwc-select id="cluster-mode" label="${_t('session.launcher.ClusterMode')}" required
+                          icon="account_tree" fixedMenuPosition
                           value="${this.cluster_mode}" @change="${(e) => this._setClusterMode(e)}">
                 ${this.cluster_mode_list.map((item) => html`
                   <mwc-list-item
@@ -2851,7 +2855,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                                   @click="${() => this._fetchSessionOwnerGroups()}">
                   </mwc-icon-button>
                 </div>
-                <mwc-select id="owner-accesskey" label="${_t('session.launcher.OwnerAccessKey')}" icon="vpn_key">
+                <mwc-select id="owner-accesskey" label="${_t('session.launcher.OwnerAccessKey')}" icon="vpn_key" fixedMenuPosition>
                   ${this.ownerKeypairs.map((item) => html`
                     <mwc-list-item class="owner-group-dropdown"
                                   id="${item.access_key}"
@@ -2861,7 +2865,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                   `)}
                 </mwc-select>
                 <div class="horizontal center layout">
-                  <mwc-select id="owner-group" label="${_t('session.launcher.OwnerGroup')}" icon="group_work">
+                  <mwc-select id="owner-group" label="${_t('session.launcher.OwnerGroup')}" icon="group_work" fixedMenuPosition>
                     ${this.ownerGroups.map((item) => html`
                       <mwc-list-item class="owner-group-dropdown"
                                     id="${item.name}"
@@ -2871,7 +2875,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                     `)}
                   </mwc-select>
                   <mwc-select id="owner-scaling-group" label="${_t('session.launcher.OwnerResourceGroup')}"
-                              icon="storage">
+                              icon="storage" fixedMenuPosition>
                     ${this.ownerScalingGroups.map((item) => html`
                       <mwc-list-item class="owner-group-dropdown"
                                     id="${item.name}"
