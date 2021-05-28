@@ -20,6 +20,7 @@ import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
 
+import 'macro-carousel';
 import '@material/mwc-linear-progress';
 
 import './lablup-slider';
@@ -37,18 +38,18 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 
 /**
- Backend AI Session Launcher
+ Backend AI Session Launcher Carousel
 
  Example:
 
- <backend-ai-session-launcher active></backend-ai-session-launcher>
+ <backend-ai-session-launcher-new active></backend-ai-session-launcher-new>
 
 @group Backend.AI Web UI
- @element backend-ai-session-launcher
+ @element backend-ai-session-launcher-new
  */
 
-@customElement('backend-ai-session-launcher-carousel')
-export default class BackendAiSessionLauncherCarousel extends BackendAIPage {
+@customElement('backend-ai-session-launcher-new')
+export default class BackendAiSessionLauncherNew extends BackendAIPage {
   @query('#image-name') manualImageName;
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
@@ -167,6 +168,7 @@ export default class BackendAiSessionLauncherCarousel extends BackendAIPage {
   @property({type: Array}) environ;
   @property({type: Object}) environ_values = Object();
   @property({type: Object}) vfolder_select_expansion = Object();
+  @property({type: Number}) currentIndex = 1;
 
   @property({type: Boolean}) _debug = false;
 
@@ -257,6 +259,11 @@ export default class BackendAiSessionLauncherCarousel extends BackendAIPage {
           padding-top: 15px;
           position: relative;
           z-index: 12;
+          display: none;
+        }
+
+        .progress.active {
+          display: block;
         }
 
         .resources.horizontal .short-indicator mwc-linear-progress {
@@ -623,6 +630,24 @@ export default class BackendAiSessionLauncherCarousel extends BackendAIPage {
             display: inline-block;
           }
         }
+
+        /* Fading animation */
+        .fade {
+          -webkit-animation-name: fade;
+          -webkit-animation-duration: 1s;
+          animation-name: fade;
+          animation-duration: 1s;
+        }
+
+        @-webkit-keyframes fade {
+          from {opacity: .7}
+          to {opacity: 1}
+        }
+
+        @keyframes fade {
+          from {opacity: .7}
+          to {opacity: 1}
+        }
       `];
   }
 
@@ -775,6 +800,7 @@ export default class BackendAiSessionLauncherCarousel extends BackendAIPage {
         this.closeDialog('modify-env-dialog');
       }
     });
+    this.currentIndex = 1;
   }
 
   _enableLaunchButton() {
@@ -2450,6 +2476,31 @@ export default class BackendAiSessionLauncherCarousel extends BackendAIPage {
   closeDialog(id) {
     this.shadowRoot.querySelector('#' + id).hide();
   }
+  
+  /**
+   * Move to previous or next progress.
+   * 
+   * @param n -1 : previous progress / 1 : next progress
+   */
+  moveProgress(n) {
+    const currentProgressEl = this.shadowRoot.querySelector('#progress-0' + this.currentIndex);
+    this.currentIndex += n;
+    const movedProgressEl = this.shadowRoot.querySelector('#progress-0' + this.currentIndex);
+    const prevButton = this.shadowRoot.querySelector('#prev-button');
+    const nextButton = this.shadowRoot.querySelector('#next-button');
+    const progresses = this.shadowRoot.querySelectorAll('.progress');
+
+    if (this.currentIndex == 1) {
+      prevButton.style.display = "none";
+    } else if (this.currentIndex == progresses.length) {
+      nextButton.style.display = "none";
+    } else {
+      prevButton.style.display = "block";
+      nextButton.style.display = "block";
+    }
+    currentProgressEl.classList.remove("active");
+    movedProgressEl.classList.add("active");
+  }
 
   render() {
     // language=HTML
@@ -2463,7 +2514,7 @@ export default class BackendAiSessionLauncherCarousel extends BackendAIPage {
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent>
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
         <form slot="content" id="launch-session-form" class="centered" style="position:relative;">
-          <div id="progress-01" class="progress center layout">
+          <div id="progress-01" class="progress center layout fade active">
             <mwc-select id="environment" icon="code" label="${_t('session.launcher.Environments')}" fullwidth required
                         value="${this.default_language}">
               <mwc-list-item selected graphic="icon" style="display:none!important;">
@@ -2537,10 +2588,10 @@ export default class BackendAiSessionLauncherCarousel extends BackendAIPage {
                 icon="rule"
                 label="${_t('session.launcher.Config')}"
                 style="width:auto;margin-right:15px;"
-                @click="${()=>this._showEnvDialog()}"></mwc-button>
-            </div>            
+                @click="${() => this._showEnvDialog()}"></mwc-button>
+            </div>
           </div>
-          <div id="progress-02" class="progress center layout">
+          <div id="progress-02" class="progress center layout fade">
             <wl-expansion
                   id="vfolder-select-expansion" name="vfolder-group"
                   style="--expansion-header-padding:16px;--expansion-content-padding:0;"
@@ -2575,7 +2626,7 @@ export default class BackendAiSessionLauncherCarousel extends BackendAIPage {
               </div>
             ` : html``}
           </div>
-          <div id="progress-03" class="progress center layout">
+          <div id="progress-03" class="progress center layout fade">
             <div class="horizontal center layout">
               <mwc-select id="scaling-groups" label="${_t('session.launcher.ResourceGroup')}" 
                           icon="storage" fullwidth required
@@ -2832,7 +2883,7 @@ export default class BackendAiSessionLauncherCarousel extends BackendAIPage {
               </div>
             </wl-expansion>
           </div>
-          <div id="progress-04" class="progress center layout">
+          <div id="progress-04" class="progress center layout fade">
             <p class="title" style="font-weight:400;">${_t('session.launcher.TotalAllocation')}</p>
             <div class="horizontal layout center center-justified allocation-check">
               <div id="total-allocation-pane" style="position:relative;">
@@ -2893,7 +2944,18 @@ export default class BackendAiSessionLauncherCarousel extends BackendAIPage {
             </div>
           </div>
         </form>
-        <div slot="footer" class="distancing"></div>
+        <div slot="footer" class="horizontal justified flex layout distancing">
+          <mwc-button id="prev-button"
+                      icon="arrow_back"
+                      label="${_t('session.launcher.Prev')}" 
+                      style="width:auto;display:none;"
+                      @click="${() => this.moveProgress(-1)}"></mwc-button>
+          <mwc-button id="next-button"
+                      icon="arrow_forward"
+                      label="${_t('session.launcher.Next')}" 
+                      style="width:auto;clear:left;"
+                      @click="${() => this.moveProgress(1)}"></mwc-button>
+        </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent closeWithConfirmation>
         <span slot="title">${_t('session.launcher.SetEnvironmentVariable')}</span>
@@ -3006,6 +3068,6 @@ export default class BackendAiSessionLauncherCarousel extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-session-launcher-carousel': BackendAiSessionLauncherCarousel;
+    'backend-ai-session-launcher-new': BackendAiSessionLauncherNew;
   }
 }

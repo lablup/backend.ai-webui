@@ -21,7 +21,7 @@ import '@material/mwc-icon-button';
 import './lablup-activity-panel';
 import './backend-ai-resource-monitor';
 import './backend-ai-resource-panel';
-import './backend-ai-session-launcher-carousel';
+import './backend-ai-session-launcher-new';
 import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
 import '../plastics/lablup-piechart/lablup-piechart';
@@ -468,7 +468,7 @@ export default class BackendAISummary extends BackendAIPage {
             <div slot="message">
               <img src="/resources/images/launcher-background.png" style="width:300px;margin-bottom:30px;"/>
               <div class="horizontal center-justified layout wrap">
-                <backend-ai-session-launcher-carousel location="summary" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher-carousel>
+                <backend-ai-session-launcher-new location="summary" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher-new>
               </div>
               <div class="horizontal center-justified layout wrap">
                 <a href="/data" class="vertical center center-justified layout start-menu-items">

@@ -204,7 +204,9 @@
       "EnvironmentVariableConfigurationDone": "Environment variable configured successfully.",
       "EnvConfigWillDisappear": "Any unsaved Environment variable and value will be disappeared.",
       "SharedMemoryAbbr": "SHMEM",
-      "GPUSlot": "Slot"
+      "GPUSlot": "Slot",
+      "Next": "Next",
+      "Prev": "Previous"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
