@@ -2488,15 +2488,15 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     const movedProgressEl = this.shadowRoot.querySelector('#progress-0' + this.currentIndex);
     const prevButton = this.shadowRoot.querySelector('#prev-button');
     const nextButton = this.shadowRoot.querySelector('#next-button');
-    const progresses = this.shadowRoot.querySelectorAll('.progress');
+    const progressLength = this.shadowRoot.querySelectorAll('.progress').length;
 
     if (this.currentIndex == 1) {
-      prevButton.style.display = "none";
-    } else if (this.currentIndex == progresses.length) {
-      nextButton.style.display = "none";
+      prevButton.style.visibility = "hidden";
+    } else if (this.currentIndex == progressLength) {
+      nextButton.style.visibility = "hidden";
     } else {
-      prevButton.style.display = "block";
-      nextButton.style.display = "block";
+      prevButton.style.visibility = "visible";
+      nextButton.style.visibility = "visible";
     }
     currentProgressEl.classList.remove("active");
     movedProgressEl.classList.add("active");
@@ -2948,12 +2948,12 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           <mwc-button id="prev-button"
                       icon="arrow_back"
                       label="${_t('session.launcher.Prev')}" 
-                      style="width:auto;display:none;"
+                      style="width:auto;visibility:hidden;"
                       @click="${() => this.moveProgress(-1)}"></mwc-button>
           <mwc-button id="next-button"
                       icon="arrow_forward"
                       label="${_t('session.launcher.Next')}" 
-                      style="width:auto;clear:left;"
+                      style="width:auto;"
                       @click="${() => this.moveProgress(1)}"></mwc-button>
         </div>
       </backend-ai-dialog>
