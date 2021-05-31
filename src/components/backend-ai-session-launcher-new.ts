@@ -14,14 +14,12 @@ import '@material/mwc-list/mwc-check-list-item';
 import '@material/mwc-icon-button';
 import '@material/mwc-button';
 import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-linear-progress';
 
 import 'weightless/checkbox';
 import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
-
-import 'macro-carousel';
-import '@material/mwc-linear-progress';
 
 import './lablup-slider';
 import './backend-ai-dialog';
@@ -587,6 +585,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           color: #404040;
         }
 
+        #progress-04 p.title {
+          font-weight: 400;
+        }
+
         .launcher-item-title {
           font-size: 12px;
           color: #404040;
@@ -617,6 +619,15 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           display: grid;
           grid-template-columns: 4fr 4fr 1fr;
           margin-bottom: 10px;
+        }
+
+        #environment-variables-container h4 {
+          margin: 0;
+        }
+
+        #environment-variables-container wl-textfield {
+          --input-font-family: var(--general-font-family);
+          --input-color-disabled: #222;
         }
 
         @media screen and (max-width: 375px) {
@@ -2897,8 +2908,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
             </wl-expansion>
           </div>
           <div id="progress-04" class="progress center layout fade">
-            <p class="title" style="font-weight:400;">${_t('session.launcher.TotalAllocation')}</p>
-            <div class="horizontal layout center center-justified allocation-check">
+            <p class="title">${_t('session.launcher.TotalAllocation')}</p>
+            <div id="total-allocation-container" class="horizontal layout center center-justified allocation-check">
               <div id="total-allocation-pane" style="position:relative;">
                 <div class="horizontal layout resource-allocated-box">
                   <div class="vertical layout center center-justified resource-allocated">
@@ -2939,15 +2950,38 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                 <p class="small">${_t('session.launcher.AllocateNode')}</p>
               </div>
             </div>
-            <p class="title" style="font-weight:400;">${_t('session.launcher.MountedFolders')}</p>
-            <ul style="color:#646464;font-size:12px;">
-              ${this.selectedVfolders.map((item) => html`
-                    <li><mwc-icon>folder_open</mwc-icon>${item}</li>
-                `)}
-              ${this.vfolders.filter((item) => (item.name.startsWith('.'))).map((item) => html`
-                <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
-              `)}
-            </ul>
+            <div id="mounted-folders-container">
+              ${this.selectedVfolders.length > 0 || this.vfolders.filter((item) => (item.name.startsWith('.'))).length > 0 ? html`
+                <p class="title">${_t('session.launcher.MountedFolders')}</p>
+                <ul style="color:#646464;font-size:12px;">
+                  ${this.selectedVfolders.map((item) => html`
+                        <li><mwc-icon>folder_open</mwc-icon>${item}</li>
+                    `)}
+                  ${this.vfolders.filter((item) => (item.name.startsWith('.'))).map((item) => html`
+                    <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
+                  `)}
+                </ul>
+              ` : html``}
+            </div>
+            <div id="environment-variables-container">
+              ${this.environ.length > 0 ? html`
+                <p class="title">${_t('session.launcher.EnvironmentVariablePaneTitle')}</p>
+                <div class="horizontal flex center center-justified layout" style="overflow-x:hidden;">
+                  <div role="listbox">
+                    <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
+                    ${this.environ.map((item) => html`
+                      <wl-textfield label="" disabled value="${item.name}"></wl-textfield>
+                    `)}
+                  </div>
+                  <div role="listbox" style="margin-left:15px;">
+                    <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
+                    ${this.environ.map((item) => html`
+                      <wl-textfield label="" disabled value="${item.value}"></wl-textfield>
+                    `)}
+                  </div>
+                </div>
+              ` : html``}
+            </div>
             <div class="horizontal center-justified flex layout distancing">
               <mwc-button
                   unelevated
