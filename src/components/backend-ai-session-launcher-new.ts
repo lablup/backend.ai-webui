@@ -568,6 +568,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
         mwc-icon {
           --mdc-icon-size: 14px;
+          margin-right: 2px;
         }
 
         ul {
@@ -2618,9 +2619,12 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
               </mwc-list>
             </wl-expansion>
             <ul style="color:#646464;font-size:12px;">
-            ${this.selectedVfolders.map((item) => html`
-                  <li><mwc-icon>folder_open</mwc-icon>${item}</li>
-                `)}
+              ${this.selectedVfolders.map((item) => html`
+                <li><mwc-icon>folder_open</mwc-icon>${item}</li>
+              `)}
+              ${this.vfolders.filter((item) => (item.name.startsWith('.'))).map((item) => html`
+                <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
+              `)}
             </ul>
             ${this.selectedVfolders.length > 0 ? html`
               <div class="horizontal layout end-justified" style="margin-bottom:10px;">
@@ -2940,6 +2944,9 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
               ${this.selectedVfolders.map((item) => html`
                     <li><mwc-icon>folder_open</mwc-icon>${item}</li>
                 `)}
+              ${this.vfolders.filter((item) => (item.name.startsWith('.'))).map((item) => html`
+                <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
+              `)}
             </ul>
             <div class="horizontal center-justified flex layout distancing">
               <mwc-button
