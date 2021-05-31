@@ -2713,7 +2713,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             `)}
             ${this.isEmpty(this.resource_templates_filtered) ? html`
               <mwc-list-item class="resource-button vertical center start layout" role="option"
-                             style="height:140px;width:350px;" type="button"
+                             style="height:140px;width:350px;" type="button" aria-selected
                              flat inverted outlined disabled>
                 <div>
                   <h4>${_t('session.launcher.NoSuitablePreset')}</h4>

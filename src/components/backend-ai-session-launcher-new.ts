@@ -2485,7 +2485,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
   /**
    * Move to previous or next progress.
    *
-   * @param n -1 : previous progress / 1 : next progress
+   * @param {Number} n -1 : previous progress / 1 : next progress
    */
   moveProgress(n) {
     const currentProgressEl = this.shadowRoot.querySelector('#progress-0' + this.currentIndex);
@@ -2693,7 +2693,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
               `)}
               ${this.isEmpty(this.resource_templates_filtered) ? html`
                 <mwc-list-item class="resource-button vertical center start layout" role="option"
-                              style="height:140px;width:350px;" type="button"
+                              style="height:140px;width:350px;" type="button" aria-selected
                               flat inverted outlined disabled>
                   <div>
                     <h4>${_t('session.launcher.NoSuitablePreset')}</h4>
