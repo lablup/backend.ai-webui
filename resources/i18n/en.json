@@ -202,7 +202,7 @@
       "EnvironmentVariable": "Variable",
       "EnvironmentVariableValue": "Value",
       "EnvironmentVariableConfigurationDone": "Environment variable configured successfully.",
-      "EnvironmentVariablePaneTitle": "Environment variable",
+      "EnvironmentVariablePaneTitle": "Environment variables",
       "EnvConfigWillDisappear": "Any unsaved Environment variable and value will be disappeared.",
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Slot",

@@ -565,8 +565,9 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         }
 
         mwc-icon {
-          --mdc-icon-size: 14px;
+          --mdc-icon-size: 13px;
           margin-right: 2px;
+          vertical-align: middle;
         }
 
         ul {
