@@ -16,6 +16,10 @@ import '@material/mwc-button';
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-linear-progress';
 
+import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
+import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
+
 import 'weightless/checkbox';
 import 'weightless/expansion';
 import 'weightless/icon';
@@ -119,6 +123,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
   @property({type: Number}) max_containers_per_session;
   @property({type: Array}) vfolders;
   @property({type: Array}) selectedVfolders;
+  @property({type: Array}) automountedVfolders;
   @property({type: Object}) used_slot_percent;
   @property({type: Object}) used_resource_group_slot_percent;
   @property({type: Object}) used_project_slot_percent;
@@ -167,7 +172,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
   @property({type: Object}) environ_values = Object();
   @property({type: Object}) vfolder_select_expansion = Object();
   @property({type: Number}) currentIndex = 1;
-
+  @property({type: Object}) _grid = Object();
+  
   @property({type: Boolean}) _debug = false;
 
   constructor() {
@@ -251,6 +257,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         mwc-linear-progress.full-bar {
           border-radius: 3px;
           height: 10px;
+        }
+
+        vaadin-grid {
+          max-height: 400px;
         }
 
         .progress {
@@ -687,6 +697,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     this.resource_templates_filtered = [];
     this.vfolders = [];
     this.selectedVfolders = [];
+    this.automountedVfolders = [];
     this.default_language = '';
     this.concurrency_used = 0;
     this.concurrency_max = 0;
@@ -819,6 +830,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       }
     });
     this.currentIndex = 1;
+    this._grid = this.shadowRoot.querySelector('#vfolder-grid');
   }
 
   _enableLaunchButton() {
@@ -830,19 +842,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       setTimeout(() => {
         this._enableLaunchButton();
       }, 1000);
-    }
-  }
-
-  /**
-   * Toggle visibility of unselect all vfolders button
-   *
-   * @param {Event} e
-   */
-  toggleUnselectAllVfoldersButton(e) {
-    const expansion = e.target;
-    const unselectAllVfolderBtn = this.shadowRoot.querySelector('#unselect-all-vfolders');
-    if (unselectAllVfolderBtn) {
-      unselectAllVfolderBtn.style.display = expansion.checked ? 'block' : 'none';
     }
   }
 
@@ -894,12 +893,12 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
    * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
   _updateSelectedFolder(forceInitialize = false) {
-    const folders = this.shadowRoot.querySelector('#vfolder');
-    const selectedFolderItems = folders.selected;
+    const selectedFolderItems = this._grid.selectedItems;
     let selectedFolders: string[] = [];
     if (selectedFolderItems.length > 0) {
-      selectedFolders = selectedFolderItems.map((item) => item.value);
-
+      let automountedVfolderNames = this.automountedVfolders.map((item) => item.name)
+      selectedFolders = selectedFolderItems.map((item) => item.name)
+                        .filter(item => !automountedVfolderNames.includes(item));
       if (forceInitialize) {
         this._unselectAllSelectedFolder();
       }
@@ -907,17 +906,18 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     this.selectedVfolders = selectedFolders;
   }
 
+  /**
+   * Unselect the selected items and update selectedVfolders to be empty.
+   * 
+   */
   _unselectAllSelectedFolder() {
-    const folders = this.shadowRoot.querySelector('#vfolder');
-    if (folders.selected) {
-      folders.items.forEach((item, index) => {
-        if (item.selected) {
-          folders.toggle(index, true);
-          item.selected = false;
-        }
-      });
-      this.selectedVfolders = [];
+    if (this._grid.selectedItems) {
+      this._grid.selectedItems.forEach((item) => {
+        item.selected = false;
+      })
+      this._grid.selectedItems = [];
     }
+    this.selectedVfolders = [];
   }
 
   /**
@@ -1437,6 +1437,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     });
   }
 
+  _updateAutomountedVirtualFolderList() {
+    this.automountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
+  }
+
   /**
    * Aggregate used resources from manager and save them.
    *
@@ -1536,6 +1540,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       this.metric_updating = true;
       await this._aggregateResourceUse('update-metric');
       await this._updateVirtualFolderList();
+      this._updateAutomountedVirtualFolderList();
       // Resource limitation is not loaded yet.
       if (Object.keys(this.resourceBroker.resourceLimits).length === 0) {
         // console.log("No resource limit loaded");
@@ -2611,43 +2616,20 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                 @click="${() => this._showEnvDialog()}"></mwc-button>
             </div>
           </div>
-          <div id="progress-02" class="progress center layout fade">
-            <wl-expansion
-                  id="vfolder-select-expansion" name="vfolder-group"
-                  style="--expansion-header-padding:16px;--expansion-content-padding:0;"
-                  @change=${(e) => this.toggleUnselectAllVfoldersButton(e)}>
-              <span slot="title" class="launcher-item-title">${_t('session.launcher.FolderToMount')}</span>
-              <mwc-list multi id="vfolder"
-                @selected="${() => this._updateSelectedFolder()}">
-              ${this.vfolders.length === 0 ? html`
-                <mwc-list-item value="" disabled="true">${_t('session.launcher.NoFolderExists')}</mwc-list-item>
-              `:html``}
-              ${this.vfolders.map((item) => html`
-                <mwc-check-list-item
-                    value="${item.name}"
-                    ?selected="${this.selectedVfolders.includes(item.name)}"
-                    ?disabled="${item.disabled}">${item.name}</mwc-check-list-item>
-              `)}
-              </mwc-list>
-            </wl-expansion>
+          <div id="progress-02" class="progress center layout fade" style="padding-top:0;">           
+            <vaadin-grid theme="row-stripes column-borders compact" aria-label="vfolder list" height-by-rows
+                         id="vfolder-grid" .items="${this.vfolders}" @click="${() => this._updateSelectedFolder()}">
+              <vaadin-grid-selection-column id="select-column" flex-grow="0" text-align="center" auto-select></vaadin-grid-selection-column>
+              <vaadin-grid-filter-column path="name" header="${_t('session.launcher.FolderToMount')}"></vaadin-grid-filter-column>
+            </vaadin-grid>
             <ul style="color:#646464;font-size:12px;">
               ${this.selectedVfolders.map((item) => html`
                 <li><mwc-icon>folder_open</mwc-icon>${item}</li>
               `)}
-              ${this.vfolders.filter((item) => (item.name.startsWith('.'))).map((item) => html`
+              ${this.automountedVfolders.map((item) => html`
                 <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
               `)}
             </ul>
-            ${this.selectedVfolders.length > 0 ? html`
-              <div class="horizontal layout end-justified" style="margin-bottom:10px;">
-                <mwc-button
-                    outlined
-                    label="${_t('session.launcher.UnSelectAllVFolders')}"
-                    id="unselect-all-vfolders"
-                    style="width:auto;margin-right:10px;"
-                    @click=${() => this._unselectAllSelectedFolder()}></mwc-button>
-              </div>
-            ` : html``}
           </div>
           <div id="progress-03" class="progress center layout fade">
             <div class="horizontal center layout">
@@ -2952,13 +2934,13 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
               </div>
             </div>
             <div id="mounted-folders-container">
-              ${this.selectedVfolders.length > 0 || this.vfolders.filter((item) => (item.name.startsWith('.'))).length > 0 ? html`
+              ${this.selectedVfolders.length > 0 || this.automountedVfolders.length > 0 ? html`
                 <p class="title">${_t('session.launcher.MountedFolders')}</p>
                 <ul style="color:#646464;font-size:12px;">
                   ${this.selectedVfolders.map((item) => html`
                         <li><mwc-icon>folder_open</mwc-icon>${item}</li>
                     `)}
-                  ${this.vfolders.filter((item) => (item.name.startsWith('.'))).map((item) => html`
+                  ${this.automountedVfolders.map((item) => html`
                     <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
                   `)}
                 </ul>
