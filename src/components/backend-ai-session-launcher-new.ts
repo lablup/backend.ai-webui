@@ -123,7 +123,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
   @property({type: Number}) max_containers_per_session;
   @property({type: Array}) vfolders;
   @property({type: Array}) selectedVfolders;
-  @property({type: Array}) automountedVfolders;
+  @property({type: Array}) autoMountedVfolders;
+  @property({type: Array}) nonAutoMountedVfolders;
   @property({type: Object}) used_slot_percent;
   @property({type: Object}) used_resource_group_slot_percent;
   @property({type: Object}) used_project_slot_percent;
@@ -697,7 +698,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     this.resource_templates_filtered = [];
     this.vfolders = [];
     this.selectedVfolders = [];
-    this.automountedVfolders = [];
+    this.nonAutoMountedVfolders = [];
+    this.autoMountedVfolders = [];
     this.default_language = '';
     this.concurrency_used = 0;
     this.concurrency_max = 0;
@@ -896,9 +898,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     const selectedFolderItems = this._grid.selectedItems;
     let selectedFolders: string[] = [];
     if (selectedFolderItems.length > 0) {
-      let automountedVfolderNames = this.automountedVfolders.map((item) => item.name)
-      selectedFolders = selectedFolderItems.map((item) => item.name)
-                        .filter(item => !automountedVfolderNames.includes(item));
+      selectedFolders = selectedFolderItems.map((item) => item.name);
       if (forceInitialize) {
         this._unselectAllSelectedFolder();
       }
@@ -1437,8 +1437,12 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     });
   }
 
-  _updateAutomountedVirtualFolderList() {
-    this.automountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
+  _updateAutoMountedVirtualFolderList() {
+    this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
+  }
+
+  _updateNonAutoMountedVirtualFolderList() {
+    this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
   }
 
   /**
@@ -1540,7 +1544,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       this.metric_updating = true;
       await this._aggregateResourceUse('update-metric');
       await this._updateVirtualFolderList();
-      this._updateAutomountedVirtualFolderList();
+      this._updateAutoMountedVirtualFolderList();
+      this._updateNonAutoMountedVirtualFolderList();
       // Resource limitation is not loaded yet.
       if (Object.keys(this.resourceBroker.resourceLimits).length === 0) {
         // console.log("No resource limit loaded");
@@ -2618,7 +2623,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           </div>
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">           
             <vaadin-grid theme="row-stripes column-borders compact" aria-label="vfolder list" height-by-rows
-                         id="vfolder-grid" .items="${this.vfolders}" @click="${() => this._updateSelectedFolder()}">
+                         id="vfolder-grid" .items="${this.nonAutoMountedVfolders}" @click="${() => this._updateSelectedFolder()}">
               <vaadin-grid-selection-column id="select-column" flex-grow="0" text-align="center" auto-select></vaadin-grid-selection-column>
               <vaadin-grid-filter-column path="name" header="${_t('session.launcher.FolderToMount')}"></vaadin-grid-filter-column>
             </vaadin-grid>
@@ -2626,7 +2631,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
               ${this.selectedVfolders.map((item) => html`
                 <li><mwc-icon>folder_open</mwc-icon>${item}</li>
               `)}
-              ${this.automountedVfolders.map((item) => html`
+              ${this.autoMountedVfolders.map((item) => html`
                 <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
               `)}
             </ul>
@@ -2934,13 +2939,13 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
               </div>
             </div>
             <div id="mounted-folders-container">
-              ${this.selectedVfolders.length > 0 || this.automountedVfolders.length > 0 ? html`
+              ${this.selectedVfolders.length > 0 || this.autoMountedVfolders.length > 0 ? html`
                 <p class="title">${_t('session.launcher.MountedFolders')}</p>
                 <ul style="color:#646464;font-size:12px;">
                   ${this.selectedVfolders.map((item) => html`
                         <li><mwc-icon>folder_open</mwc-icon>${item}</li>
                     `)}
-                  ${this.automountedVfolders.map((item) => html`
+                  ${this.autoMountedVfolders.map((item) => html`
                     <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
                   `)}
                 </ul>
