@@ -2976,7 +2976,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           <mwc-button id="prev-button"
                       icon="arrow_back"
                       label="${_t('session.launcher.Prev')}" 
-                      style="width:auto;visibility:hidden;"
+                      style="visibility:hidden;margin-right:12px;"
                       @click="${() => this.moveProgress(-1)}"></mwc-button>
           <mwc-button
               unelevated
@@ -2988,9 +2988,9 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           </mwc-button>
           <mwc-button id="next-button"
                       icon="arrow_forward"
-                      label="${_t('session.launcher.Next')}" 
-                      style="width:auto;"
+                      label="${_t('session.launcher.Next')}"
                       trailingIcon
+                      style="margin-left:12px;"
                       @click="${() => this.moveProgress(1)}"></mwc-button>
         </div>
       </backend-ai-dialog>
