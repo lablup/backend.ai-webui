@@ -375,7 +375,7 @@ export default class BackendAIData extends BackendAIPage {
           ` : html``}
           ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
             <div class="horizontal layout">
-              <mwc-multi-select id="add-folder-group" label="${_t('data.Group')}">
+              <mwc-multi-select id="add-folder-group" label="${_t('data.Project')}">
                 ${(this.allowedGroups as any).map((item, idx) => html`
                   <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
