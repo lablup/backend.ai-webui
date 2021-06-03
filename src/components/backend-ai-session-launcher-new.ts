@@ -994,6 +994,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       // this.notification.show();
     } else {
       this._resetEnvironmentVariables();
+      this._unselectAllSelectedFolder();
       await this.selectDefaultLanguage();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       // this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
@@ -1029,8 +1030,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
    * @return {void}
    * */
   _newSessionWithConfirmation() {
-    const vfolderItems = this.shadowRoot.querySelector('#vfolder').selected;
-    const vfolders = vfolderItems.map((el) => el.value);
+    const vfolderItems = this._grid.selectedItems;
+    const vfolders = vfolderItems.map((item) => item.name);
     if (vfolders.length === 0) {
       const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
       confirmationDialog.show();
@@ -1220,8 +1221,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         });
       }
 
-      // initialize vfolder and shrink vfolder selecting part
-      this.shadowRoot.querySelector('#vfolder-select-expansion').checked = false;
+      // initialize vfolder 
       this._updateSelectedFolder(false);
     }).catch((err) => {
       // this.metadata_updating = false;
@@ -2621,7 +2621,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                 @click="${() => this._showEnvDialog()}"></mwc-button>
             </div>
           </div>
-          <div id="progress-02" class="progress center layout fade" style="padding-top:0;">           
+          <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
             <vaadin-grid theme="row-stripes column-borders compact" aria-label="vfolder list" height-by-rows
                          id="vfolder-grid" .items="${this.nonAutoMountedVfolders}" @click="${() => this._updateSelectedFolder()}">
               <vaadin-grid-selection-column id="select-column" flex-grow="0" text-align="center" auto-select></vaadin-grid-selection-column>
