@@ -2970,16 +2970,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                 </div>
               ` : html``}
             </div>
-            <div class="horizontal center-justified flex layout distancing">
-              <mwc-button
-                  unelevated
-                  class="launch-button"
-                  id="launch-button"
-                  icon="rowing"
-                  @click="${() => this._newSessionWithConfirmation()}">
-                <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
-              </mwc-button>
-            </div>
           </div>
         </form>
         <div slot="footer" class="horizontal justified flex layout distancing">
@@ -2988,10 +2978,19 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                       label="${_t('session.launcher.Prev')}" 
                       style="width:auto;visibility:hidden;"
                       @click="${() => this.moveProgress(-1)}"></mwc-button>
+          <mwc-button
+              unelevated
+              class="launch-button"
+              id="launch-button"
+              icon="rowing"
+              @click="${() => this._newSessionWithConfirmation()}">
+            <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+          </mwc-button>
           <mwc-button id="next-button"
                       icon="arrow_forward"
                       label="${_t('session.launcher.Next')}" 
                       style="width:auto;"
+                      trailingIcon
                       @click="${() => this.moveProgress(1)}"></mwc-button>
         </div>
       </backend-ai-dialog>
