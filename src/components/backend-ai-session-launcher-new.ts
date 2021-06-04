@@ -2515,7 +2515,9 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
     if (this.currentIndex == 1) {
       prevButton.style.visibility = 'hidden';
+      nextButton.style.visibility = 'visible';
     } else if (this.currentIndex == progressLength) {
+      prevButton.style.visibility = 'visible';
       nextButton.style.visibility = 'hidden';
     } else {
       prevButton.style.visibility = 'visible';
@@ -2531,7 +2533,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
    */
   _resetProgress() {
     this.moveProgress(-this.currentIndex + 1);
-    this.currentIndex = 1;
     this._resetEnvironmentVariables();
     this._unselectAllSelectedFolder();
   }
