@@ -508,10 +508,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           width: 370px; // default width
         }
 
-        mwc-select > mwc-list-item.cluster-mode-dropdown {
-          --mdc-list-side-padding: auto 0px;
-        }
-
         mwc-textfield {
           width: 100%;
           font-family: var(--general-font-family);
