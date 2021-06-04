@@ -536,6 +536,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           --mdc-on-theme-primary: var(--general-sidebar-topbar-background-color);
         }
 
+        #prev-button, #next-button {
+          --mdc-typography-button-font-size: 15px;
+        }
+
         #environment {
           --mdc-menu-item-height: 40px;
           max-height: 300px;
