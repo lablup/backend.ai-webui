@@ -837,6 +837,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     });
     this.currentIndex = 1;
     this._grid = this.shadowRoot.querySelector('#vfolder-grid');
+    // Tricks to close expansion if window size changes
+    globalThis.addEventListener('resize', () => {
+      document.body.dispatchEvent(new Event('click'));
+    });
   }
 
   _enableLaunchButton() {
