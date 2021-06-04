@@ -1143,7 +1143,7 @@ export default class BackendAILogin extends BackendAIPage {
             <form>
               <fieldset>
                 <div class="horizontal layout" id="id_api_endpoint_container" style="display:none;">
-                  <mwc-icon-button id="endpoint-button" icon="cloud_queue" style="background-color: rgb(250, 250, 250);" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
+                  <mwc-icon-button id="endpoint-button" icon="cloud_queue" style="padding-left: 3px; background-color: rgb(250, 250, 250);" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
                   <mwc-menu id="endpoint-list" @selected="${() => this._updateEndpoint()}">
                     <mwc-list-item disabled>${_t('login.EndpointHistory')}</mwc-list-item>
                     ${this.endpoints.length === 0 ? html`
