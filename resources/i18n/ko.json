@@ -205,9 +205,7 @@
       "EnvironmentVariablePaneTitle": "환경변수",
       "EnvConfigWillDisappear": "저장되지 않은 환경변수 설정값은 사라집니다.",
       "SharedMemoryAbbr": "공유메모리",
-      "GPUSlot": "슬롯",
-      "Next": "다음",
-      "Prev": "이전"
+      "GPUSlot": "슬롯"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

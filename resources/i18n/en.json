@@ -205,9 +205,7 @@
       "EnvironmentVariablePaneTitle": "Environment variables",
       "EnvConfigWillDisappear": "Any unsaved Environment variable and value will be disappeared.",
       "SharedMemoryAbbr": "SHMEM",
-      "GPUSlot": "Slot",
-      "Next": "Next",
-      "Prev": "Previous"
+      "GPUSlot": "Slot"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

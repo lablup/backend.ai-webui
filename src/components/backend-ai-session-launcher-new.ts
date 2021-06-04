@@ -537,7 +537,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         }
 
         #prev-button, #next-button {
-          --mdc-typography-button-font-size: 15px;
+          color: #27824F;
         }
 
         #environment {
@@ -2976,12 +2976,11 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
             </div>
           </div>
         </form>
-        <div slot="footer" class="horizontal justified flex layout distancing">
-          <mwc-button id="prev-button"
-                      icon="arrow_back"
-                      label="${_t('session.launcher.Prev')}" 
-                      style="visibility:hidden;margin-right:12px;"
-                      @click="${() => this.moveProgress(-1)}"></mwc-button>
+        <div slot="footer" class="horizontal flex layout distancing center-center">
+          <mwc-icon-button id="prev-button"
+                           icon="arrow_back"
+                           style="visibility:hidden;margin-right:12px;"
+                           @click="${() => this.moveProgress(-1)}"></mwc-icon-button>
           <mwc-button
               unelevated
               class="launch-button"
@@ -2990,12 +2989,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
               @click="${() => this._newSessionWithConfirmation()}">
             <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
           </mwc-button>
-          <mwc-button id="next-button"
-                      icon="arrow_forward"
-                      label="${_t('session.launcher.Next')}"
-                      trailingIcon
-                      style="margin-left:12px;"
-                      @click="${() => this.moveProgress(1)}"></mwc-button>
+          <mwc-icon-button id="next-button"
+                           icon="arrow_forward"
+                           style="margin-left:12px;"
+                           @click="${() => this.moveProgress(1)}"></mwc-icon-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent closeWithConfirmation>
