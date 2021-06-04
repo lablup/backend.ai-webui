@@ -997,8 +997,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       // this.notification.text = _text('session.launcher.PleaseWaitInitializing');
       // this.notification.show();
     } else {
-      this._resetEnvironmentVariables();
-      this._unselectAllSelectedFolder();
+      this._resetProgress();
       await this.selectDefaultLanguage();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       // this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
@@ -1183,7 +1182,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
-      this._resetEnvironmentVariables();
+      this._resetProgress();
       setTimeout(() => {
         this.metadata_updating = true;
         this.aggregateResource('session-creation');
@@ -1438,15 +1437,9 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
   async _updateVirtualFolderList() {
     return this.resourceBroker.updateVirtualFolderList().then(() => {
       this.vfolders = this.resourceBroker.vfolders;
+      this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
+      this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
     });
-  }
-
-  _updateAutoMountedVirtualFolderList() {
-    this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
-  }
-
-  _updateNonAutoMountedVirtualFolderList() {
-    this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
   }
 
   /**
@@ -1548,8 +1541,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       this.metric_updating = true;
       await this._aggregateResourceUse('update-metric');
       await this._updateVirtualFolderList();
-      this._updateAutoMountedVirtualFolderList();
-      this._updateNonAutoMountedVirtualFolderList();
       // Resource limitation is not loaded yet.
       if (Object.keys(this.resourceBroker.resourceLimits).length === 0) {
         // console.log("No resource limit loaded");
@@ -2532,6 +2523,17 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     }
     currentProgressEl.classList.remove('active');
     movedProgressEl.classList.add('active');
+  }
+
+  /**
+   * Move to first page and initialize environment variables and selected mount folders.
+   * 
+   */
+  _resetProgress() {
+    this.moveProgress(-this.currentIndex + 1);
+    this.currentIndex = 1;
+    this._resetEnvironmentVariables();
+    this._unselectAllSelectedFolder();
   }
 
   render() {
