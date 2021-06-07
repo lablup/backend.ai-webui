@@ -56,6 +56,7 @@ Backend.AI Web UI focuses to
     * Check current license information (for enterprise only)
  * Plugins
     * Per-site specific plugin architecture
+    * Device plugins / storage plugins
  * Help & manuals
 
 
