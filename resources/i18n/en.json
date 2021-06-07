@@ -205,9 +205,7 @@
       "EnvironmentVariablePaneTitle": "Environment variables",
       "EnvConfigWillDisappear": "Any unsaved Environment variable and value will be disappeared.",
       "SharedMemoryAbbr": "SHMEM",
-      "GPUSlot": "Slot",
-      "Next": "Next",
-      "Prev": "Previous"
+      "GPUSlot": "Slot"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -402,7 +400,7 @@
     "Models": "Models",
     "NewFolder": "New Folder",
     "CreateANewStorageFolder": "Create a new storage folder",
-    "Group": "Group",
+    "Project": "Project",
     "DialogFolderStartingWithDotAutomount": "Folders starting with a .(dot) are automatically mounted when a new session is started.",
     "User": "User",
     "Create": "Create",

@@ -508,10 +508,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           width: 370px; // default width
         }
 
-        mwc-select > mwc-list-item.cluster-mode-dropdown {
-          --mdc-list-side-padding: auto 0px;
-        }
-
         mwc-textfield {
           width: 100%;
           font-family: var(--general-font-family);
@@ -534,6 +530,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           background-image: none;
           --mdc-theme-primary: #ddd;
           --mdc-on-theme-primary: var(--general-sidebar-topbar-background-color);
+        }
+
+        #prev-button, #next-button {
+          color: #27824F;
         }
 
         #environment {
@@ -833,6 +833,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     });
     this.currentIndex = 1;
     this._grid = this.shadowRoot.querySelector('#vfolder-grid');
+    // Tricks to close expansion if window size changes
+    globalThis.addEventListener('resize', () => {
+      document.body.dispatchEvent(new Event('click'));
+    });
   }
 
   _enableLaunchButton() {
@@ -993,7 +997,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       // this.notification.text = _text('session.launcher.PleaseWaitInitializing');
       // this.notification.show();
     } else {
-      this._resetEnvironmentVariables();
+      this._resetProgress();
       await this.selectDefaultLanguage();
       const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
       // this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
@@ -1029,8 +1033,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
    * @return {void}
    * */
   _newSessionWithConfirmation() {
-    const vfolderItems = this.shadowRoot.querySelector('#vfolder').selected;
-    const vfolders = vfolderItems.map((el) => el.value);
+    const vfolderItems = this._grid.selectedItems;
+    const vfolders = vfolderItems.map((item) => item.name);
     if (vfolders.length === 0) {
       const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
       confirmationDialog.show();
@@ -1178,7 +1182,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
-      this._resetEnvironmentVariables();
+      this._resetProgress();
       setTimeout(() => {
         this.metadata_updating = true;
         this.aggregateResource('session-creation');
@@ -1220,8 +1224,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         });
       }
 
-      // initialize vfolder and shrink vfolder selecting part
-      this.shadowRoot.querySelector('#vfolder-select-expansion').checked = false;
+      // initialize vfolder 
       this._updateSelectedFolder(false);
     }).catch((err) => {
       // this.metadata_updating = false;
@@ -1434,15 +1437,9 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
   async _updateVirtualFolderList() {
     return this.resourceBroker.updateVirtualFolderList().then(() => {
       this.vfolders = this.resourceBroker.vfolders;
+      this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
+      this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
     });
-  }
-
-  _updateAutoMountedVirtualFolderList() {
-    this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
-  }
-
-  _updateNonAutoMountedVirtualFolderList() {
-    this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
   }
 
   /**
@@ -1544,8 +1541,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       this.metric_updating = true;
       await this._aggregateResourceUse('update-metric');
       await this._updateVirtualFolderList();
-      this._updateAutoMountedVirtualFolderList();
-      this._updateNonAutoMountedVirtualFolderList();
       // Resource limitation is not loaded yet.
       if (Object.keys(this.resourceBroker.resourceLimits).length === 0) {
         // console.log("No resource limit loaded");
@@ -2520,7 +2515,9 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
     if (this.currentIndex == 1) {
       prevButton.style.visibility = 'hidden';
+      nextButton.style.visibility = 'visible';
     } else if (this.currentIndex == progressLength) {
+      prevButton.style.visibility = 'visible';
       nextButton.style.visibility = 'hidden';
     } else {
       prevButton.style.visibility = 'visible';
@@ -2528,6 +2525,16 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     }
     currentProgressEl.classList.remove('active');
     movedProgressEl.classList.add('active');
+  }
+
+  /**
+   * Move to first page and initialize environment variables and selected mount folders.
+   * 
+   */
+  _resetProgress() {
+    this.moveProgress(-this.currentIndex + 1);
+    this._resetEnvironmentVariables();
+    this._unselectAllSelectedFolder();
   }
 
   render() {
@@ -2621,7 +2628,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                 @click="${() => this._showEnvDialog()}"></mwc-button>
             </div>
           </div>
-          <div id="progress-02" class="progress center layout fade" style="padding-top:0;">           
+          <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
             <vaadin-grid theme="row-stripes column-borders compact" aria-label="vfolder list" height-by-rows
                          id="vfolder-grid" .items="${this.nonAutoMountedVfolders}" @click="${() => this._updateSelectedFolder()}">
               <vaadin-grid-selection-column id="select-column" flex-grow="0" text-align="center" auto-select></vaadin-grid-selection-column>
@@ -2970,29 +2977,25 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                 </div>
               ` : html``}
             </div>
-            <div class="horizontal center-justified flex layout distancing">
-              <mwc-button
-                  unelevated
-                  class="launch-button"
-                  id="launch-button"
-                  icon="rowing"
-                  @click="${() => this._newSessionWithConfirmation()}">
-                <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
-              </mwc-button>
-            </div>
           </div>
         </form>
-        <div slot="footer" class="horizontal justified flex layout distancing">
-          <mwc-button id="prev-button"
-                      icon="arrow_back"
-                      label="${_t('session.launcher.Prev')}" 
-                      style="width:auto;visibility:hidden;"
-                      @click="${() => this.moveProgress(-1)}"></mwc-button>
-          <mwc-button id="next-button"
-                      icon="arrow_forward"
-                      label="${_t('session.launcher.Next')}" 
-                      style="width:auto;"
-                      @click="${() => this.moveProgress(1)}"></mwc-button>
+        <div slot="footer" class="horizontal flex layout distancing center-center">
+          <mwc-icon-button id="prev-button"
+                           icon="arrow_back"
+                           style="visibility:hidden;margin-right:12px;"
+                           @click="${() => this.moveProgress(-1)}"></mwc-icon-button>
+          <mwc-button
+              unelevated
+              class="launch-button"
+              id="launch-button"
+              icon="rowing"
+              @click="${() => this._newSessionWithConfirmation()}">
+            <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+          </mwc-button>
+          <mwc-icon-button id="next-button"
+                           icon="arrow_forward"
+                           style="margin-left:12px;"
+                           @click="${() => this.moveProgress(1)}"></mwc-icon-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent closeWithConfirmation>
