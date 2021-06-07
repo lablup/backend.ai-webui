@@ -2513,18 +2513,11 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     const nextButton = this.shadowRoot.querySelector('#next-button');
     const progressLength = this.shadowRoot.querySelectorAll('.progress').length;
 
-    if (this.currentIndex == 1) {
-      prevButton.style.visibility = 'hidden';
-      nextButton.style.visibility = 'visible';
-    } else if (this.currentIndex == progressLength) {
-      prevButton.style.visibility = 'visible';
-      nextButton.style.visibility = 'hidden';
-    } else {
-      prevButton.style.visibility = 'visible';
-      nextButton.style.visibility = 'visible';
-    }
     currentProgressEl.classList.remove('active');
     movedProgressEl.classList.add('active');
+
+    prevButton.style.visibility = this.currentIndex == 1 ? 'hidden' : 'visible';
+    nextButton.style.visibility = this.currentIndex == progressLength ? 'hidden' : 'visible';
   }
 
   /**
@@ -2630,10 +2623,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           </div>
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
             <vaadin-grid theme="row-stripes column-borders compact" 
-                         id="vfolder-grid" 
-                         aria-label="vfolder list" 
-                         height-by-rows 
-                         .items="${this.nonAutoMountedVfolders}" 
+                         id="vfolder-grid"
+                         aria-label="vfolder list"
+                         height-by-rows
+                         .items="${this.nonAutoMountedVfolders}"
                          @click="${() => this._updateSelectedFolder()}">
               <vaadin-grid-selection-column id="select-column" 
                                             flex-grow="0" 
