@@ -197,7 +197,7 @@ export default class BackendAIData extends BackendAIPage {
 
         backend-ai-dialog wl-textfield,
         backend-ai-dialog wl-select {
-          --input-font-family: Roboto, Noto, sans-serif;
+          --input-font-family: var(--general-font-family);
           --input-color-disabled: #222222;
           --input-label-color-disabled: #222222;
           --input-label-font-size: 12px;
@@ -214,7 +214,7 @@ export default class BackendAIData extends BackendAIPage {
         }
 
         wl-label {
-          --label-font-family: Roboto, Noto, sans-serif;
+          --label-font-family: 'Ubuntu', Roboto;
           --label-color: black;
         }
 
@@ -357,7 +357,7 @@ export default class BackendAIData extends BackendAIPage {
                 <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
               ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Group')}</mwc-list-item>
+                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Project')}</mwc-list-item>
               ` : html``}
             </mwc-multi-select>
           </div>
@@ -377,7 +377,7 @@ export default class BackendAIData extends BackendAIPage {
           ` : html``}
           ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
             <div class="horizontal layout">
-              <mwc-multi-select id="add-folder-group" label="${_t('data.Group')}">
+              <mwc-multi-select id="add-folder-group" label="${_t('data.Project')}">
                 ${(this.allowedGroups as any).map((item, idx) => html`
                   <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
@@ -433,7 +433,7 @@ export default class BackendAIData extends BackendAIPage {
                 <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
               ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Group')}</mwc-list-item>
+                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Project')}</mwc-list-item>
               ` : html``}
             </mwc-multi-select>
           </div>
@@ -453,7 +453,7 @@ export default class BackendAIData extends BackendAIPage {
           ` : html``}
           ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
             <div class="horizontal layout">
-              <mwc-multi-select id="clone-folder-group" label="${_t('data.Group')}">
+              <mwc-multi-select id="clone-folder-group" label="${_t('data.Project')}">
                 ${(this.allowedGroups as any).map((item, idx) => html`
                   <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}

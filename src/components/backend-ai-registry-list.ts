@@ -90,7 +90,7 @@ class BackendAIRegistryList extends BackendAIPage {
         }
 
         backend-ai-dialog wl-textfield {
-          --input-font-family: Roboto, Noto, sans-serif;
+          --input-font-family: var(--general-font-family);
           --input-state-color-invalid: #b00020;
           margin-bottom: 20px;
         }
@@ -109,7 +109,7 @@ class BackendAIRegistryList extends BackendAIPage {
 
         wl-label.helper-text {
           --label-color: #b00020;
-          --label-font-family: Roboto, Noto, sans-serif;
+          --label-font-family: 'Ubuntu', Roboto;
           --label-font-size: 11px;
         }
 

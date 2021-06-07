@@ -117,7 +117,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
         wl-label {
           --label-font-size: 13px;
-          --label-font-family: 'Ubuntu', 'Quicksand', Roboto;
+          --label-font-family: 'Ubuntu', Roboto;
           -webkit-border-radius: 3px;
           -moz-border-radius: 3px;
           border-radius: 3px;

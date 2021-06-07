@@ -219,7 +219,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         wl-label.warning {
-          font-family: Roboto, Noto, sans-serif;
+          font-family: var(--general-font-family);
           font-size: 12px;
           --label-color: var(--paper-red-600);
         }

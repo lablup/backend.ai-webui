@@ -398,7 +398,7 @@
     "Models": "Models",
     "NewFolder": "New Folder",
     "CreateANewStorageFolder": "Create a new storage folder",
-    "Group": "Group",
+    "Project": "Project",
     "DialogFolderStartingWithDotAutomount": "Folders starting with a .(dot) are automatically mounted when a new session is started.",
     "User": "User",
     "Create": "Create",

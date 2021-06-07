@@ -175,10 +175,28 @@ export const BackendAIWebUIStyles = [
       color: var(--general-sidebar-footer-color, #aaaaaa) !important;
     }
 
+    .user-name {
+      max-width: 10vw;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #project {
+      font-size: 12px;
+      color: #8c8484;
+      padding-right: 8px;
+    }
+
     mwc-menu#dropdown-menu {
       position: relative;
       left: 170px;
       top: 20px;
+    }
+
+    .dropdown-menu-name {
+      position: absolute;
+      margin-top: 3px;
     }
 
     mwc-button {
@@ -403,6 +421,7 @@ export const BackendAIWebUIStyles = [
     mwc-menu.user-menu {
       --mdc-theme-surface: #f1f1f1;
       --mdc-menu-item-height: 28px;
+      --mdc-menu-min-width: 200px;
       box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     }
 
@@ -547,16 +566,12 @@ export const BackendAIWebUIStyles = [
       }
     }
 
-    @media screen and (max-width: 889px) {
-      mwc-select#group-select {
+    @media screen and (max-width: 1030px) {
+      span.email, p#project {
         display: none;
       }
 
-    }
-
-    @media screen and (max-width: 1030px) {
-      span.email, #group-select-box > div > p
-       {
+      div#welcome-message {
         display: none;
       }
     }
@@ -581,4 +596,5 @@ export const BackendAIWebUIStyles = [
     .temporarily-hide {
       display: none !important;
     }
-  `];
+  `,
+];
