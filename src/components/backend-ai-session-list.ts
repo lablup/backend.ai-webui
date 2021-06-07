@@ -417,6 +417,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     default:
       status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
     }
+    if (!globalThis.backendaiclient.supports('avoid-hol-blocking') && status.includes('SCHEDULED')) {
+      status = status.filter((e) => e !== 'SCHEDULED');
+    }
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }
