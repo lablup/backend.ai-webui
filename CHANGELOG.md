@@ -1,5 +1,22 @@
 # Changelog
 
+## v21.03.5 (07/06/2021)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**library / SDK**][**minor**] Support for SCHEDULED session with conditional manager version [#1013](https://github.com/lablup/backend.ai-webui/issues/1013)
+- [**UI / UX**][**enhancement**][**good first issue**] Modify top bar style [#1004](https://github.com/lablup/backend.ai-webui/issues/1004)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**bug**][**good first issue**][**minor**] When user see login form, cloud icon has different style [#1011](https://github.com/lablup/backend.ai-webui/issues/1011)
+- [**UI / UX**][**bug**][**good first issue**] Make available to see all icons of custom environments [#1001](https://github.com/lablup/backend.ai-webui/issues/1001)
+
+#### UI / UX:
+
+- [**UI / UX**][**easy**][**good first issue**] the password masking on "Add registry" dialog is triangle. change to the circle one. [#993](https://github.com/lablup/backend.ai-webui/issues/993)
+
+
 ## v21.03.4 (17/05/2021)
 
 #### Enhancements:
