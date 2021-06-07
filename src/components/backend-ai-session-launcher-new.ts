@@ -174,7 +174,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
   @property({type: Object}) vfolder_select_expansion = Object();
   @property({type: Number}) currentIndex = 1;
   @property({type: Object}) _grid = Object();
-  
+
   @property({type: Boolean}) _debug = false;
 
   constructor() {
@@ -912,13 +912,13 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
   /**
    * Unselect the selected items and update selectedVfolders to be empty.
-   * 
+   *
    */
   _unselectAllSelectedFolder() {
     if (this._grid.selectedItems) {
       this._grid.selectedItems.forEach((item) => {
         item.selected = false;
-      })
+      });
       this._grid.selectedItems = [];
     }
     this.selectedVfolders = [];
@@ -1224,7 +1224,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         });
       }
 
-      // initialize vfolder 
+      // initialize vfolder
       this._updateSelectedFolder(false);
     }).catch((err) => {
       // this.metadata_updating = false;
@@ -1437,8 +1437,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
   async _updateVirtualFolderList() {
     return this.resourceBroker.updateVirtualFolderList().then(() => {
       this.vfolders = this.resourceBroker.vfolders;
-      this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
-      this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
     });
   }
 
@@ -1541,6 +1539,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       this.metric_updating = true;
       await this._aggregateResourceUse('update-metric');
       await this._updateVirtualFolderList();
+      this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
+      this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
       // Resource limitation is not loaded yet.
       if (Object.keys(this.resourceBroker.resourceLimits).length === 0) {
         // console.log("No resource limit loaded");
@@ -2529,7 +2529,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
   /**
    * Move to first page and initialize environment variables and selected mount folders.
-   * 
+   *
    */
   _resetProgress() {
     this.moveProgress(-this.currentIndex + 1);
@@ -2629,10 +2629,18 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
             </div>
           </div>
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
-            <vaadin-grid theme="row-stripes column-borders compact" aria-label="vfolder list" height-by-rows
-                         id="vfolder-grid" .items="${this.nonAutoMountedVfolders}" @click="${() => this._updateSelectedFolder()}">
-              <vaadin-grid-selection-column id="select-column" flex-grow="0" text-align="center" auto-select></vaadin-grid-selection-column>
-              <vaadin-grid-filter-column path="name" header="${_t('session.launcher.FolderToMount')}"></vaadin-grid-filter-column>
+            <vaadin-grid theme="row-stripes column-borders compact" 
+                         id="vfolder-grid" 
+                         aria-label="vfolder list" 
+                         height-by-rows 
+                         .items="${this.nonAutoMountedVfolders}" 
+                         @click="${() => this._updateSelectedFolder()}">
+              <vaadin-grid-selection-column id="select-column" 
+                                            flex-grow="0" 
+                                            text-align="center" 
+                                            auto-select></vaadin-grid-selection-column>
+              <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
+                                         path="name"></vaadin-grid-filter-column>
             </vaadin-grid>
             <ul style="color:#646464;font-size:12px;">
               ${this.selectedVfolders.map((item) => html`
