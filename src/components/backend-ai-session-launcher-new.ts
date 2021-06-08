@@ -261,7 +261,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         }
 
         vaadin-grid {
-          max-height: 400px;
+          max-height: 250px;
         }
 
         .progress {
@@ -449,6 +449,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-margin-open: 0;
+        }
+
+        wl-expansion.vfolder {
+          --expansion-content-padding: 0;
         }
 
         wl-expansion span {
@@ -2518,6 +2522,9 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
     prevButton.style.visibility = this.currentIndex == 1 ? 'hidden' : 'visible';
     nextButton.style.visibility = this.currentIndex == progressLength ? 'hidden' : 'visible';
+
+    // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
+    this._grid.clearCache();
   }
 
   /**
@@ -2622,27 +2629,25 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
             </div>
           </div>
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
-            <vaadin-grid theme="row-stripes column-borders compact" 
-                         id="vfolder-grid"
-                         aria-label="vfolder list"
-                         height-by-rows
-                         .items="${this.nonAutoMountedVfolders}"
-                         @click="${() => this._updateSelectedFolder()}">
-              <vaadin-grid-selection-column id="select-column" 
-                                            flex-grow="0" 
-                                            text-align="center" 
-                                            auto-select></vaadin-grid-selection-column>
-              <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
-                                         path="name"></vaadin-grid-filter-column>
-            </vaadin-grid>
-            <ul style="color:#646464;font-size:12px;">
-              ${this.selectedVfolders.map((item) => html`
-                <li><mwc-icon>folder_open</mwc-icon>${item}</li>
-              `)}
-              ${this.autoMountedVfolders.map((item) => html`
-                <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
-              `)}
-            </ul>
+          <wl-expansion class="vfolder" name="folder-to-mount" style="--expansion-header-padding:16px;">
+            <span slot="title" style="font-size:12px;color:rgb(64, 64, 64);font-weight:400;">${_t('session.launcher.FolderToMount')}</span>
+            <span slot="description" class="launcher-item-title"></span>
+            <div class="vertical center layout flex" style="height:100%;overflow-y:scroll;width:100%;">
+              <vaadin-grid theme="row-stripes column-borders compact" 
+                            id="vfolder-grid"
+                            aria-label="vfolder list"
+                            height-by-rows
+                            .items="${this.nonAutoMountedVfolders}"
+                            @click="${() => this._updateSelectedFolder()}">
+                  <vaadin-grid-selection-column id="select-column" 
+                                                flex-grow="0" 
+                                                text-align="center" 
+                                                auto-select></vaadin-grid-selection-column>
+                  <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
+                                            path="name"></vaadin-grid-filter-column>
+              </vaadin-grid>
+            </div>
+            </wl-expansion>
           </div>
           <div id="progress-03" class="progress center layout fade">
             <div class="horizontal center layout">
