@@ -448,7 +448,14 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
+          --expansion-header-padding: 16px;
           --expansion-margin-open: 0;
+        }
+
+        wl-expansion span[slot="title"] {
+          font-size: 12px;
+          color: rgb(64, 64, 64);
+          font-weight: normal;
         }
 
         wl-expansion.vfolder {
@@ -587,6 +594,19 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
         ul {
           list-style-type: none;
+        }
+
+        ul.vfolder-list {
+          color: #646464;
+          font-size: 12px;
+        }
+
+        ul.vfolder-list > li {
+          max-width: 90%;
+          display: block;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
         }
 
         mwc-button > mwc-icon {
@@ -2629,10 +2649,9 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
             </div>
           </div>
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
-          <wl-expansion class="vfolder" name="folder-to-mount" style="--expansion-header-padding:16px;">
-            <span slot="title" style="font-size:12px;color:rgb(64, 64, 64);font-weight:400;">${_t('session.launcher.FolderToMount')}</span>
-            <span slot="description" class="launcher-item-title"></span>
-            <div class="vertical center layout flex" style="height:100%;overflow-y:scroll;width:100%;">
+          <wl-expansion class="vfolder" name="vfolder">
+            <span slot="title">${_t('session.launcher.FolderToMount')}</span>
+            <div style="height:100%;overflow-y:scroll;width:100%;">
               <vaadin-grid theme="row-stripes column-borders compact" 
                             id="vfolder-grid"
                             aria-label="vfolder list"
@@ -2647,6 +2666,17 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                                             path="name"></vaadin-grid-filter-column>
               </vaadin-grid>
             </div>
+            </wl-expansion>
+            <wl-expansion class="vfolder" name="vfolder">
+            <span slot="title">${_t('session.launcher.MountedFolders')}</span>
+              <ul class="vfolder-list">
+                ${this.selectedVfolders.map((item) => html`
+                  <li><mwc-icon>folder_open</mwc-icon>${item}</li>
+                `)}
+                ${this.autoMountedVfolders.map((item) => html`
+                  <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
+                `)}
+              </ul>
             </wl-expansion>
           </div>
           <div id="progress-03" class="progress center layout fade">
@@ -2744,9 +2774,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                 </div>
               </div>
             </div>
-            <wl-expansion name="resource-group" style="--expansion-header-padding:16px;">
-              <span slot="title" style="font-size:12px;color:rgb(64, 64, 64);font-weight:400;">${_t('session.launcher.CustomAllocation')}</span>
-              <span slot="description" class="launcher-item-title"></span>
+            <wl-expansion name="resource-group">
+              <span slot="title">${_t('session.launcher.CustomAllocation')}</span>
               <div class="vertical center layout">
                 <div class="horizontal center layout" style="margin-top:15px;">
                   <div class="resource-type" style="width:70px;">CPU</div>
@@ -2858,10 +2887,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                 `}
               </div>
              ` : html``}
-            <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
-              <span slot="title"
-                    style="font-size:12px;font-weight:400;color:#404040;">${_t('session.launcher.SetSessionOwner')}</span>
-              <span slot="description"></span>
+            <wl-expansion name="ownership" style="--expansion-content-padding:15px 0;">
+              <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
                   <mwc-textfield id="owner-email" type="email" class="flex" value=""
@@ -2954,7 +2981,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
             <div id="mounted-folders-container">
               ${this.selectedVfolders.length > 0 || this.autoMountedVfolders.length > 0 ? html`
                 <p class="title">${_t('session.launcher.MountedFolders')}</p>
-                <ul style="color:#646464;font-size:12px;">
+                <ul class="vfolder-list">
                   ${this.selectedVfolders.map((item) => html`
                         <li><mwc-icon>folder_open</mwc-icon>${item}</li>
                     `)}
