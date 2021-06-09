@@ -174,6 +174,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
   @property({type: Object}) environ_values = Object();
   @property({type: Object}) vfolder_select_expansion = Object();
   @property({type: Number}) currentIndex = 1;
+  @property({type: Number}) progressLength;
   @property({type: Object}) _grid = Object();
 
   @property({type: Boolean}) _debug = false;
@@ -320,6 +321,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
         div.blank-box {
           padding: 3.25rem 0;
+        }
+
+        div.blank-box-medium {
+          padding: 8.8rem 0;
         }
 
         div.blank-box-large {
@@ -562,6 +567,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           background-image: none;
           --mdc-theme-primary: #ddd;
           --mdc-on-theme-primary: var(--general-sidebar-topbar-background-color);
+        }
+
+        mwc-checkbox {
+          --mdc-theme-secondary: var(--general-checkbox-color);
         }
 
         #prev-button, #next-button {
@@ -878,6 +887,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       }
     });
     this.currentIndex = 1;
+    this.progressLength = this.shadowRoot.querySelectorAll('.progress').length;
     this._grid = this.shadowRoot.querySelector('#vfolder-grid');
     // Tricks to close expansion if window size changes
     globalThis.addEventListener('resize', () => {
@@ -945,7 +955,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
    * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
   _updateSelectedFolder(forceInitialize = false) {
-    if (this._grid) {
+    console.log(this._grid.selectedItems)
+    if (this._grid && this._grid.selectedItems) {
       const selectedFolderItems = this._grid.selectedItems;
       let selectedFolders: string[] = [];
       if (selectedFolderItems.length > 0) {
@@ -1075,21 +1086,31 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
   }
 
   /**
+   * Move current progress of session launcher dialog to the last
+   *
+   */
+  _moveToLastProgress() {
+    this.moveProgress(4);
+  }
+
+  /**
    * If vfolder has not any items, show launch-confirmation-dialog.
    * Else, make new session by call _newSession().
    *
    * @return {void}
    * */
   _newSessionWithConfirmation() {
-    const vfolderItems = this._grid.selectedItems;
-    const vfolders = vfolderItems.map((item) => item.name);
-    // progress page to the last
-    this.moveProgress(4);
-    if (vfolders.length === 0) {
-      const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
-      confirmationDialog.show();
+    const vfoldersCount = this._grid?.selectedItems?.map((item) => item.name).length;
+    // check whether the progress is in the last stage
+    if (this.currentIndex == this.progressLength) {
+      if (vfoldersCount !== undefined && vfoldersCount > 0) {
+        return this._newSession();
+      } else {
+        const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
+        confirmationDialog.show();
+      }
     } else {
-      return this._newSession();
+      this._moveToLastProgress();
     }
   }
 
@@ -2556,12 +2577,11 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
    * @param {Number} n -1 : previous progress / 1 : next progress
    */
   moveProgress(n) {
-    const progressLength = this.shadowRoot.querySelectorAll('.progress').length;
     const currentProgressEl = this.shadowRoot.querySelector('#progress-0' + this.currentIndex);
     this.currentIndex += n;
     // limit the range of progress number
-    if (this.currentIndex > progressLength) {
-      this.currentIndex = globalThis.backendaiclient.utils.clamp(this.currentIndex + n, progressLength, 1);
+    if (this.currentIndex > this.progressLength) {
+      this.currentIndex = globalThis.backendaiclient.utils.clamp(this.currentIndex + n, this.progressLength, 1);
     }
     const movedProgressEl = this.shadowRoot.querySelector('#progress-0' + this.currentIndex);
     const prevButton = this.shadowRoot.querySelector('#prev-button');
@@ -2571,8 +2591,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     movedProgressEl.classList.add('active');
 
     prevButton.style.visibility = this.currentIndex == 1 ? 'hidden' : 'visible';
-    nextButton.style.visibility = this.currentIndex == progressLength ? 'hidden' : 'visible';
-    this.shadowRoot.querySelector('#launch-button-msg').textContent = progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
+    nextButton.style.visibility = this.currentIndex == this.progressLength ? 'hidden' : 'visible';
+    this.shadowRoot.querySelector('#launch-button-msg').textContent = this.progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
 
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
     this._grid?.clearCache();
@@ -2683,26 +2703,25 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           <wl-expansion class="vfolder" name="vfolder">
             <span slot="title">${_t('session.launcher.FolderToMount')}</span>
             <div class="vfolder-list">
-            ${this.vfolders.length > 0 ? html`
-            <vaadin-grid
-                theme="row-stripes column-borders compact" 
-                id="vfolder-grid"
-                aria-label="vfolder list"
-                height-by-rows
-                .items="${this.nonAutoMountedVfolders}"
-                @click="${() => this._updateSelectedFolder()}">
-              <vaadin-grid-selection-column id="select-column" 
-                                            flex-grow="0" 
-                                            text-align="center" 
-                                            auto-select></vaadin-grid-selection-column>
-              <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
-                                        path="name"></vaadin-grid-filter-column>
-            </vaadin-grid>
-            ` : html`
-            <div class="vertical layout center flex blank-box-large">
-              <span>${_t('session.launcher.NoAvailableFolderToMount')}</span>
-            </div>
-            `}
+              <vaadin-grid
+                  theme="row-stripes column-borders compact" 
+                  id="vfolder-grid"
+                  aria-label="vfolder list"
+                  height-by-rows
+                  .items="${this.nonAutoMountedVfolders}"
+                  @click="${() => this._updateSelectedFolder()}">
+                <vaadin-grid-selection-column id="select-column" 
+                                              flex-grow="0" 
+                                              text-align="center" 
+                                              auto-select></vaadin-grid-selection-column>
+                <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
+                                          path="name"></vaadin-grid-filter-column>
+              </vaadin-grid>
+              ${this.vfolders.length > 0 ? html`` : html`
+              <div class="vertical layout center flex blank-box-medium">
+                <span>${_t('session.launcher.NoAvailableFolderToMount')}</span>
+              </div>
+              `}
             </div>
             </wl-expansion>
             <wl-expansion class="vfolder" name="vfolder">
@@ -2975,10 +2994,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                     `)}
                   </mwc-select>
                 </div>
-                <wl-label style="padding:15px;">
-                <wl-checkbox id="owner-enabled"></wl-checkbox>
-                  ${_t('session.launcher.LaunchSessionWithAccessKey')}
-                </wl-label>
+                <div class="horizontal layout start-justified center">
+                <mwc-checkbox id="owner-enabled"></mwc-checkbox>
+                <p style="color: rgba(0,0,0,0.6);">${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
+                </div>
               </div>
             </wl-expansion>
           </div>
