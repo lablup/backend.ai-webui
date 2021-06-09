@@ -7,14 +7,15 @@ import {css, CSSResultArray, CSSResultOrNative, customElement, html, property, q
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@material/mwc-select';
+import '@material/mwc-button';
+import '@material/mwc-checkbox/mwc-checkbox';
+import '@material/mwc-icon-button';
+import '@material/mwc-linear-progress';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-list/mwc-check-list-item';
-import '@material/mwc-icon-button';
-import '@material/mwc-button';
+import '@material/mwc-select';
 import '@material/mwc-textfield/mwc-textfield';
-import '@material/mwc-linear-progress';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
@@ -261,11 +262,11 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         }
 
         vaadin-grid {
-          max-height: 250px;
+          max-height: 450px;
         }
 
         .progress {
-          padding-top: 15px;
+          // padding-top: 15px;
           position: relative;
           z-index: 12;
           display: none;
@@ -305,6 +306,24 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           font-size: 14px;
           width: 70px;
           margin-right: 10px;
+        }
+
+        div.vfolder-list,
+        div.vfolder-mounted-list,
+        #mounted-folders-container,
+        #environment-variables-container
+         {
+          background-color: rgba(244,244,244,1);
+          max-height: 450px;
+          overflow-y: scroll;
+        }
+
+        div.blank-box {
+          padding: 3.25rem 0;
+        }
+
+        div.blank-box-large {
+          padding: 11.3rem 0;
         }
 
         .resources.horizontal .monitor.session {
@@ -400,6 +419,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
         #new-session-dialog {
           --component-width: 400px;
+          --component-height: 640px;
           --component-max-height: 640px;
           z-index: 100;
         }
@@ -434,6 +454,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           --mdc-theme-on-primary: var(--general-button-color);
         }
 
+        #launch-session-form {
+          height: calc(var(--component-height, auto) - 150px);
+        }
+
         wl-button > span {
           margin-left: 5px;
           font-weight: normal;
@@ -460,6 +484,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
         wl-expansion.vfolder {
           --expansion-content-padding: 0;
+          border-bottom: 1px 
         }
 
         wl-expansion span {
@@ -502,16 +527,12 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           };
         }
 
-        mwc-select#owner-group {
-          margin-right: 0;
-          padding-right: 0;
-          width: 50%;
-          --mdc-select-min-width: 190px;
-        }
+        mwc-select#owner-group,
         mwc-select#owner-scaling-group {
           margin-right: 0;
           padding-right: 0;
           width: 50%;
+          --mdc-menu-max-width: 200px;
           --mdc-select-min-width: 190px;
         }
 
@@ -599,6 +620,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         ul.vfolder-list {
           color: #646464;
           font-size: 12px;
+          max-height: inherit;
         }
 
         ul.vfolder-list > li {
@@ -923,15 +945,17 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
    * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
   _updateSelectedFolder(forceInitialize = false) {
-    const selectedFolderItems = this._grid.selectedItems;
-    let selectedFolders: string[] = [];
-    if (selectedFolderItems.length > 0) {
-      selectedFolders = selectedFolderItems.map((item) => item.name);
-      if (forceInitialize) {
-        this._unselectAllSelectedFolder();
+    if (this._grid) {
+      const selectedFolderItems = this._grid.selectedItems;
+      let selectedFolders: string[] = [];
+      if (selectedFolderItems.length > 0) {
+        selectedFolders = selectedFolderItems.map((item) => item.name);
+        if (forceInitialize) {
+          this._unselectAllSelectedFolder();
+        }
       }
+      this.selectedVfolders = selectedFolders;
     }
-    this.selectedVfolders = selectedFolders;
   }
 
   /**
@@ -939,7 +963,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
    *
    */
   _unselectAllSelectedFolder() {
-    if (this._grid.selectedItems) {
+    if (this._grid && this._grid.selectedItems) {
       this._grid.selectedItems.forEach((item) => {
         item.selected = false;
       });
@@ -2551,7 +2575,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     this.shadowRoot.querySelector('#launch-button-msg').textContent = progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
 
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
-    this._grid.clearCache();
+    this._grid?.clearCache();
   }
 
   /**
@@ -2658,32 +2682,48 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
           <wl-expansion class="vfolder" name="vfolder">
             <span slot="title">${_t('session.launcher.FolderToMount')}</span>
-            <div style="height:100%;overflow-y:scroll;width:100%;">
-              <vaadin-grid theme="row-stripes column-borders compact" 
-                            id="vfolder-grid"
-                            aria-label="vfolder list"
-                            height-by-rows
-                            .items="${this.nonAutoMountedVfolders}"
-                            @click="${() => this._updateSelectedFolder()}">
-                  <vaadin-grid-selection-column id="select-column" 
-                                                flex-grow="0" 
-                                                text-align="center" 
-                                                auto-select></vaadin-grid-selection-column>
-                  <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
-                                            path="name"></vaadin-grid-filter-column>
-              </vaadin-grid>
+            <div class="vfolder-list">
+            ${this.vfolders.length > 0 ? html`
+            <vaadin-grid
+                theme="row-stripes column-borders compact" 
+                id="vfolder-grid"
+                aria-label="vfolder list"
+                height-by-rows
+                .items="${this.nonAutoMountedVfolders}"
+                @click="${() => this._updateSelectedFolder()}">
+              <vaadin-grid-selection-column id="select-column" 
+                                            flex-grow="0" 
+                                            text-align="center" 
+                                            auto-select></vaadin-grid-selection-column>
+              <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
+                                        path="name"></vaadin-grid-filter-column>
+            </vaadin-grid>
+            ` : html`
+            <div class="vertical layout center flex blank-box-large">
+              <span>${_t('session.launcher.NoAvailableFolderToMount')}</span>
+            </div>
+            `}
             </div>
             </wl-expansion>
             <wl-expansion class="vfolder" name="vfolder">
-            <span slot="title">${_t('session.launcher.MountedFolders')}</span>
-              <ul class="vfolder-list">
-                ${this.selectedVfolders.map((item) => html`
-                  <li><mwc-icon>folder_open</mwc-icon>${item}</li>
-                `)}
-                ${this.autoMountedVfolders.map((item) => html`
-                  <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
-                `)}
-              </ul>
+              <span slot="title">${_t('session.launcher.MountedFolders')}</span>
+              <div class="vfolder-mounted-list">
+              ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
+                <ul class="vfolder-list">
+                    ${this.selectedVfolders.map((item) => html`
+                      <li><mwc-icon>folder_open</mwc-icon>${item}</li>
+                    `)}
+                    ${this.autoMountedVfolders.map((item) => html`
+                      <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
+                    `)}
+                </ul>
+              ` : html`
+                  <div class="vertical layout center flex blank-box-large">
+                    <span>${_t('session.launcher.NoFolderMounted')}</span>
+                  </div>
+              `}
+              </div>
+
             </wl-expansion>
           </div>
           <div id="progress-03" class="progress center layout fade">
@@ -2784,7 +2824,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
             <wl-expansion name="resource-group">
               <span slot="title">${_t('session.launcher.CustomAllocation')}</span>
               <div class="vertical center layout">
-                <div class="horizontal center layout" style="margin-top:15px;">
+                <div class="horizontal center layout">
                   <div class="resource-type" style="width:70px;">CPU</div>
                   <lablup-slider id="cpu-resource" class="cpu"
                                 pin snaps expand editable markers
@@ -2878,7 +2918,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                   </mwc-list-item>
                 `)}
               </mwc-select>
-              <div class="horizontal layout center" style="padding:0 24px 24px 24px;">
+              <div class="horizontal layout center" style="padding:0 24px;">
                 <div class="resource-type">${_t('session.launcher.ClusterSize')}</div>
                 <lablup-slider id="cluster-size" class="cluster"
                               pin snaps expand editable markers
@@ -2888,7 +2928,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                               @click="${(e) => this._applyResourceValueChanges(e, false)}"
                               @focusout="${(e) => this._applyResourceValueChanges(e, false)}"></lablup-slider>
                 ${this.cluster_mode === 'single-node' ? html`
-                  <span class="caption">${_t('session.launcher.Container')}</span>
+                  <span class="caption" style="width:60px;">${_t('session.launcher.Container')}</span>
                 ` : html`
                   <span class="caption">${_t('session.launcher.Node')}</span>
                 `}
@@ -2905,7 +2945,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                                   @click="${() => this._fetchSessionOwnerGroups()}">
                   </mwc-icon-button>
                 </div>
-                <mwc-select id="owner-accesskey" label="${_t('session.launcher.OwnerAccessKey')}" icon="vpn_key" fixedMenuPosition>
+                <mwc-select id="owner-accesskey" label="${_t('session.launcher.OwnerAccessKey')}" icon="vpn_key" fixedMenuPosition naturalMenuWidth>
                   ${this.ownerKeypairs.map((item) => html`
                     <mwc-list-item class="owner-group-dropdown"
                                   id="${item.access_key}"
@@ -2915,7 +2955,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                   `)}
                 </mwc-select>
                 <div class="horizontal center layout">
-                  <mwc-select id="owner-group" label="${_t('session.launcher.OwnerGroup')}" icon="group_work" fixedMenuPosition>
+                  <mwc-select id="owner-group" label="${_t('session.launcher.OwnerGroup')}" icon="group_work" fixedMenuPosition naturalMenuWidth>
                     ${this.ownerGroups.map((item) => html`
                       <mwc-list-item class="owner-group-dropdown"
                                     id="${item.name}"
@@ -2985,9 +3025,9 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                 <p class="small">${_t('session.launcher.AllocateNode')}</p>
               </div>
             </div>
+            <p class="title">${_t('session.launcher.MountedFolders')}</p>
             <div id="mounted-folders-container">
               ${this.selectedVfolders.length > 0 || this.autoMountedVfolders.length > 0 ? html`
-                <p class="title">${_t('session.launcher.MountedFolders')}</p>
                 <ul class="vfolder-list">
                   ${this.selectedVfolders.map((item) => html`
                         <li><mwc-icon>folder_open</mwc-icon>${item}</li>
@@ -2996,11 +3036,15 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                     <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
                   `)}
                 </ul>
-              ` : html``}
+              ` : html`
+                <div class="vertical layout center flex blank-box">
+                  <span>${_t('session.launcher.NoFolderMounted')}</span>
+                </div>
+              `}
             </div>
+            <p class="title">${_t('session.launcher.EnvironmentVariablePaneTitle')}</p>
             <div id="environment-variables-container">
               ${this.environ.length > 0 ? html`
-                <p class="title">${_t('session.launcher.EnvironmentVariablePaneTitle')}</p>
                 <div class="horizontal flex center center-justified layout" style="overflow-x:hidden;">
                   <div role="listbox">
                     <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
@@ -3015,7 +3059,11 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                     `)}
                   </div>
                 </div>
-              ` : html``}
+              ` : html`
+                  <div class="vertical layout center flex blank-box">
+                    <span>${_t('session.launcher.NoEnvConfigured')}</span>
+                  </div>
+                `}
             </div>
           </div>
         </form>
