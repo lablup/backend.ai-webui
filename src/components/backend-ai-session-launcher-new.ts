@@ -335,6 +335,10 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           padding: 11.3rem 0;
         }
 
+        #environment-variables-container {
+          font-size: 0.8rem;
+        }
+
         .resources.horizontal .monitor.session {
           margin-left: 5px;
         }
