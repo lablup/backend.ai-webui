@@ -192,6 +192,14 @@ class Manager extends EventEmitter {
           "port": port,
           "url": this.baseURL + "/vnc?port=" + port + "&dummy=1"
         });
+      } else if (app == 'xrdp') {
+        logger.debug('proxy target: ' + proxy_target);
+        res.send({
+          "code": 200,
+          "proxy": proxy_target,
+          "port": port,
+          "url": this.baseURL + "/xrdp?port=" + port + "&dummy=1"
+        });
       } else {
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/redirect?port=" + port});
       }
