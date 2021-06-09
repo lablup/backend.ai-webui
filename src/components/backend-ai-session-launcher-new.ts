@@ -315,8 +315,12 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         #environment-variables-container
          {
           background-color: rgba(244,244,244,1);
-          max-height: 450px;
           overflow-y: scroll;
+        }
+
+        div.vfolder-list,
+        div.vfolder-mounted-list {
+          max-height: 450px;
         }
 
         div.blank-box {
