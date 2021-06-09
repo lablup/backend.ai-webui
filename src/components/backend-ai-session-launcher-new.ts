@@ -1059,6 +1059,8 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
   _newSessionWithConfirmation() {
     const vfolderItems = this._grid.selectedItems;
     const vfolders = vfolderItems.map((item) => item.name);
+    // progress page to the last
+    this.moveProgress(4);
     if (vfolders.length === 0) {
       const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
       confirmationDialog.show();
@@ -1205,7 +1207,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     Promise.all(createSessionQueue).then((res: any) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.ConfirmAndLaunch');
       this._resetProgress();
       setTimeout(() => {
         this.metadata_updating = true;
@@ -1268,7 +1270,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
       this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.ConfirmAndLaunch');
     });
   }
 
@@ -1605,7 +1607,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
       }
       this.shadowRoot.querySelector('#session-resource').disabled = false;
       this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.Launch');
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.ConfirmAndLaunch');
       let disableLaunch = false;
       let shmem_metric: any = {
         'min': 0.0625,
@@ -2530,18 +2532,23 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
    * @param {Number} n -1 : previous progress / 1 : next progress
    */
   moveProgress(n) {
+    const progressLength = this.shadowRoot.querySelectorAll('.progress').length;
     const currentProgressEl = this.shadowRoot.querySelector('#progress-0' + this.currentIndex);
     this.currentIndex += n;
+    // limit the range of progress number
+    if (this.currentIndex > progressLength) {
+      this.currentIndex = globalThis.backendaiclient.utils.clamp(this.currentIndex + n, progressLength, 1);
+    }
     const movedProgressEl = this.shadowRoot.querySelector('#progress-0' + this.currentIndex);
     const prevButton = this.shadowRoot.querySelector('#prev-button');
     const nextButton = this.shadowRoot.querySelector('#next-button');
-    const progressLength = this.shadowRoot.querySelectorAll('.progress').length;
 
     currentProgressEl.classList.remove('active');
     movedProgressEl.classList.add('active');
 
     prevButton.style.visibility = this.currentIndex == 1 ? 'hidden' : 'visible';
     nextButton.style.visibility = this.currentIndex == progressLength ? 'hidden' : 'visible';
+    this.shadowRoot.querySelector('#launch-button-msg').textContent = progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
 
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
     this._grid.clearCache();
