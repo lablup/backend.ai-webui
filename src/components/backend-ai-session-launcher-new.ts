@@ -959,7 +959,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
    * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
   _updateSelectedFolder(forceInitialize = false) {
-    console.log(this._grid.selectedItems)
     if (this._grid && this._grid.selectedItems) {
       const selectedFolderItems = this._grid.selectedItems;
       let selectedFolders: string[] = [];
