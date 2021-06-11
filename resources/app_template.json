@@ -194,10 +194,10 @@
     "xrdp": [
       {
         "name": "xrdp",
-        "title": "XRDP",
+        "title": "RDP",
         "category": "6.Desktop Environment",
         "redirect": "",
-        "src": "./resources/icons/gnome.svg"
+        "src": "./resources/icons/xrdp.svg"
       }
     ],
     "rstudio": [

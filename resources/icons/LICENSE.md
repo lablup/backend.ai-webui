@@ -35,4 +35,7 @@ Icon from Cern GitLab ( https://gitlab.cern.ch/linuxsupport/ceph-for-el6 ) under
 Icon from Github purestorage repo ( https://github.com/purestorage/helm-charts ) under Apache 2.0 License.
  * purestorage.png
 
+Icon from flaticon by Pixel perfect ( https://www.flaticon.com/authors/pixel-perfect )
+ * xrdp.svg
+
 
