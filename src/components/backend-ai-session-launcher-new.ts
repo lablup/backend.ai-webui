@@ -798,15 +798,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     });
 
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
-    const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
-
-    gpu_resource.addEventListener('value-changed', () => {
-      if (gpu_resource.value > 0) {
-        this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
-      } else {
-        this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
-      }
-    });
     this.shadowRoot.querySelector('#use-gpu-checkbox').addEventListener('change', () => {
       if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked === true) {
         this.shadowRoot.querySelector('#gpu-resource').disabled = this.cuda_device_metric.min === this.cuda_device_metric.max;
@@ -1065,14 +1056,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     } else {
       this._resetProgress();
       await this.selectDefaultLanguage();
-      const gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
-      // this.shadowRoot.querySelector('#gpu-value'].textContent = gpu_resource.value;
-      if (gpu_resource.value > 0) {
-        this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
-      } else {
-        this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
-      }
-
       // Set display property of ownership panel.
       const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
       if (globalThis.backendaiclient.is_admin) {
@@ -2688,9 +2671,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
             <mwc-textfield id="image-name" type="text" class="flex" value=""
               label="${_t('session.launcher.ManualImageName')}"></mwc-textfield>
             `:html``}
-            <div style="display:none;">
-              <wl-checkbox id="use-gpu-checkbox">${_t('session.launcher.UseGPU')}</wl-checkbox>
-            </div>
             <mwc-textfield id="session-name" placeholder="${_t('session.launcher.SessionNameOptional')}"
                            pattern="[a-zA-Z0-9_-]{4,}" maxLength="64" icon="label"
                            helper="${_t('maxLength.64chars')}"
