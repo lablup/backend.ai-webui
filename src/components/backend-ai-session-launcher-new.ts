@@ -26,6 +26,7 @@ import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
 
+import './lablup-progress-bar';
 import './lablup-slider';
 import './backend-ai-dialog';
 
@@ -231,35 +232,14 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           --slider-color: var(--paper-blue-500);
         }
 
-        mwc-linear-progress {
-          width: 90px;
-          height: 5px;
-          --mdc-theme-primary: #98be5a;
-        }
-
-        mwc-linear-progress.project-bar {
-          height: 15px;
-        }
-
-        mwc-linear-progress.start-bar {
-          border-top-left-radius: 3px;
-          border-top-right-radius: 3px;
-          --mdc-theme-primary: #3677eb;
-        }
-
-        mwc-linear-progress.middle-bar {
-          --mdc-theme-primary: #4f8b46;
-        }
-
-        mwc-linear-progress.end-bar {
-          border-bottom-left-radius: 3px;
-          border-bottom-right-radius: 3px;
-          --mdc-theme-primary: #98be5a;
-        }
-
-        mwc-linear-progress.full-bar {
-          border-radius: 3px;
-          height: 10px;
+        lablup-progress-bar {
+          --progress-bar-width: 100%;
+          --progress-bar-height: 10px;
+          --progress-bar-border-radius: 0px;
+          height: 100%;
+          width: 100%;
+          --progress-bar-background: var(--general-progress-bar-using);
+          margin: 0;
         }
 
         vaadin-grid {
@@ -324,7 +304,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         }
 
         div.blank-box {
-          padding: 3.25rem 0;
+          padding: 3rem 0;
         }
 
         div.blank-box-medium {
@@ -469,7 +449,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         }
 
         #launch-session-form {
-          height: calc(var(--component-height, auto) - 150px);
+          height: calc(var(--component-height, auto) - 157px);
         }
 
         wl-button > span {
@@ -799,13 +779,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     });
 
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
-    this.shadowRoot.querySelector('#use-gpu-checkbox').addEventListener('change', () => {
-      if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked === true) {
-        this.shadowRoot.querySelector('#gpu-resource').disabled = this.cuda_device_metric.min === this.cuda_device_metric.max;
-      } else {
-        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
-      }
-    });
     document.addEventListener('backend-ai-group-changed', (e) => {
       this._updatePageVariables(true);
     });
@@ -1196,13 +1169,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     }
     config['shmem'] = String(this.shmem_request) + 'g';
 
-    if (this.shadowRoot.querySelector('#use-gpu-checkbox').checked !== true) {
-      if (this.gpu_mode == 'cuda.shares') {
-        config['fgpu'] = 0.0;
-      } else {
-        config['gpu'] = 0.0;
-      }
-    }
     if (sessionName.length == 0) { // No name is given
       sessionName = this.generateSessionId();
     }
@@ -1818,7 +1784,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
       // GPU metric
       if (this.cuda_device_metric.min == 0 && this.cuda_device_metric.max == 0) { // GPU is disabled (by image,too).
-        this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').value = 0;
         if (this.resource_templates !== [] && this.resource_templates.length > 0) { // Remove mismatching templates
@@ -1840,7 +1805,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           this.resource_templates_filtered = this.resource_templates;
         }
       } else {
-        this.shadowRoot.querySelector('#use-gpu-checkbox').checked = true;
         this.shadowRoot.querySelector('#gpu-resource').disabled = false;
         this.shadowRoot.querySelector('#gpu-resource').value = this.cuda_device_metric.max;
         this.resource_templates_filtered = this.resource_templates;
@@ -2599,6 +2563,16 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
     this._unselectAllSelectedFolder();
   }
 
+  /**
+   * 
+   * @returns {Number} - fraction of currentProgress when progressLength becomes 1
+   */
+  _calculateProgress() {
+    const progressLength = this.progressLength > 0 ? this.progressLength : 1;
+    const currentIndex = this.currentIndex > 0 ? this.currentIndex : 1;
+    return (currentIndex / progressLength).toFixed(2);
+  }
+
   render() {
     // language=HTML
     return html`
@@ -3074,23 +3048,28 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
             </div>
           </div>
         </form>
-        <div slot="footer" class="horizontal flex layout distancing center-center">
-          <mwc-icon-button id="prev-button"
-                           icon="arrow_back"
-                           style="visibility:hidden;margin-right:12px;"
-                           @click="${() => this.moveProgress(-1)}"></mwc-icon-button>
-          <mwc-button
-              unelevated
-              class="launch-button"
-              id="launch-button"
-              icon="rowing"
-              @click="${() => this._newSessionWithConfirmation()}">
-            <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
-          </mwc-button>
-          <mwc-icon-button id="next-button"
-                           icon="arrow_forward"
-                           style="margin-left:12px;"
-                           @click="${() => this.moveProgress(1)}"></mwc-icon-button>
+        <div slot="footer" class="vertical flex layout">
+          <div class="horizontal flex layout distancing center-center">
+            <mwc-icon-button id="prev-button"
+                            icon="arrow_back"
+                            style="visibility:hidden;margin-right:12px;"
+                            @click="${() => this.moveProgress(-1)}"></mwc-icon-button>
+            <mwc-button
+                unelevated
+                class="launch-button"
+                id="launch-button"
+                icon="rowing"
+                @click="${() => this._newSessionWithConfirmation()}">
+              <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+            </mwc-button>
+            <mwc-icon-button id="next-button"
+                            icon="arrow_forward"
+                            style="margin-left:12px;"
+                            @click="${() => this.moveProgress(1)}"></mwc-icon-button>
+          </div>
+          <div class="horizontal flex layout">
+            <lablup-progress-bar progress="${this._calculateProgress()}"></lablup-progress-bar>
+          </div>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent closeWithConfirmation>
