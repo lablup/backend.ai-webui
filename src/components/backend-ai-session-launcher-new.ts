@@ -3190,7 +3190,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
               id="launch-confirmation-button"
               icon="rowing"
               @click="${() => this._newSession()}">
-            <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+            <span>${_t('session.launcher.Launch')}</span>
           </mwc-button>
         </div>
       </backend-ai-dialog>
@@ -3206,14 +3206,14 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
               id="env-config-reset-button"
               style="width:auto;margin-right:10px;"
               @click="${() => this._closeAndResetEnvInput()}">
-            <span id="launch-button-msg">${_t('button.DismissAndProceed')}</span>
+            <span>${_t('button.DismissAndProceed')}</span>
           </mwc-button>
           <mwc-button
               outlined
               id="env-config-remain-button"
               style="width:auto;"
               @click="${() => this.closeDialog('env-config-confirmation')}">
-            <span id="launch-button-msg">${_t('button.Cancel')}</span>
+            <span>${_t('button.Cancel')}</span>
           </mwc-button>
         </div>
       </backend-ai-dialog>
