@@ -119,7 +119,7 @@
       "SelectResourceGroup": "자원 그룹 선택",
       "StartNewSession": "새 세션 시작",
       "ChooseEnvironment": "환경을 선택하세요",
-      "SetEnvironmentVariable": "환경 변수 설정",
+      "SetEnvironmentVariable": "환경 변수 설정 (옵션)",
       "Config": "설정",
       "Version": "버전",
       "Base": "기본환경",
@@ -205,7 +205,7 @@
       "EnvironmentVariable": "환경 변수",
       "EnvironmentVariableValue": "값",
       "EnvironmentVariableConfigurationDone": "환경 변수가 설정되었습니다.",
-      "EnvironmentVariablePaneTitle": "추가될 환경 변수",
+      "EnvironmentVariablePaneTitle": "추가될 환경 변수 (옵션)",
       "EnvConfigWillDisappear": "저장되지 않은 환경 변수 설정값은 사라집니다.",
       "SharedMemoryAbbr": "공유메모리",
       "GPUSlot": "슬롯"

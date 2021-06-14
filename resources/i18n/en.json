@@ -118,7 +118,7 @@
       "CurrentResourceGroup": "Current Resource Group",
       "SelectResourceGroup": "Select Resource Group",
       "StartNewSession": "Start new session",
-      "SetEnvironmentVariable": "Set Environment Variable",
+      "SetEnvironmentVariable": "Set Environment Variable (optional)",
       "Config": "Config",
       "ChooseEnvironment": "Choose Environment",
       "Version": "Version",
@@ -205,7 +205,7 @@
       "EnvironmentVariable": "Variable",
       "EnvironmentVariableValue": "Value",
       "EnvironmentVariableConfigurationDone": "Environment variable configured successfully.",
-      "EnvironmentVariablePaneTitle": "Environment variables to set",
+      "EnvironmentVariablePaneTitle": "Environment variables to set (optional)",
       "EnvConfigWillDisappear": "Any unsaved Environment variable and value will be disappeared.",
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Slot"

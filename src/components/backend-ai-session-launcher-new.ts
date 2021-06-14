@@ -337,6 +337,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
         #environment-variables-container {
           font-size: 0.8rem;
+          padding-bottom: 10px;
         }
 
         .resources.horizontal .monitor.session {
@@ -2687,7 +2688,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
             </div>
           </div>
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
-          <wl-expansion class="vfolder" name="vfolder">
+          <wl-expansion class="vfolder" name="vfolder" open>
             <span slot="title">${_t('session.launcher.FolderToMount')}</span>
             <div class="vfolder-list">
               <vaadin-grid
