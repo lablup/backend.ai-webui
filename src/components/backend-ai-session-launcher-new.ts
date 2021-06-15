@@ -292,7 +292,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
         div.vfolder-list,
         div.vfolder-mounted-list,
         #mounted-folders-container,
-        #environment-variables-container
+        .environment-variables-container
          {
           background-color: rgba(244,244,244,1);
           overflow-y: scroll;
@@ -315,7 +315,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           padding: 11.3rem 0;
         }
 
-        #environment-variables-container {
+        .environment-variables-container {
           font-size: 0.8rem;
           padding-bottom: 10px;
         }
@@ -677,11 +677,11 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           margin-bottom: 10px;
         }
 
-        #environment-variables-container h4 {
+        .environment-variables-container h4 {
           margin: 0;
         }
 
-        #environment-variables-container wl-textfield {
+        .environment-variables-container wl-textfield {
           --input-font-family: var(--general-font-family);
           --input-color-disabled: #222;
         }
@@ -2660,6 +2660,28 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                 style="width:auto;margin-right:15px;"
                 @click="${() => this._showEnvDialog()}"></mwc-button>
             </div>
+            <div class="environment-variables-container" style="margin-top:18px;">
+              ${this.environ.length > 0 ? html`
+                <div class="horizontal flex center center-justified layout" style="overflow-x:hidden;">
+                  <div role="listbox">
+                    <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
+                    ${this.environ.map((item) => html`
+                      <wl-textfield disabled value="${item.name}"></wl-textfield>
+                    `)}
+                  </div>
+                  <div role="listbox" style="margin-left:15px;">
+                    <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
+                    ${this.environ.map((item) => html`
+                      <wl-textfield disabled value="${item.value}"></wl-textfield>
+                    `)}
+                  </div>
+                </div>
+              ` : html`
+                  <div class="vertical layout center flex blank-box">
+                    <span>${_t('session.launcher.NoEnvConfigured')}</span>
+                  </div>
+                `}
+            </div>
           </div>
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
           <wl-expansion class="vfolder" name="vfolder" open>
@@ -3024,19 +3046,19 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
               `}
             </div>
             <p class="title">${_t('session.launcher.EnvironmentVariablePaneTitle')}</p>
-            <div id="environment-variables-container">
+            <div class="environment-variables-container">
               ${this.environ.length > 0 ? html`
                 <div class="horizontal flex center center-justified layout" style="overflow-x:hidden;">
                   <div role="listbox">
                     <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
                     ${this.environ.map((item) => html`
-                      <wl-textfield label="" disabled value="${item.name}"></wl-textfield>
+                      <wl-textfield disabled value="${item.name}"></wl-textfield>
                     `)}
                   </div>
                   <div role="listbox" style="margin-left:15px;">
                     <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
                     ${this.environ.map((item) => html`
-                      <wl-textfield label="" disabled value="${item.value}"></wl-textfield>
+                      <wl-textfield disabled value="${item.value}"></wl-textfield>
                     `)}
                   </div>
                 </div>
