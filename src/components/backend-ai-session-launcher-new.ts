@@ -317,7 +317,12 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
         .environment-variables-container {
           font-size: 0.8rem;
-          padding-bottom: 10px;
+          padding: 10px;
+        }
+
+        .environment-variables-container wl-textfield input {
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .resources.horizontal .monitor.session {
