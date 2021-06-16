@@ -1,12 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
@@ -24,6 +24,8 @@ import 'weightless/label';
 import './lablup-loading-spinner';
 import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
+import '@material/mwc-icon';
+import '@material/mwc-icon-button';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
@@ -32,11 +34,11 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 /**
  Backend.AI Error Log List
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-error-log-list
  */
 
-@customElement("backend-ai-error-log-list")
+@customElement('backend-ai-error-log-list')
 export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: String}) timestamp = '';
   @property({type: String}) errorType = '';
@@ -45,8 +47,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: String}) statusText = '';
   @property({type: String}) title = '';
   @property({type: String}) message = '';
-  @property({type: Array}) logs = Array();
-  @property({type: Array}) _selected_items = Array();
+  @property({type: Array}) logs = [];
+  @property({type: Array}) _selected_items = [];
   @property({type: Object}) spinner = Object();
   @property({type: Object}) _grid = Object();
   @property({type: Object}) logView = Object();
@@ -58,7 +60,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -69,11 +71,15 @@ export default class BackendAiErrorLogList extends BackendAIPage {
           width: 100%;
           border: 0;
           font-size: 12px;
-          height: calc(100vh - 275px);
+          height: calc(100vh - 305px);
         }
 
         vaadin-grid-cell {
           font-size: 10px;
+        }
+
+        vaadin-grid#list-grid {
+          border-top: 1px solid #dbdbdb;
         }
 
         [error-cell] {
@@ -81,7 +87,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
         }
 
         wl-label {
-          --label-font-family: Roboto, Noto, sans-serif;
+          --label-font-family: 'Ubuntu', Roboto;
           --label-color: black;
         }
 
@@ -124,7 +130,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    * Update the page size according to tab size.
    */
   _updatePageItemSize() {
-    let tableSize = window.innerHeight - 275 - 30;
+    const tableSize = window.innerHeight - 275 - 30;
     this._pageSize = Math.floor(tableSize / 31);
   }
 
@@ -134,7 +140,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   _refreshLogData() {
     this.spinner.show();
     this._updatePageItemSize();
-    this.logs = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
+    this.logs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '{}');
     this._totalLogCount = this.logs.length > 0 ? this.logs.length : 1;
     this._updateItemsFromPage(1);
     this._grid.clearCache();
@@ -155,42 +161,45 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   /**
    * Update items from page target.
    *
-   * @param page
+   * @param {number | HTMLElement} page - page number or page number HTMLelement
    */
   _updateItemsFromPage(page) {
     if (typeof page !== 'number') {
       let page_action = page.target;
       if (page_action['role'] !== 'button') {
-        page_action = page.target.closest('wl-button');
+        page_action = page.target.closest('mwc-icon-button');
       }
       page_action.id === 'previous-page' ? this._currentPage -= 1 : this._currentPage += 1;
     }
-    let start = (this._currentPage - 1) * this._grid.pageSize;
-    let end = this._currentPage * this._grid.pageSize;
+    const start = (this._currentPage - 1) * this._grid.pageSize;
+    const end = this._currentPage * this._grid.pageSize;
     if (this.logs.length > 0) {
-      let logData = this.logs.slice(start, end);
-      logData.forEach(item => {
+      const logData = this.logs.slice(start, end);
+      logData.forEach((item: any) => {
         item.timestamp_hr = this._humanReadableTime(item.timestamp);
       });
 
-      this.logView = logData; //this.logs.slice(start, end);
+      this.logView = logData; // this.logs.slice(start, end);
     }
   }
 
   /**
    * Change d of any type to human readable date time.
    *
-   * @param {any} d
+   * @param {string | Date} d - Data string or object
+   * @return {string} Human readable time string
    */
   _humanReadableTime(d: any) {
     d = new Date(d);
-    return d.toLocaleString();
+    const option = {hour12: false};
+    return d.toLocaleString('en-US', option);
   }
 
   /**
    * Change d of any type to ISO date time.
    *
-   * @param {any} d
+   * @param {string | Date} d - Data string or object
+   * @return {string} ISO time string
    */
   _toISOTime(d: any) {
     d = new Date(d);
@@ -204,56 +213,56 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       <vaadin-grid id="list-grid" page-size="${this._pageSize}"
                    theme="row-stripes column-borders compact wrap-cell-content"
                    aria-label="Error logs" .items="${this.logView}">
-        <vaadin-grid-column width="250px" flex-grow="0" text-align="start" auto-width header="${_t("logs.TimeStamp")}">
+        <vaadin-grid-column width="250px" flex-grow="0" text-align="start" auto-width header="${_t('logs.TimeStamp')}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span class="monospace">[[item.timestamp_hr]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.Status")}">
+        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Status')}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.statusCode]] [[item.statusText]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.ErrorTitle")}">
+        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorTitle')}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.title]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.ErrorMessage")}">
+        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorMessage')}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.message]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="50px" flex-grow="0" text-align="start" auto-width header="${_t("logs.ErrorType")}">
+        <vaadin-grid-column width="50px" flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorType')}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.type]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.Method")}">
+        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Method')}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span>[[item.requestMethod]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t("logs.RequestUrl")}">
+        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.RequestUrl')}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span class="monospace">[[item.requestUrl]]</span>
               </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column resizable auto-width flex-grow="0" text-align="start" header="${_t("logs.Parameters")}">
+        <vaadin-grid-column resizable auto-width flex-grow="0" text-align="start" header="${_t('logs.Parameters')}">
           <template>
               <div class="layout vertical" error-cell$="[[item.isError]]">
                 <span class="monospace">[[item.requestParameters]]</span>
@@ -262,19 +271,25 @@ export default class BackendAiErrorLogList extends BackendAIPage {
         </vaadin-grid-column>
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;border-top:1px solid #ccc;">
-        <wl-button class="pagination" id="previous-page"
-                   ?disabled="${this._currentPage === 1}"
-                   @click="${(e) => {this._updateItemsFromPage(e)}}">
-          <wl-icon class="pagination">navigate_before</wl-icon>
-        </wl-button>
+        <mwc-icon-button
+            class="pagination"
+            id="previous-page"
+            icon="navigate_before"
+            ?disabled="${this._currentPage === 1}"
+            @click="${(e) => {
+    this._updateItemsFromPage(e);
+  }}"></mwc-icon-button>
         <wl-label style="padding: 5px 15px 0px 15px;">
           ${this._currentPage} / ${Math.ceil( this._totalLogCount / this._pageSize)}
         </wl-label>
-        <wl-button class="pagination" id="next-page"
-                   ?disabled="${this._totalLogCount <= this._pageSize * this._currentPage }"
-                   @click="${(e) => {this._updateItemsFromPage(e)}}">
-          <wl-icon class="pagination">navigate_next</wl-icon>
-        </wl-button>
+        <mwc-icon-button
+            class="pagination"
+            id="next-page"
+            icon="navigate_next"
+            ?disabled="${this._totalLogCount <= this._pageSize * this._currentPage}"
+            @click="${(e) => {
+    this._updateItemsFromPage(e);
+  }}"></mwc-icon-button>
       </div>
     `;
   }
@@ -282,6 +297,6 @@ export default class BackendAiErrorLogList extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-error-log-list": BackendAiErrorLogList;
+    'backend-ai-error-log-list': BackendAiErrorLogList;
   }
 }

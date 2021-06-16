@@ -8,9 +8,9 @@ process.once('loaded', () => {
   });
 
   ipcRenderer.on('app-close-window', _ => {
-    let event = new CustomEvent("backend-ai-app-close", {"detail": ""});
+    let event = new CustomEvent('backend-ai-app-close', {'detail': ''});
     document.dispatchEvent(event);
-    setTimeout(function () {
+    setTimeout(function() {
       ipcRenderer.send('app-closed');
     }, 1000);
   });

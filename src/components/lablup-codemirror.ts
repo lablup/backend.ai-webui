@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
@@ -21,7 +21,7 @@ import {CodemirrorBaseStyle} from '../lib/codemirror/base-style.css';
 
  <lablup-codemirror></lablup-codemirror>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element lablup-codemirror
  */
 
@@ -47,7 +47,6 @@ export default class LablupCodemirror extends LitElement {
       indentUnit: 2,
       cursorScrollMargin: 50,
       lineNumbers: true,
-      lineWrapping: true,
       // lineNumberFormatter: (line) => (line % 5 === 0 || line === 1) ? line : '',
       matchBrackets: true,
       styleActiveLine: true,
@@ -83,6 +82,8 @@ export default class LablupCodemirror extends LitElement {
 
   /**
    * Get the editor's contents.
+   *
+   * @return {string} Editor's contents
    * */
   getValue() {
     return this.editor.getValue();
@@ -90,13 +91,15 @@ export default class LablupCodemirror extends LitElement {
 
   /**
    * Set the editor's contents and then refresh.
+   *
+   * @param {string} val - content to update editor
    * */
   setValue(val) {
     this.editor.setValue(val);
     this.refresh();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       IronFlex,
       IronFlexAlignment,
@@ -104,7 +107,7 @@ export default class LablupCodemirror extends LitElement {
       CodemirrorBaseStyle,
       css`
         .CodeMirror {
-          height: auto;
+          height: auto !important;
           font-size: 15px;
         }
       `,

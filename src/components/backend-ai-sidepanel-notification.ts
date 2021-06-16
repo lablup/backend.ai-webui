@@ -1,39 +1,38 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import '../plastics/mwc/mwc-drawer';
-import '@material/mwc-dialog';
 import '@material/mwc-icon';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 
 import {BackendAIPage} from './backend-ai-page';
-import {BackendAiConsoleStyles} from './backend-ai-console-styles';
+import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning
-} from "../plastics/layout/iron-flex-layout-classes";
+} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
  Backend.AI Sidepanel notification viewer for Console
 
- `backend-ai-sidepanel-notification` is a sidepanel notification viewer for console.
+ `backend-ai-sidepanel-notification` is a sidepanel notification viewer for web UI.
 
  Example:
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-sidepanel-notification
  */
-@customElement("backend-ai-sidepanel-notification")
+@customElement('backend-ai-sidepanel-notification')
 export default class BackendAiSidepanelNotification extends BackendAIPage {
   public shadowRoot: any;
 
   @property({type: Boolean}) active = true;
-  @property({type: Array}) notifications = Array();
+  @property({type: Array}) notifications = [];
 
   /**
    *  Backend.AI Task manager for Console
@@ -43,9 +42,9 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
-      BackendAiConsoleStyles,
+      BackendAIWebUIStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
@@ -81,10 +80,10 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
     // language=HTML
     return html`
       <div id="container">
-        <h3>${_t("sidepanel.Notification")}</h3>
+        <h3>${_t('sidepanel.Notification')}</h3>
         <mwc-list>
-        ${this.notifications.map(item =>
-      html`
+        ${this.notifications.map((item: any) =>
+    html`
           <mwc-list-item twoline>
             <span>${item.outerText}</span>
             <span slot="secondary">${item.getAttribute('created')}</span>
@@ -92,7 +91,7 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
           <li divider role="separator"></li>`)}
           ${this.notifications.length === 0 ? html`
             <div style="padding:15px 0;width:100%;text-align:center;">
-              ${_t("sidepanel.NoNotification")}
+              ${_t('sidepanel.NoNotification')}
             </div>
         ` : html``}
         </mwc-list>
@@ -121,10 +120,9 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
     this.notifications = globalThis.lablupNotification.notifications;
     await this.requestUpdate();
   }
-
 }
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-sidepanel-notification": BackendAiSidepanelNotification;
+    'backend-ai-sidepanel-notification': BackendAiSidepanelNotification;
   }
 }

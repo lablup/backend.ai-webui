@@ -1,9 +1,9 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -12,14 +12,14 @@ import 'weightless/title';
 import 'weightless/checkbox';
 
 import './backend-ai-dialog';
-import {BackendAiStyles} from "./backend-ai-general-styles";
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning
-} from "../plastics/layout/iron-flex-layout-classes";
-import {default as PainKiller} from "./backend-ai-painkiller";
+} from '../plastics/layout/iron-flex-layout-classes';
+import {default as PainKiller} from './backend-ai-painkiller';
 
 /**
  Lablup Terms of Service dialog
@@ -36,7 +36,7 @@ import {default as PainKiller} from "./backend-ai-painkiller";
  @element lablup-terms-of-service
  */
 
-@customElement("lablup-terms-of-service")
+@customElement('lablup-terms-of-service')
 export default class LablupTermsOfService extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: String}) tosEntryURL = '/resources/documents/terms-of-service.en.html';
@@ -44,8 +44,8 @@ export default class LablupTermsOfService extends LitElement {
   @property({type: String}) tosContent = '';
   @property({type: String}) tosLanguage = 'en';
   @property({type: Array}) tosLanguages = [
-    {code: 'ko', text: _text("language.Korean")},
-    {code: 'en', text: _text("language.English")}
+    {code: 'ko', text: _text('language.Korean')},
+    {code: 'en', text: _text('language.English')}
   ];
   @property({type: String}) title = '';
   @property({type: Boolean}) show = false;
@@ -59,7 +59,7 @@ export default class LablupTermsOfService extends LitElement {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -82,20 +82,25 @@ export default class LablupTermsOfService extends LitElement {
           }
         }
 
-        wl-button.language {
-          --button-bg: transparent;
-          --button-bg-hover: var(--paper-lightblue-300);
-          --button-bg-active: var(--paper-lightblue-300);
-        }
-
-        wl-button.language[active] {
-          --button-bg: var(--paper-lightblue-300);
-        }
-
-        wl-button.dismiss {
-          --button-bg: transparent;
-          --button-bg-hover: var(--paper-green-300);
-          --button-bg-active: var(--paper-green-300);
+        mwc-select {
+          width: 100%;
+          font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
+          --mdc-theme-primary: var(--general-sidebar-color);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-focused-dropdown-icon-color: var(--general-sidebar-color);
+          --mdc-select-disabled-dropdown-icon-color: var(--general-sidebar-color);
+          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
+          --mdc-select-hover-line-color: var(--general-sidebar-color);
+          --mdc-select-outlined-idle-border-color: var(--general-sidebar-color);
+          --mdc-select-outlined-hover-border-color: var(--general-sidebar-color);
+          --mdc-theme-surface: white;
+          --mdc-list-vertical-padding: 5px;
+          --mdc-list-side-padding: 25px;
+          --mdc-list-item__primary-text: {
+            height: 20px;
+          };
         }
       `];
   }
@@ -113,24 +118,25 @@ export default class LablupTermsOfService extends LitElement {
         <span slot="title">${this.title}</span>
         <div slot="action" class="horizontal end-justified center flex layout">
           ${this.tosLanguages ? html`
-            <span style="font-size:14px;">${_t("language.Language")}</span>
-            ${this.tosLanguages.map(item => html`
-            <wl-button class="fg blue language" outlined type="button" ?active="${this.tosLanguage === item.code}" @click="${() => {
-      this.changeLanguage(item.code)
-    }}">
-                ${item.text}
-            </wl-button>`)}
-          ` : html``}
+            <mwc-select id="select-language" label="${_text('language.Language')}"
+              @change=${() => this.changeLanguage()}>
+              ${this.tosLanguages.map((item) => html`
+                <mwc-list-item value="${item.text}" ?selected="${this.tosLanguage === item.code}">${item.text}</mwc-list-item>
+              `)}
+            </mwc-select>
+          `: html``}
         </div>
         <div slot="content">
           <div id="terms-of-service-dialog-content"></div>
           <div class="horizontal end-justified flex layout">
             <div class="flex"></div>
-            <wl-button class="fg green dismiss" id="dismiss-button" outlined type="button" @click="${() => {
-      this.close();
-    }}">
-                ${_t("button.Dismiss")}
-            </wl-button>
+            <mwc-button
+                unelevated
+                id="dismiss-button"
+                label=${_t('button.Dismiss')}
+                @click="${() => {
+    this.close();
+  }}"></mwc-button>
           </div>
         </div>
       </backend-ai-dialog>
@@ -141,22 +147,23 @@ export default class LablupTermsOfService extends LitElement {
     this.notification = globalThis.lablupNotification;
     this.dialog = this.shadowRoot.querySelector('#terms-of-service-dialog');
     this.dialog.addEventListener('didShow', () => {
-      this._syncOpenState()
+      this._syncOpenState();
     });
     this.dialog.addEventListener('didHide', () => {
-      this._syncOpenState()
+      this._syncOpenState();
     });
     if (this.block) {
       this.dialog.backdrop = true;
     }
-    //this.approveCheckbox = this.shadowRoot.querySelector('#approve-terms-of-service');
-    //this.approveCheckbox.addEventListener('iron-change', this._changeApproved.bind(this));
+    // this.approveCheckbox = this.shadowRoot.querySelector('#approve-terms-of-service');
+    // this.approveCheckbox.addEventListener('iron-change', this._changeApproved.bind(this));
     if (this.show) {
       this._showTOSdialog();
     }
   }
 
   attributeChangedCallback(name, oldval, newval) {
+    // eslint-disable-next-line wc/guard-super-call
     super.attributeChangedCallback(name, oldval, newval);
   }
 
@@ -174,20 +181,21 @@ export default class LablupTermsOfService extends LitElement {
     this._hideTOSdialog();
   }
 
-  changeLanguage(lang) {
-    this.tosContent = "";
-    this.tosLanguage = lang;
+  changeLanguage() {
+    const language = this.shadowRoot.querySelector('#select-language').value;
+    this.tosContent = '';
+    this.tosLanguage = this.tosLanguages.filter((item) => item.text === language).map((item) => item.code).toString();
     this._showTOSdialog(true);
   }
 
   async sendRequest(rqst) {
-    let resp, body;
+    let resp; let body;
     try {
       if (rqst.method == 'GET') {
         rqst.body = undefined;
       }
       resp = await fetch(rqst.uri, rqst);
-      let contentType = resp.headers.get('Content-Type');
+      const contentType = resp.headers.get('Content-Type');
       if (contentType.startsWith('application/json') ||
         contentType.startsWith('application/problem+json')) {
         body = await resp.json();
@@ -214,8 +222,8 @@ export default class LablupTermsOfService extends LitElement {
       this.tosLanguage = 'en';
     }
     this.tosEntryURL = '/resources/documents/' + this.tosEntry + '.' + this.tosLanguage + '.html';
-    if (this.tosContent == "") {
-      let rqst = {
+    if (this.tosContent == '') {
+      const rqst = {
         method: 'GET',
         uri: this.tosEntryURL,
         body: JSON.stringify({'mode': 'dialog'})
@@ -223,7 +231,7 @@ export default class LablupTermsOfService extends LitElement {
       this.sendRequest(rqst).then((response) => {
         if (typeof response !== 'undefined') {
           this.tosContent = response;
-          //this.approveCheckbox.style.display = 'block';
+          // this.approveCheckbox.style.display = 'block';
         } else {
           this.tosContent = '';
         }
@@ -239,7 +247,7 @@ export default class LablupTermsOfService extends LitElement {
           this.notification.detail = err.message;
           this.notification.show(true, err);
         }
-        this.shadowRoot.querySelector('#terms-of-service-dialog-content').innerHTML = "Problem found while loading contents. Please try again later.";
+        this.shadowRoot.querySelector('#terms-of-service-dialog-content').innerHTML = 'Problem found while loading contents. Please try again later.';
       });
     } else {
       this.show = true;
@@ -269,6 +277,6 @@ export default class LablupTermsOfService extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "lablup-terms-of-service": LablupTermsOfService;
+    'lablup-terms-of-service': LablupTermsOfService;
   }
 }

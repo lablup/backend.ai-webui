@@ -1,36 +1,36 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {render} from 'lit-html';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-tree-column';
+import '@vaadin/vaadin-grid/vaadin-grid-tree-toggle';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
-import '@material/mwc-textfield/mwc-textfield';
 
 import {default as AnsiUp} from '../lib/ansiup';
 import 'weightless/button';
-import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/icon';
 import 'weightless/textfield';
-import 'weightless/title';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu';
+import '@material/mwc-textfield/mwc-textfield';
 
-import {default as PainKiller} from "./backend-ai-painkiller";
+import {default as PainKiller} from './backend-ai-painkiller';
 import './lablup-loading-spinner';
 import '../plastics/lablup-shields/lablup-shields';
+import './lablup-progress-bar';
 import './backend-ai-dialog';
 
-import JsonToCsv from '../lib/json_to_csv';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
@@ -46,25 +46,25 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  ...
  </backend-ai-session-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-session-list
  */
 
-@customElement("backend-ai-session-list")
+@customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {
   public shadowRoot: any;
 
   @property({type: Boolean}) active = true;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
-  @property({type: Array}) compute_sessions = Array();
-  @property({type: Array}) terminationQueue = Array();
+  @property({type: Array}) compute_sessions = [];
+  @property({type: Array}) terminationQueue;
   @property({type: String}) filterAccessKey = '';
   @property({type: String}) sessionNameField = 'name';
-  @property({type: Array}) appSupportList = Array();
+  @property({type: Array}) appSupportList = [];
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
-  @property({type: Array}) _selected_items = Array();
+  @property({type: Array}) _selected_items;
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundConfigRenderer = this.configRenderer.bind(this);
   @property({type: Object}) _boundUsageRenderer = this.usageRenderer.bind(this);
@@ -80,13 +80,12 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) terminateSessionDialog = Object();
   @property({type: Object}) terminateSelectedSessionsDialog = Object();
-  @property({type: Object}) exportToCsvDialog = Object();
   @property({type: Boolean}) enableScalingGroup = false;
   @property({type: Object}) spinner = Object();
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
+  @property({type: Object}) kernel_icons = Object();
   @property({type: Object}) indicator = Object();
-  @property({type: Object}) _defaultFileName = '';
   @property({type: Proxy}) statusColorTable = new Proxy({
     'idle-timeout': 'green',
     'user-requested': 'green',
@@ -95,6 +94,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     'self-terminated': 'green'
   }, {
     get: (obj, prop) => {
+      // eslint-disable-next-line no-prototype-builtins
       return obj.hasOwnProperty(prop) ? obj[prop] : 'lightgrey';
     }
   });
@@ -107,9 +107,11 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   constructor() {
     super();
+    this._selected_items = [];
+    this.terminationQueue = [];
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -147,7 +149,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         wl-button.pagination {
           width: 15px;
           height: 15px;
-          padding: 10 10px;
+          padding: 10px;
           box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
           --button-bg: transparent;
           --button-bg-hover: var(--paper-red-100);
@@ -183,19 +185,19 @@ export default class BackendAiSessionList extends BackendAIPage {
         @media screen and (max-width: 899px) {
           #work-dialog,
           #work-dialog.mini_ui {
-            --left: 0;
+            left: 0;
             --component-width: 100%;
           }
         }
 
         @media screen and (min-width: 900px) {
           #work-dialog {
-            --left: 100px;
+            left: 100px;
             --component-width: calc(100% - 50px);
           }
 
           #work-dialog.mini_ui {
-            --left: 40px;
+            left: 40px;
             --component-width: calc(100% - 50px);
           }
         }
@@ -203,6 +205,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         #work-area {
           width: 100%;
           padding: 5px;
+          font-size:12px;
+          line-height: 12px;
           height: calc(100vh - 120px);
           background-color: #222222;
           color: #efefef;
@@ -237,59 +241,38 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-bg-active-flat: var(--paper-red-600);
         }
 
-        backend-ai-dialog wl-textfield {
-          padding: 10px 0px;
-          --input-font-family: Roboto, Noto, sans-serif;
-          --input-font-size: 12px;
-          --input-color-disabled: #bbbbbb;
-          --input-label-color-disabled: #222222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #cccccc;
-        }
-
         wl-label {
           width: 100%;
-          background-color: color: var(--paper-grey-500);
+          background-color: var(--paper-grey-500);
           min-width: 60px;
           font-size: 12px;
-          --label-font-family: Roboto, Noto, sans-serif;
+          --label-font-family: 'Ubuntu', Roboto;
         }
 
-        wl-label.unlimited {
-          margin: 12px 0px;
-        }
-
-        wl-label.warning {
-          font-size: 10px;
-          --label-color: var(--paper-red-600);
-        }
-
-        wl-checkbox#export-csv-checkbox {
-          margin-right: 5px;
-          --checkbox-size: 10px;
-          --checkbox-border-radius: 2px;
-          --checkbox-bg-checked: var(--paper-green-800);
-          --checkbox-checkmark-stroke-color: var(--paper-lime-100);
-          --checkbox-color-checked: var(--paper-green-800);
-        }
-
-        mwc-textfield {
-          width: 100%;
-          --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-green-600);
+        lablup-progress-bar.usage {
+          --progress-bar-height: 5px;
+          --progress-bar-width: 60px;
+          margin-bottom: 0;
         }
 
         div.filters #access-key-filter {
           --input-font-size: small;
           --input-label-font-size: small;
-          --input-font-family: Roboto, Noto, sans-serif;
+          --input-font-family: var(--general-font-family);
         }
 
-        .mount-button {
+        .mount-button,
+        .status-button {
           border: none;
           background: none;
           padding: 0;
           outline-style: none;
+        }
+
+        span#access-key-filter-helper-text {
+          margin-top: 3px;
+          font-size: 10px;
+          color: var(--general-menu-color-2);
         }
       `];
   }
@@ -313,19 +296,25 @@ export default class BackendAiSessionList extends BackendAIPage {
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this._grid = this.shadowRoot.querySelector('#list-grid');
-    this._initializeAppTemplate();
     this.refreshTimer = null;
     fetch('resources/image_metadata.json').then(
-      response => response.json()
+      (response) => response.json()
     ).then(
-      json => {
+      (json) => {
         this.imageInfo = json.imageInfo;
-        for (let key in this.imageInfo) {
-          this.kernel_labels[key] = [];
-          if ("label" in this.imageInfo[key]) {
-            this.kernel_labels[key] = this.imageInfo[key].label;
-          } else {
+        for (const key in this.imageInfo) {
+          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
             this.kernel_labels[key] = [];
+            if ('label' in this.imageInfo[key]) {
+              this.kernel_labels[key] = this.imageInfo[key].label;
+            } else {
+              this.kernel_labels[key] = [];
+            }
+            if ('icon' in this.imageInfo[key]) {
+              this.kernel_icons[key] = this.imageInfo[key].icon;
+            } else {
+              this.kernel_icons[key] = '';
+            }
           }
         }
       }
@@ -333,18 +322,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
-    this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
-    this._defaultFileName = new Date().toISOString().substring(0, 10) + '_'
-      + new Date().toTimeString().slice(0, 8).replace(/:/gi, '-');
-
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshWorkDialogUI(e));
-    this._refreshWorkDialogUI({"detail": {"mini-ui": globalThis.mini_ui}});
-
-    /* TODO: json to csv file converting */
-    document.addEventListener('backend-ai-csv-file-export-session', () => {
-      this._openExportToCsvDialog();
-    });
+    this._refreshWorkDialogUI({'detail': {'mini-ui': globalThis.mini_ui}});
   }
 
   async _viewStateChanged(active) {
@@ -356,7 +336,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         if (!globalThis.backendaiclient.is_admin) {
-          this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
+          // this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
+          this.shadowRoot.querySelector('#access-key-filter').style.display = 'none';
+          this.shadowRoot.querySelector('#access-key-filter-helper-text').style.display = 'none';
           this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
         } else {
           this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
@@ -373,10 +355,13 @@ export default class BackendAiSessionList extends BackendAIPage {
       }, true);
     } else { // already connected
       if (!globalThis.backendaiclient.is_admin) {
-        this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
+        this.shadowRoot.querySelector('#access-key-filter').style.display = 'none';
+        this.shadowRoot.querySelector('#access-key-filter-helper-text').style.display = 'none';
+        // this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
         this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
       } else {
         this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
+        this.shadowRoot.querySelector('#access-key-filter-helper-text').style.display = 'block';
       }
       if (globalThis.backendaiclient.APIMajorVersion < 5) {
         this.sessionNameField = 'sess_id';
@@ -390,16 +375,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  _initializeAppTemplate() {
-    fetch('resources/app_template.json').then(
-      response => response.json()
-    ).then(
-      json => {
-        this.appTemplate = json.appTemplate;
-      }
-    );
-  }
-
+  /**
+   * Refresh the job list.
+   *
+   * @param {boolean} refresh - if true, dispatch the 'backend-ai-resource-refreshed' event
+   * @param {boolean} repeat - repeat the job data reading. Set refreshTime to 5000 for running list else 30000
+   * */
   async refreshList(refresh = true, repeat = true) {
     return this._refreshJobData(refresh, repeat);
   }
@@ -408,7 +389,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Refresh the job data - data fields, sessions, etc.
    *
    * @param {boolean} refresh - if true, dispatch the 'backend-ai-resource-refreshed' event
-   * @param {boolean} repeat - set refreshTime to 5000 if true else 30000
+   * @param {boolean} repeat - repeat the job data reading. Set refreshTime to 5000 for running list else 30000
    * */
   async _refreshJobData(refresh = false, repeat = true) {
     await this.updateComplete;
@@ -423,59 +404,72 @@ export default class BackendAiSessionList extends BackendAIPage {
     let status: any;
     status = 'RUNNING';
     switch (this.condition) {
-      case "running":
-        status = ["RUNNING", "RESTARTING", "TERMINATING", "PENDING", "PREPARING", "PULLING"];
-        break;
-      case "finished":
-        status = ["TERMINATED", "CANCELLED"]; //TERMINATED, CANCELLED
-        break;
-      case "others":
-        status = ["TERMINATING", "ERROR"]; // "ERROR", "CANCELLED"..
-        // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
-        break;
-      default:
-        status = ["RUNNING", "RESTARTING", "TERMINATING", "PENDING", "PREPARING", "PULLING"];
+    case 'running':
+      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
+      break;
+    case 'finished':
+      status = ['TERMINATED', 'CANCELLED']; // TERMINATED, CANCELLED
+      break;
+    case 'others':
+      status = ['TERMINATING', 'ERROR']; // "ERROR", "CANCELLED"..
+      // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
+      break;
+    default:
+      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
+    }
+    if (!globalThis.backendaiclient.supports('avoid-hol-blocking') && status.includes('SCHEDULED')) {
+      status = status.filter((e) => e !== 'SCHEDULED');
     }
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }
 
-    let fields = [
-      "id", "name", "image",
-      "created_at", "terminated_at", "status", "status_info",
-      "service_ports", "mounts",
-      "occupied_slots", "access_key",
+    const fields = [
+      'id', 'session_id', 'name', 'image',
+      'created_at', 'terminated_at', 'status', 'status_info',
+      'service_ports', 'mounts',
+      'occupied_slots', 'access_key'
     ];
-    if (this.enableScalingGroup) {
-      fields.push("scaling_group");
+    if (globalThis.backendaiclient.supports('multi-container')) {
+      fields.push('cluster_size');
     }
-    if (this._connectionMode === "SESSION") {
-      fields.push("user_email");
+    if (globalThis.backendaiclient.supports('multi-node')) {
+      fields.push('cluster_mode');
+    }
+    if (globalThis.backendaiclient.supports('session-detail-status')) {
+      fields.push('status_data');
+    }
+    if (this.enableScalingGroup) {
+      fields.push('scaling_group');
+    }
+    if (this._connectionMode === 'SESSION') {
+      fields.push('user_email');
     }
     if (globalThis.backendaiclient.is_superadmin) {
-      fields.push("containers {container_id agent occupied_slots live_stat last_stat}");
+      fields.push('containers {container_id agent occupied_slots live_stat last_stat}');
     } else {
-      fields.push("containers {container_id occupied_slots live_stat last_stat}");
+      fields.push('containers {container_id occupied_slots live_stat last_stat}');
     }
-    let group_id = globalThis.backendaiclient.current_group_id();
+    const group_id = globalThis.backendaiclient.current_group_id();
 
-    globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id).then((response) => {
+    globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id, 10 * 1000).then((response) => {
       this.spinner.hide();
       this.total_session_count = response.compute_session_list.total_count;
       if (this.total_session_count === 0) {
         this.total_session_count = 1;
       }
-      let sessions = response.compute_session_list.items;
+      const sessions = response.compute_session_list.items;
+      // console.log(sessions);
       if (sessions !== undefined && sessions.length != 0) {
         const previousSessions = this.compute_sessions;
 
         const previousSessionKeys: any = [];
         Object.keys(previousSessions).map((objectKey, index) => {
-          previousSessionKeys.push(previousSessions[objectKey][this.sessionNameField]);
+          previousSessionKeys.push(previousSessions[objectKey]['session_id']);
         });
         Object.keys(sessions).map((objectKey, index) => {
-          let session = sessions[objectKey];
-          let occupied_slots = JSON.parse(session.occupied_slots);
+          const session = sessions[objectKey];
+          const occupied_slots = JSON.parse(session.occupied_slots);
           const kernelImage = sessions[objectKey].image.split('/')[2] || sessions[objectKey].image.split('/')[1];
           sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
           sessions[objectKey].mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
@@ -484,14 +478,23 @@ export default class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
           sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
           if (sessions[objectKey].containers && sessions[objectKey].containers.length > 0) {
-            // Assume a session has only one container (no consideration on multi-container bundling)
             const container = sessions[objectKey].containers[0];
             const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
-            sessions[objectKey].agent = container.agent
+            sessions[objectKey].agent = container.agent;
             if (liveStat && liveStat.cpu_used) {
-              sessions[objectKey].cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
+              sessions[objectKey].cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.current);
             } else {
               sessions[objectKey].cpu_used_time = this._automaticScaledTime(0);
+            }
+            if (liveStat && liveStat.cpu_util) {
+              sessions[objectKey].cpu_util = liveStat.cpu_util.current;
+            } else {
+              sessions[objectKey].cpu_util = 0;
+            }
+            if (liveStat && liveStat.mem) {
+              sessions[objectKey].mem_current = liveStat.mem.current;
+            } else {
+              sessions[objectKey].mem_current = 0;
             }
             if (liveStat && liveStat.io_read) {
               sessions[objectKey].io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
@@ -503,12 +506,34 @@ export default class BackendAiSessionList extends BackendAIPage {
             } else {
               sessions[objectKey].io_write_bytes_mb = 0;
             }
+            if (liveStat && liveStat.cuda_util) {
+              sessions[objectKey].cuda_util = liveStat.cuda_util.current;
+            } else {
+              sessions[objectKey].cuda_util = 0;
+            }
+            if (liveStat && liveStat.rocm_util) {
+              sessions[objectKey].rocm_util = liveStat.rocm_util;
+            } else {
+              sessions[objectKey].rocm_util = 0;
+            }
+            if (liveStat && liveStat.tpu_util) {
+              sessions[objectKey].tpu_util = liveStat.tpu_util;
+            } else {
+              sessions[objectKey].tpu_util = 0;
+            }
           }
-          let service_info = JSON.parse(sessions[objectKey].service_ports);
+          const service_info = JSON.parse(sessions[objectKey].service_ports);
           if (Array.isArray(service_info) === true) {
-            sessions[objectKey].app_services = service_info.map(a => a.name);
+            sessions[objectKey].app_services = service_info.map((a) => a.name);
+            sessions[objectKey].app_services_option = {};
+            service_info.forEach((elm) => {
+              if ('allowed_arguments' in elm) {
+                sessions[objectKey].app_services_option[elm.name] = elm.allowed_arguments;
+              }
+            });
           } else {
             sessions[objectKey].app_services = [];
+            sessions[objectKey].app_services_option = {};
           }
           if (sessions[objectKey].app_services.length === 0 || this.condition != 'running') {
             sessions[objectKey].appSupport = false;
@@ -531,22 +556,26 @@ export default class BackendAiSessionList extends BackendAIPage {
             sessions[objectKey].tpu_slot = parseInt(occupied_slots['tpu.device']);
           }
           if ('cuda.shares' in occupied_slots) {
-            //sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
+            // sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
             sessions[objectKey].cuda_fgpu_slot = parseFloat(occupied_slots['cuda.shares']).toFixed(2);
           }
           sessions[objectKey].kernel_image = kernelImage;
+          sessions[objectKey].icon = this._getKernelIcon(session.image);
           sessions[objectKey].sessionTags = this._getKernelInfo(session.image);
           const specs = session.image.split('/');
-          const tag = specs[specs.length - 1].split(':')[1]
-          let tags = tag.split('-');
+          sessions[objectKey].cluster_size = parseInt(sessions[objectKey].cluster_size);
+          const tag = specs[specs.length - 1].split(':')[1];
+          const tags = tag.split('-');
           if (tags[1] !== undefined) {
             sessions[objectKey].baseversion = tags[0];
             sessions[objectKey].baseimage = tags[1];
             sessions[objectKey].additional_reqs = tags.slice(1, tags.length).map((tag) => tag.toUpperCase());
-          } else {
+          } else if (sessions[objectKey].tag !== undefined) {
             sessions[objectKey].baseversion = sessions[objectKey].tag;
+          } else {
+            sessions[objectKey].baseversion = tag;
           }
-          if (this._selected_items.includes(sessions[objectKey][this.sessionNameField])) {
+          if (this._selected_items.includes(sessions[objectKey]['session_id'])) {
             sessions[objectKey].checked = true;
           } else {
             sessions[objectKey].checked = false;
@@ -554,26 +583,31 @@ export default class BackendAiSessionList extends BackendAIPage {
         });
       }
       this.compute_sessions = sessions;
+      this.requestUpdate();
       let refreshTime;
       this.refreshing = false;
       if (this.active === true) {
         if (refresh === true) {
-          //console.log("refresh!!");
-          var event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
+          // console.log("refresh!!");
+          const event = new CustomEvent('backend-ai-resource-refreshed', {'detail': {}});
           document.dispatchEvent(event);
         }
         if (repeat === true) {
-          if (this.condition === 'running') {
-            refreshTime = 5000;
-          } else {
-            refreshTime = 30000;
-          }
+          refreshTime = this.condition === 'running' ? 5000 : 30000;
           this.refreshTimer = setTimeout(() => {
-            this._refreshJobData()
+            this._refreshJobData();
           }, refreshTime);
         }
       }
-    }).catch(err => {
+    }).catch((err) => {
+      this.refreshing = false;
+      if (this.active && repeat) {
+        // Keep trying to fetch session list with more delay
+        const refreshTime = this.condition === 'running' ? 20000 : 120000;
+        this.refreshTimer = setTimeout(() => {
+          this._refreshJobData();
+        }, refreshTime);
+      }
       this.spinner.hide();
       console.log(err);
       if (err && err.message) {
@@ -590,8 +624,8 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Event} e
    * */
   _refreshWorkDialogUI(e) {
-    let work_dialog = this.shadowRoot.querySelector('#work-dialog');
-    if (e.detail.hasOwnProperty('mini-ui') && e.detail['mini-ui'] === true) {
+    const work_dialog = this.shadowRoot.querySelector('#work-dialog');
+    if (Object.prototype.hasOwnProperty.call(e.detail, 'mini-ui') && e.detail['mini-ui'] === true) {
       work_dialog.classList.add('mini_ui');
     } else {
       work_dialog.classList.remove('mini_ui');
@@ -599,10 +633,11 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   /**
-   * Return human readable time.
+   * Convert start date to human readable date.
    *
-   * @param {any} d - date
-   * */
+   * @param {Date} d - Date to convert
+   * @return {string} Human-readable date
+   */
   _humanReadableTime(d: any) {
     d = new Date(d);
     return d.toLocaleString();
@@ -612,12 +647,13 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Get kernel information - category, tag, color.
    *
    * @param {string} lang - session language
+   * @return {Record<string, unknown>} Information containing category, tag, color
    * */
   _getKernelInfo(lang) {
-    let tags: any = [];
+    const tags: any = [];
     if (lang === undefined) return [];
     const specs = lang.split('/');
-    let name = (specs[2] || specs[1]).split(':')[0];
+    const name = (specs[2] || specs[1]).split(':')[0];
     if (name in this.kernel_labels) {
       tags.push(this.kernel_labels[name]);
     } else {
@@ -641,6 +677,23 @@ export default class BackendAiSessionList extends BackendAIPage {
     return tags;
   }
 
+  /**
+   * Get kernel icon
+   *
+   * @param {string} lang - session language
+   * @return {string} kernel icon name
+   * */
+  _getKernelIcon(lang) {
+    if (lang === undefined) return [];
+    const specs = lang.split('/');
+    const name = (specs[2] || specs[1]).split(':')[0];
+    if (name in this.kernel_icons) {
+      return this.kernel_icons[name];
+    } else {
+      return '';
+    }
+  }
+
   _byteToMB(value) {
     return Math.floor(value / 1000000);
   }
@@ -657,11 +710,12 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Scale the time in units of D, H, M, S, and MS.
    *
    * @param {number} value - time to want to scale
+   * @return {Record<string, unknown>} result containing time information
    * */
   _automaticScaledTime(value: number) { // number: msec.
     let result = Object();
-    let unitText = ['D', 'H', 'M', 'S'];
-    let unitLength = [(1000 * 60 * 60 * 24), (1000 * 60 * 60), (1000 * 60), 1000];
+    const unitText = ['D', 'H', 'M', 'S'];
+    const unitLength = [(1000 * 60 * 60 * 24), (1000 * 60 * 60), (1000 * 60), 1000];
 
     for (let i = 0; i < unitLength.length; i++) {
       if (Math.floor(value / unitLength[i]) > 0) {
@@ -682,6 +736,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   _msecToSec(value) {
     return Number(value / 1000).toFixed(0);
   }
+
   _bytesToMB(value) {
     return Number(value / (1024 * 1024)).toFixed(1);
   }
@@ -690,6 +745,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    *
    * @param {any} start - start time
    * @param {any} end - end time
+   * @return {string} Elapsed time between start and end
    * */
   _elapsed(start, end) {
     return globalThis.backendaiclient.utils.elapsedTime(start, end);
@@ -703,7 +759,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   _indexRenderer(root, column, rowData) {
-    let idx = rowData.index + 1;
+    const idx = rowData.index + 1;
     render(
       html`
         <div>${idx}</div>
@@ -718,13 +774,13 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {XMLHttpRequest} rqst
    * */
   async sendRequest(rqst) {
-    let resp, body;
+    let resp; let body;
     try {
       if (rqst.method == 'GET') {
         rqst.body = undefined;
       }
       resp = await fetch(rqst.uri, rqst);
-      let contentType = resp.headers.get('Content-Type');
+      const contentType = resp.headers.get('Content-Type');
       if (contentType.startsWith('application/json') ||
         contentType.startsWith('application/problem+json')) {
         body = await resp.json();
@@ -737,25 +793,26 @@ export default class BackendAiSessionList extends BackendAIPage {
         throw body;
       }
     } catch (e) {
-      //console.log(e);
+      // console.log(e);
     }
     return body;
   }
 
-  _terminateApp(sessionName) {
-    let accessKey = globalThis.backendaiclient._config.accessKey;
-    let rqst = {
+  _terminateApp(sessionId) {
+    const token = globalThis.backendaiclient._config.accessKey;
+    const rqst = {
       method: 'GET',
-      uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + sessionName
+      uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId
     };
     return this.sendRequest(rqst)
       .then((response) => {
         this.total_session_count -= 1;
-        let accessKey = globalThis.backendaiclient._config.accessKey;
         if (response !== undefined && response.code !== 404) {
-          let rqst = {
+          const rqst = {
             method: 'GET',
-            uri: this._getProxyURL() + 'proxy/' + accessKey + "/" + sessionName + '/delete'
+            uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId + '/delete',
+            credentials: 'include',
+            mode: 'cors'
           };
           return this.sendRequest(rqst);
         }
@@ -780,6 +837,14 @@ export default class BackendAiSessionList extends BackendAIPage {
     return url;
   }
 
+  _getProxyToken() {
+    let token = 'local';
+    if (globalThis.backendaiclient._config.proxyToken !== undefined) {
+      token = globalThis.backendaiclient._config.proxyToken;
+    }
+    return token;
+  }
+
   /**
    * Show logs - work title, session logs, session name, and access key.
    *
@@ -792,9 +857,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = controls['access-key'];
 
-    globalThis.backendaiclient.get_logs(sessionId, accessKey).then((req) => {
+    globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
       const ansi_up = new AnsiUp();
-      let logs = ansi_up.ansi_to_html(req.result.logs);
+      const logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
         this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName} (${sessionUuid})`;
         this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
@@ -820,7 +885,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const sessionName = this.shadowRoot.querySelector('#work-dialog').sessionName;
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = this.shadowRoot.querySelector('#work-dialog').accessKey;
-    globalThis.backendaiclient.getLogs(sessionId, accessKey).then((req) => {
+    globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
       const ansi_up = new AnsiUp();
       const logs = ansi_up.ansi_to_html(req.result.logs);
       this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
@@ -854,50 +919,51 @@ export default class BackendAiSessionList extends BackendAIPage {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const sessionName = controls['session-name'];
+    const sessionId = controls['session-uuid'];
     const accessKey = controls['access-key'];
     this.terminateSessionDialog.sessionName = sessionName;
+    this.terminateSessionDialog.sessionId = sessionId;
     this.terminateSessionDialog.accessKey = accessKey;
     this.terminateSessionDialog.show();
   }
 
   _terminateSession(e) {
     const controls = e.target.closest('#controls');
-    const sessionName = controls['session-name'];
+    const sessionId = controls['session-uuid'];
     const accessKey = controls['access-key'];
 
-    if (this.terminationQueue.includes(sessionName)) {
+    if (this.terminationQueue.includes(sessionId)) {
       this.notification.text = 'Already terminating the session.';
       this.notification.show();
       return false;
     }
-    this.notification.text = 'Terminating session...';
-    this.notification.show();
-    return this._terminateKernel(sessionName, accessKey);
+    return this._terminateKernel(sessionId, accessKey);
   }
 
-  _terminateSessionWithCheck(e) {
-    if (this.terminationQueue.includes(this.terminateSessionDialog.sessionName)) {
+  _terminateSessionWithCheck(forced = false) {
+    if (this.terminationQueue.includes(this.terminateSessionDialog.sessionId)) {
       this.notification.text = 'Already terminating the session.';
       this.notification.show();
       return false;
     }
-    this.notification.text = 'Terminating session...';
-    this.notification.show();
-    return this._terminateKernel(this.terminateSessionDialog.sessionName, this.terminateSessionDialog.accessKey).then(response => {
+    this.spinner.show();
+    return this._terminateKernel(this.terminateSessionDialog.sessionId, this.terminateSessionDialog.accessKey, forced).then((response) => {
+      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
-      this.notification.text = "Session terminated.";
+      this.notification.text = _text('session.SessionTerminated');
       this.notification.show();
-      let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": 'running'});
+      const event = new CustomEvent('backend-ai-resource-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
+      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
       this.notification.show(true, err);
-      let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": 'running'});
+      const event = new CustomEvent('backend-ai-resource-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
     });
   }
@@ -911,28 +977,27 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Clear checked attributes.
    * */
   _clearCheckboxes() {
-    let elm = this.shadowRoot.querySelectorAll('wl-checkbox.list-check');
+    const elm = this.shadowRoot.querySelectorAll('wl-checkbox.list-check');
     [...elm].forEach((checkbox) => {
       checkbox.removeAttribute('checked');
     });
   }
 
-  _terminateSelectedSessionsWithCheck() {
-    this.notification.text = 'Terminating sessions...';
-    this.notification.show();
-
-    let terminateSessionQueue = this._selected_items.map(item => {
-      return this._terminateKernel(item[this.sessionNameField], item.access_key);
+  _terminateSelectedSessionsWithCheck(forced = false) {
+    this.spinner.show();
+    const terminateSessionQueue = this._selected_items.map((item) => {
+      return this._terminateKernel(item['session_id'], item.access_key, forced);
     });
     this._selected_items = [];
-    return Promise.all(terminateSessionQueue).then(response => {
+    return Promise.all(terminateSessionQueue).then((response) => {
+      this.spinner.hide();
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
-      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
-      this.notification.text = "Sessions terminated.";
+      this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
+      this.notification.text = _text('session.SessionsTerminated');
       this.notification.show();
-
     }).catch((err) => {
+      this.spinner.hide();
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
@@ -942,45 +1007,55 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   /**
    * Terminate selected sessions without check.
+   *
+   * @return {void}
    * */
   _terminateSelectedSessions() {
-    this.notification.text = 'Terminating sessions...';
-    this.notification.show();
-
-    let terminateSessionQueue = this._selected_items.map(item => {
-      return this._terminateKernel(item[this.sessionNameField], item.access_key);
+    this.spinner.show();
+    const terminateSessionQueue = this._selected_items.map((item) => {
+      return this._terminateKernel(item['session_id'], item.access_key);
     });
-    return Promise.all(terminateSessionQueue).then(response => {
+    return Promise.all(terminateSessionQueue).then((response) => {
+      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
-      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
-      this.notification.text = "Sessions terminated.";
+      this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
+      this.notification.text = _text('session.SessionsTerminated');
       this.notification.show();
     }).catch((err) => {
+      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
-      this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      if ('description' in err) {
+        this.notification.text = PainKiller.relieve(err.description);
+      } else {
+        this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      }
       this.notification.show(true, err);
     });
   }
 
   // General closing
 
-  async _terminateKernel(sessionName, accessKey) {
-    this.terminationQueue.push(sessionName);
-    return this._terminateApp(sessionName).then(() => {
-      globalThis.backendaiclient.destroyKernel(sessionName, accessKey).then((req) => {
+  async _terminateKernel(sessionId, accessKey, forced = false) {
+    this.terminationQueue.push(sessionId);
+    return this._terminateApp(sessionId).then(() => {
+      globalThis.backendaiclient.destroy(sessionId, accessKey, forced).then((req) => {
         setTimeout(async () => {
           this.terminationQueue = [];
-          //await this.refreshList(true, false); // Will be called from session-view from the event below
-          let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+          // await this.refreshList(true, false); // Will be called from session-view from the event below
+          const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
           document.dispatchEvent(event);
         }, 1000);
       }).catch((err) => {
-        //this.refreshList(true, false); // Will be called from session-view from the event below
-        let event = new CustomEvent("backend-ai-session-list-refreshed", {"detail": 'running'});
+        // this.refreshList(true, false); // Will be called from session-view from the event below
+        const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
         document.dispatchEvent(event);
-        this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+        if ('description' in err) {
+          this.notification.text = PainKiller.relieve(err.description);
+        } else {
+          this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+        }
         this.notification.show(true, err);
       });
     }).catch((err) => {
@@ -994,8 +1069,8 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
+    const hideButton = e.target;
+    const dialog = hideButton.closest('backend-ai-dialog');
     dialog.hide();
 
     if (dialog.id === 'ssh-dialog') {
@@ -1012,21 +1087,17 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  _openExportToCsvDialog() {
-    this.exportToCsvDialog.show();
-  }
-
   /**
    * Create dropdown menu that shows mounted folder names.
    * Added menu to document.body to show at the top.
    *
-   * @param e {Event} - mouseenter the mount-button
-   * @param mounts {Array} - array of the mounted folders
+   * @param {Event} e - mouseenter the mount-button
+   * @param {Array} mounts - array of the mounted folders
    * */
   _createMountedFolderDropdown(e, mounts) {
     const menuButton: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as any;
-    const regExp = /[\[\]\,\'\"]/g
+    const regExp = /[[\],'"]/g;
 
     menu.anchor = menuButton;
     menu.className = 'dropdown-menu';
@@ -1039,7 +1110,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     if (mounts.length > 1) {
       mounts.map((key, index) => {
         if (index > 0) {
-          let mountedFolderItem = document.createElement('mwc-list-item');
+          const mountedFolderItem = document.createElement('mwc-list-item');
           mountedFolderItem.innerHTML = key.replace(regExp, '').split(' ')[0];
           mountedFolderItem.style.height = '25px';
           mountedFolderItem.style.fontWeight = '400';
@@ -1048,7 +1119,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
           menu.appendChild(mountedFolderItem);
         }
-      })
+      });
     }
     document.body.appendChild(menu);
   }
@@ -1062,6 +1133,35 @@ export default class BackendAiSessionList extends BackendAIPage {
     while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
   }
 
+  _createStatusDetailDropdown(e, item) {
+    // console.log(item)
+    const menuButton: HTMLElement = e.target;
+    const menu = document.createElement('mwc-menu') as any;
+
+    menu.anchor = menuButton;
+    menu.className = 'dropdown-menu-status-detail';
+    menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
+    menu.setAttribute('open', '');
+    menu.setAttribute('fixed', '');
+    menu.setAttribute('x', 10);
+    menu.setAttribute('y', 15);
+
+    const statusDetailItem = document.createElement('mwc-list-item');
+    statusDetailItem.innerHTML = item.status_info;
+    statusDetailItem.style.height = '25px';
+    statusDetailItem.style.fontWeight = '400';
+    statusDetailItem.style.fontStyle = 'oblique';
+    statusDetailItem.style.fontSize = '14px';
+    statusDetailItem.style.fontFamily = 'var(--general-font-family)';
+    menu.appendChild(statusDetailItem);
+
+    document.body.appendChild(menu);
+  }
+
+  _removeStatusDetailDropdown() {
+    const menu = document.getElementsByClassName('dropdown-menu-status-detail') as any;
+    while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
+  }
   /**
    * Render session information - category, color, description, etc.
    *
@@ -1074,28 +1174,53 @@ export default class BackendAiSessionList extends BackendAIPage {
       html`
         <div class="layout vertical start">
           <div>${rowData.item[this.sessionNameField]}</div>
-          ${rowData.item.sessionTags ? rowData.item.sessionTags.map(item => html`
-            ${item.map(item => {
-        if (item.category === 'Env') {
-          item.category = item.tag;
-        }
-        if (item.category && rowData.item.baseversion) {
-          item.tag = rowData.item.baseversion;
-        }
-        return html`
-                <lablup-shields app="${item.category === undefined ? '' : item.category}" color="${item.color}" description="${item.tag}"></lablup-shields>
-              `;
-      })}
-          `) : html``}
+          <div class="horizontal center center-justified layout">
+          ${rowData.item.icon ? html`
+            <img src="resources/icons/${rowData.item.icon}" style="width:32px;height:32px;margin-right:10px;" />
+          `: html`
+          `}
+            <div class="vertical start layout">
+              ${rowData.item.sessionTags ? rowData.item.sessionTags.map((item) => html`
+              <div class="horizontal center layout">
+                ${item.map((item) => {
+    if (item.category === 'Env') {
+      item.category = item.tag;
+    }
+    if (item.category && rowData.item.baseversion) {
+      item.tag = rowData.item.baseversion;
+    }
+    return html`
+                <lablup-shields app="${item.category === undefined ? '' : item.category}"
+                                color="${item.color}"
+                                description="${item.tag}"
+                                ui="round"
+                                style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                    `;
+  })}
+              </div>`) : html``}
           ${rowData.item.additional_reqs ? html`
             <div class="layout horizontal center wrap">
               ${rowData.item.additional_reqs.map((tag) => {
-        return html`
-                  <lablup-shields app="" color="green" description="${tag}"></lablup-shields>
+    return html`
+                  <lablup-shields app=""
+                                  color="green"
+                                  description="${tag}"
+                                  ui="round"
+                                  style="margin-top:3px;margin-right:3px;"></lablup-shields>
                 `;
-      })}
+  })}
             </div>
           ` : html``}
+          ${rowData.item.cluster_size > 1 ? html`
+            <div class="layout horizontal center wrap">
+              <lablup-shields app="${rowData.item.cluster_mode === 'single-node' ? 'Multi-container': 'Multi-node'}"
+                              color="blue"
+                              description="${ 'X ' + rowData.item.cluster_size}"
+                              ui="round"
+                              style="margin-top:3px;margin-right:3px;"></lablup-shields>
+            </div>
+          `: html``}
+          </div>
         </div>
       `, root
     );
@@ -1109,31 +1234,54 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   controlRenderer(root, column?, rowData?) {
+    let mySession = true;
+    mySession = (this._connectionMode === 'API' && rowData.item.access_key === globalThis.backendaiclient._config._accessKey) ||
+      (rowData.item.user_email === globalThis.backendaiclient.email);
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
-             .session-uuid="${rowData.item.id}"
+             .session-uuid="${rowData.item.session_id}"
              .session-name="${rowData.item[this.sessionNameField]}"
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
-             .app-services="${rowData.item.app_services}">
+             .app-services="${rowData.item.app_services}"
+             .app-services-option="${rowData.item.app_services_option}">
           ${rowData.item.appSupport ? html`
-            <wl-button fab flat inverted class="fg controls-running green"
+            <mwc-icon-button class="fg controls-running green"
                                @click="${(e) => this._showAppLauncher(e)}"
-                               icon="vaadin:caret-right"><wl-icon>launch</wl-icon></wl-button>
-            <wl-button fab flat inverted class="fg controls-running"
-                               @click="${(e) => this._runTerminal(e)}"><wl-icon>keyboard_arrow_right</wl-icon></wl-button>
+                               ?disabled="${!mySession}"
+                               icon="apps"></mwc-icon-button>
+            <mwc-icon-button class="fg controls-running"
+                               ?disabled="${!mySession}"
+                               @click="${(e) => this._runTerminal(e)}">
+              <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 width="471.362px" height="471.362px" viewBox="0 0 471.362 471.362" style="enable-background:new 0 0 471.362 471.362;"
+                 xml:space="preserve">
+              <g>
+                <g>
+                  <path d="M468.794,355.171c-1.707-1.718-3.897-2.57-6.563-2.57H188.145c-2.664,0-4.854,0.853-6.567,2.57
+                    c-1.711,1.711-2.565,3.897-2.565,6.563v18.274c0,2.662,0.854,4.853,2.565,6.563c1.713,1.712,3.903,2.57,6.567,2.57h274.086
+                    c2.666,0,4.856-0.858,6.563-2.57c1.711-1.711,2.567-3.901,2.567-6.563v-18.274C471.365,359.068,470.513,356.882,468.794,355.171z"
+                    />
+                  <path d="M30.259,85.075c-1.903-1.903-4.093-2.856-6.567-2.856s-4.661,0.953-6.563,2.856L2.852,99.353
+                    C0.95,101.255,0,103.442,0,105.918c0,2.478,0.95,4.664,2.852,6.567L115.06,224.69L2.852,336.896C0.95,338.799,0,340.989,0,343.46
+                    c0,2.478,0.95,4.665,2.852,6.567l14.276,14.273c1.903,1.906,4.089,2.854,6.563,2.854s4.665-0.951,6.567-2.854l133.048-133.045
+                    c1.903-1.902,2.853-4.096,2.853-6.57c0-2.473-0.95-4.663-2.853-6.565L30.259,85.075z"/>
+                </g>
+              </g>
+            </svg>
+            </mwc-icon-button>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._isError(rowData.item.status) ? html`
-            <wl-button fab flat inverted class="fg red controls-running"
-                               @click="${(e) => this._openTerminateSessionDialog(e)}"><wl-icon>power_settings_new</wl-icon></wl-button>
+            <mwc-icon-button class="fg red controls-running"
+                               icon="power_settings_new" @click="${(e) => this._openTerminateSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
-            <wl-button fab flat inverted class="fg blue controls-running" icon="assignment"
+            <mwc-icon-button class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"
-                               on-tap="_showLogs"><wl-icon>assignment</wl-icon></wl-button>
+                               icon="assignment"></mwc-icon-button>
           ` : html`
-            <wl-button fab flat inverted disabled class="fg controls-running" icon="assignment"><wl-icon>assignment</wl-icon></wl-button>
+            <mwc-icon-button fab flat inverted disabled class="fg controls-running" icon="assignment"></mwc-icon-button>
           `}
         </div>
       `, root
@@ -1162,7 +1310,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">developer_board</wl-icon>
             <span>${rowData.item.cpu_slot}</span>
-            <span class="indicator">${_t("session.core")}</span>
+            <span class="indicator">${_t('session.core')}</span>
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">memory</wl-icon>
@@ -1208,16 +1356,14 @@ export default class BackendAiSessionList extends BackendAIPage {
                   @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
                   @mouseleave="${() => this._removeMountedFolderDropdown()}"
                 >
-                  ${rowData.item.mounts[0].replace(/[\[\]\,\'\"]/g, '').split(' ')[0]}
+                  ${rowData.item.mounts[0].replace(/[[\],'"]/g, '').split(' ')[0]}
                 </button>
               ` : html``}
-            <!-- <span>${rowData.item.storage_capacity}</span> -->
-            <!-- <span class="indicator">${rowData.item.storage_unit}</span> -->
           </div>
         </div>
      `, root
     );
-  };
+  }
 
   /**
    * Render usages - cpu_used_time, io_read_bytes_mb, and io_write_bytes_mb
@@ -1227,8 +1373,82 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   usageRenderer(root, column?, rowData?) {
-    render(
-      html`
+    if (this.condition === 'running') {
+      render(
+        // language=HTML
+        html`
+        <div class="vertical start start-justified layout">
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">CPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.cpu_util / (rowData.item.cpu_slot * 100)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">RAM</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.mem_current / (rowData.item.mem_slot * 1000000000)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>
+          ${rowData.item.cuda_gpu_slot && parseInt(rowData.item.cuda_gpu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.cuda_util / (rowData.item.cuda_gpu_slot * 100)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          ${rowData.item.cuda_fgpu_slot && parseFloat(rowData.item.cuda_fgpu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.cuda_util / (rowData.item.cuda_fgpu_slot * 100)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          ${rowData.item.rocm_gpu_slot && parseFloat(rowData.item.cuda_rocm_gpu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.rocm_util / (rowData.item.rocm_gpu_slot * 100)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          ${rowData.item.tpu_slot && parseFloat(rowData.item.tpu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">TPU</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.tpu_util / (rowData.item.tpu_slot * 100)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          <div class="horizontal start-justified center layout">
+            <div style="font-size:8px;width:35px;">I/O</div>
+            <div style="font-size:8px;" class="horizontal start-justified center layout">
+            R: ${rowData.item.io_read_bytes_mb}MB /
+            W: ${rowData.item.io_write_bytes_mb}MB
+            </div>
+          </div>
+       </div>
+        `, root);
+    } else if (this.condition === 'finished') {
+      render(
+        // language=HTML
+        html`
         <div class="layout horizontal center flex">
           <wl-icon class="fg blue indicator" style="margin-right:3px;">developer_board</wl-icon>
           ${rowData.item.cpu_used_time.D ? html`
@@ -1272,35 +1492,22 @@ export default class BackendAiSessionList extends BackendAIPage {
             <span class="indicator">WRITE</span>
           </div>
         </div>`, root
-    );
+      );
+    }
   }
 
   _toggleCheckbox(object) {
-    let exist = this._selected_items.findIndex(x => x[this.sessionNameField] == object[this.sessionNameField]);
+    const exist = this._selected_items.findIndex((x) => x['session_id'] == object['session_id']);
     if (exist === -1) {
-      this._selected_items.push(object)
+      this._selected_items.push(object);
     } else {
       this._selected_items.splice(exist, 1);
     }
     if (this._selected_items.length > 0) {
-      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'block';
+      this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'block';
     } else {
-      this.shadowRoot.querySelector("#multiple-action-buttons").style.display = 'none';
+      this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
     }
-  }
-
-  /**
-   * Toggle dateFrom and dateTo checkbox
-   *
-   * @param {Event} e - click the export-csv-checkbox switch
-   * */
-  _toggleDialogCheckbox(e) {
-    let checkbox = e.target;
-    let dateFrom = this.shadowRoot.querySelector('#date-from');
-    let dateTo = this.shadowRoot.querySelector('#date-to');
-
-    dateFrom.disabled = checkbox.checked;
-    dateTo.disabled = checkbox.checked;
   }
 
   /**
@@ -1333,7 +1540,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     render(
       html`
         <div class="layout vertical">
-          <span class="indicator">${this._connectionMode === "API" ? rowData.item.access_key : rowData.item.user_email}</span>
+          <span class="indicator">${this._connectionMode === 'API' ? rowData.item.access_key : rowData.item.user_email}</span>
         </div>
       `, root
     );
@@ -1345,152 +1552,15 @@ export default class BackendAiSessionList extends BackendAIPage {
         <span style="font-size: 12px;">${rowData.item.status}</span>
         ${rowData.item.status_info ? html`
         <br />
-        <lablup-shields app="" color="${this.statusColorTable[rowData.item.status_info]}" description="${rowData.item.status_info}"></lablup-shields>
+        <div class="layout horizontal">
+        <lablup-shields id="${rowData.item.name}" app="" color="${this.statusColorTable[rowData.item.status_info]}"
+              description="${rowData.item.status_info}" ui="round"
+              @mouseenter="${(e) => this._createStatusDetailDropdown(e, rowData.item)}"
+              @mouseleave="${() => this._removeStatusDetailDropdown()}"></lablup-shields>
+        </div>
         ` : html``}
       `, root
     );
-  }
-
-  _getFirstDateOfMonth() {
-    let date = new Date();
-    return new Date(date.getFullYear(), date.getMonth(), 2).toISOString().substring(0, 10);
-  }
-
-  _getDefaultCSVFileName() {
-    let date = new Date().toISOString().substring(0, 10);
-    let time = new Date().toTimeString().slice(0, 8).replace(/:/gi, '-');
-    return date + '_' + time;
-  }
-
-  /**
-   * Check date-to < date-from.
-   * */
-  _validateDateRange() {
-    let dateTo = this.shadowRoot.querySelector('#date-to');
-    let dateFrom = this.shadowRoot.querySelector('#date-from');
-
-    if (dateTo.value && dateFrom.value) {
-      let to = new Date(dateTo.value).getTime();
-      let from = new Date(dateFrom.value).getTime();
-      if (to < from) {
-        dateTo.value = dateFrom.value;
-      }
-    }
-  }
-
-  _exportToCSV() {
-    const fileNameEl = this.shadowRoot.querySelector('#export-file-name');
-
-    if (!fileNameEl.validity.valid) {
-      return;
-    }
-    const exportList: any = [];
-
-    // Parameters
-    let status: any = ["RUNNING", "RESTARTING", "TERMINATING",  "PENDING", "PREPARING", "PULLING", "TERMINATED", "CANCELLED", "ERROR"];
-    if (globalThis.backendaiclient.supports('detailed-session-states')) {
-      status = status.join(',');
-    }
-    const fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "access_key"];
-    if (this._connectionMode === "SESSION") {
-      fields.push("user_email");
-    }
-    if (globalThis.backendaiclient.is_superadmin) {
-      fields.push("containers {container_id agent occupied_slots live_stat last_stat}");
-    } else {
-      fields.push("containers {container_id occupied_slots live_stat last_stat}");
-    }
-    const groupId = globalThis.backendaiclient.current_group_id();
-    const limit = 100;
-
-    // Get session list and export to csv file
-    globalThis.backendaiclient.computeSession.listAll(fields, status, this.filterAccessKey, limit, 0, groupId).then((response) => {
-      const sessions = response;
-      if (sessions.length === 0) {
-        this.notification.text = "No sessions";
-        this.notification.show();
-        this.exportToCsvDialog.hide();
-        return;
-      }
-      sessions.forEach((session) => {
-        const exportListItem: any = {};
-        exportListItem.id = session.id;
-        exportListItem.name = session.name;
-        exportListItem.image = session.image.split('/')[2] || session.image.split('/')[1];
-        exportListItem.status = session.status;
-        exportListItem.status_info = session.status_info;
-        exportListItem.access_key = session.access_key;
-        exportListItem.created_at = session.created_at;
-        exportListItem.terminated_at = session.terminated_at;
-        if (session.containers && session.containers.length > 0) {
-          // Assume a session has only one container (no consideration on multi-container bundling)
-          const container = session.containers[0];
-          exportListItem.container_id = container.container_id;
-          const occupiedSlots = container.occupied_slots ? JSON.parse(container.occupied_slots) : null;
-          if (occupiedSlots) {
-            exportListItem.cpu_slot = parseInt(occupiedSlots.cpu);
-            exportListItem.mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupiedSlots.mem, 'g')).toFixed(2);
-            if (occupiedSlots['cuda.shares']) {
-              exportListItem.cuda_shares = occupiedSlots['cuda.shares'];
-            }
-            if (occupiedSlots['cuda.device']) {
-              exportListItem.cuda_device = occupiedSlots['cuda.device'];
-            }
-            if (occupiedSlots['tpu.device']) {
-              exportListItem.tpu_device = occupiedSlots['tpu.device'];
-            }
-            if (occupiedSlots['rocm.device']) {
-              exportListItem.rocm_device = occupiedSlots['rocm.device'];
-            }
-          }
-          const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
-          if (liveStat) {
-            if (liveStat.cpu_used && liveStat.cpu_used.capacity) {
-              exportListItem.cpu_used_time = this._automaticScaledTime(liveStat.cpu_used.capacity);
-            } else {
-              exportListItem.cpu_used_time = 0;
-            }
-            if (liveStat.io_read) {
-              exportListItem.io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
-            } else {
-              exportListItem.io_read_bytes_mb = 0;
-            }
-            if (liveStat.io_write) {
-              exportListItem.io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
-            } else {
-              exportListItem.io_write_bytes_mb = 0;
-            }
-          }
-          if (container.agent) {
-            exportListItem.agent = container.agent;
-          }
-        }
-        exportList.push(exportListItem);
-      });
-
-      JsonToCsv.exportToCsv(fileNameEl.value, exportList);
-      this.notification.text = "Downloading CSV file...";
-      this.notification.show();
-      this.exportToCsvDialog.hide();
-    });
-
-    // let isUnlimited = this.shadowRoot.querySelector('#export-csv-checkbox').checked;
-    // if (isUnlimited) {
-    //   globalThis.backendaiclient.computeSession.listAll(fields, this.filterAccessKey, group_id).then((response) => {
-    //     // let total_count = response.compute_sessions.length;
-    //     let sessions = response.compute_sessions;
-    //     // console.log("total_count : ",total_count);
-    //   JsonToCsv.exportToCsv(fileNameEl.value, sessions);
-    //   });
-    // } else {
-    //   let dateTo = this.shadowRoot.querySelector('#date-to');
-    //   let dateFrom = this.shadowRoot.querySelector('#date-from');
-
-    //   if(dateTo.validity.valid && dateFrom.validity.valid) {
-    //      TODO : new backendaiclient.computeSession query will be added (date range)
-    //     console.log('Session between ' , dateFrom.value, ' ~ ', dateTo.value, " will be downloaded.");
-    //   }
-    // }
   }
 
   render() {
@@ -1501,15 +1571,18 @@ export default class BackendAiSessionList extends BackendAIPage {
         <div id="multiple-action-buttons" style="display:none;">
           <wl-button outlined class="multiple-action-button" @click="${() => this._openTerminateSelectedSessionsDialog()}">
             <wl-icon style="--icon-size: 20px;">delete</wl-icon>
-            ${_t("session.Terminate")}
+            ${_t('session.Terminate')}
           </wl-button>
         </div>
         <span class="flex"></span>
-        <wl-textfield id="access-key-filter" type="search" size=30
-                     label="${_t("general.AccessKey")}" no-label-float .value="${this.filterAccessKey}"
-                     style="display:none"
-                     on-change="_updateFilterAccessKey">
-        </wl-textfield>
+        <div class="vertical layout">
+          <wl-textfield id="access-key-filter" type="search" maxLength="64"
+                      label="${_t('general.AccessKey')}" no-label-float .value="${this.filterAccessKey}"
+                      style="display:none;margin-right:20px;"
+                      @change="${(e) => this._updateFilterAccessKey(e)}">
+          </wl-textfield>
+          <span id="access-key-filter-helper-text">${_t('maxLength.64chars')}</span>
+        </div>
       </div>
 
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
@@ -1520,33 +1593,27 @@ export default class BackendAiSessionList extends BackendAIPage {
         ` : html``}
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
-          <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === "API" ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
+          <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-sort-column>
         ` : html``}
-        <vaadin-grid-column width="150px" resizable header="${_t("session.SessionInfo")}" .renderer="${this._boundSessionInfoRenderer}">
+        <vaadin-grid-column width="150px" resizable header="${_t('session.SessionInfo')}" .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="90px" flex-grow="0" header="${_t("session.Status")}" resizable .renderer="${this._boundStatusRenderer}">
+        <vaadin-grid-column width="90px" flex-grow="0" header="${_t('session.Status')}" resizable .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="160px" flex-grow="0" header="${_t("general.Control")}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t("session.Configuration")}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t("session.Usage")}" .renderer="${this._boundUsageRenderer}">
+        <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('session.Configuration')}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}" .renderer="${this._boundUsageRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t("session.Starts")}" path="created_at">
+        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}" path="created_at">
           <template>
             <div class="layout vertical">
               <span>[[item.created_at_hr]]</span>
+              <span>([[item.elapsed]])</span>
             </div>
           </template>
         </vaadin-grid-sort-column>
-        <vaadin-grid-column width="100px" flex-grow="0" resizable header="${_t("session.Reservation")}">
-          <template>
-            <div class="layout vertical">
-              <span>[[item.elapsed]]</span>
-            </div>
-          </template>
-        </vaadin-grid-column>
         ${this.is_superadmin ? html`
-          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t("session.Agent")}">
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}">
             <template>
               <div class="layout vertical">
                 <span>[[item.agent]]</span>
@@ -1556,98 +1623,69 @@ export default class BackendAiSessionList extends BackendAIPage {
             ` : html``}
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
-        <wl-button class="pagination" id="previous-page"
-                   ?disabled="${this.current_page === 1}"
-                   @click="${(e) => {
-      this._updateSessionPage(e)
-    }}">
-          <wl-icon class="pagination">navigate_before</wl-icon>
-        </wl-button>
+      <mwc-icon-button
+      class="pagination"
+      id="previous-page"
+      icon="navigate_before"
+      ?disabled="${this.current_page === 1}"
+      @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
         <wl-label style="padding-top: 5px; width:auto; text-align:center;">
         ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</wl-label>
-        <wl-button class="pagination" id="next-page"
-                   ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
-                   @click="${(e) => {
-      this._updateSessionPage(e)
-    }}">
-          <wl-icon class="pagination">navigate_next</wl-icon>
-        </wl-button>
+        <mwc-icon-button
+          class="pagination"
+          id="next-page"
+          icon="navigate_next"
+          ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
+          @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
       </div>
       <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
         <span slot="title" id="work-title"></span>
         <div slot="action">
-          <wl-button fab flat inverted @click="${(e) => this._refreshLogs()}">
-            <wl-icon>refresh</wl-icon>
-          </wl-button>
+          <mwc-icon-button fab flat inverted icon="refresh" @click="${(e) => this._refreshLogs()}">
+          </mwc-icon-button>
         </div>
         <div slot="content" id="work-area" style="overflow:scroll;"></div>
         <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
-                style="border-style: none;width: 100%;"></iframe>
+                style="border-style: none;display: none;width: 100%;"></iframe>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminate-session-dialog" fixed backdrop>
-         <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
-         <div slot="content">
-            <p>${_t("session.CheckAgainDialog")}</p>
-         </div>
-         <div slot="footer" class="horizontal end-justified flex layout">
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
-            <wl-button class="ok" @click="${(e) => this._terminateSessionWithCheck(e)}">${_t("button.Okay")}</wl-button>
-         </div>
-      </backend-ai-dialog>
-      <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
-         <span slot="title">${_t("dialog.title.LetsDouble-Check")}</span>
-         <div slot="content">
-            <p>${_t("session.TerminatingSessionDialog")} ${_t("session.CheckAgainDialog")}</p>
-         </div>
-         <div slot="footer" class="horizontal end-justified flex layout">
-            <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
-            <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t("button.Okay")}</wl-button>
-         </div>
-      </backend-ai-dialog>
-      <backend-ai-dialog id="export-to-csv" fixed backdrop>
-        <span slot="title">${_t("session.ExportSessionListToCSVFile")}</span>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
-          <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
-                          validationMessage="Allows letters, numbers and -_."
-                          value="${'session_' + this._defaultFileName}" required
-                          style="margin-bottom:10px;"></mwc-textfield>
-          <div class="horizontal center layout" style="display:none;">
-            <wl-textfield id="date-from" label="From" type="date" style="margin-right:10px;"
-                          value="${this._getFirstDateOfMonth()}" required
-                          @change="${this._validateDateRange}">
-              <wl-icon slot="before">date_range</wl-icon>
-            </wl-textfield>
-            <wl-textfield id="date-to" label="To" type="date"
-                          value="${new Date().toISOString().substring(0, 10)}" required
-                          @change="${this._validateDateRange}">
-              <wl-icon slot="before">date_range</wl-icon>
-            </wl-textfield>
-          </div>
-          <div class="horizontal center layout" style="display:none;">
-            <wl-checkbox id="export-csv-checkbox" @change="${(e) => this._toggleDialogCheckbox(e)}"></wl-checkbox>
-            <wl-label class="unlimited" for="export-csv-checkbox">Export All-time data</wl-label>
-          </div>
-          <div class="horizontal center layout" style="margin-bottom:10px;">
-            <wl-icon class="warning">warning</wl-icon>
-            <wl-label class="warning" for="warning">${_t("session.OnlyRecent100SessionExport")}</wl-label>
-          </div>
-          <div class="horizontal center layout">
-            <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
-            @click="${this._exportToCSV}">
-              <wl-icon>get_app</wl-icon>
-              ${_t("session.ExportCSVFile")}
+          <p>${_t('usersettings.SessionTerminationDialog')}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          ${this.is_admin ? html`
+            <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">
+              ${_t('button.ForceTerminate')}
             </wl-button>
-          </div>
+            <span class="flex"></span>` : html``}
+          <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
+          </wl-button>
+          <wl-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</wl-button>
         </div>
       </backend-ai-dialog>
-      `;
+      <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
+        <div slot="content">
+          <p>${_t('usersettings.SessionTerminationDialog')}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          ${this.is_admin ? html`
+            <wl-button class="warning fg red" inverted flat
+                       @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}
+            </wl-button>
+            <span class="flex"></span>` : html``}
+          <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
+          </wl-button>
+          <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}
+          </wl-button>
+        </div>
+      </backend-ai-dialog>
+    `;
   }
 
   _updateSessionPage(e) {
-    let page_action = e.target;
-    if (page_action['role'] !== 'button') {
-      page_action = e.target.closest('wl-button');
-    }
+    const page_action = e.target;
 
     if (page_action.id === 'previous-page') {
       this.current_page -= 1;
@@ -1661,6 +1699,6 @@ export default class BackendAiSessionList extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-session-list": BackendAiSessionList;
+    'backend-ai-session-list': BackendAiSessionList;
   }
 }

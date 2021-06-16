@@ -1,15 +1,17 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-//import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
-import {css, customElement, html, LitElement, property} from "lit-element";
-import {BackendAiStyles} from "./backend-ai-general-styles";
+// import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property, query} from 'lit-element';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import 'weightless/button';
 import 'weightless/card';
-import 'weightless/dialog';
 import 'weightless/icon';
-import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+import '../plastics/mwc/mwc-dialog';
+import '@material/mwc-icon-button';
+
+import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
  Backend.AI Dialog
@@ -22,13 +24,12 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
  ...
  </backend-ai-dialog>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-dialog
  */
-@customElement("backend-ai-dialog")
+@customElement('backend-ai-dialog')
 export default class BackendAiDialog extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: Object}) dialog = Object();
   @property({type: Boolean}) fixed = false;
   @property({type: Boolean}) narrowLayout = false;
   @property({type: Boolean}) scrollable = false;
@@ -36,84 +37,107 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) noclosebutton = false;
   @property({type: Boolean}) persistent = false;
   @property({type: Boolean}) blockscrolling = false;
+  @property({type: Boolean}) hideActions = true;
   @property({type: Boolean}) open = false;
   @property({type: String}) type = 'normal';
+  @property({type: Boolean}) closeWithConfirmation = false;
+
+  @query('#dialog') protected dialog;
 
   constructor() {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
       // language=CSS
       css`
-        wl-dialog {
-          --dialog-min-width: var(--component-min-width);
-          --dialog-max-width: var(--component-max-width);
-          --dialog-max-height: var(--component-max-height);
-          --dialog-width: var(--component-width);
-          --dialog-height: var(--component-height);
+        mwc-dialog {
+          --mdc-dialog-min-width: var(--component-min-width, auto);
+          --mdc-dialog-max-width: var(--component-max-width, 100%);
+          --mdc-dialog-min-height: var(--component-min-height, auto);
+          --mdc-dialog-max-height: var(--component-max-height, calc(100vh - 45px));
+          --mdc-dialog-width: var(--component-width, auto);
+          --mdc-dialog-height: var(--component-height, auto);
+          --mdc-typography-body1-font-family: var(--general-font-family);
+          --mdc-typography-body1-font-color: black;
+          --mdc-typography-headline6-font-family: var(--general-font-family);
+          --mdc-typography-headline6-font-color: black;
+          --mdc-shape-medium: 10px;
         }
 
-        wl-dialog > wl-card {
-          --card-elevation: 0;
+        mwc-dialog > div.card {
+          padding:0;
+          margin:0;
         }
 
-        wl-dialog > wl-card > h3 {
+        mwc-dialog > div.card > h3 {
           background-color: var(--general-dialog-background-color, #ffffff);
         }
 
-        wl-dialog.warning h3 {
+        mwc-dialog.warning h3 {
           color: red;
         }
 
-        wl-dialog h3 > wl-button {
-        }
-
-        wl-dialog div.content {
+        mwc-dialog div.content {
           padding: var(--component-padding, 15px);
           font-size: var(--component-font-size, 14px);
           word-break: keep-all;
+          overflow-x: hidden;
         }
 
-        wl-dialog div.footer {
-          padding: 5px 15px 10px 15px;
+        mwc-dialog div.footer {
+          padding: 5px 15px 15px 15px;
         }
 
-        wl-dialog wl-button.cancel {
-          margin-right: 5px;
-        }
-
-        wl-dialog wl-button.ok {
-          margin-right: 5px;
-        }
-
-        wl-dialog[narrow] div.content,
-        wl-dialog[narrow] div.footer {
+        mwc-dialog[narrow] div.content,
+        mwc-dialog[narrow] div.footer {
           padding: 0;
           margin: 0;
         }
 
-        wl-dialog[scrollable]::slotted([slot="content"]),
-        wl-dialog[scrollable] div.content-area {
+        mwc-dialog[scrollable]::slotted([slot="content"]),
+        mwc-dialog[scrollable] div.content-area {
           overflow-y: scroll; /* Has to be scroll (not auto) to get smooth scrolling on iOS */
           -webkit-overflow-scrolling: touch;
-          height: calc(var(--component-height) - 90px);
+          max-height: calc(100vh - 120px);
+        }
+
+        mwc-dialog div.content h4 {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          height: 20px;
+          border-bottom: 1px solid #DDD !important;
         }
       `];
   }
 
   firstUpdated() {
-    this.dialog = this.shadowRoot.querySelector('#dialog');
     this.open = this.dialog.open;
-    this.dialog.addEventListener('didShow', () => {
-      this._syncOpenState()
+    if (this.persistent) {
+      this.dialog.scrimClickAction = '';
+    }
+    this.dialog.addEventListener('opened', () => {
+      this.open = this.dialog.open;
     });
-    this.dialog.addEventListener('didHide', () => {
-      this._syncOpenState()
+    this.dialog.addEventListener('closed', (e) => {
+      // execute action only if the event target is dialog
+      if (e.target.id === 'dialog' && 'action' in e.detail && e.detail.action === 'persistent') {
+        this.show();
+      } else {
+        this.open = this.dialog.open;
+      }
+
+      /**
+       * custom event for bubbling event of closing dialog
+       */
+      const closeEvent = new CustomEvent('dialog-closed', {detail: ''});
+      this.dispatchEvent(closeEvent);
     });
   }
 
@@ -122,25 +146,10 @@ export default class BackendAiDialog extends LitElement {
   }
 
   /**
-   * Synchronize the open state according to this.open.
-   */
-  _syncOpenState() {
-    this.open = this.dialog.open;
-    if (this.open === true) {
-      let event = new CustomEvent("didShow", {"detail": ""});
-      this.dispatchEvent(event);
-    } else {
-      let event = new CustomEvent("didHide", {"detail": ""});
-      this.dispatchEvent(event);
-    }
-  }
-
-  /**
    * Hide a dialog.
    */
   _hideDialog() {
-    this.dialog.hide();
-    this.open = this.dialog.open;
+    this.hide();
   }
 
   /**
@@ -148,37 +157,41 @@ export default class BackendAiDialog extends LitElement {
    */
   show() {
     this.dialog.show();
-    this.open = this.dialog.open;
   }
 
   /**
    * Hide a dialog.
    */
   hide() {
-    this.dialog.hide();
-    this.open = this.dialog.open;
+    if (this.closeWithConfirmation) {
+      const closeEvent = new CustomEvent('dialog-closing-confirm', {detail: ''});
+      this.dispatchEvent(closeEvent);
+    } else {
+      this.dialog.close();
+    }
   }
 
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="dialog"
+      <link rel="stylesheet" href="resources/custom.css">
+      <mwc-dialog id="dialog"
                     ?fixed="${(this.fixed)}"
                     ?narrow="${(this.narrowLayout)}"
                     ?backdrop="${this.backdrop}"
                     ?persistent="${this.persistent}"
                     ?scrollable="${this.scrollable}"
                     blockscrolling="${this.blockscrolling}"
+                    hideActions="${this.hideActions}"
                     style="padding:0;" class="${this.type}">
-        <wl-card elevation="1" class="intro" style="margin: 0; height: 100%;">
-          <h3 class="horizontal center layout" style="font-weight:bold">
-            <span><slot name="title"></slot></span>
+        <div elevation="1" class="card" style="margin: 0;padding:0;">
+          <h3 class="horizontal justified layout" style="font-weight:bold">
+            <span class="vertical center-justified layout"><slot name="title"></slot></span>
             <div class="flex"></div>
             <slot name="action"></slot>
             ${this.noclosebutton ? html`` : html`
-            <wl-button fab flat inverted @click="${() => this._hideDialog()}">
-              <wl-icon>close</wl-icon>
-            </wl-button>
+            <mwc-icon-button icon="close" fab flat inverted @click="${() => this._hideDialog()}">
+            </mwc-icon-button>
             `}
           </h3>
           <div class="content content-area">
@@ -187,14 +200,14 @@ export default class BackendAiDialog extends LitElement {
           <div class="footer horizontal flex layout">
             <slot name="footer"></slot>
           </div>
-        </wl-card>
-      </wl-dialog>
+        </div>
+      </mwc-dialog>
       `;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-dialog": BackendAiDialog;
+    'backend-ai-dialog': BackendAiDialog;
   }
 }

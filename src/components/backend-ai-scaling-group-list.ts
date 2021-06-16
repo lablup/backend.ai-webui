@@ -3,12 +3,12 @@
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
@@ -21,10 +21,17 @@ import 'weightless/textarea';
 import 'weightless/textfield';
 import 'weightless/title';
 
+import '@material/mwc-switch/mwc-switch';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-select/mwc-select';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-textarea/mwc-textarea';
+
 import './backend-ai-dialog';
-import {default as PainKiller} from "./backend-ai-painkiller";
-import {BackendAiStyles} from "./backend-ai-general-styles";
-import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-classes";
+import {default as PainKiller} from './backend-ai-painkiller';
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
  Backend AI Scaling Group List
@@ -35,29 +42,32 @@ import {IronFlex, IronFlexAlignment} from "../plastics/layout/iron-flex-layout-c
 
  <backend-ai-scaling-group-list active></backend-ai-scaling-group-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-scaling-group-list
  */
 
-@customElement("backend-ai-scaling-group-list")
+@customElement('backend-ai-scaling-group-list')
 export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this._controlRenderer.bind(this);
   @property({type: Number}) selectedIndex = 0;
-  @property({type: Array}) domains = Array();
-  @property({type: Array}) scalingGroups = Array();
-  @property({type: Array}) schedulerTypes = Array();
+  @property({type: Array}) domains;
+  @property({type: Array}) scalingGroups;
+  @property({type: Array}) schedulerTypes;
 
   constructor() {
     super();
     this.active = false;
     this.schedulerTypes = ['fifo', 'lifo', 'drf'];
+    this.scalingGroups = [];
+    this.domains = [];
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
+      // language=CSS
       css`
         h4 {
           font-weight: 200;
@@ -79,15 +89,22 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           margin-top: 20px;
         }
 
-        backend-ai-dialog wl-textfield,
         backend-ai-dialog wl-textarea,
         backend-ai-dialog wl-select {
           margin-bottom: 20px;
-          --input-font-family: Roboto, Noto, sans-serif;
+          --input-font-family: var(--general-font-family);
+        }
+
+        backend-ai-dialog mwc-textfield,
+        backend-ai-dialog mwc-textarea {
+          width: 100%;
+          margin: 10px auto 20px auto;
+          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 
         backend-ai-dialog wl-label {
-          --label-font-family: Roboto, Noto, sans-serif;
+          --label-font-family: 'Ubuntu', Roboto;
           --label-color: #282828;
           margin-bottom: 5px;
         }
@@ -103,6 +120,26 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           --input-label-color-disabled: #222;
           --input-label-font-size: 12px;
           --input-border-style-disabled: 1px solid #ccc;
+        }
+
+        mwc-button[outlined] {
+          width: 100%;
+          margin: 10px auto;
+          background-image: none;
+          --mdc-button-outline-width: 2px;
+          --mdc-theme-primary: #38bd73;
+          --mdc-on-theme-primary: #38bd73;
+        }
+
+        mwc-textarea {
+          height: 150px;
+        }
+
+        mwc-select {
+          width:100%;
+          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-select-fill-color: transparent;
         }
 
         backend-ai-dialog {
@@ -126,10 +163,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       return;
     }
     // If disconnected
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         globalThis.backendaiclient.scalingGroup.list_available()
-          .then(res => {
+          .then((res) => {
             this.scalingGroups = res.scaling_groups;
           });
 
@@ -137,11 +174,11 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           .then(({domains}) => {
             this.domains = domains;
             this.requestUpdate(); // without this render is called beforehands, so update is required
-          })
+          });
       }, true);
     } else { // already connected
       globalThis.backendaiclient.scalingGroup.list_available()
-        .then(res => {
+        .then((res) => {
           this.scalingGroups = res.scaling_groups;
         });
 
@@ -149,8 +186,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         .then(({domains}) => {
           this.domains = domains;
           this.requestUpdate(); // without this render is called beforehands, so update is required
-        })
-
+        });
     }
   }
 
@@ -159,17 +195,17 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       html`
         <lablup-shields
           app=""
-          color=${rowData.item.is_active ? "green" : "red"}
-          description=${rowData.item.is_active ? "active" : "inactive"}
+          color=${rowData.item.is_active ? 'green' : 'red'}
+          description=${rowData.item.is_active ? 'active' : 'inactive'}
           ui="flat"
         ></lablup-shields>
     `,
       root
-    )
+    );
   }
 
   _indexRenderer(root, column, rowData) {
-    let idx = rowData.index + 1;
+    const idx = rowData.index + 1;
     render(
       html`
         <div>${idx}</div>
@@ -188,6 +224,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
   /**
    * Render control units - settings (modify-scaling-group), delete (delete-scaling-group)
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   _controlRenderer(root, column, rowData) {
     render(
@@ -200,86 +240,116 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             icon="settings"
             class="fg blue"
             @click=${() => {
-        this.selectedIndex = rowData.index;
-        this.shadowRoot.querySelector("#modify-scaling-group-active").checked = this.scalingGroups[rowData.index].is_active;
-        this._launchDialogById("#modify-scaling-group-dialog")
-      }}
+    this.selectedIndex = rowData.index;
+    this.shadowRoot.querySelector('#modify-scaling-group-active').checked = this.scalingGroups[rowData.index].is_active;
+    this._launchDialogById('#modify-scaling-group-dialog');
+  }}
           ><wl-icon>settings</wl-icon></wl-button>
           <wl-button fab flat inverted
             icon="delete"
             class="fg red"
             @click=${() => {
-        this.selectedIndex = rowData.index;
-        this._launchDialogById("#delete-scaling-group-dialog")
-      }}><wl-icon>delete</wl-icon></wl-button>
+    this.selectedIndex = rowData.index;
+    this._launchDialogById('#delete-scaling-group-dialog');
+  }}><wl-icon>delete</wl-icon></wl-button>
         </div>
       `, root
-    )
+    );
+  }
+
+  _validateResourceGroupName() {
+    const scalingGroupNames = this.scalingGroups.map((scalingGroup) => scalingGroup['name']);
+    const scalingGroupInfo = this.shadowRoot.querySelector('#scaling-group-name');
+    scalingGroupInfo.validityTransform = (value, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          scalingGroupInfo.validationMessage = _text('resourceGroup.ResourceGroupNameRequired');
+          return {
+            valid: nativeValidity.valid,
+            valueMissing: !nativeValidity.valid
+          };
+        } else {
+          scalingGroupInfo.validationMessage = _text('resourceGroup.EnterValidResourceGroupName');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        const isValid = !scalingGroupNames.includes(value);
+        if (!isValid) {
+          scalingGroupInfo.validationMessage = _text('resourceGroup.ResourceGroupAlreadyExist');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
+    };
   }
 
   /**
    * Create scaling group and associate scaling group with domain.
    * */
   _createScalingGroup() {
-    const scalingGroup = this.shadowRoot.querySelector("#scaling-group-name").value,
-      description = this.shadowRoot.querySelector("#scaling-group-description").value,
-      domain = this.shadowRoot.querySelector("#scaling-group-domain").value;
-
-    if (scalingGroup === "") {
-      this.notification.text = "Enter valid Resource group name";
-      this.notification.show();
-      this._hideDialogById("#create-scaling-group-dialog");
+    const scalingGroupEl = this.shadowRoot.querySelector('#scaling-group-name');
+    if (scalingGroupEl.checkValidity()) {
+      const scalingGroup = this.shadowRoot.querySelector('#scaling-group-name').value;
+      const description = this.shadowRoot.querySelector('#scaling-group-description').value;
+      const domain = this.shadowRoot.querySelector('#scaling-group-domain').value;
+      globalThis.backendaiclient.scalingGroup.create(scalingGroup, description)
+        .then(({create_scaling_group: res}) => {
+          if (res.ok) {
+            return globalThis.backendaiclient.scalingGroup.associate_domain(domain, scalingGroup);
+          } else {
+            /* error message will be handled in catch statement */
+            // this.notification.text = PainKiller.relieve(res.title);
+            // this.notification.detail = res.msg;
+            // this.notification.show();
+            return Promise.reject(res.msg);
+          }
+        })
+        .then(({associate_scaling_group_with_domain: res}) => {
+          if (res.ok) {
+            this.notification.text = _text('resourceGroup.ResourceGroupCreated');
+            this._refreshList();
+            this.shadowRoot.querySelector('#scaling-group-name').value = '';
+            this.shadowRoot.querySelector('#scaling-group-description').value = '';
+          } else {
+            this.notification.text = PainKiller.relieve(res.title);
+            this.notification.detail = res.msg;
+          }
+          this._hideDialogById('#create-scaling-group-dialog');
+          this.notification.show();
+        })
+        .catch((err) => {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err;
+          this._hideDialogById('#create-scaling-group-dialog');
+          this.notification.show(true, err);
+        });
+    } else {
+      scalingGroupEl.reportValidity();
       return;
     }
-
-    globalThis.backendaiclient.scalingGroup.create(scalingGroup, description)
-      .then(({create_scaling_group: res}) => {
-        if (res.ok) {
-          return globalThis.backendaiclient.scalingGroup.associate_domain(domain, scalingGroup);
-        } else {
-          this.notification.text = PainKiller.relieve(res.title);
-          this.notification.detail = res.msg;
-          this.notification.show();
-          return Promise.reject(res.msg);
-        }
-      })
-      .then(({associate_scaling_group_with_domain: res}) => {
-        if (res.ok) {
-          this.notification.text = "Resource group succesfully created";
-          this._refreshList();
-          this.shadowRoot.querySelector("#scaling-group-name").value = "";
-          this.shadowRoot.querySelector("#scaling-group-description").value = "";
-        } else {
-          this.notification.text = PainKiller.relieve(res.title);
-          this.notification.detail = res.msg;
-        }
-        this._hideDialogById("#create-scaling-group-dialog");
-        this.notification.show();
-      })
-      .catch(err => {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err;
-        this._hideDialogById("#create-scaling-group-dialog");
-        this.notification.show(true, err);
-      })
   }
 
   /**
    * Modify scaling group such as description, scheduler, is_active, and name.
    * */
   _modifyScalingGroup() {
-    const description = this.shadowRoot.querySelector("#modify-scaling-group-description").value,
-      scheduler = this.shadowRoot.querySelector("#modify-scaling-group-scheduler").value,
-      is_active = this.shadowRoot.querySelector("#modify-scaling-group-active").checked,
-      name = this.scalingGroups[this.selectedIndex].name;
+    const description = this.shadowRoot.querySelector('#modify-scaling-group-description').value;
+    const scheduler = this.shadowRoot.querySelector('#modify-scaling-group-scheduler').value;
+    const is_active = this.shadowRoot.querySelector('#modify-scaling-group-active').checked;
+    const name = this.scalingGroups[this.selectedIndex].name;
 
-    let input = {};
-    if (description !== this.scalingGroups[this.selectedIndex].description) input["description"] = description;
-    if (scheduler !== this.scalingGroups[this.selectedIndex].scheduler) input["scheduler"] = scheduler;
-    if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input["is_active"] = is_active;
+    const input = {};
+    if (description !== this.scalingGroups[this.selectedIndex].description) input['description'] = description;
+    if (scheduler !== this.scalingGroups[this.selectedIndex].scheduler) input['scheduler'] = scheduler;
+    if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input['is_active'] = is_active;
 
     if (Object.keys(input).length === 0) {
-      this.notification.text = "No changes made";
+      this.notification.text = _text('resourceGroup.NochangesMade');
       this.notification.show();
       return;
     }
@@ -287,23 +357,22 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     globalThis.backendaiclient.scalingGroup.update(name, input)
       .then(({modify_scaling_group}) => {
         if (modify_scaling_group.ok) {
-          this.notification.text = "Resource group successfully modified";
+          this.notification.text = _text('resourceGroup.ResourceGroupCreated');
           this._refreshList();
         } else {
           this.notification.text = PainKiller.relieve(modify_scaling_group.msg);
           this.notification.detail = modify_scaling_group.msg;
         }
-        this._hideDialogById("#modify-scaling-group-dialog");
+        this._hideDialogById('#modify-scaling-group-dialog');
         this.notification.show();
-      })
+      });
   }
 
   _deleteScalingGroup() {
     const name = this.scalingGroups[this.selectedIndex].name;
-
-    if (this.shadowRoot.querySelector("#delete-scaling-group").value !== name) {
-      this.notification.text = "Resource group name does not match!";
-      this._hideDialogById("#delete-scaling-group-dialog");
+    if (this.shadowRoot.querySelector('#delete-scaling-group').value !== name) {
+      this.notification.text = _text('resourceGroup.ResourceGroupNameNotMatch');
+      this._hideDialogById('#delete-scaling-group-dialog');
       this.notification.show();
       return;
     }
@@ -311,17 +380,19 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     globalThis.backendaiclient.scalingGroup.delete(name)
       .then(({delete_scaling_group}) => {
         if (delete_scaling_group.ok) {
-          this.notification.text = "Resource group successfully deleted";
+          this.notification.text = _text('resourceGroup.ResourceGroupDeleted');
           this._refreshList();
-          this.shadowRoot.querySelector("#delete-scaling-group").value = "";
+          this.shadowRoot.querySelector('#delete-scaling-group').value = '';
         } else {
           this.notification.text = PainKiller.relieve(delete_scaling_group.msg);
           this.notification.detail = delete_scaling_group.msg;
         }
 
-        this._hideDialogById("#delete-scaling-group-dialog");
+        this._hideDialogById('#delete-scaling-group-dialog');
         this.notification.show();
-      })
+      });
+    /* update selectedIndex to initial value */
+    this.selectedIndex = 0;
   }
 
   _refreshList() {
@@ -329,158 +400,158 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       .then(({scaling_groups}) => {
         this.scalingGroups = scaling_groups;
         this.requestUpdate(); // without this render is called beforehands, so update is required
-      })
+      });
   }
 
   render() {
     // languate=HTML
     return html`
       <h4 class="horizontal flex center center-justified layout">
-        <span>${_t("resourceGroup.ResourceGroups")}</span>
+        <span>${_t('resourceGroup.ResourceGroups')}</span>
         <span class="flex"></span>
-        <wl-button
-          class="fg blue"
-          id="add-scaling-group"
-          outlined
-          @click=${() => this._launchDialogById("#create-scaling-group-dialog")}
-        >
-          <wl-icon>add</wl-icon>
-          ${_t("button.Add")}
-        </wl-button>
+          <mwc-button
+              raised
+              id="add-scaling-group"
+              icon="add"
+              label="${_t('button.Add')}"
+              @click=${() => this._launchDialogById('#create-scaling-group-dialog')}>
+          </mwc-button>
       </h4>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scalingGroups}">
         <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.Name")}">
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Name')}">
           <template>
             <div> [[item.name]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.Description")}">
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Description')}">
           <template>
             <div> [[item.description]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.ActiveStatus")}" .renderer=${this._activeStatusRenderer}>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.ActiveStatus')}" .renderer=${this._activeStatusRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.Driver")}">
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Driver')}">
           <template>
             <div> [[item.driver]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.DriverOptions")}">
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.DriverOptions')}">
           <template>
             <div> [[item.driver_opts]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.Scheduler")}">
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}">
           <template>
             <div> [[item.scheduler]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t("resourceGroup.SchedulerOptions")}">
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.SchedulerOptions')}">
           <template>
             <div> [[item.scheduler_opts]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t("general.Control")}" .renderer=${this._boundControlRenderer}>
+        <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${_t("resourceGroup.CreateResourceGroup")}</span>
+        <span slot="title">${_t('resourceGroup.CreateResourceGroup')}</span>
 
         <div slot="content" class="login-panel intro centered">
-          <wl-textfield
+          <mwc-select
+            id="scaling-group-domain"
+            label="${_t('resourceGroup.SelectDomain')}">
+            ${this.domains.map( (e) => html`
+              <mwc-list-item style="height:auto;" value="${e.name}">
+                ${e.name}
+              </mwc-list-item>
+            `)}
+          </mwc-select>
+          <mwc-textfield
             type="text"
             id="scaling-group-name"
-            label="${_t("resourceGroup.ResourceGroupName")}"
-          ></wl-textfield>
-          <wl-textarea
+            label="${_t('resourceGroup.ResourceGroupName')}"
+            maxLength="64"
+            placeholder="${_t('maxLength.64chars')}"
+            validationMessage="${_t('data.explorer.ValueRequired')}"
+            required
+            autoValidate
+            @input="${() => this._validateResourceGroupName()}"
+          ></mwc-textfield>
+          <mwc-textarea
             name="description"
             id="scaling-group-description"
-            label="${_t("resourceGroup.Description")}"
-          ></wl-textarea>
-          <wl-select
-            id="scaling-group-domain"
-            label="${_t("resourceGroup.SelectDomain")}"
-          >
-            <option disabled>${_t("resourceGroup.SelectDomain")}</option>
-            ${this.domains.map(e => html`
-                <option value="${e.name}">
-                  ${e.name}
-                </option>
-              `
-    )}
-          </wl-select>
+            label="${_t('resourceGroup.Description')}"
+            maxLength="512"
+            placeholder="${_t('maxLength.512chars')}"
+          ></mwc-textarea>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="fg blue create-button" id="create-user-button" outlined type="button"
-            @click="${this._createScalingGroup}">
-            <wl-icon>add</wl-icon>
-            ${_t("button.Create")}
-          </wl-button>
+          <mwc-button
+              unelevated
+              id="create-user-button"
+              class="create-button"
+              icon="add"
+              label="${_t('button.Create')}"
+              @click="${this._createScalingGroup}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${_t("resourceGroup.ModifyResourceGroup")}</span>
-
-        <div slot="content" class="login-panel intro centered">
-          <wl-textarea
+        <span slot="title">${_t('resourceGroup.ModifyResourceGroup')}</span>
+        <div slot="content">
+          <div class="horizontal layout flex wrap center justified">
+            <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
+              ${_t('resourceGroup.Active')}
+            </p>
+            <mwc-switch id="modify-scaling-group-active" style="margin-right:10px;">
+            </mwc-switch>
+          </div>
+          <mwc-select
+            id="modify-scaling-group-scheduler"
+            label="${_t('resourceGroup.SelectScheduler')}"
+            value="${this.scalingGroups.length === 0 ? '' :
+    this.scalingGroups[this.selectedIndex].scheduler}">
+            ${this.schedulerTypes.map((sched) => html`
+            <mwc-list-item value="${sched}">${sched}</mwc-list-item>
+            `)}
+          </mwc-select>
+          <mwc-textarea
             id="modify-scaling-group-description"
             type="text"
-            label="Description"
-            value=${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].description}
-          ></wl-textarea>
-          <wl-select id="modify-scaling-group-scheduler" label="Select scheduler"
-              value="${this.scalingGroups.length === 0 ? "" : this.scalingGroups[this.selectedIndex].scheduler}">
-            <option disabled>Select Scheduler</option>
-            ${this.schedulerTypes.map(sched => html`
-              <option value="${sched}">${sched}</option>
-            `)}
-          </wl-select>
-          <wl-label for="switch">
-            ${_t("resourceGroup.ActiveStatus")}
-          </wl-label>
-          <div id="switch">
-            <wl-switch
-              id="modify-scaling-group-active"
-            ></wl-switch>
-          </div>
+            label="${_t('resourceGroup.Description')}"
+            value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].description}
+          ></mwc-textarea>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button
-            class="fg blue"
-            type="button"
-            outlined
-            style="width: 100%; box-sizing: border-box;"
+          <mwc-button
+            unelevated
+            icon="save"
+            label="${_t('button.Save')}"
             @click=${this._modifyScalingGroup}
-          >
-            <wl-icon>check</wl-icon>
-            ${_t("button.Save")}
-          </wl-button>
+            ></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-scaling-group-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${_t("dialog.warning.CannotBeUndone")}</span>
+        <span slot="title">${_t('dialog.warning.CannotBeUndone')}</span>
         <div slot="content">
-          <wl-textfield
+          <mwc-textfield
             id="delete-scaling-group"
             type="text"
-            label="${_t("resourceGroup.TypeResourceGroupNameToDelete")}"
-          ></wl-textfield>
+            label="${_t('resourceGroup.TypeResourceGroupNameToDelete')}"
+            maxLength="64"
+            placeholder="${_t('maxLength.64chars')}"
+          ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button
-            class="fg red delete"
-            type="button"
+          <mwc-button
             outlined
+            icon="delete"
+            label="${_t('button.Delete')}"
             style="width: 100%; box-sizing: border-box;"
-            @click=${this._deleteScalingGroup}
-          >
-            <wl-icon>delete</wl-icon>
-            ${_t("button.Delete")}
-          </wl-button>
-        </div>
+            @click="${this._deleteScalingGroup}">
+            </mwc-button>
+       </div>
       </backend-ai-dialog>
     `;
   }
@@ -488,6 +559,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-scaling-group-list": BackendAIScalingGroupList;
+    'backend-ai-scaling-group-list': BackendAIScalingGroupList;
   }
 }

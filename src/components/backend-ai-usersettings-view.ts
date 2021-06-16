@@ -1,10 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 import {store} from '../store';
 
@@ -24,8 +24,12 @@ import 'weightless/tab-group';
 import 'weightless/icon';
 import 'weightless/button';
 
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
+import '@material/mwc-button/mwc-button';
 
 import './backend-ai-dialog';
+import './lablup-activity-panel';
 import './lablup-codemirror';
 import './lablup-loading-spinner';
 import './backend-ai-error-log-list';
@@ -40,11 +44,11 @@ import './backend-ai-usersettings-general-list';
   ...
  </backend-ai-usersettings-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-usersettings-view
  */
 
-@customElement("backend-ai-usersettings-view")
+@customElement('backend-ai-usersettings-view')
 export default class BackendAiUserSettingsView extends BackendAIPage {
   public spinner: any;
 
@@ -63,14 +67,14 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
       rocm_gpu: false,
       tpu: false,
       scheduler: 'fifo'
-    }
+    };
   }
 
   static get is() {
     return 'backend-ai-usersettings-view';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -83,36 +87,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         span.spinner {
           font-size: 9px;
           margin-right: 5px;
-        }
-
-        div.description,
-        span.description {
-          font-size: 11px;
-          margin-top: 5px;
-          margin-right: 5px;
-        }
-
-        .setting-item {
-          margin: 15px 10px;
-          width: 340px;
-        }
-
-        .setting-desc {
-          width: 300px;
-        }
-
-        .setting-button {
-          width: 35px;
-        }
-
-        .setting-item wl-button {
-          --button-bg: transparent;
-          --button-bg-hover: var(--paper-teal-100);
-          --button-bg-active: var(--paper-teal-100);
-          --button-bg-disabled: #cccccc;
-          --button-color: var(--paper-teal-100);
-          --button-color-hover: var(--paper-teal-100);
-          --button-color-disabled: #cccccc;
         }
 
         wl-card > div {
@@ -146,6 +120,56 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           --tab-bg-filled: var(--paper-teal-200);
           --tab-bg-active-hover: var(--paper-teal-200);
         }
+
+        h3.tab {
+          background-color: var(--general-tabbar-background-color);
+          border-radius: 5px 5px 0px 0px;
+          margin: 0px auto;
+        }
+
+        mwc-tab-bar {
+          --mdc-theme-primary: var(--general-sidebar-selected-color);
+          --mdc-text-transform: none;
+          --mdc-tab-color-default: var(--general-tabbar-background-color);
+          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
+        }
+
+        mwc-button {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+        }
+
+        mwc-button[unelevated] {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+        }
+
+        mwc-button[outlined] {
+          background-image: none;
+          --mdc-button-outline-width: 2px;
+          --mdc-button-disabled-outline-color: var(--general-button-background-color);
+          --mdc-button-disabled-ink-color: var(--general-button-background-color);
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+        }
+
+        mwc-button.log {
+          margin: 0px 10px;
+        }
+
+        .outer-space {
+          margin: 20px;
+        }
+
+        @media screen and (max-width: 750px) {
+          mwc-button {
+            width: auto;
+          }
+          mwc-button > span {
+            display: none;
+          }
+        }
       `];
   }
 
@@ -153,50 +177,65 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <wl-card class="item">
-        <h3 class="tab horizontal wrap layout">
-          <wl-tab-group>
-            <wl-tab value="general" checked @click="${(e) => this._showTab(e.target)}" >${_t("usersettings.General")}</wl-tab>
-            <wl-tab value="logs" @click="${(e) => this._showTab(e.target)}">${_t("usersettings.Logs")}</wl-tab>
-          </wl-tab-group>
-        </h3>
-        <wl-card id="general" class="item tab-content">
-          <backend-ai-usersettings-general-list active="true"></backend-ai-usersettings-general-list>
-        </wl-card>
-        <wl-card id="logs" class="item tab-content" style="display:none;">
-          <h3 class="horizontal center layout">
-            <span>${_t("logs.LogMessages")}</span>
-            <span class="mini" style="font-size:13px;padding-left:15px;">${_t("logs.UpTo5000Logs")}</span>
-            <span class="flex"></span>
-            <wl-button class="fg cyan" inverted outlined @click="${() => this._refreshLogs()}" style="margin: 0px 10px;">
-              <wl-icon>refresh</wl-icon>
-              ${_t("button.Refresh")}
-            </wl-button>
-            <wl-button class="fg teal" inverted outlined @click="${() => this._showClearLogsDialog()}" style="margin: 0px 10px;">
-              <wl-icon>delete</wl-icon>
-               ${_t("button.ClearLogs")}
-          </wl-button>
+        <lablup-activity-panel noheader narrow autowidth>
+        <div slot="message">
+          <h3 class="tab horizontal wrap layout">
+            <mwc-tab-bar>
+              <mwc-tab title="general" label="${_t('usersettings.General')}"
+                  @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="logs" label="${_t('usersettings.Logs')}"
+                  @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+            </mwc-tab-bar>
           </h3>
-          <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
-        </wl-card>
-      </wl-card>
+          <div id="general" class="item tab-content outer-space">
+            <backend-ai-usersettings-general-list active="true"></backend-ai-usersettings-general-list>
+          </div>
+          <div id="logs" class="item tab-content" style="display:none;">
+            <h3 class="horizontal center layout outer-space">
+              <span>${_t('logs.LogMessages')}</span>
+              <span class="mini" style="font-size:13px;padding-left:15px;">${_t('logs.UpTo3000Logs')}</span>
+              <span class="flex"></span>
+              <mwc-button
+                  class="log"
+                  icon="refresh"
+                  outlined
+                  @click="${() => this._refreshLogs()}">
+                <span>${_t('button.Refresh')}</span>
+              </mwc-button>
+              <mwc-button
+                  class="log"
+                  icon="delete"
+                  outlined
+                  @click="${() => this._showClearLogsDialog()}">
+                <span>${_t('button.ClearLogs')}</span>
+              </mwc-button>
+            </h3>
+            <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
+          </div>
+        </div>
+      </lablup-activity-panel>
       <backend-ai-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling>
-        <span slot="title">${_t("dialog.warning.LogDeletion")}</span>
-        <div slot="content">${_t("dialog.warning.CannotBeUndone")}</div>
+        <span slot="title">${_t('dialog.warning.LogDeletion')}</span>
+        <div slot="content">${_t('dialog.warning.CannotBeUndone')}</div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button inverted flat id="discard-removal"
-                     style="margin: 0 5px;"
-                     @click="${() => this._hideClearLogsDialog()}">${_t("button.No")}</wl-button>
-          <wl-button id="apply-removal" class="button"
-                     style="margin: 0 5px;"
-                     @click="${() => this._removeLogMessage()}">${_t("button.Yes")}</wl-button>
+          <mwc-button
+              class="operation"
+              id="discard-removal"
+              label="${_t('button.No')}"
+              @click="${() => this._hideClearLogsDialog()}"></mwc-button>
+          <mwc-button
+              unelevated
+              class="operation"
+              id="apply-removal"
+              label="${_t('button.Yes')}"
+              @click="${() => this._removeLogMessage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;
   }
 
   firstUpdated() {
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateSettings();
       }, true);
@@ -212,7 +251,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     });
     document.addEventListener('backend-ai-usersettings', () => {
       this._viewStateChanged(true);
-    })
+    });
   }
 
   /**
@@ -225,18 +264,19 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     const tab = params.tab;
     if (tab && tab === 'logs') {
       globalThis.setTimeout(() => {
-        const tabEl = this.shadowRoot.querySelector('wl-tab[value="logs"]');
+        const tabEl = this.shadowRoot.querySelector('mwc-tab[title="logs"]');
         tabEl.click();
       }, 0);
     } else {
       globalThis.setTimeout(() => {
-        const tabEl = this.shadowRoot.querySelector('wl-tab[value="general"]');
+        const tabEl = this.shadowRoot.querySelector('mwc-tab[title="general"]');
         tabEl.click();
       }, 0);
     }
   }
 
   updateSettings() {
+    return;
   }
 
   /**
@@ -250,15 +290,15 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
    * Remove log message.
    * */
   _removeLogMessage() {
-    let currentLogs = localStorage.getItem('backendaiconsole.logs');
+    const currentLogs = localStorage.getItem('backendaiwebui.logs');
     if (currentLogs) {
-      localStorage.removeItem('backendaiconsole.logs');
+      localStorage.removeItem('backendaiwebui.logs');
     }
-    let event = new CustomEvent("log-message-clear", {});
+    const event = new CustomEvent('log-message-clear', {});
     document.dispatchEvent(event);
-    localStorage.getItem('backendaiconsole.logs');
+    localStorage.getItem('backendaiwebui.logs');
     this.clearLogsDialog.hide();
-    this.notification.text = 'Log Messages have been removed.';
+    this.notification.text = _text('logs.LogMessageRemoved');
     this.notification.show();
     this.spinner.hide();
   }
@@ -274,8 +314,8 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
    * Refresh log messages.
    * */
   _refreshLogs() {
-    this.logGrid = JSON.parse(localStorage.getItem('backendaiconsole.logs') || '{}');
-    let event = new CustomEvent("log-message-refresh", this.logGrid);
+    this.logGrid = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '{}');
+    const event = new CustomEvent('log-message-refresh', this.logGrid);
     document.dispatchEvent(event);
   }
 
@@ -285,20 +325,20 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
    * @param {EventTarget} tab - clicked tab
    * */
   _showTab(tab) {
-    let els = this.shadowRoot.querySelectorAll(".tab-content");
+    const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this._activeTab = tab.value;
+    this._activeTab = tab.title;
     if (this._activeTab === 'logs') {
       this._refreshLogs();
     }
-    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-usersettings-view": BackendAiUserSettingsView;
+    'backend-ai-usersettings-view': BackendAiUserSettingsView;
   }
 }

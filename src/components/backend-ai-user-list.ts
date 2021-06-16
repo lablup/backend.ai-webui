@@ -1,9 +1,9 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
@@ -11,7 +11,7 @@ import {render} from 'lit-html';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
-import '@vaadin/vaadin-grid/theme/lumo/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
@@ -25,14 +25,20 @@ import 'weightless/snackbar';
 import 'weightless/switch';
 import 'weightless/textarea';
 import 'weightless/textfield';
-import {default as PainKiller} from "./backend-ai-painkiller";
-import {BackendAiStyles} from "./backend-ai-general-styles";
+
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-textarea/mwc-textarea';
+import '@material/mwc-switch/mwc-switch';
+
+import {default as PainKiller} from './backend-ai-painkiller';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning
-} from "../plastics/layout/iron-flex-layout-classes";
+} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
  Backend AI User List
@@ -46,17 +52,17 @@ import {
  ...
  </backend-ai-user-list>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-user-list
  */
 
-@customElement("backend-ai-user-list")
+@customElement('backend-ai-user-list')
 export default class BackendAIUserList extends BackendAIPage {
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) editMode = false;
   @property({type: Object}) users = Object();
   @property({type: Object}) userInfo = Object();
-  @property({type: Array}) userInfoGroups = Array();
+  @property({type: Array}) userInfoGroups = [];
   @property({type: String}) condition = 'active';
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) spinner;
@@ -71,7 +77,7 @@ export default class BackendAIUserList extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -93,9 +99,6 @@ export default class BackendAIUserList extends BackendAIPage {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-        }
-
-        backend-ai-dialog h4 {
           border-bottom: 1px solid #DDD;
         }
 
@@ -120,6 +123,11 @@ export default class BackendAIUserList extends BackendAIPage {
 
         div.configuration {
           width: 70px !important;
+        }
+
+        div.password-area {
+          width: 100%;
+          max-width: 322px;
         }
 
         backend-ai-dialog wl-textfield,
@@ -149,6 +157,29 @@ export default class BackendAIUserList extends BackendAIPage {
           --button-bg-active: var(--paper-green-600);
           color: var(--paper-green-900);
         }
+
+        mwc-button, mwc-button[unelevated], mwc-button[outlined] {
+          background-image: none;
+          --mdc-theme-primary: var(--general-button-background-color);
+          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-typography-font-family: var(--general-font-family);
+        }
+
+        mwc-textfield, mwc-textarea {
+          width: 100%;
+          --mdc-typography-font-family: var(--general-font-family);
+          --mdc-typography-textfield-font-size: 14px;
+          --mdc-typography-textarea-font-size: 14px;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+        }
+
+        p.label {
+          font-size: 16px;
+          font-family: var(--general-font-family);
+          color: var(--general-sidebar-color);
+          width: 270px;
+        }
       `];
   }
 
@@ -156,6 +187,9 @@ export default class BackendAIUserList extends BackendAIPage {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
+    this.addEventListener('user-list-updated', () => {
+      this.refresh();
+    });
   }
 
   /**
@@ -169,7 +203,7 @@ export default class BackendAIUserList extends BackendAIPage {
       return;
     }
     // If disconnected
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshUserData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
@@ -185,24 +219,24 @@ export default class BackendAIUserList extends BackendAIPage {
   _refreshUserData() {
     let is_active = true;
     switch (this.condition) {
-      case 'active':
-        is_active = true;
-        break;
-      default:
-        is_active = false;
+    case 'active':
+      is_active = true;
+      break;
+    default:
+      is_active = false;
     }
     this.spinner.hide();
-    let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
+    const fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
-      let users = response.users;
-      //Object.keys(users).map((objectKey, index) => {
-      //var user = users[objectKey];
+      const users = response.users;
+      // Object.keys(users).map((objectKey, index) => {
+      // var user = users[objectKey];
       // Blank for the next impl.
-      //});
+      // });
       this.users = users;
       this._totalUserCount = this.users.length;
-      //setTimeout(() => { this._refreshKeyData(status) }, 5000);
-    }).catch(err => {
+      // setTimeout(() => { this._refreshKeyData(status) }, 5000);
+    }).catch((err) => {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -251,13 +285,13 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   _signoutUser() {
-    globalThis.backendaiclient.user.delete(this.signoutUserName).then(response => {
+    globalThis.backendaiclient.user.delete(this.signoutUserName).then((response) => {
       this.notification.text = PainKiller.relieve('Signout finished.');
       this._refreshUserData();
       this.signoutUserDialog.hide();
-    }).catch((err) => {   // Signout failed
+    }).catch((err) => { // Signout failed
       console.log(err);
-      if (typeof err.message !== "undefined") {
+      if (typeof err.message !== 'undefined') {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
       } else {
@@ -268,12 +302,14 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   async _getUserData(user_id) {
-    let fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
+    const fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.get(user_id, fields);
   }
 
   refresh() {
     this._refreshUserData();
+    // update current grid to new data
+    this.shadowRoot.querySelector('#user-grid').render();
   }
 
   _isActive() {
@@ -285,16 +321,18 @@ export default class BackendAIUserList extends BackendAIPage {
    *
    * @param {Date} start
    * @param {Date} end
+   * @return {number} Days since start till end
    * */
   _elapsed(start, end) {
-    var startDate = new Date(start);
+    const startDate = new Date(start);
+    let endDate: Date;
     if (this.condition == 'active') {
-      var endDate = new Date();
+      endDate = new Date();
     } else {
-      var endDate = new Date();
+      endDate = new Date();
     }
-    var seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
-    var days = Math.floor(seconds / 86400);
+    const seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+    const days = Math.floor(seconds / 86400);
     return days;
   }
 
@@ -302,6 +340,7 @@ export default class BackendAIUserList extends BackendAIPage {
    * Date to UTC string
    *
    * @param {Date} d - date
+   * @return {string} UTC string
    * */
   _humanReadableTime(d) {
     return new Date(d).toUTCString();
@@ -325,8 +364,11 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   /**
-   * Return an unlimited mark if unlimited sign is included.
-   * */
+   * If value includes unlimited contents, mark as unlimited.
+   *
+   * @param {string} value - string value
+   * @return {string} ∞ when value contains -, 0, 'Unlimited', Infinity, 'Infinity'
+   */
   _markIfUnlimited(value) {
     if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
@@ -341,7 +383,7 @@ export default class BackendAIUserList extends BackendAIPage {
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
-   * */
+   */
   controlRenderer(root, column?, rowData?) {
     render(
       html`
@@ -373,10 +415,30 @@ export default class BackendAIUserList extends BackendAIPage {
     );
   }
 
-  _hideDialog(e) {
-    let hideButton = e.target;
-    let dialog = hideButton.closest('backend-ai-dialog');
-    dialog.hide();
+  /**
+   * Toggle password visible/invisible mode.
+   *
+   * @param {HTMLElement} element - password visibility toggle component
+   */
+  _togglePasswordVisibility(element) {
+    const isVisible = element.__on;
+    const password = element.closest('div').querySelector('mwc-textfield');
+    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+  }
+
+  /**
+   * Toggle password and confirm input field is required or not.
+   *
+   */
+  _togglePasswordInputRequired() {
+    const passwordEl = this.shadowRoot.querySelector('#password');
+    const password = passwordEl.value;
+    const confirmEl = this.shadowRoot.querySelector('#confirm');
+    const confirm = confirmEl.value;
+    passwordEl.required = (password === '' && confirm !== '') ? true : false;
+    confirmEl.required = (password !== '' && confirm === '') ? true : false;
+    passwordEl.reportValidity();
+    confirmEl.reportValidity();
   }
 
   /**
@@ -385,67 +447,89 @@ export default class BackendAIUserList extends BackendAIPage {
    * @param {Event} event - click SaveChanges button
    * */
   _saveChanges(event) {
-    const username = this.shadowRoot.querySelector('#username').value,
-      full_name = this.shadowRoot.querySelector('#full_name').value,
-      password = this.shadowRoot.querySelector('#password').value,
-      confirm = this.shadowRoot.querySelector('#confirm').value,
-      description = this.shadowRoot.querySelector('#description').value,
-      is_active = this.shadowRoot.querySelector('#is_active').checked,
-      need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
+    const username = this.shadowRoot.querySelector('#username').value;
+    const full_name = this.shadowRoot.querySelector('#full_name').value;
+    const passwordEl = this.shadowRoot.querySelector('#password');
+    const password = passwordEl.value;
+    const confirmEl = this.shadowRoot.querySelector('#confirm');
+    const confirm = confirmEl.value;
+    const description = this.shadowRoot.querySelector('#description').value;
+    const is_active = this.shadowRoot.querySelector('#is_active').checked;
+    const need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
+
+    this._togglePasswordInputRequired();
+
+    if (!passwordEl.checkValidity() || !confirmEl.checkValidity()) {
+      return;
+    }
 
     if (password !== confirm) {
-      this.notification.text = "Password and Confirmation do not match.";
+      this.notification.text = _text('environment.PasswordsDoNotMatch');
       this.notification.show();
       return;
     }
-    let input: any = Object();
 
-    if (password !== '')
+    const input: any = Object();
+
+    if (password !== '') {
       input.password = password;
+    }
 
-    if (username !== this.userInfo.username)
+    if (username !== this.userInfo.username) {
       input.username = username;
+    }
 
-    if (full_name !== this.userInfo.full_name)
+    if (full_name !== this.userInfo.full_name) {
       input.full_name = full_name;
+    }
 
-    if (description !== this.userInfo.description)
+    if (description !== this.userInfo.description) {
       input.description = description;
+    }
 
-    if (need_password_change !== this.userInfo.need_password_change)
+    if (need_password_change !== this.userInfo.need_password_change) {
       input.need_password_change = need_password_change;
+    }
 
-    if (is_active !== this.userInfo.is_active)
+    if (is_active !== this.userInfo.is_active) {
       input.is_active = is_active;
+    }
+
+    this.refresh();
 
     if (Object.entries(input).length === 0) {
       this._hideDialog(event);
 
-      this.notification.text = "No Changes Made";
+      this.notification.text = _text('environment.NoChangeMade');
       this.notification.show();
 
       return;
     }
 
-    globalThis.backendaiclient.user.modify(this.userInfo.email, input)
-      .then(res => {
+    // globalThis.backendaiclient.user.modify(this.userInfo.email, input)
+    globalThis.backendaiclient.user.update(this.userInfo.email, input)
+      .then((res) => {
         if (res.modify_user.ok) {
-          this.shadowRoot.querySelector("#user-info-dialog").hide();
+          this.shadowRoot.querySelector('#user-info-dialog').hide();
 
-          this.notification.text = "Successfully Modified";
+          this.notification.text = _text('environment.SuccessfullyModified');
           this.userInfo = {...this.userInfo, ...input, password: null};
           this._refreshUserData();
-          this.shadowRoot.querySelector("#password").value = "";
-          this.shadowRoot.querySelector("#confirm").value = "";
+          this.shadowRoot.querySelector('#password').value = '';
+          this.shadowRoot.querySelector('#confirm').value = '';
         } else {
-          this.notification.text = `Error: ${res.modify_user.msg}`;
-
-          this.shadowRoot.querySelector("#username").value = this.userInfo.username;
-          this.shadowRoot.querySelector("#description").value = this.userInfo.description;
+          this.notification.text = PainKiller.relieve(res.modify_user.msg);
+          this.shadowRoot.querySelector('#username').value = this.userInfo.username;
+          this.shadowRoot.querySelector('#description').value = this.userInfo.description;
         }
-
         this.notification.show();
-      })
+      });
+
+    // if updated user info is current user, then apply it right away
+    if (this.userInfo.email === globalThis.backendaiclient.email) {
+      const event = new CustomEvent('current-user-info-changed', {detail: input});
+      document.dispatchEvent(event);
+    }
   }
 
   render() {
@@ -456,116 +540,150 @@ export default class BackendAIUserList extends BackendAIPage {
                    aria-label="User list" id="user-grid" .items="${this.users}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-        <vaadin-grid-filter-column path="email" header="${_t("credential.UserID")}" resizable></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column resizable header="${_t("credential.Name")}" path="username"></vaadin-grid-filter-column>
-        <vaadin-grid-column resizable header="${_t("general.Control")}"
+        <vaadin-grid-filter-column path="email" header="${_t('credential.UserID')}" resizable></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column resizable header="${_t('credential.Name')}" path="username"></vaadin-grid-filter-column>
+        <vaadin-grid-column resizable header="${_t('general.Control')}"
             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="signout-user-dialog" fixed backdrop>
-        <span slot="title">Let's double-check</span>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
           <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>.</p>
-          <p>${_t("dialog.ask.DoYouWantToProceed")}</p>
+          <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
-        <div slot="footer" class="horizontal flex layout">
-          <div class="flex"></div>
-          <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t("button.Cancel")}</wl-button>
-          <wl-button class="ok" outlined @click="${() => this._signoutUser()}">${_t("button.Okay")}</wl-button>
+        <div slot="footer" class="horizontal end-justified flex layout distancing">
+          <mwc-button
+              label="${_t('button.Cancel')}"
+              @click="${(e) => this._hideDialog(e)}"></mwc-button>
+          <mwc-button
+              unelevated
+              label="${_t('button.Okay')}"
+              @click="${() => this._signoutUser()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="user-info-dialog" fixed backdrop narrowLayout>
         <div slot="title" class="horizontal center layout">
-          <span style="margin-right:15px;">${_t("credential.UserDetail")}</span>
+          <span style="margin-right:15px;">${_t('credential.UserDetail')}</span>
           <lablup-shields app="" description="user" ui="flat"></lablup-shields>
         </div>
-        <div slot="content" class="horizontal layout">
-          <div style="width:335px;">
-            <h4>${_t("credential.Information")}</h4>
-            <div role="listbox" style="margin: 0;">
-              <wl-textfield
-                label="${_t("credential.UserID")}"
-                disabled
-                value="${this.userInfo.email}">
-              </wl-textfield>
-              <wl-textfield
-                label="${_t("credential.UserName")}"
-                id="username"
-                ?disabled=${!this.editMode}
-                value="${this.userInfo.username}">
-              </wl-textfield>
-              <wl-textfield
-                label="${_t("credential.FullName")}"
-                id="full_name"
-                ?disabled=${!this.editMode}
-                value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}">
-              </wl-textfield>
+        <div slot="content" class="horizontal layout" style="overflow-x:hidden;">
+          <div>
+            <h4>${_text('credential.Information')}</h4>
+            <div role="listbox" class="center vertical layout">
+              <mwc-textfield
+                  disabled
+                  label="${_text('credential.UserID')}"
+                  pattern="^[a-zA-Z0-9_-]+$"
+                  value="${this.userInfo.email}"
+                  maxLength="64"
+                  helper="${_text('maxLength.64chars')}"></mwc-textfield>
+              <mwc-textfield
+                  ?disabled=${!this.editMode}
+                  label="${_text('credential.UserName')}"
+                  id="username"
+                  value="${this.userInfo.username}"
+                  maxLength="64"
+                  helper="${_text('maxLength.64chars')}"></mwc-textfield>
+              <mwc-textfield
+                  ?disabled=${!this.editMode}
+                  label="${_text('credential.FullName')}"
+                  id="full_name"
+                  value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}"
+                  maxLength="64"
+                  helper="${_text('maxLength.64chars')}"></mwc-textfield>
               ${this.editMode ? html`
-                <wl-textfield type="password" label="${_t("general.NewPassword")}" id="password"></wl-textfield>
-                <wl-textfield type="password" label="${_t("general.ConfirmPassword")}" id="confirm"></wl-textfield>`
-      : html``}
-              <wl-textarea label="${_t("credential.Description")}" id="description"
-                           value="${this.userInfo.description ? this.userInfo.description : ' '}"
-                           ?disabled=${!this.editMode}>
-              </wl-textarea>
+                <div class="horizontal layout password-area">
+                  <mwc-textfield
+                      type="password"
+                      id="password"
+                      autoValidate
+                      validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
+                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                      maxLength="64"
+                      label="${_text('general.NewPassword')}"
+                      @change=${() => this._togglePasswordInputRequired()}></mwc-textfield>
+                  <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                      @click="${(e) => this._togglePasswordVisibility(e.target)}">
+                  </mwc-icon-button-toggle>
+                </div>
+                <div class="horizontal layout password-area">
+                  <mwc-textfield
+                      type="password"
+                      id="confirm"
+                      autoValidate
+                      validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
+                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                      maxLength="64"
+                      @change=${() => this._togglePasswordInputRequired()}
+                      label="${_text('webui.menu.NewPasswordAgain')}"></mwc-textfield>
+                  <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                      @click="${(e) => this._togglePasswordVisibility(e.target)}">
+                  </mwc-icon-button-toggle>
+                </div>
+                <mwc-textarea
+                    type="text"
+                    id="description"
+                    label="${_text('credential.Description')}"
+                    placeholder="${_text('maxLength.500chars')}"
+                    value="${this.userInfo.description}"
+                    id="description"></mwc-textfield>`: html``}
               ${this.editMode ? html`
-                <wl-label label for="is_active_label" style="margin-bottom: auto">
-                 ${_t("credential.DescActiveUser")}
-                </wl-label>
-                <wl-label label id="is_active_label">
-                  <wl-switch
-                    id="is_active"
-                    ?checked=${this.userInfo.is_active}>
-                  </wl-switch>
-                </wl-label>
-                <wl-label label for="need_password_change_label" style="margin-bottom: auto">
-                  ${_t("credential.DescRequirePasswordChange")}
-                </wl-label>
-                <wl-label label id="need_password_change_label">
-                  <wl-switch id="need_password_change" ?checked=${this.userInfo.need_password_change}></wl-switch>
-                </wl-label>
-                <wl-button
-                  class="fg green"
-                  type="button"
-                  outlined
-                  @click=${e => this._saveChanges(e)}
-                  style="width: 305px; margin: 0 15px 10px 15px; box-sizing: border-box;">
-                  <wl-icon>check</wl-icon>
-                  ${_t("button.SaveChanges")}
-                </wl-button>` : html`
-                    <wl-textfield label="${_t("credential.DescActiveUser")}" disabled
-                                  value="${this.userInfo.is_active ? `Yes` : `No`}">
-                    </wl-textfield>
-                    <wl-textfield label="${_t("credential.DescRequirePasswordChange")}" disabled
-                                  value="${this.userInfo.need_password_change ? `Yes` : `No`}">
-                    </wl-textfield>
+                <div class="horizontal layout center" style="margin:10px;">
+                  <p class="label">${_text('credential.DescActiveUser')}</p>
+                  <mwc-switch
+                      id="is_active"
+                      ?checked="${this.userInfo.is_active}"></mwc-switch>
+                </div>
+                <div class="horizontal layout center" style="margin:10px;">
+                  <p class="label">${_text('credential.DescRequirePasswordChange')}</p>
+                  <mwc-switch
+                      id="need_password_change"
+                      ?checked=${this.userInfo.need_password_change}></mwc-switch>
+                </div>` : html`
+                    <mwc-textfield
+                        disabled
+                        label="${_text('credential.DescActiveUser')}"
+                        value="${this.userInfo.is_active ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+                    <mwc-textfield
+                        disabled
+                        label="${_text('credential.DescRequirePasswordChange')}"
+                        value="${this.userInfo.need_password_change ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
             `}
           </div>
         </div>
         ${this.editMode ? html`` : html`
-          <div style="width:270px;">
-            <h4>${_t("credential.Association")}</h4>
+          <div>
+            <h4>${_text('credential.Association')}</h4>
             <div role="listbox" style="margin: 0;">
               <wl-textfield
-                label="${_t("credential.Domain")}"
+                label="${_t('credential.Domain')}"
                 disabled
                 value="${this.userInfo.domain_name}">
               </wl-textfield>
               <wl-textfield
-                label="${_t("credential.Role")}"
+                label="${_t('credential.Role')}"
                 disabled
                 value="${this.userInfo.role}">
               </wl-textfield>
             </div>
-            <h4>${_t("credential.ProjectAndGroup")}</h4>
+            <h4>${_text('credential.ProjectAndGroup')}</h4>
             <div role="listbox" style="margin: 0;">
               <ul>
-              ${this.userInfoGroups.map(item => html`
+              ${this.userInfoGroups.map((item) => html`
                 <li>${item}</li>
               `)}
               </ul>
             </div>
           </div>
         `}
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout distancing">
+        ${this.editMode ? html`
+          <mwc-button
+              unelevated
+              label="${_t('button.SaveChanges')}"
+              icon="check"
+              @click=${(e) => this._saveChanges(e)}></mwc-button>`:html``}
         </div>
       </backend-ai-dialog>
     `;
@@ -574,6 +692,6 @@ export default class BackendAIUserList extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-user-list": BackendAIUserList;
+    'backend-ai-user-list': BackendAIUserList;
   }
 }

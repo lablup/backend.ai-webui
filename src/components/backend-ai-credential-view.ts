@@ -2,43 +2,41 @@
  * Backend.AI-credential-view
  */
 
-import {get as _text, translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-item/paper-item';
 
 import '@material/mwc-textfield/mwc-textfield';
-import "@material/mwc-list/mwc-list-item";
-import "@material/mwc-icon-button/mwc-icon-button";
-import "@material/mwc-menu/mwc-menu";
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-icon-button/mwc-icon-button';
+import '@material/mwc-menu/mwc-menu';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-select/mwc-select';
 
-import 'weightless/button';
-import 'weightless/icon';
-import 'weightless/card';
-import 'weightless/textfield';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/expansion';
 import 'weightless/checkbox';
 import 'weightless/label';
 
+import './lablup-activity-panel';
 import './backend-ai-credential-list';
 import './backend-ai-dialog';
 import './backend-ai-resource-policy-list';
 import './backend-ai-user-list';
-import {default as PainKiller} from "./backend-ai-painkiller";
+import {default as PainKiller} from './backend-ai-painkiller';
 
 import JsonToCsv from '../lib/json_to_csv';
 import {BackendAIPage} from './backend-ai-page';
-import {BackendAiStyles} from "./backend-ai-general-styles";
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning
-} from "../plastics/layout/iron-flex-layout-classes";
+} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
  Backend.AI Credential view page
@@ -49,9 +47,9 @@ import {
  ... content ...
  </backend-ai-credential-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  */
-@customElement("backend-ai-credential-view")
+@customElement('backend-ai-credential-view')
 export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Object}) cpu_resource = {};
   @property({type: Object}) ram_resource = {};
@@ -64,10 +62,11 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Object}) container_per_session_limit = {};
   @property({type: Array}) rate_metric = [1000, 2000, 3000, 4000, 5000, 10000, 50000];
   @property({type: Object}) resource_policies = Object();
-  @property({type: Array}) resource_policy_names = Array();
+  @property({type: Array}) resource_policy_names;
   @property({type: Boolean}) isAdmin = false;
+  @property({type: Boolean}) isSuperAdmin = false;
   @property({type: String}) _status = 'inactive';
-  @property({type: Array}) allowed_vfolder_hosts = Array();
+  @property({type: Array}) allowed_vfolder_hosts = [];
   @property({type: String}) default_vfolder_host = '';
   @property({type: String}) new_access_key = '';
   @property({type: String}) new_secret_key = '';
@@ -75,12 +74,14 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) exportToCsvDialog = Object();
   @property({type: String}) _defaultFileName = '';
+  @property({type: Number}) selectAreaHeight;
 
   constructor() {
     super();
+    this.resource_policy_names = [];
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -91,50 +92,61 @@ export default class BackendAICredentialView extends BackendAIPage {
       css`
         #new-keypair-dialog {
           min-width: 350px;
+          height: 100%;
         }
 
-        wl-button {
-          --button-bg: var(--paper-light-green-50);
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
+        div.card > h4 {
+          margin-bottom: 0px;
         }
 
-        wl-button.fab {
-          --button-bg: var(--paper-light-green-600);
-          --button-bg-hover: var(--paper-green-600);
-          --button-bg-active: var(--paper-green-900);
-        }
-
-        wl-icon.close {
-          color: black;
-        }
-
-        wl-card h3 {
+        div.card h3 {
           padding-top: 0;
           padding-right: 15px;
           padding-bottom: 0;
         }
 
-        wl-card wl-card {
+        div.card div.card {
           margin: 0;
           padding: 0;
           --card-elevation: 0;
         }
 
         wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-green-600);
+          border-radius: 5px 5px 0 0;
+          --tab-group-indicator-bg: var(--general-tabbar-button-color);
         }
 
         wl-tab {
-          --tab-color: #666;
-          --tab-color-hover: #222;
-          --tab-color-hover-filled: #222;
-          --tab-color-active: var(--paper-green-600);
-          --tab-color-active-hover: var(--paper-green-600);
-          --tab-color-active-filled: #ccc;
-          --tab-bg-active: var(--paper-lime-200);
-          --tab-bg-filled: var(--paper-lime-200);
-          --tab-bg-active-hover: var(--paper-lime-200);
+          border-radius: 5px 5px 0 0;
+          --tab-color: var(--general-sidepanel-color);
+          --tab-color-hover: #26272a;
+          --tab-color-hover-filled: var(--general-tabbar-button-color);
+          --tab-color-active:var(--general-tabbar-button-color);
+          --tab-color-active-hover: var(--general-tabbar-button-color);
+          --tab-color-active-filled: var(--general-tabbar-button-color);
+          --tab-bg-active: #535457;
+          --tab-bg-filled: #26272a;
+          --tab-bg-active-hover: #535457;
+        }
+
+        h3.tab {
+          background-color: var(--general-tabbar-background-color);
+          border-radius: 5px 5px 0 0;
+          margin: 0 auto;
+        }
+
+        mwc-tab-bar {
+          --mdc-theme-primary: var(--general-sidebar-selected-color);
+          --mdc-text-transform: none;
+          --mdc-tab-color-default: var(--general-tabbar-background-color);
+          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
+        }
+
+
+        mwc-list-item {
+          height: auto;
+          font-size: 12px;
+          --mdc-theme-primary: var(--general-sidebar-color);
         }
 
         wl-expansion {
@@ -152,9 +164,8 @@ export default class BackendAICredentialView extends BackendAIPage {
         wl-label {
           width: 100%;
           min-width: 60px;
-          font-weight: 400;
-          font-size: 11px;
-          --label-font-family: Roboto, Noto, sans-serif;
+          font-size: 10px; // 11px;
+          --label-font-family: 'Ubuntu', Roboto;
         }
 
         wl-label.folders {
@@ -169,44 +180,42 @@ export default class BackendAICredentialView extends BackendAIPage {
           width: 100%;
         }
 
-        wl-textfield {
-          width: 100%;
-          --input-state-color-invalid: red;
-          --input-padding-top-bottom: 0px;
-          --input-font-family: Roboto, Noto, sans-serif;
-        }
-
         wl-checkbox {
           --checkbox-size: 10px;
           --checkbox-border-radius: 2px;
-          --checkbox-bg-checked: var(--paper-green-800);
-          --checkbox-checkmark-stroke-color: var(--paper-lime-100);
-          --checkbox-color-checked: var(--paper-green-800);
+          --checkbox-bg-checked: var(--general-checkbox-color);
+          --checkbox-checkmark-stroke-color: white;
+          --checkbox-color-checked: white;
         }
 
         mwc-textfield {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-green-600);
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
+        }
+
+        mwc-textfield.resource-input {
+          width: 5rem;
         }
 
         mwc-textfield#export-file-name {
           margin-bottom: 10px;
         }
 
-        #new-user-dialog wl-textfield {
-          margin-bottom: 15px;
-        }
-
-        mwc-textfield {
-          width: 100%;
-          --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--paper-green-600);
+        mwc-textfield#id_user_name {
+          margin-bottom: 18px;
         }
 
         mwc-menu {
           --mdc-theme-surface: #f1f1f1;
           --mdc-menu-item-height : auto;
+        }
+
+        mwc-menu#dropdown-menu {
+          position: relative;
+          left: -10px;
+          top: 50px;
         }
 
         mwc-list-item {
@@ -224,6 +233,26 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         backend-ai-dialog {
           --component-min-width: 350px;
+          --component-max-width: 390px;
+        }
+
+        backend-ai-dialog h4 {
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          height: 20px;
+          border-bottom: 1px solid #DDD;
+        }
+
+        @media screen and (max-width: 805px) {
+          mwc-tab, mwc-button {
+            --mdc-typography-button-font-size: 10px;
+          }
+
+          wl-tab {
+            width: 5px;
+          }
         }
       `];
   }
@@ -235,19 +264,23 @@ export default class BackendAICredentialView extends BackendAIPage {
       this.shadowRoot.querySelector('#inactive-credential-list').refresh();
     }, true);
 
-    this.shadowRoot.querySelectorAll('wl-expansion').forEach(element => {
-      element.addEventListener("keydown", event => {
+    this.shadowRoot.querySelectorAll('wl-expansion').forEach((element) => {
+      element.addEventListener('keydown', (event) => {
         event.stopPropagation();
       }, true);
     });
 
-    if (typeof globalThis.backendaiclient === "undefined" || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._preparePage();
       });
     } else {
       this._preparePage();
     }
+    const userIdInput = this.shadowRoot.querySelector('#id_new_user_id');
+    this._addInputValidator(userIdInput);
+    // monkeypatch for height calculation.
+    this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '123px';
   }
 
   /**
@@ -258,6 +291,9 @@ export default class BackendAICredentialView extends BackendAIPage {
       this.disablePage();
     } else {
       this.isAdmin = true;
+      if (globalThis.backendaiclient.is_superadmin === true) {
+        this.isSuperAdmin = true;
+      }
     }
     this._activeTab = 'user-lists';
     this._addValidatorToPolicyInput();
@@ -285,12 +321,12 @@ export default class BackendAICredentialView extends BackendAIPage {
     await this.updateComplete;
     if (active === false) {
       this.shadowRoot.querySelector('#resource-policy-list').active = false;
-      this.shadowRoot.querySelector('#user-list').active = false;
+      this.shadowRoot.querySelector('#active-user-list').active = false;
       this._status = 'inactive';
       return;
     }
     this.shadowRoot.querySelector('#resource-policy-list').active = true;
-    this.shadowRoot.querySelector('#user-list').active = true;
+    this.shadowRoot.querySelector('#active-user-list').active = true;
     this._status = 'active';
   }
 
@@ -300,16 +336,22 @@ export default class BackendAICredentialView extends BackendAIPage {
   async _launchKeyPairDialog() {
     await this._getResourcePolicies();
     this.shadowRoot.querySelector('#new-keypair-dialog').show();
+
+    // initialize user_id
+    this.shadowRoot.querySelector('#id_new_user_id').value = '';
   }
 
   /**
    * Read the vfolder host information.
    */
   _readVFolderHostInfo() {
-    globalThis.backendaiclient.vfolder.list_hosts().then(response => {
+    globalThis.backendaiclient.vfolder.list_hosts().then((response) => {
       this.allowed_vfolder_hosts = response.allowed;
       this.default_vfolder_host = response.default;
-    }).catch(err => {
+      this.shadowRoot.querySelector('#allowed_vfolder-hosts').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#allowed_vfolder-hosts').select(0);
+      });
+    }).catch((err) => {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -322,7 +364,8 @@ export default class BackendAICredentialView extends BackendAIPage {
   /**
    * Launch a resouce policy dialog.
    */
-  _launchResourcePolicyDialog() {
+  async _launchResourcePolicyDialog() {
+    await this._getResourcePolicies();
     this._readVFolderHostInfo();
     this.shadowRoot.querySelector('#id_new_policy_name').mdcFoundation.setValid(true);
     this.shadowRoot.querySelector('#id_new_policy_name').isUiValid = true;
@@ -354,10 +397,16 @@ export default class BackendAICredentialView extends BackendAIPage {
       'max_concurrent_sessions',
       'max_containers_per_session',
     ]).then((response) => {
-      let policies = globalThis.backendaiclient.utils.gqlToObject(response.keypair_resource_policies, 'name');
-      let policyNames = globalThis.backendaiclient.utils.gqlToList(response.keypair_resource_policies, 'name');
+      const policies = globalThis.backendaiclient.utils.gqlToObject(response.keypair_resource_policies, 'name');
+      const policyNames = globalThis.backendaiclient.utils.gqlToList(response.keypair_resource_policies, 'name');
       this.resource_policies = policies;
       this.resource_policy_names = policyNames;
+      this.shadowRoot.querySelector('#resource-policy').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#resource-policy').select(0);
+      });
+      this.shadowRoot.querySelector('#rate-limit').layout(true).then(()=>{
+        this.shadowRoot.querySelector('#rate-limit').select(0);
+      });
     });
   }
 
@@ -365,29 +414,46 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Create a keypair to the user.
    */
   _addKeyPair() {
-    let is_active = true;
-    let is_admin = false;
-    let user_id;
-    if (this.shadowRoot.querySelector('#id_new_user_id').value != '') {
-      if (this.shadowRoot.querySelector('#id_new_user_id').invalid == true) {
-        return;
-      }
-      user_id = this.shadowRoot.querySelector('#id_new_user_id').value;
+    const is_active = true;
+    const is_admin = false;
+    const user_idEl = this.shadowRoot.querySelector('#id_new_user_id');
+    let user_id = '';
+
+    if (!user_idEl.checkValidity()) {
+      return;
     } else {
-      user_id = globalThis.backendaiclient.email;
+      user_id = user_idEl.value;
     }
-    let resource_policy = this.shadowRoot.querySelector('#resource-policy').value;
-    let rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
-    let access_key = this.shadowRoot.querySelector('#id_new_access_key').value;
-    let secret_key = this.shadowRoot.querySelector('#id_new_secret_key').value;
+    /* deprecate empty user_id regarded as superadmin email */
+    // user_id = globalThis.backendaiclient.email;
+
+    /* access_key and secret_key is auto-generated by the manager */
+    /*
+      let access_key = this.shadowRoot.querySelector('#id_new_user_id').value;
+      let secret_key = this.shadowRoot.querySelector('#id_new_secret_key').value;
+      globalThis.backendaiclient.keypair.add(user_id, is_active, is_admin,
+        resource_policy, rate_limit, access_key, secret_key).then(response => {
+    */
+
+    const resource_policy = this.shadowRoot.querySelector('#resource-policy').value;
+    const rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
     // Read resources
     globalThis.backendaiclient.keypair.add(user_id, is_active, is_admin,
-      resource_policy, rate_limit, access_key, secret_key).then(response => {
-      this.shadowRoot.querySelector('#new-keypair-dialog').hide();
-      this.notification.text = "Keypair successfully created.";
-      this.notification.show();
-      this.shadowRoot.querySelector('#active-credential-list').refresh();
-    }).catch(err => {
+      resource_policy, rate_limit).then((response) => {
+      if (response.create_keypair.ok) {
+        this.shadowRoot.querySelector('#new-keypair-dialog').hide();
+        this.notification.text = _text('credential.KeypairCreated');
+        this.notification.show();
+        this.shadowRoot.querySelector('#active-credential-list').refresh();
+      } else if (response.create_keypair.msg) {
+        const id_requested = response.create_keypair.msg.split(':')[1];
+        this.notification.text = _text('credential.UserNotFound') + id_requested;
+        this.notification.show();
+      } else {
+        this.notification.text = _text('dialog.ErrorOccurred');
+        this.notification.show();
+      }
+    }).catch((err) => {
       console.log(err);
       if (err && err.message) {
         this.shadowRoot.querySelector('#new-keypair-dialog').hide();
@@ -400,24 +466,22 @@ export default class BackendAICredentialView extends BackendAIPage {
 
   /**
    * Read resource policy and check validation.
+   *
+   * @return {Record<string, unknown>} input - K-V object for resource policy
    */
   _readResourcePolicyInput() {
-    let total_resource_slots = {};
-    let vfolder_hosts: Array<object> = [];
+    const total_resource_slots = {};
+    const vfolder_hosts: Array<string|null> = [];
     vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
-    try {
-      this._validateUserInput(this.cpu_resource);
-      this._validateUserInput(this.ram_resource);
-      this._validateUserInput(this.gpu_resource);
-      this._validateUserInput(this.fgpu_resource);
-      this._validateUserInput(this.concurrency_limit);
-      this._validateUserInput(this.idle_timeout);
-      this._validateUserInput(this.container_per_session_limit);
-      this._validateUserInput(this.vfolder_capacity);
-      this._validateUserInput(this.vfolder_max_limit);
-    } catch (err) {
-      throw err;
-    }
+    this._validateUserInput(this.cpu_resource);
+    this._validateUserInput(this.ram_resource);
+    this._validateUserInput(this.gpu_resource);
+    this._validateUserInput(this.fgpu_resource);
+    this._validateUserInput(this.concurrency_limit);
+    this._validateUserInput(this.idle_timeout);
+    this._validateUserInput(this.container_per_session_limit);
+    this._validateUserInput(this.vfolder_capacity);
+    this._validateUserInput(this.vfolder_max_limit);
 
     total_resource_slots['cpu'] = this.cpu_resource['value'];
     total_resource_slots['mem'] = this.ram_resource['value'] + 'g';
@@ -436,7 +500,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       }
     });
 
-    let input = {
+    const input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
       'max_concurrent_sessions': this.concurrency_limit['value'],
@@ -453,25 +517,25 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Add a new resource policy.
    */
   _addResourcePolicy() {
-    let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
-    if(!policy_info.checkValidity()) {
+    const policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
+    if (!policy_info.checkValidity()) {
       policy_info.reportValidity();
       return;
     }
     try {
-      let name_field = this.shadowRoot.querySelector('#id_new_policy_name');
+      const name_field = this.shadowRoot.querySelector('#id_new_policy_name');
       name_field.checkValidity();
-      let name = name_field.value;
+      const name = name_field.value;
       if (name === '') {
-        throw {"message": "Policy name should not be empty"};
+        throw new Error(_text('resourcePolicy.PolicyNameEmpty'));
       }
-      let input = this._readResourcePolicyInput();
-      globalThis.backendaiclient.resourcePolicy.add(name, input).then(response => {
+      const input = this._readResourcePolicyInput();
+      globalThis.backendaiclient.resourcePolicy.add(name, input).then((response) => {
         this.shadowRoot.querySelector('#new-policy-dialog').hide();
-        this.notification.text = "Resource policy successfully created.";
+        this.notification.text = _text('resourcePolicy.SuccessfullyCreated');
         this.notification.show();
         this.shadowRoot.querySelector('#resource-policy-list').refresh();
-      }).catch(err => {
+      }).catch((err) => {
         console.log(err);
         if (err && err.message) {
           this.shadowRoot.querySelector('#new-policy-dialog').hide();
@@ -490,49 +554,18 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Add an user with user information.
    */
   _addUser() {
-    const email = this.shadowRoot.querySelector('#id_user_email').value,
-      name = this.shadowRoot.querySelector('#id_user_name').value,
-      password = this.shadowRoot.querySelector('#id_user_password').value,
-      confirm = this.shadowRoot.querySelector('#id_user_confirm').value;
+    const emailEl = this.shadowRoot.querySelector('#id_user_email');
+    const nameEl = this.shadowRoot.querySelector('#id_user_name');
+    const passwordEl = this.shadowRoot.querySelector('#id_user_password');
+    const confirmEl = this.shadowRoot.querySelector('#id_user_confirm');
 
-    // email verification
-    if (email !== '') {
-      // invalid email
-      if (this.shadowRoot.querySelector('#id_user_email').hasAttribute('invalid')) {
-        this.notification.text = "Email Is Invalid!";
-        this.notification.show();
-        return;
-      }
-    } else {
-      // empty email
-      this.notification.text = "Please Input User Id(Email)!";
-      this.notification.show();
-      return;
-    }
+    const email = emailEl.value;
+    // if name value is empty, it will be covered by the username of email address.
+    const name = nameEl.value !== '' ? nameEl.value : email.split('@')[0];
+    const password = passwordEl.value;
 
-    // username verification
-    if (name === '') {
-      this.notification.text = "Username Is Empty!";
-      this.notification.show();
-      return;
-    }
-
-    if (this.shadowRoot.querySelector("#id_user_password").getAttribute("invalid") !== null) {
-      this.notification.text = "Password must contain at least one alphabet, one digit, and one special character";
-      this.notification.show();
-      return;
-    }
-
-    // password - confirm verification
-    if (password === '') {
-      this.notification.text = "Password Is Empty!";
-      this.notification.show();
-      return;
-    }
-
-    if (password !== confirm) {
-      this.notification.text = "Confirmation Does Not Match With Original Password!";
-      this.notification.show();
+    // if any input value is invalid, it returns.
+    if (!emailEl.checkValidity() || !passwordEl.checkValidity() || !confirmEl.checkValidity()) {
       return;
     }
 
@@ -549,19 +582,19 @@ export default class BackendAICredentialView extends BackendAIPage {
     };
 
     globalThis.backendaiclient.group.list()
-      .then(res => {
-        const default_id = res.groups.find(x => x.name === 'default').id;
-        return Promise.resolve(globalThis.backendaiclient.user.add(email, {...input, 'group_ids': [default_id]}));
+      .then((res) => {
+        const default_id = res.groups.find((x) => x.name === 'default').id;
+        return Promise.resolve(globalThis.backendaiclient.user.create(email, {...input, 'group_ids': [default_id]}));
       })
-      .then(res => {
+      .then((res) => {
         this.shadowRoot.querySelector('#new-user-dialog').hide();
         if (res['create_user'].ok) {
-          this.notification.text = "User successfully created";
+          this.notification.text = _text('credential.UserAccountCreated');
 
-          this.shadowRoot.querySelector('#user-list').refresh();
+          this.shadowRoot.querySelector('#active-user-list').refresh();
         } else {
-          console.error(res['create_user'].msg);
-          this.notification.text = "Error on user creation";
+          // console.error(res['create_user'].msg);
+          this.notification.text = _text('credential.UserAccountCreatedError');
         }
         this.notification.show();
 
@@ -569,23 +602,23 @@ export default class BackendAICredentialView extends BackendAIPage {
         this.shadowRoot.querySelector('#id_user_name').value = '';
         this.shadowRoot.querySelector('#id_user_password').value = '';
         this.shadowRoot.querySelector('#id_user_confirm').value = '';
-      })
+      });
   }
 
   /**
    * Modify a resouce policy.
    */
   _modifyResourcePolicy() {
-    let name = this.shadowRoot.querySelector('#id_new_policy_name').value;
+    const name = this.shadowRoot.querySelector('#id_new_policy_name').value;
     try {
-      let input = this._readResourcePolicyInput();
+      const input = this._readResourcePolicyInput();
 
-      globalThis.backendaiclient.resourcePolicy.mutate(name, input).then(response => {
+      globalThis.backendaiclient.resourcePolicy.mutate(name, input).then((response) => {
         this.shadowRoot.querySelector('#new-policy-dialog').close();
-        this.notification.text = "Resource policy successfully updated.";
+        this.notification.text = _text('resourcePolicy.SuccessfullyUpdated');
         this.notification.show();
         this.shadowRoot.querySelector('#resource-policy-list').refresh();
-      }).catch(err => {
+      }).catch((err) => {
         console.log(err);
         if (err && err.message) {
           this.shadowRoot.querySelector('#new-policy-dialog').close();
@@ -594,7 +627,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           this.notification.show(true, err);
         }
       });
-    } catch(err){
+    } catch (err) {
       this.notification.text = err.message;
       this.notification.show();
     }
@@ -604,8 +637,8 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Disable the page.
    */
   disablePage() {
-    var els = this.shadowRoot.querySelectorAll(".admin");
-    for (var x = 0; x < els.length; x++) {
+    const els = this.shadowRoot.querySelectorAll('.admin');
+    for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
   }
@@ -613,43 +646,59 @@ export default class BackendAICredentialView extends BackendAIPage {
   /**
    * Display the tab.
    *
-   * @param button
+   * @param {any} tab - Tab webcomponent
    */
   _showTab(tab) {
-    var els = this.shadowRoot.querySelectorAll(".tab-content");
-    for (var x = 0; x < els.length; x++) {
+    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this._activeTab = tab.value;
-    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+    this._activeTab = tab.title;
+    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
+    let tabKeyword;
+    let innerTab;
+    // show inner tab(active) after selecting outer tab
+    switch (this._activeTab) {
+    case 'user-lists':
+    case 'credential-lists':
+      tabKeyword = this._activeTab.substring(0, this._activeTab.length - 1); // to remove '-s'.
+      innerTab = this.shadowRoot.querySelector('wl-tab[value=active-' + tabKeyword + ']');
+      innerTab.checked = true;
+      this._showList(innerTab);
+      break;
+    default:
+      break;
+    }
   }
 
   /**
    * Display the list.
    *
-   * @param button
+   * @param {any} list - List webcomponent
    */
   _showList(list) {
-    var els = this.shadowRoot.querySelectorAll(".list-content");
-    for (var x = 0; x < els.length; x++) {
+    const els = this.shadowRoot.querySelectorAll('.list-content');
+    for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
     this.shadowRoot.querySelector('#' + list.value).style.display = 'block';
+    const event = new CustomEvent('user-list-updated', {});
+    this.shadowRoot.querySelector('#' + list.value).dispatchEvent(event);
   }
 
   /**
-   * Set a wlTextEl value according to toggle checkbox checked state.
+   * Set a TextEl value according to toggle checkbox checked state.
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _toggleCheckbox(e) {
     const checkEl = e.target;
     const checked = checkEl.checked;
-    const wlTextEl = checkEl.closest('div').querySelector('wl-textfield');
-    wlTextEl.disabled = checked;
-    if (!wlTextEl.disabled) {
-      if (wlTextEl.value === '') {
-        wlTextEl.value = 0;
+    const TextEl = checkEl.closest('div').querySelector('mwc-textfield');
+    TextEl.disabled = checked;
+    if (!TextEl.disabled) {
+      if (TextEl.value === '') {
+        TextEl.value = 0;
       }
     }
   }
@@ -660,35 +709,34 @@ export default class BackendAICredentialView extends BackendAIPage {
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _validateResourceInput(e) {
-    const textfield = e.target.closest('wl-textfield');
-    const checkbox_el = textfield.closest('div').querySelector('.unlimited');
-    let checkbox;
-    if (checkbox_el) {
-      checkbox = checkbox_el.querySelector('wl-checkbox');
-    } else {
-      checkbox = null;
+    const textfield = e.target.closest('mwc-textfield');
+    const checkbox_el = textfield.closest('div').querySelector('wl-label.unlimited');
+    const checkbox = checkbox_el ? checkbox_el.querySelector('wl-checkbox') : null;
+    const countDecimals = (value: number) => {
+      return value % 1 ? value.toString().split('.')[1].length : 0;
+    };
+
+    if (textfield.classList.contains('discrete')) {
+      textfield.value = Math.round(textfield.value);
     }
 
-    if (textfield.value < 0) {
-      textfield.value = 0;
+    if (textfield.value <= 0) {
+      // concurrency job and container-per-session limit must be upper than 0.
+      textfield.value = ((textfield.id === 'concurrency-limit') || (textfield.id === 'container-per-session-limit')) ? 1 : 0;
     }
 
-    if (textfield.value === '') {
-      try {
-        if (!checkbox || !checkbox['checked']) {
-          textfield['required'] = true;
-          textfield.focus();
-          throw { "message" : "Please input value or check unlimited." };
-        }
-        else {
-          textfield['required'] = false;
-          textfield.value = '';
-        }
-      } catch (err) {
-        this.notification.text = err.message;
-        this.notification.show();
-      }
+    if (!textfield.valid) {
+      const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
+      textfield.value = (decimal_point > 0) ? parseFloat(textfield.value).toFixed(decimal_point) : Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
     }
+    // automatically check when textfield is min
+    if (checkbox) {
+      textfield.disabled = checkbox.checked = (textfield.value == parseFloat(textfield.min));
+    }
+  }
+
+  _updateUnlimitedValue(value) {
+    return ['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value) ? '' : value;
   }
 
   /**
@@ -701,7 +749,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       resource.value = '';
     } else {
       if (resource.value === '') {
-          throw {"message" : "Cannot create Resource Policy. Please check input values." };
+        throw new Error(_text('resourcePolicy.CannotCreateResourcePolicy'));
       }
     }
   }
@@ -710,10 +758,10 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Add validator to policy input.
    */
   _addValidatorToPolicyInput() {
-    let policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
+    const policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
     policy_info.validityTransform = (value, nativeValidity) => {
       if (!nativeValidity) {
-        policy_info.validationMessage = _text("credential.validation.PolicyName");
+        policy_info.validationMessage = _text('credential.validation.PolicyName');
         return {
           valid: false,
           valueMissing: true
@@ -721,30 +769,28 @@ export default class BackendAICredentialView extends BackendAIPage {
       }
       if (!nativeValidity.valid) {
         if (nativeValidity.patternMismatch) {
-          policy_info.validationMessage = _text("credential.validation.LetterNumber-_dot");
+          policy_info.validationMessage = _text('credential.validation.LetterNumber-_dot');
           return {
             valid: nativeValidity.valid,
             patternMismatch: !nativeValidity.valid
           };
-        }
-        else if (nativeValidity.valueMissing) {
-          policy_info.validationMessage = _text("credential.validation.PolicyName");
+        } else if (nativeValidity.valueMissing) {
+          policy_info.validationMessage = _text('credential.validation.PolicyName');
           return {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid
-          }
-        }
-        else {
-          policy_info.validationMessage = _text("credential.validation.LetterNumber-_dot");
+          };
+        } else {
+          policy_info.validationMessage = _text('credential.validation.LetterNumber-_dot');
           return {
             valid: nativeValidity.valid,
             patternMismatch: !nativeValidity.valid,
-          }
+          };
         }
       } else {
         const isValid = !this.resource_policy_names.includes(value);
         if (!isValid) {
-          policy_info.validationMessage = _text("credential.validation.NameAlreadyExists");
+          policy_info.validationMessage = _text('credential.validation.NameAlreadyExists');
         }
         return {
           valid: isValid,
@@ -760,9 +806,9 @@ export default class BackendAICredentialView extends BackendAIPage {
    * @param {object} resource
    */
   _updateInputStatus(resource) {
-    let textfield = resource;
-    let checkbox = textfield.closest('div').querySelector('wl-checkbox');
-    if (textfield.value === '' || textfield.value === "0" ) {
+    const textfield = resource;
+    const checkbox = textfield.closest('div').querySelector('wl-checkbox');
+    if (textfield.value === '' || textfield.value === '0' ) {
       textfield.disabled = true;
       checkbox.checked = true;
     } else {
@@ -783,33 +829,34 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Export user list and credential lists and resource policy lists to csv.
    */
   _exportToCSV() {
-    let fileNameEl = this.shadowRoot.querySelector('#export-file-name');
+    const fileNameEl = this.shadowRoot.querySelector('#export-file-name');
     if (!fileNameEl.validity.valid) {
       return;
     }
-    switch(this._activeTab) {
-      case 'user-lists':
-        let users = this.shadowRoot.querySelector('#user-list')['users'];
-        users.map((obj) => { // filtering unnecessary key
-          ['password', 'need_password_change'].forEach(key => delete obj[key]);
-        });
-        JsonToCsv.exportToCsv(fileNameEl.value, users);
-        break;
-      case 'credential-lists':
-        let credential_active = this.shadowRoot.querySelector('#active-credential-list')['keypairs'];
-        let credential_inactive = this.shadowRoot.querySelector('#inactive-credential-list')['keypairs'];
-        let credential = credential_active.concat(credential_inactive);
-        credential.map((obj)=> { // filtering unnecessary key
-          ['is_admin'].forEach(key => delete obj[key]);
-        });
-        JsonToCsv.exportToCsv(fileNameEl.value, credential);
-        break;
-      case 'resource-policy-lists':
-        let resource_policy = this.shadowRoot.querySelector('#resource-policy-list')['resourcePolicy'];
-        JsonToCsv.exportToCsv(fileNameEl.value, resource_policy);
-        break;
+    let users; let credential_active; let credential_inactive; let credential; let resource_policy;
+    switch (this._activeTab) {
+    case 'user-lists':
+      users = this.shadowRoot.querySelector('#active-user-list')['users'];
+      users.map((obj) => { // filtering unnecessary key
+        ['password', 'need_password_change'].forEach((key) => delete obj[key]);
+      });
+      JsonToCsv.exportToCsv(fileNameEl.value, users);
+      break;
+    case 'credential-lists':
+      credential_active = this.shadowRoot.querySelector('#active-credential-list')['keypairs'];
+      credential_inactive = this.shadowRoot.querySelector('#inactive-credential-list')['keypairs'];
+      credential = credential_active.concat(credential_inactive);
+      credential.map((obj)=> { // filtering unnecessary key
+        ['is_admin'].forEach((key) => delete obj[key]);
+      });
+      JsonToCsv.exportToCsv(fileNameEl.value, credential);
+      break;
+    case 'resource-policy-lists':
+      resource_policy = this.shadowRoot.querySelector('#resource-policy-list')['resourcePolicy'];
+      JsonToCsv.exportToCsv(fileNameEl.value, resource_policy);
+      break;
     }
-    this.notification.text = "Downloading CSV file...";
+    this.notification.text = _text('session.DownloadingCSVFile');
     this.notification.show();
     this.exportToCsvDialog.hide();
   }
@@ -832,293 +879,441 @@ export default class BackendAICredentialView extends BackendAIPage {
 
   /**
    * Get default csv file name according to local time.
+   *
+   * @return {string} - Filename with Date and Time.
    */
   _getDefaultCSVFileName() {
-    let date = new Date().toISOString().substring(0, 10);
-    let time = new Date().toTimeString().slice(0,8).replace(/:/gi, '-');
+    const date = new Date().toISOString().substring(0, 10);
+    const time = new Date().toTimeString().slice(0, 8).replace(/:/gi, '-');
     return date+'_'+time;
   }
 
   /**
    * Control a dropdown menu's open state.
+   *
+   * @param {Event} e - event from dropdown component.
    */
-  _toggleDropdown() {
-    let menu = this.shadowRoot.querySelector("#dropdown-menu");
-    menu.open = !menu.open;
-    if(this.exportToCsvDialog.open) {
-      menu.open = false;
+  _toggleDropdown(e) {
+    const menu = this.shadowRoot.querySelector('#dropdown-menu');
+    const button = e.target;
+    menu.anchor = button;
+    if (!menu.open) {
+      menu.show();
+    }
+  }
+
+  _validatePassword1() {
+    const passwordInput = this.shadowRoot.querySelector('#id_user_password');
+    const password2Input = this.shadowRoot.querySelector('#id_user_confirm');
+    password2Input.reportValidity();
+    passwordInput.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          passwordInput.validationMessage = _text('signup.PasswordInputRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else {
+          passwordInput.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        return {
+          valid: nativeValidity.valid,
+          customError: !nativeValidity.valid
+        };
+      }
+    };
+  }
+
+  _validatePassword2() {
+    const password2Input = this.shadowRoot.querySelector('#id_user_confirm');
+    password2Input.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          password2Input.validationMessage = _text('signup.PasswordInputRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else {
+          password2Input.validationMessage = _text('signup.PasswordInvalid');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        // custom validation for password input match
+        const passwordInput = this.shadowRoot.querySelector('#id_user_password');
+        const isMatched = (passwordInput.value === password2Input.value);
+        if (!isMatched) {
+          password2Input.validationMessage = _text('signup.PasswordNotMatched');
+        }
+        return {
+          valid: isMatched,
+          customError: !isMatched
+        };
+      }
+    };
+  }
+
+  _validatePassword() {
+    this._validatePassword1();
+    this._validatePassword2();
+  }
+
+  _togglePasswordVisibility(element) {
+    const isVisible = element.__on;
+    const password = element.closest('div').querySelector('mwc-textfield');
+    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+  }
+
+  /**
+   *
+   * Expand or Shrink the dialog height by the number of items in the dropdown.
+   *
+   * @param {boolean} isOpened - notify whether the dialog is opened or not.
+   */
+  _controlHeightByVfolderHostCount(isOpened = false) {
+    if (!isOpened) {
+      this.shadowRoot.querySelector('#dropdown-area').style.height = this.selectAreaHeight;
+      return;
+    }
+    const itemCount = this.shadowRoot.querySelector('#allowed_vfolder-hosts').items.length;
+    const actualHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight;
+    if (itemCount > 0) {
+      this.shadowRoot.querySelector('#dropdown-area').style.height = (actualHeight + itemCount * 14) +'px';
     }
   }
 
   render() {
     // language=HTML
     return html`
-      <wl-card class="admin item" elevation="1">
-        <h3 class="tab horizontal wrap layout">
-          <wl-tab-group>
-            <wl-tab value="user-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("credential.Users")}</wl-tab>
-            <wl-tab value="credential-lists" @click="${(e) => this._showTab(e.target)}">${_t("credential.Credentials")}</wl-tab>
-            <wl-tab value="resource-policy-lists" @click="${(e) => this._showTab(e.target)}">${_t("credential.ResourcePolicies")}</wl-tab>
-          </wl-tab-group>
-          ${this.isAdmin ? html`
+      <lablup-activity-panel noheader narrow autowidth>
+        <div slot="message">
+          <h3 class="tab horizontal wrap layout">
+           <mwc-tab-bar>
+            <mwc-tab title="user-lists" label="${_t('credential.Users')}"
+                @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+            <mwc-tab title="credential-lists" label="${_t('credential.Credentials')}"
+                @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+            <mwc-tab title="resource-policy-lists" label="${_t('credential.ResourcePolicies')}"
+                @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+           </mwc-tab-bar>
+            ${this.isAdmin ? html`
+                <span class="flex"></span>
+                <div style="position: relative;">
+                  <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
+                                  @click="${(e) => this._toggleDropdown(e)}"></mwc-icon-button>
+                  <mwc-menu id="dropdown-menu">
+                      <mwc-list-item>
+                        <a class="horizontal layout start center" @click="${this._openExportToCsvDialog}">
+                          <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
+                          ${_t('credential.exportCSV')}
+                        </a>
+                      </mwc-list-item>
+                    </mwc-menu>
+                </div>
+              ` : html``}
+          </h3>
+          <div id="user-lists" class="admin item tab-content card">
+            <h4 class="horizontal flex center center-justified layout">
+              <wl-tab-group style="margin-bottom:-8px;">
+                <wl-tab value="active-user-list" checked @click="${(e) => this._showList(e.target)}">${_t('credential.Active')}</wl-tab>
+                <wl-tab value="inactive-user-list" @click="${(e) => this._showList(e.target)}">${_t('credential.Inactive')}</wl-tab>
+              </wl-tab-group>
               <span class="flex"></span>
-              <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
-                               @click="${this._toggleDropdown}">
-                <mwc-menu id="dropdown-menu" absolute x="-50" y="25">
-                  <mwc-list-item>
-                    <a class="horizontal layout start center" @click="${this._openExportToCsvDialog}">
-                      <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
-                      ${_t("credential.exportCSV")}
-                    </a>
-                  </mwc-list-item>
-                </mwc-menu>
-              </mwc-icon-button>
-            ` : html``}
-        </h3>
-        <wl-card id="user-lists" class="admin item tab-content">
-          <h4 class="horizontal flex center center-justified layout">
-            <span>${_t("credential.Users")}</span>
-            <span class="flex"></span>
-            <wl-button class="fg green" id="add-user" outlined @click="${this._launchUserAddDialog}">
-              <wl-icon>add</wl-icon>
-              ${_t("credential.CreateUser")}
-            </wl-button>
-          </h4>
-          <div>
-            <backend-ai-user-list id="user-list" ?active="${this._status === 'active'}"></backend-ai-user-list>
+              <mwc-button raised id="add-user" icon="add" label="${_t('credential.CreateUser')}"
+                  @click="${this._launchUserAddDialog}"></mwc-button>
+            </h4>
+            <div>
+              <backend-ai-user-list class="list-content" id="active-user-list" condition="active" ?active="${this._activeTab === 'user-lists'}"></backend-ai-user-list>
+              <backend-ai-user-list class="list-content" id="inactive-user-list"  style="display:none;"  condition="inactive" ?active="${this._activeTab === 'user-lists'}"></backend-ai-user-list>
+            </div>
           </div>
-        </wl-card>
-        <wl-card id="credential-lists" class="item tab-content" style="display:none;">
-          <h4 class="horizontal flex center center-justified layout">
-            <wl-tab-group style="margin-bottom:-8px;">
-              <wl-tab value="active-credential-list" checked @click="${(e) => this._showList(e.target)}">${_t("credential.Active")}</wl-tab>
-              <wl-tab value="inactive-credential-list" @click="${(e) => this._showList(e.target)}">${_t("credential.Inactive")}</wl-tab>
-            </wl-tab-group>
-            <div class="flex"></div>
-            <wl-button class="fg green" id="add-keypair" outlined @click="${this._launchKeyPairDialog}">
-              <wl-icon>add</wl-icon>
-              ${_t("credential.AddCredential")}
-            </wl-button>
-          </h4>
-          <backend-ai-credential-list class="list-content" id="active-credential-list" condition="active" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
-          <backend-ai-credential-list class="list-content" style="display:none;" id="inactive-credential-list" condition="inactive" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
-        </wl-card>
-        <wl-card id="resource-policy-lists" class="admin item tab-content" style="display:none;">
-          <h4 class="horizontal flex center center-justified layout">
-            <span>${_t("credential.PolicyGroup")}</span>
-            <span class="flex"></span>
-            <wl-button class="fg green" id="add-policy" outlined @click="${this._launchResourcePolicyDialog}">
-              <wl-icon>add</wl-icon>
-              ${_t("credential.CreatePolicy")}
-            </wl-button>
-          </h4>
-          <div>
-            <backend-ai-resource-policy-list id="resource-policy-list" ?active="${this._activeTab === 'resource-policy-lists'}"></backend-ai-resource-policy-list>
+          <div id="credential-lists" class="item tab-content card" style="display:none;">
+            <h4 class="horizontal flex center center-justified layout">
+              <wl-tab-group style="margin-bottom:-8px;">
+                <wl-tab value="active-credential-list" checked @click="${(e) => this._showList(e.target)}">${_t('credential.Active')}</wl-tab>
+                <wl-tab value="inactive-credential-list" @click="${(e) => this._showList(e.target)}">${_t('credential.Inactive')}</wl-tab>
+              </wl-tab-group>
+              <div class="flex"></div>
+              <mwc-button raised id="add-keypair" icon="add" label="${_t('credential.AddCredential')}"
+                  @click="${this._launchKeyPairDialog}"></mwc-button>
+            </h4>
+            <backend-ai-credential-list class="list-content" id="active-credential-list" condition="active" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
+            <backend-ai-credential-list class="list-content" style="display:none;" id="inactive-credential-list" condition="inactive" ?active="${this._activeTab === 'credential-lists'}"></backend-ai-credential-list>
           </div>
-        </wl-card>
-      </wl-card>
-      <backend-ai-dialog id="new-keypair-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${_t("credential.AddCredential")}</span>
-        <div slot="content">
-          <wl-textfield type="email" name="new_user_id" id="id_new_user_id" label="User ID as E-mail (optional)"
-                       auto-validate></wl-textfield>
-          <div class="horizontal center layout">
-            <paper-dropdown-menu id="resource-policy" label="Resource Policy">
-              <paper-listbox slot="dropdown-content" selected="0">
-              ${this.resource_policy_names.map(item => html`
-                <paper-item label="${item}">${item}</paper-item>
-              `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
-            <paper-dropdown-menu id="rate-limit" label="Rate Limit (for 15 min.)">
-              <paper-listbox slot="dropdown-content" selected="0">
-              ${this.rate_metric.map(item => html`
-                <paper-item label="${item}">${item}</paper-item>
-              `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
+          <div id="resource-policy-lists" class="admin item tab-content card" style="display:none;">
+            <h4 class="horizontal flex center center-justified layout">
+              <span>${_t('credential.PolicyGroup')}</span>
+              <span class="flex"></span>
+              <mwc-button raised id="add-policy" icon="add" label="${_t('credential.CreatePolicy')}"
+                          ?disabled="${!this.isSuperAdmin}"
+                          @click="${this._launchResourcePolicyDialog}"></mwc-button>
+            </h4>
+            <div>
+              <backend-ai-resource-policy-list id="resource-policy-list" ?active="${this._activeTab === 'resource-policy-lists'}"></backend-ai-resource-policy-list>
+            </div>
           </div>
-          <wl-expansion name="advanced-keypair-info">
-            <span slot="title">${_t("general.Advanced")}</span>
-            <span slot="description"></span>
-            <wl-textfield type="text" name="new_access_key" id="id_new_access_key" label="Access Key (optional)"
-                          auto-validate .value="${this.new_access_key}">
-            </wl-textfield>
-            <wl-textfield type="text" name="new_secret_key" id="id_new_secret_key" label="Secret Key (optional)"
-                          auto-validate .value="${this.new_secret_key}">
-            </wl-textfield>
-          </wl-expansion>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-            <wl-button class="fg blue full-size" id="create-keypair-button" outlined type="button"
-            @click="${this._addKeyPair}">
-                       <wl-icon>add</wl-icon>
-                       ${_t("general.Add")}
-                       </wl-button>
+      </lablup-activity-panel>
+      <backend-ai-dialog id="new-keypair-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t('credential.AddCredential')}</span>
+        <div slot="content">
+          <div class="vertical center-justified layout center">
+            <mwc-textfield
+                type="email"
+                name="new_user_id"
+                id="id_new_user_id"
+                label="${_t('credential.UserIDAsEmail')}"
+                validationMessage="${_t('credential.UserIDRequired')}"
+                required
+                maxLength="64"
+                placeholder="${_t('maxLength.64chars')}"
+                autoValidate></mwc-textfield>
+
+            <mwc-select outlined id="resource-policy" label="${_t('credential.ResourcePolicy')}" style="width:100%;margin:10px 0;">
+              ${this.resource_policy_names.map((item) => html`
+                <mwc-list-item value="${item}">${item}</mwc-list-item>
+              `)}
+            </mwc-select>
+            <mwc-select outlined id="rate-limit" label="${_t('credential.RateLimitFor15min')}" style="width:100%;margin:10px 0;">
+              ${this.rate_metric.map((item) => html`
+                  <mwc-list-item value="${item}">${item}</mwc-list-item>
+              `)}
+            </mwc-select>
+            <!--<wl-expansion name="advanced-keypair-info" style="width:100%;">
+              <span slot="title">${_t('general.Advanced')}</span>
+              <span slot="description"></span>
+              <div class="vertical layout center">
+              <mwc-textfield
+                  type="text"
+                  name="new_access_key"
+                  id="id_new_access_key"
+                  label="${_t('credential.UserIDAsEmail')}"
+                  autoValidate></mwc-textfield>
+              <mwc-textfield
+                  type="text"
+                  name="new_access_key"
+                  id="id_new_secret_key"
+                  label="${_t('credential.AccessKeyOptional')}"
+                  autoValidate
+                  .value="${this.new_access_key}"><mwc-textfield>
+              </div>
+            </wl-expansion>-->
+          </div>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button raised id="create-keypair-button" icon="add" label="${_t('general.Add')}" style="width:100%;"
+          @click="${this._addKeyPair}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="new-policy-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${_t("credential.CreateResourcePolicy")}</span>
-
+      <backend-ai-dialog id="new-policy-dialog" fixed backdrop blockscrolling narrowLayout>
+        <span slot="title">${_t('credential.CreateResourcePolicy')}</span>
         <div slot="content">
-          <mwc-textfield id="id_new_policy_name" label="Policy Name" pattern="^[a-zA-Z0-9_-]+$"
-                           validationMessage="Policy name is Required."
-                           required></mwc-textfield>
-          <h4>${_t("credential.ResourcePolicy")}</h4>
-          <div class="horizontal center layout">
-              <div class="vertical layout" style="width:75px; margin:0px 10px 0px 0px;">
-                <wl-label>CPU</wl-label>
-                <wl-textfield id="cpu-resource" type="number"
-                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                  <wl-label class="unlimited">
-                    <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                    ${_t("credential.Unlimited")}
-                  </wl-label>
-              </div>
-              <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
-                <wl-label>RAM(GB)</wl-label>
-                <wl-textfield id="ram-resource" type="number"
-                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+          <mwc-textfield id="id_new_policy_name" label="${_t('resourcePolicy.PolicyName')}"
+                         validationMessage="${_t('data.explorer.ValueRequired')}"
+                         maxLength="64"
+                         placeholder="${_t('maxLength.64chars')}"
+                         required></mwc-textfield>
+          <h4>${_t('resourcePolicy.ResourcePolicy')}</h4>
+          <div class="horizontal center layout distancing">
+            <div class="vertical layout">
+              <wl-label>CPU</wl-label>
+              <mwc-textfield class="discrete resource-input" id="cpu-resource" type="number" min="0" max="512"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("credential.Unlimited")}
+                  ${_t('resourcePolicy.Unlimited')}
                 </wl-label>
-              </div>
-              <div class="vertical layout" style="width:75px; margin:0px 10px 0px 10px;">
-                <wl-label>GPU</wl-label>
-                <wl-textfield id="gpu-resource" type="number"
-                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                <wl-label class="unlimited">
-                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("credential.Unlimited")}
-                </wl-label>
-              </div>
-              <div class="vertical layout" style="width:75px; margin:0px 0px 0px 10px;">
-                <wl-label>fGPU</wl-label>
-                <wl-textfield id="fgpu-resource" type="number"
-                              @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                <wl-label class="unlimited">
-                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("credential.Unlimited")}
-                </wl-label>
-              </div>
-          </div>
-          <h4>${_t("credential.Sessions")}</h4>
-          <div class="horizontal center layout">
-            <div class="vertical left layout" style="width: 110px;">
-                <wl-label>${_t("credential.ContainerPerSession")}</wl-label>
-                <wl-textfield id="container-per-session-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                <wl-label class="unlimited">
-                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("credential.Unlimited")}
-                </wl-label>
-              </div>
-              <div class="vertical left layout" style="width: 110px; margin: 0px 15px;">
-                <wl-label>${_t("credential.IdleTimeoutSec")}</wl-label>
-                <wl-textfield id="idle-timeout" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                <wl-label class="unlimited">
-                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                  ${_t("credential.Unlimited")}
-                </wl-label>
-              </div>
-              <div class="vertical left layout" style="width: 110px;">
-                  <wl-label>${_t("credential.ConcurrentJobs")}</wl-label>
-                  <wl-textfield id="concurrency-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
-                  <wl-label class="unlimited">
-                    <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                    ${_t("credential.Unlimited")}
-                  </wl-label>
-              </div>
-          </div>
-          <h4 style="margin-bottom:0px;">${_t("credential.Folders")}</h4>
-          <div class="horizontal center layout">
-            <div class="vertical layout" style="width: 110px;">
-            <paper-dropdown-menu id="allowed_vfolder-hosts" label="Allowed hosts">
-              <paper-listbox slot="dropdown-content" selected="0">
-                ${this.allowed_vfolder_hosts.map(item => html`
-                  <paper-item value="${item}" style="margin: 0px 0px 1px 0px;">${item}</paper-item>
-                `)}
-              </paper-listbox>
-            </paper-dropdown-menu>
             </div>
-            <div class="vertical layout" style="width: 110px; margin: 21px 15px 0;">
-              <wl-label class="folders">${_t("credential.Capacity(GB)")}</wl-label>
-              <wl-textfield id="vfolder-capacity-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+            <div class="vertical layout">
+              <wl-label>RAM(GB)</wl-label>
+              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max="1024" step="0.01"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
-                ${_t("credential.Unlimited")}
-            </wl-label>
+                ${_t('resourcePolicy.Unlimited')}
+              </wl-label>
             </div>
-            <div class="vertical layout" style="width: 110px;">
-              <wl-label class="folders">${_t("credential.Max#")}</wl-label>
-              <wl-textfield id="vfolder-count-limit" type="number" @change="${(e) => this._validateResourceInput(e)}"></wl-textfield>
+            <div class="vertical layout">
+              <wl-label>GPU</wl-label>
+              <mwc-textfield class="resource-input" id="gpu-resource" type="number" min="0" max="64"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
+              <wl-label class="unlimited">
+                <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                ${_t('resourcePolicy.Unlimited')}
+              </wl-label>
+            </div>
+            <div class="vertical layout">
+              <wl-label>fGPU</wl-label>
+              <mwc-textfield class="resource-input" id="fgpu-resource" type="number" min="0" max="256" step="0.1"
+                            @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
+              <wl-label class="unlimited">
+                <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                ${_t('resourcePolicy.Unlimited')}
+              </wl-label>
+            </div>
+          </div>
+          <h4>${_t('resourcePolicy.Sessions')}</h4>
+          <div class="horizontal justified layout distancing">
+            <div class="vertical left layout">
+                <wl-label>${_t('resourcePolicy.ContainerPerSession')}</wl-label>
+                <mwc-textfield class="discrete" id="container-per-session-limit" type="number" min="0" max="100"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t('resourcePolicy.Unlimited')}
+                </wl-label>
+              </div>
+              <div class="vertical left layout">
+                <wl-label>${_t('resourcePolicy.IdleTimeoutSec')}</wl-label>
+                <mwc-textfield class="discrete" id="idle-timeout" type="number" min="0" max="1552000"
+                  @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t('resourcePolicy.Unlimited')}
+                </wl-label>
+              </div>
+              <div class="vertical left layout">
+                  <wl-label>${_t('resourcePolicy.ConcurrentJobs')}</wl-label>
+                  <mwc-textfield class="discrete" id="concurrency-limit" type="number" min="0" max="100"
+                      @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
+                  <wl-label class="unlimited">
+                    <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                   ${_t('resourcePolicy.Unlimited')}
+                  </wl-label>
+              </div>
+          </div>
+          <h4 style="margin-bottom:0px;">${_t('resourcePolicy.Folders')}</h4>
+          <div class="vertical center layout distancing" id="dropdown-area">
+            <mwc-select id="allowed_vfolder-hosts" label="${_t('resourcePolicy.AllowedHosts')}" style="width:100%;"
+              @opened="${() => this._controlHeightByVfolderHostCount(true)}"
+              @closed="${() => this._controlHeightByVfolderHostCount()}">
+              ${this.allowed_vfolder_hosts.map((item) => html`
+                <mwc-list-item class="owner-group-dropdown"
+                               id="${item}"
+                               value="${item}">
+                  ${item}
+                </mwc-list-item>
+              `)}
+            </mwc-select>
+            <div class="horizontal layout justified" style="width:100%;">
+              <div class="vertical layout flex">
+                <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GB)</wl-label>
+                <mwc-textfield class="discrete" id="vfolder-capacity-limit" type="number" min="0" max="1024"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
+                <wl-label class="unlimited">
+                  <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
+                  ${_t('resourcePolicy.Unlimited')}
+                </wl-label>
+              </div>
+              <div class="vertical layout flex">
+                <wl-label class="folders">${_t('credential.Max#')}</wl-label>
+                <mwc-textfield class="discrete" id="vfolder-count-limit" type="number" min="0" max="50"
+                    @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
+              </div>
             </div>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-            <wl-button class="fg blue full-size" id="create-policy-button" type="button" outlined
-             @click="${() => this._addResourcePolicy()}">
-                       <wl-icon>add</wl-icon>
-                       ${_t("credential.Create")}
-            </wl-button>
+        <div slot="footer" class="horizontal end-justified flex layout distancing">
+          <mwc-button
+              unelevated
+              outlined
+              id="create-policy-button"
+              icon="check"
+              label="${_t('credential.Create')}"
+              style="width:100%;"
+              @click="${() => this._addResourcePolicy()}"></mwc-button>
         </div>
       </backend-ai-dialog>
+      </backend-ai-dialog>
       <backend-ai-dialog id="new-user-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${_t("credential.CreateUser")}</span>
+        <span slot="title">${_t('credential.CreateUser')}</span>
         <div slot="content">
-          <wl-textfield
-            type="email"
-            name="user_email"
-            id="id_user_email"
-            label="${_t("general.E-Mail")}"
-          >
-          </wl-textfield>
-          <wl-textfield
-            type="text"
-            name="user_name"
-            id="id_user_name"
-            label="${_t("general.Username")}"
-          >
-          </wl-textfield>
-          <wl-textfield
-            type="password"
-            name="user_password"
-            id="id_user_password"
-            label="${_t("general.Password")}"
-            pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
-          >
-          </wl-textfield>
-          <wl-textfield
-            type="password"
-            name="user_confirm"
-            id="id_user_confirm"
-            label="${_t("general.ConfirmPassword")}"
-          >
-          </wl-textfield>
+          <mwc-textfield
+              type="email"
+              name="user_email"
+              id="id_user_email"
+              label="${_t('general.E-Mail')}"
+              autoValidate
+              required
+              placeholder="${_text('maxLength.64chars')}"
+              maxLength="64"
+              validationMessage="${_text('credential.validation.InvalidEmailAddress')}">
+          </mwc-textfield>
+          <mwc-textfield
+              type="text"
+              name="user_name"
+              id="id_user_name"
+              label="${_t('general.Username')}"
+              placeholder="${_text('maxLength.64chars')}"
+              maxLength="64">
+          </mwc-textfield>
+          <div class="horizontal flex layout">
+            <mwc-textfield
+                type="password"
+                name="user_password"
+                id="id_user_password"
+                label="${_t('general.Password')}"
+                autoValidate
+                required
+                pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+                validationMessage="${_text('signup.PasswordInvalid')}"
+                @change="${() => this._validatePassword()}"
+                maxLength="64">
+            </mwc-textfield>
+            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                @click="${(e) => this._togglePasswordVisibility(e.target)}">
+            </mwc-icon-button-toggle>
+          </div>
+          <div class="horizontal flex layout">
+            <mwc-textfield
+                type="password"
+                name="user_confirm"
+                id="id_user_confirm"
+                label="${_t('general.ConfirmPassword')}"
+                autoValidate
+                required
+                pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+                validationMessage="${_text('signup.PasswordNotMatched')}"
+                @change="${() => this._validatePassword()}"
+                maxLength="64">
+            </mwc-textfield>
+            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                @click="${(e) => this._togglePasswordVisibility(e.target)}">
+            </mwc-icon-button-toggle>
+          </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="fg blue full-size" id="create-user-button" outlined type="button"
-          @click="${this._addUser}">
-            <wl-icon>add</wl-icon>
-            ${_t("credential.CreateUser")}
-          </wl-button>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button raised id="create-user-button" icon="add" label="${_t('credential.CreateUser')}" style="width:100%;"
+          @click="${this._addUser}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="export-to-csv" fixed backdrop blockscrolling>
-        <span slot="title">${_t("credential.ExportCSVFile")} (${this._activeTab})</span>
+        <span slot="title">${_t('credential.ExportCSVFile')} (${this._activeTab})</span>
 
         <div slot="content" class="intro centered login-panel">
-          <mwc-textfield id="export-file-name" label="File name" pattern="^[a-zA-Z0-9_-]+$"
-                          validationMessage="Allows letters, numbers and -_."
+          <mwc-textfield id="export-file-name" label="${_text('credential.FileName')}"
+                          validationMessage="${_text('credential.validation.LetterNumber-_dot')}"
                           value="${this._activeTab + '_' + this._defaultFileName}" required
+                          placeholder="${_t('maxLength.255chars')}"
+                          maxLength="255"
           ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
-          @click="${this._exportToCSV}">
-            <wl-icon>get_app</wl-icon>
-            ${_t("credential.ExportCSVFile")}
-          </wl-button>
+          <mwc-button
+              unelevated
+              style="width:100%;"
+              icon="get_app"
+              label="${_t('credential.ExportCSVFile')}"
+              @click="${this._exportToCSV}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;
@@ -1126,6 +1321,6 @@ export default class BackendAICredentialView extends BackendAIPage {
 }
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-credential-view": BackendAICredentialView;
+    'backend-ai-credential-view': BackendAICredentialView;
   }
 }

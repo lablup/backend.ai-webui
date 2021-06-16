@@ -1,11 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {customElement, html, property} from "lit-element";
+import {CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
-@customElement("backend-ai-resource-broker")
+@customElement('backend-ai-resource-broker')
 export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Object}) supports = Object();
   // Environment-image information
@@ -26,7 +26,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   // Resource occupation information
   @property({type: String}) gpu_mode;
   @property({type: Array}) gpu_modes = [];
-  @property({type: Number}) gpu_step = 0.05;
+  @property({type: Number}) gpu_step = 0.1;
 
   // Resource slot information
   @property({type: Object}) total_slot;
@@ -39,6 +39,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Number}) concurrency_used;
   @property({type: Number}) concurrency_max;
   @property({type: Number}) concurrency_limit;
+  @property({type: Number}) max_containers_per_session;
   @property({type: Array}) vfolders;
   // Percentage data for views
   @property({type: Object}) used_slot_percent;
@@ -104,7 +105,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     return 'backend-ai-resource-broker';
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [];
   }
 
@@ -139,28 +140,30 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
   firstUpdated() {
     fetch('resources/image_metadata.json').then(
-      response => response.json()
+      (response) => response.json()
     ).then(
-      json => {
+      (json) => {
         this.imageInfo = json.imageInfo;
-        for (let key in this.imageInfo) {
-          this.tags[key] = [];
-          if ("name" in this.imageInfo[key]) {
-            this.aliases[key] = this.imageInfo[key].name;
-            this.imageNames[key] = this.imageInfo[key].name;
-          }
-          if ("icon" in this.imageInfo[key]) {
-            this.icons[key] = this.imageInfo[key].icon;
-          } else {
-            this.icons[key] = 'default.png';
-          }
+        for (const key in this.imageInfo) {
+          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
+            this.tags[key] = [];
+            if ('name' in this.imageInfo[key]) {
+              this.aliases[key] = this.imageInfo[key].name;
+              this.imageNames[key] = this.imageInfo[key].name;
+            }
+            if ('icon' in this.imageInfo[key]) {
+              this.icons[key] = this.imageInfo[key].icon;
+            } else {
+              this.icons[key] = 'default.png';
+            }
 
-          if ("label" in this.imageInfo[key]) {
-            this.imageInfo[key].label.forEach((item) => {
-              if (!("category" in item)) {
-                this.tags[key].push(item);
-              }
-            });
+            if ('label' in this.imageInfo[key]) {
+              this.imageInfo[key].label.forEach((item) => {
+                if (!('category' in item)) {
+                  this.tags[key].push(item);
+                }
+              });
+            }
           }
         }
         if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
@@ -179,10 +182,14 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         this.metadata_updating = false;
       }
     });
-    document.addEventListener("backend-ai-group-changed", (e) => {
+    document.addEventListener('backend-ai-group-changed', (e) => {
       this._updatePageVariables(true);
     });
-    /*setInterval(()=>{
+    document.addEventListener('backend-ai-calculate-current-resource', (e) => {
+      this.aggregateResource('resource-refreshed');
+      globalThis.backendaioptions.set('current-resource', this.available_slot);
+    });
+    /* setInterval(()=>{
       this.metadata_updating = true;
       this.aggregateResource('resource-refreshed');
       this.metadata_updating = false;
@@ -195,8 +202,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    *
    */
   _initAliases() {
-    for (let item in this.aliases) {
-      this.aliases[this.aliases[item]] = item;
+    for (const item in this.aliases) {
+      if ({}.hasOwnProperty.call(this.aliases, item)) {
+        this.aliases[this.aliases[item]] = item;
+      }
     }
   }
 
@@ -245,7 +254,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         if (this.current_user_group === '') {
           this.current_user_group = globalThis.backendaiclient.current_group;
         }
-        //const currentGroup = globalThis.backendaiclient.current_group || null;
+        // const currentGroup = globalThis.backendaiclient.current_group || null;
         const sgs = await globalThis.backendaiclient.scalingGroup.list(this.current_user_group);
         // Make empty scaling group item if there is no scaling groups.
         this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
@@ -253,19 +262,19 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       }
 
       // Reload number of sessions
-      let fields = ["created_at"];
-      await globalThis.backendaiclient.computeSession.list(fields = fields, status = "RUNNING", null, 1000)
-        .then(res => {
+      const fields = ['name'];
+      await globalThis.backendaiclient.computeSession.list(fields, 'RUNNING', null, 1000)
+        .then((res) => {
           if (!res.compute_session_list && res.legacy_compute_session_list) {
             res.compute_session_list = res.legacy_compute_session_list;
           }
-          this.sessions_list = res.compute_session_list.items.map(e => e.created_at);
+          this.sessions_list = res.compute_session_list.items.map((e) => e.name);
         });
       this._initAliases();
       await this._refreshResourcePolicy();
       this.aggregateResource('update-page-variable');
       this.metadata_updating = false;
-      let event = new CustomEvent("backend-ai-resource-broker-updated", {"detail": ''});
+      const event = new CustomEvent('backend-ai-resource-broker-updated', {'detail': ''});
       document.dispatchEvent(event);
       return Promise.resolve(true);
     } else {
@@ -276,6 +285,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   /**
    * Refresh keypair concurrency.
    *
+   * @return {void}
    */
   _refreshConcurrency() {
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then((response) => {
@@ -293,7 +303,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     }
     this.lastResourcePolicyQueryTime = Date.now();
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['resource_policy', 'concurrency_used']).then((response) => {
-      let policyName = response.keypair.resource_policy;
+      const policyName = response.keypair.resource_policy;
       this.concurrency_used = response.keypair.concurrency_used;
       return globalThis.backendaiclient.resourcePolicy.get(policyName, ['default_for_unspecified',
         'total_resource_slots',
@@ -301,10 +311,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'max_containers_per_session',
       ]);
     }).then((response) => {
-      let resource_policy = response.keypair_resource_policy;
+      const resource_policy = response.keypair_resource_policy;
       this.userResourceLimit = JSON.parse(response.keypair_resource_policy.total_resource_slots);
       this.concurrency_max = resource_policy.max_concurrent_sessions;
-      //this._refreshResourceTemplate('refresh-resource-policy');
+      this.max_containers_per_session = resource_policy.max_containers_per_session;
+      // this._refreshResourceTemplate('refresh-resource-policy');
       return this._updateGPUMode();
     }).catch((err) => {
       this.metadata_updating = false;
@@ -316,13 +327,13 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     if (!this._GPUmodeUpdated) {
       this._GPUmodeUpdated = true;
       return globalThis.backendaiclient.get_resource_slots().then((response) => {
-        let results = response;
+        const results = response;
         ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
           if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
             this.gpu_mode = item;
             (this.gpu_modes as Array<string>).push(item);
             if (item === 'cuda.shares') {
-              this.gpu_step = 0.05;
+              this.gpu_step = 0.1;
             } else {
               this.gpu_step = 1;
             }
@@ -338,11 +349,12 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   }
 
   generateSessionId() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < 8; i++)
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 8; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
-    return text + "-console";
+    }
+    return text + '-session';
   }
 
   /**
@@ -353,11 +365,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     if (Date.now() - this.lastVFolderQueryTime < 2000) {
       return Promise.resolve(false);
     }
-    let l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id());
+    const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id());
     return l.then((value) => {
       this.lastVFolderQueryTime = Date.now();
-      let selectableFolders: object[] = [];
-      let automountFolders: object[] = [];
+      const selectableFolders: Record<string, unknown>[] = [];
+      const automountFolders: Record<string, unknown>[] = [];
       value.forEach((item) => {
         if (item.name.startsWith('.')) {
           item.disabled = true;
@@ -376,18 +388,18 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    *
    * @param {string} from - set the value for debugging purpose.
    */
-  async _aggregateCurrentResource(from: string = '') {
+  async _aggregateCurrentResource(from = '') {
     if (this.aggregate_updating) {
       return Promise.resolve(false);
     }
     if (Date.now() - this.lastQueryTime < 1000) {
       return Promise.resolve(false);
     }
-    //console.log('aggregate from:', from);
+    // console.log('aggregate from:', from);
     this.aggregate_updating = true;
-    let total_slot = {};
-    let total_resource_group_slot = {};
-    let total_project_slot = {};
+    const total_slot = {};
+    const total_resource_group_slot = {};
+    const total_project_slot = {};
 
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then(async (response) => {
       this.concurrency_used = response.keypair.concurrency_used;
@@ -395,19 +407,19 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         this.current_user_group = globalThis.backendaiclient.current_group;
       }
       const param: any = {group: globalThis.backendaiclient.current_group};
-      if (this.current_user_group !== globalThis.backendaiclient.current_group
-        || this.scaling_groups.length == 0
-        || this.scaling_groups.length === 1 && this.scaling_groups[0].name === "") {
+      if (this.current_user_group !== globalThis.backendaiclient.current_group ||
+        this.scaling_groups.length == 0 ||
+        this.scaling_groups.length === 1 && this.scaling_groups[0].name === '') {
         this.current_user_group = globalThis.backendaiclient.current_group;
         const sgs = await globalThis.backendaiclient.scalingGroup.list(this.current_user_group);
         // Make empty scaling group item if there is no scaling groups.
         this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
       }
       if (this.scaling_groups.length > 0) {
-        let scaling_groups: any = [];
-        this.scaling_groups.map(group => {
+        const scaling_groups: any = [];
+        this.scaling_groups.map((group) => {
           scaling_groups.push(group.name);
-        })
+        });
         if (this.scaling_group === '' || !scaling_groups.includes(this.scaling_group)) {
           this.scaling_group = this.scaling_groups[0].name;
         }
@@ -416,8 +428,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       return globalThis.backendaiclient.resourcePreset.check(param);
     }).then((response) => {
       if (response.presets) {
-        let presets = response.presets;
-        let available_presets: any = [];
+        const presets = response.presets;
+        const available_presets: any = [];
         presets.forEach((item) => {
           if (item.allocatable === true) {
             if ('cuda.shares' in item.resource_slots) {
@@ -448,30 +460,30 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         }
       }
 
-      let resource_remaining = response.keypair_remaining;
-      let resource_using = response.keypair_using;
-      let project_resource_total = response.group_limits;
-      let project_resource_using = response.group_using;
-      let device_list = {
+      const resource_remaining = response.keypair_remaining;
+      const resource_using = response.keypair_using;
+      const project_resource_total = response.group_limits;
+      const project_resource_using = response.group_using;
+      const device_list = {
         'cuda.device': 'cuda_device',
         'cuda.shares': 'cuda_shares',
         'rocm.device': 'rocm_device',
         'tpu.device': 'tpu_device'
-      }
-      //let scaling_group_resource_remaining = response.scaling_group_remaining;
+      };
+      // let scaling_group_resource_remaining = response.scaling_group_remaining;
       if (this.scaling_group === '' && this.scaling_groups.length > 0) { // no scaling group in the current project
         response.scaling_groups[''] = {
           using: {'cpu': 0, 'mem': 0},
           remaining: {'cpu': 0, 'mem': 0},
-        }
+        };
       } else if (this.scaling_groups.length === 0) {
         this.aggregate_updating = false;
         return Promise.resolve(false);
       }
-      let scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
-      let scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
+      const scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
+      const scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
 
-      let keypair_resource_limit = response.keypair_limits;
+      const keypair_resource_limit = response.keypair_limits;
       if ('cpu' in keypair_resource_limit) {
         total_resource_group_slot['cpu'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
         total_project_slot['cpu'] = Number(project_resource_total.cpu);
@@ -493,7 +505,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       total_slot['mem'] = total_slot['mem'].toFixed(2);
       total_resource_group_slot['mem'] = total_resource_group_slot['mem'].toFixed(2);
 
-      for (let [slot_key, slot_name] of Object.entries(device_list)) {
+      for (const [slot_key, slot_name] of Object.entries(device_list)) {
         if (slot_key in keypair_resource_limit) {
           total_resource_group_slot[slot_name] = Number(scaling_group_resource_remaining[slot_key]) + Number(scaling_group_resource_using[slot_key]);
           total_project_slot[slot_name] = Number(project_resource_total[slot_key]);
@@ -505,11 +517,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         }
       }
 
-      let remaining_slot: Object = Object();
-      let used_slot: Object = Object();
-      let remaining_sg_slot: Object = Object();
-      let used_resource_group_slot: Object = Object();
-      let used_project_slot: Object = Object();
+      const remaining_slot: Record<number, unknown> = Object();
+      const used_slot: Record<number, unknown> = Object();
+      const remaining_sg_slot: Record<string, unknown> = Object();
+      const used_resource_group_slot: Record<number, unknown> = Object();
+      const used_project_slot: Record<number, unknown> = Object();
 
       if ('cpu' in resource_remaining) { // Monkeypatch: manager reports Infinity to cpu.
         if ('cpu' in resource_using) {
@@ -517,7 +529,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         } else {
           used_slot['cpu'] = 0;
         }
-        if (resource_remaining['cpu'] === 'Infinity') {  // Monkeypatch: manager reports Infinity to mem.
+        if (resource_remaining['cpu'] === 'Infinity') { // Monkeypatch: manager reports Infinity to mem.
           remaining_slot['cpu'] = total_slot['cpu'] - used_slot['cpu'];
         } else {
           remaining_slot['cpu'] = resource_remaining['cpu'];
@@ -543,7 +555,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         } else {
           used_slot['mem'] = 0.0;
         }
-        if (resource_remaining['mem'] === 'Infinity') {  // Monkeypatch: manager reports Infinity to mem.
+        if (resource_remaining['mem'] === 'Infinity') { // Monkeypatch: manager reports Infinity to mem.
           remaining_slot['mem'] = total_slot['mem'] - used_slot['mem'];
         } else {
           remaining_slot['mem'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resource_remaining['mem'], 'g'));
@@ -567,7 +579,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       }
       used_project_slot['mem'] = used_project_slot['mem'].toFixed(2);
 
-      for (let [slot_key, slot_name] of Object.entries(device_list)) {
+      for (const [slot_key, slot_name] of Object.entries(device_list)) {
         if (slot_key in resource_remaining) {
           remaining_slot[slot_name] = resource_remaining[slot_key];
           if (slot_key in resource_using) {
@@ -608,9 +620,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.used_resource_group_slot = used_resource_group_slot;
       this.used_project_slot = used_project_slot;
 
-      let used_slot_percent = {};
-      let used_resource_group_slot_percent = {};
-      let used_project_slot_percent = {};
+      const used_slot_percent = {};
+      const used_resource_group_slot_percent = {};
+      const used_project_slot_percent = {};
 
       ['cpu', 'mem', 'cuda_device', 'cuda_shares', 'rocm_device', 'tpu_device'].forEach((slot) => {
         if (slot in used_slot) {
@@ -648,15 +660,15 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         used_slot_percent['concurrency'] = (this.concurrency_used / this.concurrency_max) * 100.0;
         remaining_slot['concurrency'] = this.concurrency_max - this.concurrency_used;
       }
-      this.concurrency_limit = Math.min(remaining_slot['concurrency'], 5);
+      this.concurrency_limit = Math.min(remaining_slot['concurrency'], 3);
       this.available_slot = remaining_sg_slot;
       this.used_slot_percent = used_slot_percent;
       this.used_resource_group_slot_percent = used_resource_group_slot_percent;
       this.lastQueryTime = Date.now();
       this.aggregate_updating = false;
       return Promise.resolve(true);
-      //return this.available_slot;
-    }).catch(err => {
+      // return this.available_slot;
+    }).catch((err) => {
       this.lastQueryTime = Date.now();
       this.aggregate_updating = false;
       throw err;
@@ -668,8 +680,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    *
    * @param {string} from - set the value for debugging purpose.
    */
-  aggregateResource(from: string = '') {
-    //console.log('aggregate resource called - ', from);
+  aggregateResource(from = '') {
+    // console.log('aggregate resource called - ', from);
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._aggregateCurrentResource(from);
@@ -704,7 +716,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         }
         this.supports[supportsKey].push(item.tag);
         let imageName: string;
-        let specs: string[] = item.name.split('/');
+        const specs: string[] = item.name.split('/');
         if (specs.length === 1) {
           imageName = specs[0];
         } else {
@@ -729,7 +741,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         }
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
         this.imageRequirements[`${supportsKey}:${item.tag}`] = {};
-        item.labels.forEach(label => {
+        item.labels.forEach((label) => {
           if (label['key'] === 'com.nvidia.tensorflow.version') {
             this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'TensorFlow ' + label['value'];
           }
@@ -751,7 +763,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     let humanizedName = null;
     let matchedString = 'abcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()';
     Object.keys(candidate).forEach((item, index) => {
-      let specs = kernelName.split('/');
+      const specs = kernelName.split('/');
       if (specs.length == 2) {
         imageName = specs[1];
       } else {
@@ -768,12 +780,16 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     return humanizedName;
   }
 
+  _cap(text) {
+    text = text.replace(/^./, text[0].toUpperCase());
+    return text;
+  }
+
   _updateEnvironment() {
     const langs = Object.keys(this.supports);
     if (langs === undefined) return;
     langs.sort((a, b) => (this.supportImages[a].group > this.supportImages[b].group) ? 1 : -1); // TODO: fix this to rearrange kernels
-    // TODO: add category indicator between groups
-    let interCategory: string = '';
+    let interCategory = '';
     this.languages = [];
     langs.forEach((item, index) => {
       if (!(Object.keys(this.aliases).includes(item))) {
@@ -784,9 +800,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           this.aliases[item] = item;
         }
       }
-      let specs = item.split('/');
-      let registry = specs[0];
-      let prefix, kernelName;
+      const specs = item.split('/');
+      const registry = specs[0];
+      let prefix; let kernelName;
       if (specs.length == 2) {
         prefix = '';
         kernelName = specs[1];
@@ -805,28 +821,28 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       alias = alias.split('/').slice(-1)[0];
       basename = basename.split('/').slice(-1)[0];
 
-      let tags: object[] = [];
+      let tags: Record<string, unknown>[] = [];
       if (kernelName in this.tags) {
         tags = tags.concat(this.tags[kernelName]);
       }
-      if (prefix != '' && prefix != 'lablup') {
+      if (prefix != '' && !['lablup', 'cloud', 'stable'].includes(prefix)) {
         tags.push({
-          tag: prefix,
+          tag: this._cap(prefix),
           color: 'purple'
         });
       }
-      let icon: string = "default.png";
+      let icon = 'default.png';
       if (kernelName in this.icons) {
         icon = this.icons[kernelName];
       }
       if (interCategory !== this.supportImages[item].group) {
         this.languages.push({
-          name: "",
-          registry: "",
-          prefix: "",
-          kernelname: "",
-          alias: "",
-          icon: "",
+          name: '',
+          registry: '',
+          prefix: '',
+          kernelname: '',
+          alias: '',
+          icon: '',
           basename: this.supportImages[item].group,
           tags: [],
           clickable: false
@@ -844,7 +860,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         icon: icon
       });
     });
-    //this._initAliases();
+    // this._initAliases();
     this.image_updating = false;
   }
 
@@ -879,6 +895,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-resource-broker": BackendAiResourceBroker;
+    'backend-ai-resource-broker': BackendAiResourceBroker;
   }
 }

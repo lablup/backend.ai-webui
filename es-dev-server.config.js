@@ -4,5 +4,5 @@ module.exports = {
   nodeResolve: true,
   appIndex: 'index.html',
   plugins: [],
-  moduleDirs: ['node_modules'],
+  moduleDirs: ['node_modules']
 };

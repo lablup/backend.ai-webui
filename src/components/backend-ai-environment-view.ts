@@ -1,10 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from "lit-translate";
-import {css, customElement, html, property} from "lit-element";
+import {translate as _t} from 'lit-translate';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -15,6 +15,10 @@ import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
+import '@material/mwc-button';
+import './lablup-activity-panel';
 import './backend-ai-dialog';
 import './backend-ai-environment-list';
 import './backend-ai-resource-preset-list';
@@ -29,11 +33,11 @@ import './backend-ai-registry-list';
  ... content ...
  </backend-ai-environment-view>
 
- @group Backend.AI Console
+@group Backend.AI Web UI
  @element backend-ai-environment-view
  */
 
-@customElement("backend-ai-environment-view")
+@customElement('backend-ai-environment-view')
 export default class BackendAIEnvironmentView extends BackendAIPage {
   @property({type: String}) images = Object();
   @property({type: Boolean}) is_superadmin = false;
@@ -43,7 +47,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     super();
   }
 
-  static get styles() {
+  static get styles(): CSSResultOrNative | CSSResultArray {
     return [
       BackendAiStyles,
       IronFlex,
@@ -66,6 +70,19 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
               --tab-bg-active-hover: var(--paper-yellow-200);
           }
 
+          h3.tab {
+            background-color: var(--general-tabbar-background-color);
+            border-radius: 5px 5px 0px 0px;
+            margin: 0px auto;
+          }
+
+          mwc-tab-bar {
+            --mdc-theme-primary: var(--general-sidebar-selected-color);
+            --mdc-text-transform: none;
+            --mdc-tab-color-default: var(--general-tabbar-background-color);
+            --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
+          }
+
           div h4 {
               margin: 0;
               font-weight: 100;
@@ -81,6 +98,15 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
               --card-elevation: 0;
           }
 
+          @media screen and (max-width: 805px) {
+            mwc-tab, mwc-button {
+              --mdc-typography-button-font-size: 10px;
+            }
+
+            wl-tab {
+              width: 5px;
+            }
+          }
       `
     ];
   }
@@ -93,13 +119,13 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
       _activeTab: {
         type: Boolean
       }
-    }
+    };
   }
 
   /**
    * Set backend.ai client to super admin.
-   * 
-   * @param {Boolean} active 
+   *
+   * @param {Boolean} active
    */
   async _viewStateChanged(active) {
     await this.updateComplete;
@@ -119,43 +145,43 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
 
   /**
    * Display the tab.
-   * 
-   * @param tab 
+   *
+   * @param {any} tab - tab webcomponent that has 'title' property
    */
   _showTab(tab) {
-    var els = this.shadowRoot.querySelectorAll(".tab-content");
-    for (var x = 0; x < els.length; x++) {
+    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this._activeTab = tab.value;
-    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+    this._activeTab = tab.title;
+    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 
   render() {
     // language=HTML
     return html`
-      <wl-card class="item" elevation="1">
-        <h3 class="tab horizontal center layout">
-          <wl-tab-group>
-            <wl-tab value="image-lists" checked @click="${(e) => this._showTab(e.target)}">${_t("environment.Images")}</wl-tab>
-            <wl-tab value="resource-template-lists" @click="${(e) => this._showTab(e.target)}">${_t("environment.ResourcePresets")}</wl-tab>
-            ${this.is_superadmin ? html`
-              <wl-tab value="registry-lists" @click="${(e) => this._showTab(e.target)}">${_t("environment.Registries")}</wl-tab>` : html``}
-          </wl-tab-group>
-          <div class="flex"></div>
-        </h3>
-        <div id="image-lists" class="tab-content">
-          <backend-ai-environment-list ?active="${this._activeTab === 'image-lists'}"></backend-ai-environment-list>
+      <lablup-activity-panel noheader narrow autowidth>
+        <div slot="message">
+          <h3 class="tab horizontal center layout">
+            <mwc-tab-bar>
+              <mwc-tab title="image-lists" label="${_t('environment.Images')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="resource-template-lists" label="${_t('environment.ResourcePresets')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              ${this.is_superadmin ? html`
+                <mwc-tab title="registry-lists" label="${_t('environment.Registries')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              `: html``}
+            </mwc-tab-bar>
+            <div class="flex"></div>
+          </h3>
+          <div id="image-lists" class="tab-content">
+            <backend-ai-environment-list ?active="${this._activeTab === 'image-lists'}"></backend-ai-environment-list>
+          </div>
+          <backend-ai-resource-preset-list id="resource-template-lists" class="admin item tab-content" style="display: none" ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-preset-list>
+          <div id="registry-lists" class="tab-content">
+            <backend-ai-registry-list ?active="${this._activeTab === 'registry-lists'}"> </backend-ai-registry-list>
+          </div>
         </div>
-        <backend-ai-resource-preset-list id="resource-template-lists" class="admin item tab-content" style="display: none" ?active="${this._activeTab === 'resource-template-lists'}"></backend-ai-resource-preset-list>
-        <div id="registry-lists" class="tab-content">
-          <backend-ai-registry-list ?active="${this._activeTab === 'registry-lists'}"> </backend-ai-registry-list>
-        </div>
-      </wl-card>
+      </lablup-activity-panel>
     `;
-  }
-
-  firstUpdated() {
   }
 
   disconnectedCallback() {
@@ -165,7 +191,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "backend-ai-environment-view": BackendAIEnvironmentView;
+    'backend-ai-environment-view': BackendAIEnvironmentView;
   }
 }
 
