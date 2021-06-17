@@ -92,6 +92,7 @@ export default class LablupProgressBar extends LitElement {
   render() {
     // language=HTML
     return html`
+    <link rel="stylesheet" href="resources/custom.css">
     <div class="horizontal layout flex">
       <slot name="left-desc"></slot>
       <div class="progress">

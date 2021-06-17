@@ -251,7 +251,10 @@
     "WarningTensorboardPathCannotBeChanged": "주의: TensorBoard 로그 경로는 TensorBoard 실행 중엔 바꿀 수 없습니다.",
     "Arguments": "프로그램 인수",
     "ModifyArguments": "프로그램 인수 수정",
-    "UseThisArguments": "이 인수 사용"
+    "UseThisArguments": "이 인수 사용",
+    "UseYourFavoriteVNCApp": "선호하는 VNC 앱을 사용해 연결하세요",
+    "XRDPconnection": "RDP 연결",
+    "UseYourFavoriteMSTSCApp": "선호하는 MS 리모트 데스크탑 클라이언트를 사용해 연결하세요"
   },
   "button": {
     "Cancel": "취소",
@@ -1075,14 +1078,13 @@
     "QueryingExisitingComputeSession": "기존 연산 세션 조회중 ...",
     "SessionStatusId": "기존 연산 세션의 상태: ",
     "PleaseReload": "잠시 후에 다시 시도해 보십시오.",
-    "FoundExistingComputeSession": "재사용할 수 있는 연산 세션 발견",
+    "FoundExistingComputeSession": "실행 중인 계산 세션이 발견되었습니다.",
     "FindingSessionTemplate": "세션 템플릿 탐석 중 ...",
     "NoSessionTemplate": "사용 가능한 세션 템플릿이 없습니다",
     "CreatingComputeSession": "연산 세션 생성 중 ...",
     "SessionStillPreparing": "연산 세션이 계속 준비중입니다. 잠시 후 리로드 하십시오.",
     "ComputeSessionPrepared": "연산 세션이 준비되었습니다",
-    "sessionStatusIs": "세션 상태는 ",
-    "FoundExistingComputeSession": "실행 중인 계산 세션이 발견되었습니다."
+    "sessionStatusIs": "세션 상태는 "
   },
   "error": {
     "UpdateError": "업데이트 에러",
