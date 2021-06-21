@@ -587,8 +587,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     const select = document.createElement('mwc-select') as any;
     select.id = 'group-select';
     select.value = this.current_group;
-    select.style.width = 'auto';
-    // select.setAttribute('naturalMenuWidth', 'true');
+    select.style = 'width: auto;max-width: 200px;'
     select.addEventListener('selected', (e) => this.changeGroup(e));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
@@ -1359,7 +1358,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">21.03.4.210517</small>
+                <small class="sidebar-footer" style="font-size:9px;">21.03.6.210620</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1383,7 +1382,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">21.03.4.210517</small>
+              <small class="sidebar-footer" style="font-size:9px;">21.03.6.210620</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1403,15 +1402,16 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
                 </div>
                 <div slot="navigationIcon" class="vertical-line" style="height:35px;"></div>
-                <div class="horizontal layout" slot="title" style="font-size:12px;margin-left:10px;padding-top:10px;">
+                <div class="horizontal layout" slot="title" id="welcome-message" style="font-size:12px;margin-left:10px;padding-top:10px;">
                   <p>${_t('webui.menu.WelcomeMessage')}</p>
-                  <p>&nbsp;${this._getUsername()}${_t('webui.menu.WelcomeMessage_2')}</p>
+                  <p class="user-name">${this._getUsername()}</p>
+                  <p>${_t('webui.menu.WelcomeMessage_2')}</p>
                 </div>
                 <div slot="actionItems" style="margin:0;">
                   <div class="horizontal flex center layout">
                     <div style="height:48px;">
                       <div class="horizontal center center-justified layout">
-                        <p style="font-size:12px;color:#8c8484;">${_t('webui.menu.Project')}</p>
+                        <p id="project">${_t('webui.menu.Project')}</p>
                         <div id="group-select-box"></div>
                       </div>
                     </div>
@@ -1432,27 +1432,27 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
                               <mwc-icon class="dropdown-menu">info</mwc-icon>
-                              ${_t('webui.menu.AboutBackendAI')}
+                              <span class="dropdown-menu-name">${_t('webui.menu.AboutBackendAI')}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                               <mwc-icon class="dropdown-menu">lock</mwc-icon>
-                              ${_t('webui.menu.ChangeUserInfo')}
+                              <span class="dropdown-menu-name">${_t('webui.menu.ChangeUserInfo')}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
                               <mwc-icon class="dropdown-menu">drag_indicator</mwc-icon>
-                              ${_t('webui.menu.Preferences')}
+                              <span class="dropdown-menu-name">${_t('webui.menu.Preferences')}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
                               <mwc-icon class="dropdown-menu">assignment</mwc-icon>
-                              ${_t('webui.menu.LogsErrors')}
+                              <span class="dropdown-menu-name">${_t('webui.menu.LogsErrors')}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
                               <mwc-icon class="dropdown-menu">logout</mwc-icon>
-                              ${_t('webui.menu.LogOut')}
+                              <span class="dropdown-menu-name">${_t('webui.menu.LogOut')}</span>
                           </mwc-list-item>
                         </mwc-menu>
                       </div>
-                      <span class="full_name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0px auto 10px; padding-top:10px;">
+                      <span class="full_name user-name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0px auto 10px; padding-top:10px;">
                         ${this.full_name}
                       </span>
                       <mwc-icon-button id="dropdown-button" @click="${() => this._toggleDropdown()}" style="font-size: 0.5rem;">

@@ -252,7 +252,10 @@
     "WarningTensorboardPathCannotBeChanged": "Warning: Tensorboard log path cannot be changed after launch.",
     "Arguments": "Arguments",
     "ModifyArguments": "Modify arguments",
-    "UseThisArguments": "Use this arguments"
+    "UseThisArguments": "Use this arguments",
+    "UseYourFavoriteVNCApp": "Use your favorite VNC app",
+    "XRDPconnection": "RDP Connection",
+    "UseYourFavoriteMSTSCApp": "Use your favorite MS Remote Desktop app"
   },
   "button": {
     "Cancel": "Cancel",
@@ -398,7 +401,7 @@
     "Models": "Models",
     "NewFolder": "New Folder",
     "CreateANewStorageFolder": "Create a new storage folder",
-    "Group": "Group",
+    "Project": "Project",
     "DialogFolderStartingWithDotAutomount": "Folders starting with a .(dot) are automatically mounted when a new session is started.",
     "User": "User",
     "Create": "Create",
@@ -1081,8 +1084,7 @@
     "CreatingComputeSession": "Creating compute session ...",
     "SessionStillPreparing": "Session is still in preparing. Reload after a while",
     "ComputeSessionPrepared": "Compute session prepared",
-    "sessionStatusIs": "Session status is",
-    "FoundExistingComputeSession": "Found existing compute session"
+    "sessionStatusIs": "Session status is"
   },
   "error": {
     "UpdateError": "Update error",

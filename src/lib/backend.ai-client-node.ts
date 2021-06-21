@@ -551,6 +551,9 @@ class Client {
       this._features['storage-proxy'] = true;
       this._features['hardware-metadata'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('20.09.16')) {
+      this._features['avoid-hol-blocking'] = true;
+    }
   }
 
   /**
@@ -2582,12 +2585,16 @@ class ComputeSession {
                 status = "RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR",
                 accessKey = '', limit = 100, offset = 0, group = '', timeout:number = 0) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
+    if (!this.client.supports('avoid-hol-blocking')) {
+      status.replace('SCHEDULED,', '');
+      status.replace('SCHEDULED', '');
+    }
     let q, v;
     const sessions: any = [];
 
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
       compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
-        items { ${fields.join(" ")}}
+        items { ${fields.join(' ')}}
         total_count
       }
     }`;

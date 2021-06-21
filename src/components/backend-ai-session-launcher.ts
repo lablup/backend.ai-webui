@@ -1302,6 +1302,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       'lxde': 'LXDE',
       'lxqt': 'LXQt',
       'xfce': 'XFCE',
+      'xrdp': 'XRDP',
       'gnome': 'GNOME',
       'kde': 'KDE',
       'ubuntu16.04': 'Ubuntu 16.04',
@@ -2466,6 +2467,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
+      <link rel="stylesheet" href="resources/custom.css">
       <wl-button raised class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}"
                  @click="${() => this._launchSessionDialog()}">
         <wl-icon>power_settings_new</wl-icon>

@@ -108,7 +108,7 @@ export default class BackendAiSessionView extends BackendAIPage {
 
         backend-ai-dialog wl-textfield {
           padding: 10px 0;
-          --input-font-family: Roboto, Noto, sans-serif;
+          --input-font-family: var(--general-font-family);
           --input-font-size: 12px;
           --input-color-disabled: #bbbbbb;
           --input-label-color-disabled: #222222;
@@ -316,7 +316,12 @@ export default class BackendAiSessionView extends BackendAIPage {
     const exportList: any = [];
 
     // Parameters
-    let status: any = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING', 'TERMINATED', 'CANCELLED', 'ERROR'];
+    let status: any;
+    if (globalThis.backendaiclient.supports('avoid-hol-blocking')) {
+      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING', 'TERMINATED', 'CANCELLED', 'ERROR'];
+    } else {
+      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'PREPARING', 'PULLING', 'TERMINATED', 'CANCELLED', 'ERROR'];
+    }
     if (globalThis.backendaiclient.supports('detailed-session-states')) {
       status = status.join(',');
     }
