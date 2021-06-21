@@ -58,7 +58,7 @@ Backend.AI Web UI focuses to
     * Per-site specific plugin architecture
     * Device plugins / storage plugins
  * Help & manuals
-
+    * Online manual
 
 ## Management Features
 
