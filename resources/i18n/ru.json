@@ -836,7 +836,9 @@
     "English": "английский",
     "Korean": "Корейский",
     "Language": "Язык",
-    "OSDefault": "ОС по умолчанию"
+    "OSDefault": "ОС по умолчанию",
+    "Russian": "русский",
+    "French": "Французский"
   },
   "settings": {
     "General": "Общий",
