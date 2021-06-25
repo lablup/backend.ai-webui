@@ -12,5 +12,5 @@ library / SDK:
   - resources/lib/**/*
   - resources/wsproxy/**/*
 
-l10n:
+localization:
   - resources/i18n/*
