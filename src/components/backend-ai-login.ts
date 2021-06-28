@@ -217,7 +217,7 @@ export default class BackendAILogin extends BackendAIPage {
         .login-form {
           position: relative;
         }
-        
+
         .waiting-animation {
           top: 20%;
           left: 40%;
@@ -234,7 +234,7 @@ export default class BackendAILogin extends BackendAIPage {
           -webkit-transform: rotateZ(45deg);
           transform: rotateZ(45deg);
         }
-    
+
         .sk-folding-cube .sk-cube {
           float: left;
           width: 50%;
@@ -244,7 +244,7 @@ export default class BackendAILogin extends BackendAIPage {
           -ms-transform: scale(1.1);
           transform: scale(1.1);
         }
-    
+
         .sk-folding-cube .sk-cube:before {
           content: '';
           position: absolute;
@@ -259,37 +259,37 @@ export default class BackendAILogin extends BackendAIPage {
           -ms-transform-origin: 100% 100%;
           transform-origin: 100% 100%;
         }
-    
+
         .sk-folding-cube .sk-cube2 {
           -webkit-transform: scale(1.1) rotateZ(90deg);
           transform: scale(1.1) rotateZ(90deg);
         }
-    
+
         .sk-folding-cube .sk-cube3 {
           -webkit-transform: scale(1.1) rotateZ(180deg);
           transform: scale(1.1) rotateZ(180deg);
         }
-    
+
         .sk-folding-cube .sk-cube4 {
           -webkit-transform: scale(1.1) rotateZ(270deg);
           transform: scale(1.1) rotateZ(270deg);
         }
-    
+
         .sk-folding-cube .sk-cube2:before {
           -webkit-animation-delay: 0.3s;
           animation-delay: 0.3s;
         }
-    
+
         .sk-folding-cube .sk-cube3:before {
           -webkit-animation-delay: 0.6s;
           animation-delay: 0.6s;
         }
-    
+
         .sk-folding-cube .sk-cube4:before {
           -webkit-animation-delay: 0.9s;
           animation-delay: 0.9s;
         }
-    
+
         @-webkit-keyframes sk-foldCubeAngle {
           0%,
           10% {
@@ -310,7 +310,7 @@ export default class BackendAILogin extends BackendAIPage {
             opacity: 0;
           }
         }
-    
+
         @keyframes sk-foldCubeAngle {
           0%,
           10% {
@@ -1085,6 +1085,7 @@ export default class BackendAILogin extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <backend-ai-dialog id="login-panel" noclosebutton fixed blockscrolling persistent disablefocustrap>
         <div slot="title">
           <div id="login-title-area"></div>

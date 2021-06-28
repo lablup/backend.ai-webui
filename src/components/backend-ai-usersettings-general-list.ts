@@ -56,7 +56,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: Array}) supportLanguages = [
     {name: _t('language.OSDefault'), code: 'default'},
     {name: _t('language.English'), code: 'en'},
-    {name: _t('language.Korean'), code: 'ko'}
+    {name: _t('language.Korean'), code: 'ko'},
+    {name: _t('language.Russian'), code: 'ru'},
+    {name: _t('language.French'), code: 'fr'}
   ];
   @property({type: Boolean}) beta_feature_panel = false;
   @property({type: Boolean}) shell_script_edit = false;
