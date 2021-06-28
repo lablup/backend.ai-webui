@@ -842,7 +842,9 @@
     "English": "English",
     "Korean": "Korean",
     "Language": "Language",
-    "OSDefault": "OS Default"
+    "OSDefault": "OS Default",
+    "Russian": "Russian",
+    "French": "French"
   },
   "settings": {
     "General": "General",
