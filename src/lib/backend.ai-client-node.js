@@ -455,19 +455,19 @@ class Client {
             this._features['scaling-group'] = true;
             this._features['group'] = true;
             this._features['group-folder'] = true;
-          this._features['system-images'] = true;
-          this._features['detailed-session-states'] = true;
-          this._features['change-user-name'] = true;
+            this._features['system-images'] = true;
+            this._features['detailed-session-states'] = true;
+            this._features['change-user-name'] = true;
         }
-      if (this.isAPIVersionCompatibleWith('v6.20200815')) {
-        this._features['multi-container'] = true;
-        this._features['multi-node'] = true;
-        this._features['storage-proxy'] = true;
-        this._features['hardware-metadata'] = true;
-      }
-      if (this.isManagerVersionCompatibleWith('20.09.16')) {
-        this._features['avoid-hol-blocking'] = true;
-      }
+        if (this.isAPIVersionCompatibleWith('v6.20200815')) {
+            this._features['multi-container'] = true;
+            this._features['multi-node'] = true;
+            this._features['storage-proxy'] = true;
+            this._features['hardware-metadata'] = true;
+        }
+        if (this.isManagerVersionCompatibleWith('20.09.16')) {
+            this._features['avoid-hol-blocking'] = true;
+        }
     }
     /**
      * Return if manager is compatible with given version.
@@ -527,6 +527,10 @@ class Client {
         try {
             result = await this._wrapWithPromise(rqst);
             if (result.authenticated === true) {
+                if (result.data.role === 'monitor') {
+                    this.logout();
+                    return Promise.resolve({ fail_reason: 'Monitor user does not allow to login.' });
+                }
                 await this.get_manager_version();
                 return this.check_login();
             }
@@ -2403,21 +2407,21 @@ class ComputeSession {
      * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
      */
     async listAll(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"], status = "RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR", accessKey = '', limit = 100, offset = 0, group = '', timeout = 0) {
-      fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
-      if (!this.client.supports('avoid-hol-blocking')) {
-        status.replace('SCHEDULED,', '');
-        status.replace('SCHEDULED', '');
-      }
-      let q, v;
-      const sessions = [];
-      q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
+        fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
+        if (!this.client.supports('avoid-hol-blocking')) {
+            status.replace('SCHEDULED,', '');
+            status.replace('SCHEDULED', '');
+        }
+        let q, v;
+        const sessions = [];
+        q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
       compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
         items { ${fields.join(' ')}}
         total_count
       }
     }`;
-      // Prevent fetching more than 1000 sessions.
-      for (let offset = 0; offset < 10 * limit; offset += limit) {
+        // Prevent fetching more than 1000 sessions.
+        for (let offset = 0; offset < 10 * limit; offset += limit) {
             v = { limit, offset, status };
             if (accessKey != '') {
                 v.access_key = accessKey;
@@ -2721,8 +2725,8 @@ class Domain {
     /**
      * Modify domain information.
      * @param {string} domain_name - domain name of group
-
-
+  
+  
      * @param {json} input - Domain specification to change. Required fields are:
      * {
      *   'name': String,          // Group name.
