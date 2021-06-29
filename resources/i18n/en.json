@@ -586,7 +586,7 @@
     "InstallingImage": "Installing: ",
     "TakesTime": ". It takes time so have a cup of coffee!",
     "AppInfoDeleted": "App information successfully deleted.",
-    "NoChangeMade": "",
+    "NoChangeMade": "No changes were made",
     "SuccessfullyModified": "Successfully modified",
     "ProblemOccurred": "Problem occurred",
     "PasswordsDoNotMatch": "Password and Confirmation do not match."

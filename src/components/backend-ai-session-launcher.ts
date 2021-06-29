@@ -2891,6 +2891,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       <div slot="footer" class="horizontal center-justified flex layout distancing">
         <mwc-button
             unelevated
+            fullwidth
             class="launch-button"
             id="launch-button"
             icon="rowing"
@@ -2970,9 +2971,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <p>${_t('session.launcher.LaunchConfirmationDialog')}</p>
         <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
       </div>
-      <div slot="footer" class="horizontal end-justified flex layout">
+      <div slot="footer" class="horizontal center-justified flex layout">
         <mwc-button
             unelevated
+            fullwidth
             class="launch-confirmation-button"
             id="launch-confirmation-button"
             icon="rowing"
@@ -2988,19 +2990,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
       </div>
       <div slot="footer" class="horizontal end-justified flex layout">
+       <mwc-button
+           outlined
+           id="env-config-remain-button"
+           style="width:auto;"
+           @click="${() => this.closeDialog('env-config-confirmation')}">
+         <span id="launch-button-msg">${_t('button.Cancel')}</span>
+       </mwc-button>
         <mwc-button
             unelevated
             id="env-config-reset-button"
             style="width:auto;margin-right:10px;"
             @click="${() => this._closeAndResetEnvInput()}">
           <span id="launch-button-msg">${_t('button.DismissAndProceed')}</span>
-        </mwc-button>
-        <mwc-button
-            outlined
-            id="env-config-remain-button"
-            style="width:auto;"
-            @click="${() => this.closeDialog('env-config-confirmation')}">
-          <span id="launch-button-msg">${_t('button.Cancel')}</span>
         </mwc-button>
       </div>
     </backend-ai-dialog>

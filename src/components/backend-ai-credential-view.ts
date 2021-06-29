@@ -1110,7 +1110,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button raised id="create-keypair-button" icon="add" label="${_t('general.Add')}" style="width:100%;"
+          <mwc-button raised id="create-keypair-button" icon="add" label="${_t('general.Add')}" fullwidth
           @click="${this._addKeyPair}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -1222,14 +1222,13 @@ export default class BackendAICredentialView extends BackendAIPage {
             </div>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout distancing">
           <mwc-button
               unelevated
-              outlined
+              fullwidth
               id="create-policy-button"
               icon="check"
               label="${_t('credential.Create')}"
-              style="width:100%;"
               @click="${() => this._addResourcePolicy()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -1292,7 +1291,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button raised id="create-user-button" icon="add" label="${_t('credential.CreateUser')}" style="width:100%;"
+          <mwc-button raised id="create-user-button" icon="add" label="${_t('credential.CreateUser')}" fullwidth
           @click="${this._addUser}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -1310,7 +1309,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               unelevated
-              style="width:100%;"
+              fullwidth
               icon="get_app"
               label="${_t('credential.ExportCSVFile')}"
               @click="${this._exportToCSV}"></mwc-button>

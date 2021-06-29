@@ -752,7 +752,7 @@
     "CreateResourceGroup": "자원 그룹 추가",
     "SelectDomain": "도메인 선택",
     "ModifyResourceGroup": "자원 그룹 수정",
-    "TypeResourceGroupNameToDelete": "_삭제 확인을 위해 자원 그룹 이름을 입력하세요.",
+    "TypeResourceGroupNameToDelete": "삭제 확인을 위해 자원 그룹 이름을 입력하세요.",
     "ResourceGroupName": "자원 그룹 이름",
     "Active": "활성",
     "SelectScheduler": "스케줄러 선택",

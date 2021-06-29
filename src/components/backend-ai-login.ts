@@ -1170,7 +1170,7 @@ export default class BackendAILogin extends BackendAIPage {
                       unelevated
                       id="login-button"
                       icon="check"
-                      style="width:100%;"
+                      fullwidth
                       label="${_t('login.Login')}"
                       @click="${() => this._login()}"></mwc-button>
                 ${this.signup_support && this.allowAnonymousChangePassword ? html`
@@ -1213,9 +1213,10 @@ export default class BackendAILogin extends BackendAIPage {
           <mwc-textfield type="password" name="signout_password" id="id_signout_password" maxLength="64"
               label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               outlined
+              fullwidth
               id="signout-button"
               icon="check"
               label="${_t('login.LeaveService')}"
@@ -1233,9 +1234,10 @@ export default class BackendAILogin extends BackendAIPage {
               validationMessage="${_t('signup.InvalidEmail')}"
               pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               outlined
+              fullwidth
               icon="check"
               label="${_t('login.EmailSendButton')}"
               @click="${() => this._sendChangePasswordEmail()}"></mwc-button>
@@ -1249,9 +1251,10 @@ export default class BackendAILogin extends BackendAIPage {
           <div slot="content" style="text-align:center;padding-top:15px;">
           ${this.blockMessage}
           </div>
-          <div slot="footer" class="horizontal end-justified flex layout">
+          <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               outlined
+              fullwidth
               label="${_t('login.CancelLogin')}"
               @click="${(e) => this._cancelLogin(e)}"></mwc-button>
           </div>

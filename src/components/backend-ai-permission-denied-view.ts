@@ -129,9 +129,10 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
       <div class="vertical layout desc">
         <div class="title">${_tr('webui.UNAUTHORIZEDACCESS')}</div>
         <p class="description">${_tr('webui.AdminOnlyPage')}</p>
-        <div style="width:auto;">
+        <div>
           <mwc-button
               unelevated
+              fullwidth
               id="go-to-summary"
               label="${_t('button.GoBackToSummaryPage')}"
               @click="${() => this._moveTo('summary')}"></mwc-button>

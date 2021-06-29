@@ -436,18 +436,18 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
           <div slot="footer" class="horizontal end-justified flex layout">
             <mwc-button
+               outlined
+               id="env-config-remain-button"
+               style="width:auto;"
+               @click="${() => this.closeDialog('env-config-confirmation')}">
+             <span id="launch-button-msg">${_t('button.Cancel')}</span>
+           </mwc-button>
+            <mwc-button
                 unelevated
                 id="env-config-reset-button"
                 style="width:auto;margin-right:10px;"
                 @click="${() => this.closeAndResetEnvInput()}">
               <span id="launch-button-msg">${_t('button.DismissAndProceed')}</span>
-            </mwc-button>
-            <mwc-button
-                outlined
-                id="env-config-remain-button"
-                style="width:auto;"
-                @click="${() => this.closeDialog('env-config-confirmation')}">
-              <span id="launch-button-msg">${_t('button.Cancel')}</span>
             </mwc-button>
           </div>
         </backend-ai-dialog>

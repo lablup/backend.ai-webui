@@ -1,5 +1,5 @@
-import { css } from "lit-element";
-import { BackendAiStyles } from "./backend-ai-general-styles";
+import {css} from 'lit-element';
+import {BackendAiStyles} from './backend-ai-general-styles';
 
 export const BackendAIWebUIStyles = [
   BackendAiStyles,
@@ -12,7 +12,7 @@ export const BackendAIWebUIStyles = [
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url("/resources/images/loading-background-large.jpg");
+      background-image: url('/resources/images/loading-background-large.jpg');
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: top left;
@@ -469,7 +469,7 @@ export const BackendAIWebUIStyles = [
       width: 48px;
       height: 48px;
       background-color: #ffffff;
-      background-image: url("/manifest/backend.ai-brand-simple.svg");
+      background-image: url('/manifest/backend.ai-brand-simple.svg');
       background-repeat: no-repeat;
       background-size: 36px 36px;
       background-position: center center;
