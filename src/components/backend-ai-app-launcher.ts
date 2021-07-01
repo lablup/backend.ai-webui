@@ -49,6 +49,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
+  @property({type: Number}) xrdpPort = 0;
   @property({type: String}) tensorboardPath = '';
   @property({type: Boolean}) isPathConfigured = false;
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
@@ -205,7 +206,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           padding: 0px 3px;
           display: inline-block;
         }
-        
+
         @media screen and (max-width: 810px) {
           #terminal-guide {
             --component-width: calc(100% - 50px);
@@ -702,6 +703,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             this.vncPort = response.port;
             this._openVNCDialog();
+          } else if (appName === 'xrdp') {
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
+            this.xrdpPort = response.port;
+            this._openXRDPDialog();
           } else if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
@@ -783,6 +788,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   _openVNCDialog() {
     const dialog = this.shadowRoot.querySelector('#vnc-dialog');
+    dialog.show();
+  }
+
+  /**
+   * Open a XRDP dialog.
+   */
+  _openXRDPDialog() {
+    const dialog = this.shadowRoot.querySelector('#xrdp-dialog');
     dialog.show();
   }
 
@@ -896,7 +909,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     div.setAttribute('class', 'vertical layout flex');
     let lang = globalThis.backendaioptions.get('current_language');
     // if current_language is OS default, then link to English docs
-    if (!['ko', 'en'].includes(lang)) {
+    if (!['en', 'ko', 'ru', 'fr'].includes(lang)) {
       lang = 'en';
     }
     div.innerHTML = `
@@ -1020,10 +1033,21 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <backend-ai-dialog id="vnc-dialog" fixed backdrop>
         <span slot="title">${_t('session.VNCconnection')}</span>
         <div slot="content" style="padding:15px;">
-          <div style="padding:15px 0;">${_t('session.UseYourFavoriteSSHApp')}</div>
+          <div style="padding:15px 0;">${_t('session.UseYourFavoriteVNCApp')}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t('session.ConnectionInformation')}</h4>
             <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a>
+            </div>
+          </section>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="xrdp-dialog" fixed backdrop>
+        <span slot="title">${_t('session.XRDPconnection')}</span>
+        <div slot="content" style="padding:15px;">
+          <div style="padding:15px 0;">${_t('session.UseYourFavoriteMSTSCApp')}</div>
+          <section class="vertical layout wrap start start-justified">
+            <h4>${_t('session.ConnectionInformation')}</h4>
+            <div><span>RDP URL:</span> <a href="rdp://127.0.0.1:${this.xrdpPort}">rdp://127.0.0.1:${this.xrdpPort}</a>
             </div>
           </section>
         </div>

@@ -609,6 +609,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'lxde': 'LXDE',
       'lxqt': 'LXQt',
       'xfce': 'XFCE',
+      'xrdp': 'XRDP',
       'gnome': 'GNOME',
       'kde': 'KDE',
       'ubuntu16.04': 'Ubuntu 16.04',

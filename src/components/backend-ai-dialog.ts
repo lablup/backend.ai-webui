@@ -174,6 +174,7 @@ export default class BackendAiDialog extends LitElement {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <mwc-dialog id="dialog"
                     ?fixed="${(this.fixed)}"
                     ?narrow="${(this.narrowLayout)}"
