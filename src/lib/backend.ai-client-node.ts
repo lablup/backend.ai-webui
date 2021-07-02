@@ -615,6 +615,10 @@ class Client {
     try {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
+        if (result.data.role === 'monitor') {
+          this.logout();
+          return Promise.resolve({fail_reason: 'Monitor user does not allow to login.'});
+        }
         await this.get_manager_version();
         return this.check_login();
       } else if (result.authenticated === false) { // Authentication failed.
@@ -3804,6 +3808,17 @@ class utils {
     n = n + '';
     return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
   }
+
+  /**
+   * Limit the boundary of value
+   * 
+   * @param {number} value - input value to be clamped
+   * @param {number} min - minimum value of the input value
+   * @param {number} max - maximum value of the input vallue
+   */
+  clamp(value: number, min: number, max: number) {
+    return Math.max(min, Math.min(value, max));
+  };
 
   gqlToObject(array, key) {
     let result = {};

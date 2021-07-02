@@ -117,7 +117,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     const urlParams = new URLSearchParams(queryString);
     const sToken = urlParams.get('sToken') || null;
     if (sToken !== null) {
-      document.cookie = `sToken=${sToken}; expires=Session; path=/`
+      document.cookie = `sToken=${sToken}; expires=Session; path=/`;
     }
 
     try {

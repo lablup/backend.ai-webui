@@ -50,6 +50,7 @@ Backend.AI Web UI focuses to
     * Insight (working)
  * Configurations
     * User-specific web / app configurations
+    * System maintenances 
     * Beta features
     * WebUI logs / errors
  * License
@@ -58,7 +59,7 @@ Backend.AI Web UI focuses to
     * Per-site specific plugin architecture
     * Device plugins / storage plugins
  * Help & manuals
-
+    * Online manual
 
 ## Management Features
 
