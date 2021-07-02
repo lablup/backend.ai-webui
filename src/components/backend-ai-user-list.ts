@@ -551,7 +551,7 @@ export default class BackendAIUserList extends BackendAIPage {
           <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>.</p>
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout distancing">
+        <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               label="${_t('button.Cancel')}"
               @click="${(e) => this._hideDialog(e)}"></mwc-button>

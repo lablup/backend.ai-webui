@@ -295,7 +295,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         mwc-button {
-          margin: auto 10px;
           --mdc-typography-button-font-size: 12px;
         }
 
@@ -307,10 +306,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         wl-button.goto:last-of-type {
           font-weight: bold;
-        }
-
-        mwc-button.fullwidth {
-          width: 100%;
         }
 
         mwc-button#readonly-btn {
@@ -766,7 +761,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="share-folder-dialog" fixed backdrop persistent>
         <span slot="title">${_t('data.explorer.ShareFolder')}</span>
-        <div slot="content" role="listbox" style="margin: 0;width:100%;" >
+        <div slot="content" role="listbox" style="margin: 0;width:100%;">
           <div style="margin: 10px 0px">${_t('data.explorer.People')}</div>
           <div class="vertical layout flex" id="textfields">
             <div class="horizontal layout">
@@ -805,8 +800,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             unelevated
             fullwidth
             id="share-button"
-            @click=${(e) => this._shareFolder(e)}
-          >
+            @click=${(e) => this._shareFolder(e)}>
             ${_t('button.Share')}
           </mwc-button>
         </div>
