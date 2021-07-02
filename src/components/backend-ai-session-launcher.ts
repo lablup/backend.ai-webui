@@ -46,13 +46,13 @@ import {
 
  Example:
 
- <backend-ai-session-launcher-new active></backend-ai-session-launcher-new>
+ <backend-ai-session-launcher active></backend-ai-session-launcher>
 
 @group Backend.AI Web UI
- @element backend-ai-session-launcher-new
+ @element backend-ai-session-launcher
  */
 
-@customElement('backend-ai-session-launcher-new')
+@customElement('backend-ai-session-launcher')
 export default class BackendAiSessionLauncherNew extends BackendAIPage {
   @query('#image-name') manualImageName;
   @property({type: Boolean}) is_connected = false;
@@ -483,7 +483,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
         wl-expansion.vfolder {
           --expansion-content-padding: 0;
-          border-bottom: 1px 
+          border-bottom: 1px
         }
 
         wl-expansion span {
@@ -2569,7 +2569,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
   }
 
   /**
-   * 
+   *
    * @returns {Number} - fraction of currentProgress when progressLength becomes 1
    */
   _calculateProgress() {
@@ -2693,15 +2693,15 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
             <span slot="title">${_t('session.launcher.FolderToMount')}</span>
             <div class="vfolder-list">
               <vaadin-grid
-                  theme="row-stripes column-borders compact" 
+                  theme="row-stripes column-borders compact"
                   id="vfolder-grid"
                   aria-label="vfolder list"
                   height-by-rows
                   .items="${this.nonAutoMountedVfolders}"
                   @click="${() => this._updateSelectedFolder()}">
-                <vaadin-grid-selection-column id="select-column" 
-                                              flex-grow="0" 
-                                              text-align="center" 
+                <vaadin-grid-selection-column id="select-column"
+                                              flex-grow="0"
+                                              text-align="center"
                                               auto-select></vaadin-grid-selection-column>
                 <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
                                           path="name"></vaadin-grid-filter-column>
@@ -2736,7 +2736,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
           </div>
           <div id="progress-03" class="progress center layout fade">
             <div class="horizontal center layout">
-              <mwc-select id="scaling-groups" label="${_t('session.launcher.ResourceGroup')}" 
+              <mwc-select id="scaling-groups" label="${_t('session.launcher.ResourceGroup')}"
                           icon="storage" required fixedMenuPosition
                           @selected="${(e) => this.updateScalingGroup(false, e)}">
                 ${this.scaling_groups.map((item) => html`
@@ -2842,7 +2842,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
                                 min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                                 value="${this.cpu_request}"></lablup-slider>
                   <span class="caption">${_t('session.launcher.Core')}</span>
-                  <mwc-icon-button icon="info" class="fg green info" 
+                  <mwc-icon-button icon="info" class="fg green info"
                                     @click="${(e) => {
     this._showResourceDescription(e, 'cpu');
   }}"></mwc-icon-button>
@@ -3210,6 +3210,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-session-launcher-new': BackendAiSessionLauncherNew;
+    'backend-ai-session-launcher': BackendAiSessionLauncherNew;
   }
 }

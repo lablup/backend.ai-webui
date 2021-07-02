@@ -21,7 +21,7 @@ import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
 
 import './lablup-activity-panel';
-import './backend-ai-session-launcher-new';
+import './backend-ai-session-launcher';
 import JsonToCsv from '../lib/json_to_csv';
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -464,7 +464,7 @@ export default class BackendAiSessionView extends BackendAIPage {
               ` : html``}
             </div>
             <div class="horizontal layout flex end-justified" style="margin-right:20px;">
-            <backend-ai-session-launcher-new location="session" id="session-launcher" ?active="${this.active === true}" isSupportingFab></backend-ai-session-launcher-new>
+            <backend-ai-session-launcher location="session" id="session-launcher" ?active="${this.active === true}" isSupportingFab></backend-ai-session-launcher>
             </div>
           </h3>
           <div id="running-lists" class="tab-content">
