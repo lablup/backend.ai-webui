@@ -587,7 +587,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     const select = document.createElement('mwc-select') as any;
     select.id = 'group-select';
     select.value = this.current_group;
-    select.style = 'width: auto;max-width: 200px;'
+    select.style = 'width: auto;max-width: 200px;';
     select.addEventListener('selected', (e) => this.changeGroup(e));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');

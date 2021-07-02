@@ -3524,6 +3524,17 @@ class utils {
         n = n + '';
         return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
     }
+    /**
+     * Limit the boundary of value
+     *
+     * @param {number} value - input value to be clamped
+     * @param {number} min - minimum value of the input value
+     * @param {number} max - maximum value of the input vallue
+     */
+    clamp(value, min, max) {
+        return Math.max(min, Math.min(value, max));
+    }
+    ;
     gqlToObject(array, key) {
         let result = {};
         array.forEach(function (element) {
