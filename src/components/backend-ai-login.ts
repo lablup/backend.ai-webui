@@ -364,6 +364,7 @@ export default class BackendAILogin extends BackendAIPage {
 
   refreshWithConfig(config) {
     if (typeof config.plugin === 'undefined' || typeof config.plugin.login === 'undefined' || config.plugin.login === '') {
+      this._enableUserInput();
     } else {
       import('../plugins/' + config.plugin.login).then(() => {
         console.log('Plugin loaded.');

@@ -615,6 +615,10 @@ class Client {
     try {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
+        if (result.data.role === 'monitor') {
+          this.logout();
+          return Promise.resolve({fail_reason: 'Monitor user does not allow to login.'});
+        }
         await this.get_manager_version();
         return this.check_login();
       } else if (result.authenticated === false) { // Authentication failed.
