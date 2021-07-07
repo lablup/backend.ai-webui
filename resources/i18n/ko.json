@@ -333,6 +333,7 @@
     "Created": "생성일",
     "Lastused": "최종 사용일",
     "ResourcePolicy": "자원 정책",
+    "ResourcePolicyName": "자원 정책 이름",
     "NumberOfQueries": "쿼리 수",
     "ConcurrentSessions": "동시 세션수",
     "active": "활성",

@@ -333,6 +333,7 @@
     "Created": "Created",
     "Lastused": "Last used",
     "ResourcePolicy": "Resource Policy",
+    "ResourcePolicyName": "Resource Policy Name",
     "NumberOfQueries": "Number Of Queries",
     "ConcurrentSessions": "Concurrent Sessions",
     "active": "active",
