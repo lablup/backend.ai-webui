@@ -82,6 +82,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
+  @property({type: Boolean}) allow_manual_image_name_for_session = false;
   @property({type: Boolean}) openPortToPublic = false;
   @property({type: Boolean}) maxCPUCoresPerContainer = 64;
   @property({type: Number}) maxCUDADevicesPerContainer = 16;
@@ -410,6 +411,11 @@ export default class BackendAILogin extends BackendAIPage {
       this.allow_project_resource_monitor = false;
     } else {
       this.allow_project_resource_monitor = true;
+    }
+    if (typeof config.general === 'undefined' || typeof config.general.allowManualImageNameForSession === 'undefined' || config.general.allowManualImageNameForSession === '' || config.general.allowManualImageNameForSession == false) {
+      this.allow_manual_image_name_for_session = false;
+    } else {
+      this.allow_manual_image_name_for_session = true;
     }
 
     if (typeof config.resources === 'undefined' || typeof config.resources.openPortToPublic === 'undefined' || config.resources.openPortToPublic === '' || config.resources.openPortToPublic == false) {
@@ -985,6 +991,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
       globalThis.backendaiclient._config.default_import_environment = this.default_import_environment;
       globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
+      globalThis.backendaiclient._config.allow_manual_image_name_for_session = this.allow_manual_image_name_for_session;
       globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
       globalThis.backendaiclient._config.maxCPUCoresPerContainer = this.maxCPUCoresPerContainer;
       globalThis.backendaiclient._config.maxCUDADevicesPerContainer = this.maxCUDADevicesPerContainer;
