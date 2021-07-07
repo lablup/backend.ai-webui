@@ -627,12 +627,12 @@ export default class BackendAICredentialList extends BackendAIPage {
         <vaadin-grid-sort-column resizable header="${_t('credential.KeyAge')}" path="created_at" .renderer="${this._boundKeyageRenderer}">
         </vaadin-grid-sort-column>
 
-        <vaadin-grid-sort-column resizable header="${_t('credential.ResourcePolicyName')}" path="resource_policy">
-        </vaadin-grid-sort-column>
-
         <vaadin-grid-column width="150px" resizable>
           <template class="header">${_t('credential.ResourcePolicy')}</template>
           <template>
+            <div class="layout horizontal wrap center">
+              <span>[[item.resource_policy]]</span>
+            </div>
             <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
                 <mwc-icon class="fg green">developer_board</mwc-icon>
