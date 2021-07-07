@@ -2663,7 +2663,7 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
             `)}
             </mwc-select>
             ${this._debug || this.allow_manual_image_name_for_session ? html`
-            <mwc-textfield id="image-name" type="text" class="flex" value=""
+            <mwc-textfield id="image-name" type="text" class="flex" value="" icon="assignment_turned_in"
               label="${_t('session.launcher.ManualImageName')}"></mwc-textfield>
             `:html``}
             <mwc-textfield id="session-name" placeholder="${_t('session.launcher.SessionNameOptional')}"
