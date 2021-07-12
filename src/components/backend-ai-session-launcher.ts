@@ -53,7 +53,7 @@ import {
  */
 
 @customElement('backend-ai-session-launcher')
-export default class BackendAiSessionLauncherNew extends BackendAIPage {
+export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#image-name') manualImageName;
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
@@ -3210,6 +3210,6 @@ export default class BackendAiSessionLauncherNew extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-session-launcher': BackendAiSessionLauncherNew;
+    'backend-ai-session-launcher': BackendAiSessionLauncher;
   }
 }

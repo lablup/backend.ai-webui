@@ -41,14 +41,14 @@ import {
 
  Example:
 
- <backend-ai-session-launcher active></backend-ai-session-launcher>
+ <backend-ai-session-launcher-legacy active></backend-ai-session-launcher-legacy>
 
 @group Backend.AI Web UI
- @element backend-ai-session-launcher
+ @element backend-ai-session-launcher-legacy
  */
 
-@customElement('backend-ai-session-launcher')
-export default class BackendAiSessionLauncher extends BackendAIPage {
+@customElement('backend-ai-session-launcher-legacy')
+ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
   @query('#image-name') manualImageName;
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
@@ -183,7 +183,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   static get is() {
-    return 'backend-ai-session-launcher';
+    return 'backend-ai-session-launcher-legacy';
   }
 
   static get styles(): CSSResultOrNative | CSSResultArray {
@@ -3010,6 +3010,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-session-launcher': BackendAiSessionLauncher;
+    'backend-ai-session-launcher-legacy': BackendAiSessionLauncherLegacy;
   }
 }
