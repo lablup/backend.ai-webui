@@ -24,6 +24,7 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
+import { booleanLiteral } from '@babel/types';
 
 /**
  Backend.AI Agent List
@@ -426,12 +427,16 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
    * @param {object} rowData
    */
   controlRenderer(root, column?, rowData?) {
+    let unmatched: boolean;
+    if (this.agentDetail.cpu_util_live == null || !('current_mem' in this.agentDetail)|| !('live_stat' in this.agentDetail && 'node' in this.agentDetail.live_stat)){
+      unmatched = true;
+    }else unmatched = false;
     render(
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.id}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment"
-                           @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
+          <mwc-icon-button class="fg blue controls-running" icon="assignment" ?disabled=${unmatched}
+                          @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
         </div>`, root
     );
   }
