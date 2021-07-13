@@ -166,6 +166,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) max_cuda_device_per_container = 16;
   @property({type: Number}) max_cuda_shares_per_container = 16;
   @property({type: Number}) max_shm_per_container = 2;
+  @property({type: Boolean}) allow_manual_image_name_for_session = false;
   @property({type: Object}) resourceBroker;
   @property({type: Number}) cluster_size = 1;
   @property({type: String}) cluster_mode;
@@ -800,6 +801,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
         this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
         this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+        if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
+          'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
+          globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
+          this.allow_manual_image_name_for_session = globalThis.backendaiclient._config.allow_manual_image_name_for_session;
+        } else {
+          this.allow_manual_image_name_for_session = false;
+        }
         if (globalThis.backendaiclient.supports('multi-container')) {
           this.cluster_support = true;
         }
@@ -812,6 +820,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
       this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
       this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+      if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
+        'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
+        globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
+        this.allow_manual_image_name_for_session = globalThis.backendaiclient._config.allow_manual_image_name_for_session;
+      } else {
+        this.allow_manual_image_name_for_session = false;
+      }
       if (globalThis.backendaiclient.supports('multi-container')) {
         this.cluster_support = true;
       }
@@ -2647,8 +2662,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               </mwc-list-item>
             `)}
             </mwc-select>
-            ${this._debug ? html`
-            <mwc-textfield id="image-name" type="text" class="flex" value=""
+            ${this._debug || this.allow_manual_image_name_for_session ? html`
+            <mwc-textfield id="image-name" type="text" class="flex" value="" icon="assignment_turned_in"
               label="${_t('session.launcher.ManualImageName')}"></mwc-textfield>
             `:html``}
             <mwc-textfield id="session-name" placeholder="${_t('session.launcher.SessionNameOptional')}"

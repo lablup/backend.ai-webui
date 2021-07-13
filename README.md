@@ -50,7 +50,7 @@ Backend.AI Web UI focuses to
     * Insight (working)
  * Configurations
     * User-specific web / app configurations
-    * System maintenances 
+    * System maintenances
     * Beta features
     * WebUI logs / errors
  * License
@@ -112,6 +112,7 @@ allowSignout = false # Let users signout from service. Signup plugin is required
 allowAnonymousChangePassword = false # Enable / disable anonymous user can send change password email. Manager plugin is required.
 allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
 autoLogout = false # If true, user will be automatically logout when they close all Backend.AI tab / window.
+allowManualImageNameForSession = false # If true, user will be able to use the specific environment image by typing the exact name.
 debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
 
 [wsproxy]

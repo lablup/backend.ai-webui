@@ -10,6 +10,7 @@ allowSignout = false
 allowProjectResourceMonitor = true
 #loginAttemptLimit = 5
 #loginBlockTime = 180
+allowManualImageNameForSession = false
 debug = true
 
 [wsproxy]

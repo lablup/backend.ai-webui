@@ -9,6 +9,7 @@ signupSupport = false
 allowSignout = true
 allowAnonymousChangePassword = false
 allowProjectResourceMonitor = true
+allowManualImageNameForSession = false
 #loginAttemptLimit = 5
 #loginBlockTime = 180
 debug = true
