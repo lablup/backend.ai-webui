@@ -1455,11 +1455,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                               ${this.domain}
                           </mwc-list-item>
                           ` : html``}
-                          <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                              ${this.user_id}
+                          <mwc-list-item class="horizontal layout start center" style="border-bottom:1px solid #ccc;">
+                              <mwc-icon class="dropdown-menu">perm_identity</mwc-icon> 
+                              <span class="dropdown-menu-name">${this.user_id}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                              Role: ${this.roleInfo.role}
+                              <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon> 
+                              <span class="dropdown-menu-name">${this.roleInfo.role}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
                               <mwc-icon class="dropdown-menu">info</mwc-icon>
@@ -1563,13 +1565,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           </mwc-text-field>
         </div>
         <div slot="content" class="layout vertical" style="width:300px;">
-        <mwc-textfield id="pref-original-name" type="text"
+        <mwc-textfield id="pref-original-name" disabled type="text"
             label="${_t('general.AccessKey')}"
             style="" value="${this.keysInfo.access_key}" readonly>
         </mwc-text-field>
       </div>
       <div slot="content" class="layout vertical" style="width:300px;">
-          <mwc-textfield id="pref-original-name" type="text"
+          <mwc-textfield id="pref-original-name" disabled type="text"
               label="${_t('general.SecretKey')}"
               style="margin-bottom:20px;" value="${this.keysInfo.secret_key}" readonly
           </mwc-text-field>
