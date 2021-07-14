@@ -122,7 +122,7 @@ proxyListenIP = "[Websocket proxy configuration IP.]"
 [resources]
 openPortToPublic = true # Show option to open app proxy port to anyone.
 maxCPUCoresPerContainer = 256 # Maximum CPU per container.
-maxMemoryPerContainer = 16 # Maximum memory per container.
+maxMemoryPerContainer = 64 # Maximum memory per container.
 maxCUDADevicesPerContainer = 16  # Maximum CUDA devices per container.
 maxCUDASharesPerContainer = 8  # Maximum CUDA shares per container.
 maxShmPerContainer = 1 # Maximum shared memory per container.
