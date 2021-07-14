@@ -24,7 +24,6 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
-import { booleanLiteral } from '@babel/types';
 
 /**
  Backend.AI Agent List
@@ -420,6 +419,18 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   /**
+     * Determine if the storage has unmatched file system.
+     *
+     * @return {boolean}
+     */
+  unmatchedFileSystem() {
+    if (this.agentDetail.cpu_util_live == null ) return true;
+    if (!('current_mem' in this.agentDetail)) return true;
+    if (!('live_stat' in this.agentDetail && 'node' in this.agentDetail.live_stat)) return true;
+    return false;
+  }
+
+  /**
    * Render control buttons such as assignment, build, add an alarm, pause and delete.
    *
    * @param {DOMelement} root
@@ -427,15 +438,11 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
    * @param {object} rowData
    */
   controlRenderer(root, column?, rowData?) {
-    let unmatched: boolean;
-    if (this.agentDetail.cpu_util_live == null || !('current_mem' in this.agentDetail)|| !('live_stat' in this.agentDetail && 'node' in this.agentDetail.live_stat)){
-      unmatched = true;
-    }else unmatched = false;
     render(
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.id}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment" ?disabled=${unmatched}
+          <mwc-icon-button class="fg blue controls-running" icon="assignment" ?disabled=${this.unmatchedFileSystem()}
                           @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
         </div>`, root
     );
