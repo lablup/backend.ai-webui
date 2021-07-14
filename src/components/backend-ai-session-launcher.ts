@@ -163,6 +163,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Number}) max_cpu_core_per_session = 64;
+  @property({type: Number}) max_mem_per_container = 16;
   @property({type: Number}) max_cuda_device_per_container = 16;
   @property({type: Number}) max_cuda_shares_per_container = 16;
   @property({type: Number}) max_shm_per_container = 2;
@@ -798,6 +799,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
+        this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 16;
         this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
         this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
         this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
@@ -817,6 +819,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }, {once: true});
     } else {
       this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
+      this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 16;
       this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
       this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
       this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
@@ -1759,13 +1762,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             if (parseInt(image_mem_max) !== 0) {
               mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem']);
             } else {
-              mem_metric.max = parseFloat(user_mem_max);
+              mem_metric.max = Math.min(parseFloat(user_mem_max), available_slot['mem'], this.max_mem_per_container);
             }
           } else {
             if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity' && isNaN(mem_metric.max) !== true) {
               mem_metric.max = Math.min(parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem']);
             } else {
-              mem_metric.max = available_slot['mem']; // TODO: set to largest memory size
+              mem_metric.max = Math.min(available_slot['mem'], this.max_mem_per_container); // TODO: set to largest memory size
             }
           }
           if (mem_metric.min >= mem_metric.max) {
@@ -2262,9 +2265,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _updateShmemLimit() {
     const shmemEl = this.shadowRoot.querySelector('#shmem-resource');
     let shmem_value = shmemEl.value;
-    this.shmem_metric.max = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
+    this.shmem_metric.max = Math.min(this.max_shm_per_container, this.shmem_metric.max, parseFloat(this.shadowRoot.querySelector('#mem-resource').value));
     // clamp the max value to the smaller of the current memory value or the configuration file value.
-    this.shadowRoot.querySelector('#shmem-resource').max = Math.min(this.max_shm_per_container, this.shmem_metric.max);
+    shmemEl.max = this.shmem_metric.max;
     if (parseFloat(shmem_value) > this.shmem_metric.max) {
       shmem_value = this.shmem_metric.max;
       this.shmem_request = shmem_value;

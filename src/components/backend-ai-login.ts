@@ -85,6 +85,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) allow_manual_image_name_for_session = false;
   @property({type: Boolean}) openPortToPublic = false;
   @property({type: Boolean}) maxCPUCoresPerContainer = 64;
+  @property({type: Boolean}) maxMemoryPerContainer = 16;
   @property({type: Number}) maxCUDADevicesPerContainer = 16;
   @property({type: Number}) maxCUDASharesPerContainer = 16;
   @property({type: Boolean}) maxShmPerContainer = 2;
@@ -427,6 +428,11 @@ export default class BackendAILogin extends BackendAIPage {
       this.maxCPUCoresPerContainer = 64;
     } else {
       this.maxCPUCoresPerContainer = parseInt(config.resources.maxCPUCoresPerContainer);
+    }
+    if (typeof config.resources === 'undefined' || typeof config.resources.maxMemoryPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxMemoryPerContainer))) {
+      this.maxMemoryPerContainer = 16;
+    } else {
+      this.maxMemoryPerContainer = parseInt(config.resources.maxMemoryPerContainer);
     }
     if (typeof config.resources === 'undefined' || typeof config.resources.maxCUDADevicesPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCUDADevicesPerContainer))) {
       this.maxCUDADevicesPerContainer = 16;
@@ -994,6 +1000,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.allow_manual_image_name_for_session = this.allow_manual_image_name_for_session;
       globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
       globalThis.backendaiclient._config.maxCPUCoresPerContainer = this.maxCPUCoresPerContainer;
+      globalThis.backendaiclient._config.maxMemoryPerContainer = this.maxMemoryPerContainer;
       globalThis.backendaiclient._config.maxCUDADevicesPerContainer = this.maxCUDADevicesPerContainer;
       globalThis.backendaiclient._config.maxCUDASharesPerContainer = this.maxCUDASharesPerContainer;
       globalThis.backendaiclient._config.maxShmPerContainer = this.maxShmPerContainer;
