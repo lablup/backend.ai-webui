@@ -138,6 +138,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Array}) superAdminOnlyPages = ['agent', 'settings', 'maintenance', 'information'];
   @property({type: Number}) timeoutSec = 5;
   @property({type: Boolean}) use_experiment = false;
+  @property({type: Object}) roleInfo = Object();
+  @property({type: Object}) keysInfo = {
+    access_key: 'ABC',
+    secret_key: 'ABC',
+  };
 
   constructor() {
     super();
@@ -575,6 +580,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.full_name = globalThis.backendaiclient.full_name;
     this.domain = globalThis.backendaiclient._config.domainName;
     this.current_group = this._readRecentProjectGroup();
+    this._showAccessSecretKeys();
+    this._showRole();
     globalThis.backendaiclient.current_group = this.current_group;
     this.groups = globalThis.backendaiclient.groups;
     const groupSelectionBox: HTMLElement = this.shadowRoot.getElementById('group-select-box');
@@ -1237,6 +1244,27 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     return name;
   }
 
+  _getAccessSecretKeys(accessKey) {
+    const fields = ['access_key', 'secret_key'];
+    return globalThis.backendaiclient.keypair.info(accessKey, fields);
+  }
+
+  async _showAccessSecretKeys() {
+    const access_key = globalThis.backendaiclient._config.accessKey;
+    const data = await this._getAccessSecretKeys(access_key);
+    this.keysInfo = data.keypair;
+  }
+
+  _getRole(user_id) {
+    const fields = ['role'];
+    return globalThis.backendaiclient.user.get(user_id, fields);
+  }
+
+  async _showRole() {
+    const data = await this._getRole(this.user_id);
+    this.roleInfo = data.user;
+  }
+
   protected render() {
     // language=HTML
     return html`
@@ -1358,7 +1386,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">21.03.6.210620</small>
+                <small class="sidebar-footer" style="font-size:9px;">21.03.6.210712</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1382,7 +1410,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">21.03.6.210620</small>
+              <small class="sidebar-footer" style="font-size:9px;">21.03.6.210712</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1430,13 +1458,16 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                           <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
                               ${this.user_id}
                           </mwc-list-item>
+                          <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+                              Role: ${this.roleInfo.role}
+                          </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
                               <mwc-icon class="dropdown-menu">info</mwc-icon>
                               <span class="dropdown-menu-name">${_t('webui.menu.AboutBackendAI')}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                               <mwc-icon class="dropdown-menu">lock</mwc-icon>
-                              <span class="dropdown-menu-name">${_t('webui.menu.ChangeUserInfo')}</span>
+                              <span class="dropdown-menu-name">${_t('webui.menu.MyAccount')}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
                               <mwc-icon class="dropdown-menu">drag_indicator</mwc-icon>
@@ -1523,12 +1554,24 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
       <backend-ai-dialog id="user-preference-dialog" fixed backdrop>
-        <span slot="title">${_t('webui.menu.ChangeUserInformation')}</span>
+        <span slot="title">${_t('webui.menu.MyAccountInformation')}</span>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-name" type="text"
               label="${_t('webui.menu.FullName')}" maxLength="64" autofocus
-              style="margin-bottom:20px;" value="${this.full_name}"
+              value="${this.full_name}"
               helper="${_t('maxLength.64chars')}">
+          </mwc-text-field>
+        </div>
+        <div slot="content" class="layout vertical" style="width:300px;">
+        <mwc-textfield id="pref-original-name" type="text"
+            label="${_t('general.AccessKey')}"
+            style="" value="${this.keysInfo.access_key}" readonly>
+        </mwc-text-field>
+      </div>
+      <div slot="content" class="layout vertical" style="width:300px;">
+          <mwc-textfield id="pref-original-name" type="text"
+              label="${_t('general.SecretKey')}"
+              style="margin-bottom:20px;" value="${this.keysInfo.secret_key}" readonly
           </mwc-text-field>
         </div>
         <div slot="content" class="layout vertical" style="width:300px;">
