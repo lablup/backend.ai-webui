@@ -1266,7 +1266,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   async _showKeypairInfo() {
     const data = await this._getKeypairInfo(this.user_id);
     this.keyPairInfo = data;
-    console.log(this.keyPairInfo.keypairs);
   }
   protected render() {
     // language=HTML
