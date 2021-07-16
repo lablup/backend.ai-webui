@@ -515,7 +515,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
           --mdc-select-dropdown-icon-color: rgba(255, 0, 0, 0.87);
           --mdc-select-focused-dropdown-icon-color: rgba(255, 0, 0, 0.42);
+          --mdc-select-disabled-ink-color	: rgba(0, 0, 0, 0.64);
           --mdc-select-disabled-dropdown-icon-color: rgba(255, 0, 0, 0.87);
+          --mdc-select-disabled-fill-color: rgba(244, 244, 244, 1);
           --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
           --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
           --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
@@ -2596,6 +2598,21 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return (currentIndex / progressLength).toFixed(2);
   }
 
+  /**
+   * Disable Select UI about Environments and versions when event target value is not empty.
+   * 
+   */
+  _toggleEnvironmentSelectUI() {
+    const SelectedEnvironment = this.shadowRoot.querySelector('mwc-select#environment');
+    const SelectedVersions = this.shadowRoot.querySelector('mwc-select#version');
+    const isManualImageEnabled = this.manualImageName?.value ? true : false;
+    SelectedEnvironment.disabled = SelectedVersions.disabled = isManualImageEnabled;
+    // select none(-1) when manual image is enabled
+    const selectedIndex = isManualImageEnabled ? -1 : 1;
+    SelectedEnvironment.select(selectedIndex);
+    SelectedVersions.select(selectedIndex);
+  }
+
   render() {
     // language=HTML
     return html`
@@ -2667,7 +2684,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </mwc-select>
             ${this._debug || this.allow_manual_image_name_for_session ? html`
             <mwc-textfield id="image-name" type="text" class="flex" value="" icon="assignment_turned_in"
-              label="${_t('session.launcher.ManualImageName')}"></mwc-textfield>
+              label="${_t('session.launcher.ManualImageName')}"
+              @change=${(e) => this._toggleEnvironmentSelectUI()}></mwc-textfield>
             `:html``}
             <mwc-textfield id="session-name" placeholder="${_t('session.launcher.SessionNameOptional')}"
                            pattern="[a-zA-Z0-9_-]{4,}" maxLength="64" icon="label"
