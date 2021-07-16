@@ -894,7 +894,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _enableLaunchButton() {
     // Check preconditions and enable it via pooling
     if (!this.resourceBroker.image_updating) { // Image information is successfully updated.
-      this.languages = this.resourceBroker.languages;
+      this.languages = this.resourceBroker.languages; // TODO: filter images here.
       this.enableLaunchButton = true;
     } else {
       setTimeout(() => {

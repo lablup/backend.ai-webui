@@ -748,6 +748,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           if (label['key'] === 'com.nvidia.pytorch.version') {
             this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'PyTorch ' + label['value'];
           }
+          if (label['key'] === 'ai.backend.features') {
+            this.imageRequirements[`${supportsKey}:${item.tag}`]['features'] = label['value'].split(' ');
+          }
         });
       });
       this._updateEnvironment();
