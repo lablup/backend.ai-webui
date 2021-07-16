@@ -12,6 +12,12 @@ import {store} from '../store';
 
 import {navigate, updateOffline} from '../backend-ai-app';
 
+import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
+import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-icons/vaadin-icons';
+import '@vaadin/vaadin-item/vaadin-item';
+
 import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-button';
@@ -139,10 +145,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Number}) timeoutSec = 5;
   @property({type: Boolean}) use_experiment = false;
   @property({type: Object}) roleInfo = Object();
-  @property({type: Object}) keysInfo = {
-    access_key: 'ABC',
-    secret_key: 'ABC',
-  };
+  @property({type: Object}) keyPairInfo = Object();
 
   constructor() {
     super();
@@ -580,8 +583,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.full_name = globalThis.backendaiclient.full_name;
     this.domain = globalThis.backendaiclient._config.domainName;
     this.current_group = this._readRecentProjectGroup();
-    this._showAccessSecretKeys();
     this._showRole();
+    this._showKeypairInfo();
     globalThis.backendaiclient.current_group = this.current_group;
     this.groups = globalThis.backendaiclient.groups;
     const groupSelectionBox: HTMLElement = this.shadowRoot.getElementById('group-select-box');
@@ -1244,17 +1247,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     return name;
   }
 
-  _getAccessSecretKeys(accessKey) {
-    const fields = ['access_key', 'secret_key'];
-    return globalThis.backendaiclient.keypair.info(accessKey, fields);
-  }
-
-  async _showAccessSecretKeys() {
-    const access_key = globalThis.backendaiclient._config.accessKey;
-    const data = await this._getAccessSecretKeys(access_key);
-    this.keysInfo = data.keypair;
-  }
-
   _getRole(user_id) {
     const fields = ['role'];
     return globalThis.backendaiclient.user.get(user_id, fields);
@@ -1265,6 +1257,17 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.roleInfo = data.user;
   }
 
+  _getKeypairInfo(user_id) {
+    const fields = ['access_key', 'secret_key'];
+    const is_active = true;
+    return globalThis.backendaiclient.keypair.list(user_id, fields, is_active);
+  }
+
+  async _showKeypairInfo() {
+    const data = await this._getKeypairInfo(this.user_id);
+    this.keyPairInfo = data;
+    console.log(this.keyPairInfo.keypairs);
+  }
   protected render() {
     // language=HTML
     return html`
@@ -1564,22 +1567,20 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               helper="${_t('maxLength.64chars')}">
           </mwc-text-field>
         </div>
-        <div slot="content" class="layout vertical" style="width:300px;">
-        <mwc-textfield id="pref-original-name" disabled type="text"
-            label="${_t('general.AccessKey')}"
-            style="" value="${this.keysInfo.access_key}" readonly>
-        </mwc-text-field>
-      </div>
-      <div slot="content" class="layout vertical" style="width:300px;">
-          <mwc-textfield id="pref-original-name" disabled type="text"
-              label="${_t('general.SecretKey')}"
-              style="margin-bottom:20px;" value="${this.keysInfo.secret_key}" readonly
-          </mwc-text-field>
+        <div slot="content" class="layout vertical" style="width:300px; height: 100px">
+          <vaadin-grid theme="row-stripes column-borders compact" aria-label="Key List" style="height: auto"
+                    .items="${this.keyPairInfo.keypairs}">
+            <vaadin-grid-column path="access_key" header="${_t('general.AccessKey')}" resizable>
+            </vaadin-grid-column>
+            <vaadin-grid-column path="secret_key" header="${_t('general.SecretKey')}" resizable>
+            </vaadin-grid-column>
+          </vaadin-grid>
         </div>
+
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-password" type="password"
               label="${_t('webui.menu.OriginalPassword')}" maxLength="64"
-              style="margin-bottom:20px;">
+              style="margin-bottom:20px; margin-top:20px;">
           </mwc-textfield>
           <div class="horizontal flex layout">
             <mwc-textfield id="pref-new-password" label="${_t('webui.menu.NewPassword')}"
