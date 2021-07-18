@@ -1027,9 +1027,20 @@ import {
   _newSession() {
     const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
     confirmationDialog.hide();
-    const selectedItem = this.shadowRoot.querySelector('#environment').selected;
-    const kernel = selectedItem.id;
-    const version = this.shadowRoot.querySelector('#version').value;
+    let kernel;
+    let version;
+    if (this.manualImageName && this.manualImageName.value) {
+      const nameFragements = this.manualImageName.value.split(':');
+      version = nameFragements.splice(-1, 1)[0];
+      kernel = nameFragements.join(':');
+    } else {
+      // When the "Environment" dropdown is disabled after typing the image name manually,
+      // `selecteditem.id` is `null` and raises "id" exception when trying to launch the session.
+      // That's why we need if-else block here.
+      const selectedItem = this.shadowRoot.querySelector('#environment').selected;
+      kernel = selectedItem.id;
+      version = this.shadowRoot.querySelector('#version').value;
+    }
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     const isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
     const vfolder = this.selectedVfolders;
