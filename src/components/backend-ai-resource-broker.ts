@@ -708,6 +708,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.supports = {};
       this.supportImages = {};
       this.imageRequirements = {};
+      const privateImages: Array<string> = [];
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
         const supportsKey = `${item.registry}/${item.name}`;
@@ -748,7 +749,14 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           if (label['key'] === 'com.nvidia.pytorch.version') {
             this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'PyTorch ' + label['value'];
           }
+          if (label['key'] === 'ai.backend.features' && label['value'].includes('private')) {
+            privateImages.push(supportsKey)
+          }
         });
+      });
+      privateImages.forEach((key) => {
+        delete this.supports[key];
+        delete this.supportImages[key];
       });
       this._updateEnvironment();
     }).catch((err) => {
