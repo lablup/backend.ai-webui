@@ -160,6 +160,7 @@ import {
   @property({type: Number}) max_cuda_device_per_container = 16;
   @property({type: Number}) max_cuda_shares_per_container = 16;
   @property({type: Number}) max_shm_per_container = 2;
+  @property({type: Boolean}) allow_manual_image_name_for_session = false;
   @property({type: Object}) resourceBroker;
   @property({type: Number}) cluster_size = 1;
   @property({type: String}) cluster_mode;
@@ -721,6 +722,13 @@ import {
         this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
         this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
         this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+        if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
+          'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
+          globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
+          this.allow_manual_image_name_for_session = globalThis.backendaiclient._config.allow_manual_image_name_for_session;
+        } else {
+          this.allow_manual_image_name_for_session = false;
+        }
         if (globalThis.backendaiclient.supports('multi-container')) {
           this.cluster_support = true;
         }
@@ -734,6 +742,13 @@ import {
       this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
       this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
       this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+      if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
+        'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
+        globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
+        this.allow_manual_image_name_for_session = globalThis.backendaiclient._config.allow_manual_image_name_for_session;
+      } else {
+        this.allow_manual_image_name_for_session = false;
+      }
       if (globalThis.backendaiclient.supports('multi-container')) {
         this.cluster_support = true;
       }
@@ -1012,9 +1027,20 @@ import {
   _newSession() {
     const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
     confirmationDialog.hide();
-    const selectedItem = this.shadowRoot.querySelector('#environment').selected;
-    const kernel = selectedItem.id;
-    const version = this.shadowRoot.querySelector('#version').value;
+    let kernel;
+    let version;
+    if (this.manualImageName && this.manualImageName.value) {
+      const nameFragements = this.manualImageName.value.split(':');
+      version = nameFragements.splice(-1, 1)[0];
+      kernel = nameFragements.join(':');
+    } else {
+      // When the "Environment" dropdown is disabled after typing the image name manually,
+      // `selecteditem.id` is `null` and raises "id" exception when trying to launch the session.
+      // That's why we need if-else block here.
+      const selectedItem = this.shadowRoot.querySelector('#environment').selected;
+      kernel = selectedItem.id;
+      version = this.shadowRoot.querySelector('#version').value;
+    }
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     const isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
     const vfolder = this.selectedVfolders;
@@ -1117,7 +1143,7 @@ import {
       config['env'] = this.environ_values;
     }
     let kernelName: string;
-    if (this._debug && this.manualImageName.value !== '') {
+    if (this._debug || this.manualImageName.value !== '') {
       kernelName = this.manualImageName.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
@@ -2464,6 +2490,22 @@ import {
     this.shadowRoot.querySelector('#' + id).hide();
   }
 
+  /**
+   * Disable Select UI about Environments and versions when event target value is not empty.
+   * 
+   */
+  _toggleEnvironmentSelectUI() {
+    const SelectedEnvironment = this.shadowRoot.querySelector('mwc-select#environment');
+    const SelectedVersions = this.shadowRoot.querySelector('mwc-select#version');
+    const isManualImageEnabled = this.manualImageName?.value ? true : false;
+    SelectedEnvironment.disabled = SelectedVersions.disabled = isManualImageEnabled;
+    // select none(-1) when manual image is enabled
+    const selectedIndex = isManualImageEnabled ? -1 : 1;
+    SelectedEnvironment.select(selectedIndex);
+    SelectedVersions.select(selectedIndex);
+  }
+
+
   render() {
     // language=HTML
     return html`
@@ -2535,9 +2577,11 @@ import {
               </mwc-list-item>
             `)}
             </mwc-select>
-            ${this._debug ? html`
+            ${this._debug || this.allow_manual_image_name_for_session ? html`
+            
             <mwc-textfield id="image-name" type="text" class="flex" value=""
-              label="${_t('session.launcher.ManualImageName')}"></mwc-textfield>
+              label="${_t('session.launcher.ManualImageName')}" @change=${(e) => this._toggleEnvironmentSelectUI()}></mwc-textfield>
+
             `:html``}
           </div>
           <div style="display:none;">
@@ -2570,7 +2614,7 @@ import {
             <mwc-list fullwidth multi id="vfolder"
               @selected="${() => this._updateSelectedFolder()}">
             ${this.vfolders.length === 0 ? html`
-              <mwc-list-item value="" disabled="true">${_t('session.launcher.NoFolderExists')}</mwc-list-item>
+              <mwc-list-item value="" ?disabled="${true}">${_t('session.launcher.NoFolderExists')}</mwc-list-item>
             `:html``}
             ${this.vfolders.map((item) => html`
               <mwc-check-list-item
@@ -2719,7 +2763,7 @@ import {
             `)}
             ${this.isEmpty(this.resource_templates_filtered) ? html`
               <mwc-list-item class="resource-button vertical center start layout" role="option"
-                             style="height:140px;width:350px;" type="button" aria-selected
+                             style="height:140px;width:350px;" type="button"
                              flat inverted outlined disabled>
                 <div>
                   <h4>${_t('session.launcher.NoSuitablePreset')}</h4>

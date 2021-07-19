@@ -515,7 +515,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
           --mdc-select-dropdown-icon-color: rgba(255, 0, 0, 0.87);
           --mdc-select-focused-dropdown-icon-color: rgba(255, 0, 0, 0.42);
+          --mdc-select-disabled-ink-color	: rgba(0, 0, 0, 0.64);
           --mdc-select-disabled-dropdown-icon-color: rgba(255, 0, 0, 0.87);
+          --mdc-select-disabled-fill-color: rgba(244, 244, 244, 1);
           --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
           --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
           --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
@@ -1107,9 +1109,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _newSession() {
     const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
     confirmationDialog.hide();
-    const selectedItem = this.shadowRoot.querySelector('#environment').selected;
-    const kernel = selectedItem.id;
-    const version = this.shadowRoot.querySelector('#version').value;
+    let kernel;
+    let version;
+    if (this.manualImageName && this.manualImageName.value) {
+      const nameFragments = this.manualImageName.value.split(':');
+      version = nameFragments.splice(-1, 1)[0];
+      kernel = nameFragments.join(':');
+    } else {
+      // When the "Environment" dropdown is disabled after typing the image name manually,
+      // `selecteditem.id` is `null` and raises "id" exception when trying to launch the session.
+      // That's why we need if-else block here.
+      const selectedItem = this.shadowRoot.querySelector('#environment').selected;
+      kernel = selectedItem.id;
+      version = this.shadowRoot.querySelector('#version').value;
+    }
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     const isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
     const vfolder = this.selectedVfolders;
@@ -1205,7 +1218,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['env'] = this.environ_values;
     }
     let kernelName: string;
-    if (this._debug && this.manualImageName.value !== '') {
+    if (this._debug || this.manualImageName.value !== '') {
       kernelName = this.manualImageName.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
@@ -2596,6 +2609,21 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return (currentIndex / progressLength).toFixed(2);
   }
 
+  /**
+   * Disable Select UI about Environments and versions when event target value is not empty.
+   * 
+   */
+  _toggleEnvironmentSelectUI() {
+    const SelectedEnvironment = this.shadowRoot.querySelector('mwc-select#environment');
+    const SelectedVersions = this.shadowRoot.querySelector('mwc-select#version');
+    const isManualImageEnabled = this.manualImageName?.value ? true : false;
+    SelectedEnvironment.disabled = SelectedVersions.disabled = isManualImageEnabled;
+    // select none(-1) when manual image is enabled
+    const selectedIndex = isManualImageEnabled ? -1 : 1;
+    SelectedEnvironment.select(selectedIndex);
+    SelectedVersions.select(selectedIndex);
+  }
+
   render() {
     // language=HTML
     return html`
@@ -2667,7 +2695,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </mwc-select>
             ${this._debug || this.allow_manual_image_name_for_session ? html`
             <mwc-textfield id="image-name" type="text" class="flex" value="" icon="assignment_turned_in"
-              label="${_t('session.launcher.ManualImageName')}"></mwc-textfield>
+              label="${_t('session.launcher.ManualImageName')}"
+              @change=${(e) => this._toggleEnvironmentSelectUI()}></mwc-textfield>
             `:html``}
             <mwc-textfield id="session-name" placeholder="${_t('session.launcher.SessionNameOptional')}"
                            pattern="[a-zA-Z0-9_-]{4,}" maxLength="64" icon="label"
@@ -2812,7 +2841,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `)}
               ${this.isEmpty(this.resource_templates_filtered) ? html`
                 <mwc-list-item class="resource-button vertical center start layout" role="option"
-                              style="height:140px;width:350px;" type="button" aria-selected
+                              style="height:140px;width:350px;" type="button"
                               flat inverted outlined disabled>
                   <div>
                     <h4>${_t('session.launcher.NoSuitablePreset')}</h4>
