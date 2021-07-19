@@ -506,6 +506,21 @@ export const BackendAiStyles = [
       --mdc-typography-subtitle1-line-height: 16px;
     }
 
+    mwc-textfield#secretkey {
+      --mdc-text-field-fill-color: transparent;
+      --mdc-theme-primary: var(--general-textfield-selected-color);
+      --mdc-text-field-hover-line-color: transparent;
+      --mdc-text-field-idle-line-color: var(--general-textfield-idle-color);
+      --mdc-text-field-fill-color: rgb(250, 250, 250);
+      font-family: var(--general-font-family);
+      --mdc-typography-font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-family: var(--general-font-family);
+      --mdc-typography-subtitle1-font-size: 10.5px;
+      --mdc-typography-subtitle1-font-color: black;
+      --mdc-typography-subtitle1-font-weight: 400;
+      --mdc-typography-subtitle1-line-height: 16px;
+    }
+
     mwc-textarea {
       --mdc-text-field-fill-color: transparent;
       --mdc-theme-primary: var(--general-textarea-color);

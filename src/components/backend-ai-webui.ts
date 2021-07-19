@@ -12,12 +12,6 @@ import {store} from '../store';
 
 import {navigate, updateOffline} from '../backend-ai-app';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
-import '@vaadin/vaadin-icons/vaadin-icons';
-import '@vaadin/vaadin-item/vaadin-item';
-
 import '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-button';
@@ -145,7 +139,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Number}) timeoutSec = 5;
   @property({type: Boolean}) use_experiment = false;
   @property({type: Object}) roleInfo = Object();
-  @property({type: Object}) keyPairInfo = Object();
+  @property({type: Object}) keyPairInfo = {
+    keypairs: [{access_key: String}]
+  };
+  @property({type: Object}) curSecretKey = {secret_key: ''}
 
   constructor() {
     super();
@@ -1258,7 +1255,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   _getKeypairInfo(user_id) {
-    const fields = ['access_key', 'secret_key'];
+    const fields = ['access_key'];
     const is_active = true;
     return globalThis.backendaiclient.keypair.list(user_id, fields, is_active);
   }
@@ -1267,6 +1264,19 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     const data = await this._getKeypairInfo(this.user_id);
     this.keyPairInfo = data;
   }
+
+  _getSecretKey(accessKey) {
+    const fields = ['secret_key'];
+    return globalThis.backendaiclient.keypair.info(accessKey, fields);
+  }
+
+  async _showSecretKey(e) {
+    const secret_key = this.shadowRoot.querySelector('#secretkey');
+    const data = await this._getSecretKey(e.target.selected.value);
+    this.curSecretKey = data.keypair;
+    secret_key.value = this.curSecretKey.secret_key;
+  }
+
   protected render() {
     // language=HTML
     return html`
@@ -1564,22 +1574,25 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               label="${_t('webui.menu.FullName')}" maxLength="64" autofocus
               value="${this.full_name}"
               helper="${_t('maxLength.64chars')}">
-          </mwc-text-field>
+          </mwc-textfield>
         </div>
-        <div slot="content" class="layout vertical" style="width:300px; height: 100px">
-          <vaadin-grid theme="row-stripes column-borders compact" aria-label="Key List" style="height: auto"
-                    .items="${this.keyPairInfo.keypairs}">
-            <vaadin-grid-column path="access_key" header="${_t('general.AccessKey')}" resizable>
-            </vaadin-grid-column>
-            <vaadin-grid-column path="secret_key" header="${_t('general.SecretKey')}" resizable>
-            </vaadin-grid-column>
-          </vaadin-grid>
+        <div slot="content" class="layout vertical" style="width:300px">
+          <mwc-select label="${_t('general.AccessKey')}"
+                      @selected="${(e) => this._showSecretKey(e)}">
+            ${this.keyPairInfo.keypairs.map((item) => html`
+              <mwc-list-item value="${item.access_key}">
+                ${item.access_key}
+              </mwc-list-item>`)}
+          </mwc-select>
+          <mwc-textfield id="secretkey" disabled type="text"
+              label="${_t('general.SecretKey')}"
+              style="margin-bottom:20px; margin-top:20px;" value="" readonly>
+          </mwc-textfield>
         </div>
-
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-password" type="password"
               label="${_t('webui.menu.OriginalPassword')}" maxLength="64"
-              style="margin-bottom:20px; margin-top:20px;">
+              style="margin-bottom:20px;">
           </mwc-textfield>
           <div class="horizontal flex layout">
             <mwc-textfield id="pref-new-password" label="${_t('webui.menu.NewPassword')}"
