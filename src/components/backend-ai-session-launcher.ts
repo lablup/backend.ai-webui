@@ -2289,8 +2289,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _updateShmemLimit() {
     const shmemEl = this.shadowRoot.querySelector('#shmem-resource');
+    const currentMemLimit = parseFloat(this.shadowRoot.querySelector('#mem-resource').value)
     let shmem_value = shmemEl.value;
-    this.shmem_metric.max = Math.min(this.max_shm_per_container, this.shmem_metric.max, parseFloat(this.shadowRoot.querySelector('#mem-resource').value));
+    this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
     shmemEl.max = this.shmem_metric.max;
     if (parseFloat(shmem_value) > this.shmem_metric.max) {
@@ -2861,31 +2862,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ` : html``}
               </mwc-select>
             </div>
-            <div style="display:none;" class="horizontal layout center center-justified allocation-check">
-              <div style="font-size:22px;">=</div>
-              <div class="horizontal layout resource-allocated-box">
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.CPU')}</p>
-                  <span>${this.cpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                  <p>Core</p>
-                </div>
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.Memory')}</p>
-                  <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                  <p>GB</p>
-                </div>
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.SharedMemory')}</p>
-                  <span>${this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                  <p>GB</p>
-                </div>
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.Accelerator')}</p>
-                  <span>${this.gpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                  <p>${_t('session.launcher.GPU')}</p>
-                </div>
-              </div>
-            </div>
             <wl-expansion name="resource-group">
               <span slot="title">${_t('session.launcher.CustomAllocation')}</span>
               <div class="vertical center layout">
@@ -2914,6 +2890,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                   @changed="${() => {
     this._updateShmemLimit();
   }}"
+                                  @focusout="${(e) => this._applyResourceValueChanges(e)}"
                                 marker_limit="${this.marker_limit}"
                                 min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                 value="${this.mem_request}"></lablup-slider>
@@ -3054,22 +3031,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <div class="horizontal layout resource-allocated-box">
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.CPU')}</p>
-                    <span>${this.cpu_request}</span>
+                    <span>${this.cpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                     <p>Core</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.Memory')}</p>
-                    <span>${this.mem_request}</span>
+                    <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                     <p>GB</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                    <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
-                    <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
+                    <span>${this._conditionalGBtoMB(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</span>
+                    <p>${this._conditionalGBtoMBunit(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.GPU')}</p>
-                    <span>${this.gpu_request}</span>
+                    <span>${this.gpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                     <p>${_t('session.launcher.GPUSlot')}</p>
                   </div>
                 </div>
