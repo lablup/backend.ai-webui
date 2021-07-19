@@ -179,7 +179,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) currentIndex = 1;
   @property({type: Number}) progressLength;
   @property({type: Object}) _grid = Object();
-
   @property({type: Boolean}) _debug = false;
 
   constructor() {
@@ -524,7 +523,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
           --mdc-select-dropdown-icon-color: rgba(255, 0, 0, 0.87);
           --mdc-select-focused-dropdown-icon-color: rgba(255, 0, 0, 0.42);
-          --mdc-select-disabled-ink-color	: rgba(0, 0, 0, 0.64);
+          --mdc-select-disabled-ink-color: rgba(0, 0, 0, 0.64);
           --mdc-select-disabled-dropdown-icon-color: rgba(255, 0, 0, 0.87);
           --mdc-select-disabled-fill-color: rgba(244, 244, 244, 1);
           --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
@@ -1228,7 +1227,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['env'] = this.environ_values;
     }
     let kernelName: string;
-    if (this._debug || this.manualImageName.value !== '') {
+    if (this._debug || ( this.manualImageName && this.manualImageName.value !== '')) {
       kernelName = this.manualImageName.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
@@ -2286,7 +2285,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _updateShmemLimit() {
     const shmemEl = this.shadowRoot.querySelector('#shmem-resource');
-    const currentMemLimit = parseFloat(this.shadowRoot.querySelector('#mem-resource').value)
+    const currentMemLimit = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
     let shmem_value = shmemEl.value;
     this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
@@ -2611,7 +2610,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    *
-   * @returns {Number} - fraction of currentProgress when progressLength becomes 1
+   * @return {Number} - fraction of currentProgress when progressLength becomes 1
    */
   _calculateProgress() {
     const progressLength = this.progressLength > 0 ? this.progressLength : 1;
