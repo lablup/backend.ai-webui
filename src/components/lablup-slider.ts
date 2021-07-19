@@ -36,11 +36,11 @@ export default class LablupSlider extends LitElement {
   @property({type: Number}) value;
   @property({type: Number}) max;
   @property({type: Number}) min;
-  @property({type: Boolean}) editable = null;
-  @property({type: Boolean}) pin = null;
-  @property({type: Boolean}) markers = null;
+  @property({type: Boolean}) editable = false;
+  @property({type: Boolean}) pin = false;
+  @property({type: Boolean}) markers = false;
   @property({type: Number}) marker_limit = 30;
-  @property({type: Boolean}) disabled = null;
+  @property({type: Boolean}) disabled = false;
   @property({type: Object}) textfield;
   @query('#slider', true) slider;
 
