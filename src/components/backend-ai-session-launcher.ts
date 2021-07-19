@@ -346,6 +346,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         .indicator {
           font-family: monospace;
         }
+        .cluster-total-allocation-container {
+          border-radius:10px;
+          border:1px dotted var(--general-button-background-color);
+          padding-top:10px;
+          margin-left:15px;
+          margin-right:15px;
+        }
 
         .resource-button {
           height: 140px;
@@ -901,6 +908,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.languages = this.resourceBroker.languages;
       this.enableLaunchButton = true;
     } else {
+      this.enableLaunchButton = false;
       setTimeout(() => {
         this._enableLaunchButton();
       }, 1000);
@@ -1289,7 +1297,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           // remove redundant error message
         });
       }
-
       // initialize vfolder
       this._updateSelectedFolder(false);
     }).catch((err) => {
@@ -2279,8 +2286,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _updateShmemLimit() {
     const shmemEl = this.shadowRoot.querySelector('#shmem-resource');
+    const currentMemLimit = parseFloat(this.shadowRoot.querySelector('#mem-resource').value)
     let shmem_value = shmemEl.value;
-    this.shmem_metric.max = Math.min(this.max_shm_per_container, this.shmem_metric.max, parseFloat(this.shadowRoot.querySelector('#mem-resource').value));
+    this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
     shmemEl.max = this.shmem_metric.max;
     if (parseFloat(shmem_value) > this.shmem_metric.max) {
@@ -2613,7 +2621,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Disable Select UI about Environments and versions when event target value is not empty.
-   * 
+   *
    */
   _toggleEnvironmentSelectUI() {
     const SelectedEnvironment = this.shadowRoot.querySelector('mwc-select#environment');
@@ -2851,31 +2859,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ` : html``}
               </mwc-select>
             </div>
-            <div style="display:none;" class="horizontal layout center center-justified allocation-check">
-              <div style="font-size:22px;">=</div>
-              <div class="horizontal layout resource-allocated-box">
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.CPU')}</p>
-                  <span>${this.cpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                  <p>Core</p>
-                </div>
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.Memory')}</p>
-                  <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                  <p>GB</p>
-                </div>
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.SharedMemory')}</p>
-                  <span>${this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                  <p>GB</p>
-                </div>
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.Accelerator')}</p>
-                  <span>${this.gpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                  <p>${_t('session.launcher.GPU')}</p>
-                </div>
-              </div>
-            </div>
             <wl-expansion name="resource-group">
               <span slot="title">${_t('session.launcher.CustomAllocation')}</span>
               <div class="vertical center layout">
@@ -2904,6 +2887,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                   @changed="${() => {
     this._updateShmemLimit();
   }}"
+                                  @focusout="${(e) => this._applyResourceValueChanges(e)}"
                                 marker_limit="${this.marker_limit}"
                                 min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                 value="${this.mem_request}"></lablup-slider>
@@ -3039,45 +3023,71 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
           <div id="progress-04" class="progress center layout fade">
             <p class="title">${_t('session.launcher.TotalAllocation')}</p>
-            <div id="total-allocation-container" class="horizontal layout center center-justified allocation-check">
-              <div id="total-allocation-pane" style="position:relative;">
-                <div class="horizontal layout resource-allocated-box">
+            <div class="vertical layout center center-justified cluster-total-allocation-container">
+              <div id="cluster-allocation-pane" style="position:relative;${this.cluster_size <= 1 ? 'display:none;' : ''}">
+                <div class="horizontal layout">
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.CPU')}</p>
-                    <span>${this.cpu_request}</span>
+                    <span>${this.cpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                     <p>Core</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.Memory')}</p>
-                    <span>${this.mem_request}</span>
+                    <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                     <p>GB</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                    <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
-                    <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
+                    <span>${this._conditionalGBtoMB(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</span>
+                    <p>${this._conditionalGBtoMBunit(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.GPU')}</p>
-                    <span>${this.gpu_request}</span>
+                    <span>${this.gpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                     <p>${_t('session.launcher.GPUSlot')}</p>
                   </div>
                 </div>
-                <div id="resource-allocated-box-shadow"></div>
               </div>
-              <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
-                <div class="horizontal layout">
-                  <p>×</p>
-                  <span>${this.cluster_size <= 1 ? this.session_request : this.cluster_size}</span>
+              <div id="total-allocation-container" class="horizontal layout center center-justified allocation-check">
+                <div id="total-allocation-pane" style="position:relative;">
+                  <div class="horizontal layout resource-allocated-box">
+                    <div class="vertical layout center center-justified resource-allocated">
+                      <p>${_t('session.launcher.CPU')}</p>
+                      <span>${this.cpu_request}</span>
+                      <p>Core</p>
+                    </div>
+                    <div class="vertical layout center center-justified resource-allocated">
+                      <p>${_t('session.launcher.Memory')}</p>
+                      <span>${this.mem_request}</span>
+                      <p>GB</p>
+                    </div>
+                    <div class="vertical layout center center-justified resource-allocated">
+                      <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
+                      <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
+                      <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
+                    </div>
+                    <div class="vertical layout center center-justified resource-allocated">
+                      <p>${_t('session.launcher.GPU')}</p>
+                      <span>${this.gpu_request}</span>
+                      <p>${_t('session.launcher.GPUSlot')}</p>
+                    </div>
+                  </div>
+                  <div id="resource-allocated-box-shadow"></div>
                 </div>
-                <p class="small">${_t('session.launcher.Container')}</p>
-              </div>
-              <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
-                <div class="horizontal layout">
-                  <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
-                  <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
+                <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
+                  <div class="horizontal layout">
+                    <p>×</p>
+                    <span>${this.cluster_size <= 1 ? this.session_request : this.cluster_size}</span>
+                  </div>
+                  <p class="small">${_t('session.launcher.Container')}</p>
                 </div>
-                <p class="small">${_t('session.launcher.AllocateNode')}</p>
+                <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
+                  <div class="horizontal layout">
+                    <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
+                    <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
+                  </div>
+                  <p class="small">${_t('session.launcher.AllocateNode')}</p>
+                </div>
               </div>
             </div>
             <p class="title">${_t('session.launcher.MountedFolders')}</p>

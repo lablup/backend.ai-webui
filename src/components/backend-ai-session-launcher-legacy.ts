@@ -2205,8 +2205,9 @@ import {
 
   _updateShmemLimit() {
     const shmemEl = this.shadowRoot.querySelector('#shmem-resource');
+    const currentMemLimit = parseFloat(this.shadowRoot.querySelector('#mem-resource').value)
     let shmem_value = shmemEl.value;
-    this.shmem_metric.max = Math.min(this.max_shm_per_container, this.shmem_metric.max, parseFloat(this.shadowRoot.querySelector('#mem-resource').value));
+    this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
     shmemEl.max = this.shmem_metric.max;
     if (parseFloat(shmem_value) > this.shmem_metric.max) {
@@ -2688,31 +2689,6 @@ import {
                 <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
               </div>
               <p class="small">${_t('session.launcher.AllocateNode')}</p>
-            </div>
-          </div>
-          <div style="display:none;" class="horizontal layout center center-justified allocation-check">
-            <div style="font-size:22px;">=</div>
-            <div class="horizontal layout resource-allocated-box">
-              <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t('session.launcher.CPU')}</p>
-                <span>${this.cpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                <p>Core</p>
-              </div>
-              <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t('session.launcher.Memory')}</p>
-                <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                <p>GB</p>
-              </div>
-              <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t('session.launcher.SharedMemory')}</p>
-                <span>${this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                <p>GB</p>
-              </div>
-              <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t('session.launcher.Accelerator')}</p>
-                <span>${this.gpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                <p>${_t('session.launcher.GPU')}</p>
-              </div>
             </div>
           </div>
           <div class="vertical center layout" style="padding-top:15px;position:relative;z-index:11;">
