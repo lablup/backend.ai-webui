@@ -2614,7 +2614,7 @@ import {
             <mwc-list fullwidth multi id="vfolder"
               @selected="${() => this._updateSelectedFolder()}">
             ${this.vfolders.length === 0 ? html`
-              <mwc-list-item value="" disabled="true">${_t('session.launcher.NoFolderExists')}</mwc-list-item>
+              <mwc-list-item value="" ?disabled="${true}">${_t('session.launcher.NoFolderExists')}</mwc-list-item>
             `:html``}
             ${this.vfolders.map((item) => html`
               <mwc-check-list-item
@@ -2763,7 +2763,7 @@ import {
             `)}
             ${this.isEmpty(this.resource_templates_filtered) ? html`
               <mwc-list-item class="resource-button vertical center start layout" role="option"
-                             style="height:140px;width:350px;" type="button" aria-selected
+                             style="height:140px;width:350px;" type="button"
                              flat inverted outlined disabled>
                 <div>
                   <h4>${_t('session.launcher.NoSuitablePreset')}</h4>

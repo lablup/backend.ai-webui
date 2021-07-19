@@ -1112,9 +1112,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let kernel;
     let version;
     if (this.manualImageName && this.manualImageName.value) {
-      const nameFragements = this.manualImageName.value.split(':');
-      version = nameFragements.splice(-1, 1)[0];
-      kernel = nameFragements.join(':');
+      const nameFragments = this.manualImageName.value.split(':');
+      version = nameFragments.splice(-1, 1)[0];
+      kernel = nameFragments.join(':');
     } else {
       // When the "Environment" dropdown is disabled after typing the image name manually,
       // `selecteditem.id` is `null` and raises "id" exception when trying to launch the session.
@@ -2841,7 +2841,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `)}
               ${this.isEmpty(this.resource_templates_filtered) ? html`
                 <mwc-list-item class="resource-button vertical center start layout" role="option"
-                              style="height:140px;width:350px;" type="button" aria-selected
+                              style="height:140px;width:350px;" type="button"
                               flat inverted outlined disabled>
                   <div>
                     <h4>${_t('session.launcher.NoSuitablePreset')}</h4>
