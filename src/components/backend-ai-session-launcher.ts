@@ -2660,9 +2660,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                         `) : ''}
                         <mwc-icon-button icon="info"
                                          class="fg blue info"
-                                         @click="${(e) => {
-    this._showKernelDescription(e, item);
-  }}">
+                                         @click="${(e) => {this._showKernelDescription(e, item);}}">
                         </mwc-icon-button>
                       </div>
                     </div>
