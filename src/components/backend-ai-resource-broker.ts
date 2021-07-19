@@ -708,7 +708,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.supports = {};
       this.supportImages = {};
       this.imageRequirements = {};
-      const privateImages: Array<string> = [];
+      const privateImages: Object = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
         const supportsKey = `${item.registry}/${item.name}`;
@@ -750,13 +750,22 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'PyTorch ' + label['value'];
           }
           if (label['key'] === 'ai.backend.features' && label['value'].includes('private')) {
-            privateImages.push(supportsKey)
+            if (!(supportsKey in privateImages)) {
+              privateImages[supportsKey] = [];
+            }
+            privateImages[supportsKey].push(item.tag);
           }
         });
       });
-      privateImages.forEach((key) => {
-        delete this.supports[key];
-        delete this.supportImages[key];
+      Object.keys(privateImages).forEach((key) => {
+        // Hide "private" images.
+        const tags = this.supports[key];
+        this.supports[key] = tags.filter((tag) => !privateImages[key].includes(tag));
+        if (this.supports[key].length < 1) {
+          // If there is no availabe version, remove the environment itself.
+          delete this.supports[key];
+          // delete this.supportImages[key];
+        }
       });
       this._updateEnvironment();
     }).catch((err) => {
