@@ -241,6 +241,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           height: 100%;
           width: 100%;
           --progress-bar-background: var(--general-progress-bar-using);
+          /* transition speed for progress bar */
+          --progress-bar-transition-second: .1s;
           margin: 0;
         }
 
