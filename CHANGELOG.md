@@ -1,5 +1,17 @@
 # Changelog
 
+## v21.03.7 (19/07/2021)
+
+#### Enhancements:
+
+- [**UI / UX**][**easy**][**enhancement**][**good first issue**] Let's synchronize the speed of the progress bar and the current page of new session launcher. [#1073](https://github.com/lablup/backend.ai-webui/issues/1073)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**easy**][**good first issue**][**urgency**] Manual image doesn't get applied in a session creating process. [#1069](https://github.com/lablup/backend.ai-webui/issues/1069)
+- [**UI / UX**][**bug**][**easy**][**good first issue**] clamping shared memory according to max shared memory value in config file doesn't work [#1063](https://github.com/lablup/backend.ai-webui/issues/1063)
+
+
 ## v21.03.6 (14/07/2021)
 
 #### Enhancements:
