@@ -899,10 +899,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.languages = this.resourceBroker.languages;
       this.enableLaunchButton = true;
     } else {
+      this.enableLaunchButton = false;
       setTimeout(() => {
         this._enableLaunchButton();
       }, 1000);
     }
+  }
+
+  _disableLaunchButton() {
+    this.enableLaunchButton = false;
   }
 
   /**
@@ -1239,6 +1244,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       sessions.push({'kernelName': kernelName, 'sessionName': sessionName, config});
     }
+    this._disableLaunchButton();
     const createSessionQueue = sessions.map((item) => {
       return this.tasker.add('Creating ' + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', 'session');
     });
@@ -1287,6 +1293,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           // remove redundant error message
         });
       }
+      setTimeout(() => {
+        this._enableLaunchButton();
+      }, 2000);
 
       // initialize vfolder
       this._updateSelectedFolder(false);
@@ -1307,6 +1316,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
+      this._enableLaunchButton();
       this.shadowRoot.querySelector('#launch-button').disabled = false;
       this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.ConfirmAndLaunch');
     });
@@ -2611,7 +2621,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Disable Select UI about Environments and versions when event target value is not empty.
-   * 
+   *
    */
   _toggleEnvironmentSelectUI() {
     const SelectedEnvironment = this.shadowRoot.querySelector('mwc-select#environment');
