@@ -668,15 +668,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.available_slot = this.resourceBroker.available_slot;
       this.used_slot_percent = this.resourceBroker.used_slot_percent;
       this.used_resource_group_slot_percent = this.resourceBroker.used_resource_group_slot_percent;
-
-      // fix resource slot values according to the type of resources
-      this._fixDecimalPointInResourceSlots(this.used_project_slot);
-      this._fixDecimalPointInResourceSlots(this.total_slot);
-      this._fixDecimalPointInResourceSlots(this.total_resource_group_slot);
-      this._fixDecimalPointInResourceSlots(this.total_project_slot);
-      this._fixDecimalPointInResourceSlots(this.used_slot);
-      this._fixDecimalPointInResourceSlots(this.used_resource_group_slot);
-      this._fixDecimalPointInResourceSlots(this.used_project_slot);
       // this.requestUpdate();
       return Promise.resolve(true);
       // return this.available_slot;
@@ -703,28 +694,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     } else {
       this._aggregateResourceUse(from);
     }
-  }
-
-  /**
-   * fix the value of resource according to the type of resources
-   * 
-   * @param {Object} resource_slots - resource slots which contains value of resources
-   */
-  _fixDecimalPointInResourceSlots(resource_slots: Object) {
-    const resourcesToClamp: Object = {
-      mem: 2,
-      cuda_device: 1,
-      cuda_shares: 1,
-      rocm_device_slot: 1,
-      tpu_device_slot: 1
-    };
-    const resourceList = Object.keys(resourcesToClamp);
-    Object.keys(resource_slots).map((key, idx) => {
-      if (resourceList.includes(key) && resource_slots[key] && !isNaN(resource_slots[key])) {
-        resource_slots[key] = (typeof resource_slots[key] === 'string') ? parseFloat(resource_slots[key]) : resource_slots[key];
-        resource_slots[key] = resource_slots[key].toFixed(resourcesToClamp[key]);
-      }
-    });
   }
 
   /**
