@@ -209,7 +209,8 @@
       "EnvConfigWillDisappear": "Any unsaved Environment variable and value will be disappeared.",
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Slot",
-      "FolderAlias": "Alias"
+      "FolderAlias": "Alias",
+      "FolderAliasOverlapping": "Aliases overlap with other names that already exist"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

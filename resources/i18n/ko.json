@@ -209,7 +209,8 @@
       "EnvConfigWillDisappear": "저장되지 않은 환경 변수 설정값은 사라집니다.",
       "SharedMemoryAbbr": "공유메모리",
       "GPUSlot": "슬롯",
-      "FolderAlias": "대체이름"
+      "FolderAlias": "대체이름",
+      "FolderAliasOverlapping": "대체 이름이 이미 존재하는 다른 이름과 겹칩니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
