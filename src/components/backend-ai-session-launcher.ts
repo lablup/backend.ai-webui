@@ -1929,7 +1929,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   folderMapRenderer(root, column?, rowData?) {
     render(
       html`
-        <vaadin-text-field theme="small" value="" @change="${(e)=>this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
+        <vaadin-text-field clear-button-visible prevent-invalid-input pattern="^[a-zA-Z0-9\._-]*$"
+                           theme="small" value="" @change="${(e)=>this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
         </template>
       `,
       root
@@ -1937,7 +1938,21 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _updateFolderMap(folder, alias) {
-    if (alias !== '' && folder !== alias) {
+    if (alias !== '' && folder !== alias) { // Prevent vfolder name & alias overlapping
+      if (this.selectedVfolders.includes(alias)) {
+        this.notification.text = _text('session.launcher.FolderAliasOverlapping');
+        this.notification.show();
+        return;
+      }
+      for (const f in this.folderMapping) { // Prevent alias overlapping
+        if ({}.hasOwnProperty.call(this.folderMapping, f)) {
+          if (this.folderMapping[f] == alias) {
+            this.notification.text = _text('session.launcher.FolderAliasOverlapping');
+            this.notification.show();
+            return;
+          }
+        }
+      }
       this.folderMapping[folder] = alias;
     }
   }
