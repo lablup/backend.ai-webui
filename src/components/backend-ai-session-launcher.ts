@@ -2809,7 +2809,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                               text-align="center"
                                               auto-select></vaadin-grid-selection-column>
                 <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
-                                          path="name"></vaadin-grid-filter-column>
+                                          path="name" resizable></vaadin-grid-filter-column>
                 <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" header="${_t('session.launcher.FolderAlias')}">
                 </vaadin-grid-column>
               </vaadin-grid>
@@ -2826,7 +2826,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
                 <ul class="vfolder-list">
                     ${this.selectedVfolders.map((item) => html`
-                      <li><mwc-icon>folder_open</mwc-icon>${item}</li>
+                      <li><mwc-icon>folder_open</mwc-icon>${item}
+                      ${item in this.folderMapping ? html` (&#10140; ${this.folderMapping[item]})`: html``}
+                      </li>
                     `)}
                     ${this.autoMountedVfolders.map((item) => html`
                       <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
@@ -3147,8 +3149,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ${this.selectedVfolders.length > 0 || this.autoMountedVfolders.length > 0 ? html`
                 <ul class="vfolder-list">
                   ${this.selectedVfolders.map((item) => html`
-                        <li><mwc-icon>folder_open</mwc-icon>${item}</li>
-                    `)}
+                    <li><mwc-icon>folder_open</mwc-icon>${item}
+                    ${item in this.folderMapping ? html` (&#10140; ${this.folderMapping[item]})`: html``}
+                    </li>
+                  `)}
                   ${this.autoMountedVfolders.map((item) => html`
                     <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
                   `)}
