@@ -419,18 +419,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   /**
-     * Determine if the storage has unmatched file system.
-     *
-     * @return {boolean}
-     */
-  unmatchedFileSystem() {
-    if (this.agentDetail.cpu_util_live == null ) return true;
-    if (!('current_mem' in this.agentDetail)) return true;
-    if (!('live_stat' in this.agentDetail && 'node' in this.agentDetail.live_stat)) return true;
-    return false;
-  }
-
-  /**
    * Render control buttons such as assignment, build, add an alarm, pause and delete.
    *
    * @param {DOMelement} root
@@ -442,7 +430,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.id}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment" ?disabled=${this.unmatchedFileSystem()}
+          <mwc-icon-button class="fg blue controls-running" icon="assignment" 
+                          ?disabled=${Object.keys(JSON.parse(rowData.item.performance_metric)).length == 0 && JSON.parse(rowData.item.performance_metric).constructor == Object}
                           @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
         </div>`, root
     );
