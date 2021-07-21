@@ -138,11 +138,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Array}) superAdminOnlyPages = ['agent', 'settings', 'maintenance', 'information'];
   @property({type: Number}) timeoutSec = 5;
   @property({type: Boolean}) use_experiment = false;
+  @property({type: Object}) loggedAccount = Object();
   @property({type: Object}) roleInfo = Object();
   @property({type: Object}) keyPairInfo = {
-    keypairs: [{access_key: String}]
+    keypairs: [{access_key: String, secret_key: String}]
   };
-  @property({type: Object}) curSecretKey = {secret_key: ''}
 
   constructor() {
     super();
@@ -379,6 +379,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   refreshPage(): void {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
+
+    this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
     globalThis.backendaiclient.proxyURL = this.proxy_url;
     if (typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient != null &&
       typeof globalThis.backendaiclient.is_admin !== 'undefined' && globalThis.backendaiclient.is_admin === true) {
@@ -581,7 +583,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.domain = globalThis.backendaiclient._config.domainName;
     this.current_group = this._readRecentProjectGroup();
     this._showRole();
-    this._showKeypairInfo();
     globalThis.backendaiclient.current_group = this.current_group;
     this.groups = globalThis.backendaiclient.groups;
     const groupSelectionBox: HTMLElement = this.shadowRoot.getElementById('group-select-box');
@@ -631,6 +632,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * Open the user preference dialog.
    */
   async _openUserPrefDialog() {
+    this._showKeypairInfo();
     const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
     dialog.show();
   }
@@ -1255,7 +1257,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   _getKeypairInfo(user_id) {
-    const fields = ['access_key'];
+    const fields = ['access_key', 'secret_key'];
     const is_active = true;
     return globalThis.backendaiclient.keypair.list(user_id, fields, is_active);
   }
@@ -1263,18 +1265,22 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   async _showKeypairInfo() {
     const data = await this._getKeypairInfo(this.user_id);
     this.keyPairInfo = data;
+    this.keyPairInfo.keypairs.reverse();
   }
 
-  _getSecretKey(accessKey) {
-    const fields = ['secret_key'];
-    return globalThis.backendaiclient.keypair.info(accessKey, fields);
-  }
+  // _getSecretKey(accessKey) {
+  //   const fields = ['secret_key'];
+  //   return globalThis.backendaiclient.keypair.info(accessKey, fields);
+  // }
 
   async _showSecretKey(e) {
     const secret_key = this.shadowRoot.querySelector('#secretkey');
-    const data = await this._getSecretKey(e.target.selected.value);
-    this.curSecretKey = data.keypair;
-    secret_key.value = this.curSecretKey.secret_key;
+    for (let i = 0; i < this.keyPairInfo.keypairs.length; i++) {
+      if (e.target.selected.value == this.keyPairInfo.keypairs[i].access_key) {
+        secret_key.value = this.keyPairInfo.keypairs[i].secret_key;
+        break;
+      }
+    }
   }
 
   protected render() {
@@ -1577,10 +1583,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           </mwc-textfield>
         </div>
         <div slot="content" class="layout vertical" style="width:300px">
-          <mwc-select label="${_t('general.AccessKey')}"
+          <mwc-select class="access-key-select" fixedMenuPosition required
+                      label="${_t('general.AccessKey')}"
                       @selected="${(e) => this._showSecretKey(e)}">
             ${this.keyPairInfo.keypairs.map((item) => html`
-              <mwc-list-item value="${item.access_key}">
+              <mwc-list-item value="${item.access_key}" ?selected=${this.loggedAccount.access_key === item.access_key}>
                 ${item.access_key}
               </mwc-list-item>`)}
           </mwc-select>
