@@ -1268,11 +1268,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.keyPairInfo.keypairs.reverse();
   }
 
-  // _getSecretKey(accessKey) {
-  //   const fields = ['secret_key'];
-  //   return globalThis.backendaiclient.keypair.info(accessKey, fields);
-  // }
-
   async _showSecretKey(e) {
     const secret_key = this.shadowRoot.querySelector('#secretkey');
     for (let i = 0; i < this.keyPairInfo.keypairs.length; i++) {
