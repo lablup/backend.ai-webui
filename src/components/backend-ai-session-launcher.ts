@@ -1930,14 +1930,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     render(
       html`
         <vaadin-text-field clear-button-visible prevent-invalid-input pattern="^[a-zA-Z0-9\._-]*$" ?disabled="${!rowData.selected}"
-                           theme="small" value="${rowData.item.name}" @input="${(e)=>this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
+                           theme="small" value="${rowData.item.name}"
+                           @change="${(e)=>this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
         </template>
       `,
       root
     );
   }
-
-  _updateFolderMap(folder, alias) {
+  async _updateFolderMap(folder, alias) {
     if (alias !== '' && folder !== alias) { // Prevent vfolder name & alias overlapping
       if (this.selectedVfolders.includes(alias)) {
         this.notification.text = _text('session.launcher.FolderAliasOverlapping');
@@ -1954,6 +1954,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
       }
       this.folderMapping[folder] = alias;
+      await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
     }
   }
 
@@ -2820,7 +2821,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `}
             </div>
             </wl-expansion>
-            <wl-expansion class="vfolder" name="vfolder">
+            <wl-expansion id="vfolder-mount-preview" class="vfolder" name="vfolder">
               <span slot="title">${_t('session.launcher.MountedFolders')}</span>
               <div class="vfolder-mounted-list">
               ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
