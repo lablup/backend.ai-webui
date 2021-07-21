@@ -208,7 +208,8 @@
       "EnvironmentVariablePaneTitle": "추가될 환경 변수 (옵션)",
       "EnvConfigWillDisappear": "저장되지 않은 환경 변수 설정값은 사라집니다.",
       "SharedMemoryAbbr": "공유메모리",
-      "GPUSlot": "슬롯"
+      "GPUSlot": "슬롯",
+      "FolderAlias": "대체이름"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -593,7 +594,8 @@
     "AppInfoDeleted": "선택한 앱 정보가 성공적으로 삭제되었습니다.",
     "SuccessfullyModified": "성공적으로 수정되었습니다.",
     "ProblemOccurred": "문제가 발생했습니다.",
-    "PasswordsDoNotMatch": "변경할 비밀번호와 비밀번호 확인란의 값이 일치해야 합니다."
+    "PasswordsDoNotMatch": "변경할 비밀번호와 비밀번호 확인란의 값이 일치해야 합니다.",
+    "NoChangeMade": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",

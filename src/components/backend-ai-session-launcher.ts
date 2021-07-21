@@ -6,6 +6,7 @@ import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultArray, CSSResultOrNative, customElement, html, property, query} from 'lit-element';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
+import {render} from 'lit-html';
 
 import '@material/mwc-button';
 import '@material/mwc-checkbox/mwc-checkbox';
@@ -20,6 +21,7 @@ import '@material/mwc-textfield/mwc-textfield';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
+import '@vaadin/vaadin-text-field/vaadin-text-field';
 
 import 'weightless/checkbox';
 import 'weightless/expansion';
@@ -127,6 +129,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Array}) selectedVfolders;
   @property({type: Array}) autoMountedVfolders;
   @property({type: Array}) nonAutoMountedVfolders;
+  @property({type: Object}) folderMapping = Object();
   @property({type: Object}) used_slot_percent;
   @property({type: Object}) used_resource_group_slot_percent;
   @property({type: Object}) used_project_slot_percent;
@@ -180,6 +183,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) progressLength;
   @property({type: Object}) _grid = Object();
   @property({type: Boolean}) _debug = false;
+  @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
 
   constructor() {
     super();
@@ -987,6 +991,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._grid.selectedItems = [];
     }
     this.selectedVfolders = [];
+    this.folderMapping = Object();
   }
 
   /**
@@ -1219,6 +1224,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
+      if (Object.keys(this.folderMapping).length !== 0) {
+        config['mount_map'] = {};
+        for (const f in this.folderMapping) {
+          if ({}.hasOwnProperty.call(this.folderMapping, f)) {
+            config['mount_map'][f] = '/home/work/' + this.folderMapping[f];
+          }
+        }
+      }
     }
     if (this.mode === 'import' && this.importScript !== '') {
       config['bootstrap_script'] = this.importScript;
@@ -1904,6 +1917,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (selectedItem === null) return;
     const kernel = selectedItem.id;
     this._updateVersions(kernel);
+  }
+
+  /**
+   * Render a folder Map
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  folderMapRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <vaadin-text-field theme="small" value="" @change="${(e)=>this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
+        </template>
+      `,
+      root
+    );
+  }
+
+  _updateFolderMap(folder, alias) {
+    if (alias !== '' && folder !== alias) {
+      this.folderMapping[folder] = alias;
+    }
   }
 
   changed(e) {
@@ -2759,6 +2795,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                               auto-select></vaadin-grid-selection-column>
                 <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
                                           path="name"></vaadin-grid-filter-column>
+                <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" header="${_t('session.launcher.FolderAlias')}">
+                </vaadin-grid-column>
               </vaadin-grid>
               ${this.vfolders.length > 0 ? html`` : html`
               <div class="vertical layout center flex blank-box-medium">
