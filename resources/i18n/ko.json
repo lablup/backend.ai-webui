@@ -595,7 +595,7 @@
     "SuccessfullyModified": "성공적으로 수정되었습니다.",
     "ProblemOccurred": "문제가 발생했습니다.",
     "PasswordsDoNotMatch": "변경할 비밀번호와 비밀번호 확인란의 값이 일치해야 합니다.",
-    "NoChangeMade": "__NOT_TRANSLATED__"
+    "NoChangeMade": "변경된 부분이 없습니다."
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
