@@ -965,7 +965,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
-  _updateSelectedFolder(forceInitialize = false) {
+  async _updateSelectedFolder(forceInitialize = false) {
     if (this._grid && this._grid.selectedItems) {
       const selectedFolderItems = this._grid.selectedItems;
       let selectedFolders: string[] = [];
@@ -976,7 +976,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
       }
       this.selectedVfolders = selectedFolders;
+      for (const folder of this.selectedVfolders) {
+        if (folder in this.folderMapping && this.selectedVfolders.includes(this.folderMapping[folder])) {
+          delete this.folderMapping[folder];
+          this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
+          await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+          return Promise.resolve(true);
+        }
+      }
     }
+    return Promise.resolve(true);
   }
 
   /**
@@ -1929,9 +1938,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   folderMapRenderer(root, column?, rowData?) {
     render(
       html`
-        <vaadin-text-field clear-button-visible prevent-invalid-input pattern="^[a-zA-Z0-9\._-]*$" ?disabled="${!rowData.selected}"
+        <vaadin-text-field id="vfolder-alias-${rowData.item.name}" clear-button-visible prevent-invalid-input
+                           pattern="^[a-zA-Z0-9\._-]*$" ?disabled="${!rowData.selected}"
                            theme="small" placeholder="${rowData.item.name}"
-                           @change="${(e)=>this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
+                           @change="${(e) => this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
         </template>
       `,
       root
@@ -1960,7 +1970,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       this.folderMapping[folder] = alias;
       await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+      return;
     }
+    return;
   }
 
   changed(e) {
