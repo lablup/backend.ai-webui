@@ -1951,28 +1951,28 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (alias === '' && folder in this.folderMapping) {
       delete this.folderMapping[folder];
       await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
-      return;
+      return Promise.resolve(true);
     }
     if (folder !== alias) {
       if (this.selectedVfolders.includes(alias)) { // Prevent vfolder name & alias overlapping
         this.notification.text = _text('session.launcher.FolderAliasOverlapping');
         this.notification.show();
-        return;
+        return Promise.resolve(false);
       }
       for (const f in this.folderMapping) { // Prevent alias overlapping
         if ({}.hasOwnProperty.call(this.folderMapping, f)) {
           if (this.folderMapping[f] == alias) {
             this.notification.text = _text('session.launcher.FolderAliasOverlapping');
             this.notification.show();
-            return;
+            return Promise.resolve(false);
           }
         }
       }
       this.folderMapping[folder] = alias;
       await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
-      return;
+      return Promise.resolve(true);
     }
-    return;
+    return Promise.resolve(true);
   }
 
   changed(e) {
