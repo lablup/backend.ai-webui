@@ -1948,8 +1948,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     );
   }
   async _updateFolderMap(folder, alias) {
-    if (alias === '' && folder in this.folderMapping) {
-      delete this.folderMapping[folder];
+    if (alias === '') {
+      if (folder in this.folderMapping) {
+        delete this.folderMapping[folder];
+      }
       await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
       return Promise.resolve(true);
     }
@@ -1957,6 +1959,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (this.selectedVfolders.includes(alias)) { // Prevent vfolder name & alias overlapping
         this.notification.text = _text('session.launcher.FolderAliasOverlapping');
         this.notification.show();
+        delete this.folderMapping[folder];
+        this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
+        await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
         return Promise.resolve(false);
       }
       for (const f in this.folderMapping) { // Prevent alias overlapping
@@ -1964,6 +1969,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (this.folderMapping[f] == alias) {
             this.notification.text = _text('session.launcher.FolderAliasOverlapping');
             this.notification.show();
+            delete this.folderMapping[folder];
+            this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
+            await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
             return Promise.resolve(false);
           }
         }
