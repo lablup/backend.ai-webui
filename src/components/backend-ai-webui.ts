@@ -140,9 +140,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Boolean}) use_experiment = false;
   @property({type: Object}) loggedAccount = Object();
   @property({type: Object}) roleInfo = Object();
-  @property({type: Object}) keyPairInfo = {
-    keypairs: [{access_key: String, secret_key: String}]
-  };
+  @property({type: Object}) keyPairInfo = Object();
 
   constructor() {
     super();
@@ -256,6 +254,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     globalThis.addEventListener('resize', (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
+      // Tricks to close expansion if window size changes
+      document.body.dispatchEvent(new Event('click'));
     });
     // apply update name when user info changed via users page
     document.addEventListener('current-user-info-changed', (e: any) => {
@@ -1384,7 +1384,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 `) : html``}
             ` : html``}
             <footer id="short-height">
-              <div class="terms-of-use full-menu" style="margin-bottom:10px;">
+              <div class="terms-of-use full-menu">
                 <small style="font-size:11px;">
                   <a @click="${() => this.showTOSAgreement()}">${_t('webui.menu.TermsOfService')}</a>
                   ·
@@ -1408,7 +1408,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </footer>
           </mwc-list>
           <footer>
-            <div class="terms-of-use full-menu" style="margin-bottom:10px;">
+            <div class="terms-of-use full-menu">
               <small style="font-size:11px;">
                 <a @click="${() => this.showTOSAgreement()}">${_t('webui.menu.TermsOfService')}</a>
                 ·
@@ -1578,10 +1578,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           </mwc-textfield>
         </div>
         <div slot="content" class="layout vertical" style="width:300px">
-          <mwc-select class="access-key-select" fixedMenuPosition required
+          <mwc-select id="access-key-select" class="fixed-position" fixedMenuPosition required
                       label="${_t('general.AccessKey')}"
                       @selected="${(e) => this._showSecretKey(e)}">
-            ${this.keyPairInfo.keypairs.map((item) => html`
+            ${this.keyPairInfo.keypairs?.map((item) => html`
               <mwc-list-item value="${item.access_key}" ?selected=${this.loggedAccount.access_key === item.access_key}>
                 ${item.access_key}
               </mwc-list-item>`)}
