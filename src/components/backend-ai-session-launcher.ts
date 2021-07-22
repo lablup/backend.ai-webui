@@ -812,7 +812,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 1536;
         this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
         this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
-        this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+        this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 8;
         if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
           'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
           globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
@@ -832,7 +832,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 1536;
       this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
       this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
-      this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+      this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 8;
       if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
         'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
         globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
