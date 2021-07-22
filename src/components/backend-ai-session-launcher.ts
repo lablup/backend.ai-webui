@@ -1938,8 +1938,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     );
   }
   async _updateFolderMap(folder, alias) {
-    if (alias !== '' && folder !== alias) { // Prevent vfolder name & alias overlapping
-      if (this.selectedVfolders.includes(alias)) {
+    if (folder !== alias) {
+      if (alias === '' && folder in this.folderMapping) {
+        delete this.folderMapping[folder];
+        return;
+      }
+      if (this.selectedVfolders.includes(alias)) { // Prevent vfolder name & alias overlapping
         this.notification.text = _text('session.launcher.FolderAliasOverlapping');
         this.notification.show();
         return;
@@ -2709,7 +2713,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       role="separator" disabled="true">${item.basename}</h5>
                 ` : html`
                   <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
-                    <img slot="graphic" src="resources/icons/${item.icon}" style="width:24px;height:24px;"/>
+                    <img slot="graphic" alt="language icon" src="resources/icons/${item.icon}"
+                         style="width:24px;height:24px;"/>
                     <div class="horizontal justified center flex layout" style="width:340px;">
                       <div style="padding-right:5px;">${item.basename}</div>
                       <div class="flex"></div>
@@ -2721,7 +2726,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                         `) : ''}
                         <mwc-icon-button icon="info"
                                          class="fg blue info"
-                                         @click="${(e) => {this._showKernelDescription(e, item);}}">
+                                         @click="${(e) => this._showKernelDescription(e, item)}">
                         </mwc-icon-button>
                       </div>
                     </div>
@@ -3272,8 +3277,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <span slot="title">${this._helpDescriptionTitle}</span>
         <div slot="content" class="horizontal layout center" style="margin:5px;">
         ${this._helpDescriptionIcon == '' ? html`` : html`
-          <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
-          `}
+          <img slot="graphic" alt="help icon" src="resources/icons/${this._helpDescriptionIcon}"
+               style="width:64px;height:64px;margin-right:10px;"/>
+        `}
           <div style="font-size:14px;">${unsafeHTML(this._helpDescription)}</div>
         </div>
       </backend-ai-dialog>
