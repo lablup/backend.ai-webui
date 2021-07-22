@@ -745,6 +745,9 @@ class Client {
             if (resources['mounts']) {
                 params['config'].mounts = resources['mounts'];
             }
+            if (resources['mount_map']) {
+                params['config'].mount_map = resources['mount_map'];
+            }
             if (resources['scaling_group']) {
                 params['config'].scaling_group = resources['scaling_group'];
             }
