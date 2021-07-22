@@ -1930,7 +1930,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     render(
       html`
         <vaadin-text-field clear-button-visible prevent-invalid-input pattern="^[a-zA-Z0-9\._-]*$" ?disabled="${!rowData.selected}"
-                           theme="small" value="${rowData.item.name}"
+                           theme="small" placeholder="${rowData.item.name}"
                            @change="${(e)=>this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
         </template>
       `,
