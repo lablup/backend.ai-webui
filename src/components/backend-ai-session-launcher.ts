@@ -165,11 +165,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
-  @property({type: Number}) max_cpu_core_per_session = 64;
-  @property({type: Number}) max_mem_per_container = 16;
+  @property({type: Number}) max_cpu_core_per_session = 128;
+  @property({type: Number}) max_mem_per_container = 1536;
   @property({type: Number}) max_cuda_device_per_container = 16;
   @property({type: Number}) max_cuda_shares_per_container = 16;
-  @property({type: Number}) max_shm_per_container = 2;
+  @property({type: Number}) max_shm_per_container = 8;
   @property({type: Boolean}) allow_manual_image_name_for_session = false;
   @property({type: Object}) resourceBroker;
   @property({type: Number}) cluster_size = 1;
@@ -812,11 +812,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
-        this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 16;
+        this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 128;
+        this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 1536;
         this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
         this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
-        this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+        this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 8;
         if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
           'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
           globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
@@ -832,11 +832,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this._enableLaunchButton();
       }, {once: true});
     } else {
-      this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
-      this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 16;
+      this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 128;
+      this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 1536;
       this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
       this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
-      this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+      this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 8;
       if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
         'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
         globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
@@ -1803,13 +1803,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if ('mem' in this.userResourceLimit) {
             const user_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g');
             if (parseInt(image_mem_max) !== 0) {
-              mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem']);
+              mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem'], this.max_mem_per_container);
             } else {
               mem_metric.max = Math.min(parseFloat(user_mem_max), available_slot['mem'], this.max_mem_per_container);
             }
           } else {
             if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity' && isNaN(mem_metric.max) !== true) {
-              mem_metric.max = Math.min(parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem']);
+              mem_metric.max = Math.min(parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem'], this.max_mem_per_container);
             } else {
               mem_metric.max = Math.min(available_slot['mem'], this.max_mem_per_container); // TODO: set to largest memory size
             }
