@@ -48,7 +48,7 @@ import {
  */
 
 @customElement('backend-ai-session-launcher-legacy')
- export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
+export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
   @query('#image-name') manualImageName;
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
@@ -2205,7 +2205,7 @@ import {
 
   _updateShmemLimit() {
     const shmemEl = this.shadowRoot.querySelector('#shmem-resource');
-    const currentMemLimit = parseFloat(this.shadowRoot.querySelector('#mem-resource').value)
+    const currentMemLimit = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
     let shmem_value = shmemEl.value;
     this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
@@ -2493,7 +2493,7 @@ import {
 
   /**
    * Disable Select UI about Environments and versions when event target value is not empty.
-   * 
+   *
    */
   _toggleEnvironmentSelectUI() {
     const SelectedEnvironment = this.shadowRoot.querySelector('mwc-select#environment');
