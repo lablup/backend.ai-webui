@@ -991,7 +991,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._grid.selectedItems = [];
     }
     this.selectedVfolders = [];
-    this.folderMapping = Object();
   }
 
   /**
@@ -1067,6 +1066,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // this.notification.text = _text('session.launcher.PleaseWaitInitializing');
       // this.notification.show();
     } else {
+      this.folderMapping = Object();
       this._resetProgress();
       await this.selectDefaultLanguage();
       // Set display property of ownership panel.
@@ -1938,11 +1938,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     );
   }
   async _updateFolderMap(folder, alias) {
+    if (alias === '' && folder in this.folderMapping) {
+      delete this.folderMapping[folder];
+      await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+      return;
+    }
     if (folder !== alias) {
-      if (alias === '' && folder in this.folderMapping) {
-        delete this.folderMapping[folder];
-        return;
-      }
       if (this.selectedVfolders.includes(alias)) { // Prevent vfolder name & alias overlapping
         this.notification.text = _text('session.launcher.FolderAliasOverlapping');
         this.notification.show();
