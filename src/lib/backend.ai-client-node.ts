@@ -830,6 +830,9 @@ class Client {
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
       }
+      if (resources['mount_map']) {
+        params['config'].mount_map = resources['mount_map'];
+      }
       if (resources['scaling_group']) {
         params['config'].scaling_group = resources['scaling_group'];
       }
@@ -3811,7 +3814,7 @@ class utils {
 
   /**
    * Limit the boundary of value
-   * 
+   *
    * @param {number} value - input value to be clamped
    * @param {number} min - minimum value of the input value
    * @param {number} max - maximum value of the input vallue

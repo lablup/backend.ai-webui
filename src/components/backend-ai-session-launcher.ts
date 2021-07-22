@@ -6,6 +6,7 @@ import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultArray, CSSResultOrNative, customElement, html, property, query} from 'lit-element';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
+import {render} from 'lit-html';
 
 import '@material/mwc-button';
 import '@material/mwc-checkbox/mwc-checkbox';
@@ -20,6 +21,7 @@ import '@material/mwc-textfield/mwc-textfield';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
+import '@vaadin/vaadin-text-field/vaadin-text-field';
 
 import 'weightless/checkbox';
 import 'weightless/expansion';
@@ -127,6 +129,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Array}) selectedVfolders;
   @property({type: Array}) autoMountedVfolders;
   @property({type: Array}) nonAutoMountedVfolders;
+  @property({type: Object}) folderMapping = Object();
   @property({type: Object}) used_slot_percent;
   @property({type: Object}) used_resource_group_slot_percent;
   @property({type: Object}) used_project_slot_percent;
@@ -180,6 +183,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) progressLength;
   @property({type: Object}) _grid = Object();
   @property({type: Boolean}) _debug = false;
+  @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
 
   constructor() {
     super();
@@ -961,7 +965,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
-  _updateSelectedFolder(forceInitialize = false) {
+  async _updateSelectedFolder(forceInitialize = false) {
     if (this._grid && this._grid.selectedItems) {
       const selectedFolderItems = this._grid.selectedItems;
       let selectedFolders: string[] = [];
@@ -972,7 +976,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
       }
       this.selectedVfolders = selectedFolders;
+      for (const folder of this.selectedVfolders) {
+        if (folder in this.folderMapping && this.selectedVfolders.includes(this.folderMapping[folder])) {
+          delete this.folderMapping[folder];
+          this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
+          await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+          return Promise.resolve(true);
+        }
+      }
     }
+    return Promise.resolve(true);
   }
 
   /**
@@ -1062,6 +1075,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // this.notification.text = _text('session.launcher.PleaseWaitInitializing');
       // this.notification.show();
     } else {
+      this.folderMapping = Object();
       this._resetProgress();
       await this.selectDefaultLanguage();
       // Set display property of ownership panel.
@@ -1219,6 +1233,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
+      if (Object.keys(this.folderMapping).length !== 0) {
+        config['mount_map'] = {};
+        for (const f in this.folderMapping) {
+          if ({}.hasOwnProperty.call(this.folderMapping, f)) {
+            config['mount_map'][f] = '/home/work/' + this.folderMapping[f];
+          }
+        }
+      }
     }
     if (this.mode === 'import' && this.importScript !== '') {
       config['bootstrap_script'] = this.importScript;
@@ -1904,6 +1926,61 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (selectedItem === null) return;
     const kernel = selectedItem.id;
     this._updateVersions(kernel);
+  }
+
+  /**
+   * Render a folder Map
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  folderMapRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <vaadin-text-field id="vfolder-alias-${rowData.item.name}" clear-button-visible prevent-invalid-input
+                           pattern="^[a-zA-Z0-9\._-]*$" ?disabled="${!rowData.selected}"
+                           theme="small" placeholder="${rowData.item.name}"
+                           @change="${(e) => this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
+        </template>
+      `,
+      root
+    );
+  }
+  async _updateFolderMap(folder, alias) {
+    if (alias === '') {
+      if (folder in this.folderMapping) {
+        delete this.folderMapping[folder];
+      }
+      await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+      return Promise.resolve(true);
+    }
+    if (folder !== alias) {
+      if (this.selectedVfolders.includes(alias)) { // Prevent vfolder name & alias overlapping
+        this.notification.text = _text('session.launcher.FolderAliasOverlapping');
+        this.notification.show();
+        delete this.folderMapping[folder];
+        this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
+        await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+        return Promise.resolve(false);
+      }
+      for (const f in this.folderMapping) { // Prevent alias overlapping
+        if ({}.hasOwnProperty.call(this.folderMapping, f)) {
+          if (this.folderMapping[f] == alias) {
+            this.notification.text = _text('session.launcher.FolderAliasOverlapping');
+            this.notification.show();
+            delete this.folderMapping[folder];
+            this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
+            await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+            return Promise.resolve(false);
+          }
+        }
+      }
+      this.folderMapping[folder] = alias;
+      await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+      return Promise.resolve(true);
+    }
+    return Promise.resolve(true);
   }
 
   changed(e) {
@@ -2657,7 +2734,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       role="separator" disabled="true">${item.basename}</h5>
                 ` : html`
                   <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
-                    <img slot="graphic" src="resources/icons/${item.icon}" style="width:24px;height:24px;"/>
+                    <img slot="graphic" alt="language icon" src="resources/icons/${item.icon}"
+                         style="width:24px;height:24px;"/>
                     <div class="horizontal justified center flex layout" style="width:340px;">
                       <div style="padding-right:5px;">${item.basename}</div>
                       <div class="flex"></div>
@@ -2669,7 +2747,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                         `) : ''}
                         <mwc-icon-button icon="info"
                                          class="fg blue info"
-                                         @click="${(e) => {this._showKernelDescription(e, item);}}">
+                                         @click="${(e) => this._showKernelDescription(e, item)}">
                         </mwc-icon-button>
                       </div>
                     </div>
@@ -2758,7 +2836,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                               text-align="center"
                                               auto-select></vaadin-grid-selection-column>
                 <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
-                                          path="name"></vaadin-grid-filter-column>
+                                          path="name" resizable></vaadin-grid-filter-column>
+                <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" header="${_t('session.launcher.FolderAlias')}">
+                </vaadin-grid-column>
               </vaadin-grid>
               ${this.vfolders.length > 0 ? html`` : html`
               <div class="vertical layout center flex blank-box-medium">
@@ -2767,13 +2847,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `}
             </div>
             </wl-expansion>
-            <wl-expansion class="vfolder" name="vfolder">
+            <wl-expansion id="vfolder-mount-preview" class="vfolder" name="vfolder">
               <span slot="title">${_t('session.launcher.MountedFolders')}</span>
               <div class="vfolder-mounted-list">
               ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
                 <ul class="vfolder-list">
                     ${this.selectedVfolders.map((item) => html`
-                      <li><mwc-icon>folder_open</mwc-icon>${item}</li>
+                      <li><mwc-icon>folder_open</mwc-icon>${item}
+                      ${item in this.folderMapping ? html` (&#10140; ${this.folderMapping[item]})`: html``}
+                      </li>
                     `)}
                     ${this.autoMountedVfolders.map((item) => html`
                       <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
@@ -3094,8 +3176,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ${this.selectedVfolders.length > 0 || this.autoMountedVfolders.length > 0 ? html`
                 <ul class="vfolder-list">
                   ${this.selectedVfolders.map((item) => html`
-                        <li><mwc-icon>folder_open</mwc-icon>${item}</li>
-                    `)}
+                    <li><mwc-icon>folder_open</mwc-icon>${item}
+                    ${item in this.folderMapping ? html` (&#10140; ${this.folderMapping[item]})`: html``}
+                    </li>
+                  `)}
                   ${this.autoMountedVfolders.map((item) => html`
                     <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
                   `)}
@@ -3214,8 +3298,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <span slot="title">${this._helpDescriptionTitle}</span>
         <div slot="content" class="horizontal layout center" style="margin:5px;">
         ${this._helpDescriptionIcon == '' ? html`` : html`
-          <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
-          `}
+          <img slot="graphic" alt="help icon" src="resources/icons/${this._helpDescriptionIcon}"
+               style="width:64px;height:64px;margin-right:10px;"/>
+        `}
           <div style="font-size:14px;">${unsafeHTML(this._helpDescription)}</div>
         </div>
       </backend-ai-dialog>
