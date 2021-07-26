@@ -97,7 +97,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
           margin-right: 5px;
         }
 
-        #agent-detail {
+        #storage-proxy-detail {
           --component-max-width: 90%;
         }
 
@@ -138,7 +138,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.storageProxyDetailDialog = this.shadowRoot.querySelector('#agent-detail');
+    this.storageProxyDetailDialog = this.shadowRoot.querySelector('#storage-proxy-detail');
   }
 
   connectedCallback() {
@@ -460,7 +460,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t('general.Control')}"
                             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
-      <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
+      <backend-ai-dialog id="storage-proxy-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">
           <div class="horizontal start start-justified layout">
