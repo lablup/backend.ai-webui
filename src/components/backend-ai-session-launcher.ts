@@ -6,6 +6,7 @@ import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultArray, CSSResultOrNative, customElement, html, property, query} from 'lit-element';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
+import {render} from 'lit-html';
 
 import '@material/mwc-button';
 import '@material/mwc-checkbox/mwc-checkbox';
@@ -20,6 +21,7 @@ import '@material/mwc-textfield/mwc-textfield';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
+import '@vaadin/vaadin-text-field/vaadin-text-field';
 
 import 'weightless/checkbox';
 import 'weightless/expansion';
@@ -127,6 +129,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Array}) selectedVfolders;
   @property({type: Array}) autoMountedVfolders;
   @property({type: Array}) nonAutoMountedVfolders;
+  @property({type: Object}) folderMapping = Object();
   @property({type: Object}) used_slot_percent;
   @property({type: Object}) used_resource_group_slot_percent;
   @property({type: Object}) used_project_slot_percent;
@@ -162,10 +165,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
-  @property({type: Number}) max_cpu_core_per_session = 64;
+  @property({type: Number}) max_cpu_core_per_session = 128;
+  @property({type: Number}) max_mem_per_container = 1536;
   @property({type: Number}) max_cuda_device_per_container = 16;
   @property({type: Number}) max_cuda_shares_per_container = 16;
-  @property({type: Number}) max_shm_per_container = 2;
+  @property({type: Number}) max_shm_per_container = 8;
+  @property({type: Boolean}) allow_manual_image_name_for_session = false;
   @property({type: Object}) resourceBroker;
   @property({type: Number}) cluster_size = 1;
   @property({type: String}) cluster_mode;
@@ -177,8 +182,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) currentIndex = 1;
   @property({type: Number}) progressLength;
   @property({type: Object}) _grid = Object();
-
   @property({type: Boolean}) _debug = false;
+  @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
 
   constructor() {
     super();
@@ -239,6 +244,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           height: 100%;
           width: 100%;
           --progress-bar-background: var(--general-progress-bar-using);
+          /* transition speed for progress bar */
+          --progress-bar-transition-second: .1s;
           margin: 0;
         }
 
@@ -341,6 +348,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .indicator {
           font-family: monospace;
+        }
+        .cluster-total-allocation-container {
+          border-radius:10px;
+          border:1px dotted var(--general-button-background-color);
+          padding-top:10px;
+          margin-left:15px;
+          margin-right:15px;
         }
 
         .resource-button {
@@ -513,7 +527,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
           --mdc-select-dropdown-icon-color: rgba(255, 0, 0, 0.87);
           --mdc-select-focused-dropdown-icon-color: rgba(255, 0, 0, 0.42);
+          --mdc-select-disabled-ink-color: rgba(0, 0, 0, 0.64);
           --mdc-select-disabled-dropdown-icon-color: rgba(255, 0, 0, 0.87);
+          --mdc-select-disabled-fill-color: rgba(244, 244, 244, 1);
           --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
           --mdc-select-hover-line-color: rgba(255, 0, 0, 0.87);
           --mdc-select-outlined-idle-border-color: rgba(255, 0, 0, 0.42);
@@ -796,10 +812,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
+        this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 128;
+        this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 1536;
         this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
         this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
-        this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+        this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 8;
+        if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
+          'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
+          globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
+          this.allow_manual_image_name_for_session = globalThis.backendaiclient._config.allow_manual_image_name_for_session;
+        } else {
+          this.allow_manual_image_name_for_session = false;
+        }
         if (globalThis.backendaiclient.supports('multi-container')) {
           this.cluster_support = true;
         }
@@ -808,10 +832,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this._enableLaunchButton();
       }, {once: true});
     } else {
-      this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
+      this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 128;
+      this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 1536;
       this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
       this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
-      this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+      this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 8;
+      if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
+        'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
+        globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
+        this.allow_manual_image_name_for_session = globalThis.backendaiclient._config.allow_manual_image_name_for_session;
+      } else {
+        this.allow_manual_image_name_for_session = false;
+      }
       if (globalThis.backendaiclient.supports('multi-container')) {
         this.cluster_support = true;
       }
@@ -879,6 +911,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.languages = this.resourceBroker.languages;
       this.enableLaunchButton = true;
     } else {
+      this.enableLaunchButton = false;
       setTimeout(() => {
         this._enableLaunchButton();
       }, 1000);
@@ -932,7 +965,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
-  _updateSelectedFolder(forceInitialize = false) {
+  async _updateSelectedFolder(forceInitialize = false) {
     if (this._grid && this._grid.selectedItems) {
       const selectedFolderItems = this._grid.selectedItems;
       let selectedFolders: string[] = [];
@@ -943,7 +976,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
       }
       this.selectedVfolders = selectedFolders;
+      for (const folder of this.selectedVfolders) {
+        if (folder in this.folderMapping && this.selectedVfolders.includes(this.folderMapping[folder])) {
+          delete this.folderMapping[folder];
+          this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
+          await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+          return Promise.resolve(true);
+        }
+      }
     }
+    return Promise.resolve(true);
   }
 
   /**
@@ -1033,6 +1075,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // this.notification.text = _text('session.launcher.PleaseWaitInitializing');
       // this.notification.show();
     } else {
+      this.folderMapping = Object();
       this._resetProgress();
       await this.selectDefaultLanguage();
       // Set display property of ownership panel.
@@ -1089,9 +1132,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _newSession() {
     const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
     confirmationDialog.hide();
-    const selectedItem = this.shadowRoot.querySelector('#environment').selected;
-    const kernel = selectedItem.id;
-    const version = this.shadowRoot.querySelector('#version').value;
+    let kernel;
+    let version;
+    if (this.manualImageName && this.manualImageName.value) {
+      const nameFragments = this.manualImageName.value.split(':');
+      version = nameFragments.splice(-1, 1)[0];
+      kernel = nameFragments.join(':');
+    } else {
+      // When the "Environment" dropdown is disabled after typing the image name manually,
+      // `selecteditem.id` is `null` and raises "id" exception when trying to launch the session.
+      // That's why we need if-else block here.
+      const selectedItem = this.shadowRoot.querySelector('#environment').selected;
+      kernel = selectedItem.id;
+      version = this.shadowRoot.querySelector('#version').value;
+    }
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     const isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
     const vfolder = this.selectedVfolders;
@@ -1179,6 +1233,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
+      if (Object.keys(this.folderMapping).length !== 0) {
+        config['mount_map'] = {};
+        for (const f in this.folderMapping) {
+          if ({}.hasOwnProperty.call(this.folderMapping, f)) {
+            config['mount_map'][f] = '/home/work/' + this.folderMapping[f];
+          }
+        }
+      }
     }
     if (this.mode === 'import' && this.importScript !== '') {
       config['bootstrap_script'] = this.importScript;
@@ -1187,7 +1249,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['env'] = this.environ_values;
     }
     let kernelName: string;
-    if (this._debug && this.manualImageName.value !== '') {
+    if (this._debug || ( this.manualImageName && this.manualImageName.value !== '')) {
       kernelName = this.manualImageName.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
@@ -1256,7 +1318,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           // remove redundant error message
         });
       }
-
       // initialize vfolder
       this._updateSelectedFolder(false);
     }).catch((err) => {
@@ -1742,15 +1803,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if ('mem' in this.userResourceLimit) {
             const user_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g');
             if (parseInt(image_mem_max) !== 0) {
-              mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem']);
+              mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem'], this.max_mem_per_container);
             } else {
-              mem_metric.max = parseFloat(user_mem_max);
+              mem_metric.max = Math.min(parseFloat(user_mem_max), available_slot['mem'], this.max_mem_per_container);
             }
           } else {
             if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity' && isNaN(mem_metric.max) !== true) {
-              mem_metric.max = Math.min(parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem']);
+              mem_metric.max = Math.min(parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem'], this.max_mem_per_container);
             } else {
-              mem_metric.max = available_slot['mem']; // TODO: set to largest memory size
+              mem_metric.max = Math.min(available_slot['mem'], this.max_mem_per_container); // TODO: set to largest memory size
             }
           }
           if (mem_metric.min >= mem_metric.max) {
@@ -1865,6 +1926,61 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (selectedItem === null) return;
     const kernel = selectedItem.id;
     this._updateVersions(kernel);
+  }
+
+  /**
+   * Render a folder Map
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  folderMapRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <vaadin-text-field id="vfolder-alias-${rowData.item.name}" clear-button-visible prevent-invalid-input
+                           pattern="^[a-zA-Z0-9\._-]*$" ?disabled="${!rowData.selected}"
+                           theme="small" placeholder="${rowData.item.name}"
+                           @change="${(e) => this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
+        </template>
+      `,
+      root
+    );
+  }
+  async _updateFolderMap(folder, alias) {
+    if (alias === '') {
+      if (folder in this.folderMapping) {
+        delete this.folderMapping[folder];
+      }
+      await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+      return Promise.resolve(true);
+    }
+    if (folder !== alias) {
+      if (this.selectedVfolders.includes(alias)) { // Prevent vfolder name & alias overlapping
+        this.notification.text = _text('session.launcher.FolderAliasOverlapping');
+        this.notification.show();
+        delete this.folderMapping[folder];
+        this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
+        await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+        return Promise.resolve(false);
+      }
+      for (const f in this.folderMapping) { // Prevent alias overlapping
+        if ({}.hasOwnProperty.call(this.folderMapping, f)) {
+          if (this.folderMapping[f] == alias) {
+            this.notification.text = _text('session.launcher.FolderAliasOverlapping');
+            this.notification.show();
+            delete this.folderMapping[folder];
+            this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
+            await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+            return Promise.resolve(false);
+          }
+        }
+      }
+      this.folderMapping[folder] = alias;
+      await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+      return Promise.resolve(true);
+    }
+    return Promise.resolve(true);
   }
 
   changed(e) {
@@ -2246,10 +2362,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _updateShmemLimit() {
     const shmemEl = this.shadowRoot.querySelector('#shmem-resource');
+    const currentMemLimit = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
     let shmem_value = shmemEl.value;
-    this.shmem_metric.max = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
+    this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
-    this.shadowRoot.querySelector('#shmem-resource').max = Math.min(this.max_shm_per_container, this.shmem_metric.max);
+    shmemEl.max = this.shmem_metric.max;
     if (parseFloat(shmem_value) > this.shmem_metric.max) {
       shmem_value = this.shmem_metric.max;
       this.shmem_request = shmem_value;
@@ -2570,12 +2687,27 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    *
-   * @returns {Number} - fraction of currentProgress when progressLength becomes 1
+   * @return {Number} - fraction of currentProgress when progressLength becomes 1
    */
   _calculateProgress() {
     const progressLength = this.progressLength > 0 ? this.progressLength : 1;
     const currentIndex = this.currentIndex > 0 ? this.currentIndex : 1;
     return (currentIndex / progressLength).toFixed(2);
+  }
+
+  /**
+   * Disable Select UI about Environments and versions when event target value is not empty.
+   *
+   */
+  _toggleEnvironmentSelectUI() {
+    const SelectedEnvironment = this.shadowRoot.querySelector('mwc-select#environment');
+    const SelectedVersions = this.shadowRoot.querySelector('mwc-select#version');
+    const isManualImageEnabled = this.manualImageName?.value ? true : false;
+    SelectedEnvironment.disabled = SelectedVersions.disabled = isManualImageEnabled;
+    // select none(-1) when manual image is enabled
+    const selectedIndex = isManualImageEnabled ? -1 : 1;
+    SelectedEnvironment.select(selectedIndex);
+    SelectedVersions.select(selectedIndex);
   }
 
   render() {
@@ -2602,7 +2734,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       role="separator" disabled="true">${item.basename}</h5>
                 ` : html`
                   <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
-                    <img slot="graphic" src="resources/icons/${item.icon}" style="width:24px;height:24px;"/>
+                    <img slot="graphic" alt="language icon" src="resources/icons/${item.icon}"
+                         style="width:24px;height:24px;"/>
                     <div class="horizontal justified center flex layout" style="width:340px;">
                       <div style="padding-right:5px;">${item.basename}</div>
                       <div class="flex"></div>
@@ -2614,9 +2747,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                         `) : ''}
                         <mwc-icon-button icon="info"
                                          class="fg blue info"
-                                         @click="${(e) => {
-    this._showKernelDescription(e, item);
-  }}">
+                                         @click="${(e) => this._showKernelDescription(e, item)}">
                         </mwc-icon-button>
                       </div>
                     </div>
@@ -2647,9 +2778,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               </mwc-list-item>
             `)}
             </mwc-select>
-            ${this._debug ? html`
-            <mwc-textfield id="image-name" type="text" class="flex" value=""
-              label="${_t('session.launcher.ManualImageName')}"></mwc-textfield>
+            ${this._debug || this.allow_manual_image_name_for_session ? html`
+            <mwc-textfield id="image-name" type="text" class="flex" value="" icon="assignment_turned_in"
+              label="${_t('session.launcher.ManualImageName')}"
+              @change=${(e) => this._toggleEnvironmentSelectUI()}></mwc-textfield>
             `:html``}
             <mwc-textfield id="session-name" placeholder="${_t('session.launcher.SessionNameOptional')}"
                            pattern="[a-zA-Z0-9_-]{4,}" maxLength="64" icon="label"
@@ -2704,7 +2836,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                               text-align="center"
                                               auto-select></vaadin-grid-selection-column>
                 <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
-                                          path="name"></vaadin-grid-filter-column>
+                                          path="name" resizable></vaadin-grid-filter-column>
+                <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" header="${_t('session.launcher.FolderAlias')}">
+                </vaadin-grid-column>
               </vaadin-grid>
               ${this.vfolders.length > 0 ? html`` : html`
               <div class="vertical layout center flex blank-box-medium">
@@ -2713,13 +2847,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `}
             </div>
             </wl-expansion>
-            <wl-expansion class="vfolder" name="vfolder">
+            <wl-expansion id="vfolder-mount-preview" class="vfolder" name="vfolder">
               <span slot="title">${_t('session.launcher.MountedFolders')}</span>
               <div class="vfolder-mounted-list">
               ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
                 <ul class="vfolder-list">
                     ${this.selectedVfolders.map((item) => html`
-                      <li><mwc-icon>folder_open</mwc-icon>${item}</li>
+                      <li><mwc-icon>folder_open</mwc-icon>${item}
+                      ${item in this.folderMapping ? html` (&#10140; ${this.folderMapping[item]})`: html``}
+                      </li>
                     `)}
                     ${this.autoMountedVfolders.map((item) => html`
                       <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
@@ -2794,7 +2930,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `)}
               ${this.isEmpty(this.resource_templates_filtered) ? html`
                 <mwc-list-item class="resource-button vertical center start layout" role="option"
-                              style="height:140px;width:350px;" type="button" aria-selected
+                              style="height:140px;width:350px;" type="button"
                               flat inverted outlined disabled>
                   <div>
                     <h4>${_t('session.launcher.NoSuitablePreset')}</h4>
@@ -2803,31 +2939,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </mwc-list-item>
               ` : html``}
               </mwc-select>
-            </div>
-            <div style="display:none;" class="horizontal layout center center-justified allocation-check">
-              <div style="font-size:22px;">=</div>
-              <div class="horizontal layout resource-allocated-box">
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.CPU')}</p>
-                  <span>${this.cpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                  <p>Core</p>
-                </div>
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.Memory')}</p>
-                  <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                  <p>GB</p>
-                </div>
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.SharedMemory')}</p>
-                  <span>${this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                  <p>GB</p>
-                </div>
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.Accelerator')}</p>
-                  <span>${this.gpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                  <p>${_t('session.launcher.GPU')}</p>
-                </div>
-              </div>
             </div>
             <wl-expansion name="resource-group">
               <span slot="title">${_t('session.launcher.CustomAllocation')}</span>
@@ -2857,6 +2968,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                   @changed="${() => {
     this._updateShmemLimit();
   }}"
+                                  @focusout="${(e) => this._applyResourceValueChanges(e)}"
                                 marker_limit="${this.marker_limit}"
                                 min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                 value="${this.mem_request}"></lablup-slider>
@@ -2992,45 +3104,71 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
           <div id="progress-04" class="progress center layout fade">
             <p class="title">${_t('session.launcher.TotalAllocation')}</p>
-            <div id="total-allocation-container" class="horizontal layout center center-justified allocation-check">
-              <div id="total-allocation-pane" style="position:relative;">
-                <div class="horizontal layout resource-allocated-box">
+            <div class="vertical layout center center-justified cluster-total-allocation-container">
+              <div id="cluster-allocation-pane" style="position:relative;${this.cluster_size <= 1 ? 'display:none;' : ''}">
+                <div class="horizontal layout">
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.CPU')}</p>
-                    <span>${this.cpu_request}</span>
+                    <span>${this.cpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                     <p>Core</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.Memory')}</p>
-                    <span>${this.mem_request}</span>
+                    <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                     <p>GB</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                    <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
-                    <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
+                    <span>${this._conditionalGBtoMB(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</span>
+                    <p>${this._conditionalGBtoMBunit(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.GPU')}</p>
-                    <span>${this.gpu_request}</span>
+                    <span>${this.gpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
                     <p>${_t('session.launcher.GPUSlot')}</p>
                   </div>
                 </div>
-                <div id="resource-allocated-box-shadow"></div>
               </div>
-              <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
-                <div class="horizontal layout">
-                  <p>×</p>
-                  <span>${this.cluster_size <= 1 ? this.session_request : this.cluster_size}</span>
+              <div id="total-allocation-container" class="horizontal layout center center-justified allocation-check">
+                <div id="total-allocation-pane" style="position:relative;">
+                  <div class="horizontal layout resource-allocated-box">
+                    <div class="vertical layout center center-justified resource-allocated">
+                      <p>${_t('session.launcher.CPU')}</p>
+                      <span>${this.cpu_request}</span>
+                      <p>Core</p>
+                    </div>
+                    <div class="vertical layout center center-justified resource-allocated">
+                      <p>${_t('session.launcher.Memory')}</p>
+                      <span>${this.mem_request}</span>
+                      <p>GB</p>
+                    </div>
+                    <div class="vertical layout center center-justified resource-allocated">
+                      <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
+                      <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
+                      <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
+                    </div>
+                    <div class="vertical layout center center-justified resource-allocated">
+                      <p>${_t('session.launcher.GPU')}</p>
+                      <span>${this.gpu_request}</span>
+                      <p>${_t('session.launcher.GPUSlot')}</p>
+                    </div>
+                  </div>
+                  <div id="resource-allocated-box-shadow"></div>
                 </div>
-                <p class="small">${_t('session.launcher.Container')}</p>
-              </div>
-              <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
-                <div class="horizontal layout">
-                  <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
-                  <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
+                <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
+                  <div class="horizontal layout">
+                    <p>×</p>
+                    <span>${this.cluster_size <= 1 ? this.session_request : this.cluster_size}</span>
+                  </div>
+                  <p class="small">${_t('session.launcher.Container')}</p>
                 </div>
-                <p class="small">${_t('session.launcher.AllocateNode')}</p>
+                <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
+                  <div class="horizontal layout">
+                    <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
+                    <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
+                  </div>
+                  <p class="small">${_t('session.launcher.AllocateNode')}</p>
+                </div>
               </div>
             </div>
             <p class="title">${_t('session.launcher.MountedFolders')}</p>
@@ -3038,8 +3176,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ${this.selectedVfolders.length > 0 || this.autoMountedVfolders.length > 0 ? html`
                 <ul class="vfolder-list">
                   ${this.selectedVfolders.map((item) => html`
-                        <li><mwc-icon>folder_open</mwc-icon>${item}</li>
-                    `)}
+                    <li><mwc-icon>folder_open</mwc-icon>${item}
+                    ${item in this.folderMapping ? html` (&#10140; ${this.folderMapping[item]})`: html``}
+                    </li>
+                  `)}
                   ${this.autoMountedVfolders.map((item) => html`
                     <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
                   `)}
@@ -3158,8 +3298,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <span slot="title">${this._helpDescriptionTitle}</span>
         <div slot="content" class="horizontal layout center" style="margin:5px;">
         ${this._helpDescriptionIcon == '' ? html`` : html`
-          <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
-          `}
+          <img slot="graphic" alt="help icon" src="resources/icons/${this._helpDescriptionIcon}"
+               style="width:64px;height:64px;margin-right:10px;"/>
+        `}
           <div style="font-size:14px;">${unsafeHTML(this._helpDescription)}</div>
         </div>
       </backend-ai-dialog>

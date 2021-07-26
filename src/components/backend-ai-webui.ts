@@ -1399,7 +1399,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
+<<<<<<< HEAD
                 <small class="sidebar-footer" style="font-size:9px;">21.03.6.210712</small>
+=======
+                <small class="sidebar-footer" style="font-size:9px;">21.03.8.210722</small>
+>>>>>>> 992d18b5c0f7198587ce8adfdedc2c6717194a88
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1423,7 +1427,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
+<<<<<<< HEAD
               <small class="sidebar-footer" style="font-size:9px;">21.03.6.210712</small>
+=======
+              <small class="sidebar-footer" style="font-size:9px;">21.03.8.210722</small>
+>>>>>>> 992d18b5c0f7198587ce8adfdedc2c6717194a88
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
