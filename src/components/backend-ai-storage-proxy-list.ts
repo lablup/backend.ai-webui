@@ -26,7 +26,7 @@ import './backend-ai-dialog';
 import './lablup-progress-bar';
 
 /**
- Backend.AI Agent List
+ Backend.AI Storage Proxy List
 
  Example:
 
@@ -168,7 +168,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   /**
    * Load an storage proxy informations.
    *
-   * @param {string} status - The agent's backend.ai client status.
    */
   _loadStorageProxyList() {
     if (this.active !== true) {
@@ -407,7 +406,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   /**
    * Show storage proxy detailed dialog.
    *
-   * @param {string} storageProxyId - agent ID
+   * @param {string} storageProxyId - storage proxy ID
    * @return {void}
    */
   showStorageProxyDetailDialog(storageProxyId) {
