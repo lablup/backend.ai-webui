@@ -3838,6 +3838,43 @@ class utils {
     });
     return result;
   }
+
+  /**
+   * Read recent project group according to endpoint id.
+   *
+   * @return {string} Current selected group
+   */
+  _readRecentProjectGroup() {
+    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
+    const value: string | null = globalThis.backendaioptions.get('projectGroup.' + endpointId);
+    if (value) { // Check if saved group has gone between logins / sessions
+      if (globalThis.backendaiclient.groups.length > 0 && globalThis.backendaiclient.groups.includes(value)) {
+        return value; // value is included. So it is ok.
+      } else {
+        this._deleteRecentProjectGroupInfo();
+        return globalThis.backendaiclient.current_group;
+      }
+    }
+    return globalThis.backendaiclient.current_group;
+  }
+  
+  /**
+   * Set the project group according to current group.
+   *
+   * @param {string} value
+   */
+  _writeRecentProjectGroup(value: string) {
+    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
+    globalThis.backendaioptions.set('projectGroup.' + endpointId, value ? value : globalThis.backendaiclient.current_group);
+  }
+  
+  /**
+   * Delete the recent project group information.
+   */
+  _deleteRecentProjectGroupInfo() {
+    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
+    globalThis.backendaioptions.delete('projectGroup.' + endpointId);
+  }
 }
 
 // below will become "static const" properties in ES7

@@ -388,7 +388,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.is_superadmin = false;
     }
     this._refreshUserInfoPanel();
-    this._writeRecentProjectGroup(this.current_group);
+    globalThis.backendaiclient.utils._writeRecentProjectGroup(this.current_group);
     document.body.style.backgroundImage = 'none';
     this.appBody.style.visibility = 'visible';
 
@@ -574,7 +574,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.user_id = globalThis.backendaiclient.email;
     this.full_name = globalThis.backendaiclient.full_name;
     this.domain = globalThis.backendaiclient._config.domainName;
-    this.current_group = this._readRecentProjectGroup();
+    this.current_group = globalThis.backendaiclient.utils._readRecentProjectGroup();
     globalThis.backendaiclient.current_group = this.current_group;
     this.groups = globalThis.backendaiclient.groups;
     const groupSelectionBox: HTMLElement = this.shadowRoot.getElementById('group-select-box');
@@ -951,7 +951,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    */
   async logout(performClose = false) {
     console.log('also close the app:', performClose);
-    this._deleteRecentProjectGroupInfo();
+    globalThis.backendaiclient.utils._deleteRecentProjectGroupInfo();
     if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
       this.notification.text = _text('webui.CleanUpNow');
       this.notification.show();
@@ -1017,7 +1017,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   changeGroup(e) {
     globalThis.backendaiclient.current_group = e.target.value;
     this.current_group = globalThis.backendaiclient.current_group;
-    this._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
+    globalThis.backendaiclient.utils._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
     const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {'detail': globalThis.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
@@ -1108,43 +1108,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       const event = new CustomEvent('backend-ai-usersettings-logs', {});
       document.dispatchEvent(event);
     }
-  }
-
-  /**
-   * Read recent project group according to endpoint id.
-   *
-   * @return {string} Current selected group
-   */
-  _readRecentProjectGroup() {
-    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
-    const value: string | null = globalThis.backendaioptions.get('projectGroup.' + endpointId);
-    if (value) { // Check if saved group has gone between logins / sessions
-      if (globalThis.backendaiclient.groups.length > 0 && globalThis.backendaiclient.groups.includes(value)) {
-        return value; // value is included. So it is ok.
-      } else {
-        this._deleteRecentProjectGroupInfo();
-        return globalThis.backendaiclient.current_group;
-      }
-    }
-    return globalThis.backendaiclient.current_group;
-  }
-
-  /**
-   * Set the project group according to current group.
-   *
-   * @param {string} value
-   */
-  _writeRecentProjectGroup(value: string) {
-    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
-    globalThis.backendaioptions.set('projectGroup.' + endpointId, value ? value : globalThis.backendaiclient.current_group);
-  }
-
-  /**
-   * Delete the recent project group information.
-   */
-  _deleteRecentProjectGroupInfo() {
-    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
-    globalThis.backendaioptions.delete('projectGroup.' + endpointId);
   }
 
   /**
