@@ -987,7 +987,8 @@ export default class BackendAILogin extends BackendAIPage {
       } else {
         globalThis.backendaiclient.groups = ['default'];
       }
-      globalThis.backendaiclient.current_group = globalThis.backendaiclient.groups[0];
+      const currentGroup = globalThis.backendaiclient.utils._readRecentProjectGroup();
+      globalThis.backendaiclient.current_group = currentGroup ? currentGroup : globalThis.backendaiclient.groups[0];
       globalThis.backendaiclient.current_group_id = () => {
         return globalThis.backendaiclient.groupIds[globalThis.backendaiclient.current_group];
       };

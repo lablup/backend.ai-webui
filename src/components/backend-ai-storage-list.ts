@@ -1646,9 +1646,9 @@ export default class BackendAiStorageList extends BackendAIPage {
   _deleteFolder(folderName) {
     const job = globalThis.backendaiclient.vfolder.delete(folderName);
     job.then((resp) => {
-      console.log(resp);
+      // console.log(resp);
       if (resp.msg) {
-        console.log(resp);
+        console.log(resp.msg);
         this.notification.text = _text('data.folders.CannotDeleteFolder');
         this.notification.show(true);
       } else {
