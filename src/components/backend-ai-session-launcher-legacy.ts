@@ -41,14 +41,14 @@ import {
 
  Example:
 
- <backend-ai-session-launcher active></backend-ai-session-launcher>
+ <backend-ai-session-launcher-legacy active></backend-ai-session-launcher-legacy>
 
 @group Backend.AI Web UI
- @element backend-ai-session-launcher
+ @element backend-ai-session-launcher-legacy
  */
 
-@customElement('backend-ai-session-launcher')
-export default class BackendAiSessionLauncher extends BackendAIPage {
+@customElement('backend-ai-session-launcher-legacy')
+export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
   @query('#image-name') manualImageName;
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
@@ -156,9 +156,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Number}) max_cpu_core_per_session = 64;
+  @property({type: Number}) max_mem_per_container = 16;
   @property({type: Number}) max_cuda_device_per_container = 16;
   @property({type: Number}) max_cuda_shares_per_container = 16;
   @property({type: Number}) max_shm_per_container = 2;
+  @property({type: Boolean}) allow_manual_image_name_for_session = false;
   @property({type: Object}) resourceBroker;
   @property({type: Number}) cluster_size = 1;
   @property({type: String}) cluster_mode;
@@ -183,7 +185,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   static get is() {
-    return 'backend-ai-session-launcher';
+    return 'backend-ai-session-launcher-legacy';
   }
 
   static get styles(): CSSResultOrNative | CSSResultArray {
@@ -716,9 +718,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
+        this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 16;
         this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
         this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
         this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+        if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
+          'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
+          globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
+          this.allow_manual_image_name_for_session = globalThis.backendaiclient._config.allow_manual_image_name_for_session;
+        } else {
+          this.allow_manual_image_name_for_session = false;
+        }
         if (globalThis.backendaiclient.supports('multi-container')) {
           this.cluster_support = true;
         }
@@ -728,9 +738,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }, {once: true});
     } else {
       this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 64;
+      this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 16;
       this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
       this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
       this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 2;
+      if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
+        'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
+        globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
+        this.allow_manual_image_name_for_session = globalThis.backendaiclient._config.allow_manual_image_name_for_session;
+      } else {
+        this.allow_manual_image_name_for_session = false;
+      }
       if (globalThis.backendaiclient.supports('multi-container')) {
         this.cluster_support = true;
       }
@@ -1009,9 +1027,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _newSession() {
     const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
     confirmationDialog.hide();
-    const selectedItem = this.shadowRoot.querySelector('#environment').selected;
-    const kernel = selectedItem.id;
-    const version = this.shadowRoot.querySelector('#version').value;
+    let kernel;
+    let version;
+    if (this.manualImageName && this.manualImageName.value) {
+      const nameFragements = this.manualImageName.value.split(':');
+      version = nameFragements.splice(-1, 1)[0];
+      kernel = nameFragements.join(':');
+    } else {
+      // When the "Environment" dropdown is disabled after typing the image name manually,
+      // `selecteditem.id` is `null` and raises "id" exception when trying to launch the session.
+      // That's why we need if-else block here.
+      const selectedItem = this.shadowRoot.querySelector('#environment').selected;
+      kernel = selectedItem.id;
+      version = this.shadowRoot.querySelector('#version').value;
+    }
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     const isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
     const vfolder = this.selectedVfolders;
@@ -1114,7 +1143,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['env'] = this.environ_values;
     }
     let kernelName: string;
-    if (this._debug && this.manualImageName.value !== '') {
+    if (this._debug || this.manualImageName.value !== '') {
       kernelName = this.manualImageName.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
@@ -2107,6 +2136,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _resourceTemplateToCustom() {
     this.shadowRoot.querySelector('#resource-templates').selectedText = _text('session.launcher.CustomResourceApplied');
+    console.log(this.shmem_metric.max, this.max_shm_per_container);
   }
 
   /**
@@ -2175,10 +2205,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _updateShmemLimit() {
     const shmemEl = this.shadowRoot.querySelector('#shmem-resource');
+    const currentMemLimit = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
     let shmem_value = shmemEl.value;
-    this.shmem_metric.max = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
+    this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
-    this.shadowRoot.querySelector('#shmem-resource').max = Math.min(this.max_shm_per_container, this.shmem_metric.max);
+    shmemEl.max = this.shmem_metric.max;
     if (parseFloat(shmem_value) > this.shmem_metric.max) {
       shmem_value = this.shmem_metric.max;
       this.shmem_request = shmem_value;
@@ -2460,6 +2491,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.shadowRoot.querySelector('#' + id).hide();
   }
 
+  /**
+   * Disable Select UI about Environments and versions when event target value is not empty.
+   *
+   */
+  _toggleEnvironmentSelectUI() {
+    const SelectedEnvironment = this.shadowRoot.querySelector('mwc-select#environment');
+    const SelectedVersions = this.shadowRoot.querySelector('mwc-select#version');
+    const isManualImageEnabled = this.manualImageName?.value ? true : false;
+    SelectedEnvironment.disabled = SelectedVersions.disabled = isManualImageEnabled;
+    // select none(-1) when manual image is enabled
+    const selectedIndex = isManualImageEnabled ? -1 : 1;
+    SelectedEnvironment.select(selectedIndex);
+    SelectedVersions.select(selectedIndex);
+  }
+
+
   render() {
     // language=HTML
     return html`
@@ -2531,9 +2578,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               </mwc-list-item>
             `)}
             </mwc-select>
-            ${this._debug ? html`
+            ${this._debug || this.allow_manual_image_name_for_session ? html`
+            
             <mwc-textfield id="image-name" type="text" class="flex" value=""
-              label="${_t('session.launcher.ManualImageName')}"></mwc-textfield>
+              label="${_t('session.launcher.ManualImageName')}" @change=${(e) => this._toggleEnvironmentSelectUI()}></mwc-textfield>
+
             `:html``}
           </div>
           <div style="display:none;">
@@ -2566,7 +2615,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <mwc-list fullwidth multi id="vfolder"
               @selected="${() => this._updateSelectedFolder()}">
             ${this.vfolders.length === 0 ? html`
-              <mwc-list-item value="" disabled="true">${_t('session.launcher.NoFolderExists')}</mwc-list-item>
+              <mwc-list-item value="" ?disabled="${true}">${_t('session.launcher.NoFolderExists')}</mwc-list-item>
             `:html``}
             ${this.vfolders.map((item) => html`
               <mwc-check-list-item
@@ -2642,31 +2691,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <p class="small">${_t('session.launcher.AllocateNode')}</p>
             </div>
           </div>
-          <div style="display:none;" class="horizontal layout center center-justified allocation-check">
-            <div style="font-size:22px;">=</div>
-            <div class="horizontal layout resource-allocated-box">
-              <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t('session.launcher.CPU')}</p>
-                <span>${this.cpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                <p>Core</p>
-              </div>
-              <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t('session.launcher.Memory')}</p>
-                <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                <p>GB</p>
-              </div>
-              <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t('session.launcher.SharedMemory')}</p>
-                <span>${this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                <p>GB</p>
-              </div>
-              <div class="vertical layout center center-justified resource-allocated">
-                <p>${_t('session.launcher.Accelerator')}</p>
-                <span>${this.gpu_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
-                <p>${_t('session.launcher.GPU')}</p>
-              </div>
-            </div>
-          </div>
           <div class="vertical center layout" style="padding-top:15px;position:relative;z-index:11;">
             <mwc-select id="resource-templates" label="${_t('session.launcher.ResourceAllocation')}"
                         icon="dashboard_customize" fullwidth required>
@@ -2715,7 +2739,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             `)}
             ${this.isEmpty(this.resource_templates_filtered) ? html`
               <mwc-list-item class="resource-button vertical center start layout" role="option"
-                             style="height:140px;width:350px;" type="button" aria-selected
+                             style="height:140px;width:350px;" type="button"
                              flat inverted outlined disabled>
                 <div>
                   <h4>${_t('session.launcher.NoSuitablePreset')}</h4>
@@ -3010,6 +3034,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-session-launcher': BackendAiSessionLauncher;
+    'backend-ai-session-launcher-legacy': BackendAiSessionLauncherLegacy;
   }
 }

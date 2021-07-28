@@ -631,6 +631,9 @@ export default class BackendAICredentialList extends BackendAIPage {
           <template class="header">${_t('credential.ResourcePolicy')}</template>
           <template>
             <div class="layout horizontal wrap center">
+              <span>[[item.resource_policy]]</span>
+            </div>
+            <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
                 <mwc-icon class="fg green">developer_board</mwc-icon>
                 <span>[[item.total_resource_slots.cpu]]</span>
