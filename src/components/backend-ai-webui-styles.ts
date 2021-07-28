@@ -336,6 +336,10 @@ export const BackendAIWebUIStyles = [
       --mdc-select-disabled-dropdown-icon-color: #747474;
     }
 
+    mwc-select.fixed-position > mwc-list-item {
+      width: 255px;
+    }
+
     mwc-multi-select {
       width: 135px;
       min-width: 135px;
@@ -388,6 +392,10 @@ export const BackendAIWebUIStyles = [
 
     mwc-textfield {
       width: 100%;
+    }
+
+    #user-preference-dialog mwc-textfield#secretkey {
+    --mdc-typography-subtitle1-font-size: 0.7rem;
     }
 
     mwc-textarea {
@@ -485,6 +493,10 @@ export const BackendAIWebUIStyles = [
       -webkit-appearance: none;
       width: 0 !important;
       height: 0;
+    }
+
+    .terms-of-use {
+      margin-bottom: 10px;
     }
 
     footer#short-height {
