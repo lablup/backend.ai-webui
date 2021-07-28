@@ -27,6 +27,7 @@ import '@material/mwc-textfield/mwc-textfield';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import './lablup-loading-spinner';
+import './lablup-loading-dots';
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-progress-bar';
 import './backend-ai-dialog';
@@ -82,6 +83,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) terminateSelectedSessionsDialog = Object();
   @property({type: Boolean}) enableScalingGroup = false;
   @property({type: Object}) spinner = Object();
+  @property({type: Object}) dots = Object();
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) kernel_icons = Object();
@@ -118,10 +120,25 @@ export default class BackendAiSessionList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
+        div.session-list {
+          height: calc(100vh - 235px);
+        }
+
+        div.blank-box {
+          padding: 3rem 0;
+        }
+
+        div.blank-box-medium {
+          padding: 8.8rem 0;
+        }
+
+        div.blank-box-large {
+          padding: 11.3rem 0;
+        }
+
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 265px);
         }
 
         wl-icon.indicator {
@@ -274,6 +291,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           font-size: 10px;
           color: var(--general-menu-color-2);
         }
+        
+        span#no-data-message {
+          font-size: 20px;
+          font-weight: 200;
+          display: block;
+          color: #999999;
+        }
       `];
   }
 
@@ -294,7 +318,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.dots = this.shadowRoot.querySelector('#loading-dots');
     this._grid = this.shadowRoot.querySelector('#list-grid');
     this.refreshTimer = null;
     fetch('resources/image_metadata.json').then(
@@ -400,7 +424,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       return;
     }
     this.refreshing = true;
-    this.spinner.show();
+    this.dots.show();
     let status: any;
     status = 'RUNNING';
     switch (this.condition) {
@@ -453,7 +477,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const group_id = globalThis.backendaiclient.current_group_id();
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id, 10 * 1000).then((response) => {
-      this.spinner.hide();
+      this.dots.hide();
       this.total_session_count = response.compute_session_list.total_count;
       if (this.total_session_count === 0) {
         this.total_session_count = 1;
@@ -608,7 +632,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           this._refreshJobData();
         }, refreshTime);
       }
-      this.spinner.hide();
+      this.dots.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -1584,44 +1608,56 @@ export default class BackendAiSessionList extends BackendAIPage {
           <span id="access-key-filter-helper-text">${_t('maxLength.64chars')}</span>
         </div>
       </div>
-
-      <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
-         .items="${this.compute_sessions}" height-by-rows>
-        ${this._isRunning ? html`
-          <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+        <div class="session-list">
+        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
+           .items="${this.compute_sessions}" height-by-rows>
+          ${this._isRunning ? html`
+            <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+            </vaadin-grid-column>
+          ` : html``}
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+          ${this.is_admin ? html`
+            <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
+            </vaadin-grid-sort-column>
+          ` : html``}
+          <vaadin-grid-column width="150px" resizable header="${_t('session.SessionInfo')}" .renderer="${this._boundSessionInfoRenderer}">
           </vaadin-grid-column>
-        ` : html``}
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        ${this.is_admin ? html`
-          <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
-          </vaadin-grid-sort-column>
-        ` : html``}
-        <vaadin-grid-column width="150px" resizable header="${_t('session.SessionInfo')}" .renderer="${this._boundSessionInfoRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="90px" flex-grow="0" header="${_t('session.Status')}" resizable .renderer="${this._boundStatusRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('session.Configuration')}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}" .renderer="${this._boundUsageRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}" path="created_at">
-          <template>
-            <div class="layout vertical">
-              <span>[[item.created_at_hr]]</span>
-              <span>([[item.elapsed]])</span>
-            </div>
-          </template>
-        </vaadin-grid-sort-column>
-        ${this.is_superadmin ? html`
-          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}">
+          <vaadin-grid-column width="90px" flex-grow="0" header="${_t('session.Status')}" resizable .renderer="${this._boundStatusRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('session.Configuration')}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}" .renderer="${this._boundUsageRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}" path="created_at">
             <template>
               <div class="layout vertical">
-                <span>[[item.agent]]</span>
+                <span>[[item.created_at_hr]]</span>
+                <span>([[item.elapsed]])</span>
               </div>
             </template>
-          </vaadin-grid-column>
-            ` : html``}
-      </vaadin-grid>
+          </vaadin-grid-sort-column>
+          ${this.is_superadmin ? html`
+            <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}">
+              <template>
+                <div class="layout vertical">
+                  <span>[[item.agent]]</span>
+                </div>
+              </template>
+            </vaadin-grid-column>
+              ` : html``}
+        </vaadin-grid>
+        ${this.total_session_count == 0 ? html`
+          <div class="vertical layout center flex blank-box-large">
+            <lablup-loading-dots id="loading-dots"></lablup-loading-dots>
+          </div>`
+        : html`
+          ${this.total_session_count == 1 && this.compute_sessions.length == 0 ? html`
+            <div class="vertical layout center flex blank-box-large">
+              <span id="no-data-message">${_t('session.NoSessionToDisplay')}</span>
+            </div>
+          ` : html``}
+        `}
+      </div>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
       <mwc-icon-button
       class="pagination"

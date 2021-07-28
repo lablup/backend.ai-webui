@@ -9,6 +9,8 @@ import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
+import './lablup-loading-spinner';
+
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
@@ -37,6 +39,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: String}) condition = '';
   @property({type: String}) presetName = '';
   @property({type: Object}) resourcePresets;
+  @property({type: Object}) spinner;
+  @property({type: Number}) _totalresourcePresetCount = 0;
   @property({type: Array}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Array}) _boundControlRenderer = this.controlRenderer.bind(this);
 
@@ -51,10 +55,24 @@ class BackendAiResourcePresetList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
+        div.resource-preset-list {
+          height: calc(100vh - 235px);
+        }
+
+        div.blank-box-large {
+          padding: 11.3rem 0;
+        }
+
+        span#no-data-message {
+          font-size: 20px;
+          font-weight: 200;
+          display: block;
+          color: #999999;
+        }
+
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 225px);
         }
 
         wl-button > wl-icon {
@@ -210,8 +228,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
           <span class="flex"></span>
           <mwc-button raised id="add-resource-preset" icon="add" label="${_t('resourcePreset.CreatePreset')}" @click="${(e) => this._launchPresetAddDialog(e)}"></mwc-button>
         </h4>
-        <div>
-          <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
+        <div class="resource-preset-list">
+          <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Resource Policy list"
                       .items="${this.resourcePresets}">
             <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
 
@@ -232,6 +250,17 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
             </vaadin-grid-column>
           </vaadin-grid>
+          ${this._totalresourcePresetCount == 0 ? html`
+            <div class="vertical layout center flex blank-box-large">
+              <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+            </div>`
+          : html`
+            ${this._totalresourcePresetCount == 1 && this.resourcePresets.length == 0 ? html`
+              <div class="vertical layout center flex blank-box-large">
+                <span id="no-data-message">${_t('resourcePreset.NoResourcePresetToDisplay')}</span>
+              </div>
+            ` : html``}
+          `}
         </div>
       </div>
       <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling narrowLayout>
@@ -341,6 +370,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     const textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {
@@ -420,6 +450,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
     const param = {
       'group': globalThis.backendaiclient.current_group
     };
+    this.spinner.show();
     return globalThis.backendaiclient.resourcePreset.check(param).then((response) => {
       const resourcePresets = response.presets;
       Object.keys(resourcePresets).map((objectKey, index) => {
@@ -432,6 +463,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
         }
       });
       this.resourcePresets = resourcePresets;
+      this._totalresourcePresetCount = this.resourcePresets.length > 0 ? this.resourcePresets.length : 1;
+      this.spinner.hide();
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {

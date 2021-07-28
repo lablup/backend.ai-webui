@@ -67,11 +67,25 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
+        div.log-list {
+          height: calc(100vh - 305px);
+        }
+
+        div.blank-box-large {
+          padding: 11.3rem 0;
+        }
+
+        span#no-data-message {
+          font-size: 20px;
+          font-weight: 200;
+          display: block;
+          color: #999999;
+        }
+
         vaadin-grid {
           width: 100%;
           border: 0;
           font-size: 12px;
-          height: calc(100vh - 305px);
         }
 
         vaadin-grid-cell {
@@ -209,67 +223,79 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <vaadin-grid id="list-grid" page-size="${this._pageSize}"
-                   theme="row-stripes column-borders compact wrap-cell-content"
-                   aria-label="Error logs" .items="${this.logView}">
-        <vaadin-grid-column width="250px" flex-grow="0" text-align="start" auto-width header="${_t('logs.TimeStamp')}">
-          <template>
-              <div class="layout vertical" error-cell$="[[item.isError]]">
-                <span class="monospace">[[item.timestamp_hr]]</span>
-              </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Status')}">
-          <template>
-              <div class="layout vertical" error-cell$="[[item.isError]]">
-                <span>[[item.statusCode]] [[item.statusText]]</span>
-              </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorTitle')}">
-          <template>
-              <div class="layout vertical" error-cell$="[[item.isError]]">
-                <span>[[item.title]]</span>
-              </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorMessage')}">
-          <template>
-              <div class="layout vertical" error-cell$="[[item.isError]]">
-                <span>[[item.message]]</span>
-              </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column width="50px" flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorType')}">
-          <template>
-              <div class="layout vertical" error-cell$="[[item.isError]]">
-                <span>[[item.type]]</span>
-              </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Method')}">
-          <template>
-              <div class="layout vertical" error-cell$="[[item.isError]]">
-                <span>[[item.requestMethod]]</span>
-              </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.RequestUrl')}">
-          <template>
-              <div class="layout vertical" error-cell$="[[item.isError]]">
-                <span class="monospace">[[item.requestUrl]]</span>
-              </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable auto-width flex-grow="0" text-align="start" header="${_t('logs.Parameters')}">
-          <template>
-              <div class="layout vertical" error-cell$="[[item.isError]]">
-                <span class="monospace">[[item.requestParameters]]</span>
-              </div>
-          </template>
-        </vaadin-grid-column>
-      </vaadin-grid>
+      <div class="log-list">
+        <vaadin-grid id="list-grid" height-by-rows page-size="${this._pageSize}"
+                     theme="row-stripes column-borders compact wrap-cell-content"
+                     aria-label="Error logs" .items="${this.logView}">
+          <vaadin-grid-column width="250px" flex-grow="0" text-align="start" auto-width header="${_t('logs.TimeStamp')}">
+            <template>
+                <div class="layout vertical" error-cell$="[[item.isError]]">
+                  <span class="monospace">[[item.timestamp_hr]]</span>
+                </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Status')}">
+            <template>
+                <div class="layout vertical" error-cell$="[[item.isError]]">
+                  <span>[[item.statusCode]] [[item.statusText]]</span>
+                </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorTitle')}">
+            <template>
+                <div class="layout vertical" error-cell$="[[item.isError]]">
+                  <span>[[item.title]]</span>
+                </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorMessage')}">
+            <template>
+                <div class="layout vertical" error-cell$="[[item.isError]]">
+                  <span>[[item.message]]</span>
+                </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column width="50px" flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorType')}">
+            <template>
+                <div class="layout vertical" error-cell$="[[item.isError]]">
+                  <span>[[item.type]]</span>
+                </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Method')}">
+            <template>
+                <div class="layout vertical" error-cell$="[[item.isError]]">
+                  <span>[[item.requestMethod]]</span>
+                </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.RequestUrl')}">
+            <template>
+                <div class="layout vertical" error-cell$="[[item.isError]]">
+                  <span class="monospace">[[item.requestUrl]]</span>
+                </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable auto-width flex-grow="0" text-align="start" header="${_t('logs.Parameters')}">
+            <template>
+                <div class="layout vertical" error-cell$="[[item.isError]]">
+                  <span class="monospace">[[item.requestParameters]]</span>
+                </div>
+            </template>
+          </vaadin-grid-column>
+        </vaadin-grid>
+        ${this._totalLogCount == 0 ? html`
+          <div class="vertical layout center flex blank-box-large">
+            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+          </div>`
+        : html`
+          ${this._totalLogCount == 1 && this.logs.length == 0 ? html`
+            <div class="vertical layout center flex blank-box-large">
+              <span id="no-data-message">${_t('credential.NoCredentialToDisplay')}</span>
+            </div>
+          ` : html``}
+        `}
+      </div>
       <div class="horizontal center-justified layout flex" style="padding: 10px;border-top:1px solid #ccc;">
         <mwc-icon-button
             class="pagination"

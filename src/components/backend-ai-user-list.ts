@@ -86,10 +86,17 @@ export default class BackendAIUserList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
+        div.user-list {
+          height: calc(100vh - 235px);
+        }
+
+        div.blank-box-large {
+          padding: 11.3rem 0;
+        }
+
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 235px);
         }
 
         backend-ai-dialog h4,
@@ -180,6 +187,13 @@ export default class BackendAIUserList extends BackendAIPage {
           color: var(--general-sidebar-color);
           width: 270px;
         }
+
+        span#no-data-message {
+          font-size: 20px;
+          font-weight: 200;
+          display: block;
+          color: #999999;
+        }
       `];
   }
 
@@ -225,7 +239,7 @@ export default class BackendAIUserList extends BackendAIPage {
     default:
       is_active = false;
     }
-    this.spinner.hide();
+    this.spinner.show();
     const fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       const users = response.users;
@@ -234,9 +248,11 @@ export default class BackendAIUserList extends BackendAIPage {
       // Blank for the next impl.
       // });
       this.users = users;
-      this._totalUserCount = this.users.length;
+      this._totalUserCount = this.users.length > 0 ? this.users.length : 1;
+      this.spinner.hide();
       // setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch((err) => {
+      this.spinner.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -531,20 +547,32 @@ export default class BackendAIUserList extends BackendAIPage {
       document.dispatchEvent(event);
     }
   }
-
+          
   render() {
     // language=HTML
     return html`
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <vaadin-grid theme="row-stripes column-borders compact"
-                   aria-label="User list" id="user-grid" .items="${this.users}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
-                            .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-        <vaadin-grid-filter-column path="email" header="${_t('credential.UserID')}" resizable></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column resizable header="${_t('credential.Name')}" path="username"></vaadin-grid-filter-column>
-        <vaadin-grid-column resizable header="${_t('general.Control')}"
-            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-      </vaadin-grid>
+      <div class="user-list">
+        <vaadin-grid theme="row-stripes column-borders compact" height-by-rows
+                      aria-label="User list" id="user-grid" .items="${this.users}">
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
+                              .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
+          <vaadin-grid-filter-column path="email" header="${_t('credential.UserID')}" resizable></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column resizable header="${_t('credential.Name')}" path="username"></vaadin-grid-filter-column>
+          <vaadin-grid-column resizable header="${_t('general.Control')}"
+                .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        </vaadin-grid>
+        ${this._totalUserCount == 0 ? html`
+          <div class="vertical layout center flex blank-box-large">
+            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+          </div>`
+        : html`
+          ${this._totalUserCount == 1 && this.users.length == 0 ? html`
+            <div class="vertical layout center flex blank-box-large">
+              <span id="no-data-message">${_t('credential.NoCredentialToDisplay')}</span>
+            </div>
+          ` : html``}
+        `}
+      </div>
       <backend-ai-dialog id="signout-user-dialog" fixed backdrop>
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">

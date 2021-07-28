@@ -22,6 +22,7 @@ import '@material/mwc-icon/mwc-icon';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import './lablup-loading-spinner';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
@@ -42,6 +43,7 @@ import './lablup-progress-bar';
 export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Array}) agents;
+  @property({type: Object}) spinner;
   @property({type: Object}) agentsObject = Object();
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
@@ -52,6 +54,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: Object}) _boundCapabilitiesRenderer = this.capabilitiesRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: String}) filter = '';
+  @property({type: Number}) _totalAgentCount = 0;
 
   constructor() {
     super();
@@ -65,6 +68,21 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
+        div.user-list {
+          height: calc(100vh - 235px);
+        }
+
+        div.blank-box-large {
+          padding: 11.3rem 0;
+        }
+        
+        span#no-data-message {
+          font-size: 20px;
+          font-weight: 200;
+          display: block;
+          color: #999999;
+        }
+
         vaadin-grid {
           border: 0;
           font-size: 14px;
@@ -137,6 +155,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
   }
@@ -174,6 +193,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     if (this.active !== true) {
       return;
     }
+    this.spinner.show();
     globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric', 'usage']).then((response) => {
       const storage_volumes = response.storage_volume_list.items;
       const agents: Array<any> = [];
@@ -191,6 +211,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         });
       }
       this.agents = agents;
+      this._totalAgentCount = this.agents.length > 0 ? this.agents.length : 1;
+      this.spinner.hide();
       const event = new CustomEvent('backend-ai-storage-proxy-updated', {});
       this.dispatchEvent(event);
       if (this.active === true) {
@@ -199,6 +221,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         }, 15000);
       }
     }).catch((err) => {
+      this.spinner.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -443,23 +466,36 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
-                   .items="${this.agents}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
-                            .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="100px" resizable header="${_t('agent.BackendType')}"
-                            .renderer="${this._boundTypeRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable width="60px" header="${_t('agent.Resources')}"
-                            .renderer="${this._boundResourceRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Capabilities')}"
-                            .renderer="${this._boundCapabilitiesRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t('general.Control')}"
-                            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-      </vaadin-grid>
+      <div class="agent-list">
+        <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
+                     .items="${this.agents}">
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
+                              .renderer="${this._indexRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column width="100px" resizable header="${_t('agent.BackendType')}"
+                              .renderer="${this._boundTypeRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable width="60px" header="${_t('agent.Resources')}"
+                              .renderer="${this._boundResourceRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Capabilities')}"
+                              .renderer="${this._boundCapabilitiesRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column resizable header="${_t('general.Control')}"
+                              .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        </vaadin-grid>
+        ${this._totalAgentCount == 0 ? html`
+          <div class="vertical layout center flex blank-box-large">
+            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+          </div>`
+        : html`
+          ${this._totalAgentCount == 1 && this.agents.length == 0 ? html`
+            <div class="vertical layout center flex blank-box-large">
+              <span id="no-data-message">${_t('agent.NoAgentToDisplay')}</span>
+            </div>
+          ` : html``}
+        `}
+      </div>
       <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">

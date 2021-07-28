@@ -239,6 +239,7 @@
     "ExportCSVFile": "Export CSV File",
     "ResourceGroup": "Resource Group",
     "NoLogs": "No logs.",
+    "NoSessionToDisplay": "No sessions to display",
     "CreationFailed": "Session creation failed. Please try again in few minutes.",
     "applauncher": {
       "AppMustBeRun": "Start only when the app is already running",
@@ -305,6 +306,7 @@
     "Running": "Running",
     "BackendType": "Backend Type",
     "Capabilities": "Capabilities",
+    "NoAgentToDisplay": "No Agents to display",
     "NoNetworkSignal": "No network signals."
   },
   "general": {
@@ -376,6 +378,8 @@
     "Description": "Description",
     "Days": "Days",
     "NoChanges": "No changes were made",
+    "NoUserToDisplay": "No Users to display",
+    "NoCredentialToDisplay": "No Credentials to display", 
     "FileName": "File name",
     "validation": {
       "InvalidEmailAddress": "Invalid Email Address.",
@@ -468,7 +472,8 @@
       "Edit": "Edit",
       "EditDelete": "Edit+Delete",
       "KickOut": "Kick out user",
-      "CannotDeleteFolder": "Cannot delete folder mounted in one or more sessions. Please terminate the session first."
+      "CannotDeleteFolder": "Cannot delete folder mounted in one or more sessions. Please terminate the session first.",
+      "NoFolderToDisplay": "No Folders to display"
     },
     "explorer": {
       "Delete": "Delete...",
@@ -587,6 +592,7 @@
     "SelectedImagesAlreadyInstalled": "Selected Image(s) are already installed or None. Please check again.",
     "SelectedImagesNotInstalled": "Selected Images(s) are not installed. Please check again.",
     "Disabled": "disabled",
+    "NoImageToDisplay": "No Images to display",
     "NoResourcesForImage": "Not Enough resources for pulling the image. Image name: ",
     "InstallingImage": "Installing: ",
     "TakesTime": ". It takes time so have a cup of coffee!",
@@ -607,6 +613,7 @@
     "PresetName": "Preset Name",
     "AboutToDeletePreset": "You are about to delete this preset:",
     "NoPresetName": "Input preset name",
+    "NoResourcePresetToDisplay": "No Resource Presets to display",
     "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
     "Created": "Resource preset created",
     "Updated": "Resource preset updated",
@@ -712,6 +719,7 @@
     "SuccessfullyUpdated": "Resource policy successfully updated.",
     "SuccessfullyDeleted": "Resource policy successfully deleted.",
     "PolicyNameEmpty": "Policy name should not be empty.",
+    "NoResourcePolicyToDisplay": "No Resource Policies to display",
     "AboutToDeleteResourcePolicy": "You are about to delete this resource policy: "
   },
   "registry": {
@@ -744,6 +752,7 @@
     "RegistryUpdateFailed": "Registry update failed.",
     "RescanImages": "Rescanning Images...",
     "RescanFailed": "Rescan Failed.",
+    "NoRegistryToDisplay": "No Registries to display",
     "PleaseSelectOption": "Please select one option."
   },
   "resourceGroup": {

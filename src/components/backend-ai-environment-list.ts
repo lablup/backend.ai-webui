@@ -78,6 +78,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     'rocm-gpu': ['0', '1', '2', '3', '4', '5', '6', '7'],
     'tpu': ['0', '1', '2']};
   @property({type: Number}) cpuValue = 0;
+  @property({type: Number}) _totalImageCount = 0;
 
   constructor() {
     super();
@@ -98,9 +99,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
+        div.image-list {
+          height: calc(100vh - 235px);
+        }
+        
+        div.blank-box-large {
+          padding: 11.3rem 0;
+        }
+
         vaadin-grid {
           font-size: 14px;
-          height: calc(100vh - 235px);
         }
 
         wl-button > wl-icon {
@@ -806,58 +814,70 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="horizontal layout flex end-justified" style="margin:10px;">
         <mwc-button raised label="${_t('environment.Install')}" class="operation" id="install-image" icon="get_app" @click="${this.openInstallImageDialog}"></mwc-button>
         <mwc-button disabled label="${_t('environment.Delete')}" class="operation temporarily-hide" id="delete-image" icon="delete" @click="${this.openDeleteImageDialog}"></mwc-button>
       </div>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
-        <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
-        </vaadin-grid-selection-column>
-        <vaadin-grid-column path="installed" flex-grow="0" .renderer="${this._boundInstallRenderer}">
-            <template class="header">
-              <vaadin-grid-sorter path="installed">${_t('environment.Status')}</vaadin-grid-sorter>
+      <div class="image-list">
+        <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Environments" id="testgrid" .items="${this.images}">
+          <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
+          </vaadin-grid-selection-column>
+          <vaadin-grid-column path="installed" flex-grow="0" .renderer="${this._boundInstallRenderer}">
+              <template class="header">
+                <vaadin-grid-sorter path="installed">${_t('environment.Status')}</vaadin-grid-sorter>
+              </template>
+            </vaadin-grid-column>
+          <vaadin-grid-filter-column path="registry" width="80px" resizable
+              header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="namespace" width="60px" resizable
+              header="${_t('environment.Namespace')}"></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="lang" resizable
+              header="${_t('environment.Language')}"></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="baseversion" resizable
+              header="${_t('environment.Version')}"></vaadin-grid-filter-column>
+
+          <vaadin-grid-column width="60px" resizable>
+            <template class="header">${_t('environment.Base')}</template>
+            <template>
+              <template is="dom-repeat" items="[[ item.baseimage ]]">
+                <lablup-shields app="" color="blue" ui="round" description="[[item]]"></lablup-shields>
+              </template>
             </template>
           </vaadin-grid-column>
-        <vaadin-grid-filter-column path="registry" width="80px" resizable
-            header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="namespace" width="60px" resizable
-            header="${_t('environment.Namespace')}"></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="lang" resizable
-            header="${_t('environment.Language')}"></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="baseversion" resizable
-            header="${_t('environment.Version')}"></vaadin-grid-filter-column>
+          <vaadin-grid-column width="50px" resizable>
+            <template class="header">${_t('environment.Constraint')}</template>
+            <template>
+              <template is="dom-if" if="[[item.additional_req]]">
+                <lablup-shields app="" color="green" ui="round" description="[[item.additional_req]]"></lablup-shields>
+              </template>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-filter-column path="digest" resizable
+              header="${_t('environment.Digest')}">
+            <template>
+              <div class="layout vertical">
+                <span class="indicator monospace">[[item.digest]]</span>
+              </div>
+            </template>
+          </vaadin-grid-filter-column>
 
-        <vaadin-grid-column width="60px" resizable>
-          <template class="header">${_t('environment.Base')}</template>
-          <template>
-            <template is="dom-repeat" items="[[ item.baseimage ]]">
-              <lablup-shields app="" color="blue" ui="round" description="[[item]]"></lablup-shields>
-            </template>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column width="50px" resizable>
-          <template class="header">${_t('environment.Constraint')}</template>
-          <template>
-            <template is="dom-if" if="[[item.additional_req]]">
-              <lablup-shields app="" color="green" ui="round" description="[[item.additional_req]]"></lablup-shields>
-            </template>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-filter-column path="digest" resizable
-            header="${_t('environment.Digest')}">
-          <template>
-            <div class="layout vertical">
-              <span class="indicator monospace">[[item.digest]]</span>
+          <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t('environment.ResourceLimit')}" .renderer="${this._boundRequirementsRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
+          </vaadin-grid-column>
+        </vaadin-grid>
+        ${this._totalImageCount == 0 ? html`
+          <div class="vertical layout center flex blank-box-large">
+            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+          </div>`
+        : html`
+          ${this._totalImageCount == 1 && this.images.length == 0 ? html`
+            <div class="vertical layout center flex blank-box-large">
+              <span id="no-data-message">${_t('environment.NoImageToDisplay')}</span>
             </div>
-          </template>
-        </vaadin-grid-filter-column>
-
-        <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t('environment.ResourceLimit')}" .renderer="${this._boundRequirementsRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
-        </vaadin-grid-column>
-      </vaadin-grid>
+          ` : html``}
+        `}
+      </div>
       <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('environment.ModifyImageResourceLimit')}</span>
         <div slot="content">
@@ -1322,6 +1342,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // let sorted_images = {};
       // image_keys.sort();
       this.images = domainImages;
+      this._totalImageCount = this.images.length > 0 ? this.images.length : 1;
       this.spinner.hide();
     }).catch((err) => {
       console.log(err);

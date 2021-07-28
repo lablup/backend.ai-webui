@@ -20,6 +20,7 @@ import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
+import './lablup-loading-spinner';
 import './backend-ai-dialog';
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -65,6 +66,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   };
   @property({type: Boolean}) isAdmin = false;
   @property({type: String}) condition = 'active';
+  @property({type: Object}) spinner;
   @property({type: Object}) keypairs = Object();
   @property({type: Object}) resourcePolicy = Object();
   @property({type: Object}) indicator = Object();
@@ -86,10 +88,25 @@ export default class BackendAICredentialList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
+        div.credential-list {
+          height: calc(100vh - 235px);
+        }
+
+        div.blank-box {
+          padding: 3rem 0;
+        }
+
+        div.blank-box-medium {
+          padding: 8.8rem 0;
+        }
+
+        div.blank-box-large {
+          padding: 11.3rem 0;
+        }
+
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 235px);
         }
 
         mwc-icon-button {
@@ -154,10 +171,18 @@ export default class BackendAICredentialList extends BackendAIPage {
         mwc-select {
           --mdc-theme-primary: var(--general-sidebar-color);
         }
+
+        span#no-data-message {
+          font-size: 20px;
+          font-weight: 200;
+          display: block;
+          color: #999999;
+        }
       `];
   }
 
   firstUpdated() {
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
   }
 
@@ -200,6 +225,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     default:
       is_active = false;
     }
+    this.spinner.show();
     return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
       const rp = response.keypair_resource_policies;
       this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
@@ -267,8 +293,10 @@ export default class BackendAICredentialList extends BackendAIPage {
       });
       this.keypairs = keypairs;
       this._totalCredentialCount = this.keypairs.length > 0 ? this.keypairs.length : 1;
+      this.spinner.hide();
       // setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch((err) => {
+      this.spinner.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -599,103 +627,116 @@ export default class BackendAICredentialList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
-                   id="keypair-grid" .items="${this.keypairs}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
+      <div class="credential-list">
+        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list" height-by-rows
+                     id="keypair-grid" .items="${this.keypairs}">
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
 
-        <vaadin-grid-filter-column path="user_id" header="${_t('credential.UserID')}" resizable></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="access_key" header="${_t('general.AccessKey')}" resizable>
-          <template>
-            <div class="monospace">[[item.access_key]]</div>
-          </template>
-        </vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="user_id" header="${_t('credential.UserID')}" resizable></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="access_key" header="${_t('general.AccessKey')}" resizable>
+            <template>
+              <div class="monospace">[[item.access_key]]</div>
+            </template>
+          </vaadin-grid-filter-column>
 
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="is_admin">${_t('credential.Permission')}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout horizontal center flex">
-              <template is="dom-if" if="[[item.is_admin]]">
-                <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
-              </template>
-              <lablup-shields app="" description="user" ui="flat"></lablup-shields>
-            </div>
-          </template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-sort-column resizable header="${_t('credential.KeyAge')}" path="created_at" .renderer="${this._boundKeyageRenderer}">
-        </vaadin-grid-sort-column>
-
-        <vaadin-grid-column width="150px" resizable>
-          <template class="header">${_t('credential.ResourcePolicy')}</template>
-          <template>
-            <div class="layout horizontal wrap center">
-              <span>[[item.resource_policy]]</span>
-            </div>
-            <div class="layout horizontal wrap center">
-              <div class="layout horizontal configuration">
-                <mwc-icon class="fg green">developer_board</mwc-icon>
-                <span>[[item.total_resource_slots.cpu]]</span>
-                <span class="indicator">${_t('general.cores')}</span>
+          <vaadin-grid-column resizable>
+            <template class="header">
+              <vaadin-grid-sorter path="is_admin">${_t('credential.Permission')}</vaadin-grid-sorter>
+            </template>
+            <template>
+              <div class="layout horizontal center flex">
+                <template is="dom-if" if="[[item.is_admin]]">
+                  <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
+                </template>
+                <lablup-shields app="" description="user" ui="flat"></lablup-shields>
               </div>
-              <div class="layout horizontal configuration">
-                <mwc-icon class="fg green">memory</mwc-icon>
-                <span>[[item.total_resource_slots.mem]]</span>
-                <span class="indicator">GB</span>
+            </template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-sort-column resizable header="${_t('credential.KeyAge')}" path="created_at" .renderer="${this._boundKeyageRenderer}">
+          </vaadin-grid-sort-column>
+
+          <vaadin-grid-column width="150px" resizable>
+            <template class="header">${_t('credential.ResourcePolicy')}</template>
+            <template>
+              <div class="layout horizontal wrap center">
+                <span>[[item.resource_policy]]</span>
               </div>
-            </div>
-            <div class="layout horizontal wrap center">
-              <template is="dom-if" if="[[item.total_resource_slots.cuda_device]]">
+              <div class="layout horizontal wrap center">
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green">view_module</mwc-icon>
-                  <span>[[item.total_resource_slots.cuda_device]]</span>
-                  <span class="indicator">GPU</span>
+                  <mwc-icon class="fg green">developer_board</mwc-icon>
+                  <span>[[item.total_resource_slots.cpu]]</span>
+                  <span class="indicator">${_t('general.cores')}</span>
                 </div>
-              </template>
-              <template is="dom-if" if="[[item.total_resource_slots.cuda_shares]]">
                 <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green">view_module</mwc-icon>
-                  <span>[[item.total_resource_slots.cuda_shares]]</span>
-                  <span class="indicator">fGPU</span>
+                  <mwc-icon class="fg green">memory</mwc-icon>
+                  <span>[[item.total_resource_slots.mem]]</span>
+                  <span class="indicator">GB</span>
                 </div>
-              </template>
-            </div>
-            <div class="layout horizontal wrap center">
-              <div class="layout horizontal configuration">
-                <mwc-icon class="fg green">cloud_queue</mwc-icon>
-                <span>[[item.max_vfolder_size]]</span>
-                <span class="indicator">GB</span>
               </div>
-              <div class="layout horizontal configuration">
-                <mwc-icon class="fg green">folder</mwc-icon>
-                <span>[[item.max_vfolder_count]]</span>
-                <span class="indicator">${_t('general.Folders')}</span>
+              <div class="layout horizontal wrap center">
+                <template is="dom-if" if="[[item.total_resource_slots.cuda_device]]">
+                  <div class="layout horizontal configuration">
+                    <mwc-icon class="fg green">view_module</mwc-icon>
+                    <span>[[item.total_resource_slots.cuda_device]]</span>
+                    <span class="indicator">GPU</span>
+                  </div>
+                </template>
+                <template is="dom-if" if="[[item.total_resource_slots.cuda_shares]]">
+                  <div class="layout horizontal configuration">
+                    <mwc-icon class="fg green">view_module</mwc-icon>
+                    <span>[[item.total_resource_slots.cuda_shares]]</span>
+                    <span class="indicator">fGPU</span>
+                  </div>
+                </template>
               </div>
-            </div>
-          </template>
-        </vaadin-grid-column>
+              <div class="layout horizontal wrap center">
+                <div class="layout horizontal configuration">
+                  <mwc-icon class="fg green">cloud_queue</mwc-icon>
+                  <span>[[item.max_vfolder_size]]</span>
+                  <span class="indicator">GB</span>
+                </div>
+                <div class="layout horizontal configuration">
+                  <mwc-icon class="fg green">folder</mwc-icon>
+                  <span>[[item.max_vfolder_count]]</span>
+                  <span class="indicator">${_t('general.Folders')}</span>
+                </div>
+              </div>
+            </template>
+          </vaadin-grid-column>
 
-        <vaadin-grid-column resizable>
-          <template class="header">${_t('credential.Allocation')}</template>
-          <template>
-            <div class="layout horizontal center flex">
-              <div class="vertical start layout">
-                <div style="font-size:11px;width:40px;">[[item.concurrency_used]] /
-                  [[item.concurrency_limit]]
+          <vaadin-grid-column resizable>
+            <template class="header">${_t('credential.Allocation')}</template>
+            <template>
+              <div class="layout horizontal center flex">
+                <div class="vertical start layout">
+                  <div style="font-size:11px;width:40px;">[[item.concurrency_used]] /
+                    [[item.concurrency_limit]]
+                  </div>
+                  <span class="indicator">Sess.</span>
                 </div>
-                <span class="indicator">Sess.</span>
+                <div class="vertical start layout">
+                  <span style="font-size:8px">[[item.rate_limit]] <span class="indicator">req./15m.</span></span>
+                  <span style="font-size:8px">[[item.num_queries]] <span class="indicator">queries</span></span>
+                </div>
               </div>
-              <div class="vertical start layout">
-                <span style="font-size:8px">[[item.rate_limit]] <span class="indicator">req./15m.</span></span>
-                <span style="font-size:8px">[[item.num_queries]] <span class="indicator">queries</span></span>
-              </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column width="150px" resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
+          </vaadin-grid-column>
+        </vaadin-grid>
+        ${this._totalCredentialCount == 0 ? html`
+          <div class="vertical layout center flex blank-box-large">
+            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+          </div>`
+        : html`
+          ${this._totalCredentialCount == 1 && this.keypairs.length == 0 ? html`
+            <div class="vertical layout center flex blank-box-large">
+              <span id="no-data-message">${_t('credential.NoCredentialToDisplay')}</span>
             </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column width="150px" resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
-        </vaadin-grid-column>
-      </vaadin-grid>
+          ` : html``}
+        `}
+      </div>
       <backend-ai-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
         <span slot="title">Keypair Detail</span>
         <div slot="action" class="horizontal end-justified flex layout">

@@ -8,6 +8,8 @@ import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} f
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
+import './lablup-loading-spinner';
+
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -50,9 +52,11 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this._controlRenderer.bind(this);
   @property({type: Number}) selectedIndex = 0;
+  @property({type: Object}) spinner;
   @property({type: Array}) domains;
   @property({type: Array}) scalingGroups;
   @property({type: Array}) schedulerTypes;
+  @property({type: Number}) _totalScalingGroupCount = 0;
 
   constructor() {
     super();
@@ -69,6 +73,21 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
+        div.scaling-group-list {
+          height: calc(100vh - 235px);
+        }
+
+        div.blank-box-large {
+          padding: 11.3rem 0;
+        }
+        
+        span#no-data-message {
+          font-size: 20px;
+          font-weight: 200;
+          display: block;
+          color: #999999;
+        }
+
         h4 {
           font-weight: 200;
           font-size: 14px;
@@ -150,6 +169,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
   }
 
@@ -162,12 +182,15 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     if (active === false) {
       return;
     }
+    this.spinner.show();
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         globalThis.backendaiclient.scalingGroup.list_available()
           .then((res) => {
             this.scalingGroups = res.scaling_groups;
+            this._totalScalingGroupCount = this.scalingGroups.length > 0 ? this.scalingGroups.length : 1;
+            this.spinner.hide();
           });
 
         globalThis.backendaiclient.domain.list()
@@ -180,6 +203,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       globalThis.backendaiclient.scalingGroup.list_available()
         .then((res) => {
           this.scalingGroups = res.scaling_groups;
+          this._totalScalingGroupCount = this.scalingGroups.length > 0 ? this.scalingGroups.length : 1;
+          this.spinner.hide();
         });
 
       globalThis.backendaiclient.domain.list()
@@ -396,9 +421,12 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _refreshList() {
+    this.spinner.show();
     globalThis.backendaiclient.scalingGroup.list_available()
       .then(({scaling_groups}) => {
         this.scalingGroups = scaling_groups;
+        this._totalScalingGroupCount = this.scalingGroups.length > 0 ? this.scalingGroups.length : 1;
+        this.spinner.hide();
         this.requestUpdate(); // without this render is called beforehands, so update is required
       });
   }
@@ -417,44 +445,57 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               @click=${() => this._launchDialogById('#create-scaling-group-dialog')}>
           </mwc-button>
       </h4>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scalingGroups}">
-        <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Name')}">
-          <template>
-            <div> [[item.name]] </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Description')}">
-          <template>
-            <div> [[item.description]] </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.ActiveStatus')}" .renderer=${this._activeStatusRenderer}>
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Driver')}">
-          <template>
-            <div> [[item.driver]] </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.DriverOptions')}">
-          <template>
-            <div> [[item.driver_opts]] </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}">
-          <template>
-            <div> [[item.scheduler]] </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.SchedulerOptions')}">
-          <template>
-            <div> [[item.scheduler_opts]] </div>
-          </template>
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
-        </vaadin-grid-column>
-      </vaadin-grid>
+      <div class="scaling-group-list">
+        <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Job list" .items="${this.scalingGroups}">
+          <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Name')}">
+            <template>
+              <div> [[item.name]] </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Description')}">
+            <template>
+              <div> [[item.description]] </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.ActiveStatus')}" .renderer=${this._activeStatusRenderer}>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Driver')}">
+            <template>
+              <div> [[item.driver]] </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.DriverOptions')}">
+            <template>
+              <div> [[item.driver_opts]] </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}">
+            <template>
+              <div> [[item.scheduler]] </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.SchedulerOptions')}">
+            <template>
+              <div> [[item.scheduler_opts]] </div>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
+          </vaadin-grid-column>
+        </vaadin-grid>
+        ${this._totalScalingGroupCount == 0 ? html`
+          <div class="vertical layout center flex blank-box-large">
+            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+          </div>`
+        : html`
+          ${this._totalScalingGroupCount == 1 && this.scalingGroups.length == 1 ? html`
+            <div class="vertical layout center flex blank-box-large">
+              <span id="no-data-message">${_t('resourceGroup.NoGroupToDisplay')}</span>
+            </div>
+          ` : html``}
+        `}
+      </div>
       <backend-ai-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('resourceGroup.CreateResourceGroup')}</span>
 

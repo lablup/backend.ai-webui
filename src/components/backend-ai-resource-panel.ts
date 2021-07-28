@@ -415,7 +415,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <lablup-activity-panel title="${_t('summary.SystemResources')}" elevation="1" narrow height="${this.height}">
         <div slot="message">
           <div class="horizontal justified layout wrap indicators">
