@@ -74,7 +74,7 @@
     "ResourceStatistics": "Estatísticas de recursos",
     "CoresReserved": "Núcleos reservados",
     "reserved": "reservado",
-    "FractionalGPUScalingEnabled": "Escalonamento de GPU fracionário ativado",
+    "FractionalGPUScalingEnabled": "Escalonamento de GPU fracionário habilitado",
     "ROCMGPUEnabled": "GPU ROCm habilitado",
     "TPUEnabled": "TPU ativado",
     "Reserved": "Reservado",
@@ -507,7 +507,7 @@
       "FileBrowserSessionRunningAlready": "A sessão de suporte a filebrowser já está em execução. Faça upload da (s) pasta (s) usando essa sessão.",
       "NotEnoughResourceForFileBrowserSession": "Sem recursos suficientes (cpu: 1 Core, mem: 0,5 GB) para criar a sessão para o navegador de arquivos. verifique os recursos disponíveis.",
       "NoImagesSupportingFileBrowser": "Ainda não há imagens que suportem o navegador de arquivos. Pelo menos uma ou mais imagens que suportam o navegador de arquivos são necessárias para carregar a (s) pasta (s).",
-      "ClickFilebrowserButton": "Para fazer o upload da (s) pasta (s), clique no botão Executar o navegador de arquivos."
+      "ClickFilebrowserButton": "Para fazer o upload da (s) pasta (s), clique no botão Executar navegador de arquivos."
     },
     "invitation": {
       "EnterEmail": "Insira o endereço de e-mail",
@@ -836,7 +836,9 @@
     "English": "inglês",
     "Korean": "coreano",
     "Language": "Língua",
-    "OSDefault": "SO padrão"
+    "OSDefault": "SO padrão",
+    "Russian": "russo",
+    "French": "francês"
   },
   "settings": {
     "General": "Em geral",
@@ -963,7 +965,7 @@
     "ConnectingToCluster": "Conectando ao cluster Backend.AI ...",
     "ForgotPassword": "Esqueceu a senha?",
     "ChangePassword": "Alterar a senha",
-    "SendChangePasswordEmail": "Enviar e-mail para alterar a senha",
+    "SendChangePasswordEmail": "Enviar email de alteração de senha",
     "DescChangePasswordEmail": "Para enviar um email para alteração da sua senha, por favor digite o seu email e carregue no botão ENVIAR.",
     "EmailSendButton": "Mandar",
     "UpdatePasswordMessage": "Digite seu e-mail e uma nova senha e pressione o botão Atualizar.",
@@ -1032,7 +1034,7 @@
     "CreateNotebookButton": "Botão Criar Bloco de Notas",
     "CreateButtonCode": "Crio",
     "NotebookButtonURL": "URL do notebook",
-    "YouCanCreateNotebookCode": "Insira a URL do notebook para criar um código de crachá como abaixo que você pode executar diretamente no Backend.AI",
+    "YouCanCreateNotebookCode": "Insira a URL do notebook para criar um código de crachá como abaixo, que você pode executar diretamente no Backend.AI.",
     "NoNotebookCode": "O endereço do notebook está vazio. Insira um código de notebook válido para copiar o código do crachá.",
     "NotebookBadgeCodeCopied": "O código do emblema do notebook é copiado para a área de transferência.",
     "CouldNotCopyText": "Não foi possível copiar o texto:",

@@ -483,7 +483,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               <div class="layout vertical start-justified wrap">
                 <lablup-progress-bar id="gpu-usage-bar" class="start"
                   progress="${this.cuda_gpu_used / this.cuda_gpu_total}"
-                  description="${this.cuda_gpu_used} / ${this.cuda_gpu_total} CUDA GPUs ${_t('summary.reserved')}."
+                  description="${this.cuda_gpu_used !== 0 ? this.cuda_gpu_used.toFixed(1) : 0} / ${this.cuda_gpu_total !== 0 ? this.cuda_gpu_total.toFixed(1) : 0} CUDA GPUs ${_t('summary.reserved')}."
                 ></lablup-progress-bar>
                 <lablup-progress-bar id="gpu-usage-bar-2" class="end"
                   progress="0"
@@ -499,7 +499,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               <div class="layout vertical start-justified wrap">
               <lablup-progress-bar id="fgpu-usage-bar" class="start"
                 progress="${this.cuda_fgpu_used / this.cuda_fgpu_total}"
-                description="${this.cuda_fgpu_used} / ${this.cuda_fgpu_total} CUDA fGPUs ${_t('summary.reserved')}."
+                description="${this.cuda_fgpu_used !== 0 ? this.cuda_fgpu_used.toFixed(1) : 0} / ${this.cuda_fgpu_total !== 0 ? this.cuda_fgpu_total.toFixed(1) : 0} CUDA fGPUs ${_t('summary.reserved')}."
               ></lablup-progress-bar>
               <lablup-progress-bar id="fgpu-usage-bar-2" class="end"
                 progress="0"

@@ -13,7 +13,7 @@ import {BackendAIPage} from './backend-ai-page';
 import '@material/mwc-button';
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
-import '../plastics/mwc/mwc-multi-select';
+import '@material/mwc-select';
 import '@material/mwc-switch';
 import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-tab-bar/mwc-tab-bar';
@@ -218,9 +218,8 @@ export default class BackendAIData extends BackendAIPage {
           --label-color: black;
         }
 
-        mwc-multi-select {
-          width: 173px;
-          --mdc-select-min-width: 173px;
+        mwc-select {
+          width: 50%;
           margin-bottom: 10px;
           --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-select-fill-color: transparent;
@@ -230,17 +229,29 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-list-vertical-padding: 5px;
         }
 
+        mwc-select.full-width {
+          width: 100%;
+        }
+
+        mwc-select.full-width.fixed-position > mwc-list-item {
+          width: 314px; // default width
+        }
+
+        mwc-select.fixed-position > mwc-list-item {
+          width: 140px; // default width
+        }
+
+        mwc-select mwc-icon-button {
+          --mdc-icon-button-size: 24px;
+          color: var(--general-textfield-selected-color);
+        }
+
         #help-description {
           --dialog-width: 350px;
         }
 
         #help-description p {
           padding: 5px !important;
-        }
-
-        mwc-multi-select mwc-icon-button {
-          --mdc-icon-button-size: 24px;
-          color: var(--general-textfield-selected-color);
         }
 
         #automount-folder-lists > div {
@@ -341,47 +352,47 @@ export default class BackendAIData extends BackendAIPage {
           @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
             required validationMessage="${_t('data.Allowslettersnumbersand-_dot')}" maxLength="64"
             placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
+          <mwc-select class="full-width fixed-position" id="add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+            ${this.vhosts.map((item, idx) => html`
+              <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
+                <span>${item}</span>
+                <mwc-icon-button slot="meta" icon="info"
+                    @click="${(e) => this._showStorageDescription(e, item)}">
+                </mwc-icon-button>
+              </mwc-list-item>
+            `)}
+          </mwc-select>
           <div class="horizontal layout">
-            <mwc-multi-select id="add-folder-host" label="${_t('data.Host')}">
-              ${this.vhosts.map((item, idx) => html`
-                <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
-                  <span>${item}</span>
-                  <mwc-icon-button slot="meta" icon="info"
-                      @click="${(e) => this._showStorageDescription(e, item)}">
-                  </mwc-icon-button>
-                </mwc-list-item>
-              `)}
-            </mwc-multi-select>
-            <mwc-multi-select id="add-folder-type" label="${_t('data.Type')}">
+            <mwc-select id="add-folder-type" label="${_t('data.Type')}"
+                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}">
               ${(this.allowed_folder_type as string[]).includes('user') ? html`
                 <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
               ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
                 <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Project')}</mwc-list-item>
               ` : html``}
-            </mwc-multi-select>
-          </div>
-          ${this._vfolderInnatePermissionSupport ? html`
-            <div class="horizontal layout">
-              <mwc-multi-select id="add-folder-usage-mode" label="${_t('data.UsageMode')}">
-                ${this.usageModes.map((item, idx) => html`
-                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
-                `)}
-              </mwc-multi-select>
-              <mwc-multi-select id="add-folder-permission" label="${_t('data.Type')}">
-                ${this.permissions.map((item, idx) => html`
-                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
-                `)}
-              </mwc-multi-select>
-            </div>
-          ` : html``}
-          ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-            <div class="horizontal layout">
-              <mwc-multi-select id="add-folder-group" label="${_t('data.Project')}">
+            </mwc-select>
+            ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
+              <mwc-select class="fixed-position" id="add-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
                 ${(this.allowedGroups as any).map((item, idx) => html`
                   <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
-              </mwc-multi-select>
+              </mwc-select>
+            </div>
+          ` : html``}
+          </div>
+          ${this._vfolderInnatePermissionSupport ? html`
+            <div class="horizontal layout">
+              <mwc-select class="fixed-position" id="add-folder-usage-mode" label="${_t('data.UsageMode')}" fixedMenuPosition>
+                ${this.usageModes.map((item, idx) => html`
+                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+                `)}
+              </mwc-select>
+              <mwc-select class="fixed-position" id="add-folder-permission" label="${_t('data.Type')}" fixedMenuPosition>
+                ${this.permissions.map((item, idx) => html`
+                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+                `)}
+              </mwc-select>
             </div>
           ` : html``}
           ${this.enableStorageProxy ?
@@ -417,47 +428,46 @@ export default class BackendAIData extends BackendAIPage {
               @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
               required validationMessage="${_t('data.Allowslettersnumbersand-_dot')}" maxLength="64"
               placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
+          <mwc-select class="full-width fixed-position" id="clone-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+            ${this.vhosts.map((item, idx) => html`
+              <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
+                <span>${item}</span>
+                <mwc-icon-button slot="meta" icon="info"
+                    @click="${(e) => this._showStorageDescription(e, item)}">
+                </mwc-icon-button>
+              </mwc-list-item>
+            `)}
+          </mwc-select>
           <div class="horizontal layout">
-            <mwc-multi-select id="clone-folder-host" label="${_t('data.Host')}">
-              ${this.vhosts.map((item, idx) => html`
-                <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
-                  <span>${item}</span>
-                  <mwc-icon-button slot="meta" icon="info"
-                      @click="${(e) => this._showStorageDescription(e, item)}">
-                  </mwc-icon-button>
-                </mwc-list-item>
-              `)}
-            </mwc-multi-select>
-            <mwc-multi-select id="clone-folder-type" label="${_t('data.Type')}">
+            <mwc-select id="clone-folder-type" label="${_t('data.Type')}"
+                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}">
               ${(this.allowed_folder_type as string[]).includes('user') ? html`
                 <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
               ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
                 <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Project')}</mwc-list-item>
               ` : html``}
-            </mwc-multi-select>
+            </mwc-select>
+            ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
+                <mwc-select class="fixed-position" id="clone-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
+                  ${(this.allowedGroups as any).map((item, idx) => html`
+                    <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                  `)}
+                </mwc-select>
+            ` : html``}
           </div>
           ${this._vfolderInnatePermissionSupport ? html`
             <div class="horizontal layout">
-              <mwc-multi-select id="clone-folder-usage-mode" label="${_t('data.UsageMode')}">
+              <mwc-select class="fixed-position" id="clone-folder-usage-mode" label="${_t('data.UsageMode')}" FixedMenuPosition>
                 ${this.usageModes.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
-              </mwc-multi-select>
-              <mwc-multi-select id="clone-folder-permission" label="${_t('data.Type')}">
+              </mwc-select>
+              <mwc-select class="fixed-position" id="clone-folder-permission" label="${_t('data.Type')}" FixedMenuPosition>
                 ${this.permissions.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
-              </mwc-multi-select>
-            </div>
-          ` : html``}
-          ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-            <div class="horizontal layout">
-              <mwc-multi-select id="clone-folder-group" label="${_t('data.Project')}">
-                ${(this.allowedGroups as any).map((item, idx) => html`
-                  <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
-                `)}
-              </mwc-multi-select>
+              </mwc-select>
             </div>
           ` : html``}
           ${this.enableStorageProxy ?

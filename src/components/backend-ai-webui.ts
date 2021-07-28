@@ -141,6 +141,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Array}) superAdminOnlyPages = ['agent', 'settings', 'maintenance', 'information'];
   @property({type: Number}) timeoutSec = 5;
   @property({type: Boolean}) use_experiment = false;
+  @property({type: Object}) loggedAccount = Object();
+  @property({type: Object}) roleInfo = Object();
+  @property({type: Object}) keyPairInfo = Object();
 
   constructor() {
     super();
@@ -253,6 +256,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
     globalThis.addEventListener('resize', (event) => {
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight);
+      // Tricks to close expansion if window size changes
+      document.body.dispatchEvent(new Event('click'));
     });
     // apply update name when user info changed via users page
     document.addEventListener('current-user-info-changed', (e: any) => {
@@ -372,6 +377,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   refreshPage(): void {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
+
+    this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
     globalThis.backendaiclient.proxyURL = this.proxy_url;
     if (typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient != null &&
       typeof globalThis.backendaiclient.is_admin !== 'undefined' && globalThis.backendaiclient.is_admin === true) {
@@ -573,6 +580,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.full_name = globalThis.backendaiclient.full_name;
     this.domain = globalThis.backendaiclient._config.domainName;
     this.current_group = this._readRecentProjectGroup();
+    this._showRole();
     globalThis.backendaiclient.current_group = this.current_group;
     this.groups = globalThis.backendaiclient.groups;
     const groupSelectionBox: HTMLElement = this.shadowRoot.getElementById('group-select-box');
@@ -585,7 +593,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     const select = document.createElement('mwc-select') as any;
     select.id = 'group-select';
     select.value = this.current_group;
-    select.style = 'width: auto;max-width: 200px;'
+    select.style = 'width: auto;max-width: 200px;';
     select.addEventListener('selected', (e) => this.changeGroup(e));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
@@ -622,6 +630,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * Open the user preference dialog.
    */
   async _openUserPrefDialog() {
+    this._showKeypairInfo();
     const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
     dialog.show();
   }
@@ -1235,6 +1244,38 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     return name;
   }
 
+  _getRole(user_id) {
+    const fields = ['role'];
+    return globalThis.backendaiclient.user.get(user_id, fields);
+  }
+
+  async _showRole() {
+    const data = await this._getRole(this.user_id);
+    this.roleInfo = data.user;
+  }
+
+  _getKeypairInfo(user_id) {
+    const fields = ['access_key', 'secret_key'];
+    const is_active = true;
+    return globalThis.backendaiclient.keypair.list(user_id, fields, is_active);
+  }
+
+  async _showKeypairInfo() {
+    const data = await this._getKeypairInfo(this.user_id);
+    this.keyPairInfo = data;
+    this.keyPairInfo.keypairs.reverse();
+  }
+
+  async _showSecretKey(e) {
+    const secret_key = this.shadowRoot.querySelector('#secretkey');
+    for (let i = 0; i < this.keyPairInfo.keypairs.length; i++) {
+      if (e.target.selected.value == this.keyPairInfo.keypairs[i].access_key) {
+        secret_key.value = this.keyPairInfo.keypairs[i].secret_key;
+        break;
+      }
+    }
+  }
+
   protected render() {
     // language=HTML
     return html`
@@ -1341,7 +1382,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 `) : html``}
             ` : html``}
             <footer id="short-height">
-              <div class="terms-of-use full-menu" style="margin-bottom:10px;">
+              <div class="terms-of-use full-menu">
                 <small style="font-size:11px;">
                   <a @click="${() => this.showTOSAgreement()}">${_t('webui.menu.TermsOfService')}</a>
                   ·
@@ -1356,7 +1397,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">21.03.6.210620</small>
+                <small class="sidebar-footer" style="font-size:9px;">21.03.8.210722</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1365,7 +1406,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </footer>
           </mwc-list>
           <footer>
-            <div class="terms-of-use full-menu" style="margin-bottom:10px;">
+            <div class="terms-of-use full-menu">
               <small style="font-size:11px;">
                 <a @click="${() => this.showTOSAgreement()}">${_t('webui.menu.TermsOfService')}</a>
                 ·
@@ -1380,7 +1421,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">21.03.6.210620</small>
+              <small class="sidebar-footer" style="font-size:9px;">21.03.8.210722</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1425,8 +1466,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                               ${this.domain}
                           </mwc-list-item>
                           ` : html``}
+                          <mwc-list-item class="horizontal layout start center" style="border-bottom:1px solid #ccc;">
+                              <mwc-icon class="dropdown-menu">perm_identity</mwc-icon> 
+                              <span class="dropdown-menu-name">${this.user_id}</span>
+                          </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                              ${this.user_id}
+                              <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon> 
+                              <span class="dropdown-menu-name">${this.roleInfo.role}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
                               <mwc-icon class="dropdown-menu">info</mwc-icon>
@@ -1434,7 +1480,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
                               <mwc-icon class="dropdown-menu">lock</mwc-icon>
-                              <span class="dropdown-menu-name">${_t('webui.menu.ChangeUserInfo')}</span>
+                              <span class="dropdown-menu-name">${_t('webui.menu.MyAccount')}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
                               <mwc-icon class="dropdown-menu">drag_indicator</mwc-icon>
@@ -1521,13 +1567,27 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
       <backend-ai-dialog id="user-preference-dialog" fixed backdrop>
-        <span slot="title">${_t('webui.menu.ChangeUserInformation')}</span>
+        <span slot="title">${_t('webui.menu.MyAccountInformation')}</span>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-name" type="text"
               label="${_t('webui.menu.FullName')}" maxLength="64" autofocus
-              style="margin-bottom:20px;" value="${this.full_name}"
+              value="${this.full_name}"
               helper="${_t('maxLength.64chars')}">
-          </mwc-text-field>
+          </mwc-textfield>
+        </div>
+        <div slot="content" class="layout vertical" style="width:300px">
+          <mwc-select id="access-key-select" class="fixed-position" fixedMenuPosition required
+                      label="${_t('general.AccessKey')}"
+                      @selected="${(e) => this._showSecretKey(e)}">
+            ${this.keyPairInfo.keypairs?.map((item) => html`
+              <mwc-list-item value="${item.access_key}" ?selected=${this.loggedAccount.access_key === item.access_key}>
+                ${item.access_key}
+              </mwc-list-item>`)}
+          </mwc-select>
+          <mwc-textfield id="secretkey" disabled type="text"
+              label="${_t('general.SecretKey')}"
+              style="margin-bottom:20px; margin-top:20px;" value="" readonly>
+          </mwc-textfield>
         </div>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-password" type="password"

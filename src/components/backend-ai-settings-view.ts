@@ -702,12 +702,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
    */
   _validateInput(e) {
     const textfield = e.target.closest('mwc-textfield');
-    const clamp = (value: number, min: number, max: number) => {
-      return Math.max(min, Math.min(value, max));
-    };
     if (textfield.value) {
       textfield.value = Math.round(textfield.value);
-      textfield.value = clamp(textfield.value, textfield.min, textfield.max);
+      textfield.value = globalThis.backendaiclient.utils.clamp(textfield.value, textfield.min, textfield.max);
     }
   }
 

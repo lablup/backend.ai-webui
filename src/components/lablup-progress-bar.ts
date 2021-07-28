@@ -33,7 +33,7 @@ export default class LablupProgressBar extends LitElement {
   @property({type: Object}) progressBar;
   @property({type: Object}) frontDesc;
   @property({type: Object}) backDesc;
-  @property({type: Number}) progress = 0;
+  @property({type: String}) progress = '';
   @property({type: String}) description = ''
 
   static get styles(): CSSResultGroup | undefined {
@@ -79,7 +79,7 @@ export default class LablupProgressBar extends LitElement {
           color: var(--progress-bar-font-color, black);
           clip-path: inset(0 0 0 100%);
           -webkit-clip-path: inset(0 0 0 100%);
-          transition: clip-path 1s linear;
+          transition: clip-path var(--progress-bar-transition-second, 1s) linear;
       }
 
       .front[slot=description-2] {
