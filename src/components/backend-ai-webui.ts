@@ -1529,7 +1529,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               label="${_t('webui.menu.FullName')}" maxLength="64" autofocus
               style="margin-bottom:20px;" value="${this.full_name}"
               helper="${_t('maxLength.64chars')}">
-          </mwc-text-field>
+          </mwc-textfield>
         </div>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-password" type="password"
