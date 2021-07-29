@@ -151,7 +151,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         span.resource-limit-title {
           font-size: 14px;
           font-family: var(--general-font-family);
-          font-align: left;
+          text-align: left;
           width: 70px;
         }
 
@@ -1199,6 +1199,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this._grid = this.shadowRoot.querySelector('#testgrid');
     this._grid.addEventListener('sorter-changed', (e) => {
       this._refreshSorter(e);
+    });
+
+    document.addEventListener('image-list-refreshed', () => {
+      this._getImages();
     });
 
     // uncheck every checked rows when dialog is closed

@@ -163,7 +163,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
                   outlined
                   disabled
                   label="${_t('maintenance.CleanupImages')}"
-                  icon="delete"
+                  icon="delete">
               </mwc-button>
             </div>
           </div>
@@ -211,6 +211,8 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
           indicator.set(100 * ratio, _text('maintenance.Scanning'));
         });
         sse.addEventListener('bgtask_done', (e) => {
+          const event = new CustomEvent('image-list-refreshed');
+          document.dispatchEvent(event);
           indicator.set(100, _text('maintenance.RescanImageFinished'));
           sse.close();
         });
