@@ -1593,12 +1593,34 @@ export default class BackendAiSessionList extends BackendAIPage {
         ` : html``}
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
-          <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
-          </vaadin-grid-sort-column>
+          <vaadin-grid-column resizable width="270px" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
+            <template class="header">
+              <div class="horizontal layout center justified flex" style="margin-right:15px;">
+                <span class="title">${this._connectionMode === 'API' ? 'API Key' : 'User ID'}</span>
+                <vaadin-grid-sorter path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}" direction="asc" style="padding:0 10px;">
+                  <vaadin-grid-filter path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}" value="[[_filterInfo]]">
+                    <vaadin-text-field slot="filter" focus-target theme="small" value="{{_filterInfo::input}}">
+                    </vaadin-text-field>
+                  </vaadin-grid-filter>
+                </vaadin-grid-sorter>
+              </div>
+            </template>
+          </vaadin-grid-column>
         ` : html``}
         <vaadin-grid-column width="150px" resizable header="${_t('session.SessionInfo')}" .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="90px" flex-grow="0" header="${_t('session.Status')}" resizable .renderer="${this._boundStatusRenderer}">
+        <vaadin-grid-column width="250px" flex-grow="0" resizable .renderer="${this._boundStatusRenderer}">
+          <template class="header">
+            <div class="horizontal layout center justified flex" style="margin-right:15px;">
+              <span class="title">${_t('session.Status')}</span>
+              <vaadin-grid-sorter path="status" direction="asc" style="padding:0 10px;">
+                <vaadin-grid-filter path="status" value="[[_filterStatus]]">
+                  <vaadin-text-field slot="filter" focus-target theme="small" value="{{_filterStatus::input}}">
+                  </vaadin-text-field>
+                </vaadin-grid-filter>
+              </vaadin-grid-sorter>
+            </div>
+          </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('session.Configuration')}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
