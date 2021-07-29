@@ -27,7 +27,7 @@ Backend.AI Web UI focuses to
     * Monitor current resources sessions using
     * Choose and run environment-supported apps
     * Web-based Terminal for each session
-    * Fully-featured VSCode editor and environments
+    * Fully-featured Visual Studio Code editor and environments
  * Pipeline
     * Experiments (with SACRED / Microsoft NNI / Apache MLFlow)
     * AutoML (with Microsoft NNI / Apache MLFlow)
