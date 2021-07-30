@@ -441,7 +441,7 @@ export default class BackendAiSessionView extends BackendAIPage {
       </div>
       <lablup-activity-panel elevation="1" autowidth narrow noheader>
         <div slot="message">
-          <h3 class="tab horizontal center layout">
+          <h3 class="tab horizontal center layout" style="margin-top:0;margin-bottom:0;">
             <div class="horizontal layout flex start-justified">
             <mwc-tab-bar>
               <mwc-tab title="running" label="${_t('session.Running')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
