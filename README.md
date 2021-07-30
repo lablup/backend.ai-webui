@@ -403,9 +403,20 @@ Note: On macOS Catalina, use scripts/build-windows-app.sh to build Windows 32bit
 Note: Now the `make win` command support only Windows x64 app, therefore you do not need to use `build-windows-app.sh` anymore.
 
 #### macOS version
-
+##### All versions (Intel/Apple)
 ```
 $ make mac
+```
+NOTE: Sometimes Apple silicon version compiled on Intel machine does not work.
+
+##### Intel x64
+```
+$ make mac_intel
+```
+
+##### Apple Silicon (Apple M1 and above)
+```
+$ make mac_apple
 ```
 
 #### Linux x86-64 version
