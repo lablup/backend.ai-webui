@@ -1,5 +1,17 @@
 # Changelog
 
+## v21.03.8 (26/07/2021)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Increase default resource limit [#1083](https://github.com/lablup/backend.ai-webui/issues/1083)
+- [**UI / UX**][**library / SDK**][**cloud**][**major**][**localization**] Attach virtual folder with alias name [#1081](https://github.com/lablup/backend.ai-webui/issues/1081)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**library / SDK**][**minor**][**blocker**][**urgency**] Decimal point fixing in resource slots [#1079](https://github.com/lablup/backend.ai-webui/issues/1079)
+
+
 ## v21.03.7 (19/07/2021)
 
 #### Enhancements:
