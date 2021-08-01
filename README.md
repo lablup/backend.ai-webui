@@ -427,15 +427,8 @@ $ make linux
 
 ### Packaging as zip files
 
-Note: this command only works on macOS, because packaging uses `ditto`, that supports both PKZIP and compressed CPIO format.
-
 Note: Packaging usually performs right after app building. Therefore you do not need this option in normal condition.
-
-Note: Requires electron-installer-dmg to make macOS disk image. It requires Python 2+ to build binary for package.
-
-```
-$ make pack
-```
+Note: Packaging macOS disk image requires electron-installer-dmg to make macOS disk image. It requires Python 2+ to build binary for package.
 
 ### Manual run to test Electron
 
