@@ -2724,7 +2724,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <form slot="content" id="launch-session-form" class="centered" style="position:relative;">
           <div id="progress-01" class="progress center layout fade active">
             <mwc-select id="environment" icon="code" label="${_t('session.launcher.Environments')}" required fixedMenuPosition
-                        value="${this.default_language}">
+                        value="${this.default_language}" style="overflow-y: overlay">
               <mwc-list-item selected graphic="icon" style="display:none!important;">
                 ${_t('session.launcher.ChooseEnvironment')}
               </mwc-list-item>
