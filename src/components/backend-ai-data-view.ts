@@ -386,7 +386,7 @@ export default class BackendAIData extends BackendAIPage {
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
               </mwc-select>
-              <mwc-select class="fixed-position" id="add-folder-permission" label="${_t('data.Type')}" fixedMenuPosition>
+              <mwc-select class="fixed-position" id="add-folder-permission" label="${_t('data.Permission')}" fixedMenuPosition>
                 ${this.permissions.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
@@ -461,7 +461,7 @@ export default class BackendAIData extends BackendAIPage {
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
               </mwc-select>
-              <mwc-select class="fixed-position" id="clone-folder-permission" label="${_t('data.Type')}" FixedMenuPosition>
+              <mwc-select class="fixed-position" id="clone-folder-permission" label="${_t('data.Permission')}" FixedMenuPosition>
                 ${this.permissions.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
