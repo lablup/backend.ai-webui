@@ -1598,8 +1598,8 @@ export default class BackendAiSessionList extends BackendAIPage {
               <div class="horizontal layout center justified flex" style="margin-right:15px;">
                 <span class="title">${this._connectionMode === 'API' ? 'API Key' : 'User ID'}</span>
                 <vaadin-grid-sorter path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}" direction="asc" style="padding:0 10px;">
-                  <vaadin-grid-filter path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}" value="[[_filterInfo]]">
-                    <vaadin-text-field slot="filter" focus-target theme="small" value="{{_filterInfo::input}}">
+                  <vaadin-grid-filter path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}" value="[[_filterUserInfo]]">
+                    <vaadin-text-field slot="filter" focus-target theme="small" value="{{_filterUserInfo::input}}">
                     </vaadin-text-field>
                   </vaadin-grid-filter>
                 </vaadin-grid-sorter>
@@ -1607,7 +1607,18 @@ export default class BackendAiSessionList extends BackendAIPage {
             </template>
           </vaadin-grid-column>
         ` : html``}
-        <vaadin-grid-column width="150px" resizable header="${_t('session.SessionInfo')}" .renderer="${this._boundSessionInfoRenderer}">
+        <vaadin-grid-column width="270px" resizable .renderer="${this._boundSessionInfoRenderer}">
+          <template class="header">
+            <div class="horizontal layout center justified flex" style="margin-right:15px;">
+              <span class="title">${_t('session.SessionInfo')}</span>
+              <vaadin-grid-sorter path=${this.sessionNameField} direction="asc" style="padding:0 10px;">
+                <vaadin-grid-filter path=${this.sessionNameField} value="[[_filterSessionInfo]]">
+                  <vaadin-text-field slot="filter" focus-target theme="small" value="{{_filterSessionInfo::input}}">
+                  </vaadin-text-field>
+                </vaadin-grid-filter>
+              </vaadin-grid-sorter>
+            </div>
+          </template>
         </vaadin-grid-column>
         <vaadin-grid-column width="250px" flex-grow="0" resizable .renderer="${this._boundStatusRenderer}">
           <template class="header">
