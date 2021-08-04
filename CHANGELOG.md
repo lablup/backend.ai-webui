@@ -1,5 +1,36 @@
 # Changelog
 
+## v21.03.7 (19/07/2021)
+
+#### Enhancements:
+
+- [**UI / UX**][**easy**][**enhancement**][**good first issue**] Let's synchronize the speed of the progress bar and the current page of new session launcher. [#1073](https://github.com/lablup/backend.ai-webui/issues/1073)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**blocker**][**bug**][**easy**][**good first issue**][**urgency**] Manual image doesn't get applied in a session creating process. [#1069](https://github.com/lablup/backend.ai-webui/issues/1069)
+- [**UI / UX**][**bug**][**easy**][**good first issue**] clamping shared memory according to max shared memory value in config file doesn't work [#1063](https://github.com/lablup/backend.ai-webui/issues/1063)
+
+
+## v21.03.6 (14/07/2021)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**enterprise**][**minor**] Manual image name support without debug flag [#1052](https://github.com/lablup/backend.ai-webui/issues/1052)
+- [**UI / UX**][**enhancement**][**minor**] Support longer host name for new virtual folder [#1049](https://github.com/lablup/backend.ai-webui/issues/1049)
+- [**UI / UX**][**enhancement**][**localization**] Support French language [#1038](https://github.com/lablup/backend.ai-webui/issues/1038)
+- [**enhancement**][**localization**] Support Russian language [#1037](https://github.com/lablup/backend.ai-webui/issues/1037)
+- [**UI / UX**][**enhancement**][**enterprise**] More injection points for site-specific custom CSS [#1015](https://github.com/lablup/backend.ai-webui/issues/1015)
+- [**UI / UX**][**enhancement**][**enterprise**][**major**] Prevent login trial for monitor (bot) user [#997](https://github.com/lablup/backend.ai-webui/issues/997)
+- [**UI / UX**][**enhancement**][**working**] Apply carousel UI in current session-launcher [#915](https://github.com/lablup/backend.ai-webui/issues/915)
+
+#### Bug Fixes:
+
+- [**bug**] BackendAiSessionLauncher is duplicated declaration. [#1056](https://github.com/lablup/backend.ai-webui/issues/1056)
+- [**bug**][**easy**] Waiting animation shows up when session cookies for login is empty [#1047](https://github.com/lablup/backend.ai-webui/issues/1047)
+- [**UI / UX**][**bug**][**good first issue**] dropdown UI in modify permissions dialog in Data & Storage menu gets updated although it's not applied [#949](https://github.com/lablup/backend.ai-webui/issues/949)
+
+
 ## v21.03.5 (07/06/2021)
 
 #### Enhancements:

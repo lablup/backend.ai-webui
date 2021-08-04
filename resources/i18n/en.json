@@ -20,8 +20,8 @@
       "Information": "Information",
       "About": "About",
       "AboutBackendAI": "About Backend.AI",
-      "ChangeUserInformation": "Change User Information",
-      "ChangeUserInfo": "Change User Info",
+      "MyAccountInformation": "My Account Information",
+      "MyAccount": "My Account",
       "FullName": "Full Name",
       "FullNameInvalid": "Full name should not exceed 64 characters",
       "ChangePassword": "Change Password",
@@ -208,7 +208,9 @@
       "EnvironmentVariablePaneTitle": "Environment variables to set (optional)",
       "EnvConfigWillDisappear": "Any unsaved Environment variable and value will be disappeared.",
       "SharedMemoryAbbr": "SHMEM",
-      "GPUSlot": "Slot"
+      "GPUSlot": "Slot",
+      "FolderAlias": "Alias",
+      "FolderAliasOverlapping": "Aliases overlap with other names that already exist"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

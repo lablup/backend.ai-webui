@@ -533,7 +533,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._validateFolderName(true);
   }}"></mwc-textfield>
           <div class="vertical center layout" id="dropdown-area">
-            <mwc-select id="update-folder-permission" style="width:100%;" label="${_t('data.Type')}"
+            <mwc-select id="update-folder-permission" style="width:100%;" label="${_t('data.Permission')}"
               @opened="${() => this._controlHeightByPermissionCount(true)}"
               @closed="${() => this._controlHeightByPermissionCount()}">
               ${this.permissions.map((item, idx) => html`

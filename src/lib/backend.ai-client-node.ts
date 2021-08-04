@@ -372,7 +372,7 @@ class Client {
         case Client.ERR_TIMEOUT:
           errorType = 'https://api.backend.ai/probs/request-timeout-error';
           errorTitle = `Request timeout`;
-          errorMsg = 'No response returned during the timeout period';
+          errorMsg = 'No response returned within timeout';
           errorDesc = errorMsg;
           resp.status = 408;
           resp.statusText = 'Timeout exceeded';
@@ -829,6 +829,9 @@ class Client {
       params['config'] = {resources: config};
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
+      }
+      if (resources['mount_map']) {
+        params['config'].mount_map = resources['mount_map'];
       }
       if (resources['scaling_group']) {
         params['config'].scaling_group = resources['scaling_group'];
@@ -3811,7 +3814,7 @@ class utils {
 
   /**
    * Limit the boundary of value
-   * 
+   *
    * @param {number} value - input value to be clamped
    * @param {number} min - minimum value of the input value
    * @param {number} max - maximum value of the input vallue

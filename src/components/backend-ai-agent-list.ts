@@ -22,7 +22,6 @@ import '@material/mwc-icon/mwc-icon';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
