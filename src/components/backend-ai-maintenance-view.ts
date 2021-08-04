@@ -211,7 +211,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
           indicator.set(100 * ratio, _text('maintenance.Scanning'));
         });
         sse.addEventListener('bgtask_done', (e) => {
-          const event = new CustomEvent('image-list-refreshed');
+          const event = new CustomEvent('image-rescanned');
           document.dispatchEvent(event);
           indicator.set(100, _text('maintenance.RescanImageFinished'));
           sse.close();

@@ -1201,7 +1201,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this._refreshSorter(e);
     });
 
-    document.addEventListener('image-list-refreshed', () => {
+    document.addEventListener('image-rescanned', () => {
       this._getImages();
     });
 
