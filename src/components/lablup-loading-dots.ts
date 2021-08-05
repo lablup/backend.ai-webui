@@ -36,6 +36,7 @@ export default class LablupLoadingdots extends LitElement {
           width: 100px;
           background-color: transparent;
         }
+        
 
         .pulse-container {
           width: 100px;
