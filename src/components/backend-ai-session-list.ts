@@ -1611,8 +1611,8 @@ export default class BackendAiSessionList extends BackendAIPage {
           <template class="header">
             <div class="horizontal layout center justified flex" style="margin-right:15px;">
               <span class="title">${_t('session.SessionInfo')}</span>
-              <vaadin-grid-sorter path=${this.sessionNameField} direction="asc" style="padding:0 10px;">
-                <vaadin-grid-filter path=${this.sessionNameField} value="[[_filterSessionInfo]]">
+              <vaadin-grid-sorter path="${this.sessionNameField}" direction="asc" style="padding:0 10px;">
+                <vaadin-grid-filter path="${this.sessionNameField}" value="[[_filterSessionInfo]]">
                   <vaadin-text-field slot="filter" focus-target theme="small" value="{{_filterSessionInfo::input}}">
                   </vaadin-text-field>
                 </vaadin-grid-filter>
