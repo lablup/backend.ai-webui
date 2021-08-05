@@ -73,21 +73,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        div.scaling-group-list {
-          height: calc(100vh - 235px);
-        }
-
-        div.blank-box-large {
-          padding: 11.3rem 0;
-        }
-        
-        span#no-data-message {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
-          color: #999999;
-        }
-
         h4 {
           font-weight: 200;
           font-size: 14px;
@@ -445,7 +430,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               @click=${() => this._launchDialogById('#create-scaling-group-dialog')}>
           </mwc-button>
       </h4>
-      <div class="scaling-group-list">
+      <div class="list-wrapper">
         <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Job list" .items="${this.scalingGroups}">
           <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
           </vaadin-grid-column>
@@ -491,7 +476,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         : html`
           ${this._totalScalingGroupCount == 1 && this.scalingGroups.length == 1 ? html`
             <div class="vertical layout center flex blank-box-large">
-              <span id="no-data-message">${_t('resourceGroup.NoGroupToDisplay')}</span>
+              <span class="no-data-message">${_t('resourceGroup.NoGroupToDisplay')}</span>
             </div>
           ` : html``}
         `}

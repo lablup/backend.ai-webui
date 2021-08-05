@@ -86,14 +86,6 @@ export default class BackendAIUserList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        div.user-list {
-          height: calc(100vh - 235px);
-        }
-
-        div.blank-box-large {
-          padding: 11.3rem 0;
-        }
-
         vaadin-grid {
           border: 0;
           font-size: 14px;
@@ -186,13 +178,6 @@ export default class BackendAIUserList extends BackendAIPage {
           font-family: var(--general-font-family);
           color: var(--general-sidebar-color);
           width: 270px;
-        }
-
-        span#no-data-message {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
-          color: #999999;
         }
       `];
   }
@@ -551,7 +536,7 @@ export default class BackendAIUserList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <div class="user-list">
+      <div class="list-wrapper">
         <vaadin-grid theme="row-stripes column-borders compact" height-by-rows
                       aria-label="User list" id="user-grid" .items="${this.users}">
           <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
@@ -568,7 +553,7 @@ export default class BackendAIUserList extends BackendAIPage {
         : html`
           ${this._totalUserCount == 1 && this.users.length == 0 ? html`
             <div class="vertical layout center flex blank-box-large">
-              <span id="no-data-message">${_t('credential.NoCredentialToDisplay')}</span>
+              <span class="no-data-message">${_t('credential.NoCredentialToDisplay')}</span>
             </div>
           ` : html``}
         `}

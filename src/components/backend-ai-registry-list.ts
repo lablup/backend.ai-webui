@@ -66,21 +66,6 @@ class BackendAIRegistryList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        div.registry-list {
-          height: calc(100vh - 225px);
-        }
-
-        div.blank-box-large {
-          padding: 11.3rem 0;
-        }
-
-        span#no-data-message {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
-          color: #999999;
-        }
-      
         vaadin-grid {
           border: 0;
           font-size: 14px;
@@ -555,7 +540,7 @@ class BackendAIRegistryList extends BackendAIPage {
         <mwc-button raised id="add-registry" label="${_t('registry.AddRegistry')}" icon="add"
             @click=${() => this._launchDialogById('#add-registry-dialog')}></mwc-button>
       </h4>
-      <div class="registry-list">
+      <div class="list-wrapper">
         <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Registry list" .items="${this.registryList}">
           <vaadin-grid-column flex-grow="0" width="40px" header="#" text-align="center" .renderer=${this._indexRenderer}>
           </vaadin-grid-column>
@@ -596,7 +581,7 @@ class BackendAIRegistryList extends BackendAIPage {
         : html`
           ${this._totalRegistryCount == 1 && this.registryList.length == 0 ? html`
             <div class="vertical layout center flex blank-box-large">
-              <span id="no-data-message">${_t('registry.NoRegistryToDisplay')}</span>
+              <span class="no-data-message">${_t('registry.NoRegistryToDisplay')}</span>
             </div>
           ` : html``}
         `}

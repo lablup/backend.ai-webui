@@ -32,10 +32,11 @@ export default class LablupLoadingdots extends LitElement {
     return [
       // language=CSS
       css`
-        .spinner-box {
+        .dots-box {
           width: 100px;
           background-color: transparent;
         }
+
         .pulse-container {
           width: 100px;
           display: flex;
@@ -76,7 +77,7 @@ export default class LablupLoadingdots extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div class="spinner-box" id="dots">
+      <div class="dots-box" id="dots">
         <div class="pulse-container">  
           <div class="pulse-bubble pulse-bubble-1"></div>
           <div class="pulse-bubble pulse-bubble-2"></div>

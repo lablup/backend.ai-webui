@@ -99,14 +99,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        div.image-list {
-          height: calc(100vh - 235px);
-        }
-        
-        div.blank-box-large {
-          padding: 11.3rem 0;
-        }
-
         vaadin-grid {
           font-size: 14px;
         }
@@ -265,7 +257,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           --mdc-theme-secondary: var(--general-slider-color);
           --mdc-theme-text-primary-on-dark: #ffffff;
         }
-
       `];
   }
 
@@ -818,7 +809,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         <mwc-button raised label="${_t('environment.Install')}" class="operation" id="install-image" icon="get_app" @click="${this.openInstallImageDialog}"></mwc-button>
         <mwc-button disabled label="${_t('environment.Delete')}" class="operation temporarily-hide" id="delete-image" icon="delete" @click="${this.openDeleteImageDialog}"></mwc-button>
       </div>
-      <div class="image-list">
+      <div class="list-wrappert">
         <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Environments" id="testgrid" .items="${this.images}">
           <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
           </vaadin-grid-selection-column>
@@ -873,7 +864,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         : html`
           ${this._totalImageCount == 1 && this.images.length == 0 ? html`
             <div class="vertical layout center flex blank-box-large">
-              <span id="no-data-message">${_t('environment.NoImageToDisplay')}</span>
+              <span class="no-data-message">${_t('environment.NoImageToDisplay')}</span>
             </div>
           ` : html``}
         `}

@@ -120,22 +120,6 @@ export default class BackendAiSessionList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        div.session-list {
-          height: calc(100vh - 235px);
-        }
-
-        div.blank-box {
-          padding: 3rem 0;
-        }
-
-        div.blank-box-medium {
-          padding: 8.8rem 0;
-        }
-
-        div.blank-box-large {
-          padding: 11.3rem 0;
-        }
-
         vaadin-grid {
           border: 0;
           font-size: 14px;
@@ -290,13 +274,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           margin-top: 3px;
           font-size: 10px;
           color: var(--general-menu-color-2);
-        }
-        
-        span#no-data-message {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
-          color: #999999;
         }
       `];
   }
@@ -1608,7 +1585,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           <span id="access-key-filter-helper-text">${_t('maxLength.64chars')}</span>
         </div>
       </div>
-        <div class="session-list">
+        <div class="list-wrapper">
         <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
            .items="${this.compute_sessions}" height-by-rows>
           ${this._isRunning ? html`
@@ -1653,7 +1630,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         : html`
           ${this.total_session_count == 1 && this.compute_sessions.length == 0 ? html`
             <div class="vertical layout center flex blank-box-large">
-              <span id="no-data-message">${_t('session.NoSessionToDisplay')}</span>
+              <span class="no-data-message">${_t('session.NoSessionToDisplay')}</span>
             </div>
           ` : html``}
         `}

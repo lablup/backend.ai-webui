@@ -55,21 +55,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        div.resource-preset-list {
-          height: calc(100vh - 235px);
-        }
-
-        div.blank-box-large {
-          padding: 11.3rem 0;
-        }
-
-        span#no-data-message {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
-          color: #999999;
-        }
-
         vaadin-grid {
           border: 0;
           font-size: 14px;
@@ -228,7 +213,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           <span class="flex"></span>
           <mwc-button raised id="add-resource-preset" icon="add" label="${_t('resourcePreset.CreatePreset')}" @click="${(e) => this._launchPresetAddDialog(e)}"></mwc-button>
         </h4>
-        <div class="resource-preset-list">
+        <div class="list-wrapper">
           <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Resource Policy list"
                       .items="${this.resourcePresets}">
             <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
@@ -257,7 +242,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           : html`
             ${this._totalresourcePresetCount == 1 && this.resourcePresets.length == 0 ? html`
               <div class="vertical layout center flex blank-box-large">
-                <span id="no-data-message">${_t('resourcePreset.NoResourcePresetToDisplay')}</span>
+                <span class="no-data-message">${_t('resourcePreset.NoResourcePresetToDisplay')}</span>
               </div>
             ` : html``}
           `}

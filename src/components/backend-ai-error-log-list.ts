@@ -67,21 +67,6 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        div.log-list {
-          height: calc(100vh - 305px);
-        }
-
-        div.blank-box-large {
-          padding: 11.3rem 0;
-        }
-
-        span#no-data-message {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
-          color: #999999;
-        }
-
         vaadin-grid {
           width: 100%;
           border: 0;
@@ -223,7 +208,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <div class="log-list">
+      <div class="list-wrapper">
         <vaadin-grid id="list-grid" height-by-rows page-size="${this._pageSize}"
                      theme="row-stripes column-borders compact wrap-cell-content"
                      aria-label="Error logs" .items="${this.logView}">
@@ -291,7 +276,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
         : html`
           ${this._totalLogCount == 1 && this.logs.length == 0 ? html`
             <div class="vertical layout center flex blank-box-large">
-              <span id="no-data-message">${_t('credential.NoCredentialToDisplay')}</span>
+              <span class="no-data-message">${_t('credential.NoCredentialToDisplay')}</span>
             </div>
           ` : html``}
         `}

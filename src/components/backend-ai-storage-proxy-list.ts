@@ -42,16 +42,10 @@ import './lablup-progress-bar';
 @customElement('backend-ai-storage-proxy-list')
 export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: String}) condition = 'running';
-<<<<<<< HEAD
-  @property({type: Array}) agents;
-  @property({type: Object}) spinner;
-  @property({type: Object}) agentsObject = Object();
-  @property({type: Object}) agentDetail = Object();
-=======
   @property({type: Array}) storages;
+  @property({type: Object}) spinner;
   @property({type: Object}) storagesObject = Object();
   @property({type: Object}) storageProxyDetail = Object();
->>>>>>> upstream/main
   @property({type: Object}) notification = Object();
   @property({type: Object}) storageProxyDetailDialog = Object();
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
@@ -60,7 +54,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: Object}) _boundCapabilitiesRenderer = this.capabilitiesRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: String}) filter = '';
-  @property({type: Number}) _totalAgentCount = 0;
+  @property({type: Number}) _totalStorageCount = 0;
 
   constructor() {
     super();
@@ -74,21 +68,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        div.user-list {
-          height: calc(100vh - 235px);
-        }
-
-        div.blank-box-large {
-          padding: 11.3rem 0;
-        }
-        
-        span#no-data-message {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
-          color: #999999;
-        }
-
         vaadin-grid {
           border: 0;
           font-size: 14px;
@@ -215,13 +194,9 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
           }
         });
       }
-<<<<<<< HEAD
-      this.agents = agents;
-      this._totalAgentCount = this.agents.length > 0 ? this.agents.length : 1;
-      this.spinner.hide();
-=======
       this.storages = storages;
->>>>>>> upstream/main
+      this._totalStorageCount = this.storages.length > 0 ? this.storages.length : 1;
+      this.spinner.hide();
       const event = new CustomEvent('backend-ai-storage-proxy-updated', {});
       this.dispatchEvent(event);
       if (this.active === true) {
@@ -483,10 +458,9 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-<<<<<<< HEAD
-      <div class="agent-list">
+    <div class="list-wrapper">
         <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
-                     .items="${this.agents}">
+                     .items="${this.storages}">
           <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                               .renderer="${this._indexRenderer}"></vaadin-grid-column>
           <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
@@ -502,39 +476,20 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
           <vaadin-grid-column resizable header="${_t('general.Control')}"
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         </vaadin-grid>
-        ${this._totalAgentCount == 0 ? html`
+        ${this._totalStorageCount == 0 ? html`
           <div class="vertical layout center flex blank-box-large">
             <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
           </div>`
         : html`
-          ${this._totalAgentCount == 1 && this.agents.length == 0 ? html`
+          ${this._totalStorageCount == 1 && this.storages.length == 0 ? html`
             <div class="vertical layout center flex blank-box-large">
-              <span id="no-data-message">${_t('agent.NoAgentToDisplay')}</span>
+              <span class="no-data-message">${_t('agent.NoAgentToDisplay')}</span>
             </div>
           ` : html``}
         `}
       </div>
-      <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
-=======
-      <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
-                   .items="${this.storages}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
-                            .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="100px" resizable header="${_t('agent.BackendType')}"
-                            .renderer="${this._boundTypeRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable width="60px" header="${_t('agent.Resources')}"
-                            .renderer="${this._boundResourceRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Capabilities')}"
-                            .renderer="${this._boundCapabilitiesRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t('general.Control')}"
-                            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-      </vaadin-grid>
+
       <backend-ai-dialog id="storage-proxy-detail" fixed backdrop blockscrolling persistent scrollable>
->>>>>>> upstream/main
         <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">
           <div class="horizontal start start-justified layout">

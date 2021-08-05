@@ -4,7 +4,6 @@
  */
 
 import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
-import 'weightless/progress-spinner';
 
 /**
  Lablup Loading Spinner

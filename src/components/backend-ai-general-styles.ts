@@ -827,4 +827,27 @@ export const BackendAiStyles = [
     .temporarily-hide {
       display: none !important;
     }
+
+    div.list-wrapper {
+      height: calc(100vh - 235px);
+    }
+
+    div.blank-box {
+      padding: 3rem 0;
+    }
+
+    div.blank-box-medium {
+      padding: 8.8rem 0;
+    }
+
+    div.blank-box-large {
+      padding: 11.3rem 0;
+    }
+
+    span.no-data-message {
+      font-size: 20px;
+      font-weight: 200;
+      display: block;
+      color: #999999;
+    }
   `];

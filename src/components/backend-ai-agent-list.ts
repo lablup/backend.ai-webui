@@ -69,21 +69,6 @@ export default class BackendAIAgentList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        div.agent-list {
-          height: calc(100vh - 200px);
-        }
-
-        div.blank-box-large {
-          padding: 11.3rem 0;
-        }
-
-        span#no-data-message {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
-          color: #999999;
-        }
-
         vaadin-grid {
           border: 0;
           font-size: 14px;
@@ -811,7 +796,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <div class="agent-list">
+      <div class="list-wrapper">
         <vaadin-grid class="${this.condition}" height-by-rows theme="row-stripes column-borders compact" aria-label="Job list"
                      .items="${this.agents}">
           <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
@@ -840,7 +825,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         : html`
           ${this._totalAgentCount == 1 && this.agents.length == 0 ? html`
             <div class="vertical layout center flex blank-box-large">
-              <span id="no-data-message">${_t('agent.NoAgentToDisplay')}</span>
+              <span class="no-data-message">${_t('agent.NoAgentToDisplay')}</span>
             </div>
           ` : html``}
         `}

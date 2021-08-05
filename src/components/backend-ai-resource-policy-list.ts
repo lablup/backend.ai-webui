@@ -71,10 +71,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        div.resource-policy-list {
-          height: calc(100vh - 300px);
-        }
-        
         vaadin-grid {
           border: 0;
           font-size: 14px;
@@ -92,18 +88,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         wl-button {
           --button-fab-size: 40px;
           margin-right: 5px;
-        }
-
-        div.blank-box {
-          padding: 3rem 0;
-        }
-
-        div.blank-box-medium {
-          padding: 8.8rem 0;
-        }
-
-        div.blank-box-large {
-          padding: 11.3rem 0;
         }
 
         vaadin-item {
@@ -194,20 +178,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           height: 20px;
           border-bottom: 1px solid #DDD;
         }
-
-        span#no-data-message {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
-          color: #999999;
-        }
       `];
   }
 
   render() {
     // language=HTML
     return html`
-      <div class="resource-policy-list">
+      <div class="list-wrapper">
         <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Resource Policy list"
                      .items="${this.resourcePolicy}">
           <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
@@ -258,7 +235,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         : html`
           ${this._totalResourcePolicyCount == 1 && Object.keys(this.resourcePolicy).length == 0 ? html`
             <div class="vertical layout center flex blank-box-large">
-              <span id="no-data-message">${_t('resourcePolicy.NoResourcePolicyToDisplay')}</span>
+              <span class="no-data-message">${_t('resourcePolicy.NoResourcePolicyToDisplay')}</span>
             </div>
           ` : html``}
         `}

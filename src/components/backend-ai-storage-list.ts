@@ -145,10 +145,6 @@ export default class BackendAiStorageList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        div.storage-list {
-          height: calc(100vh - 235px);
-        }
-
         vaadin-grid {
           border: 0 !important;
         }
@@ -228,17 +224,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         vaadin-item {
           font-size: 13px;
           font-weight: 100;
-        }
-
-        div.blank-box-large {
-          padding: 11.3rem 0;
-        }
-
-        span#no-data-message {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
-          color: #999999;
         }
 
         #folder-explorer-dialog {
@@ -468,7 +453,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <div class="storage-list">
+      <div class="list-wrapper">
         <vaadin-grid class="folderlist" height-by-rows theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
           <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
           </vaadin-grid-column>
@@ -516,7 +501,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         : html`
           ${this._totalFolderCount == 1 && this.folders.length == 0 ? html`
             <div class="vertical layout center flex blank-box-large">
-              <span id="no-data-message">${_t('data.folders.NoFolderToDisplay')}</span>
+              <span class="no-data-message">${_t('data.folders.NoFolderToDisplay')}</span>
             </div>
           ` : html``}
         `}
