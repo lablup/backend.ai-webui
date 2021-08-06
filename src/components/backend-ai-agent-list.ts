@@ -815,13 +815,13 @@ export default class BackendAIAgentList extends BackendAIPage {
                                    header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
           <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Status')}"
                               .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column resizable header="${_t('general.Control')}"
+          <vaadin-grid-column resizable header="${_t('general.Control')}"¸
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         </vaadin-grid>
         ${this._totalAgentCount == 0 ? html`
-
+          <div class="vertical layout center flex blank-box-large">
             <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-          `
+          </div>`
         : html`
           ${this._totalAgentCount == 1 && this.agents.length == 0 ? html`
             <div class="vertical layout center flex blank-box-large">
