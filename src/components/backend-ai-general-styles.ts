@@ -844,7 +844,7 @@ export const BackendAiStyles = [
       padding: 11.3rem 0;
     }
 
-    span.no-data-message {
+    span.list-message {
       font-size: 20px;
       font-weight: 200;
       display: block;

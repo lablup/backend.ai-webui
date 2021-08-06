@@ -73,7 +73,7 @@ export default class LablupLoadingSpinner extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div class="spinner-box" id="dots">
+      <div class="spinner-box" id="spinner">
         <div class="pulse-container">  
           <div class="pulse-bubble pulse-bubble-1"></div>
           <div class="pulse-bubble pulse-bubble-2"></div>

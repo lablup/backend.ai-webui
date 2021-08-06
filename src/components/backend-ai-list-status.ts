@@ -5,8 +5,6 @@
 
 import {CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 
-import './lablup-loading-dots';
-
 import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
@@ -15,24 +13,29 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-/**
- Backend AI List Loading dots
+import './lablup-loading-dots';
 
- `backend-ai-list-loading-dots` is loading dots of list component.
+/**
+ Backend AI List Status
+
+ `backend-ai-list-status` shows the status such as empty data or loading situation of list component.
 
  Example:
 
- <backend-ai-list-loading-dots></backend-ai-list-loading-dots>
+ <backend-ai-list-status></backend-ai-list-status>
 
 @group Backend.AI Web UI
- @element backend-ai-list-loading-dots
+ @element backend-ai-list-status
  */
 
-@customElement('backend-ai-list-loading-dots')
-export default class BackendAIListLoadingdots extends LitElement {
+@customElement('backend-ai-list-status')
+export default class BackendAIListStatus extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: Object}) list_dots;
-  @property({type: Boolean}) active = false;
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) message="There is no data to show";
+  @property({type: String}) status_condition="loading";
+  @property({type: Object}) dots = Object();
+  @property({type: Boolean}) active = true;
 
   constructor() {
     super();
@@ -51,18 +54,25 @@ export default class BackendAIListLoadingdots extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div class="vertical layout center flex blank-box-large">
-        <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+      <div class="vertical id="status" layout center flex blank-box-large">
+        ${this.status_condition == "loading" ? html`
+          <lablup-loading-dots id="loading-dots"></lablup-loading_dots>
+        `: html`
+          ${this.status_condition == "no-data" ? html`
+            <span class="list-message">${this.message}</span>
+          `: html``}
+        `}
       </div>
     `;
   }
 
   shouldUpdate() {
     return this.active;
-  }
+  } 
 
   firstUpdated() {
-    this.list_dots = this.shadowRoot.querySelector('#list-dots');
+    this.dots = this.shadowRoot.querySelector('#loading-dots');
+    this.list_status = this.shadowRoot.querySelector('#status');
     this.active = true;
   }
 
@@ -79,8 +89,10 @@ export default class BackendAIListLoadingdots extends LitElement {
    * */
   async show() {
     this.active = true;
+    this.dots.show();
     await this.updateComplete;
-    this.list_dots.style.display = 'block';
+    this.list_status.style.display = 'block';
+    console.log(this.status_condition);
   }
 
   /**
@@ -88,29 +100,15 @@ export default class BackendAIListLoadingdots extends LitElement {
    * */
   async hide() {
     this.active = true;
+    this.dots.hide();
     await this.updateComplete;
-    this.list_dots.style.display = 'none';
+    this.list_status.style.display = 'none';
     this.active = false;
-  }
-
-  /**
-   * Change whether dots is visible or not.
-   * */
-  async toggle() {
-    await this.updateComplete;
-    if (this.list_dots.active === true) {
-      this.active = true;
-      this.list_dots.style.display = 'none';
-      this.active = false;
-    } else {
-      this.active = true;
-      this.list_dots.style.display = 'block';
-    }
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-list-loading-dots': BackendAIListLoadingdots;
+    'backend-ai-list-status': BackendAIListStatus;
   }
 }
