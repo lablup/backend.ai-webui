@@ -819,9 +819,9 @@ export default class BackendAIAgentList extends BackendAIPage {
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         </vaadin-grid>
         ${this._totalAgentCount == 0 ? html`
-          <div class="vertical layout center flex blank-box-large">
+
             <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-          </div>`
+          `
         : html`
           ${this._totalAgentCount == 1 && this.agents.length == 0 ? html`
             <div class="vertical layout center flex blank-box-large">
