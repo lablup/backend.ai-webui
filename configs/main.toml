@@ -28,8 +28,8 @@ maxShmPerContainer = 32
 maxFileUploadSize = 68719476736 # 64GB.
 
 [environments]
-#whitelist = ""
-#blacklist = ""
+#allowlist = ""
+#blocklist = ""
 
 [server]
 consoleServerURL =

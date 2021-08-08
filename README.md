@@ -129,6 +129,10 @@ maxCUDASharesPerContainer = 8  # Maximum CUDA shares per container.
 maxShmPerContainer = 1 # Maximum shared memory per container.
 maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
 
+[environments]
+allowlist = ""
+#blocklist = ""
+
 [server]
 webServerURL = "[Web server website URL. App will use the site instead of local app.]"
                    # Uses websocket proxy in the app
