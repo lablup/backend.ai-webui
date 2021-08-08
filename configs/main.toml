@@ -27,6 +27,10 @@ maxCUDASharesPerContainer = 4096
 maxShmPerContainer = 32 
 maxFileUploadSize = 68719476736 # 64GB.
 
+[environments]
+#whitelist = ""
+#blacklist = ""
+
 [server]
 consoleServerURL =
 
