@@ -130,8 +130,8 @@ maxShmPerContainer = 1 # Maximum shared memory per container.
 maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
 
 [environments]
-allowlist = ""
-#blocklist = ""
+#allowlist = "" # Comma-separated image name. It should contain the full URL, except the protocol and tag. e.g. cr.backend.ai/stable/python
+# You should pick default_environment too.
 
 [server]
 webServerURL = "[Web server website URL. App will use the site instead of local app.]"
