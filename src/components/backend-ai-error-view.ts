@@ -86,9 +86,10 @@ export default class BackendAIErrorView extends BackendAIPage {
       <div class="vertical layout" style="width:100%;">
         <div class="title">${_tr('webui.NOTFOUND')}</div>
         <p class="description">${_t('webui.DescNOTFOUND')}</p>
-        <div style="width:auto;">
+        <div>
           <mwc-button
               unelevated
+              fullwidth
               id="go-to-summary"
               label="${_t('button.GoBackToSummaryPage')}"
               @click="${() => this._moveTo('summary')}"></mwc-button>

@@ -1430,6 +1430,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       'py38': 'Python 3.8',
       'py39': 'Python 3.9',
       'py310': 'Python 3.10',
+      'ji15': 'Julia 1.5',
+      'ji16': 'Julia 1.6',
+      'ji17': 'Julia 1.7',
       'lxde': 'LXDE',
       'lxqt': 'LXQt',
       'xfce': 'XFCE',
@@ -3330,18 +3333,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-              unelevated
-              id="env-config-reset-button"
-              style="width:auto;margin-right:10px;"
-              @click="${() => this._closeAndResetEnvInput()}">
-            <span>${_t('button.DismissAndProceed')}</span>
+              id="env-config-remain-button"
+              label="${_t('button.Cancel')}"
+              @click="${() => this.closeDialog('env-config-confirmation')}"
+              style="width:auto;margin-right:10px;">
           </mwc-button>
           <mwc-button
-              outlined
-              id="env-config-remain-button"
-              style="width:auto;"
-              @click="${() => this.closeDialog('env-config-confirmation')}">
-            <span>${_t('button.Cancel')}</span>
+              unelevated
+              id="env-config-reset-button"
+              label="${_t('button.DismissAndProceed')}"
+              @click="${() => this._closeAndResetEnvInput()}"
+              style="width:auto;">
           </mwc-button>
         </div>
       </backend-ai-dialog>

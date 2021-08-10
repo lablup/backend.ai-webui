@@ -107,13 +107,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           padding-right: 5px;
         }
 
-        wl-button.create-button {
-          width: 330px;
-          --button-bg: white;
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
-        }
-
         wl-label {
           width: 100%;
           min-width: 60px;
@@ -334,11 +327,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified flex layout distancing">
           <mwc-button
               unelevated
-              outlined
+              fullwidth
               id="create-policy-button"
               icon="check"
               label="${_t('button.Update')}"
-              style="width:100%;"
               @click="${() => this._modifyResourcePolicy()}"></mwc-button>
         </div>
       </backend-ai-dialog>

@@ -15,6 +15,7 @@ import 'weightless/textfield';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-button/mwc-button';
 import '@material/mwc-icon-button/mwc-icon-button';
 import '@material/mwc-menu/mwc-menu';
 import '@material/mwc-tab-bar/mwc-tab-bar';
@@ -441,7 +442,7 @@ export default class BackendAiSessionView extends BackendAIPage {
       </div>
       <lablup-activity-panel elevation="1" autowidth narrow noheader>
         <div slot="message">
-          <h3 class="tab horizontal center layout">
+          <h3 class="tab horizontal center layout" style="margin-top:0;margin-bottom:0;">
             <div class="horizontal layout flex start-justified">
             <mwc-tab-bar>
               <mwc-tab title="running" label="${_t('session.Running')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
@@ -501,13 +502,13 @@ export default class BackendAiSessionView extends BackendAIPage {
             <wl-checkbox id="export-csv-checkbox" @change="${(e) => this._toggleDialogCheckbox(e)}"></wl-checkbox>
             <wl-label class="unlimited" for="export-csv-checkbox">Export All-time data</wl-label>
           </div>
-          <div class="horizontal center layout">
-            <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
-            @click="${this._exportToCSV}">
-              <wl-icon>get_app</wl-icon>
-              ${_t('session.ExportCSVFile')}
-            </wl-button>
-          </div>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button unelevated 
+                      fullwidth
+                      icon="get_app" 
+                      label="${_t('session.ExportCSVFile')}"
+                      @click="${this._exportToCSV}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

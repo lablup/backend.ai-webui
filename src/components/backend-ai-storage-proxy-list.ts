@@ -425,11 +425,19 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
    * @param {object} rowData
    */
   controlRenderer(root, column?, rowData?) {
+    let perfMetricDisabled;
+    try {
+      const perfMetric = JSON.parse(rowData.item.performance_metric);
+      perfMetricDisabled = Object.keys(perfMetric).length > 0 ? false : true;
+    } catch {
+      perfMetricDisabled = true;
+    }
     render(
       // language=HTML
       html`
-        <div id="controls" class="layout horizontal flex center" storage-proxy-id="${rowData.item.id}">
+        <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.id}">
           <mwc-icon-button class="fg blue controls-running" icon="assignment" 
+                          ?disabled="${perfMetricDisabled}"
                           @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
         </div>`, root
     );

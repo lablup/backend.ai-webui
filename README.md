@@ -27,7 +27,7 @@ Backend.AI Web UI focuses to
     * Monitor current resources sessions using
     * Choose and run environment-supported apps
     * Web-based Terminal for each session
-    * Fully-featured VSCode editor and environments
+    * Fully-featured Visual Studio Code editor and environments
  * Pipeline
     * Experiments (with SACRED / Microsoft NNI / Apache MLFlow)
     * AutoML (with Microsoft NNI / Apache MLFlow)
@@ -128,6 +128,11 @@ maxCUDADevicesPerContainer = 16  # Maximum CUDA devices per container.
 maxCUDASharesPerContainer = 8  # Maximum CUDA shares per container.
 maxShmPerContainer = 1 # Maximum shared memory per container.
 maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
+
+[environments]
+#allowlist = "" # Comma-separated image name. Image name should contain the repository (registry path and image name) part of the full image URL, excluding the protocol and tag
+# e.g. cr.backend.ai/stable/python
+# You should pick default_environment in general section too.
 
 [server]
 webServerURL = "[Web server website URL. App will use the site instead of local app.]"
@@ -385,7 +390,9 @@ Electron building is automated using `Makefile`.
 
 ```
 $ make clean  # clean prebuilt codes
-$ make mac # build macOS app
+$ make mac # build macOS app (both Intel/Apple)
+$ make mac_intel # build macOS app (Intel x64)
+$ make mac_apple # build macOS app (Apple Silicon)
 $ make win # build win64 app
 $ make linux # build linux app
 $ make all # build win64/macos/linux app
@@ -401,9 +408,20 @@ Note: On macOS Catalina, use scripts/build-windows-app.sh to build Windows 32bit
 Note: Now the `make win` command support only Windows x64 app, therefore you do not need to use `build-windows-app.sh` anymore.
 
 #### macOS version
-
+##### All versions (Intel/Apple)
 ```
 $ make mac
+```
+NOTE: Sometimes Apple silicon version compiled on Intel machine does not work.
+
+##### Intel x64
+```
+$ make mac_intel
+```
+
+##### Apple Silicon (Apple M1 and above)
+```
+$ make mac_apple
 ```
 
 #### Linux x86-64 version
@@ -414,15 +432,8 @@ $ make linux
 
 ### Packaging as zip files
 
-Note: this command only works on macOS, because packaging uses `ditto`, that supports both PKZIP and compressed CPIO format.
-
 Note: Packaging usually performs right after app building. Therefore you do not need this option in normal condition.
-
-Note: Requires electron-installer-dmg to make macOS disk image. It requires Python 2+ to build binary for package.
-
-```
-$ make pack
-```
+Note: Packaging macOS disk image requires electron-installer-dmg to make macOS disk image. It requires Python 2+ to build binary for package.
 
 ### Manual run to test Electron
 
