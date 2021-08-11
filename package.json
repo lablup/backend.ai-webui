@@ -25,7 +25,7 @@
     "patchLib": "cd ./src/plastics/weightless && bash patch-input-behavior.sh",
     "docs": "./node_modules/jsdoc/jsdoc.js -c ./jsdoc.json",
     "update": "./node_modules/typescript/bin/tsc",
-    "postinstall": "npm run patch:weightless && npm run patch:lit-translate",
+    "postinstall": "npm run patch:weightless",
     "patch:weightless": "cd ./src/plastics/weightless && bash ./patch-input-behavior.sh",
     "patch:lit-translate": "unzip -o ./scripts/lit-translate.zip -d ./node_modules/lit-translate && cp -f ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js"
   },
@@ -61,7 +61,7 @@
     "date-fns": "^2.22.1",
     "https-proxy-agent": "^5.0.0",
     "lit": "^2.0.0-rc.2",
-    "lit-translate": "github:andreasbm/lit-translate#lit-2",
+    "lit-translate": "^2.0.0-rc.1",
     "log": "^6.0.0",
     "macro-carousel": "^1.0.0",
     "marked": "^2.1.3",
