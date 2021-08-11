@@ -38,4 +38,5 @@ Icon from Github purestorage repo ( https://github.com/purestorage/helm-charts )
 Icon from flaticon by Pixel perfect ( https://www.flaticon.com/authors/pixel-perfect )
  * xrdp.svg
 
-
+Icon from flaticon by Freepik ( https://www.flaticon.com/free-icon/check-list_1721929?related_id=1721929 )
+ * check-list.svg 
