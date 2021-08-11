@@ -12,7 +12,7 @@ import '@vaadin/vaadin-grid/vaadin-grid-tree-toggle';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
-import '@vaadin/vaadin-grid/vaadin-grid-filter-column'
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 
 import {default as AnsiUp} from '../lib/ansiup';
