@@ -433,6 +433,7 @@ $ make linux
 ### Packaging as zip files
 
 Note: Packaging usually performs right after app building. Therefore you do not need this option in normal condition.
+
 Note: Packaging macOS disk image requires electron-installer-dmg to make macOS disk image. It requires Python 2+ to build binary for package.
 
 ### Manual run to test Electron
@@ -446,6 +447,12 @@ $ npm run electron:d  # OR, ./node_modules/electron/cli.js .
 
 ### Localization
 Locale resources are JSON files located in `resources/i18n`.
+
+Currently WebUI supports these languages:
+ * English
+ * Korean
+ * French
+ * Russian
 
 #### Extracting i18n resources
 
