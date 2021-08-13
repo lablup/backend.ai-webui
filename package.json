@@ -95,7 +95,6 @@
     "electron-installer-debian": "^3.1.0",
     "electron-installer-dmg": "^3.0.0",
     "electron-packager": "^15.2.0",
-    "electron-tabs": "^0.15.0",
     "es-dev-server": "^2.1.0",
     "eslint": "^7.30.0",
     "eslint-config-google": "^0.14.0",
