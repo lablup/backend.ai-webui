@@ -1643,7 +1643,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     job.then((resp) => {
       // console.log(resp);
       if (resp.msg) {
-        console.log(resp.msg);
         this.notification.text = _text('data.folders.CannotDeleteFolder');
         this.notification.show(true);
       } else {
