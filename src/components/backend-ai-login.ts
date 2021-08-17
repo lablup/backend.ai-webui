@@ -993,7 +993,7 @@ export default class BackendAILogin extends BackendAIPage {
       } else {
         globalThis.backendaiclient.groups = ['default'];
       }
-      const currentGroup = globalThis.backendaiclient.utils._readRecentProjectGroup();
+      const currentGroup = globalThis.backendaiutils._readRecentProjectGroup();
       globalThis.backendaiclient.current_group = currentGroup ? currentGroup : globalThis.backendaiclient.groups[0];
       globalThis.backendaiclient.current_group_id = () => {
         return globalThis.backendaiclient.groupIds[globalThis.backendaiclient.current_group];

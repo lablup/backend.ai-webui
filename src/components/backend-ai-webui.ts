@@ -29,18 +29,23 @@ import toml from 'markty-toml';
 import 'weightless/popover';
 import 'weightless/popover-card';
 
-import './backend-ai-settings-store';
-import './backend-ai-splash';
-import './backend-ai-help-button';
-import './lablup-notification';
-import './backend-ai-indicator-pool';
-import './lablup-terms-of-service';
-import './backend-ai-dialog';
-import './backend-ai-sidepanel-task';
-import './backend-ai-sidepanel-notification';
 import './backend-ai-app-launcher';
+import './backend-ai-common-utils';
+import './backend-ai-dialog';
+import './backend-ai-help-button';
+import './backend-ai-indicator-pool';
+import './backend-ai-login';
+import './backend-ai-offline-indicator';
 import './backend-ai-resource-broker';
+import BackendAiSettingsStore from './backend-ai-settings-store';
+import BackendAiCommonUtils from './backend-ai-common-utils';
+import './backend-ai-sidepanel-notification';
+import './backend-ai-sidepanel-task';
+import BackendAiTasker from './backend-ai-tasker';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
+import './backend-ai-splash';
+import './lablup-notification';
+import './lablup-terms-of-service';
 
 import '../lib/backend.ai-client-es6';
 import {default as TabCount} from '../lib/TabCounter';
@@ -53,17 +58,12 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/mwc/mwc-multi-select';
 
-import './backend-ai-offline-indicator';
-import './backend-ai-login';
-
-import BackendAiSettingsStore from './backend-ai-settings-store';
-import BackendAiTasker from './backend-ai-tasker';
-
 registerTranslateConfig({
   loader: (lang) => fetch(`/resources/i18n/${lang}.json`).then((res) => res.json())
 });
 globalThis.backendaioptions = new BackendAiSettingsStore;
 globalThis.tasker = new BackendAiTasker;
+globalThis.backendaiutils = new BackendAiCommonUtils;
 
 /**
  Backend.AI Web UI
@@ -395,7 +395,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.is_superadmin = false;
     }
     this._refreshUserInfoPanel();
-    globalThis.backendaiclient.utils._writeRecentProjectGroup(this.current_group);
+    globalThis.backendaiutils._writeRecentProjectGroup(this.current_group);
     document.body.style.backgroundImage = 'none';
     this.appBody.style.visibility = 'visible';
 
@@ -581,7 +581,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.user_id = globalThis.backendaiclient.email;
     this.full_name = globalThis.backendaiclient.full_name;
     this.domain = globalThis.backendaiclient._config.domainName;
-    this.current_group = this._readRecentProjectGroup();
+    this.current_group = globalThis.backendaiutils._readRecentProjectGroup();
     this._showRole();
     globalThis.backendaiclient.current_group = this.current_group;
     this.groups = globalThis.backendaiclient.groups;
@@ -960,7 +960,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    */
   async logout(performClose = false) {
     console.log('also close the app:', performClose);
-    globalThis.backendaiclient.utils._deleteRecentProjectGroupInfo();
+    globalThis.backendaiutils._deleteRecentProjectGroupInfo();
     if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
       this.notification.text = _text('webui.CleanUpNow');
       this.notification.show();
@@ -1026,7 +1026,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   changeGroup(e) {
     globalThis.backendaiclient.current_group = e.target.value;
     this.current_group = globalThis.backendaiclient.current_group;
-    globalThis.backendaiclient.utils._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
+    globalThis.backendaiutils._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
     const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {'detail': globalThis.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
