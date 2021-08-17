@@ -16,7 +16,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {style} from '@material/mwc-top-app-bar/mwc-top-app-bar-css';
+import {styles} from '@material/mwc-top-app-bar/mwc-top-app-bar.css';
 import {css, customElement} from 'lit-element';
 
 import {BackendAiStyles} from '../../components/backend-ai-general-styles';
@@ -32,7 +32,7 @@ declare global {
 @customElement('mwc-top-app-bar-fixed')
 export class TopAppBarFixed extends TopAppBarFixedBase {
   static get styles() {
-    return [style, BackendAiStyles,
+    return [styles, BackendAiStyles,
       css`
         .mdc-top-app-bar {
           width: calc(100% - var(--mdc-drawer-width, 256px));
