@@ -57,7 +57,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     {name: _t('language.Korean'), code: 'ko'},
     {name: _t('language.Russian'), code: 'ru'},
     {name: _t('language.French'), code: 'fr'},
-    {name: _t('language.Mongolian'), code: 'mn'}
+    {name: _t('language.Mongolian'), code: 'mn'},
+    {name: _t('language.Indonesian'), code: 'id'}
   ];
   @property({type: Boolean}) beta_feature_panel = false;
   @property({type: Boolean}) shell_script_edit = false;
