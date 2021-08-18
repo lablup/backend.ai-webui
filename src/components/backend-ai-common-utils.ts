@@ -25,7 +25,7 @@ export default class BackendAiCommonUtils extends BackendAIPage {
    *
    * @return {string} Current selected group
    */
-    _readRecentProjectGroup() {
+  _readRecentProjectGroup() {
     const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
     const value: string | null = globalThis.backendaioptions.get('projectGroup.' + endpointId);
     if (value) { // Check if saved group has gone between logins / sessions
