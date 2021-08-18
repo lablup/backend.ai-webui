@@ -14,7 +14,7 @@ module.exports = {
       extensions: ['.ts', '.js', '.jsx']
     },
     trans: false,
-    lngs: ['en', 'ko', 'ru', 'fr'],
+    lngs: ['en', 'ko', 'ru', 'fr', 'mn'],
     defaultLng: 'en',
     defaultNs: 'resource',
     defaultValue: function(lng, ns, key) {
