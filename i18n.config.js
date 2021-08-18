@@ -14,7 +14,7 @@ module.exports = {
       extensions: ['.ts', '.js', '.jsx']
     },
     trans: false,
-    lngs: ['en', 'ko'],
+    lngs: ['en', 'ko', 'ru', 'fr'],
     defaultLng: 'en',
     defaultNs: 'resource',
     defaultValue: function(lng, ns, key) {
@@ -23,7 +23,7 @@ module.exports = {
         return key;
       }
       // Return the string '__NOT_TRANSLATED__' for other languages
-      return '__NOT_TRANSLATED__';
+      return '__NOT_TRANSLATED__'+key;
     },
     resource: {
       loadPath: 'resources/i18n/{{lng}}.json',
