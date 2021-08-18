@@ -123,7 +123,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Boolean}) mini_ui = false;
   @property({type: Boolean}) auto_logout = false;
   @property({type: String}) lang = 'default';
-  @property({type: Array}) supportLanguageCodes = ['en', 'ko', 'ru', 'fr'];
+  @property({type: Array}) supportLanguageCodes = ['en', 'ko', 'ru', 'fr', 'mn'];
   @property({type: Array}) blockedMenuitem;
   @property({type: Number}) minibarWidth = 88;
   @property({type: Number}) sidebarWidth = 250;
