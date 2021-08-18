@@ -203,7 +203,14 @@
       "EnvironmentVariableConfigurationDone": "Переменная среды настроена успешно.",
       "EnvConfigWillDisappear": "Все несохраненные переменные среды и значения будут удалены.",
       "SharedMemoryAbbr": "Обш. Пам.",
-      "GPUSlot": "Слот"
+      "GPUSlot": "Слот",
+      "ConfirmAndLaunch": "__NOT_TRANSLATED__",
+      "FolderAliasOverlapping": "__NOT_TRANSLATED__",
+      "NoEnvConfigured": "__NOT_TRANSLATED__",
+      "FolderAlias": "__NOT_TRANSLATED__",
+      "NoAvailableFolderToMount": "__NOT_TRANSLATED__",
+      "MountedFolders": "__NOT_TRANSLATED__",
+      "EnvironmentVariablePaneTitle": "__NOT_TRANSLATED__"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -588,7 +595,8 @@
     "AppInfoDeleted": "Информация о приложении успешно удалена.",
     "SuccessfullyModified": "Успешно изменено",
     "ProblemOccurred": "Возникла проблема",
-    "PasswordsDoNotMatch": "Пароль и подтверждение не совпадают."
+    "PasswordsDoNotMatch": "Пароль и подтверждение не совпадают.",
+    "NoChangeMade": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Предустановки ресурсов",

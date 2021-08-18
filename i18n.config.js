@@ -23,7 +23,7 @@ module.exports = {
         return key;
       }
       // Return the string '__NOT_TRANSLATED__' for other languages
-      return '__NOT_TRANSLATED__'+key;
+      return '__NOT_TRANSLATED__';
     },
     resource: {
       loadPath: 'resources/i18n/{{lng}}.json',
