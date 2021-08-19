@@ -453,6 +453,8 @@ Currently WebUI supports these languages:
  * Korean
  * French
  * Russian
+ * Mongolian
+ * Indonesian
 
 #### Extracting i18n resources
 
