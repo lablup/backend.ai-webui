@@ -34,7 +34,6 @@ import '../plastics/chart-js';
 import './backend-ai-dialog';
 import './backend-ai-storage-list';
 import './lablup-activity-panel';
-import './lablup-loading-spinner';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 
@@ -71,7 +70,6 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Array}) allowedGroups = [];
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Object}) notification = Object();
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) folderLists = Object();
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean}) active = true;
@@ -292,7 +290,6 @@ export default class BackendAIData extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="vertical layout" style="margin:20px;">
         <lablup-activity-panel elevation="1" narrow title=${_t('data.StorageStatus')} autowidth>
           <div slot="message">
@@ -505,7 +502,6 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.folderLists = this.shadowRoot.querySelectorAll('backend-ai-storage-list');
     fetch('resources/storage_metadata.json').then(

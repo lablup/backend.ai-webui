@@ -65,14 +65,13 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Array}) userInfoGroups = [];
   @property({type: String}) condition = 'active';
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
-  @property({type: Object}) status = Object();
+  @property({type: Object}) list_status = Object();
   @property({type: Object}) keypairs;
   @property({type: Object}) signoutUserDialog = Object();
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
   @property({type: Object}) userGrid = Object();
-  @property({type: String}) list_status_condition = 'loading';
-  @property({type: Number}) _totalUserCount = 0;
+  @property({type: String}) list_condition = 'loading';
 
   constructor() {
     super();
@@ -184,10 +183,7 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.status = this.shadowRoot.querySelector('#list-status');
-    console.log("firstupdate");
-    console.log(this.status);
-
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
     this.addEventListener('user-list-updated', () => {
@@ -228,8 +224,8 @@ export default class BackendAIUserList extends BackendAIPage {
     default:
       is_active = false;
     }
-    this.list_status_condition = 'loading';
-    this.status.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     const fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       const users = response.users;
@@ -238,16 +234,14 @@ export default class BackendAIUserList extends BackendAIPage {
       // Blank for the next impl.
       // });
       this.users = users;
-      this._totalUserCount = this.users.length > 0 ? this.users.length : 1;
       if (this.users.length == 0) {
-        this.list_status_condition = 'no-data';
-        this.status.show();
+        this.list_condition = 'no-data';
       } else {
-        this.status.hide();
+        this.list_status.hide();
       }
       // setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch((err) => {
-      this.status.hide();
+      this.list_status.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -555,7 +549,7 @@ export default class BackendAIUserList extends BackendAIPage {
           <vaadin-grid-column resizable header="${_t('general.Control')}"
                 .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         </vaadin-grid>
-        <backend-ai-list-status id="list_status" status_condition="${this.list_status_condition}" message="${_text('credential.NoCredentialToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('credential.NoUserToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="signout-user-dialog" fixed backdrop>
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>

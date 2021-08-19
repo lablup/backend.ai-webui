@@ -22,7 +22,7 @@ import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement,
 export default class LablupLoadingdots extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) dots;
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean}) active = true;
 
   constructor() {
     super();

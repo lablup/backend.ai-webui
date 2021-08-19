@@ -8,7 +8,7 @@ import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} f
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import './lablup-loading-spinner';
+import './backend-ai-list-status';
 import './backend-ai-dialog';
 
 import '@material/mwc-textfield';
@@ -64,7 +64,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: String}) storageType = 'general';
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();
-  @property({type: Number}) _totalFolderCount = 0;
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) enableStorageProxy = false;
   @property({type: Boolean}) authenticated = false;
@@ -92,7 +91,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) deleteFileDialog = Object();
   @property({type: Object}) downloadFileDialog = Object();
   @property({type: Object}) sessionLauncher = Object();
-  @property({type: Object}) spinner = Object();
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
   @property({type: Object}) _boundIndexRenderer = Object();
@@ -494,17 +494,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 .renderer="${this._boundCloneableRenderer}"></vaadin-grid-column>` : html``}
           <vaadin-grid-column auto-width resizable header="${_t('data.folders.Control')}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>-->
         </vaadin-grid>
-        ${this._totalFolderCount == 0 ? html`
-          <div class="vertical layout center flex blank-box-large">
-            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-          </div>`
-        : html`
-          ${this._totalFolderCount == 1 && this.folders.length == 0 ? html`
-            <div class="vertical layout center flex blank-box-large">
-              <span class="no-data-message">${_t('data.folders.NoFolderToDisplay')}</span>
-            </div>
-          ` : html``}
-        `}
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('data.folders.NoFolderToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="folder-setting-dialog" fixed backdrop>
         <span slot="title">${_t('data.folders.FolderOptionUpdate')}</span>
@@ -930,7 +920,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleCheckbox();
     });
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
     const textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
@@ -1345,11 +1335,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
     this._folderRefreshing = true;
     this.lastQueryTime = Date.now();
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     let groupId = null;
     groupId = globalThis.backendaiclient.current_group_id();
     globalThis.backendaiclient.vfolder.list(groupId).then((value) => {
-      this.spinner.hide();
       const folders = value.filter((item) => {
         if (this.storageType === 'general' && !item.name.startsWith('.')) {
           return item;
@@ -1358,7 +1348,11 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
       });
       this.folders = folders;
-      this._totalFolderCount = this.folders.length > 0 ? this.folders.length : 1;
+      if (this.folders.length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }
       this._folderRefreshing = false;
     }).catch(()=>{
       this._folderRefreshing = false;

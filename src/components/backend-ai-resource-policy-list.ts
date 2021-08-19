@@ -21,7 +21,7 @@ import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/label';
 
-import './lablup-loading-spinner';
+import './backend-ai-list-status';
 import './backend-ai-dialog';
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -32,7 +32,8 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 @customElement('backend-ai-resource-policy-list')
 export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) visible = false;
-  @property({type: Object}) spinner;
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Object}) keypairs = {};
   @property({type: Object}) resourcePolicy = {};
   @property({type: Object}) keypairInfo = {};
@@ -53,7 +54,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Array}) resource_policy_names;
   @property({type: String}) current_policy_name = '';
   @property({type: Number}) selectAreaHeight;
-  @property({type: Number}) _totalResourcePolicyCount = 0;
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundConcurrencyRenderer = this.concurrencyRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
@@ -228,17 +228,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
           </vaadin-grid-column>
         </vaadin-grid>
-        ${this._totalResourcePolicyCount == 0 ? html`
-          <div class="vertical layout center flex blank-box-large">
-            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-          </div>`
-        : html`
-          ${this._totalResourcePolicyCount == 1 && Object.keys(this.resourcePolicy).length == 0 ? html`
-            <div class="vertical layout center flex blank-box-large">
-              <span class="no-data-message">${_t('resourcePolicy.NoResourcePolicyToDisplay')}</span>
-            </div>
-          ` : html``}
-        `}
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('resourcePolicy.NoResourcePolicyToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="modify-policy-dialog" fixed backdrop blockscrolling narrowLayout>
         <span slot="title">${_t('resourcePolicy.UpdateResourcePolicy')}</span>
@@ -463,7 +453,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     // monkeypatch for height calculation.
     this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '123px';
@@ -536,7 +526,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _refreshPolicyData() {
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
       const rp = response.keypair_resource_policies;
       // let resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
@@ -575,10 +566,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         }
       });
       this.resourcePolicy = resourcePolicies;
-      this._totalResourcePolicyCount = Object.keys(this.resourcePolicy).length > 0? Object.keys(this.resourcePolicy).length : 1;
-      this.spinner.hide();
+      if (Object.keys(this.resourcePolicy).length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }
     }).catch((err) => {
-      this.spinner.hide();
+      this.list_status.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);

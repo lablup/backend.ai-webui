@@ -8,8 +8,6 @@ import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {BackendAIPage} from './backend-ai-page';
 
-import './lablup-loading-spinner';
-
 import 'weightless/card';
 import 'weightless/icon';
 
@@ -74,7 +72,6 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Number}) rocm_gpu_used = 0;
   @property({type: Number}) tpu_total = 0;
   @property({type: Number}) tpu_used = 0;
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
@@ -282,7 +279,6 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.update_checker = this.shadowRoot.querySelector('#update-checker');
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
@@ -455,7 +451,6 @@ export default class BackendAISummary extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css">
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="item" elevation="1" style="padding-bottom:20px;">
         ${this.announcement != '' ? html`
           <div class="notice-ticker horizontal center layout wrap flex">

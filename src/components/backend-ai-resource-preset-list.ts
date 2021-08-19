@@ -9,7 +9,7 @@ import {BackendAIPage} from './backend-ai-page';
 
 import {render} from 'lit-html';
 
-import './lablup-loading-spinner';
+import './backend-ai-list-status';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
@@ -39,8 +39,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: String}) condition = '';
   @property({type: String}) presetName = '';
   @property({type: Object}) resourcePresets;
-  @property({type: Object}) spinner;
-  @property({type: Number}) _totalresourcePresetCount = 0;
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Array}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Array}) _boundControlRenderer = this.controlRenderer.bind(this);
 
@@ -235,17 +235,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
             </vaadin-grid-column>
           </vaadin-grid>
-          ${this._totalresourcePresetCount == 0 ? html`
-            <div class="vertical layout center flex blank-box-large">
-              <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-            </div>`
-          : html`
-            ${this._totalresourcePresetCount == 1 && this.resourcePresets.length == 0 ? html`
-              <div class="vertical layout center flex blank-box-large">
-                <span class="no-data-message">${_t('resourcePreset.NoResourcePresetToDisplay')}</span>
-              </div>
-            ` : html``}
-          `}
+          <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('resourcePreset.NoResourcePresetToDisplay')}"></backend-ai-list-status>
         </div>
       </div>
       <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling narrowLayout>
@@ -355,7 +345,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     const textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {
@@ -435,7 +425,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
     const param = {
       'group': globalThis.backendaiclient.current_group
     };
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     return globalThis.backendaiclient.resourcePreset.check(param).then((response) => {
       const resourcePresets = response.presets;
       Object.keys(resourcePresets).map((objectKey, index) => {
@@ -448,9 +439,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
         }
       });
       this.resourcePresets = resourcePresets;
-      this._totalresourcePresetCount = this.resourcePresets.length > 0 ? this.resourcePresets.length : 1;
-      this.spinner.hide();
-    }).catch((err) => {
+      if (this.resourcePresets.length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }    }).catch((err) => {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);

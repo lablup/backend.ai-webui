@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from 'lit-translate';
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -22,7 +22,7 @@ import '@material/mwc-icon/mwc-icon';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import './lablup-loading-spinner';
+import './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
@@ -44,7 +44,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Boolean}) useHardwareMetadata = false;
   @property({type: Array}) agents = [];
-  @property({type: Object}) spinner;
+  @property({type: Object}) list_status = Object();
   @property({type: Object}) agentsObject = Object();
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
@@ -56,7 +56,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: String}) filter = '';
-  @property({type: Number}) _totalAgentCount = 0;
+  @property({type: String}) list_condition = 'loading';  
 
   constructor() {
     super();
@@ -141,8 +141,8 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
   }
 
@@ -181,7 +181,8 @@ export default class BackendAIAgentList extends BackendAIPage {
     if (this.active !== true) {
       return;
     }
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     let fields: Array<string>;
     switch (this.condition) {
     case 'running':
@@ -356,8 +357,11 @@ export default class BackendAIAgentList extends BackendAIPage {
         });
       }
       this.agents = agents;
-      this._totalAgentCount = this.agents.length > 0 ? this.agents.length : 1;
-      this.spinner.hide();
+      if (this.agents.length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }
       if (this.agentDetailDialog.open) { // refresh the data
         this.agentDetail = this.agentsObject[this.agentDetail['id']];
         this.agentDetailDialog.updateComplete;
@@ -369,7 +373,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         }, 15000);
       }
     }).catch((err) => {
-      this.spinner.hide();
+      this.list_status.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -818,17 +822,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <vaadin-grid-column resizable header="${_t('general.Control')}"¸
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         </vaadin-grid>
-        ${this._totalAgentCount == 0 ? html`
-          <div class="vertical layout center flex blank-box-large">
-            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-          </div>`
-        : html`
-          ${this._totalAgentCount == 1 && this.agents.length == 0 ? html`
-            <div class="vertical layout center flex blank-box-large">
-              <span class="no-data-message">${_t('agent.NoAgentToDisplay')}</span>
-            </div>
-          ` : html``}
-        `}
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('agent.NoAgentToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.DetailedInformation')}</span>

@@ -696,6 +696,7 @@
     "RequestUrl": "Request Url",
     "Parameters": "Parameters",
     "ErrorType": "Error Type",
+    "NoLogToDisplay": "No Logs to display",
     "LogMessageRemoved": "Log Messages have been removed."
   },
   "resourcePolicy": {

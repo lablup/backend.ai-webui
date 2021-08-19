@@ -4,6 +4,7 @@
  */
 
 import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import 'weightless/progress-spinner';
 
 /**
  Lablup Loading Spinner
@@ -32,54 +33,22 @@ export default class LablupLoadingSpinner extends LitElement {
     return [
       // language=CSS
       css`
-      .spinner-box {
-        width: 100px;
-        background-color: transparent;
-      }
-      .pulse-container {
-        width: 100px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .pulse-bubble {
-        width: 16px;
-        height: 16px;
-        border-radius: 50%;
-        background-color: rgba(114, 235, 81, 0.8);
-      }
-      .pulse-bubble-1 {
-          animation: pulse .4s ease 0s infinite alternate;
-      }
-      .pulse-bubble-2 {
-          animation: pulse .4s ease .2s infinite alternate;
-      }
-      .pulse-bubble-3 {
-          animation: pulse .4s ease .4s infinite alternate;
-      }
-      @keyframes pulse {
-        from {
-          opacity: 1;
-          transform: scale(1);
+        wl-progress-spinner {
+          --progress-spinner-size: 48px;
+          --progress-spinner-stroke-width: 12px;
+          width: 48px;
+          height: 48px;
+          position: fixed;
+          bottom: 60px;
+          right: 60px;
         }
-        to {
-          opacity: .25;
-          transform: scale(.75);
-        }
-      }
       `];
   }
 
   render() {
     // language=HTML
     return html`
-      <div class="spinner-box" id="spinner">
-        <div class="pulse-container">  
-          <div class="pulse-bubble pulse-bubble-1"></div>
-          <div class="pulse-bubble pulse-bubble-2"></div>
-          <div class="pulse-bubble pulse-bubble-3"></div>
-        </div>
-      </div>
+      <wl-progress-spinner id="spinner"></wl-progress-spinner>
     `;
   }
 
@@ -132,10 +101,6 @@ export default class LablupLoadingSpinner extends LitElement {
       this.active = true;
       this.spinner.style.display = 'block';
     }
-  }
-
-  async is_active() {
-    return this.spinner.active;
   }
 }
 

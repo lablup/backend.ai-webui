@@ -26,8 +26,7 @@ import '@material/mwc-menu';
 import '@material/mwc-textfield/mwc-textfield';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-import './lablup-loading-spinner';
-import './lablup-loading-dots';
+import './backend-ai-list-status';
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-progress-bar';
 import './backend-ai-dialog';
@@ -82,8 +81,8 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) terminateSessionDialog = Object();
   @property({type: Object}) terminateSelectedSessionsDialog = Object();
   @property({type: Boolean}) enableScalingGroup = false;
-  @property({type: Object}) spinner = Object();
-  @property({type: Object}) dots = Object();
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) kernel_icons = Object();
@@ -295,7 +294,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.dots = this.shadowRoot.querySelector('#loading-dots');
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this._grid = this.shadowRoot.querySelector('#list-grid');
     this.refreshTimer = null;
     fetch('resources/image_metadata.json').then(
@@ -406,7 +405,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.refreshing = true;
     console.log("This is refreshjobdata");
 
-    this.dots.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     let status: any;
     status = 'RUNNING';
     switch (this.condition) {
@@ -459,10 +459,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     const group_id = globalThis.backendaiclient.current_group_id();
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id, 10 * 1000).then((response) => {
-      this.dots.hide();
       this.total_session_count = response.compute_session_list.total_count;
       if (this.total_session_count === 0) {
+        this.list_condition = 'no-data';
         this.total_session_count = 1;
+      } else {
+        this.list_status.hide();
       }
       const sessions = response.compute_session_list.items;
       // console.log(sessions);
@@ -614,7 +616,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           this._refreshJobData();
         }, refreshTime);
       }
-      this.dots.hide();
+      this.list_status.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -952,9 +954,10 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.notification.show();
       return false;
     }
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     return this._terminateKernel(this.terminateSessionDialog.sessionId, this.terminateSessionDialog.accessKey, forced).then((response) => {
-      this.spinner.hide();
+      this.list_status.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -963,7 +966,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       const event = new CustomEvent('backend-ai-resource-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
-      this.spinner.hide();
+      this.list_status.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -990,20 +993,21 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _terminateSelectedSessionsWithCheck(forced = false) {
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
       return this._terminateKernel(item['session_id'], item.access_key, forced);
     });
     this._selected_items = [];
     return Promise.all(terminateSessionQueue).then((response) => {
-      this.spinner.hide();
+      this.list_status.hide();
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
       this.notification.text = _text('session.SessionsTerminated');
       this.notification.show();
     }).catch((err) => {
-      this.spinner.hide();
+      this.list_status.hide();
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
@@ -1017,19 +1021,20 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @return {void}
    * */
   _terminateSelectedSessions() {
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
       return this._terminateKernel(item['session_id'], item.access_key);
     });
     return Promise.all(terminateSessionQueue).then((response) => {
-      this.spinner.hide();
+      this.list_status.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
       this.notification.text = _text('session.SessionsTerminated');
       this.notification.show();
     }).catch((err) => {
-      this.spinner.hide();
+      this.list_status.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       if ('description' in err) {
@@ -1572,7 +1577,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
           <wl-button outlined class="multiple-action-button" @click="${() => this._openTerminateSelectedSessionsDialog()}">
@@ -1628,17 +1632,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             </vaadin-grid-column>
               ` : html``}
         </vaadin-grid>
-        ${this.total_session_count == 0 ? html`
-          <div class="vertical layout center flex blank-box-large">
-            <lablup-loading-dots id="loading-dots"></lablup-loading-dots>
-          </div>`
-        : html`
-          ${this.total_session_count == 1 && this.compute_sessions.length == 0 ? html`
-            <div class="vertical layout center flex blank-box-large">
-              <span class="no-data-message">${_t('session.NoSessionToDisplay')}</span>
-            </div>
-          ` : html``}
-        `}
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('session.NoSessionToDisplay')}"></backend-ai-list-status>
       </div>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
       <mwc-icon-button

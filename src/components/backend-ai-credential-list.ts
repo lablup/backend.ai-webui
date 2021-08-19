@@ -20,7 +20,7 @@ import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
-import './lablup-loading-spinner';
+import './backend-ai-list-status';
 import './backend-ai-dialog';
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -66,14 +66,14 @@ export default class BackendAICredentialList extends BackendAIPage {
   };
   @property({type: Boolean}) isAdmin = false;
   @property({type: String}) condition = 'active';
-  @property({type: Object}) spinner;
+  @property({type: Object}) list_status;
   @property({type: Object}) keypairs = Object();
   @property({type: Object}) resourcePolicy = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) _boundKeyageRenderer = this.keyageRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) keypairGrid = Object();
-  @property({type: Number}) _totalCredentialCount = 0;
+  @property({type: String}) list_condition = 'loading';
 
   constructor() {
     super();
@@ -159,7 +159,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
   }
 
@@ -202,7 +202,8 @@ export default class BackendAICredentialList extends BackendAIPage {
     default:
       is_active = false;
     }
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
       const rp = response.keypair_resource_policies;
       this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
@@ -269,11 +270,14 @@ export default class BackendAICredentialList extends BackendAIPage {
         }
       });
       this.keypairs = keypairs;
-      this._totalCredentialCount = this.keypairs.length > 0 ? this.keypairs.length : 1;
-      this.spinner.hide();
+      if (this.keypairs.length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }
       // setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch((err) => {
-      this.spinner.hide();
+      this.list_status.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -702,17 +706,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           <vaadin-grid-column width="150px" resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
           </vaadin-grid-column>
         </vaadin-grid>
-        ${this._totalCredentialCount == 0 ? html`
-          <div class="vertical layout center flex blank-box-large">
-            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-          </div>`
-        : html`
-          ${this._totalCredentialCount == 1 && this.keypairs.length == 0 ? html`
-            <div class="vertical layout center flex blank-box-large">
-              <span class="no-data-message">${_t('credential.NoCredentialToDisplay')}</span>
-            </div>
-          ` : html``}
-        `}
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('credential.NoCredentialToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
         <span slot="title">Keypair Detail</span>

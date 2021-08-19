@@ -19,8 +19,8 @@ import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
-import './lablup-loading-spinner';
 import './backend-ai-dialog';
+import './backend-ai-list-status';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -57,7 +57,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Boolean}) _rocm_gpu_disabled = false;
   @property({type: Boolean}) _tpu_disabled = false;
   @property({type: Object}) alias = Object();
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) installImageDialog = Object();
   @property({type: Object}) deleteImageDialog = Object();
@@ -78,7 +77,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     'rocm-gpu': ['0', '1', '2', '3', '4', '5', '6', '7'],
     'tpu': ['0', '1', '2']};
   @property({type: Number}) cpuValue = 0;
-  @property({type: Number}) _totalImageCount = 0;
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
 
   constructor() {
     super();
@@ -857,17 +857,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
           </vaadin-grid-column>
         </vaadin-grid>
-        ${this._totalImageCount == 0 ? html`
-          <div class="vertical layout center flex blank-box-large">
-            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-          </div>`
-        : html`
-          ${this._totalImageCount == 1 && this.images.length == 0 ? html`
-            <div class="vertical layout center flex blank-box-large">
-              <span class="no-data-message">${_t('environment.NoImageToDisplay')}</span>
-            </div>
-          ` : html``}
-        `}
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('environment.NoImageToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('environment.ModifyImageResourceLimit')}</span>
@@ -1194,7 +1184,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
@@ -1253,8 +1243,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Get backend.ai client images.
    */
   _getImages() {
-    this.spinner.show();
-
+    this.list_condition = 'loading';
+    this.list_status.show();
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
       return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
@@ -1333,8 +1323,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // let sorted_images = {};
       // image_keys.sort();
       this.images = domainImages;
-      this._totalImageCount = this.images.length > 0 ? this.images.length : 1;
-      this.spinner.hide();
+      if (this.images.length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }
     }).catch((err) => {
       console.log(err);
       if (typeof err.message !== 'undefined') {
@@ -1344,7 +1337,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
       }
       this.notification.show(true, err);
-      this.spinner.hide();
+      this.list_status.hide();
     });
   }
 

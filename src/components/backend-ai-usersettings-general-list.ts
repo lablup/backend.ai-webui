@@ -867,6 +867,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   render() {
     // languate=HTML
     return html`
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <h3 class="horizontal center layout">
         <span>${_t('usersettings.Preferences')}</span>
         <span class="flex"></span>

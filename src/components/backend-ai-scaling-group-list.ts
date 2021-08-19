@@ -8,7 +8,7 @@ import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} f
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import './lablup-loading-spinner';
+import './backend-ai-list-status';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields';
@@ -52,11 +52,11 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this._controlRenderer.bind(this);
   @property({type: Number}) selectedIndex = 0;
-  @property({type: Object}) spinner;
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Array}) domains;
   @property({type: Array}) scalingGroups;
   @property({type: Array}) schedulerTypes;
-  @property({type: Number}) _totalScalingGroupCount = 0;
 
   constructor() {
     super();
@@ -154,7 +154,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
   }
 
@@ -167,15 +167,19 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     if (active === false) {
       return;
     }
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         globalThis.backendaiclient.scalingGroup.list_available()
           .then((res) => {
             this.scalingGroups = res.scaling_groups;
-            this._totalScalingGroupCount = this.scalingGroups.length > 0 ? this.scalingGroups.length : 1;
-            this.spinner.hide();
+            if (this.scalingGroups.length == 0) {
+              this.list_condition = 'no-data';
+            } else {
+              this.list_status.hide();
+            }
           });
 
         globalThis.backendaiclient.domain.list()
@@ -189,7 +193,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         .then((res) => {
           this.scalingGroups = res.scaling_groups;
           this._totalScalingGroupCount = this.scalingGroups.length > 0 ? this.scalingGroups.length : 1;
-          this.spinner.hide();
+          this.list_status.hide();
         });
 
       globalThis.backendaiclient.domain.list()
@@ -406,12 +410,16 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _refreshList() {
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     globalThis.backendaiclient.scalingGroup.list_available()
       .then(({scaling_groups}) => {
         this.scalingGroups = scaling_groups;
-        this._totalScalingGroupCount = this.scalingGroups.length > 0 ? this.scalingGroups.length : 1;
-        this.spinner.hide();
+        if (this.scalingGroups.length == 0) {
+          this.list_condition = 'no-data';
+        } else {
+          this.list_status.hide();
+        }
         this.requestUpdate(); // without this render is called beforehands, so update is required
       });
   }
@@ -469,17 +477,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
           </vaadin-grid-column>
         </vaadin-grid>
-        ${this._totalScalingGroupCount == 0 ? html`
-          <div class="vertical layout center flex blank-box-large">
-            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-          </div>`
-        : html`
-          ${this._totalScalingGroupCount == 1 && this.scalingGroups.length == 1 ? html`
-            <div class="vertical layout center flex blank-box-large">
-              <span class="no-data-message">${_t('resourceGroup.NoGroupToDisplay')}</span>
-            </div>
-          ` : html``}
-        `}
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('resourceGroup.NoGroupToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('resourceGroup.CreateResourceGroup')}</span>

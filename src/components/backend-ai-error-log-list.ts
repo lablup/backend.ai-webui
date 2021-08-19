@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from 'lit-translate';
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -21,7 +21,7 @@ import 'weightless/icon';
 import 'weightless/button';
 import 'weightless/label';
 
-import './lablup-loading-spinner';
+import './backend-ai-list-status';
 import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
 import '@material/mwc-icon';
@@ -49,12 +49,13 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: String}) message = '';
   @property({type: Array}) logs = [];
   @property({type: Array}) _selected_items = [];
-  @property({type: Object}) spinner = Object();
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Object}) _grid = Object();
   @property({type: Object}) logView = Object();
   @property({type: Number}) _pageSize = 25;
   @property({type: Number}) _currentPage = 1;
-  @property({type: Number}) _totalLogCount = 0;
+  @property({type: Number}) _totalLogCount = 0;  
 
   constructor() {
     super();
@@ -114,7 +115,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this._updatePageItemSize();
     this._grid = this.shadowRoot.querySelector('#list-grid');
     if (!globalThis.backendaiclient || !globalThis.backendaiclient.is_admin) {
@@ -137,13 +138,18 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    * Refresh log data.
    */
   _refreshLogData() {
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     this._updatePageItemSize();
     this.logs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '{}');
     this._totalLogCount = this.logs.length > 0 ? this.logs.length : 1;
     this._updateItemsFromPage(1);
     this._grid.clearCache();
-    this.spinner.hide();
+    if (this.logs.length == 0) {
+      this.list_condition = 'no-data';
+    } else {
+      this.list_status.hide();
+    }  
   }
 
   /**
@@ -269,17 +275,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
             </template>
           </vaadin-grid-column>
         </vaadin-grid>
-        ${this._totalLogCount == 0 ? html`
-          <div class="vertical layout center flex blank-box-large">
-            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-          </div>`
-        : html`
-          ${this._totalLogCount == 1 && this.logs.length == 0 ? html`
-            <div class="vertical layout center flex blank-box-large">
-              <span class="no-data-message">${_t('credential.NoCredentialToDisplay')}</span>
-            </div>
-          ` : html``}
-        `}
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('logs.NoLogToDisplay')}"></backend-ai-list-status>
       </div>
       <div class="horizontal center-justified layout flex" style="padding: 10px;border-top:1px solid #ccc;">
         <mwc-icon-button

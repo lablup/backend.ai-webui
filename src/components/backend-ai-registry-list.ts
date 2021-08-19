@@ -7,7 +7,7 @@ import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} f
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
-import './lablup-loading-spinner';
+import './backend-ai-list-status';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '../plastics/lablup-shields/lablup-shields';
@@ -41,8 +41,8 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 class BackendAIRegistryList extends BackendAIPage {
   public registryList: any;
   @property({type: Object}) indicator = Object();
-  @property({type: Object}) spinner;
-  @property({type: Number}) _totalRegistryCount = 0;
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Number}) selectedIndex = 0;
   @property({type: String}) boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
   @property({type: String}) boundControlsRenderer = this._controlsRenderer.bind(this);
@@ -142,7 +142,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     this.indicator = globalThis.lablupIndicator;
   }
@@ -168,15 +168,18 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _refreshRegistryList() {
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
       return globalThis.backendaiclient.registry.list();
     }).then(({result}) => {
       this.registryList = this._parseRegistryList(result);
-      this._totalRegistryCount = this.registryList.length > 0 ? this.registryList.length : 1;
-      this.spinner.hide();
-      this.hostnames = this.registryList.map( (value) => {
+      if (this.registryList.length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }      this.hostnames = this.registryList.map( (value) => {
         return value.hostname;
       });
       this.requestUpdate();
@@ -574,17 +577,7 @@ class BackendAIRegistryList extends BackendAIPage {
           <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this.boundControlsRenderer}>
           </vaadin-grid-column>
         </vaadin-grid>
-        ${this._totalRegistryCount == 0 ? html`
-          <div class="vertical layout center flex blank-box-large">
-            <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-          </div>`
-        : html`
-          ${this._totalRegistryCount == 1 && this.registryList.length == 0 ? html`
-            <div class="vertical layout center flex blank-box-large">
-              <span class="no-data-message">${_t('registry.NoRegistryToDisplay')}</span>
-            </div>
-          ` : html``}
-        `}
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('registry.NoRegistryToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="add-registry-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('registry.AddRegistry')}</span>

@@ -8,9 +8,7 @@ import {CSSResultArray, CSSResultOrNative, customElement, html, LitElement, prop
 import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
-  IronFlexAlignment,
-  IronFlexFactors,
-  IronPositioning
+  IronFlexAlignment
 } from '../plastics/layout/iron-flex-layout-classes';
 
 import './lablup-loading-dots';
@@ -46,17 +44,15 @@ export default class BackendAIListStatus extends LitElement {
       BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
-      IronFlexFactors,
-      IronPositioning,
       ];
   }
 
   render() {
     // language=HTML
     return html`
-      <div class="vertical id="status" layout center flex blank-box-large">
+      <div class="vertical layout center flex blank-box-large" id="status">
         ${this.status_condition == "loading" ? html`
-          <lablup-loading-dots id="loading-dots"></lablup-loading_dots>
+          <lablup-loading-dots id="loading-dots"></lablup-loading-dots>
         `: html`
           ${this.status_condition == "no-data" ? html`
             <span class="list-message">${this.message}</span>
@@ -71,7 +67,6 @@ export default class BackendAIListStatus extends LitElement {
   } 
 
   firstUpdated() {
-    this.dots = this.shadowRoot.querySelector('#loading-dots');
     this.list_status = this.shadowRoot.querySelector('#status');
     this.active = true;
   }
@@ -89,9 +84,8 @@ export default class BackendAIListStatus extends LitElement {
    * */
   async show() {
     this.active = true;
-    this.dots.show();
     await this.updateComplete;
-    this.list_status.style.display = 'block';
+    this.list_status.style.display = 'flex';
     console.log(this.status_condition);
   }
 
@@ -100,7 +94,6 @@ export default class BackendAIListStatus extends LitElement {
    * */
   async hide() {
     this.active = true;
-    this.dots.hide();
     await this.updateComplete;
     this.list_status.style.display = 'none';
     this.active = false;
