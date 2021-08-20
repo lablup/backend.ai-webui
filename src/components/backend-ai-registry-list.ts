@@ -220,7 +220,7 @@ class BackendAIRegistryList extends BackendAIPage {
     const username = (<HTMLInputElement> this.shadowRoot.querySelector('#add-registry-username')).value;
     const password = (<HTMLInputElement> this.shadowRoot.querySelector('#add-registry-password')).value;
     const registerType = this.shadowRoot.querySelector('#select-registry-type').value;
-    const projectName = this.shadowRoot.querySelector('#add-project-name').value;
+    const projectName = this.shadowRoot.querySelector('#add-project-name').value.replace(/\s/g, '');
 
     if (!this.shadowRoot.querySelector('#add-registry-hostname').valid) {
       const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
@@ -330,7 +330,7 @@ class BackendAIRegistryList extends BackendAIPage {
     input.type = registerType;
     if (['harbor', 'harbor2'].includes(registerType)) {
       if (projectName && projectName !== '' && projectName !== this.registryList[this.selectedIndex].project) {
-        input.project = projectName;
+        input.project = projectName.replace(/\s/g, '');
       } else {
         return;
       }
