@@ -3838,6 +3838,7 @@ class utils {
     });
     return result;
   }
+
 }
 
 // below will become "static const" properties in ES7

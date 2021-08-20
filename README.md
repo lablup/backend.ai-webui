@@ -129,6 +129,11 @@ maxCUDASharesPerContainer = 8  # Maximum CUDA shares per container.
 maxShmPerContainer = 1 # Maximum shared memory per container.
 maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
 
+[environments]
+#allowlist = "" # Comma-separated image name. Image name should contain the repository (registry path and image name) part of the full image URL, excluding the protocol and tag
+# e.g. cr.backend.ai/stable/python
+# You should pick default_environment in general section too.
+
 [server]
 webServerURL = "[Web server website URL. App will use the site instead of local app.]"
                    # Uses websocket proxy in the app
@@ -428,6 +433,7 @@ $ make linux
 ### Packaging as zip files
 
 Note: Packaging usually performs right after app building. Therefore you do not need this option in normal condition.
+
 Note: Packaging macOS disk image requires electron-installer-dmg to make macOS disk image. It requires Python 2+ to build binary for package.
 
 ### Manual run to test Electron
@@ -441,6 +447,12 @@ $ npm run electron:d  # OR, ./node_modules/electron/cli.js .
 
 ### Localization
 Locale resources are JSON files located in `resources/i18n`.
+
+Currently WebUI supports these languages:
+ * English
+ * Korean
+ * French
+ * Russian
 
 #### Extracting i18n resources
 
