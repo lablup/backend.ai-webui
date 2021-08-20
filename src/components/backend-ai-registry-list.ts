@@ -440,17 +440,17 @@ class BackendAIRegistryList extends BackendAIPage {
 
   _validateUrl() {
     const url = this.editMode
-      ? this.shadowRoot.querySelector("#modify-registry-url")
-      : this.shadowRoot.querySelector("#add-registry-url");
+      ? this.shadowRoot.querySelector('#modify-registry-url')
+      : this.shadowRoot.querySelector('#add-registry-url');
     const validationMessage = this.editMode
-      ? this.shadowRoot.querySelector("#modify-registry-url-validation")
-      : this.shadowRoot.querySelector("#registry-url-validation");
+      ? this.shadowRoot.querySelector('#modify-registry-url-validation')
+      : this.shadowRoot.querySelector('#registry-url-validation');
     validationMessage.style.display = url.valid ? 'none' : 'block';
   }
 
   _validateHostname() {
-    const hostname = this.shadowRoot.querySelector("#add-registry-hostname").value;
-    const validationMessage = this.shadowRoot.querySelector("#registry-hostname-validation");
+    const hostname = this.shadowRoot.querySelector('#add-registry-hostname').value;
+    const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
     if (hostname && hostname !== '') {
       validationMessage.style.display = 'none';
     } else {
