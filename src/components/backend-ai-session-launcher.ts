@@ -3318,18 +3318,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-              unelevated
-              id="env-config-reset-button"
-              style="width:auto;margin-right:10px;"
-              @click="${() => this._closeAndResetEnvInput()}">
-            <span>${_t('button.DismissAndProceed')}</span>
+              id="env-config-remain-button"
+              label="${_t('button.Cancel')}"
+              @click="${() => this.closeDialog('env-config-confirmation')}"
+              style="width:auto;margin-right:10px;">
           </mwc-button>
           <mwc-button
-              outlined
-              id="env-config-remain-button"
-              style="width:auto;"
-              @click="${() => this.closeDialog('env-config-confirmation')}">
-            <span>${_t('button.Cancel')}</span>
+              unelevated
+              id="env-config-reset-button"
+              label="${_t('button.DismissAndProceed')}"
+              @click="${() => this._closeAndResetEnvInput()}"
+              style="width:auto;">
           </mwc-button>
         </div>
       </backend-ai-dialog>

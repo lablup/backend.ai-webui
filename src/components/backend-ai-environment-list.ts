@@ -929,9 +929,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             </div>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
+              fullwidth
               icon="check"
               label="${_t('button.SaveChanges')}"
               @click="${() => this.modifyImage()}"></mwc-button>

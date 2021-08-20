@@ -404,13 +404,13 @@ export default class BackendAIData extends BackendAIPage {
             ${_t('data.DialogFolderStartingWithDotAutomount')}
           </div>
         </div>
-        <div slot="footer" class="horizontal flex">
+        <div slot="footer" class="horizontal center-justified flex">
           <mwc-button
               unelevated
+              fullwidth
               id="add-button"
               icon="rowing"
               label="${_t('data.Create')}"
-              style="width:100%;"
               @click="${() => this._addFolder()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -479,13 +479,13 @@ export default class BackendAIData extends BackendAIPage {
             ${_t('data.DialogFolderStartingWithDotAutomount')}
           </div>
         </div>
-        <div slot="footer" class="horizontal flex">
+        <div slot="footer" class="horizontal center-justified flex">
           <mwc-button
               unelevated
+              fullwidth
               id="clone-button"
               icon="file_copy"
               label="${_t('data.Create')}"
-              style="width:100%;"
               @click="${() => this._cloneFolder()}"></mwc-button>
         </div>
       </backend-ai-dialog>

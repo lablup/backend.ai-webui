@@ -511,9 +511,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             placeholder="${_t('maxLength.512chars')}"
           ></mwc-textarea>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
+              fullwidth
               id="create-user-button"
               class="create-button"
               icon="add"
@@ -547,9 +548,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].description}
           ></mwc-textarea>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
             unelevated
+            fullwidth
             icon="save"
             label="${_t('button.Save')}"
             @click=${this._modifyScalingGroup}
@@ -570,9 +572,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
             outlined
+            fullwidth
             icon="delete"
             label="${_t('button.Delete')}"
-            style="width: 100%; box-sizing: border-box;"
+            style="box-sizing: border-box;"
             @click="${this._deleteScalingGroup}">
             </mwc-button>
        </div>

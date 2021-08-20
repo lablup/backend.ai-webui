@@ -798,9 +798,10 @@ export default class BackendAICredentialList extends BackendAIPage {
                 value="${this.keypairInfo.rate_limit}"></mwc-textfield>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
+              fullwidth
               id="keypair-modify-save"
               icon="check"
               label="${_t('button.SaveChanges')}"
