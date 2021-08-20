@@ -334,6 +334,8 @@ class BackendAIRegistryList extends BackendAIPage {
       } else {
         return;
       }
+    } else {
+      input.project = '';
     }
 
     if (Object.entries(input).length === 0) {
