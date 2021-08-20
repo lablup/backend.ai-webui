@@ -1603,13 +1603,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           ` : html``}
           <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
           ${this.is_admin ? html`
-            <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
-            </vaadin-grid-sort-column>
+            <vaadin-grid-filter-column path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}" 
+            header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable .renderer="${this._boundUserInfoRenderer}">
+            </vaadin-grid-filter-column>
           ` : html``}
-          <vaadin-grid-column width="150px" resizable header="${_t('session.SessionInfo')}" .renderer="${this._boundSessionInfoRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-column width="90px" flex-grow="0" header="${_t('session.Status')}" resizable .renderer="${this._boundStatusRenderer}">
-          </vaadin-grid-column>
+          <vaadin-grid-filter-column path="${this.sessionNameField}" header="${_t('session.SessionInfo')}" resizable .renderer="${this._boundSessionInfoRenderer}">
+          </vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="status" header="${_t('session.Status')}" resizable .renderer="${this._boundStatusRenderer}">
+          </vaadin-grid-filter-column>
           <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
           <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('session.Configuration')}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
           <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}" .renderer="${this._boundUsageRenderer}">
