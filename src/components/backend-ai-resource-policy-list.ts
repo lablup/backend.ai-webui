@@ -429,7 +429,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div id="controls" class="layout horizontal flex center"
              .policy-name="${rowData.item.name}">
         ${this.is_admin ? html`
-              <wl-button fab flat inverted class="fg green controls-running" icon="settings"
+              <wl-button fab flat inverted class="fg blue controls-running" icon="settings"
                                  @click="${(e) => this._launchResourcePolicyDialog(e)}"><wl-icon>settings</wl-icon></wl-button>
                                  ` : html``}
         ${this.is_admin ? html`

@@ -746,7 +746,10 @@
     "RegistryUpdateFailed": "Registry update failed.",
     "RescanImages": "Rescanning Images...",
     "RescanFailed": "Rescan Failed.",
-    "PleaseSelectOption": "Please select one option."
+    "PleaseSelectOption": "Please select one option.",
+    "ModifyRegistryConfigurations": "Modify registry configurations",
+    "RegistrySuccessfullyModified": "Registry successfully modified.",
+    "NoChangeMade": "No changes were made."
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",
