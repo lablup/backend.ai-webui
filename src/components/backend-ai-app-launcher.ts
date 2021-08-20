@@ -907,7 +907,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     div.setAttribute('class', 'vertical layout flex');
     let lang = globalThis.backendaioptions.get('current_language');
     // if current_language is OS default, then link to English docs
-    if (!['en', 'ko', 'ru', 'fr'].includes(lang)) {
+    if (!['en', 'ko', 'ru', 'fr', 'mn', 'id'].includes(lang)) {
       lang = 'en';
     }
     div.innerHTML = `

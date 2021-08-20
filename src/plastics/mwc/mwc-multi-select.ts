@@ -17,7 +17,7 @@
 
 import {css, customElement} from 'lit-element';
 import {SelectBase} from '@material/mwc-select/mwc-select-base';
-import {style} from '@material/mwc-select/mwc-select-css.js';
+import {styles} from '@material/mwc-select/mwc-select.css';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -28,7 +28,7 @@ declare global {
 @customElement('mwc-multi-select')
 export class Select extends SelectBase {
   static get styles() {
-    return [style,
+    return [styles,
       css`
         .mdc-select__anchor {
           min-width: var(--mdc-select-min-width, 200px);

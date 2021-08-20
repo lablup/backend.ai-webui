@@ -7,11 +7,11 @@ import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} f
 import {render} from 'lit-html';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-tree-column';
 import '@vaadin/vaadin-grid/vaadin-grid-tree-toggle';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 
 import {default as AnsiUp} from '../lib/ansiup';
@@ -1600,31 +1600,31 @@ export default class BackendAiSessionList extends BackendAIPage {
           ${this._isRunning ? html`
             <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
             </vaadin-grid-column>
-          ` : html``}
-          <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-          ${this.is_admin ? html`
-            <vaadin-grid-filter-column path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}" 
-            header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable .renderer="${this._boundUserInfoRenderer}">
-            </vaadin-grid-filter-column>
-          ` : html``}
-          <vaadin-grid-filter-column path="${this.sessionNameField}" header="${_t('session.SessionInfo')}" resizable .renderer="${this._boundSessionInfoRenderer}">
+        ` : html``}
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+        ${this.is_admin ? html`
+          <vaadin-grid-filter-column path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}" 
+          header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-filter-column>
-          <vaadin-grid-filter-column path="status" header="${_t('session.Status')}" resizable .renderer="${this._boundStatusRenderer}">
-          </vaadin-grid-filter-column>
-          <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('session.Configuration')}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}" .renderer="${this._boundUsageRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}" path="created_at">
-            <template>
-              <div class="layout vertical">
-                <span>[[item.created_at_hr]]</span>
-                <span>([[item.elapsed]])</span>
-              </div>
-            </template>
-          </vaadin-grid-sort-column>
-          ${this.is_superadmin ? html`
-            <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}">
+        ` : html``}
+        <vaadin-grid-filter-column path="${this.sessionNameField}" header="${_t('session.SessionInfo')}" resizable .renderer="${this._boundSessionInfoRenderer}">
+        </vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="status" header="${_t('session.Status')}" resizable .renderer="${this._boundStatusRenderer}">
+        </vaadin-grid-filter-column>
+        <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('session.Configuration')}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}" .renderer="${this._boundUsageRenderer}">
+        </vaadin-grid-column>
+        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}" path="created_at">
+          <template>
+            <div class="layout vertical">
+              <span>[[item.created_at_hr]]</span>
+              <span>([[item.elapsed]])</span>
+            </div>
+          </template>
+        </vaadin-grid-sort-column>
+        ${this.is_superadmin ? html`
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}">
               <template>
                 <div class="layout vertical">
                   <span>[[item.agent]]</span>

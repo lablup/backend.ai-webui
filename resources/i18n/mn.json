@@ -203,7 +203,14 @@
       "EnvironmentVariableConfigurationDone": "Орчны хувьсагчийг амжилттай тохируулав.",
       "EnvConfigWillDisappear": "Хадгалагдаагүй орчны аливаа хувьсагч ба утга алга болно.",
       "SharedMemoryAbbr": "SHMEM",
-      "GPUSlot": "Slot"
+      "GPUSlot": "Slot",
+      "ConfirmAndLaunch": "__NOT_TRANSLATED__",
+      "FolderAliasOverlapping": "__NOT_TRANSLATED__",
+      "NoEnvConfigured": "__NOT_TRANSLATED__",
+      "FolderAlias": "__NOT_TRANSLATED__",
+      "NoAvailableFolderToMount": "__NOT_TRANSLATED__",
+      "MountedFolders": "__NOT_TRANSLATED__",
+      "EnvironmentVariablePaneTitle": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Сесс бэлтгэж байна ...",
@@ -588,7 +595,8 @@
     "AppInfoDeleted": "Аппын мэдээллийг амжилттай устгалаа.",
     "SuccessfullyModified": "Амжилттай өөрчилсөн",
     "ProblemOccurred": "Асуудал гарсан",
-    "PasswordsDoNotMatch": "Нууц үг ба баталгаажуулалт таарахгүй байна."
+    "PasswordsDoNotMatch": "Нууц үг ба баталгаажуулалт таарахгүй байна.",
+    "NoChangeMade": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",
@@ -838,7 +846,9 @@
     "Language": "Хэл",
     "OSDefault": "OS Default",
     "Russian": "Орос",
-    "French": "Франц"
+    "French": "Франц",
+    "Mongolian": "__NOT_TRANSLATED__",
+    "Indonesian": "__NOT_TRANSLATED__"
   },
   "settings": {
     "General": "Ерөнхий",
