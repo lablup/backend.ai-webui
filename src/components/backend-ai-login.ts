@@ -91,6 +91,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Number}) maxCUDASharesPerContainer = 16;
   @property({type: Boolean}) maxShmPerContainer = 2;
   @property({type: Boolean}) maxFileUploadSize = -1;
+  @property({type: Array}) allow_image_list;
   @property({type: Array}) endpoints;
   @property({type: Object}) logoutTimerBeforeOneMin;
   @property({type: Object}) logoutTimer;
@@ -500,6 +501,11 @@ export default class BackendAILogin extends BackendAIPage {
       this.default_import_environment = 'index.docker.io/lablup/python:3.8-ubuntu18.04';
     } else {
       this.default_import_environment = config.general.defaultImportEnvironment;
+    }
+    if (typeof config.environments === 'undefined' || typeof config.environments.allowlist === 'undefined' || config.environments.allowlist === '') {
+      this.allow_image_list = [];
+    } else {
+      this.allow_image_list = config.environments.allowlist.split(',');
     }
     const connection_mode: string | null = localStorage.getItem('backendaiwebui.connection_mode');
     if (globalThis.isElectron && connection_mode !== null && connection_mode != '' && connection_mode != '""') {
@@ -988,7 +994,8 @@ export default class BackendAILogin extends BackendAIPage {
       } else {
         globalThis.backendaiclient.groups = ['default'];
       }
-      globalThis.backendaiclient.current_group = globalThis.backendaiclient.groups[0];
+      const currentGroup = globalThis.backendaiutils._readRecentProjectGroup();
+      globalThis.backendaiclient.current_group = currentGroup ? currentGroup : globalThis.backendaiclient.groups[0];
       globalThis.backendaiclient.current_group_id = () => {
         return globalThis.backendaiclient.groupIds[globalThis.backendaiclient.current_group];
       };
@@ -1006,6 +1013,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.maxCUDASharesPerContainer = this.maxCUDASharesPerContainer;
       globalThis.backendaiclient._config.maxShmPerContainer = this.maxShmPerContainer;
       globalThis.backendaiclient._config.maxFileUploadSize = this.maxFileUploadSize;
+      globalThis.backendaiclient._config.allow_image_list = this.allow_image_list;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
@@ -1186,7 +1194,7 @@ export default class BackendAILogin extends BackendAIPage {
                       unelevated
                       id="login-button"
                       icon="check"
-                      style="width:100%;"
+                      fullwidth
                       label="${_t('login.Login')}"
                       @click="${() => this._login()}"></mwc-button>
                 ${this.signup_support && this.allowAnonymousChangePassword ? html`
@@ -1229,9 +1237,10 @@ export default class BackendAILogin extends BackendAIPage {
           <mwc-textfield type="password" name="signout_password" id="id_signout_password" maxLength="64"
               label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               outlined
+              fullwidth
               id="signout-button"
               icon="check"
               label="${_t('login.LeaveService')}"
@@ -1249,9 +1258,10 @@ export default class BackendAILogin extends BackendAIPage {
               validationMessage="${_t('signup.InvalidEmail')}"
               pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               outlined
+              fullwidth
               icon="check"
               label="${_t('login.EmailSendButton')}"
               @click="${() => this._sendChangePasswordEmail()}"></mwc-button>
@@ -1265,9 +1275,10 @@ export default class BackendAILogin extends BackendAIPage {
           <div slot="content" style="text-align:center;padding-top:15px;">
           ${this.blockMessage}
           </div>
-          <div slot="footer" class="horizontal end-justified flex layout">
+          <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               outlined
+              fullwidth
               label="${_t('login.CancelLogin')}"
               @click="${(e) => this._cancelLogin(e)}"></mwc-button>
           </div>

@@ -854,30 +854,36 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       if (kernelName in this.icons) {
         icon = this.icons[kernelName];
       }
-      if (interCategory !== this.supportImages[item].group) {
+      if ( globalThis.backendaiclient._config.allow_image_list !== undefined &&
+        globalThis.backendaiclient._config.allow_image_list.length > 0 &&
+        !globalThis.backendaiclient._config.allow_image_list.includes(item)) {
+        // Do nothing
+      } else {
+        if (interCategory !== this.supportImages[item].group) {
+          this.languages.push({
+            name: '',
+            registry: '',
+            prefix: '',
+            kernelname: '',
+            alias: '',
+            icon: '',
+            basename: this.supportImages[item].group,
+            tags: [],
+            clickable: false
+          });
+          interCategory = this.supportImages[item].group;
+        }
         this.languages.push({
-          name: '',
-          registry: '',
-          prefix: '',
-          kernelname: '',
-          alias: '',
-          icon: '',
-          basename: this.supportImages[item].group,
-          tags: [],
-          clickable: false
+          name: item,
+          registry: registry,
+          prefix: prefix,
+          kernelname: kernelName,
+          alias: alias,
+          basename: basename,
+          tags: tags,
+          icon: icon
         });
-        interCategory = this.supportImages[item].group;
       }
-      this.languages.push({
-        name: item,
-        registry: registry,
-        prefix: prefix,
-        kernelname: kernelName,
-        alias: alias,
-        basename: basename,
-        tags: tags,
-        icon: icon
-      });
     });
     // this._initAliases();
     this.image_updating = false;

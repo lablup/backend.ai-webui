@@ -627,8 +627,8 @@ class BackendAIRegistryList extends BackendAIPage {
               <wl-label class="helper-text" id="project-name-validation" style="display:block;">${_t('registry.ForHarborOnly')}</wl-label>
          </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button unelevated icon="add" label="${_t('button.Add')}"
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button unelevated fullwidth icon="add" label="${_t('button.Add')}"
             @click=${this._addRegistry}></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -642,9 +642,9 @@ class BackendAIRegistryList extends BackendAIPage {
             label="${_t('registry.TypeRegistryNameToDelete')}"
           ></wl-textfield>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button unelevated icon="delete" label="${_t('button.Delete')}"
-              @click=${this._deleteRegistry} style="width:100%;"></mwc-button>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button unelevated fullwidth icon="delete" label="${_t('button.Delete')}"
+              @click=${this._deleteRegistry}></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

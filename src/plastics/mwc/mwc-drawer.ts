@@ -19,7 +19,7 @@
 import {css, customElement} from 'lit-element';
 
 import {DrawerBase} from '@material/mwc-drawer/mwc-drawer-base';
-import {style} from '@material/mwc-drawer/mwc-drawer-css';
+import {styles} from '@material/mwc-drawer/mwc-drawer.css';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -30,7 +30,7 @@ declare global {
 @customElement('mwc-drawer')
 export class Drawer extends DrawerBase {
   static get styles() {
-    return [style,
+    return [styles,
       css`
     .mdc-drawer {
       background-color: var(--mdc-drawer-background-color, '#ffffff');

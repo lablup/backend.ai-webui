@@ -32,18 +32,23 @@ import toml from 'markty-toml';
 import 'weightless/popover';
 import 'weightless/popover-card';
 
-import './backend-ai-settings-store';
-import './backend-ai-splash';
-import './backend-ai-help-button';
-import './lablup-notification';
-import './backend-ai-indicator-pool';
-import './lablup-terms-of-service';
-import './backend-ai-dialog';
-import './backend-ai-sidepanel-task';
-import './backend-ai-sidepanel-notification';
 import './backend-ai-app-launcher';
+import './backend-ai-common-utils';
+import './backend-ai-dialog';
+import './backend-ai-help-button';
+import './backend-ai-indicator-pool';
+import './backend-ai-login';
+import './backend-ai-offline-indicator';
 import './backend-ai-resource-broker';
+import BackendAiSettingsStore from './backend-ai-settings-store';
+import BackendAiCommonUtils from './backend-ai-common-utils';
+import './backend-ai-sidepanel-notification';
+import './backend-ai-sidepanel-task';
+import BackendAiTasker from './backend-ai-tasker';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
+import './backend-ai-splash';
+import './lablup-notification';
+import './lablup-terms-of-service';
 
 import '../lib/backend.ai-client-es6';
 import {default as TabCount} from '../lib/TabCounter';
@@ -56,17 +61,12 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/mwc/mwc-multi-select';
 
-import './backend-ai-offline-indicator';
-import './backend-ai-login';
-
-import BackendAiSettingsStore from './backend-ai-settings-store';
-import BackendAiTasker from './backend-ai-tasker';
-
 registerTranslateConfig({
   loader: (lang) => fetch(`/resources/i18n/${lang}.json`).then((res) => res.json())
 });
 globalThis.backendaioptions = new BackendAiSettingsStore;
 globalThis.tasker = new BackendAiTasker;
+globalThis.backendaiutils = new BackendAiCommonUtils;
 
 /**
  Backend.AI Web UI
@@ -126,7 +126,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Boolean}) mini_ui = false;
   @property({type: Boolean}) auto_logout = false;
   @property({type: String}) lang = 'default';
-  @property({type: Array}) supportLanguageCodes = ['en', 'ko', 'ru', 'fr'];
+  @property({type: Array}) supportLanguageCodes = ['en', 'ko', 'ru', 'fr', 'mn', 'id'];
   @property({type: Array}) blockedMenuitem;
   @property({type: Number}) minibarWidth = 88;
   @property({type: Number}) sidebarWidth = 250;
@@ -393,7 +393,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.is_superadmin = false;
     }
     this._refreshUserInfoPanel();
-    this._writeRecentProjectGroup(this.current_group);
+    globalThis.backendaiutils._writeRecentProjectGroup(this.current_group);
     document.body.style.backgroundImage = 'none';
     this.appBody.style.visibility = 'visible';
 
@@ -579,7 +579,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.user_id = globalThis.backendaiclient.email;
     this.full_name = globalThis.backendaiclient.full_name;
     this.domain = globalThis.backendaiclient._config.domainName;
-    this.current_group = this._readRecentProjectGroup();
+    this.current_group = globalThis.backendaiutils._readRecentProjectGroup();
     this._showRole();
     globalThis.backendaiclient.current_group = this.current_group;
     this.groups = globalThis.backendaiclient.groups;
@@ -958,7 +958,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    */
   async logout(performClose = false) {
     console.log('also close the app:', performClose);
-    this._deleteRecentProjectGroupInfo();
+    globalThis.backendaiutils._deleteRecentProjectGroupInfo();
     if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
       this.notification.text = _text('webui.CleanUpNow');
       this.notification.show();
@@ -1024,7 +1024,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   changeGroup(e) {
     globalThis.backendaiclient.current_group = e.target.value;
     this.current_group = globalThis.backendaiclient.current_group;
-    this._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
+    globalThis.backendaiutils._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
     const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {'detail': globalThis.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
@@ -1115,43 +1115,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       const event = new CustomEvent('backend-ai-usersettings-logs', {});
       document.dispatchEvent(event);
     }
-  }
-
-  /**
-   * Read recent project group according to endpoint id.
-   *
-   * @return {string} Current selected group
-   */
-  _readRecentProjectGroup() {
-    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
-    const value: string | null = globalThis.backendaioptions.get('projectGroup.' + endpointId);
-    if (value) { // Check if saved group has gone between logins / sessions
-      if (globalThis.backendaiclient.groups.length > 0 && globalThis.backendaiclient.groups.includes(value)) {
-        return value; // value is included. So it is ok.
-      } else {
-        this._deleteRecentProjectGroupInfo();
-        return globalThis.backendaiclient.current_group;
-      }
-    }
-    return globalThis.backendaiclient.current_group;
-  }
-
-  /**
-   * Set the project group according to current group.
-   *
-   * @param {string} value
-   */
-  _writeRecentProjectGroup(value: string) {
-    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
-    globalThis.backendaioptions.set('projectGroup.' + endpointId, value ? value : globalThis.backendaiclient.current_group);
-  }
-
-  /**
-   * Delete the recent project group information.
-   */
-  _deleteRecentProjectGroupInfo() {
-    const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
-    globalThis.backendaioptions.delete('projectGroup.' + endpointId);
   }
 
   /**
@@ -1397,7 +1360,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">21.03.8.210722</small>
+                <small class="sidebar-footer" style="font-size:9px;">21.03.10.210817</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1421,7 +1384,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">21.03.8.210722</small>
+              <small class="sidebar-footer" style="font-size:9px;">21.03.10.210817</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>

@@ -910,7 +910,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     div.setAttribute('class', 'vertical layout flex');
     let lang = globalThis.backendaioptions.get('current_language');
     // if current_language is OS default, then link to English docs
-    if (!['en', 'ko', 'ru', 'fr'].includes(lang)) {
+    if (!['en', 'ko', 'ru', 'fr', 'mn', 'id'].includes(lang)) {
       lang = 'en';
     }
     div.innerHTML = `
@@ -1000,10 +1000,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a>
             </div>
             <div><span>Port:</span> ${this.sshPort}</div>
-            <a id="sshkey-download-link" style="margin-top:15px;" href="">
-              <mwc-button class="fg apps green">${_t('DownloadSSHKey')}</mwc-button>
-            </a>
           </section>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <a id="sshkey-download-link" style="margin-top:15px;width:100%;" href="">
+            <mwc-button unelevated fullwidth>${_t('DownloadSSHKey')}</mwc-button>
+          </a>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="tensorboard-dialog" fixed>
@@ -1013,7 +1015,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <mwc-textfield id="tensorboard-path" value="${_t('session.DefaultTensorboardPath')}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified center flex layout">
-          <mwc-button unelevated
+          <mwc-button unelevated fullwidth
               icon="rowing" class="bg green" @click="${(e) => this._addTensorboardPath(e)}">
             ${_t('session.UseThisPath')}
           </mwc-button>
@@ -1026,7 +1028,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <mwc-textfield value=""></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button style="width:100%;" class="fg apps green" @click="${(e) => this._addTensorboardPath(e)}">
+          <mwc-button unelevated fullwidth class="fg apps green" @click="${(e) => this._addTensorboardPath(e)}">
             ${_t('session.UseThisArguments')}
           </mwc-button>
         </div>
@@ -1065,7 +1067,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             id="app-launch-confirmation-button"
             icon="rowing"
             label="${_t('session.applauncher.ConfirmAndRun')}"
-            style="width:100%;"
+            fullwidth
             @click="${() => this._runApp(this.appController)}">
           </mwc-button>
         </div>

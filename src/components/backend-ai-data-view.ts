@@ -388,7 +388,7 @@ export default class BackendAIData extends BackendAIPage {
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
               </mwc-select>
-              <mwc-select class="fixed-position" id="add-folder-permission" label="${_t('data.Type')}" fixedMenuPosition>
+              <mwc-select class="fixed-position" id="add-folder-permission" label="${_t('data.Permission')}" fixedMenuPosition>
                 ${this.permissions.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
@@ -409,13 +409,13 @@ export default class BackendAIData extends BackendAIPage {
             ${_t('data.DialogFolderStartingWithDotAutomount')}
           </div>
         </div>
-        <div slot="footer" class="horizontal flex">
+        <div slot="footer" class="horizontal center-justified flex">
           <mwc-button
               unelevated
+              fullwidth
               id="add-button"
               icon="rowing"
               label="${_t('data.Create')}"
-              style="width:100%;"
               @click="${() => this._addFolder()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -463,7 +463,7 @@ export default class BackendAIData extends BackendAIPage {
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
               </mwc-select>
-              <mwc-select class="fixed-position" id="clone-folder-permission" label="${_t('data.Type')}" FixedMenuPosition>
+              <mwc-select class="fixed-position" id="clone-folder-permission" label="${_t('data.Permission')}" FixedMenuPosition>
                 ${this.permissions.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
@@ -484,13 +484,13 @@ export default class BackendAIData extends BackendAIPage {
             ${_t('data.DialogFolderStartingWithDotAutomount')}
           </div>
         </div>
-        <div slot="footer" class="horizontal flex">
+        <div slot="footer" class="horizontal center-justified flex">
           <mwc-button
               unelevated
+              fullwidth
               id="clone-button"
               icon="file_copy"
               label="${_t('data.Create')}"
-              style="width:100%;"
               @click="${() => this._cloneFolder()}"></mwc-button>
         </div>
       </backend-ai-dialog>

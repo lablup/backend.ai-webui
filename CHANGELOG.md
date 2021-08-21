@@ -1,5 +1,32 @@
 # Changelog
 
+## v21.03.9 (09/08/2021)
+
+#### Enhancements:
+
+- [**enhancement**][**major**][**library / SDK**][**UI / UX**][**enterprise**] General image allowlist [#1096](https://github.com/lablup/backend.ai-webui/issues/1096)
+- [**enhancement**][**minor**] Uneven margin at `Force Quit` button [#1091](https://github.com/lablup/backend.ai-webui/issues/1091)
+- [**enhancement**][**good first issue**][**easy**][**UI / UX**] Let's expand the range of Change User Info menu to show AK/SK of the logined account [#1058](https://github.com/lablup/backend.ai-webui/issues/1058)
+- [**enhancement**][**good first issue**][**minor**][**UI / UX**] Let's disable description icon in controls panel of Storages tab in Resources page  [#1055](https://github.com/lablup/backend.ai-webui/issues/1055)
+- [**enhancement**] Clean-up button layout [#1016](https://github.com/lablup/backend.ai-webui/issues/1016)
+
+#### Bug Fixes:
+
+- [**bug**][**minor**] Inconsistent width of environment dropdown menu in the session launch dialog [#1084](https://github.com/lablup/backend.ai-webui/issues/1084)
+
+
+## v21.03.8 (26/07/2021)
+
+#### Enhancements:
+
+- [**UI / UX**][**enhancement**][**minor**] Increase default resource limit [#1083](https://github.com/lablup/backend.ai-webui/issues/1083)
+- [**UI / UX**][**library / SDK**][**cloud**][**major**][**localization**] Attach virtual folder with alias name [#1081](https://github.com/lablup/backend.ai-webui/issues/1081)
+
+#### Bug Fixes:
+
+- [**UI / UX**][**library / SDK**][**minor**][**blocker**][**urgency**] Decimal point fixing in resource slots [#1079](https://github.com/lablup/backend.ai-webui/issues/1079)
+
+
 ## v21.03.7 (19/07/2021)
 
 #### Enhancements:

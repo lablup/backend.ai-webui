@@ -129,7 +129,7 @@
       "Environments": "실행 환경",
       "Start": "시작",
       "FolderToMount": "마운트할 폴더",
-      "MountedFolders": "마운트한 폴더",
+      "MountedFolders": "마운트된 폴더",
       "ResourceAllocation": "자원 할당",
       "NoSuitablePreset": "해당되는 프리셋 없음",
       "Advanced": "고급 설정",
@@ -760,7 +760,7 @@
     "CreateResourceGroup": "자원 그룹 추가",
     "SelectDomain": "도메인 선택",
     "ModifyResourceGroup": "자원 그룹 수정",
-    "TypeResourceGroupNameToDelete": "_삭제 확인을 위해 자원 그룹 이름을 입력하세요.",
+    "TypeResourceGroupNameToDelete": "삭제 확인을 위해 자원 그룹 이름을 입력하세요.",
     "ResourceGroupName": "자원 그룹 이름",
     "Active": "활성",
     "SelectScheduler": "스케줄러 선택",
@@ -846,7 +846,9 @@
     "Language": "언어",
     "OSDefault": "운영체제 언어",
     "Russian": "러시아어",
-    "French": "프랑스어"
+    "French": "프랑스어",
+    "Mongolian": "몽골어",
+    "Indonesian": "인도네시아어"
   },
   "settings": {
     "General": "일반",

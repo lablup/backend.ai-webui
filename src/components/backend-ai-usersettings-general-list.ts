@@ -58,7 +58,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     {name: _t('language.English'), code: 'en'},
     {name: _t('language.Korean'), code: 'ko'},
     {name: _t('language.Russian'), code: 'ru'},
-    {name: _t('language.French'), code: 'fr'}
+    {name: _t('language.French'), code: 'fr'},
+    {name: _t('language.Mongolian'), code: 'mn'},
+    {name: _t('language.Indonesian'), code: 'id'}
   ];
   @property({type: Boolean}) beta_feature_panel = false;
   @property({type: Boolean}) shell_script_edit = false;
@@ -1032,7 +1034,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent closeWithConfirmation>
         <span slot="title">${_t('usersettings.Edit_ShellScriptTitle_1')} ${this.rcfile} ${_t('usersettings.Edit_ShellScriptTitle_2')}</span>
-        <div slot="content" class="vertical layout" style="height:calc(100vh - 300px);">
+        <div slot="content" class="vertical layout" style="height:calc(100vh - 261px);">
           <mwc-select id="select-rcfile-type"
                   label="${_t('usersettings.ConfigFilename')}"
                   required
@@ -1050,7 +1052,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <lablup-codemirror id="usersetting-editor" mode="shell"></lablup-codemirror>
           </div>
         </div>
-        <div slot="footer" class="end-justified layout flex">
+        <div slot="footer" class="end-justified layout flex horizontal">
           <mwc-button id="discard-code" label="${_t('button.Cancel')}" @click="${() => this._hideUserConfigScriptDialog()}"></mwc-button>
           <mwc-button id="delete-rcfile" label="${_t('button.Delete')}" @click="${() => this._deleteRcFile()}"></mwc-button>
           <mwc-button unelevated id="save-code" label="${_t('button.Save')}" @click="${() => this._saveUserConfigScript()}"></mwc-button>
@@ -1123,7 +1125,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <div style="color:crimson">${_t('usersettings.SSHKeypairGenerationWarning')}</div>
           </div>
         </div>
-        <div slot="footer">
+        <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
              unelevated
              label="${_t('button.Close')}"
@@ -1132,7 +1134,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="clear-ssh-keypair-dialog" fixed persistent>
         <span slot="title">${_t('usersettings.ClearSSHKeypairInput')}</span>
-        <div slot="footer">
+        <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               outlined
               label="${_t('button.No')}"

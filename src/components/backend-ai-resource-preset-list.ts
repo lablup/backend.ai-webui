@@ -267,9 +267,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
             </fieldset>
           </form>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout distancing">
           <mwc-button
               unelevated
+              fullwidth
               icon="check"
               label="${_t('button.SaveChanges')}"
               @click="${() => this._modifyResourceTemplate()}">
@@ -310,9 +311,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 validationMessage="${_t('resourcePreset.MinimumShmemUnit')}"></mwc-textfield>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout distancing">
           <mwc-button
               unelevated
+              fullwidth
               id="create-policy-button"
               icon="add"
               label="${_t('button.Add')}"

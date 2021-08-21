@@ -18,6 +18,7 @@ import '@material/mwc-select';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
+import '@material/mwc-button/mwc-button';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column-group';
@@ -296,7 +297,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         mwc-button {
-          margin: auto 10px;
           --mdc-typography-button-font-size: 12px;
         }
 
@@ -308,10 +308,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         wl-button.goto:last-of-type {
           font-weight: bold;
-        }
-
-        mwc-button.fullwidth {
-          width: 100%;
         }
 
         mwc-button#readonly-btn {
@@ -509,7 +505,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._validateFolderName(true);
   }}"></mwc-textfield>
           <div class="vertical center layout" id="dropdown-area">
-            <mwc-select id="update-folder-permission" style="width:100%;" label="${_t('data.Type')}"
+            <mwc-select id="update-folder-permission" style="width:100%;" label="${_t('data.Permission')}"
               @opened="${() => this._controlHeightByPermissionCount(true)}"
               @closed="${() => this._controlHeightByPermissionCount()}">
               ${this.permissions.map((item, idx) => html`
@@ -528,7 +524,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           ` : html``}
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button class="fullwidth button" type="submit" icon="edit" id="update-button" outlined @click="${() => this._updateFolder()}">
+          <mwc-button unelevated fullwidth type="submit" icon="edit" id="update-button" @click="${() => this._updateFolder()}">
             ${_t('data.Update')}
           </mwc-button>
         </div>
@@ -542,7 +538,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                          maxLength="64" placeholder="${_text('maxLength.64chars')}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button unelevated class="fullwidth red button" type="submit" icon="close" id="delete-button" @click="${() => this._deleteFolderWithCheck()}">
+          <mwc-button unelevated fullwidth type="submit" icon="close" id="delete-button" @click="${() => this._deleteFolderWithCheck()}">
             ${_t('data.folders.Delete')}
           </mwc-button>
         </div>
@@ -556,7 +552,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                          maxLength="64" placeholder="${_text('maxLength.64chars')}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button unelevated class="fullwidth red button" type="submit" id="leave-button" @click="${() => this._leaveFolderWithCheck()}">
+          <mwc-button unelevated fullwidth type="submit" id="leave-button" @click="${() => this._leaveFolderWithCheck()}">
             ${_t('data.folders.Leave')}
           </mwc-button>
         </div>
@@ -760,14 +756,14 @@ export default class BackendAiStorageList extends BackendAIPage {
           <br/>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
-          <mwc-button icon="rowing" class="fullwidth blue button" type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}" outlined>
+          <mwc-button icon="rowing" unelevated fullwidth type="submit" id="mkdir-btn" @click="${(e) => this._mkdir(e)}">
             ${_t('button.Create')}
           </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="share-folder-dialog" fixed backdrop persistent>
         <span slot="title">${_t('data.explorer.ShareFolder')}</span>
-        <div slot="content" role="listbox" style="margin: 0;width:100%;" >
+        <div slot="content" role="listbox" style="margin: 0;width:100%;">
           <div style="margin: 10px 0px">${_t('data.explorer.People')}</div>
           <div class="vertical layout flex" id="textfields">
             <div class="horizontal layout">
@@ -803,11 +799,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-button
             icon="share"
             type="button"
-            class="fullwidth button"
             unelevated
+            fullwidth
             id="share-button"
-            @click=${(e) => this._shareFolder(e)}
-          >
+            @click=${(e) => this._shareFolder(e)}>
             ${_t('button.Share')}
           </mwc-button>
         </div>
@@ -836,8 +831,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-button
             icon="check"
             type="button"
-            class="fullwidth button"
             unelevated
+            fullwidth
             @click=${() => this._modifySharedFolderPermissions()}
           >
             ${_t('button.SaveChanges')}
@@ -853,7 +848,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div id="old-file-name" style="padding-left:15px;height:2.5em;"></div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button icon="edit" class="fullwidth blue button" type="button" id="rename-file-button" unelevated @click="${() => this._compareFileExtension()}">
+          <mwc-button icon="edit" fullwidth type="button" id="rename-file-button" unelevated @click="${() => this._compareFileExtension()}">
             ${_t('data.explorer.RenameAFile')}
           </mwc-button>
         </div>
@@ -873,10 +868,10 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.explorer.DownloadFile')}</span>
         <div slot="content">
           <a href="${this.downloadURL}">
-            <wl-button outlined>${_t('data.explorer.TouchToDownload')}</wl-button>
+            <mwc-button outlined>${_t('data.explorer.TouchToDownload')}</mwc-button>
           </a>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <div slot="footer" class="horizontal end-justified flex layout distancing">
           <mwc-button @click="${(e) => this._hideDialog(e)}">${_t('button.Close')}</mwc-button>
         </div>
       </backend-ai-dialog>
@@ -886,7 +881,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <p>${_t('data.explorer.FileExtensionChanged')}</p>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout distancing">
-          <mwc-button unelevated @click="${(e) => this._keepFileExtension()}">
+          <mwc-button outlined fullwidth @click="${(e) => this._keepFileExtension()}">
             ${globalThis.backendaioptions.get('language') !== 'ko' ?
     html`
                 ${_text('data.explorer.KeepFileExtension') + this.oldFileExtension}
@@ -895,7 +890,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 ${this.oldFileExtension + _text('data.explorer.KeepFileExtension')}
               `}
           </mwc-button>
-          <mwc-button outlined @click="${() => this._renameFile()}">
+          <mwc-button unelevated fullwidth @click="${() => this._renameFile()}">
             ${globalThis.backendaioptions.get('language') !== 'ko' ?
     html`
                 ${this.newFileExtension ? _text('data.explorer.UseNewFileExtension') + this.newFileExtension : _text('data.explorer.RemoveFileExtension')}
@@ -1648,9 +1643,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   _deleteFolder(folderName) {
     const job = globalThis.backendaiclient.vfolder.delete(folderName);
     job.then((resp) => {
-      console.log(resp);
+      // console.log(resp);
       if (resp.msg) {
-        console.log(resp);
         this.notification.text = _text('data.folders.CannotDeleteFolder');
         this.notification.show(true);
       } else {

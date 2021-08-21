@@ -171,9 +171,10 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
             <div style="height:1em"></div>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
+              fullwidth
               label="${_t('webui.menu.Update')}"
               @click="${() => this._updatePassword()}"></mwc-button>
         </div>
