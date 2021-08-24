@@ -2378,32 +2378,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * Get MB value when input is less than 1 GB.
-   *
-   * @param {number} value - value with GB unit.
-   * @return {number} MB value if input is smaller than 1GB. Otherwise, GB value.
-   * */
-  _conditionalGBtoMB(value) {
-    if (value < 1.0) {
-      return (value * 1024).toFixed(0);
-    }
-    return value;
-  }
-
-  /**
-   * Get MB unit when input is less than 1 GB.
-   *
-   * @param {number} value - value with GB unit.
-   * @return {string} MB if input is smaller than 1GB. Otherwise, GB.
-   * */
-  _conditionalGBtoMBunit(value) {
-    if (value < 1.0) {
-      return 'MB';
-    }
-    return 'GB';
-  }
-
-  /**
    * Get version information - Version, Language, Additional information.
    *
    * @param {any} version
@@ -3122,8 +3096,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                    <span>${this._conditionalGBtoMB(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</span>
-                    <p>${this._conditionalGBtoMBunit(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</p>
+                    <span>${globalThis.backendaiutils._conditionalGBtoMB(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</span>
+                    <p>${globalThis.backendaiutils._conditionalGBtoMBunit(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.GPU')}</p>
@@ -3147,8 +3121,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     </div>
                     <div class="vertical layout center center-justified resource-allocated">
                       <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                      <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
-                      <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
+                      <span>${globalThis.backendaiutils._conditionalGBtoMB(this.shmem_request)}</span>
+                      <p>${globalThis.backendaiutils._conditionalGBtoMBunit(this.shmem_request)}</p>
                     </div>
                     <div class="vertical layout center center-justified resource-allocated">
                       <p>${_t('session.launcher.GPU')}</p>
