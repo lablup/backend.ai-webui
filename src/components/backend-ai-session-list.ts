@@ -1120,8 +1120,8 @@ export default class BackendAiSessionList extends BackendAIPage {
           menu.appendChild(mountedFolderItem);
         }
       });
+      document.body.appendChild(menu);
     }
-    document.body.appendChild(menu);
   }
 
 
