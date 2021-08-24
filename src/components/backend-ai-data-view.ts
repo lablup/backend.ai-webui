@@ -715,10 +715,6 @@ export default class BackendAIData extends BackendAIPage {
     desc.show();
   }
 
-  _indexFrom1(index) {
-    return index + 1;
-  }
-
   /**
    * Add folder with name, host, type, usage mode and permission.
    */
