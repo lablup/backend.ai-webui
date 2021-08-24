@@ -169,7 +169,7 @@ class BackendAIRegistryList extends BackendAIPage {
       return globalThis.backendaiclient.registry.list();
     }).then(({result}) => {
       this.registryList = this._parseRegistryList(result);
-      this.hostnames = this.registryList.map( (value) => {
+      this.hostnames = this.registryList.map((value) => {
         return value.hostname;
       });
       this.requestUpdate();
@@ -313,7 +313,7 @@ class BackendAIRegistryList extends BackendAIPage {
     const username = (<HTMLInputElement> this.shadowRoot.querySelector('#modify-registry-username')).value;
     const password = (<HTMLInputElement> this.shadowRoot.querySelector('#modify-registry-password')).value;
     const registerType = this.shadowRoot.querySelector('#modify-select-registry-type').value;
-    const projectName = this.shadowRoot.querySelector('#modify-project-name').value;
+    const projectName = this.shadowRoot.querySelector('#modify-project-name').value.replace(/\s/g, '');
 
     const input: any = Object();
 
@@ -330,7 +330,7 @@ class BackendAIRegistryList extends BackendAIPage {
     input.type = registerType;
     if (['harbor', 'harbor2'].includes(registerType)) {
       if (projectName && projectName !== '' && projectName !== this.registryList[this.selectedIndex].project) {
-        input.project = projectName.replace(/\s/g, '');
+        input.project = projectName;
       } else {
         return;
       }
@@ -467,6 +467,7 @@ class BackendAIRegistryList extends BackendAIPage {
     const projectNameValidationEl = this.editMode
       ? this.shadowRoot.querySelector('#modify-project-name-validation')
       : this.shadowRoot.querySelector('#project-name-validation');
+    projectTextEl.value = projectTextEl.value.replace(/\s/g, '');
     if (projectTextEl && projectTextEl.value !== '' && !projectTextEl.disabled) {
       projectNameValidationEl.style.display = 'none';
     } else {
