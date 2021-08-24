@@ -476,7 +476,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
           // Readable text
           sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
-          sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
+          sessions[objectKey].created_at_hr = globalThis.backendaiutils._humanReadableTime(sessions[objectKey].created_at);
           if (sessions[objectKey].containers && sessions[objectKey].containers.length > 0) {
             const container = sessions[objectKey].containers[0];
             const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
@@ -497,12 +497,12 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].mem_current = 0;
             }
             if (liveStat && liveStat.io_read) {
-              sessions[objectKey].io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
+              sessions[objectKey].io_read_bytes_mb = globalThis.backendaiutils._bytesToMB(liveStat.io_read.current);
             } else {
               sessions[objectKey].io_read_bytes_mb = 0;
             }
             if (liveStat && liveStat.io_write) {
-              sessions[objectKey].io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
+              sessions[objectKey].io_write_bytes_mb = globalThis.backendaiutils._bytesToMB(liveStat.io_write.current);
             } else {
               sessions[objectKey].io_write_bytes_mb = 0;
             }
@@ -633,17 +633,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   /**
-   * Convert start date to human readable date.
-   *
-   * @param {Date} d - Date to convert
-   * @return {string} Human-readable date
-   */
-  _humanReadableTime(d: any) {
-    d = new Date(d);
-    return d.toLocaleString();
-  }
-
-  /**
    * Get kernel information - category, tag, color.
    *
    * @param {string} lang - session language
@@ -694,18 +683,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  _byteToGB(value) {
-    return Math.floor(value / 1000000000);
-  }
-
-  _MBToGB(value) {
-    return value / 1024;
-  }
-
   /**
    * Scale the time in units of D, H, M, S, and MS.
    *
@@ -733,13 +710,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     return result;
   }
 
-  _msecToSec(value) {
-    return Number(value / 1000).toFixed(0);
-  }
-
-  _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
-  }
   /**
    * Return elapsed time
    *

@@ -261,7 +261,7 @@ export default class BackendAICredentialList extends BackendAIPage {
             keypair['total_resource_slots'].tpu_device = '-';
           }
           ['cpu', 'mem', 'cuda_shares', 'cuda_device', 'rocm_device', 'tpu_device'].forEach((slot) => {
-            keypair['total_resource_slots'][slot] = this._markIfUnlimited(keypair['total_resource_slots'][slot]);
+            keypair['total_resource_slots'][slot] = globalThis.backendaiutils._markIfUnlimited(keypair['total_resource_slots'][slot]);
           });
         }
       });
@@ -471,20 +471,6 @@ export default class BackendAICredentialList extends BackendAIPage {
       `,
       root
     );
-  }
-
-  /**
-   * If value includes unlimited contents, mark as unlimited.
-   *
-   * @param {string} value  - value to check
-   * @return {string}       - Unlimited character is value is unlimited.
-   */
-  _markIfUnlimited(value) {
-    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
-      return '∞';
-    } else {
-      return value;
-    }
   }
 
   /**

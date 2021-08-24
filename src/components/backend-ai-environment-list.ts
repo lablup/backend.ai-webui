@@ -504,7 +504,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             <div class="layout horizontal configuration">
               <wl-icon class="fg green">developer_board</wl-icon>
               <span>${rowData.item.cpu_limit_min}</span> ~
-              <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
+              <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
               <span class="indicator">${_t('general.cores')}</span>
             </div>
           </div>
@@ -512,7 +512,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             <div class="layout horizontal configuration">
               <wl-icon class="fg green">memory</wl-icon>
               <span>${rowData.item.mem_limit_min}</span> ~
-              <span>${this._markIfUnlimited(rowData.item.mem_limit_max)}</span>
+              <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.mem_limit_max)}</span>
             </div>
           </div>
         ${rowData.item.cuda_device_limit_min ? html`
@@ -520,7 +520,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <div class="layout horizontal configuration">
                 <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
                 <span>${rowData.item.cuda_device_limit_min}</span> ~
-                <span>${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
+                <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
                 <span class="indicator">CUDA GPU</span>
               </div>
             </div>
@@ -530,7 +530,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <div class="layout horizontal configuration">
                 <wl-icon class="fg green">apps</wl-icon>
                 <span>${rowData.item.cuda_shares_limit_min}</span> ~
-                <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
+                <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
                 <span class="indicator">CUDA fGPU</span>
               </div>
             </div>
@@ -540,7 +540,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <div class="layout horizontal configuration">
                 <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
                 <span>${rowData.item.rocm_device_limit_min}</span> ~
-                <span>${this._markIfUnlimited(rowData.item.rocm_device_limit_max)}</span>
+                <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.rocm_device_limit_max)}</span>
                 <span class="indicator">ROCm GPU</span>
               </div>
             </div>
@@ -550,7 +550,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               <div class="layout horizontal configuration">
                 <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
                 <span>${rowData.item.tpu_device_limit_min}</span> ~
-                <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
+                <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
                 <span class="indicator">TPU</span>
               </div>
             </div>

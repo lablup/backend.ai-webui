@@ -372,12 +372,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">developer_board</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cpu)}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.total_resource_slots.cpu)}</span>
             <span class="indicator">cores</span>
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">memory</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.mem)}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.total_resource_slots.mem)}</span>
             <span class="indicator">GB</span>
           </div>
         </div>
@@ -386,7 +386,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
             <span class="indicator">GPU</span>
           </div>
 ` : html``}
@@ -394,7 +394,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
             <span class="indicator">fGPU</span>
           </div>
 ` : html``}
@@ -402,12 +402,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">cloud_queue</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.max_vfolder_size)}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.max_vfolder_size)}</span>
             <span class="indicator">GB</span>
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">folder</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.max_vfolder_count)}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.max_vfolder_count)}</span>
             <span class="indicator">Folders</span>
           </div>
         </div>
@@ -752,16 +752,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     } else {
       textfield.disabled = false;
       checkbox.checked = false;
-    }
-  }
-
-  _markIfUnlimited(value) {
-    if (['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value)) {
-      return '∞';
-    } else if (['NaN', NaN].includes(value)) {
-      return '-';
-    } else {
-      return value;
     }
   }
 

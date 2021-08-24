@@ -381,26 +381,6 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
-   * Convert the value byte to MB.
-   *
-   * @param {number} value
-   * @return {number} converted value from byte to MB.
-   */
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  /**
-   * Convert the value MB to GB.
-   *
-   * @param {number} value
-   * @return {number} converted value from MB to GB.
-   */
-  _MBtoGB(value) {
-    return Math.floor(value / 1024);
-  }
-
-  /**
    * Return backend.ai client elapsed time.
    *
    * @param {Date} start - Start time of backend.ai client.
@@ -422,27 +402,6 @@ export default class BackendAIAgentList extends BackendAIPage {
       return 'Reserved for ' + seconds + 'sec.';
     }
     return seconds;
-  }
-
-  /**
-   * Covert start date to human readable date.
-   *
-   * @param {Date} start
-   * @return {string} Human-readable date string.
-   */
-  _humanReadableDate(start) {
-    const d = new Date(start);
-    return d.toLocaleString();
-  }
-
-  /**
-   * Increase index by 1.
-   *
-   * @param {number} index
-   * @return {number} index + 1 (for table index)
-   */
-  _indexFrom1(index: number) {
-    return index + 1;
   }
 
   /**
@@ -601,7 +560,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         // language=HTML
         html`
           <div class="layout vertical">
-            <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
+            <span>${globalThis.backendaiutils._humanReadableDate(rowData.item.first_contact)}</span>
             <lablup-shields app="${_t('agent.Terminated')}" color="yellow"
                             description="${elapsed}" ui="round"></lablup-shields>
 
@@ -613,7 +572,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         // language=HTML
         html`
           <div class="layout vertical">
-            <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
+            <span>${globalThis.backendaiutils._humanReadableDate(rowData.item.first_contact)}</span>
             <lablup-shields app="${_t('agent.Running')}" color="darkgreen"
                             description="${elapsed}" ui="round"></lablup-shields>
 
@@ -782,10 +741,6 @@ export default class BackendAIAgentList extends BackendAIPage {
     );
   }
 
-  _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
-  }
-
   render() {
     // language=HTML
     return html`
@@ -839,8 +794,8 @@ export default class BackendAIAgentList extends BackendAIPage {
               </div>
               <h3>Network</h3>
               ${this.agentDetail?.live_stat?.node ? html`
-                <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
-                <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
+                <div>TX: ${globalThis.backendaiutils._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
+                <div>RX: ${globalThis.backendaiutils._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
               ` : html`
                 <p>${_t('agent.NoNetworkSignal')}</p>
               `}
