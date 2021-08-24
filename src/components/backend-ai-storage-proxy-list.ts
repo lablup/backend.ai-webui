@@ -207,47 +207,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   /**
-   * Convert the value byte to MB.
-   *
-   * @param {number} value - byte value
-   * @return {number} value converted to MB
-   */
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  /**
-   * Convert the value MB to GB.
-   *
-   * @param {number} value - MB value
-   * @return {number} value converted to GB
-   */
-  _MBtoGB(value) {
-    return Math.floor(value / 1024);
-  }
-
-  /**
-   * Convert start date to human readable date.
-   *
-   * @param {Date} start date
-   * @return {string} Human-readable date
-   */
-  _humanReadableDate(start) {
-    const d = new Date(start);
-    return d.toLocaleString();
-  }
-
-  /**
-   * Increase index by 1.
-   *
-   * @param {number} index
-   * @return {number} index + 1
-   */
-  _indexFrom1(index: number) {
-    return index + 1;
-  }
-
-  /**
    * Return the heartbeat status.
    *
    * @param {string} state
@@ -324,6 +283,10 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     case 'dgx':
       color = 'green';
       icon = 'local';
+      break;
+    case 'netapp':
+      color = 'black';
+      icon = 'local'; // TODO: add netapp ontap logo into /resources/icons/...
       break;
     default:
       color = 'yellow';
@@ -429,6 +392,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     try {
       const perfMetric = JSON.parse(rowData.item.performance_metric);
       perfMetricDisabled = Object.keys(perfMetric).length > 0 ? false : true;
+      // check once more and disable when it's 3rd plugin and its not in agent page
+      perfMetricDisabled = (globalThis.currentPage === 'agent' && !perfMetricDisabled) ? true : false;
     } catch {
       perfMetricDisabled = true;
     }
@@ -441,10 +406,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
                           @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
         </div>`, root
     );
-  }
-
-  _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
   }
 
   render() {
@@ -496,8 +457,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
               </div>
               <h3>Network</h3>
               ${'live_stat' in this.storageProxyDetail && 'node' in this.storageProxyDetail.live_stat ? html`
-                <div>TX: ${this._bytesToMB(this.storageProxyDetail.live_stat.node.net_tx.current)}MB</div>
-                <div>RX: ${this._bytesToMB(this.storageProxyDetail.live_stat.node.net_rx.current)}MB</div>
+                <div>TX: ${globalThis.backendaiutils._bytesToMB(this.storageProxyDetail.live_stat.node.net_tx.current)}MB</div>
+                <div>RX: ${globalThis.backendaiutils._bytesToMB(this.storageProxyDetail.live_stat.node.net_rx.current)}MB</div>
               ` : html``}
             </div>
           </div>

@@ -128,12 +128,12 @@ class BackendAiResourcePresetList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <wl-icon class="fg green">developer_board</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.resource_slots.cpu)}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.resource_slots.cpu)}</span>
             <span class="indicator">${_t('general.cores')}</span>
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green">memory</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.resource_slots.mem_gb)}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.resource_slots.mem_gb)}</span>
             <span class="indicator">GB</span>
           </div>
         </div>
@@ -142,7 +142,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
     html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg green">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.device'])}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.resource_slots['cuda.device'])}</span>
             <span class="indicator">GPU</span>
           </div>
         ` : html``}
@@ -150,7 +150,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
     html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg green">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
             <span class="indicator">GPU</span>
           </div>
         ` : html``}
@@ -542,23 +542,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
     const seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
     const days = Math.floor(seconds / 86400);
     return days;
-  }
-
-  _humanReadableTime(d: any) {
-    d = new Date(d);
-    return d.toUTCString();
-  }
-
-  _indexFrom1(index) {
-    return index + 1;
-  }
-
-  _markIfUnlimited(value) {
-    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
-      return '∞';
-    } else {
-      return value;
-    }
   }
 
   /**

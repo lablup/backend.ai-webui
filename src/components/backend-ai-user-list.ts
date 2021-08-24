@@ -364,20 +364,6 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   /**
-   * If value includes unlimited contents, mark as unlimited.
-   *
-   * @param {string} value - string value
-   * @return {string} ∞ when value contains -, 0, 'Unlimited', Infinity, 'Infinity'
-   */
-  _markIfUnlimited(value) {
-    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
-      return '∞';
-    } else {
-      return value;
-    }
-  }
-
-  /**
    * Control rendering - showUserDetail, editUserDetail, signoutUserDialog.
    *
    * @param {Element} root - the row details content DOM element
