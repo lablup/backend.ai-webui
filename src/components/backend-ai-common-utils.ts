@@ -57,6 +57,136 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     globalThis.backendaioptions.delete('projectGroup.' + endpointId);
   }
 
+  /**
+   * Convert the value byte to MB.
+   *
+   * @param {number} value
+   * @return {number} converted value from byte to MB.
+   */
+  _byteToMB(value) {
+    return Math.floor(value / 1000000);
+  }
+
+  _bytesToMB(value) {
+    return Number(value / (1024 * 1024)).toFixed(1);
+  }
+
+  _bytesToGB(value) {
+    const gibibyte = Math.pow(1024, 3);
+    return Number(value / gibibyte).toFixed(1);
+  }
+
+  _bytesToTB(value) {
+    const gibibyte = Math.pow(1024, 4);
+    return Number(value / gibibyte).toFixed(1);
+  }
+
+  /**
+   * Convert the value MB to GB.
+   *
+   * @param {number} value
+   * @return {number} converted value from MB to GB.
+   */
+  _MBtoGB(value) {
+    return Math.floor(value / 1024);
+  }
+
+  /**
+   * Get MB value when input is less than 1 GB.
+   *
+   * @param {number} value - value with GB unit.
+   * @return {number} MB value if input is smaller than 1GB. Otherwise, GB value.
+   * */
+  _conditionalGBtoMB(value) {
+    if (value < 1.0) {
+      return (value * 1024).toFixed(0);
+    }
+    return value;
+  }
+
+  /**
+   * Get MB unit when input is less than 1 GB.
+   *
+   * @param {number} value - value with GB unit.
+   * @return {string} MB if input is smaller than 1GB. Otherwise, GB.
+   * */
+  _conditionalGBtoMBunit(value) {
+    if (value < 1.0) {
+      return 'MB';
+    }
+    return 'GB';
+  }
+
+  _msecToSec(value) {
+    return Number(value / 1000).toFixed(0);
+  }
+
+  /**
+   * Convert start date to human readable date.
+   *
+   * @param {Date} start date
+   * @return {string} Human-readable date
+   */
+  _humanReadableDate(start) {
+    const d = new Date(start);
+    return d.toLocaleString();
+  }
+
+  /**
+   * Change d of any type to human readable date time.
+   *
+   * @param {string | Date} d - Data string or object
+   * @return {string} Human readable time string
+   */
+  _humanReadableTime(d: any) {
+    d = new Date(d);
+    const option = {hour12: false};
+    return d.toLocaleString('en-US', option);
+  }
+
+  /**
+   * Change d of any type to ISO date time.
+   *
+   * @param {string | Date} d - Data string or object
+   * @return {string} ISO time string
+   */
+  _toISOTime(d: any) {
+    d = new Date(d);
+    return d.toISOString();
+  }
+
+  _humanReadableFileSize(value) {
+    if (value > 1000000000) {
+      return Math.floor(value / 1000000000) + 'GB';
+    } else if (value > 1000000) {
+      return Math.floor(value / 1000000) + 'MB';
+    } else if (value > 1000) {
+      return Math.floor(value / 1000) + 'KB';
+    } else {
+      return Math.floor(value) + 'Bytes';
+    }
+  }
+
+  _markIfUnlimited(value) {
+    if (['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value)) {
+      return '∞';
+    } else if (['NaN', NaN].includes(value)) {
+      return '-';
+    } else {
+      return value;
+    }
+  }
+
+  /**
+   * Increase index by 1.
+   *
+   * @param {number} index
+   * @return {number} index + 1
+   */
+  _indexFrom1(index: number) {
+    return index + 1;
+  }
+
   render() {
     // language=HTML
     return html`
