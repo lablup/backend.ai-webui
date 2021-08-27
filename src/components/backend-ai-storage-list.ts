@@ -1564,7 +1564,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     if (newName) {
       if (newNameEl.checkValidity()) {
-        const job = globalThis.backendaiclient.vfolder.rename(newName);
+        const job = globalThis.backendaiclient.vfolder.rename(newName, this.folderInfo.host);
         job.then((value) => {
           this.notification.text = _text('data.folders.FolderRenamed');
           this.notification.show();

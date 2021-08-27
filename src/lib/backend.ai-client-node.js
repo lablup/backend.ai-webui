@@ -1415,7 +1415,7 @@ class VFolder {
         if (name == null) {
             name = this.name;
         }
-        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}`, null);
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}`);
         return this.client._wrapWithPromise(rqst);
     }
     /**
@@ -1423,8 +1423,11 @@ class VFolder {
      *
      * @param {string} new_name - New virtual folder name.
      */
-    async rename(new_name = null) {
-        const body = { new_name };
+    async rename(new_name = null, host = '') {
+        const body = {
+            'new_name': new_name,
+            'host': host
+        };
         let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${this.name}/rename`, body);
         return this.client._wrapWithPromise(rqst);
     }
