@@ -1047,7 +1047,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   indexRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-      html`${globalThis.backendaiutils._indexFrom1(rowData.index)}`, root
+      html`${this._indexFrom1(rowData.index)}`, root
     );
   }
 
@@ -1421,6 +1421,10 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.shadowRoot.querySelector('#' + id).hide();
   }
 
+  _indexFrom1(index) {
+    return index + 1;
+  }
+
   /**
    * Return whether item has permission or not.
    *
@@ -1560,7 +1564,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     if (newName) {
       if (newNameEl.checkValidity()) {
-        const job = globalThis.backendaiclient.vfolder.rename(newName, this.folderInfo.host);
+        const job = globalThis.backendaiclient.vfolder.rename(newName);
         job.then((value) => {
           this.notification.text = _text('data.folders.FolderRenamed');
           this.notification.show();
@@ -1992,6 +1996,22 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+  _byteToMB(value) {
+    return Math.floor(value / 1000000);
+  }
+
+  _humanReadableFileSize(value) {
+    if (value > 1000000000) {
+      return Math.floor(value / 1000000000) + 'GB';
+    } else if (value > 1000000) {
+      return Math.floor(value / 1000000) + 'MB';
+    } else if (value > 1000) {
+      return Math.floor(value / 1000) + 'KB';
+    } else {
+      return Math.floor(value) + 'Bytes';
+    }
+  }
+
   /* File upload and download */
   /**
    * Add eventListener to the dropzone - dragleave, dragover, drop.
@@ -2026,7 +2046,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             const file = e.dataTransfer.files[i];
             /* Drag & Drop file upload size limits to configuration */
             if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
-              this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${globalThis.backendaiutils._humanReadableFileSize(this._maxFileUploadSize)})`;
+              this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
               this.notification.show();
               return;
             } else {
@@ -2110,7 +2130,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       for (let i = 0; i < 5; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
       /* File upload size limits to configuration */
       if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
-        this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${globalThis.backendaiutils._humanReadableFileSize(this._maxFileUploadSize)})`;
+        this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
         this.notification.show();
         return;
       } else {
@@ -2552,7 +2572,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @return {string} UTC time string
    * */
   _humanReadableTime(d) {
-    const date = new Date();
+    const date = new Date(d * 1000);
     const offset = date.getTimezoneOffset() / 60;
     const hours = date.getHours();
     date.setHours(hours - offset);

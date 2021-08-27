@@ -1423,10 +1423,9 @@ class VFolder {
      *
      * @param {string} new_name - New virtual folder name.
      */
-    async rename(new_name = null, host = '') {
+    async rename(new_name = null) {
         const body = {
-            'new_name': new_name,
-            'host': host
+            'new_name': new_name
         };
         let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${this.name}/rename`, body);
         return this.client._wrapWithPromise(rqst);

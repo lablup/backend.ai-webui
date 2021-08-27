@@ -414,6 +414,7 @@
     "Create": "Create",
     "Update": "Update",
     "Copy": "Copy",
+    "FolderAlreadyExists": "Folder name already exists.",
     "FolderNameRequired": "Folder name is required",
     "FileandFoldernameRequired": "File/Folder name is required",
     "Allowslettersnumbersand-_dot": "Allows letters, numbers and -_.",

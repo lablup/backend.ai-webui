@@ -414,6 +414,7 @@
     "Create": "생성",
     "Update": "갱신",
     "Copy": "복사",
+    "FolderAlreadyExists": "폴더 명이 이미 존재합니다.",
     "FolderNameRequired": "폴더 이름은 필수 입력입니다.",
     "FileandFoldernameRequired": "파일 및 폴더 이름이 필요합니다.",
     "Allowslettersnumbersand-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",

@@ -73,6 +73,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) spinner = Object();
   @property({type: Object}) folderLists = Object();
+  @property({type: Array}) folderNameList = Array();
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean}) active = true;
   @property({type: Object}) _lists = Object();
@@ -716,6 +717,20 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   /**
+   * 
+   * Get the list of vfolder names
+   */
+  _getVfolderNames() {
+    let folderNameList: Array<any> = [];
+    Array.prototype.forEach.call(this.folderLists, (elem, index) => {
+      Array.prototype.forEach.call(elem.folders, (folder, index) => {
+        folderNameList.push(folder.name);
+      });
+    });
+    this.folderNameList = folderNameList;
+  }
+
+  /**
    * Add folder with name, host, type, usage mode and permission.
    */
   _addFolder() {
@@ -730,6 +745,12 @@ export default class BackendAIData extends BackendAIPage {
     let usageMode = '';
     let permission = '';
     let cloneable = false;
+    this._getVfolderNames();
+    if (this.folderNameList.includes(name)) {
+      this.notification.text = _text('data.FolderAlreadyExists');
+      this.notification.show(true);
+      return;
+    }
     if (['user', 'group'].includes(ownershipType) === false) {
       ownershipType = 'user';
     }
