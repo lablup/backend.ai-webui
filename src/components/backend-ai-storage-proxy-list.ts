@@ -173,7 +173,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     if (this.active !== true) {
       return;
     }
-    globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric', 'usage']).then((response) => {
+    globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric', 'usage', 'hardware_metadata']).then((response) => {
       const storage_volumes = response.storage_volume_list.items;
       const storages: Array<any> = [];
       if (storage_volumes !== undefined && storage_volumes.length != 0) {
@@ -451,20 +451,20 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     // language=HTML
     return html`
       <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
-                   .items="${this.storages}">
+                   height-by-rows .items="${this.storages}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
+        <vaadin-grid-column auto-width flex-grow="0" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="100px" resizable header="${_t('agent.BackendType')}"
+        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('agent.BackendType')}"
                             .renderer="${this._boundTypeRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable width="60px" header="${_t('agent.Resources')}"
+        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Resources')}"
                             .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Capabilities')}"
+        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('agent.Capabilities')}"
                             .renderer="${this._boundCapabilitiesRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t('general.Control')}"
+        <vaadin-grid-column width="60px" resizable header="${_t('general.Control')}"
                             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="storage-proxy-detail" fixed backdrop blockscrolling persistent scrollable>
