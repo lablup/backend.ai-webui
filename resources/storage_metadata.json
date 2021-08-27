@@ -65,6 +65,16 @@
       "dialects": [
         "XFS"
       ]
+    },
+    "netapp-ontap": {
+      "name": "NetApp ONTAP Qtree",
+      "description": "Netapp ONTAP Qtree is a logically defined file system that can exist as a special subdirectory of the root directory within a FlexVol volume.",
+      "icon": "local.png",
+      "dialects": [
+        "qtree",
+        "netapp",
+        "netapp2"
+      ]
     }
   }
 }

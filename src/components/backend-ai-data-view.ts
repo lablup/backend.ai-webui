@@ -700,6 +700,8 @@ export default class BackendAIData extends BackendAIPage {
    */
   _showStorageDescription(e, item) {
     e.stopPropagation();
+    // item string sanitization
+    item = item.split(':').pop();
     if (item in this.storageInfo) {
       this._helpDescriptionTitle = this.storageInfo[item].name;
       this._helpDescription = this.storageInfo[item].description;
