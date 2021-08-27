@@ -431,15 +431,13 @@ export default class BackendAiSessionView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <div class="horizontal layout wrap">
-        <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" autowidth>
-          <div slot="message">
-            <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
-          </div>
-        </lablup-activity-panel>
-        <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" style="display:none;">
-        </lablup-activity-panel>
-      </div>
+      <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" autowidth>
+        <div slot="message">
+          <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
+        </div>
+      </lablup-activity-panel>
+      <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" style="display:none;">
+      </lablup-activity-panel>
       <lablup-activity-panel elevation="1" autowidth narrow noheader>
         <div slot="message">
           <h3 class="tab horizontal center layout" style="margin-top:0;margin-bottom:0;">
