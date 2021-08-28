@@ -840,6 +840,14 @@
     "1Day": "1 Day",
     "1Week": "1 Week"
   },
+  "storageproxy": {
+    "Add": "Add",
+    "Delete": "Delete",
+    "NoQosSelected": "No QoS Selected",
+    "NotSelectedYet": "Not Selected Yet",
+    "QuotaUpdateOperationSucceed": "Quota update operation has been successfully done.",
+    "LimitValueError": "The soft limit cannot be greater than hard limit."
+  },
   "language": {
     "Browser": "Browser",
     "English": "English",
