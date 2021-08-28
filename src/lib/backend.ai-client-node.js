@@ -1849,6 +1849,53 @@ class StorageProxy {
         let v = { 'vfolder_host': host };
         return this.client.query(q, v);
     }
+    /**
+     * Get storage-proxy specific feature
+     *
+     * @param {string} path - additional path
+     */
+    async get(path = '') {
+        if (path) {
+            const rqst = this.client.newSignedRequest("GET", path);
+            return this.client._wrapWithPromise(rqst);
+        }
+    }
+    /**
+     * Create storage-proxy specific feature
+     *
+     * @param {string} path - additional path
+     * @param {Object} body - body to send in the request
+     */
+    async create(path = '', body = {}) {
+        if (path) {
+            const rqst = this.client.newSignedRequest("POST", path, body);
+            return this.client._wrapWithPromise(rqst);
+        }
+    }
+    /**
+     * Update storage-proxy specific feature
+     *
+     * @param {string} path - additional path
+     * @param {Object} body - body to send in the request
+     */
+    async update(path = '', body = {}) {
+        if (path) {
+            const rqst = this.client.newSignedRequest("POST", path, body);
+            return this.client._wrapWithPromise(rqst);
+        }
+    }
+    /**
+     * Delete storage-proxy specific feature
+     *
+     * @param {string} path - additional path
+     * @param {Object} body - body to send in the request
+     */
+    async delete(path = '', body = {}) {
+        if (path) {
+            const rqst = this.client.newSignedRequest("DELETE", path, body);
+            return this.client._wrapWithPromise(rqst);
+        }
+    }
 }
 class Keypair {
     /**
