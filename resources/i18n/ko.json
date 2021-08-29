@@ -840,6 +840,18 @@
     "1Day": "1일",
     "1Week": "1주"
   },
+  "storageproxy": {
+    "Add": "추가",
+    "Delete": "삭제",
+    "NoQosSelected": "지정된 QoS 정책이 없습니다.",
+    "NotSelectedYet": "선택된 정보가 없습니다.",
+    "QuotaUpdateOperationSucceed": "Quota 업데이트가 완료되었습니다.",
+    "ClickIconFirst": "<mwc-icon style='color:#29B6F6;'>assignment</mwc-icon> 아이콘을 먼저 클릭해주세요.",
+    "UpdateOperationSucceed": "변경되었습니다.",
+    "CreateOperationSucceed": "생성되었습니다.",
+    "DeleteOperationSucceed": "삭제되었습니다.",
+    "LimitValueError": "Soft limit 값은 Hard limit 값을 초과할 수 없습니다."
+  },
   "language": {
     "Browser": "브라우저 기본",
     "English": "English",

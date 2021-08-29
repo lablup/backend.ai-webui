@@ -840,6 +840,18 @@
     "1Day": "1 Day",
     "1Week": "1 Week"
   },
+  "storageproxy": {
+    "Add": "Add",
+    "Delete": "Delete",
+    "NoQosSelected": "No QoS Selected",
+    "NotSelectedYet": "Not Selected Yet",
+    "QuotaUpdateOperationSucceed": "Quota update operation has been successfully done.",
+    "ClickIconFirst": "Please click the blue icon <mwc-icon style='color:#29B6F6;'>assignment</mwc-icon> in Controls panel of node list.",
+    "UpdateOperationSucceed": "Updated successfully.",
+    "CreateOperationSucceed": "Created successfully.",
+    "DeleteOperationSucceed": "Deleted successfully.",
+    "LimitValueError": "The soft limit cannot be greater than hard limit."
+  },
   "language": {
     "Browser": "Browser",
     "English": "English",
