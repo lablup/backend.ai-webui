@@ -130,7 +130,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         }
 
         .resource-indicator {
-          width: 100px !important;
+          width: 50px !important;
         }
 
       `];
@@ -190,6 +190,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         });
       }
       this.storages = storages;
+      // Updates the width of all columns which have autoWidth
+      this.shadowRoot.querySelector('vaadin-grid').recalculateColumnWidths();
       const event = new CustomEvent('backend-ai-storage-proxy-updated', {});
       this.dispatchEvent(event);
       if (this.active === true) {
@@ -331,7 +333,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       // language=HTML
       html`
         <div class="layout flex">
-          <div class="layout horizontal center flex">
+          <div class="layout horizontal center wrap justified">
             <div class="layout horizontal start resource-indicator">
               <mwc-icon class="fg green">data_usage</mwc-icon>
               <span class="indicator" style="padding-left:5px;">${_t('session.Usage')}</span>
@@ -415,7 +417,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
                    height-by-rows .items="${this.storages}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column auto-width flex-grow="0" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
+        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('agent.BackendType')}"
                             .renderer="${this._boundTypeRenderer}">
