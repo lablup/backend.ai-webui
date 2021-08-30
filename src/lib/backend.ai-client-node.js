@@ -1880,7 +1880,7 @@ class StorageProxy {
      */
     async update(path = '', body = {}) {
         if (path) {
-            const rqst = this.client.newSignedRequest("POST", path, body);
+            const rqst = this.client.newSignedRequest("PATCH", path, body);
             return this.client._wrapWithPromise(rqst);
         }
     }
