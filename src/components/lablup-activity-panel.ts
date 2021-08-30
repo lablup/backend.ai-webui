@@ -134,7 +134,7 @@ export default class LablupActivityPanel extends LitElement {
             <wl-icon>close</wl-icon>
           </wl-button>
         </h4>
-        <div class="${this.disabled ? `disabled` : `enabled`}">
+        <div class="${this.disabled ? `disabled` : `enabled`}" id="content">
           <slot name="message"></slot>
         </div>
       </div>
@@ -187,7 +187,7 @@ export default class LablupActivityPanel extends LitElement {
       this.shadowRoot.querySelector('#header').style.display = 'none';
     }
     if (this.scrollableY) {
-      this.shadowRoot.querySelector('.card').style.overflowY = 'auto';
+      this.shadowRoot.querySelector('#content').style.overflowY = 'auto';
     }
   }
 
