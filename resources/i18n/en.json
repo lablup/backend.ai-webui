@@ -844,13 +844,16 @@
     "Add": "Add",
     "Delete": "Delete",
     "NoQosSelected": "No QoS Selected",
+    "NoQoSToDisplay":"There's no QoS to display in this volume.",
     "NotSelectedYet": "Not Selected Yet",
     "QuotaUpdateOperationSucceed": "Quota update operation has been successfully done.",
     "ClickIconFirst": "Please click the blue icon <mwc-icon style='color:#29B6F6;'>assignment</mwc-icon> in Controls panel of node list.",
     "UpdateOperationSucceed": "Updated successfully.",
     "CreateOperationSucceed": "Created successfully.",
     "DeleteOperationSucceed": "Deleted successfully.",
-    "LimitValueError": "The soft limit cannot be greater than hard limit."
+    "LimitValueError": "The soft limit cannot be greater than hard limit.",
+    "NameAlreadyExists": "Name already exists.",
+    "NoChangableValueBelow": "You cannot update this folowing value after creatiion."
   },
   "language": {
     "Browser": "Browser",
