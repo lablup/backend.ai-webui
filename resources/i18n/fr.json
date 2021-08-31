@@ -210,7 +210,14 @@
       "FolderAlias": "__NOT_TRANSLATED__",
       "NoAvailableFolderToMount": "__NOT_TRANSLATED__",
       "MountedFolders": "__NOT_TRANSLATED__",
-      "EnvironmentVariablePaneTitle": "__NOT_TRANSLATED__"
+      "EnvironmentVariablePaneTitle": "__NOT_TRANSLATED__",
+      "OpenMPOptimization": "__NOT_TRANSLATED__",
+      "DescOpenMPOptimization": "__NOT_TRANSLATED__",
+      "HPCOptimization": "__NOT_TRANSLATED__",
+      "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
+      "(Automatic)": "__NOT_TRANSLATED__",
+      "NumOpenMPthreads": "__NOT_TRANSLATED__",
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
