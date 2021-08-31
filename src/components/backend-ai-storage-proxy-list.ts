@@ -380,7 +380,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
    * @return {void}
    */
   showStorageProxyDetailDialog(storageProxyId) {
-    console.log(this.defaultDescription)
     const event = new CustomEvent('backend-ai-selected-storage-proxy', {'detail': storageProxyId});
     document.dispatchEvent(event);
     // this.storageProxyDetail = this.storagesObject[storageProxyId];
