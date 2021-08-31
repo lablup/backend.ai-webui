@@ -534,13 +534,14 @@ export default class BackendAiSettingsView extends BackendAIPage {
     } else { // already connected
       this.updateSettings();
     }
+    const {scheduler, network} = this.options;
     // if user wants to modify the scheduler options and close the dialog, open the confirm dialog.
     const schedulerEnvDialog = this.shadowRoot.querySelector('#scheduler-env-dialog');
     schedulerEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
       const container = this.shadowRoot.querySelector('#scheduler-env-container');
       const rows = container.querySelectorAll('mwc-textfield');
       for (const row of rows) {
-        if (this.options.scheduler[this._findOptionById(row.id)] !== row.value && this.selectedSchedulerType !== '') {
+        if (scheduler[this._findOptionById(row.id)] !== row.value && this.selectedSchedulerType !== '') {
           this.openDialog('env-config-confirmation');
           break;
         } else {
@@ -553,7 +554,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       const container = this.shadowRoot.querySelector('#overlay-network-env-container');
       const rows = container.querySelectorAll('mwc-textfield');
       for (const row of rows) {
-        if (this.options.network[this._findOptionById(row.id)] !== row.value) {
+        if (network[this._findOptionById(row.id)] !== row.value) {
           this.openDialog('env-config-confirmation');
           break;
         } else {
@@ -765,7 +766,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           .then((response) => {
             this.notification.text = _text('notification.SuccessfullyUpdated');
             this.notification.show();
-            this.options['schedulerType'] = this.selectedSchedulerType;
+            this.options.schedulerType = this.selectedSchedulerType;
             this.options.scheduler = {...this.options.scheduler, ...options};
             this.update(this.options);
             this._closeDialogWithConfirmation('scheduler-env-dialog');
@@ -792,7 +793,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     for (const networkOption of networkOptions) {
       const key = this._findOptionById(networkOption.id);
       const value = networkOption.value;
-      if (value !== '' || value.length !== 0 || value != undefined) {
+      if (value !== '' || value !== null || value !== undefined) {
         options[key] = value;
       } else {
         return;
