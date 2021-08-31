@@ -52,6 +52,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: Object}) _boundCapabilitiesRenderer = this.capabilitiesRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: String}) filter = '';
+  @property({type: Object}) defaultDescription = Object(); // prior to current text descriptions
 
   constructor() {
     super();
@@ -107,6 +108,10 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
           height: 10px;
           --mdc-theme-primary: #3677eb;
           --mdc-linear-progress-buffer-color: #98be5a;
+        }
+
+        lablup-progress-bar.exceeded {
+          --progress-bar-background: #C03D29;
         }
 
         lablup-progress-bar.cpu {
@@ -336,10 +341,10 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
           <div class="layout horizontal center wrap justified">
             <div class="layout horizontal start resource-indicator">
               <mwc-icon class="fg green">data_usage</mwc-icon>
-              <span class="indicator" style="padding-left:5px;">${_t('session.Usage')}</span>
+              <span class="indicator" style="padding-left:5px;">${this.defaultDescription?.usage ?? _t('session.Usage')}</span>
             </div>
             <span class="flex"></span>
-            <lablup-progress-bar id="volume-usage-bar" progress="${usageRatio}"
+            <lablup-progress-bar id="volume-usage-bar" progress="${usageRatio}" class="${parseInt(usagePercent) > 100 ? 'exceeded' : ''}"
                                  buffer="${totalBuffer}"
                                  description="${usagePercent}%"></lablup-progress-bar>
           </div>
@@ -375,6 +380,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
    * @return {void}
    */
   showStorageProxyDetailDialog(storageProxyId) {
+    console.log(this.defaultDescription)
     const event = new CustomEvent('backend-ai-selected-storage-proxy', {'detail': storageProxyId});
     document.dispatchEvent(event);
     // this.storageProxyDetail = this.storagesObject[storageProxyId];
@@ -416,17 +422,17 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.storages}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
+        <vaadin-grid-column auto-width flex-grow="0" resizable header="${this.defaultDescription?.endpoint ?? _t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('agent.BackendType')}"
+        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${this.defaultDescription?.backendType ?? _t('agent.BackendType')}"
                             .renderer="${this._boundTypeRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Resources')}"
+        <vaadin-grid-column auto-width flex-grow="0" resizable header="${this.defaultDescription?.usage ??  _t('agent.Resources')}"
                             .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('agent.Capabilities')}"
+        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${this.defaultDescription?.capabilities ??_t('agent.Capabilities')}"
                             .renderer="${this._boundCapabilitiesRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="60px" resizable header="${_t('general.Control')}"
+        <vaadin-grid-column width="60px" resizable header="${this.defaultDescription?.control ?? _t('general.Control')}"
                             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="storage-proxy-detail" fixed backdrop blockscrolling persistent scrollable>
