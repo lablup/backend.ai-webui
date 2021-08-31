@@ -2475,6 +2475,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Check validation of input.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
+  _validateInput(e) {
+    const textfield = e.target.closest('mwc-textfield');
+    if (textfield.value) {
+      textfield.value = Math.round(textfield.value);
+      textfield.value = globalThis.backendaiclient.utils.clamp(textfield.value, textfield.min, textfield.max);
+    }
+  }
+
+  /**
    * Append a row to the environment variable list.
    *
    * @param {string} name - environment variable name
@@ -3073,7 +3086,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <div class="horizontal center layout">
                   <div style="width:200px;">${_t('session.launcher.NumOpenMPthreads')}</div>
                   <mwc-textfield id="OpenMPCore" type="number" placeholder="${_t('session.launcher.(Automatic)')}"
-                                value="" min="0" step="1" style="width:120px;">
+                                 value="" min="0" max="1000" step="1" style="width:120px;"
+                                 pattern="[0-9]+" @change="${(e) => this._validateInput(e)}">
                   </mwc-textfield>
                   <mwc-icon-button icon="info" class="fg green info"
                                     @click="${(e) => {
@@ -3083,7 +3097,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <div class="horizontal center layout">
                   <div style="width:200px;">${_t('session.launcher.NumOpenBLASthreads')}</div>
                   <mwc-textfield id="OpenBLASCore" type="number" placeholder="${_t('session.launcher.(Automatic)')}"
-                                value="" min="0" step="1" style="width:120px;">
+                                 value="" min="0" max="1000" step="1" style="width:120px;"
+                                 pattern="[0-9]+" @change="${(e) => this._validateInput(e)}">
                   </mwc-textfield>
                   <mwc-icon-button icon="info" class="fg green info"
                                     @click="${(e) => {
