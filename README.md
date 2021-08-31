@@ -148,7 +148,7 @@ webServerURL = "[Web server website URL. App will use the site instead of local 
 
 ## Branches
 
- * master : Development branch
+ * main : Development branch
  * release : Latest release branch
  * feature/[feature-branch] : Feature branch. Uses `git flow` development scheme.
  * tags/v[versions] : version tags. Each tag represents release versions.
@@ -453,6 +453,8 @@ Currently WebUI supports these languages:
  * Korean
  * French
  * Russian
+ * Mongolian
+ * Indonesian
 
 #### Extracting i18n resources
 
