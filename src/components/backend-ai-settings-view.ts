@@ -322,7 +322,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         icon="rule"
                         label="${_t('settings.Config')}"
                         style="float: right;"
-                        @click="${() => this._openDialogWithConfirmation('overlay-network-env-dialog')}"></mwc-button>
+                        @click="${() => {
+                          this.updateNetworkOptionElements();
+                          this._openDialogWithConfirmation('overlay-network-env-dialog');
+                        }}"></mwc-button>
                     </div>
                   </div>
                 </div>
@@ -534,14 +537,13 @@ export default class BackendAiSettingsView extends BackendAIPage {
     } else { // already connected
       this.updateSettings();
     }
-    const {scheduler, network} = this.options;
     // if user wants to modify the scheduler options and close the dialog, open the confirm dialog.
     const schedulerEnvDialog = this.shadowRoot.querySelector('#scheduler-env-dialog');
     schedulerEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
       const container = this.shadowRoot.querySelector('#scheduler-env-container');
       const rows = container.querySelectorAll('mwc-textfield');
       for (const row of rows) {
-        if (scheduler[this._findOptionById(row.id)] !== row.value && this.selectedSchedulerType !== '') {
+        if (this.options.scheduler[this._findOptionById(row.id)] !== row.value && this.selectedSchedulerType !== '') {
           this.openDialog('env-config-confirmation');
           break;
         } else {
@@ -554,7 +556,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       const container = this.shadowRoot.querySelector('#overlay-network-env-container');
       const rows = container.querySelectorAll('mwc-textfield');
       for (const row of rows) {
-        if (network[this._findOptionById(row.id)] !== row.value) {
+        if (this.options.network[this._findOptionById(row.id)] !== row.value) {
           this.openDialog('env-config-confirmation');
           break;
         } else {
@@ -570,10 +572,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     }
   }
 
-  /**
-   * Image pulling behavior, scheduler, network, and resource slots setting update
-   * */
-  updateSettings() {
+  updatePulling() {
     globalThis.backendaiclient.setting.get('docker/image/auto_pull').then((response) => {
       if (response['result'] === null || response['result'] === 'digest') { // digest mode
         this.options['image_pulling_behavior'] = 'digest';
@@ -584,26 +583,27 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       this.update(this.options);
     });
+  }
+
+  updateScheduler() {
     for (const [key] of Object.entries(this.options.scheduler)) {
       globalThis.backendaiclient.setting.get(`plugins/scheduler/${this.selectedSchedulerType}/${key}`).then((response) => {
-        if (response['result'] === null) {
-          this.options.scheduler[key] = '0';
-        } else {
-          this.options.scheduler[key] = response['result'];
-        }
+        this.options.scheduler[key] = response['result'] || '0';
       });
-      this.update(this.options);
+      this.update(this.options.scheduler);
     }
+  }
+
+  updateNetwork() {
     for (const [key] of Object.entries(this.options.network)) {
       globalThis.backendaiclient.setting.get(`network/overlay/${key}`).then((response) => {
-        if (response['result'] === null) {
-          this.options.network[key] = response['result'] = '';
-        } else {
-          this.options.network[key] = response['result'];
-        }
+        this.options.network[key] = response['result'] || '';
       });
-      this.update(this.options);
+      this.update(this.options.network);
     }
+  }
+
+  updateResourceSlots() {
     globalThis.backendaiclient.get_resource_slots().then((response) => {
       if ('cuda.device' in response) {
         this.options['cuda_gpu'] = true;
@@ -619,6 +619,28 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       this.update(this.options);
     });
+  }
+
+  /**
+   * Image pulling behavior, scheduler, network, and resource slots setting update
+   * */
+  updateSettings() {
+    this.updatePulling();
+    this.updateScheduler();
+    this.updateNetwork();
+    this.updateResourceSlots();
+  }
+
+  /**
+   * Update the values of elements whose class name is network option.
+   * */
+  updateNetworkOptionElements() {
+    this.updateNetwork();
+    const networkOptions = [...this.shadowRoot.querySelectorAll('.network-option')];
+    for (const networkOption of networkOptions) {
+      const key = this._findOptionById(networkOption.id);
+      networkOption.value = this.options.network[key] || '';
+    }
   }
 
   /**
@@ -821,14 +843,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
    */
   changeSelectedScheduleType(e) {
     this.selectedSchedulerType = e.target.value;
-    this.updateSettings();
+    this.updateScheduler();
     for (const [key] of Object.entries(this.options.scheduler)) {
       globalThis.backendaiclient.setting.get(`plugins/scheduler/${this.selectedSchedulerType}/${key}`).then((response) => {
-        if (response['result'] === null) {
-          this.shadowRoot.querySelector('#' + this._findIdByOption(key)).value = '0';
-        } else {
-          this.shadowRoot.querySelector('#' + this._findIdByOption(key)).value = response['result'];
-        }
+        this.shadowRoot.querySelector('#' + this._findIdByOption(key)).value = response['result'] || '0';
       });
     }
   }
