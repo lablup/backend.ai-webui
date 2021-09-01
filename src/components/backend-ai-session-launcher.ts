@@ -1249,10 +1249,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['env'] = this.environ_values;
     }
     if (this.shadowRoot.querySelector('#OpenMPCore').value !== '') {
-      config['env']['OMP_NUM_THREADS'] = this.shadowRoot.querySelector('#OpenMPCore').value;
+      config['env']['OMP_NUM_THREADS'] = Math.max(0, parseInt(this.shadowRoot.querySelector('#OpenMPCore').value)).toString();
     }
     if (this.shadowRoot.querySelector('#OpenBLASCore').value !== '') {
-      config['env']['OPENBLAS_NUM_THREADS'] = this.shadowRoot.querySelector('#OpenBLASCore').value;
+      config['env']['OPENBLAS_NUM_THREADS'] = Math.max(0, parseInt(this.shadowRoot.querySelector('#OpenBLASCore').value)).toString();
     }
     let kernelName: string;
     if (this._debug || ( this.manualImageName && this.manualImageName.value !== '')) {
