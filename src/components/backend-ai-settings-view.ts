@@ -427,7 +427,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
               <span slot="title">${_t('settings.SessionCreationRetries')}</span>
               <mwc-icon-button icon="info" @click="${(e) => this._showConfigDescription(e, 'retries')}" style="pointer-events:auto;"></mwc-icon-button>
               <mwc-textfield  id="num-retries"
-                              outlined
                               required
                               autoValidate
                               validationMessage="${_t('settings.InputRequired')}"
@@ -470,7 +469,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
               <mwc-textfield id="mtu"
                              class="network-option"
                              value="${this.options.network.mtu}"
-                             outlined
                              required
                              autoValidate
                              validationMessage="${_t('settings.InputRequired')}"
