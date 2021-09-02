@@ -210,7 +210,14 @@
       "FolderAlias": "Фолдерын хоч нэр",
       "NoAvailableFolderToMount": "Холбох боломжтой фолдер байхгүй байна.",
       "MountedFolders": "Холбогдсон фолдерууд",
-      "EnvironmentVariablePaneTitle": "Environment хувьсагч тохируулах (заавал биш)"
+      "EnvironmentVariablePaneTitle": "Environment хувьсагч тохируулах (заавал биш)",
+      "OpenMPOptimization": "__NOT_TRANSLATED__",
+      "DescOpenMPOptimization": "__NOT_TRANSLATED__",
+      "HPCOptimization": "__NOT_TRANSLATED__",
+      "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
+      "(Automatic)": "__NOT_TRANSLATED__",
+      "NumOpenMPthreads": "__NOT_TRANSLATED__",
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",

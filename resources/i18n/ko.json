@@ -210,7 +210,13 @@
       "SharedMemoryAbbr": "공유메모리",
       "GPUSlot": "슬롯",
       "FolderAlias": "대체이름",
-      "FolderAliasOverlapping": "대체 이름이 이미 존재하는 다른 이름과 겹칩니다."
+      "FolderAliasOverlapping": "대체 이름이 이미 존재하는 다른 이름과 겹칩니다.",
+      "OpenMPOptimization": "OpenMP/OpenBLAS 최적화",
+      "DescOpenMPOptimization": "<p>이 값은 nthreads-var 내부 컨트롤 변수의 초기 값을 설정하여 병렬 영역에 사용할 스레드 수를 설정합니다.</p><p>Backend.AI는 이 값을 CPU 코어수와 같게 설정하며, 일반적인 고성능 컴퓨팅 워크로드를 가속하는 효과가 있습니다. 그러나 일부 멀티스레드 워크로드의 경우 OpenMP를 사용하는 여러 프로세스가 동시에 사용되어 비정상적으로 많은 스레드를 생성하여 상당한 성능 저하가 발생합니다. 이러한 경우 이 값을 1 또는 2로 조정하시기 바랍니다.</p>",
+      "HPCOptimization": "고성능 컴퓨팅 최적화",
+      "(Automatic)": "(자동설정)",
+      "NumOpenMPthreads": "OpenMP 쓰레드 수",
+      "NumOpenBLASthreads": "OpenBLAS 쓰레드 수"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

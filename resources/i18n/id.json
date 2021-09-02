@@ -210,7 +210,14 @@
       "FolderAlias": "Nama lain",
       "NoAvailableFolderToMount": "Tidak ada folder yang dapat dipasang",
       "MountedFolders": "Folder Terpasang",
-      "EnvironmentVariablePaneTitle": "Nama Panel Variabel Lingkungan"
+      "EnvironmentVariablePaneTitle": "Nama Panel Variabel Lingkungan",
+      "OpenMPOptimization": "__NOT_TRANSLATED__",
+      "DescOpenMPOptimization": "__NOT_TRANSLATED__",
+      "HPCOptimization": "__NOT_TRANSLATED__",
+      "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
+      "(Automatic)": "__NOT_TRANSLATED__",
+      "NumOpenMPthreads": "__NOT_TRANSLATED__",
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
