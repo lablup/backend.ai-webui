@@ -262,7 +262,8 @@
     "UseThisArguments": "이 인수 사용",
     "UseYourFavoriteVNCApp": "선호하는 VNC 앱을 사용해 연결하세요",
     "XRDPconnection": "RDP 연결",
-    "UseYourFavoriteMSTSCApp": "선호하는 MS 리모트 데스크탑 클라이언트를 사용해 연결하세요"
+    "UseYourFavoriteMSTSCApp": "선호하는 MS 리모트 데스크탑 클라이언트를 사용해 연결하세요",
+    "OnlyOneFolderAttached": "하나의 폴더만 연결되어 있습니다."
   },
   "button": {
     "Cancel": "취소",

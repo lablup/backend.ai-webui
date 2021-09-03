@@ -1107,18 +1107,19 @@ export default class BackendAiSessionList extends BackendAIPage {
     menu.setAttribute('x', 10);
     menu.setAttribute('y', 15);
 
-    if (mounts.length > 1) {
+    if (mounts.length >= 1) {
       mounts.map((key, index) => {
-        if (index > 0) {
-          const mountedFolderItem = document.createElement('mwc-list-item');
-          mountedFolderItem.innerHTML = key.replace(regExp, '').split(' ')[0];
-          mountedFolderItem.style.height = '25px';
-          mountedFolderItem.style.fontWeight = '400';
-          mountedFolderItem.style.fontSize = '14px';
-          mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
-
-          menu.appendChild(mountedFolderItem);
+        const mountedFolderItem = document.createElement('mwc-list-item');
+        mountedFolderItem.style.height = '25px';
+        mountedFolderItem.style.fontWeight = '400';
+        mountedFolderItem.style.fontSize = '14px';
+        mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
+        if (mounts.length > 1) {
+          mountedFolderItem.innerHTML = `${index + 1}. ${key.replace(regExp, '').split(' ')[0]}`;
+        } else {
+          mountedFolderItem.innerHTML = _text('session.OnlyOneFolderAttached');
         }
+        menu.appendChild(mountedFolderItem);
       });
       document.body.appendChild(menu);
     }
