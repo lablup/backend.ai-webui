@@ -911,7 +911,13 @@
       "digest": "Боловсруулах",
       "tag": "Таг",
       "none": "Аль нь ч биш"
-    }
+    },
+    "OverlayNetwork": "__NOT_TRANSLATED__",
+    "OverlayNetworkConfiguration": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettings": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
+    "MTUDescription": "__NOT_TRANSLATED__",
+    "OutOfRange": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
