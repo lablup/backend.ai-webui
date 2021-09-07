@@ -3080,7 +3080,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 `}
               </div>
              ` : html``}
-            <wl-expansion name="hpc-option-group" open>
+            <wl-expansion name="hpc-option-group">
               <span slot="title">${_t('session.launcher.HPCOptimization')}</span>
               <div class="vertical center layout">
                 <div class="horizontal center layout">
