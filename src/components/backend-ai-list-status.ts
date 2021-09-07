@@ -30,7 +30,7 @@ import './lablup-loading-dots';
 export default class BackendAIListStatus extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) list_status = Object();
-  @property({type: String}) message="There is no data to display";
+  @property({type: String}) message="There is nothing to display";
   @property({type: String}) status_condition="loading";
   @property({type: Object}) dots = Object();
   @property({type: Boolean}) active = true;
