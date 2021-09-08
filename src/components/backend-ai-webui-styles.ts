@@ -395,7 +395,7 @@ export const BackendAIWebUIStyles = [
     }
 
     #user-preference-dialog mwc-textfield#secretkey {
-    --mdc-typography-subtitle1-font-size: 0.7rem;
+      --mdc-typography-subtitle1-font-size: 0.7rem;
     }
 
     mwc-textarea {

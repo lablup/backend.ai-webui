@@ -210,7 +210,14 @@
       "FolderAlias": "__NOT_TRANSLATED__",
       "NoAvailableFolderToMount": "__NOT_TRANSLATED__",
       "MountedFolders": "__NOT_TRANSLATED__",
-      "EnvironmentVariablePaneTitle": "__NOT_TRANSLATED__"
+      "EnvironmentVariablePaneTitle": "__NOT_TRANSLATED__",
+      "OpenMPOptimization": "__NOT_TRANSLATED__",
+      "DescOpenMPOptimization": "__NOT_TRANSLATED__",
+      "HPCOptimization": "__NOT_TRANSLATED__",
+      "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
+      "(Automatic)": "__NOT_TRANSLATED__",
+      "NumOpenMPthreads": "__NOT_TRANSLATED__",
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -904,7 +911,13 @@
       "digest": "Дайджест",
       "tag": "Тег",
       "none": "Никто"
-    }
+    },
+    "OverlayNetwork": "__NOT_TRANSLATED__",
+    "OverlayNetworkConfiguration": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettings": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
+    "MTUDescription": "__NOT_TRANSLATED__",
+    "OutOfRange": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",
