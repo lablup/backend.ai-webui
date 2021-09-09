@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.8.1)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v21.3.1)
 ====================================================================
 
 (C) Copyright 2016-2021 Lablup Inc.

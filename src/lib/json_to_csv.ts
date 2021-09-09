@@ -76,7 +76,9 @@ export default class JsonToCsv {
             }).join(separator);
           }).join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      // @ts-ignore
       if (navigator.msSaveBlob) { // IE 10+
+        // @ts-ignore
         navigator.msSaveBlob(blob, filename);
       } else {
         const link = document.createElement('a');
