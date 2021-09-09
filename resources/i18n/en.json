@@ -210,7 +210,13 @@
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Slot",
       "FolderAlias": "Alias",
-      "FolderAliasOverlapping": "Aliases overlap with other names that already exist"
+      "FolderAliasOverlapping": "Aliases overlap with other names that already exist",
+      "OpenMPOptimization": "OpenMP/OpenBLAS Optimization",
+      "DescOpenMPOptimization": "<p>This value sets the number of threads to use for parallel regions by setting the initial value of the nthreads-var internal control variable.</p><p>Backend.AI sets this value equal to the number of CPU cores, which has the effect of accelerating typical high-performance computing workloads. However, for some multi-threaded workloads, multiple processes using OpenMP are used at the same time, resulting in an abnormally large number of threads and significant performance degradation. In this case, please adjust this value to 1 or 2.</p>",
+      "HPCOptimization": "High-Performance Computing Optimizations",
+      "(Automatic)": "(Automatic)",
+      "NumOpenMPthreads": "Number of OpenMP threads",
+      "NumOpenBLASthreads": "Number of OpenBLAS threads"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -886,7 +892,7 @@
     "SessionCreationRetriesDescription": "If the session creation fails, the session creation is retried for the value specified in here. If the session cannot be created within the trials, the request will be ignored and Backend.AI will process the next request.",
     "FifoOnly": "Currently, changes are only possible when the scheduler is FIFO.",
     "InputRequired": "This field is required.",
-    "InputRange0to1000": "Enter values between 0 to 1000.",
+    "OutOfRange": "Out of range.",
     "SchedulerRequired": "Scheduler is required.",
     "InvalidValue": "Please put the correct input value.",
     "EnvConfigWillDisappear": "Any unsaved environment variable and value will be disappeared.",
@@ -905,7 +911,12 @@
       "digest": "Digest",
       "tag": "Tag",
       "none": "None"
-    }
+    },
+    "OverlayNetwork": "Overlay Network",
+    "OverlayNetworkConfiguration": "Configuration to use when creating overlay networks.",
+    "OverlayNetworkSettings": "Overlay Network settings",
+    "OverlayNetworkSettingsDescription": "An overlay network is a computer network that is layered on top of another network. The overlay network creates a distributed network among multiple Docker daemon hosts of the Backend.AI manager.",
+    "MTUDescription": "Maximum transmission unit, the size of the largest packet that a network protocol can transmit."
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",
