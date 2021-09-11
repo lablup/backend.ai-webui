@@ -1033,7 +1033,7 @@ class Client {
    * @param {string} mode - either "query", "batch", "input", or "continue"
    * @param {string} opts - an optional object specifying additional configs such as batch-mode build/exec commands
    */
-  async execute(sessionId, runId, mode, code, opts) {
+  async execute(sessionId, runId, mode, code, opts, timeout = 0) {
     let params = {
       "mode": mode,
       "code": code,
