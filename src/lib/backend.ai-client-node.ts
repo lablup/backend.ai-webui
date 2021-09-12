@@ -1041,7 +1041,7 @@ class Client {
       "options": opts,
     };
     let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params);
-    return this._wrapWithPromise(rqst);
+	return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
   // legacy aliases (DO NOT USE for new codes)
