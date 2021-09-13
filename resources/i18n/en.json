@@ -268,7 +268,8 @@
     "UseThisArguments": "Use this arguments",
     "UseYourFavoriteVNCApp": "Use your favorite VNC app",
     "XRDPconnection": "RDP Connection",
-    "UseYourFavoriteMSTSCApp": "Use your favorite MS Remote Desktop app"
+    "UseYourFavoriteMSTSCApp": "Use your favorite MS Remote Desktop app",
+    "OnlyOneFolderAttached": "Only one folder is attached."
   },
   "button": {
     "Cancel": "Cancel",

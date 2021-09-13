@@ -1107,21 +1107,22 @@ export default class BackendAiSessionList extends BackendAIPage {
     menu.setAttribute('x', 10);
     menu.setAttribute('y', 15);
 
-    if (mounts.length > 1) {
+    if (mounts.length >= 1) {
       mounts.map((key, index) => {
-        if (index > 0) {
-          const mountedFolderItem = document.createElement('mwc-list-item');
-          mountedFolderItem.innerHTML = key.replace(regExp, '').split(' ')[0];
-          mountedFolderItem.style.height = '25px';
-          mountedFolderItem.style.fontWeight = '400';
-          mountedFolderItem.style.fontSize = '14px';
-          mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
-
-          menu.appendChild(mountedFolderItem);
+        const mountedFolderItem = document.createElement('mwc-list-item');
+        mountedFolderItem.style.height = '25px';
+        mountedFolderItem.style.fontWeight = '400';
+        mountedFolderItem.style.fontSize = '14px';
+        mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
+        if (mounts.length > 1) {
+          mountedFolderItem.innerHTML = ` ${key.replace(regExp, '').split(' ')[0]}`;
+        } else {
+          mountedFolderItem.innerHTML = _text('session.OnlyOneFolderAttached');
         }
+        menu.appendChild(mountedFolderItem);
       });
+      document.body.appendChild(menu);
     }
-    document.body.appendChild(menu);
   }
 
 
@@ -1593,8 +1594,9 @@ export default class BackendAiSessionList extends BackendAIPage {
         ` : html``}
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
-          <vaadin-grid-filter-column path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}" 
-          header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable .renderer="${this._boundUserInfoRenderer}">
+          <vaadin-grid-filter-column path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
+                                     header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable
+                                     .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-filter-column>
         ` : html``}
         <vaadin-grid-filter-column path="${this.sessionNameField}" header="${_t('session.SessionInfo')}" resizable .renderer="${this._boundSessionInfoRenderer}">
