@@ -1115,7 +1115,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         mountedFolderItem.style.fontSize = '14px';
         mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
         if (mounts.length > 1) {
-          mountedFolderItem.innerHTML = `${index + 1}. ${key.replace(regExp, '').split(' ')[0]}`;
+          mountedFolderItem.innerHTML = ` ${key.replace(regExp, '').split(' ')[0]}`;
         } else {
           mountedFolderItem.innerHTML = _text('session.OnlyOneFolderAttached');
         }
@@ -1594,8 +1594,9 @@ export default class BackendAiSessionList extends BackendAIPage {
         ` : html``}
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
-          <vaadin-grid-filter-column path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}" 
-          header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable .renderer="${this._boundUserInfoRenderer}">
+          <vaadin-grid-filter-column path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
+                                     header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable
+                                     .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-filter-column>
         ` : html``}
         <vaadin-grid-filter-column path="${this.sessionNameField}" header="${_t('session.SessionInfo')}" resizable .renderer="${this._boundSessionInfoRenderer}">
