@@ -217,7 +217,8 @@
       "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
       "(Automatic)": "__NOT_TRANSLATED__",
       "NumOpenMPthreads": "__NOT_TRANSLATED__",
-      "NumOpenBLASthreads": "__NOT_TRANSLATED__"
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__",
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -269,7 +270,8 @@
     "UseThisArguments": "Энэ аргументийг ашиглана уу",
     "UseYourFavoriteVNCApp": "Өөрийн дуртай VNC програмаа ашиглаарай",
     "XRDPconnection": "RDP холболт",
-    "UseYourFavoriteMSTSCApp": "Дуртай MS Remote Desktop програмаа ашиглаарай"
+    "UseYourFavoriteMSTSCApp": "Дуртай MS Remote Desktop програмаа ашиглаарай",
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",

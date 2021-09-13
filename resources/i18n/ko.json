@@ -216,7 +216,8 @@
       "HPCOptimization": "고성능 컴퓨팅 최적화",
       "(Automatic)": "(자동설정)",
       "NumOpenMPthreads": "OpenMP 쓰레드 수",
-      "NumOpenBLASthreads": "OpenBLAS 쓰레드 수"
+      "NumOpenBLASthreads": "OpenBLAS 쓰레드 수",
+      "SwitchOpenMPoptimization": "OpenMP 자동 최적화 사용"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
