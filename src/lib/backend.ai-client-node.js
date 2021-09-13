@@ -2954,7 +2954,7 @@ class User {
         if (this.client.is_admin === true) {
             let q = `mutation($email: String!, $input: UserInput!) {` +
                 `  create_user(email: $email, props: $input) {` +
-                `    ok msg user { ${fields.join(" ")} }` +
+                `    ok msg` +
                 `  }` +
                 `}`;
             let v = {
