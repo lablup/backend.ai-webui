@@ -49,6 +49,7 @@
     "@vaadin/vaadin-icons": "^21.0.0",
     "@vaadin/vaadin-item": "^21.0.0",
     "@vaadin/vaadin-progress-bar": "^21.0.0",
+    "@vaadin/vaadin-template-renderer": "^21.0.1",
     "@vanillawc/wc-codemirror": "^1.9.7",
     "@webcomponents/webcomponentsjs": "^2.6.0",
     "bufferutil": "^4.0.3",

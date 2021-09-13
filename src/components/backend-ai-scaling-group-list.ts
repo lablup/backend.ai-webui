@@ -9,6 +9,8 @@ import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-template-renderer';
+
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
