@@ -15,6 +15,8 @@ import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
+import '@vaadin/vaadin-template-renderer';
+
 import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';

@@ -941,7 +941,7 @@ class Client {
      * @param {string} mode - either "query", "batch", "input", or "continue"
      * @param {string} opts - an optional object specifying additional configs such as batch-mode build/exec commands
      */
-    async execute(sessionId, runId, mode, code, opts) {
+    async execute(sessionId, runId, mode, code, opts, timeout = 0) {
         let params = {
             "mode": mode,
             "code": code,
@@ -949,7 +949,7 @@ class Client {
             "options": opts,
         };
         let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params);
-        return this._wrapWithPromise(rqst);
+        return this._wrapWithPromise(rqst, false, null, timeout);
     }
     // legacy aliases (DO NOT USE for new codes)
     createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
@@ -3003,7 +3003,7 @@ class User {
         if (this.client.is_admin === true) {
             let q = `mutation($email: String!, $input: UserInput!) {` +
                 `  create_user(email: $email, props: $input) {` +
-                `    ok msg user { ${fields.join(" ")} }` +
+                `    ok msg` +
                 `  }` +
                 `}`;
             let v = {
