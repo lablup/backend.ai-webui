@@ -269,7 +269,9 @@
     "UseThisArguments": "Используйте эти аргументы",
     "UseYourFavoriteVNCApp": "Используйте свое любимое приложение VNC",
     "XRDPconnection": "RDP-соединение",
-    "UseYourFavoriteMSTSCApp": "Используйте ваше любимое приложение MS Remote Desktop"
+    "UseYourFavoriteMSTSCApp": "Используйте ваше любимое приложение MS Remote Desktop",
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__",
+    "UseV2Proxy": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
@@ -778,7 +780,8 @@
     "ResourceGroupDeleted": "Группа ресурсов успешно удалена",
     "EnterValidResourceGroupName": "Введите действительное имя группы ресурсов",
     "ResourceGroupNameRequired": "Укажите название группы ресурсов.",
-    "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует."
+    "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует.",
+    "CoordinatorAddress": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Общий",

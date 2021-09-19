@@ -299,7 +299,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       const scalingGroup = this.shadowRoot.querySelector('#scaling-group-name').value;
       const description = this.shadowRoot.querySelector('#scaling-group-description').value;
       const domain = this.shadowRoot.querySelector('#scaling-group-domain').value;
-      globalThis.backendaiclient.scalingGroup.create(scalingGroup, description)
+      const coordinatorAddress = this.shadowRoot.querySelector('#scaling-group-coordinator-address').value;
+      globalThis.backendaiclient.scalingGroup.create(scalingGroup, description, coordinatorAddress)
         .then(({create_scaling_group: res}) => {
           if (res.ok) {
             return globalThis.backendaiclient.scalingGroup.associate_domain(domain, scalingGroup);
@@ -343,12 +344,19 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     const description = this.shadowRoot.querySelector('#modify-scaling-group-description').value;
     const scheduler = this.shadowRoot.querySelector('#modify-scaling-group-scheduler').value;
     const is_active = this.shadowRoot.querySelector('#modify-scaling-group-active').checked;
+    let coordinator_address: string = this.shadowRoot.querySelector('#modify-scaling-group-coordinator-address').value;
+    if (coordinator_address.endsWith('/')) {
+      coordinator_address = coordinator_address.slice(0, coordinator_address.length - 1);
+    }
     const name = this.scalingGroups[this.selectedIndex].name;
+
+    console.log(this.scalingGroups[this.selectedIndex]);
 
     const input = {};
     if (description !== this.scalingGroups[this.selectedIndex].description) input['description'] = description;
     if (scheduler !== this.scalingGroups[this.selectedIndex].scheduler) input['scheduler'] = scheduler;
     if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input['is_active'] = is_active;
+    if (coordinator_address !== this.scalingGroups[this.selectedIndex].coordinator_address) input['coordinator_address'] = coordinator_address;
 
     if (Object.keys(input).length === 0) {
       this.notification.text = _text('resourceGroup.NochangesMade');
@@ -454,6 +462,11 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             <div> [[item.scheduler_opts]] </div>
           </template>
         </vaadin-grid-column>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.CoordinatorAddress')}">
+          <template>
+            <div> [[item.coordinator_address]] </div>
+          </template>
+        </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
@@ -488,6 +501,12 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             maxLength="512"
             placeholder="${_t('maxLength.512chars')}"
           ></mwc-textarea>
+          <mwc-textfield
+            id="scaling-group-coordinator-address"
+            type="url"
+            label="${_t('resourceGroup.CoordinatorAddress')}"
+            placeholder="http://localhost:10200"
+          ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
@@ -525,6 +544,12 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             label="${_t('resourceGroup.Description')}"
             value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].description}
           ></mwc-textarea>
+          <mwc-textfield
+            id="modify-scaling-group-coordinator-address"
+            type="url"
+            label="${_t('resourceGroup.CoordinatorAddress')}"
+            value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].coordinator_address}
+          ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button

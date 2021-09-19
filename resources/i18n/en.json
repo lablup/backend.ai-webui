@@ -269,7 +269,8 @@
     "UseYourFavoriteVNCApp": "Use your favorite VNC app",
     "XRDPconnection": "RDP Connection",
     "UseYourFavoriteMSTSCApp": "Use your favorite MS Remote Desktop app",
-    "OnlyOneFolderAttached": "Only one folder is attached."
+    "OnlyOneFolderAttached": "Only one folder is attached.",
+    "UseV2Proxy": "UseV2Proxy"
   },
   "button": {
     "Cancel": "Cancel",
@@ -778,7 +779,8 @@
     "ResourceGroupDeleted": "Resource group successfully deleted",
     "EnterValidResourceGroupName": "Enter valid Resource group name",
     "ResourceGroupNameRequired": "Resource group name is required.",
-    "ResourceGroupAlreadyExist": "A resource group with the same name already exists."
+    "ResourceGroupAlreadyExist": "A resource group with the same name already exists.",
+    "CoordinatorAddress": "CoordinatorAddress"
   },
   "maintenance": {
     "General": "General",

@@ -269,7 +269,8 @@
     "UseYourFavoriteVNCApp": "선호하는 VNC 앱을 사용해 연결하세요",
     "XRDPconnection": "RDP 연결",
     "UseYourFavoriteMSTSCApp": "선호하는 MS 리모트 데스크탑 클라이언트를 사용해 연결하세요",
-    "OnlyOneFolderAttached": "하나의 폴더만 연결되어 있습니다."
+    "OnlyOneFolderAttached": "하나의 폴더만 연결되어 있습니다.",
+    "UseV2Proxy": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "취소",
@@ -778,7 +779,8 @@
     "ResourceGroupDeleted": "자원 그룹이 성공적으로 삭제되었습니다.",
     "EnterValidResourceGroupName": "올바른 자원 그룹 명을 입력해주세요.",
     "ResourceGroupNameRequired": "자원 그룹 이름이 필요합니다.",
-    "ResourceGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다."
+    "ResourceGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다.",
+    "CoordinatorAddress": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "일반",

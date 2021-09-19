@@ -941,7 +941,7 @@ class Client {
      * @param {string} mode - either "query", "batch", "input", or "continue"
      * @param {string} opts - an optional object specifying additional configs such as batch-mode build/exec commands
      */
-    async execute(sessionId, runId, mode, code, opts) {
+    async execute(sessionId, runId, mode, code, opts, timeout = 0) {
         let params = {
             "mode": mode,
             "code": code,
@@ -949,7 +949,7 @@ class Client {
             "options": opts,
         };
         let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params);
-        return this._wrapWithPromise(rqst);
+        return this._wrapWithPromise(rqst, false, null, timeout);
     }
     // legacy aliases (DO NOT USE for new codes)
     createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
@@ -2447,7 +2447,7 @@ class ComputeSession {
      * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
      * @param {string} sessionUuid - session ID to query specific compute session.
      */
-    async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], sessionUuid = '') {
+    async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "scaling_group"], sessionUuid = '') {
         fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
         let q, v;
         q = `query($session_uuid: UUID!) {
@@ -2457,6 +2457,15 @@ class ComputeSession {
     }`;
         v = { session_uuid: sessionUuid };
         return this.client.query(q, v);
+    }
+    async startService(session, app, port = null, envs = null, args = null) {
+        let rqst = this.client.newSignedRequest('POST', `/session/${session}/start-service`, {
+            app,
+            port: port || undefined,
+            envs: envs || undefined,
+            args: args || undefined,
+        });
+        return this.client._wrapWithPromise(rqst);
     }
 }
 class SessionTemplate {
@@ -3034,7 +3043,7 @@ class ScalingGroup {
     }
     async list_available() {
         if (this.client.is_superadmin === true) {
-            const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
+            const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts", "coordinator_address"];
             const q = `query {` +
                 `  scaling_groups { ${fields.join(" ")} }` +
                 `}`;
