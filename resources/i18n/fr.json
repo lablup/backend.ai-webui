@@ -781,7 +781,7 @@
     "EnterValidResourceGroupName": "Entrez un nom de groupe de ressources valide",
     "ResourceGroupNameRequired": "Le nom du groupe de ressources est requis.",
     "ResourceGroupAlreadyExist": "Un groupe de ressources du même nom existe déjà.",
-    "CoordinatorAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Général",

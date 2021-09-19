@@ -299,8 +299,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       const scalingGroup = this.shadowRoot.querySelector('#scaling-group-name').value;
       const description = this.shadowRoot.querySelector('#scaling-group-description').value;
       const domain = this.shadowRoot.querySelector('#scaling-group-domain').value;
-      const coordinatorAddress = this.shadowRoot.querySelector('#scaling-group-coordinator-address').value;
-      globalThis.backendaiclient.scalingGroup.create(scalingGroup, description, coordinatorAddress)
+      const wsproxyAddress = this.shadowRoot.querySelector('#scaling-group-wsproxy-address').value;
+      globalThis.backendaiclient.scalingGroup.create(scalingGroup, description, wsproxyAddress)
         .then(({create_scaling_group: res}) => {
           if (res.ok) {
             return globalThis.backendaiclient.scalingGroup.associate_domain(domain, scalingGroup);
@@ -344,9 +344,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     const description = this.shadowRoot.querySelector('#modify-scaling-group-description').value;
     const scheduler = this.shadowRoot.querySelector('#modify-scaling-group-scheduler').value;
     const is_active = this.shadowRoot.querySelector('#modify-scaling-group-active').checked;
-    let coordinator_address: string = this.shadowRoot.querySelector('#modify-scaling-group-coordinator-address').value;
-    if (coordinator_address.endsWith('/')) {
-      coordinator_address = coordinator_address.slice(0, coordinator_address.length - 1);
+    let wsproxy_address: string = this.shadowRoot.querySelector('#modify-scaling-group-wsproxy-address').value;
+    if (wsproxy_address.endsWith('/')) {
+      wsproxy_address = wsproxy_address.slice(0, wsproxy_address.length - 1);
     }
     const name = this.scalingGroups[this.selectedIndex].name;
 
@@ -356,7 +356,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     if (description !== this.scalingGroups[this.selectedIndex].description) input['description'] = description;
     if (scheduler !== this.scalingGroups[this.selectedIndex].scheduler) input['scheduler'] = scheduler;
     if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input['is_active'] = is_active;
-    if (coordinator_address !== this.scalingGroups[this.selectedIndex].coordinator_address) input['coordinator_address'] = coordinator_address;
+    if (wsproxy_address !== this.scalingGroups[this.selectedIndex].wsproxy_address) input['wsproxy_address'] = wsproxy_address;
 
     if (Object.keys(input).length === 0) {
       this.notification.text = _text('resourceGroup.NochangesMade');
@@ -462,9 +462,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             <div> [[item.scheduler_opts]] </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.CoordinatorAddress')}">
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.WsproxyAddress')}">
           <template>
-            <div> [[item.coordinator_address]] </div>
+            <div> [[item.wsproxy_address]] </div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
@@ -502,9 +502,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             placeholder="${_t('maxLength.512chars')}"
           ></mwc-textarea>
           <mwc-textfield
-            id="scaling-group-coordinator-address"
+            id="scaling-group-wsproxy-address"
             type="url"
-            label="${_t('resourceGroup.CoordinatorAddress')}"
+            label="${_t('resourceGroup.WsproxyAddress')}"
             placeholder="http://localhost:10200"
           ></mwc-textfield>
         </div>
@@ -545,10 +545,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].description}
           ></mwc-textarea>
           <mwc-textfield
-            id="modify-scaling-group-coordinator-address"
+            id="modify-scaling-group-wsproxy-address"
             type="url"
-            label="${_t('resourceGroup.CoordinatorAddress')}"
-            value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].coordinator_address}
+            label="${_t('resourceGroup.WsproxyAddress')}"
+            value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].wsproxy_address}
           ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">

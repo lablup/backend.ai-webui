@@ -780,7 +780,7 @@
     "EnterValidResourceGroupName": "올바른 자원 그룹 명을 입력해주세요.",
     "ResourceGroupNameRequired": "자원 그룹 이름이 필요합니다.",
     "ResourceGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다.",
-    "CoordinatorAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "일반",

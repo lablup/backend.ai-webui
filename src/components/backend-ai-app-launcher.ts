@@ -554,7 +554,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return Promise.resolve(false);
     }
     const token = tokenResponse.token;
-    let uri = tokenResponse.coordinator_address + `/v2/proxy/${token}/${sessionUuid}/add?app=${app}`;
+    let uri = tokenResponse.wsproxy_address + `/v2/proxy/${token}/${sessionUuid}/add?app=${app}`;
     if (port !== null && port > 1024 && port < 65535) {
       uri += `&port=${port}`;
     }
