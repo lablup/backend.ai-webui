@@ -217,7 +217,8 @@
       "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
       "(Automatic)": "__NOT_TRANSLATED__",
       "NumOpenMPthreads": "__NOT_TRANSLATED__",
-      "NumOpenBLASthreads": "__NOT_TRANSLATED__"
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__",
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -269,7 +270,8 @@
     "UseThisArguments": "Используйте эти аргументы",
     "UseYourFavoriteVNCApp": "Используйте свое любимое приложение VNC",
     "XRDPconnection": "RDP-соединение",
-    "UseYourFavoriteMSTSCApp": "Используйте ваше любимое приложение MS Remote Desktop"
+    "UseYourFavoriteMSTSCApp": "Используйте ваше любимое приложение MS Remote Desktop",
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
