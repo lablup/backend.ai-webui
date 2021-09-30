@@ -16,6 +16,7 @@ import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-list/mwc-check-list-item';
 import '@material/mwc-select';
+import '@material/mwc-switch';
 import '@material/mwc-textfield/mwc-textfield';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -1248,11 +1249,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.environ_values !== {}) {
       config['env'] = this.environ_values;
     }
-    if (this.shadowRoot.querySelector('#OpenMPCore').value !== '') {
-      config['env']['OMP_NUM_THREADS'] = Math.max(0, parseInt(this.shadowRoot.querySelector('#OpenMPCore').value)).toString();
-    }
-    if (this.shadowRoot.querySelector('#OpenBLASCore').value !== '') {
-      config['env']['OPENBLAS_NUM_THREADS'] = Math.max(0, parseInt(this.shadowRoot.querySelector('#OpenBLASCore').value)).toString();
+    if (this.shadowRoot.querySelector('#OpenMPswitch').checked === true) {
+      if (this.shadowRoot.querySelector('#OpenMPCore').value !== '') {
+        config['env']['OMP_NUM_THREADS'] = Math.max(0, parseInt(this.shadowRoot.querySelector('#OpenMPCore').value)).toString();
+      }
+      if (this.shadowRoot.querySelector('#OpenBLASCore').value !== '') {
+        config['env']['OPENBLAS_NUM_THREADS'] = Math.max(0, parseInt(this.shadowRoot.querySelector('#OpenBLASCore').value)).toString();
+      }
+    } else {
+      config['env']['OMP_NUM_THREADS'] = '1';
+      config['env']['OPENBLAS_NUM_THREADS'] = '1';
     }
     let kernelName: string;
     if (this._debug || ( this.manualImageName && this.manualImageName.value !== '')) {
@@ -3083,6 +3089,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <wl-expansion name="hpc-option-group">
               <span slot="title">${_t('session.launcher.HPCOptimization')}</span>
               <div class="vertical center layout">
+                <div class="horizontal center center-justified flex layout">
+                  <div style="width:313px;">${_t('session.launcher.SwitchOpenMPoptimization')}</div>
+                  <mwc-switch id="OpenMPswitch" checked></mwc-switch>
+                </div>
                 <div class="horizontal center layout">
                   <div style="width:200px;">${_t('session.launcher.NumOpenMPthreads')}</div>
                   <mwc-textfield id="OpenMPCore" type="number" placeholder="${_t('session.launcher.(Automatic)')}"

@@ -216,7 +216,8 @@
       "HPCOptimization": "High-Performance Computing Optimizations",
       "(Automatic)": "(Automatic)",
       "NumOpenMPthreads": "Number of OpenMP threads",
-      "NumOpenBLASthreads": "Number of OpenBLAS threads"
+      "NumOpenBLASthreads": "Number of OpenBLAS threads",
+      "SwitchOpenMPoptimization": "Use automatic OpenMP optimization"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
