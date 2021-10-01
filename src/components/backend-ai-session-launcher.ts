@@ -1249,16 +1249,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.environ_values !== {}) {
       config['env'] = this.environ_values;
     }
-    if (this.shadowRoot.querySelector('#OpenMPswitch').checked === true) {
-      if (this.shadowRoot.querySelector('#OpenMPCore').value !== '') {
-        config['env']['OMP_NUM_THREADS'] = Math.max(0, parseInt(this.shadowRoot.querySelector('#OpenMPCore').value)).toString();
-      }
-      if (this.shadowRoot.querySelector('#OpenBLASCore').value !== '') {
-        config['env']['OPENBLAS_NUM_THREADS'] = Math.max(0, parseInt(this.shadowRoot.querySelector('#OpenBLASCore').value)).toString();
-      }
-    } else {
-      config['env']['OMP_NUM_THREADS'] = '1';
-      config['env']['OPENBLAS_NUM_THREADS'] = '1';
+    if (this.shadowRoot.querySelector('#OpenMPswitch').checked === false) {
+      const openMPCoreValue = this.shadowRoot.querySelector('#OpenMPCore').value;
+      const openBLASCoreValue = this.shadowRoot.querySelector('#OpenBLASCore').value;
+      config['env']['OMP_NUM_THREADS'] = openMPCoreValue ? Math.max(0, parseInt(openMPCoreValue)).toString() : '1';
+      config['env']['OPENBLAS_NUM_THREADS'] = openBLASCoreValue ? Math.max(0, parseInt(openBLASCoreValue)).toString() : '1';
     }
     let kernelName: string;
     if (this._debug || ( this.manualImageName && this.manualImageName.value !== '')) {
@@ -2742,6 +2737,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     SelectedVersions.select(selectedIndex);
   }
 
+  /**
+   * Show HPC optimization options only if OpenMPswitch is not checked.
+   */
+  _toggleHPCOptimization() {
+    const isOpenMPChecked = this.shadowRoot.querySelector('#OpenMPswitch').checked;
+    this.shadowRoot.querySelector('#HPCOptimizationOptions').style.display = isOpenMPChecked ? 'none' : 'block';
+  }
+
   render() {
     // language=HTML
     return html`
@@ -3091,29 +3094,31 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="vertical center layout">
                 <div class="horizontal center center-justified flex layout">
                   <div style="width:313px;">${_t('session.launcher.SwitchOpenMPoptimization')}</div>
-                  <mwc-switch id="OpenMPswitch" checked></mwc-switch>
+                  <mwc-switch id="OpenMPswitch" checked @change="${this._toggleHPCOptimization}"></mwc-switch>
                 </div>
-                <div class="horizontal center layout">
-                  <div style="width:200px;">${_t('session.launcher.NumOpenMPthreads')}</div>
-                  <mwc-textfield id="OpenMPCore" type="number" placeholder="${_t('session.launcher.(Automatic)')}"
-                                 value="" min="0" max="1000" step="1" style="width:120px;"
-                                 pattern="[0-9]+" @change="${(e) => this._validateInput(e)}">
-                  </mwc-textfield>
-                  <mwc-icon-button icon="info" class="fg green info"
+                <div id="HPCOptimizationOptions" style="display:none;">
+                  <div class="horizontal center layout">
+                    <div style="width:200px;">${_t('session.launcher.NumOpenMPthreads')}</div>
+                    <mwc-textfield id="OpenMPCore" type="number" placeholder="${_t('session.launcher.(Automatic)')}"
+                                  value="" min="0" max="1000" step="1" style="width:120px;"
+                                  pattern="[0-9]+" @change="${(e) => this._validateInput(e)}">
+                    </mwc-textfield>
+                    <mwc-icon-button icon="info" class="fg green info"
                                     @click="${(e) => {
-    this._showResourceDescription(e, 'openmp-optimization');
-  }}"></mwc-icon-button>
-                </div>
-                <div class="horizontal center layout">
-                  <div style="width:200px;">${_t('session.launcher.NumOpenBLASthreads')}</div>
-                  <mwc-textfield id="OpenBLASCore" type="number" placeholder="${_t('session.launcher.(Automatic)')}"
-                                 value="" min="0" max="1000" step="1" style="width:120px;"
-                                 pattern="[0-9]+" @change="${(e) => this._validateInput(e)}">
-                  </mwc-textfield>
-                  <mwc-icon-button icon="info" class="fg green info"
-                                    @click="${(e) => {
-    this._showResourceDescription(e, 'openmp-optimization');
-  }}"></mwc-icon-button>
+      this._showResourceDescription(e, 'openmp-optimization');
+    }}"></mwc-icon-button>
+                  </div>
+                  <div class="horizontal center layout">
+                    <div style="width:200px;">${_t('session.launcher.NumOpenBLASthreads')}</div>
+                    <mwc-textfield id="OpenBLASCore" type="number" placeholder="${_t('session.launcher.(Automatic)')}"
+                                  value="" min="0" max="1000" step="1" style="width:120px;"
+                                  pattern="[0-9]+" @change="${(e) => this._validateInput(e)}">
+                    </mwc-textfield>
+                    <mwc-icon-button icon="info" class="fg green info"
+                                      @click="${(e) => {
+      this._showResourceDescription(e, 'openmp-optimization');
+    }}"></mwc-icon-button>
+                  </div>
                 </div>
               </div>
             </wl-expansion>
