@@ -3099,7 +3099,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <div id="HPCOptimizationOptions" style="display:none;">
                   <div class="horizontal center layout">
                     <div style="width:200px;">${_t('session.launcher.NumOpenMPthreads')}</div>
-                    <mwc-textfield id="OpenMPCore" type="number" placeholder="${_t('session.launcher.(Automatic)')}"
+                    <mwc-textfield id="OpenMPCore" type="number" placeholder="1"
                                   value="" min="0" max="1000" step="1" style="width:120px;"
                                   pattern="[0-9]+" @change="${(e) => this._validateInput(e)}">
                     </mwc-textfield>
@@ -3110,7 +3110,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                   <div class="horizontal center layout">
                     <div style="width:200px;">${_t('session.launcher.NumOpenBLASthreads')}</div>
-                    <mwc-textfield id="OpenBLASCore" type="number" placeholder="${_t('session.launcher.(Automatic)')}"
+                    <mwc-textfield id="OpenBLASCore" type="number" placeholder="1"
                                   value="" min="0" max="1000" step="1" style="width:120px;"
                                   pattern="[0-9]+" @change="${(e) => this._validateInput(e)}">
                     </mwc-textfield>
