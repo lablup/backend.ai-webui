@@ -811,9 +811,10 @@ export default class BackendAILogin extends BackendAIPage {
     );
     return this.client.get_manager_version().then(async ()=>{
       const isLogon = await this.client.check_login();
+      const loginAttempt = globalThis.backendaioptions.get('login_attempt', 0, 'general').toString();
       if (isLogon === false) { // Not authenticated yet.
         this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
-        this.client.login().then((response) => {
+        this.client.login(loginAttempt).then((response) => {
           if (response === false) {
             this.open();
             if (this.user_id != '' && this.password != '') {

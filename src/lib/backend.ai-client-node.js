@@ -177,8 +177,9 @@ class Client {
      * @param {AbortController.signal} signal - Request signal to abort fetch
      * @param {number} timeout - Custom timeout (sec.) If no timeout is given, default timeout is used.
      * @param {number} retry - an integer to retry this request
+     * @param {String} logText - the number of login attempts if not empty
      */
-    async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout = 0, retry = 0) {
+    async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout = 0, retry = 0, logText = '') {
         let errorType = Client.ERR_REQUEST;
         let errorTitle = '';
         let errorMsg;
@@ -324,7 +325,7 @@ class Client {
                 type: errorType,
                 requestUrl: rqst.uri,
                 requestMethod: rqst.method,
-                requestParameters: rqst.body,
+                requestParameters: logText.length > 0 ? logText : rqst.body,
                 statusCode: resp.status,
                 statusText: resp.statusText,
                 title: errorTitle,
@@ -351,7 +352,7 @@ class Client {
             "type": "",
             "requestUrl": rqst.uri,
             "requestMethod": rqst.method,
-            "requestParameters": rqst.body,
+            "requestParameters": logText.length > 0 ? logText : rqst.body,
             "statusCode": resp.status,
             "statusText": resp.statusText,
             "title": body.title,
@@ -516,8 +517,9 @@ class Client {
     /**
      * Login into webserver with given ID/Password. This requires additional webserver package.
      *
+     * @param {String} logText - the number of login attempts if not empty
      */
-    async login() {
+    async login(logText = '') {
         let body = {
             'username': this._config.userId,
             'password': this._config.password
@@ -525,7 +527,7 @@ class Client {
         let rqst = this.newSignedRequest('POST', `/server/login`, body);
         let result;
         try {
-            result = await this._wrapWithPromise(rqst);
+            result = await this._wrapWithPromise(rqst, false, null, 0, 0, logText);
             if (result.authenticated === true) {
                 if (result.data.role === 'monitor') {
                     this.logout();
@@ -1009,7 +1011,7 @@ class Client {
      * @param {string} q - query string for GraphQL
      * @param {string} v - variable string for GraphQL
      * @param {number} timeout - Timeout to force terminate request
-     * @param {number} retry - The number of retry when request is failled
+     * @param {number} retry - The number of retry when request is failed
      */
     async query(q, v, signal = null, timeout = 0, retry = 0) {
         let query = {
