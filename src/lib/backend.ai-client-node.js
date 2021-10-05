@@ -569,6 +569,11 @@ class Client {
     logout() {
         let body = {};
         let rqst = this.newSignedRequest('POST', `/server/logout`, body);
+        // clean up log msg for security reason
+        const currentLogs = localStorage.getItem('backendaiwebui.logs');
+        if (currentLogs) {
+            localStorage.removeItem('backendaiwebui.logs');
+        }
         return this._wrapWithPromise(rqst);
     }
     /**
