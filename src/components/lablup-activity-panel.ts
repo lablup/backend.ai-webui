@@ -37,7 +37,7 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: Number}) width = 350;
   @property({type: Number}) widthpct = 0;
   @property({type: Number}) height = 0;
-  @property({type: Number}) marginWidth = 16;
+  @property({type: Number}) marginWidth = 14;
   @property({type: Number}) minwidth = 0;
   @property({type: Number}) maxwidth = 0;
   @property({type: Boolean}) pinned = false;
@@ -60,7 +60,7 @@ export default class LablupActivityPanel extends LitElement {
           display: block;
           background: var(--card-background-color, #ffffff);
           box-sizing: border-box;
-          margin: 16px;
+          margin: 14px;
           padding: 0;
           border-radius: 5px;
           box-shadow: rgba(4, 7, 22, 0.7) 0px 0px 4px -2px;
@@ -161,13 +161,13 @@ export default class LablupActivityPanel extends LitElement {
     }
     if (this.horizontalsize) {
       if (this.horizontalsize == '2x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 2 + 32) + 'px';
+        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 2 + 28) + 'px';
       }
       if (this.horizontalsize == '3x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 3 + 64) + 'px';
+        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 3 + 56) + 'px';
       }
       if (this.horizontalsize == '4x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 4 + 96) + 'px';
+        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 4 + 84) + 'px';
       }
     }
     (this.shadowRoot.querySelector('.card') as any).style.margin = this.marginWidth + 'px';

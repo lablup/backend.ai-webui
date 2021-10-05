@@ -148,7 +148,7 @@ webServerURL = "[Web server website URL. App will use the site instead of local 
 
 ## Branches
 
- * master : Development branch
+ * main : Development branch
  * release : Latest release branch
  * feature/[feature-branch] : Feature branch. Uses `git flow` development scheme.
  * tags/v[versions] : version tags. Each tag represents release versions.
@@ -273,7 +273,7 @@ e.g. You will download the `backend.ai-webserver` package.
 $ make compile
 ```
 
-#### Web server
+#### Backend.AI WebServer
 Good for develop phase. Not recommended for production environment.
 
 Note: This command will use Web UI source in `build/rollup` directory. No certificate will be used therefore web server will serve as HTTP.
@@ -288,7 +288,7 @@ $ docker-compose up -d webui-dev // as a daemon
 
 Visit `http://127.0.0.1:8080` to test web server.
 
-#### Web server with SSL
+#### Backend.AI WebServer with SSL
 Recommended for production.
 
 Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `certificates` directory. Otherwise, you will have an error during container initialization.
@@ -453,6 +453,8 @@ Currently WebUI supports these languages:
  * Korean
  * French
  * Russian
+ * Mongolian
+ * Indonesian
 
 #### Extracting i18n resources
 

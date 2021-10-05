@@ -290,7 +290,7 @@ export default class BackendAIData extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <div class="vertical layout" style="margin:20px;">
+      <div class="vertical layout">
         <lablup-activity-panel elevation="1" narrow title=${_t('data.StorageStatus')} autowidth>
           <div slot="message">
             <div class="horizontal layout wrap flex center center-justified">

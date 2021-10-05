@@ -11,6 +11,8 @@ import {BackendAIPage} from './backend-ai-page';
 import './backend-ai-list-status';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-template-renderer';
+
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
@@ -57,6 +59,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Array}) domains;
   @property({type: Array}) scalingGroups;
   @property({type: Array}) schedulerTypes;
+  @property({type: Number}) _totalScalingGroupCount = 0;
 
   constructor() {
     super();
