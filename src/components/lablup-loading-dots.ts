@@ -14,7 +14,7 @@ import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement,
 
  <lablup-loading-dots></lablup-loading-dots>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element lablup-loading-dots
  */
 
@@ -52,13 +52,15 @@ export default class LablupLoadingdots extends LitElement {
         }
 
         .pulse-bubble-1 {
-            animation: pulse .4s ease 0s infinite alternate;
+          animation: pulse .4s ease 0s infinite alternate;
         }
+
         .pulse-bubble-2 {
-            animation: pulse .4s ease .2s infinite alternate;
+          animation: pulse .4s ease .2s infinite alternate;
         }
+
         .pulse-bubble-3 {
-            animation: pulse .4s ease .4s infinite alternate;
+          animation: pulse .4s ease .4s infinite alternate;
         }
 
         @keyframes pulse {
@@ -78,7 +80,7 @@ export default class LablupLoadingdots extends LitElement {
     // language=HTML
     return html`
       <div class="dots-box" id="dots">
-        <div class="pulse-container">  
+        <div class="pulse-container">
           <div class="pulse-bubble pulse-bubble-1"></div>
           <div class="pulse-bubble pulse-bubble-2"></div>
           <div class="pulse-bubble pulse-bubble-3"></div>

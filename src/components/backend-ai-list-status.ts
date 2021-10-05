@@ -5,11 +5,8 @@
 
 import {CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 
-import { BackendAiStyles } from './backend-ai-general-styles';
-import {
-  IronFlex,
-  IronFlexAlignment
-} from '../plastics/layout/iron-flex-layout-classes';
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 import './lablup-loading-dots';
 
@@ -22,7 +19,7 @@ import './lablup-loading-dots';
 
  <backend-ai-list-status></backend-ai-list-status>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element backend-ai-list-status
  */
 
@@ -30,8 +27,8 @@ import './lablup-loading-dots';
 export default class BackendAIListStatus extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) list_status = Object();
-  @property({type: String}) message="There is nothing to display";
-  @property({type: String}) status_condition="loading";
+  @property({type: String}) message = 'There is nothing to display';
+  @property({type: String}) status_condition = 'loading';
   @property({type: Object}) dots = Object();
   @property({type: Boolean}) active = true;
 
@@ -44,19 +41,19 @@ export default class BackendAIListStatus extends LitElement {
       BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
-      ];
+    ];
   }
 
   render() {
     // language=HTML
     return html`
       <div class="vertical layout center flex blank-box-large" id="status">
-        ${this.status_condition == "loading" ? html`
+        ${this.status_condition == 'loading' ? html`
           <lablup-loading-dots id="loading-dots"></lablup-loading-dots>
-        `: html`
-          ${this.status_condition == "no-data" ? html`
+        ` : html`
+          ${this.status_condition == 'no-data' ? html`
             <span class="list-message">${this.message}</span>
-          `: html``}
+          ` : html``}
         `}
       </div>
     `;
@@ -64,7 +61,7 @@ export default class BackendAIListStatus extends LitElement {
 
   shouldUpdate() {
     return this.active;
-  } 
+  }
 
   firstUpdated() {
     this.list_status = this.shadowRoot.querySelector('#status');
