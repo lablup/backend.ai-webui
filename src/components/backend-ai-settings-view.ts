@@ -154,6 +154,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
         .setting-button {
           float: right;
           width: 35px;
+          white-space: nowrap;
         }
 
         .setting-desc-pulldown {
