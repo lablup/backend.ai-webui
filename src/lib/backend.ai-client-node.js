@@ -941,7 +941,7 @@ class Client {
      * @param {string} mode - either "query", "batch", "input", or "continue"
      * @param {string} opts - an optional object specifying additional configs such as batch-mode build/exec commands
      */
-    async execute(sessionId, runId, mode, code, opts) {
+    async execute(sessionId, runId, mode, code, opts, timeout = 0) {
         let params = {
             "mode": mode,
             "code": code,
@@ -949,7 +949,7 @@ class Client {
             "options": opts,
         };
         let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params);
-        return this._wrapWithPromise(rqst);
+        return this._wrapWithPromise(rqst, false, null, timeout);
     }
     // legacy aliases (DO NOT USE for new codes)
     createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
@@ -3149,7 +3149,7 @@ class Registry {
         const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": "config/docker/registry", "prefix": true });
         return this.client._wrapWithPromise(rqst);
     }
-    async add(key, value) {
+    async set(key, value) {
         key = encodeURIComponent(key);
         let regkey = `config/docker/registry/${key}`;
         const rqst = this.client.newSignedRequest("POST", "/config/set", {
