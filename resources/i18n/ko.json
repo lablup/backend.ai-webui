@@ -210,7 +210,14 @@
       "SharedMemoryAbbr": "공유메모리",
       "GPUSlot": "슬롯",
       "FolderAlias": "대체이름",
-      "FolderAliasOverlapping": "대체 이름이 이미 존재하는 다른 이름과 겹칩니다."
+      "FolderAliasOverlapping": "대체 이름이 이미 존재하는 다른 이름과 겹칩니다.",
+      "OpenMPOptimization": "OpenMP/OpenBLAS 최적화",
+      "DescOpenMPOptimization": "<p>이 값은 nthreads-var 내부 컨트롤 변수의 초기 값을 설정하여 병렬 영역에 사용할 스레드 수를 설정합니다.</p><p>Backend.AI는 이 값을 CPU 코어수와 같게 설정하며, 일반적인 고성능 컴퓨팅 워크로드를 가속하는 효과가 있습니다. 그러나 일부 멀티스레드 워크로드의 경우 OpenMP를 사용하는 여러 프로세스가 동시에 사용되어 비정상적으로 많은 스레드를 생성하여 상당한 성능 저하가 발생합니다. 이러한 경우 이 값을 1 또는 2로 조정하시기 바랍니다.</p>",
+      "HPCOptimization": "고성능 컴퓨팅 최적화",
+      "(Automatic)": "(자동설정)",
+      "NumOpenMPthreads": "OpenMP 쓰레드 수",
+      "NumOpenBLASthreads": "OpenBLAS 쓰레드 수",
+      "SwitchOpenMPoptimization": "OpenMP 자동 최적화 사용"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -262,7 +269,8 @@
     "UseThisArguments": "이 인수 사용",
     "UseYourFavoriteVNCApp": "선호하는 VNC 앱을 사용해 연결하세요",
     "XRDPconnection": "RDP 연결",
-    "UseYourFavoriteMSTSCApp": "선호하는 MS 리모트 데스크탑 클라이언트를 사용해 연결하세요"
+    "UseYourFavoriteMSTSCApp": "선호하는 MS 리모트 데스크탑 클라이언트를 사용해 연결하세요",
+    "OnlyOneFolderAttached": "하나의 폴더만 연결되어 있습니다."
   },
   "button": {
     "Cancel": "취소",
@@ -885,7 +893,7 @@
     "SessionCreationRetriesDescription": "세션 생성이 실패한 경우 지정한 횟수만큼 세션 생성을 재시도합니다. 만약 지정한 횟수 안에 세션 생성을 하지 못하는 경우 해당 요청을 무시하고 다음 요청을 처리합니다.",
     "FifoOnly": "현재는 스케줄러가 FIFO일 때만 변경 가능합니다.",
     "InputRequired": "필수 입력입니다.",
-    "InputRange0to1000": "0 에서 1000 사이 정수 값만 입력해주세요.",
+    "OutOfRange": "입력 범위를 벗어났습니다.",
     "SchedulerRequired": "스케줄러는 필수 선택입니다.",
     "InvalidValue": "올바른 입력값을 넣어주세요.",
     "EnvConfigWillDisappear": "저장되지 않은 환경 변수 설정값은 사라집니다.",
@@ -904,7 +912,12 @@
       "digest": "해시값",
       "tag": "태그",
       "none": "사용안함"
-    }
+    },
+    "OverlayNetwork": "오버레이 네트워크",
+    "OverlayNetworkConfiguration": "오버레이 네트워크 설정을 변경합니다.",
+    "OverlayNetworkSettings": "오버레이 네트워크 설정",
+    "OverlayNetworkSettingsDescription": "오버레이 네트워크는 물리 네트워크 위에 성립되는 가상의 컴퓨터 네트워크입니다. 오버레이 네트워크는 Backend.AI 매니저의 여러 Docker 데몬 호스트 간에 분산 네트워크를 생성합니다.",
+    "MTUDescription": "최대 전송 단위 - 해당 레이어가 전송할 수 있는 최대 프로토콜 데이터 단위의 크기입니다."
   },
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",
