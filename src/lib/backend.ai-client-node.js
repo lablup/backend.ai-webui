@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v20.8.1)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v21.3.1)
 ====================================================================
 
 (C) Copyright 2016-2021 Lablup Inc.
@@ -2954,7 +2954,7 @@ class User {
         if (this.client.is_admin === true) {
             let q = `mutation($email: String!, $input: UserInput!) {` +
                 `  create_user(email: $email, props: $input) {` +
-                `    ok msg user { ${fields.join(" ")} }` +
+                `    ok msg` +
                 `  }` +
                 `}`;
             let v = {
