@@ -924,9 +924,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._addInputValidator(textfield);
     }
     if (this.storageType === 'automount') {
-      this.shadowRoot.querySelector('div.storage-list').style.height = 'calc(100vh - 230px)';
+      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 230px)';
     } else {
-      this.shadowRoot.querySelector('div.storage-list').style.height = 'calc(100vh - 185px)';
+      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 185px)';
     }
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList(true, 'group-changed'));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
