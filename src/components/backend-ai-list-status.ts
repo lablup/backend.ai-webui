@@ -5,7 +5,7 @@
 
 import {CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 
-import { BackendAiStyles } from './backend-ai-general-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment
@@ -30,8 +30,8 @@ import './lablup-loading-dots';
 export default class BackendAIListStatus extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) list_status = Object();
-  @property({type: String}) message="There is nothing to display";
-  @property({type: String}) status_condition="loading";
+  @property({type: String}) message='There is nothing to display';
+  @property({type: String}) status_condition='loading';
   @property({type: Object}) dots = Object();
   @property({type: Boolean}) active = true;
 
@@ -44,17 +44,17 @@ export default class BackendAIListStatus extends LitElement {
       BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
-      ];
+    ];
   }
 
   render() {
     // language=HTML
     return html`
       <div class="vertical layout center flex blank-box-large" id="status">
-        ${this.status_condition == "loading" ? html`
+        ${this.status_condition == 'loading' ? html`
           <lablup-loading-dots id="loading-dots"></lablup-loading-dots>
         `: html`
-          ${this.status_condition == "no-data" ? html`
+          ${this.status_condition == 'no-data' ? html`
             <span class="list-message">${this.message}</span>
           `: html``}
         `}
@@ -64,7 +64,7 @@ export default class BackendAIListStatus extends LitElement {
 
   shouldUpdate() {
     return this.active;
-  } 
+  }
 
   firstUpdated() {
     this.list_status = this.shadowRoot.querySelector('#status');

@@ -445,7 +445,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
         this.list_condition = 'no-data';
       } else {
         this.list_status.hide();
-      }    }).catch((err) => {
+      }
+    }).catch((err) => {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);

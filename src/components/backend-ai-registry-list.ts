@@ -179,7 +179,7 @@ class BackendAIRegistryList extends BackendAIPage {
         this.list_condition = 'no-data';
       } else {
         this.list_status.hide();
-      }      this.hostnames = this.registryList.map( (value) => {
+      } this.hostnames = this.registryList.map( (value) => {
         return value.hostname;
       });
       this.requestUpdate();

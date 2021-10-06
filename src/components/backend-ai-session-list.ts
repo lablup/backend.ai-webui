@@ -324,7 +324,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshWorkDialogUI(e));
-    console.log("This is firstUpdate");
+    console.log('This is firstUpdate');
     this._refreshWorkDialogUI({'detail': {'mini-ui': globalThis.mini_ui}});
   }
 
@@ -352,7 +352,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         this._connectionMode = globalThis.backendaiclient._config._connectionMode;
         this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
-        console.log("This is _viewStateChanged and already disconnected");
+        console.log('This is _viewStateChanged and already disconnected');
         this._refreshJobData();
       }, true);
     } else { // already connected
@@ -373,7 +373,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this._connectionMode = globalThis.backendaiclient._config._connectionMode;
       this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
-      console.log("This is _viewStateChanged and already connected");
+      console.log('This is _viewStateChanged and already connected');
       this._refreshJobData();
     }
   }
@@ -403,7 +403,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       return;
     }
     this.refreshing = true;
-    console.log("This is refreshjobdata");
+    console.log('This is refreshjobdata');
 
     this.list_condition = 'loading';
     this.list_status.show();

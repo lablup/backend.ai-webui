@@ -200,7 +200,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         this.list_condition = 'no-data';
       } else {
         this.list_status.hide();
-      }      const event = new CustomEvent('backend-ai-storage-proxy-updated', {});
+      } const event = new CustomEvent('backend-ai-storage-proxy-updated', {});
       this.dispatchEvent(event);
       if (this.active === true) {
         setTimeout(() => {
