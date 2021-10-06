@@ -536,7 +536,7 @@ export default class BackendAIUserList extends BackendAIPage {
       document.dispatchEvent(event);
     }
   }
-          
+
   render() {
     // language=HTML
     return html`

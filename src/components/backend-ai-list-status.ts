@@ -83,7 +83,6 @@ export default class BackendAIListStatus extends LitElement {
     this.active = true;
     await this.updateComplete;
     this.list_status.style.display = 'flex';
-    console.log(this.status_condition);
   }
 
   /**

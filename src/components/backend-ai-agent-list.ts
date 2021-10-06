@@ -56,7 +56,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: String}) filter = '';
-  @property({type: String}) list_condition = 'loading';  
+  @property({type: String}) list_condition = 'loading';
 
   constructor() {
     super();

@@ -56,7 +56,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: Object}) logView = Object();
   @property({type: Number}) _pageSize = 25;
   @property({type: Number}) _currentPage = 1;
-  @property({type: Number}) _totalLogCount = 0;  
+  @property({type: Number}) _totalLogCount = 0;
 
   constructor() {
     super();
@@ -150,7 +150,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       this.list_condition = 'no-data';
     } else {
       this.list_status.hide();
-    }  
+    }
   }
 
   /**

@@ -326,7 +326,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshWorkDialogUI(e));
-    console.log("This is firstUpdate");
     this._refreshWorkDialogUI({'detail': {'mini-ui': globalThis.mini_ui}});
   }
 
@@ -354,7 +353,6 @@ export default class BackendAiSessionList extends BackendAIPage {
         this._connectionMode = globalThis.backendaiclient._config._connectionMode;
         this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
-        console.log("This is _viewStateChanged and already disconnected");
         this._refreshJobData();
       }, true);
     } else { // already connected
@@ -375,7 +373,6 @@ export default class BackendAiSessionList extends BackendAIPage {
       this._connectionMode = globalThis.backendaiclient._config._connectionMode;
       this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
-      console.log("This is _viewStateChanged and already connected");
       this._refreshJobData();
     }
   }
@@ -405,7 +402,6 @@ export default class BackendAiSessionList extends BackendAIPage {
       return;
     }
     this.refreshing = true;
-    console.log("This is refreshjobdata");
 
     this.list_condition = 'loading';
     this.list_status.show();
@@ -469,7 +465,6 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.list_status.hide();
       }
       const sessions = response.compute_session_list.items;
-      // console.log(sessions);
       if (sessions !== undefined && sessions.length != 0) {
         const previousSessions = this.compute_sessions;
 
@@ -598,7 +593,6 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.refreshing = false;
       if (this.active === true) {
         if (refresh === true) {
-          // console.log("refresh!!");
           const event = new CustomEvent('backend-ai-resource-refreshed', {'detail': {}});
           document.dispatchEvent(event);
         }
@@ -1148,7 +1142,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _createStatusDetailDropdown(e, item) {
-    // console.log(item)
     const menuButton: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as any;
 
