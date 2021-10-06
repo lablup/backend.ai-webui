@@ -844,6 +844,10 @@ export const BackendAiStyles = [
       padding: 11.3rem 0;
     }
 
+    div.list-wrapper {
+      position: relative;
+    }
+
     span.list-message {
       font-size: 20px;
       font-weight: 200;

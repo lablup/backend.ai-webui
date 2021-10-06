@@ -124,6 +124,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
+          height: calc(100vh - 265px);
         }
 
         wl-icon.indicator {

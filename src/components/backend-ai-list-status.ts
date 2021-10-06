@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
@@ -41,13 +41,21 @@ export default class BackendAIListStatus extends LitElement {
       BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
-    ];
+      // language=CSS
+      css`
+        #status {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      `];
   }
 
   render() {
     // language=HTML
     return html`
-      <div class="vertical layout center flex blank-box-large" id="status">
+      <div class="vertical layout center flex" id="status">
         ${this.status_condition == 'loading' ? html`
           <lablup-loading-dots id="loading-dots"></lablup-loading-dots>
         ` : html`

@@ -76,6 +76,12 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 225px);
+        }
+
         h4 {
           font-weight: 200;
           font-size: 14px;
