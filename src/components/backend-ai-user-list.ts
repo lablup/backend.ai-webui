@@ -226,7 +226,7 @@ export default class BackendAIUserList extends BackendAIPage {
     }
     this.list_condition = 'loading';
     this.list_status.show();
-    const fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
+    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       const users = response.users;
       // Object.keys(users).map((objectKey, index) => {
