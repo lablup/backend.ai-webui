@@ -2700,6 +2700,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
     this._grid?.clearCache();
+
+    // in last page, show selected image information
+    if (this.currentIndex==4){
+      let selected_env = this.shadowRoot.querySelector('#environment').selected.value.split("/");
+      this.shadowRoot.querySelector('#selected_img').innerHTML = selected_env[1] + "/";      
+      this.shadowRoot.querySelector('#selected_img').innerHTML += selected_env[2] + "/";
+      this.shadowRoot.querySelector('#selected_img').innerHTML += this.shadowRoot.querySelector('#version').value; 
+    }
   }
 
   /**
@@ -3172,6 +3180,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
           <div id="progress-04" class="progress center layout fade">
             <p class="title">${_t('session.launcher.TotalAllocation')}</p>
+            <p class="vertical layout center flex blank-box" id = "selected_img"></p>
             <div class="vertical layout center center-justified cluster-total-allocation-container">
               <div id="cluster-allocation-pane" style="position:relative;${this.cluster_size <= 1 ? 'display:none;' : ''}">
                 <div class="horizontal layout">
