@@ -1,5 +1,22 @@
 # Changelog
 
+## v21.03.10 (02/09/2021)
+
+#### Enhancements:
+
+- [**enhancement**][**UI / UX**] add overlay network settings dialog and increase code flexibility [#1120](https://github.com/lablup/backend.ai-webui/issues/1120)
+- [**enhancement**] Option UI to modify accelerated computing parameters [#1119](https://github.com/lablup/backend.ai-webui/issues/1119)
+- [**enhancement**] Change the width of the Resource Statistics panel to be the same as the Session list panel. [#1113](https://github.com/lablup/backend.ai-webui/issues/1113)
+- [**enhancement**] Support Indonesian language [#1100](https://github.com/lablup/backend.ai-webui/issues/1100)
+- [**enhancement**] Support Mongolian language [#1099](https://github.com/lablup/backend.ai-webui/issues/1099)
+
+#### Bugfixes
+
+- [**bug**][**UI / UX**] change width Resource Statics panel [#1117](https://github.com/lablup/backend.ai-webui/pull/1117)
+- [**bug**][**maintenance**][**minor**] cannot build docker-compose [#1116](https://github.com/lablup/backend.ai-webui/pull/1116)
+- [**blocker**][**UI / UX**][**minor**]  comment out number of file item in folder info dialog [#1101](https://github.com/lablup/backend.ai-webui/pull/1101)
+
+
 ## v21.03.9 (09/08/2021)
 
 #### Enhancements:
