@@ -780,7 +780,7 @@
     "EnterValidResourceGroupName": "Enter valid Resource group name",
     "ResourceGroupNameRequired": "Resource group name is required.",
     "ResourceGroupAlreadyExist": "A resource group with the same name already exists.",
-    "WsproxyAddress": "WsproxyAddress"
+    "WsproxyAddress": "WSProxy Server Address"
   },
   "maintenance": {
     "General": "General",
