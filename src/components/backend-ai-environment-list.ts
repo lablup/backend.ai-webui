@@ -3,11 +3,10 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
+import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
-import {render} from 'lit';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -17,13 +16,14 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
+import './lablup-loading-spinner';
+import './backend-ai-dialog';
+
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-template-renderer';
-import './lablup-loading-spinner';
-import './backend-ai-dialog';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -32,7 +32,7 @@ import 'weightless/textfield';
 import 'weightless/label';
 
 import '@material/mwc-button/mwc-button';
-import '@material/mwc-slider/mwc-slider';
+import '@material/mwc-slider';
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
@@ -49,9 +49,6 @@ import {default as PainKiller} from './backend-ai-painkiller';
 export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Array}) images;
   @property({type: Array}) allowed_registries;
-  @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
-  @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
-  @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
   @property({type: Array}) servicePorts;
   @property({type: Number}) selectedIndex = 0;
   @property({type: Array}) selectedImages = [];
@@ -81,6 +78,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     'rocm-gpu': ['0', '1', '2', '3', '4', '5', '6', '7'],
     'tpu': ['0', '1', '2']};
   @property({type: Number}) cpuValue = 0;
+  @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
+  @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
+  @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
 
   constructor() {
     super();
@@ -739,7 +739,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
-  controlsRenderer(root, column, rowData) {
+  controlsRenderer(root, column?, rowData?)  {
     render(
       html`
         <div id="controls" class="layout horizontal flex center">
@@ -831,8 +831,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         <vaadin-grid-filter-column path="baseversion" resizable
             header="${_t('environment.Version')}"></vaadin-grid-filter-column>
 
-        <vaadin-grid-column width="60px" resizable>
-          <template class="header">${_t('environment.Base')}</template>
+        <vaadin-grid-column width="60px" resizable header="${_t('environment.Base')}">
           <template>
             <template is="dom-repeat" items="[[ item.baseimage ]]">
               <lablup-shields app="" color="blue" ui="round" description="[[item]]"></lablup-shields>
@@ -855,7 +854,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             </div>
           </template>
         </vaadin-grid-filter-column>
-
         <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t('environment.ResourceLimit')}" .renderer="${this._boundRequirementsRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>

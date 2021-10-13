@@ -4,12 +4,11 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
+import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import {render} from 'lit';
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
 
