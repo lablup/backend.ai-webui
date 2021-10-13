@@ -19,6 +19,14 @@ interface Window {
   backendaiclient: any;
 }
 
+interface CustomRequestInfo {
+  method: string,
+  headers: Headers,
+  cache: string,
+  body: any,
+  uri: string
+}
+
 class ClientConfig {
   public _apiVersionMajor: string;
   public _apiVersion: string;
@@ -256,19 +264,24 @@ class Client {
   /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
-   * @param {Request} rqst - Request object to send
+   * @param {CustomRequestInfo} rqst - Request object to send
    * @param {Boolean} rawFile - True if it is raw request
    * @param {AbortController.signal} signal - Request signal to abort fetch
    * @param {number} timeout - Custom timeout (sec.) If no timeout is given, default timeout is used.
    * @param {number} retry - an integer to retry this request
-   * @param {String} logText - the number of login attempts if not empty
    */
-  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0, retry: number = 0, logText = '') {
+  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0, retry: number = 0) {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
     let errorDesc = '';
     let resp, body, requestTimer;
+
+    let encryptLoginInfo = (jsonEncodedStr :string) => {
+      let obj = JSON.parse(jsonEncodedStr);
+      obj.password = '********';
+      return JSON.stringify(obj);
+    }
 
     try {
       if (rqst.method == 'GET') {
@@ -401,7 +414,7 @@ class Client {
         type: errorType,
         requestUrl: rqst.uri,
         requestMethod: rqst.method,
-        requestParameters:  logText.length > 0 ? logText: rqst.body,
+        requestParameters:  rqst.uri.split('/').pop() === 'login' ? encryptLoginInfo(rqst.body) : rqst.body,
         statusCode: resp.status,
         statusText: resp.statusText,
         title: errorTitle,
@@ -429,7 +442,7 @@ class Client {
       "type": "",
       "requestUrl": rqst.uri,
       "requestMethod": rqst.method,
-      "requestParameters": logText.length > 0 ? logText: rqst.body,
+      "requestParameters": rqst.uri.split('/').pop() === 'login' ? encryptLoginInfo(rqst.body) : rqst.body,
       "statusCode": resp.status,
       "statusText": resp.statusText,
       "title": body.title,
@@ -602,11 +615,9 @@ class Client {
   }
 
   /**
-   * Login into webserver with given ID/Password. This requires additional webserver package.
-   *
-   * @param {String} logText - the number of login attempts if not empty
+   * Login into webserver with given ID/Password. This requires additional webserver package.   *
    */
-  async login(logText = '') {
+  async login() {
     let body = {
       'username': this._config.userId,
       'password': this._config.password
@@ -614,7 +625,7 @@ class Client {
     let rqst = this.newSignedRequest('POST', `/server/login`, body);
     let result;
     try {
-      result = await this._wrapWithPromise(rqst, false, null, 0, 0, logText);
+      result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
         if (result.data.role === 'monitor') {
           this.logout();
@@ -1198,7 +1209,7 @@ class Client {
     } else {
       hdrs.set('Content-Type', content_type);
     }
-    let requestInfo = {
+    let requestInfo: CustomRequestInfo = {
       method: method,
       headers: hdrs,
       cache: 'default',
