@@ -136,22 +136,20 @@ export default class BackendAIStatisticsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-        <div style="margin:20px;">
-          <lablup-activity-panel elevation="1" noheader narrow autowidth>
-            <div slot="message">
-              <h3 class="tab horizontal center layout">
-                <mwc-tab-bar>
-                  <mwc-tab title="usage" label="${_t('statistics.Usage')}"></mwc-tab>
-                </mwc-tab-bar>
-              </h3>
-              <div class="horizontal wrap layout">
-                <div id="usage-stat" class="tab-content">
-                  <backend-ai-usage-list id="usage-list"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usage-list>
-                </div>
+        <lablup-activity-panel elevation="1" noheader narrow autowidth>
+          <div slot="message">
+            <h3 class="tab horizontal center layout">
+              <mwc-tab-bar>
+                <mwc-tab title="usage" label="${_t('statistics.Usage')}"></mwc-tab>
+              </mwc-tab-bar>
+            </h3>
+            <div class="horizontal wrap layout">
+              <div id="usage-stat" class="tab-content">
+                <backend-ai-usage-list id="usage-list"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usage-list>
               </div>
             </div>
-          </lablup-activity-panel>
-        </div>
+          </div>
+        </lablup-activity-panel>
       `;
   }
 }

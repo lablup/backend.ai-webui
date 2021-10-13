@@ -14,8 +14,8 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-
-import {css, customElement} from 'lit-element';
+import {css} from 'lit';
+import {customElement} from 'lit/decorators.js';
 import {SelectBase} from '@material/mwc-select/mwc-select-base';
 import {styles} from '@material/mwc-select/mwc-select.css';
 

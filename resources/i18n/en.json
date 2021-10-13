@@ -216,7 +216,8 @@
       "HPCOptimization": "High-Performance Computing Optimizations",
       "(Automatic)": "(Automatic)",
       "NumOpenMPthreads": "Number of OpenMP threads",
-      "NumOpenBLASthreads": "Number of OpenBLAS threads"
+      "NumOpenBLASthreads": "Number of OpenBLAS threads",
+      "SwitchOpenMPoptimization": "Use automatic OpenMP optimization"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -268,7 +269,8 @@
     "UseThisArguments": "Use this arguments",
     "UseYourFavoriteVNCApp": "Use your favorite VNC app",
     "XRDPconnection": "RDP Connection",
-    "UseYourFavoriteMSTSCApp": "Use your favorite MS Remote Desktop app"
+    "UseYourFavoriteMSTSCApp": "Use your favorite MS Remote Desktop app",
+    "OnlyOneFolderAttached": "Only one folder is attached."
   },
   "button": {
     "Cancel": "Cancel",
@@ -752,7 +754,10 @@
     "RegistryUpdateFailed": "Registry update failed.",
     "RescanImages": "Rescanning Images...",
     "RescanFailed": "Rescan Failed.",
-    "PleaseSelectOption": "Please select one option."
+    "PleaseSelectOption": "Please select one option.",
+    "ModifyRegistryConfigurations": "Modify registry configurations",
+    "RegistrySuccessfullyModified": "Registry successfully modified.",
+    "NoChangeMade": "No changes were made."
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",

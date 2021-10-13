@@ -12,6 +12,7 @@ import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
+import '@vaadin/vaadin-template-renderer';
 
 import 'weightless/card';
 import 'weightless/dialog';

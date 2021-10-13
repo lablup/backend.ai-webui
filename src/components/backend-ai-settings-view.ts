@@ -156,6 +156,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
         .setting-button {
           float: right;
           width: 35px;
+          white-space: nowrap;
         }
 
         .setting-desc-pulldown {
@@ -367,11 +368,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                     </div>
                     <div class="vertical center-justified layout">
-                      <mwc-button
+                      <mwc-button style="white-space: nowrap;"
                         unelevated
                         icon="rule"
                         label="${_t('settings.Config')}"
-                        style="float: right;"
                         @click="${()=>this._openDialogWithConfirmation('scheduler-env-dialog')}"></mwc-button>
                     </div>
                   </div>

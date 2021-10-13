@@ -17,9 +17,9 @@
  limitations under the License.
  */
 import {styles} from '@material/mwc-top-app-bar/mwc-top-app-bar.css';
-import {css, customElement} from 'lit-element';
-//import {CSSResultArray} from 'lit';
-//import {BackendAiStyles} from '../../components/backend-ai-general-styles';
+import {css} from 'lit';
+import {customElement} from 'lit/decorators.js';
+import {BackendAiStyles} from '../../components/backend-ai-general-styles';
 
 import {TopAppBarFixedBase} from '@material/mwc-top-app-bar-fixed/mwc-top-app-bar-fixed-base';
 
