@@ -435,26 +435,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this.shadowRoot.querySelector('#app-dialog').hide();
   }
 
-  /**
-   * Open a WsProxy with session and app and port number.
-   *
-   * @param {string} sessionUuid
-   * @param {string} app
-   * @param {number} port
-   * @param {object | null} envs
-   * @param {object | null} args
-   */
-  async _open_wsproxy(sessionUuid, app = 'jupyter', port: number | null = null, envs: Record<string, unknown> | null = null, args: Record<string, unknown> | null = null) {
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      return false;
-    }
-    const openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
-    let openToPublic = false;
-    if (openToPublicCheckBox == null) { // Null or undefined
-    } else {
-      openToPublic = openToPublicCheckBox.checked;
-      openToPublicCheckBox.checked = false;
-    }
+  async _resolveV1ProxyUri(sessionUuid: string, app: string): Promise<string | undefined> {
     const param = {
       endpoint: globalThis.backendaiclient._config.endpoint
     };
@@ -472,7 +453,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.notification.text = _text('session.launcher.ProxyNotReady');
 
       this.notification.show();
-      return Promise.resolve(false);
+      return;
     }
     const rqst = {
       method: 'PUT',
@@ -489,31 +470,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.indicator.end();
       this.notification.text = _text('session.launcher.ProxyConfiguratorNotResponding');
       this.notification.show();
-      return Promise.resolve(false);
+      return;
     }
     const token = response.token;
-    let uri = this._getProxyURL() + `proxy/${token}/${sessionUuid}/add?app=${app}`;
-    if (port !== null && port > 1024 && port < 65535) {
-      uri += `&port=${port}`;
-    }
-    if (openToPublic) {
-      uri += '&open_to_public=true';
-    }
-    if (envs !== null && Object.keys(envs).length > 0) {
-      uri = uri + '&envs=' + encodeURI(JSON.stringify(envs));
-    }
-    if (args !== null && Object.keys(args).length > 0) {
-      uri = uri + '&args=' + encodeURI(JSON.stringify(args));
-    }
-    this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
-    const rqst_proxy = {
-      method: 'GET',
-      app: app,
-      uri: uri
-    };
-    return await this.sendRequest(rqst_proxy);
+    return this._getProxyURL() + `proxy/${token}/${sessionUuid}/add?app=${app}`;
   }
-
 
   /**
    * Open V2 WsProxy (direct connection) with session and app and port number.
@@ -524,9 +485,49 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {object | null} envs
    * @param {object | null} args
    */
-  async _open_v2_wsproxy(sessionUuid, app = 'jupyter', port: number | null = null, envs: Record<string, unknown> | null = null, args: Record<string, unknown> | null = null) {
+  async _resolveV2ProxyUri(sessionUuid: string, app: string, port: number | null = null, envs: Record<string, unknown> | null = null, args: Record<string, unknown> | null = null): Promise<string | undefined> {
+    const tokenResponse = await globalThis.backendaiclient.computeSession.startService(
+      sessionUuid, app, port, envs, args
+    );
+    if (tokenResponse === undefined) {
+      this.indicator.end();
+      this.notification.text = _text('session.launcher.ProxyConfiguratorNotResponding');
+      this.notification.show();
+      return;
+    }
+    const token = tokenResponse.token;
+    return tokenResponse.wsproxy_address + `/v2/proxy/${token}/${sessionUuid}/add?app=${app}`;
+  }
+
+  /**
+   * Open a WsProxy with session and app and port number.
+   *
+   * @param {string} sessionUuid
+   * @param {string} app
+   * @param {number} port
+   * @param {object | null} envs
+   * @param {object | null} args
+   */
+  async _open_wsproxy(sessionUuid, app = 'jupyter', port: number | null = null, envs: Record<string, unknown> | null = null, args: Record<string, unknown> | null = null) {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
+    }
+
+    const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group'], sessionUuid);
+    if (kInfo === undefined) {
+      this.indicator.end();
+      this.notification.text = _text('session.CreationFailed'); // TODO: Change text
+
+      this.notification.show();
+      return Promise.resolve(false);
+    }
+
+    const scalingGroupId = kInfo.compute_session.scaling_group;
+    const wsproxyVersion = await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId);
+
+    let uri = (wsproxyVersion.version == 'v1') ? await this._resolveV1ProxyUri(sessionUuid, app) : await this._resolveV2ProxyUri(sessionUuid, app, port, envs, args);
+    if (!uri) {
+      return Promise.resolve(false);
     }
     const openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
     let openToPublic = false;
@@ -536,25 +537,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       openToPublicCheckBox.checked = false;
     }
 
-    if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
-      this.indicator.end();
-      this.notification.text = _text('session.launcher.ProxyNotReady');
-
-      this.notification.show();
-      return Promise.resolve(false);
-    }
-    this.indicator.set(20, _text('session.launcher.SettingUpProxyForApp'));
-    const tokenResponse = await globalThis.backendaiclient.computeSession.startService(
-      sessionUuid, app, port, envs, args
-    );
-    if (tokenResponse === undefined) {
-      this.indicator.end();
-      this.notification.text = _text('session.launcher.ProxyConfiguratorNotResponding');
-      this.notification.show();
-      return Promise.resolve(false);
-    }
-    const token = tokenResponse.token;
-    let uri = tokenResponse.wsproxy_address + `/v2/proxy/${token}/${sessionUuid}/add?app=${app}`;
     if (port !== null && port > 1024 && port < 65535) {
       uri += `&port=${port}`;
     }
@@ -747,18 +729,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
       const usePreferredPort = this.shadowRoot.querySelector('#chk-preferred-port').checked;
-      const useV2Proxy = this.shadowRoot.querySelector('#chk-use-v2-proxy').checked;
       const userPort = parseInt(this.shadowRoot.querySelector('#app-port').value);
       if (usePreferredPort && userPort) {
         port = userPort;
       }
-      let promise: Promise<any>;
-      if (useV2Proxy) {
-        promise = this._open_v2_wsproxy(sessionUuid, appName, port, envs, args);
-      } else {
-        promise = this._open_wsproxy(sessionUuid, appName, port, envs, args);
-      }
-      promise
+      this._open_wsproxy(sessionUuid, appName, port, envs, args)
         .then(async (response) => {
           await this._connectToProxyWorker(response.url, urlPostfix);
           if (appName === 'sshd') {
@@ -1054,10 +1029,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               <mwc-textfield id="app-port" type="number" no-label-float value="10250"
                              min="1025" max="65534" style="margin-left:1em; width:90px"
                              @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
-            </div>
-            <div class="horizontal layout center">
-              <mwc-checkbox id="chk-use-v2-proxy" style="margin-right:0.5em"></mwc-checkbox>
-              ${_t('session.UseV2Proxy')}
             </div>
           </div>
         </div>

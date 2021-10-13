@@ -271,8 +271,7 @@
     "UseYourFavoriteVNCApp": "Utilisez votre application VNC préférée",
     "XRDPconnection": "Connexion RDP",
     "UseYourFavoriteMSTSCApp": "Utilisez votre application MS Remote Desktop préférée",
-    "OnlyOneFolderAttached": "__NOT_TRANSLATED__",
-    "UseV2Proxy": "__NOT_TRANSLATED__"
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Annuler",

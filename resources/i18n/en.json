@@ -270,8 +270,7 @@
     "UseYourFavoriteVNCApp": "Use your favorite VNC app",
     "XRDPconnection": "RDP Connection",
     "UseYourFavoriteMSTSCApp": "Use your favorite MS Remote Desktop app",
-    "OnlyOneFolderAttached": "Only one folder is attached.",
-    "UseV2Proxy": "UseV2Proxy"
+    "OnlyOneFolderAttached": "Only one folder is attached."
   },
   "button": {
     "Cancel": "Cancel",

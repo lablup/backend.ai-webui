@@ -271,8 +271,7 @@
     "UseYourFavoriteVNCApp": "Используйте свое любимое приложение VNC",
     "XRDPconnection": "RDP-соединение",
     "UseYourFavoriteMSTSCApp": "Используйте ваше любимое приложение MS Remote Desktop",
-    "OnlyOneFolderAttached": "__NOT_TRANSLATED__",
-    "UseV2Proxy": "__NOT_TRANSLATED__"
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",

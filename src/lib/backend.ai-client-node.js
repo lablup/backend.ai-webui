@@ -3059,6 +3059,11 @@ class ScalingGroup {
         const rqst = this.client.newSignedRequest("GET", queryString, null);
         return this.client._wrapWithPromise(rqst);
     }
+    async getWsproxyVersion(group) {
+        const queryString = `/scaling-groups/${group}/wsproxy-version`;
+        const rqst = this.client.newSignedRequest("GET", queryString, null);
+        return this.client._wrapWithPromise(rqst);
+    }
     /**
      * Create a scaling group
      *

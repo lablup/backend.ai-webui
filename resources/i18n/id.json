@@ -271,8 +271,7 @@
     "UseYourFavoriteVNCApp": "Gunakan aplikasi VNC favorit Anda",
     "XRDPconnection": "Koneksi RDP",
     "UseYourFavoriteMSTSCApp": "Gunakan aplikasi MS Remote Desktop favorit Anda",
-    "OnlyOneFolderAttached": "__NOT_TRANSLATED__",
-    "UseV2Proxy": "__NOT_TRANSLATED__"
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
