@@ -754,7 +754,10 @@
     "RegistryUpdateFailed": "레지스트리 업데이트가 실패하였습니다.",
     "RescanImages": "이미지 리스캔중...",
     "RescanFailed": "리스캔 작업이 실패하였습니다.",
-    "PleaseSelectOption": "옵션 선택은 필수입니다."
+    "PleaseSelectOption": "옵션 선택은 필수입니다.",
+    "ModifyRegistryConfigurations": "레지스트리 환경 설정 수정",
+    "RegistrySuccessfullyModified": "레지스트리가 성공적으로 수정되었습니다.",
+    "NoChangeMade": "변경된 부분이 없습니다."
   },
   "resourceGroup": {
     "ResourceGroups": "자원 그룹",

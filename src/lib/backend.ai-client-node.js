@@ -3163,7 +3163,7 @@ class Registry {
         const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": "config/docker/registry", "prefix": true });
         return this.client._wrapWithPromise(rqst);
     }
-    async add(key, value) {
+    async set(key, value) {
         key = encodeURIComponent(key);
         let regkey = `config/docker/registry/${key}`;
         const rqst = this.client.newSignedRequest("POST", "/config/set", {
