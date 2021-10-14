@@ -496,7 +496,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return;
     }
     const token = tokenResponse.token;
-    return tokenResponse.wsproxy_address + `/v2/proxy/${token}/${sessionUuid}/add?app=${app}`;
+    return tokenResponse.wsproxy_addr + `/v2/proxy/${token}/${sessionUuid}/add?app=${app}`;
   }
 
   /**

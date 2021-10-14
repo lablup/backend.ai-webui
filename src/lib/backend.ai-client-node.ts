@@ -3271,7 +3271,7 @@ class ScalingGroup {
 
   async list_available() {
     if (this.client.is_superadmin === true) {
-      const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts", "wsproxy_address"];
+      const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts", "wsproxy_addr"];
       const q = `query {` +
         `  scaling_groups { ${fields.join(" ")} }` +
         `}`;

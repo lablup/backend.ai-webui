@@ -344,9 +344,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     const description = this.shadowRoot.querySelector('#modify-scaling-group-description').value;
     const scheduler = this.shadowRoot.querySelector('#modify-scaling-group-scheduler').value;
     const is_active = this.shadowRoot.querySelector('#modify-scaling-group-active').checked;
-    let wsproxy_address: string = this.shadowRoot.querySelector('#modify-scaling-group-wsproxy-address').value;
-    if (wsproxy_address.endsWith('/')) {
-      wsproxy_address = wsproxy_address.slice(0, wsproxy_address.length - 1);
+    let wsproxy_addr: string = this.shadowRoot.querySelector('#modify-scaling-group-wsproxy-address').value;
+    if (wsproxy_addr.endsWith('/')) {
+      wsproxy_addr = wsproxy_addr.slice(0, wsproxy_addr.length - 1);
     }
     const name = this.scalingGroups[this.selectedIndex].name;
 
@@ -356,7 +356,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     if (description !== this.scalingGroups[this.selectedIndex].description) input['description'] = description;
     if (scheduler !== this.scalingGroups[this.selectedIndex].scheduler) input['scheduler'] = scheduler;
     if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input['is_active'] = is_active;
-    if (wsproxy_address !== this.scalingGroups[this.selectedIndex].wsproxy_address) input['wsproxy_address'] = wsproxy_address;
+    if (wsproxy_addr !== this.scalingGroups[this.selectedIndex].wsproxy_addr) input['wsproxy_addr'] = wsproxy_addr;
 
     if (Object.keys(input).length === 0) {
       this.notification.text = _text('resourceGroup.NochangesMade');
@@ -464,7 +464,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.WsproxyAddress')}">
           <template>
-            <div> [[item.wsproxy_address]] </div>
+            <div> [[item.wsproxy_addr]] </div>
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
@@ -548,7 +548,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             id="modify-scaling-group-wsproxy-address"
             type="url"
             label="${_t('resourceGroup.WsproxyAddress')}"
-            value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].wsproxy_address}
+            value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].wsproxy_addr}
           ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
