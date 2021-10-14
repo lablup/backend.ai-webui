@@ -102,6 +102,10 @@ export default class LablupTermsOfService extends LitElement {
             height: 20px;
           };
         }
+
+        #terms-of-service-dialog-content h1 {
+          line-height: 1.2em;
+        }
       `];
   }
 
