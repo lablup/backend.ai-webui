@@ -1207,7 +1207,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             <div class="horizontal layout justified" style="width:100%;">
               <div class="vertical layout flex">
                 <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GB)</wl-label>
-                <mwc-textfield class="discrete" id="vfolder-capacity-limit" type="number" min="0" max="1024"
+                <mwc-textfield id="vfolder-capacity-limit" type="number" min="0" max="1024" step="0.1"
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
