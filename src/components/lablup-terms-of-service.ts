@@ -83,7 +83,7 @@ export default class LablupTermsOfService extends LitElement {
         }
 
         mwc-select {
-          width: 100%;
+          width: 135px;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
           --mdc-theme-primary: var(--general-sidebar-color);
@@ -120,7 +120,7 @@ export default class LablupTermsOfService extends LitElement {
     return html`
       <backend-ai-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable>
         <span slot="title">${this.title}</span>
-        <div slot="action" class="horizontal end-justified center flex layout" style="width: 135px;">
+        <div slot="action" class="horizontal end-justified center flex layout>
           ${this.tosLanguages ? html`
             <mwc-select id="select-language" label="${_text('language.Language')}"
               @change=${() => this.changeLanguage()}>
