@@ -120,7 +120,7 @@ export default class LablupTermsOfService extends LitElement {
     return html`
       <backend-ai-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable>
         <span slot="title">${this.title}</span>
-        <div slot="action" class="horizontal end-justified center flex layout>
+        <div slot="action" class="horizontal end-justified center flex layout">
           ${this.tosLanguages ? html`
             <mwc-select id="select-language" label="${_text('language.Language')}"
               @change=${() => this.changeLanguage()}>
