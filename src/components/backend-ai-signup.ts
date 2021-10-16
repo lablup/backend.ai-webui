@@ -96,7 +96,7 @@ export default class BackendAiSignup extends BackendAIPage {
           }
 
           mwc-button.full {
-            width: 335px;
+            width: 70%;
           }
 
           mwc-button {
