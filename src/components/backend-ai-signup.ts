@@ -418,7 +418,7 @@ export default class BackendAiSignup extends BackendAIPage {
     return html`
       <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <span slot="title">${_t('signup.SignupBETA')}</span>
-        <div slot="content">
+        <div slot="content" class="vertical flex layout">
           <mwc-textfield type="email" name="user_email" id="id_user_email" autofocus
                        maxlength="64" placeholder="${_text('maxLength.64chars')}"
                        label="${_t('signup.E-mail')}" validateOnInitialRender
