@@ -3144,14 +3144,12 @@ class ScalingGroup {
      * }
      */
     async update(name, input) {
-        console.log('===', input);
         if (!globalThis.backendaiclient.isManagerVersionCompatibleWith('21.09.0')) {
             delete input.wsproxy_addr;
             if (Object.keys(input).length < 1) {
                 return Promise.resolve({ modify_scaling_group: { ok: true } });
             }
         }
-        console.log('===', input);
         let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
             `  modify_scaling_group(name: $name, props: $input) {` +
             `    ok msg` +
