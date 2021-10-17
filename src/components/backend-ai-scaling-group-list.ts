@@ -350,8 +350,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     }
     const name = this.scalingGroups[this.selectedIndex].name;
 
-    console.log(this.scalingGroups[this.selectedIndex]);
-
     const input = {};
     if (description !== this.scalingGroups[this.selectedIndex].description) input['description'] = description;
     if (scheduler !== this.scalingGroups[this.selectedIndex].scheduler) input['scheduler'] = scheduler;
