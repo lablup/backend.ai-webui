@@ -473,7 +473,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return;
     }
     const token = response.token;
-    return this._getProxyURL() + `proxy/${token}/${sessionUuid}/add?app=${app}`;
+    return new URL(`v1/proxy/${token}/${sessionUuid}/add?app=${app}`, this._getProxyURL()).href;
   }
 
   /**
@@ -496,7 +496,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return;
     }
     const token = tokenResponse.token;
-    return tokenResponse.wsproxy_addr + `/v2/proxy/${token}/${sessionUuid}/add?app=${app}`;
+    return new URL(`v2/proxy/${token}/${sessionUuid}/add?app=${app}`, tokenResponse.wsproxy_addr).href;
   }
 
   /**
