@@ -473,7 +473,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return;
     }
     const token = response.token;
-    return new URL(`v1/proxy/${token}/${sessionUuid}/add?app=${app}`, this._getProxyURL()).href;
+    return new URL(`proxy/${token}/${sessionUuid}/add?app=${app}`, this._getProxyURL()).href;
   }
 
   /**
