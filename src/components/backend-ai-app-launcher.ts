@@ -435,26 +435,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this.shadowRoot.querySelector('#app-dialog').hide();
   }
 
-  /**
-   * Open a WsProxy with session and app and port number.
-   *
-   * @param {string} sessionUuid
-   * @param {string} app
-   * @param {number} port
-   * @param {object | null} envs
-   * @param {object | null} args
-   */
-  async _open_wsproxy(sessionUuid, app = 'jupyter', port: number | null = null, envs: Record<string, unknown> | null = null, args: Record<string, unknown> | null = null) {
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      return false;
-    }
-    const openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
-    let openToPublic = false;
-    if (openToPublicCheckBox == null) { // Null or undefined
-    } else {
-      openToPublic = openToPublicCheckBox.checked;
-      openToPublicCheckBox.checked = false;
-    }
+  async _resolveV1ProxyUri(sessionUuid: string, app: string): Promise<string | undefined> {
     const param = {
       endpoint: globalThis.backendaiclient._config.endpoint
     };
@@ -472,7 +453,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.notification.text = _text('session.launcher.ProxyNotReady');
 
       this.notification.show();
-      return Promise.resolve(false);
+      return;
     }
     const rqst = {
       method: 'PUT',
@@ -489,10 +470,73 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.indicator.end();
       this.notification.text = _text('session.launcher.ProxyConfiguratorNotResponding');
       this.notification.show();
-      return Promise.resolve(false);
+      return;
     }
     const token = response.token;
-    let uri = this._getProxyURL() + `proxy/${token}/${sessionUuid}/add?app=${app}`;
+    return new URL(`proxy/${token}/${sessionUuid}/add?app=${app}`, this._getProxyURL()).href;
+  }
+
+  /**
+   * Open V2 WsProxy (direct connection) with session and app and port number.
+   *
+   * @param {string} sessionUuid
+   * @param {string} app
+   * @param {number} port
+   * @param {object | null} envs
+   * @param {object | null} args
+   */
+  async _resolveV2ProxyUri(sessionUuid: string, app: string, port: number | null = null, envs: Record<string, unknown> | null = null, args: Record<string, unknown> | null = null): Promise<string | undefined> {
+    const tokenResponse = await globalThis.backendaiclient.computeSession.startService(
+      sessionUuid, app, port, envs, args
+    );
+    if (tokenResponse === undefined) {
+      this.indicator.end();
+      this.notification.text = _text('session.launcher.ProxyConfiguratorNotResponding');
+      this.notification.show();
+      return;
+    }
+    const token = tokenResponse.token;
+    return new URL(`v2/proxy/${token}/${sessionUuid}/add?app=${app}`, tokenResponse.wsproxy_addr).href;
+  }
+
+  /**
+   * Open a WsProxy with session and app and port number.
+   *
+   * @param {string} sessionUuid
+   * @param {string} app
+   * @param {number} port
+   * @param {object | null} envs
+   * @param {object | null} args
+   */
+  async _open_wsproxy(sessionUuid, app = 'jupyter', port: number | null = null, envs: Record<string, unknown> | null = null, args: Record<string, unknown> | null = null) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      return false;
+    }
+
+    const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group'], sessionUuid);
+    if (kInfo === undefined) {
+      this.indicator.end();
+      this.notification.text = _text('session.CreationFailed'); // TODO: Change text
+
+      this.notification.show();
+      return Promise.resolve(false);
+    }
+
+    const scalingGroupId = kInfo.compute_session.scaling_group;
+    const wsproxyVersion = await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId);
+
+    let uri = (wsproxyVersion.version == 'v1') ? await this._resolveV1ProxyUri(sessionUuid, app) : await this._resolveV2ProxyUri(sessionUuid, app, port, envs, args);
+    if (!uri) {
+      return Promise.resolve(false);
+    }
+    const openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
+    let openToPublic = false;
+    if (openToPublicCheckBox == null) { // Null or undefined
+    } else {
+      openToPublic = openToPublicCheckBox.checked;
+      openToPublicCheckBox.checked = false;
+    }
+
     if (port !== null && port > 1024 && port < 65535) {
       uri += `&port=${port}`;
     }
@@ -513,6 +557,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     };
     return await this.sendRequest(rqst_proxy);
   }
+
   /**
    * Close a WsProxy with session and app.
    *

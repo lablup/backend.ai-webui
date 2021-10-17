@@ -2447,7 +2447,7 @@ class ComputeSession {
      * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
      * @param {string} sessionUuid - session ID to query specific compute session.
      */
-    async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"], sessionUuid = '') {
+    async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "scaling_group"], sessionUuid = '') {
         fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
         let q, v;
         q = `query($session_uuid: UUID!) {
@@ -2457,6 +2457,15 @@ class ComputeSession {
     }`;
         v = { session_uuid: sessionUuid };
         return this.client.query(q, v);
+    }
+    async startService(session, app, port = null, envs = null, args = null) {
+        let rqst = this.client.newSignedRequest('POST', `/session/${session}/start-service`, {
+            app,
+            port: port || undefined,
+            envs: envs || undefined,
+            args: args || undefined,
+        });
+        return this.client._wrapWithPromise(rqst);
     }
 }
 class SessionTemplate {
@@ -3035,6 +3044,9 @@ class ScalingGroup {
     async list_available() {
         if (this.client.is_superadmin === true) {
             const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
+            if (globalThis.backendaiclient.isManagerVersionCompatibleWith('21.09.0')) {
+                fields.push('wsproxy_addr');
+            }
             const q = `query {` +
                 `  scaling_groups { ${fields.join(" ")} }` +
                 `}`;
@@ -3051,12 +3063,27 @@ class ScalingGroup {
         return this.client._wrapWithPromise(rqst);
     }
     /**
+     * Get the version of WSProxy for a specific scaling group.
+     * (NEW) manager version 21.09.
+     *
+     * @param {string} group - Scaling group name
+     */
+    async getWsproxyVersion(group) {
+        if (!globalThis.backendaiclient.isManagerVersionCompatibleWith('21.09.0')) {
+            return Promise.resolve({ version: 'v1' }); // for manager<=21.03 compatibility.
+        }
+        const queryString = `/scaling-groups/${group}/wsproxy-version`;
+        const rqst = this.client.newSignedRequest("GET", queryString, null);
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
      * Create a scaling group
      *
      * @param {string} name - Scaling group name
      * @param {string} description - Scaling group description
+     * @param {string} wsproxyAddress - wsproxy url (NEW in manager 21.09)
      */
-    async create(name, description = "") {
+    async create(name, description = "", wsproxyAddress = null) {
         const input = {
             description: description,
             is_active: true,
@@ -3065,6 +3092,9 @@ class ScalingGroup {
             driver_opts: "{}",
             scheduler_opts: "{}"
         };
+        if (globalThis.backendaiclient.isManagerVersionCompatibleWith('21.09.0')) {
+            input['wsproxy_addr'] = wsproxyAddress;
+        }
         // if (this.client.is_admin === true) {
         let q = `mutation($name: String!, $input: CreateScalingGroupInput!) {` +
             `  create_scaling_group(name: $name, props: $input) {` +
@@ -3110,9 +3140,16 @@ class ScalingGroup {
      *   'driver_opts': JSONString
      *   'scheduler': String
      *   'scheduler_opts': JSONString
+     *   'wsproxy_addr': String         // NEW in manager 21.09
      * }
      */
     async update(name, input) {
+        if (!globalThis.backendaiclient.isManagerVersionCompatibleWith('21.09.0')) {
+            delete input.wsproxy_addr;
+            if (Object.keys(input).length < 1) {
+                return Promise.resolve({ modify_scaling_group: { ok: true } });
+            }
+        }
         let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
             `  modify_scaling_group(name: $name, props: $input) {` +
             `    ok msg` +
