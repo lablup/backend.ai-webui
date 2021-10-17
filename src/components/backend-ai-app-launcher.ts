@@ -523,7 +523,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
 
     const scalingGroupId = kInfo.compute_session.scaling_group;
-    const wsproxyVersion = await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId);
+    let wsproxyVersion;
+    try {
+      wsproxyVersion = await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId);
+    } catch {
+      // For manager<=21.03 compatibility.
+      wsproxyVersion = {version: 'v1'};
+    }
 
     let uri = (wsproxyVersion.version == 'v1') ? await this._resolveV1ProxyUri(sessionUuid, app) : await this._resolveV2ProxyUri(sessionUuid, app, port, envs, args);
     if (!uri) {
