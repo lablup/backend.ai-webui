@@ -3043,7 +3043,10 @@ class ScalingGroup {
     }
     async list_available() {
         if (this.client.is_superadmin === true) {
-            const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts", "wsproxy_addr"];
+            const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
+            if (globalThis.backendaiclient.isManagerVersionCompatibleWith('21.09.0')) {
+                fields.push('wsproxy_addr');
+            }
             const q = `query {` +
                 `  scaling_groups { ${fields.join(" ")} }` +
                 `}`;
@@ -3059,7 +3062,16 @@ class ScalingGroup {
         const rqst = this.client.newSignedRequest("GET", queryString, null);
         return this.client._wrapWithPromise(rqst);
     }
+    /**
+     * Get the version of WSProxy for a specific scaling group.
+     * (NEW) manager version 21.09.
+     *
+     * @param {string} group - Scaling group name
+     */
     async getWsproxyVersion(group) {
+        if (!globalThis.backendaiclient.isManagerVersionCompatibleWith('21.09.0')) {
+            return Promise.resolve({ version: 'v1' }); // for manager<=21.03 compatibility.
+        }
         const queryString = `/scaling-groups/${group}/wsproxy-version`;
         const rqst = this.client.newSignedRequest("GET", queryString, null);
         return this.client._wrapWithPromise(rqst);
@@ -3069,8 +3081,9 @@ class ScalingGroup {
      *
      * @param {string} name - Scaling group name
      * @param {string} description - Scaling group description
+     * @param {string} wsproxyAddress - wsproxy url (NEW in manager 21.09)
      */
-    async create(name, description = "") {
+    async create(name, description = "", wsproxyAddress = null) {
         const input = {
             description: description,
             is_active: true,
@@ -3079,6 +3092,9 @@ class ScalingGroup {
             driver_opts: "{}",
             scheduler_opts: "{}"
         };
+        if (globalThis.backendaiclient.isManagerVersionCompatibleWith('21.09.0')) {
+            input['wsproxy_addr'] = wsproxyAddress;
+        }
         // if (this.client.is_admin === true) {
         let q = `mutation($name: String!, $input: CreateScalingGroupInput!) {` +
             `  create_scaling_group(name: $name, props: $input) {` +
@@ -3124,9 +3140,18 @@ class ScalingGroup {
      *   'driver_opts': JSONString
      *   'scheduler': String
      *   'scheduler_opts': JSONString
+     *   'wsproxy_addr': String         // NEW in manager 21.09
      * }
      */
     async update(name, input) {
+        console.log('===', input);
+        if (!globalThis.backendaiclient.isManagerVersionCompatibleWith('21.09.0')) {
+            delete input.wsproxy_addr;
+            if (Object.keys(input).length < 1) {
+                return Promise.resolve({ modify_scaling_group: { ok: true } });
+            }
+        }
+        console.log('===', input);
         let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
             `  modify_scaling_group(name: $name, props: $input) {` +
             `    ok msg` +
