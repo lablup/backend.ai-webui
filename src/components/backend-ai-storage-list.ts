@@ -122,6 +122,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     mem: 0.5
   }
   @property({type: Array}) filebrowserSupportedImages = [];
+  @property({type: Object}) storageProxyInfo = Object();
+  @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
 
   constructor() {
     super();
@@ -136,6 +138,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
     this._boundFolderListRenderer = this.folderListRenderer.bind(this);
+    this._getStorageProxyBackendInformation();
   }
 
   static get styles(): CSSResultOrNative | CSSResultArray {
@@ -608,10 +611,12 @@ export default class BackendAiStorageList extends BackendAIPage {
                 </span>
               </mwc-list-item>
             ` : html``}
-            <mwc-list-item twoline>
-              <span><strong>${_t('data.folders.SizeQuota')}</strong></span>
-              <span class="monospace" slot="secondary">${this.folderInfo.max_size || _t('data.folders.SizeQuotaNotSet')}</span>
-            </mwc-list-item>
+            ${this._checkFolderSupportSizeQuota(this.folderInfo.host) ? html`
+              <mwc-list-item twoline>
+                <span><strong>${_t('data.folders.SizeQuota')}</strong></span>
+                <span class="monospace" slot="secondary">${this.folderInfo.max_size || _t('data.folders.SizeQuotaNotSet')}</span>
+              </mwc-list-item>
+            ` : html``}
           </mwc-list>
         </div>
       </backend-ai-dialog>
@@ -1311,6 +1316,33 @@ export default class BackendAiStorageList extends BackendAIPage {
         `}
         </div>`, root
     );
+  }
+
+  _getStorageProxyBackendInformation() {
+    globalThis.backendaiclient.storageproxy.list(
+      ['id', 'backend', 'capabilities']
+    ).then((resp) => {
+      const results = resp.storage_volume_list.items;
+      const storageInfo = {};
+      results.forEach((s) => {
+        storageInfo[s.id] = s;
+      });
+      this.storageProxyInfo = storageInfo;
+    }).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+  }
+
+  _checkFolderSupportSizeQuota(host: string) {
+    if (!host) {
+      return false;
+    }
+    const backend = this.storageProxyInfo[host].backend;
+    return this.quotaSupportStorageBackends.includes(backend) ? true : false;
   }
 
   refreshFolderList() {
