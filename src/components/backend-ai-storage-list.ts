@@ -613,9 +613,10 @@ export default class BackendAiStorageList extends BackendAIPage {
             ` : html``}
             ${this._checkFolderSupportSizeQuota(this.folderInfo.host) ? html`
               <mwc-list-item twoline>
-                <span><strong>${_t('data.folders.SizeQuota')}</strong></span>
+                <span><strong>${_t('data.folders.FolderUsage')}</strong></span>
                 <span class="monospace" slot="secondary">
-                  ${this.folderInfo.max_size ? this._humanReadableFileSize(this.folderInfo.max_size * 2**20) : _t('data.folders.SizeQuotaNotSet')}
+                  ${_t('data.folders.FolderUsing')}: ${this.folderInfo.used_bytes ? this._humanReadableFileSize(this.folderInfo.used_bytes) : 'Undefined'} /
+                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size ? this._humanReadableFileSize(this.folderInfo.max_size * 2**20) : 'Undefined'}
                 </span>
               </mwc-list-item>
             ` : html``}
