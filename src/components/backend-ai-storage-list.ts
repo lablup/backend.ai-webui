@@ -569,7 +569,9 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <span>${_t('data.folders.Location')}</span>
               </div>
             <div class="vertical layout center info-indicator">
-              <div class="big indicator">${this.folderInfo.numFiles}</div>
+              <div class="big indicator">
+                ${this.folderInfo.numFiles < 0 ? 'many' : this.folderInfo.numFiles}
+              </div>
               <span>${_t('data.folders.NumberOfFiles')}</span>
             </div>
           </div>
