@@ -479,7 +479,7 @@
       "EditDelete": "Edit+Delete",
       "KickOut": "Kick out user",
       "CannotDeleteFolder": "Cannot delete folder mounted in one or more sessions. Please terminate the session first.",
-      "SizeQuota": "Size quota (Mbytes)",
+      "SizeQuota": "Size quota",
       "SizeQuotaNotSet": "Not set"
     },
     "explorer": {
