@@ -608,7 +608,10 @@ export default class BackendAiStorageList extends BackendAIPage {
                 </span>
               </mwc-list-item>
             ` : html``}
-
+            <mwc-list-item twoline>
+              <span><strong>${_t('data.folders.SizeQuota')}</strong></span>
+              <span class="monospace" slot="secondary">${this.folderInfo.max_size || _t('data.folders.SizeQuotaNotSet')}</span>
+            </mwc-list-item>
           </mwc-list>
         </div>
       </backend-ai-dialog>
@@ -632,6 +635,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                   @click="${() => this._executeFileBrowser()}">
                   <img class=${!this.isWritable}
                        id="filebrowser-img"
+                       alt="File Browser"
                        src="./resources/icons/filebrowser.svg"></img>
                   <span>${_t('data.explorer.ExecuteFileBrowser')}</span>
               </mwc-button>
