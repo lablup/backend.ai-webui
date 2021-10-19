@@ -90,7 +90,6 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) cloneFolderName = '';
   @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
   @property({type: Object}) storageProxyInfo = Object();
-  @property({type: Number}) maxFolderSize = 0;
 
   constructor() {
     super();
@@ -615,11 +614,10 @@ export default class BackendAIData extends BackendAIPage {
     const accessKey = globalThis.backendaiclient._config.accessKey;
     const res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
     const policyName = res.keypair.resource_policy;
-    const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count', 'max_vfolder_size']);
+    const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count']);
     const max_vfolder_count = resource_policy.keypair_resource_policy.max_vfolder_count;
     const groupId = globalThis.backendaiclient.current_group_id();
     const folders = await globalThis.backendaiclient.vfolder.list(groupId);
-    this.maxFolderSize = resource_policy.keypair_resource_policy.max_vfolder_size;
     this.createdCount = folders.filter((item) => item.is_owner).length;
     this.invitedCount = folders.length - this.createdCount;
     this.capacity = (this.createdCount < max_vfolder_count ? (max_vfolder_count - this.createdCount) : 0);
@@ -759,7 +757,6 @@ export default class BackendAIData extends BackendAIPage {
     let usageMode = '';
     let permission = '';
     let cloneable = false;
-    const quota = this.maxFolderSize;
     if (['user', 'group'].includes(ownershipType) === false) {
       ownershipType = 'user';
     }
@@ -793,7 +790,7 @@ export default class BackendAIData extends BackendAIPage {
     }
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {
-      const job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission, cloneable, quota.toString());
+      const job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission, cloneable);
       job.then((value) => {
         this.notification.text = _text('data.folders.FolderCreated');
         this.notification.show();
