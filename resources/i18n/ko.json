@@ -481,7 +481,8 @@
       "CannotDeleteFolder": "폴더가 하나 이상의 세션에 마운트 되어있어 삭제할 수 없습니다. 세션 종료 후 삭제가 가능합니다.",
       "FolderUsage": "폴더 사용량",
       "FolderUsing": "사용량",
-      "FolderQuota": "가용량"
+      "FolderQuota": "가용량",
+      "MaxFolderQuota": "최대 할당 가능 용량"
     },
     "explorer": {
       "Delete": "삭제...",

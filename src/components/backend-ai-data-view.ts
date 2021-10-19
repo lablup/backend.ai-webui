@@ -369,18 +369,22 @@ export default class BackendAIData extends BackendAIPage {
           @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
             required validationMessage="${_t('data.Allowslettersnumbersand-_dot')}" maxLength="64"
             placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
-            <div id="quota-setting-section" class="horizontal layout center justified">
-                <mwc-textfield id="add-folder-quota" label="${_t('data.folders.FolderQuota')}"
-                    type="number" min="0" step="0.1" @change="${() => this._updateQuotaInputHumanReadableValue()}"></mwc-textfield>
-                <mwc-select id="add-folder-quota-unit" @change="${() => this._updateQuotaInputHumanReadableValue()}">
-                ${Object.keys(this.quotaUnit).map((unit, idx) => html`
-                      <mwc-list-item value="${unit}" ?selected="${unit === this.quota.unit}">${unit}</mwc-list-item>
-                    `)}
-                </mwc-select>
+            <div id="quota-setting-section" class="vertical layout">
+              <div class="horizontal layout center justified">
+                  <mwc-textfield id="add-folder-quota" label="${_t('data.folders.FolderQuota')}"
+                      type="number" min="0" step="0.1" @change="${() => this._updateQuotaInputHumanReadableValue()}"></mwc-textfield>
+                  <mwc-select id="add-folder-quota-unit" @change="${() => this._updateQuotaInputHumanReadableValue()}">
+                  ${Object.keys(this.quotaUnit).map((unit, idx) => html`
+                        <mwc-list-item value="${unit}" ?selected="${unit === this.quota.unit}">${unit}</mwc-list-item>
+                      `)}
+                  </mwc-select>
+              </div>
+              <span class="helper-text">${_t("data.folders.MaxFolderQuota")} : ${this.quota.value + ' ' + this.quota.unit}</span>
             </div>
-          <mwc-select class="full-width fixed-position" id="add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+          <mwc-select class="full-width fixed-position" id="add-folder-host" label="${_t('data.Host')}"
+              @change="${() => this._toggleQuotaConfiguration()}"fixedMenuPosition>
             ${this.vhosts.map((item, idx) => html`
-              <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
+              <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
                 <span>${item}</span>
                 <mwc-icon-button slot="meta" icon="info"
                     @click="${(e) => this._showStorageDescription(e, item)}">
@@ -715,6 +719,7 @@ export default class BackendAIData extends BackendAIPage {
       this.allowedGroups = group_info.groups;
     }
     this._initFolderQuota();
+    this._toggleQuotaConfiguration();
     this.openDialog('add-folder-dialog');
   }
 
@@ -723,6 +728,12 @@ export default class BackendAIData extends BackendAIPage {
     const quotaUnitEl = this.shadowRoot.querySelector('#add-folder-quota-unit');
     quotaEl.value = this.quota.value;
     quotaUnitEl.value = this.quota.unit;
+  }
+
+  _toggleQuotaConfiguration() {
+    let backend = '';
+    [backend, ] = this.vhost.split(':');
+    this.shadowRoot.querySelector('#quota-setting-section').style.display = this.quotaSupportStorageBackends.includes(backend) ? 'flex' : 'none';
   }
 
   openDialog(id) {
