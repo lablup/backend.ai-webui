@@ -376,7 +376,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-typography-label-font-size: 12px;
           --mdc-theme-primary: var(--general-textfield-selected-color);
         }
-        
+
         mwc-select#modify-folder-quota-unit {
           width: 50%;
         }
@@ -682,8 +682,8 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-list-item twoline>
                 <span><strong>${_t('data.folders.FolderUsage')}</strong></span>
                 <span class="monospace" slot="secondary">
-                  ${_t('data.folders.FolderUsing')}: ${this.folderInfo.used_bytes ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.used_bytes / this.quotaUnit.MB) : 'Undefined'} /
-                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size) : 'Undefined'}
+                  ${_t('data.folders.FolderUsing')}: ${this.folderInfo.used_bytes ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.used_bytes / this.quotaUnit.MB, 2) : 'Undefined'} /
+                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size, 2) : 'Undefined'}
                   ${this.folderInfo.used_bytes && this.folderInfo.max_size ? html`
                     <vaadin-progress-bar value="${this.folderInfo.used_bytes / this.folderInfo.max_size / 2**20}"></vaadin-progress-bar>
                   ` : html``}
@@ -1083,27 +1083,17 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   quotaRenderer(root, column?, rowData?) {
+    let quotaIndicator = '-';
+    if (this._checkFolderSupportSizeQuota(rowData.item.host) && rowData.item.max_size) {
+      quotaIndicator = globalThis.backendaiutils._humanReadableFileSize(rowData.item.max_size);
+    }
     render(
       // language=HTML
       html`
-        <div class="horizontal layout center center-justified">
-         ${this._displayFolderQuota(rowData.item)}</div>
+        <div class="horizontal layout center center-justified">${quotaIndicator}</div>
       `, root
     );
   }
-
-  /**
-   * Display Folder Quota only if host supports folder quota
-   *
-   * @param {Object} folderInfo
-   */
-   _displayFolderQuota(folderInfo) {
-     if (this._checkFolderSupportSizeQuota(folderInfo.host)) {
-        return globalThis.backendaiutils._humanReadableFileSize(folderInfo.max_size);
-     } else {
-       return '-';
-     }
-   }
 
   /**
    * Add textfield to write email.
@@ -1699,7 +1689,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     }
 
-    const modifyFolderJobQueue = [] as any;  
+    const modifyFolderJobQueue = [] as any;
     const updateFolderConfig = globalThis.backendaiclient.vfolder.update_folder(input, this.renameFolderName);
     modifyFolderJobQueue.push(updateFolderConfig);
     if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
@@ -1860,7 +1850,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Get max_size of keypair resource policy
-   * 
+   *
    */
   async _getMaxSize() {
     const accessKey = globalThis.backendaiclient._config.accessKey;
