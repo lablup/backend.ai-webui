@@ -107,6 +107,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) _boundCreatedTimeRenderer = Object();
   @property({type: Object}) _boundPermissionRenderer = Object();
   @property({type: Object}) _boundCloneableRenderer = Object();
+  @property({type: Object}) _boundQuotaRenderer = Object();
   @property({type: Boolean}) _uploadFlag = true;
   @property({type: Boolean}) _folderRefreshing = false;
   @property({type: Number}) lastQueryTime = 0;
@@ -148,6 +149,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundCreatedTimeRenderer = this.createdTimeRenderer.bind(this);
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
     this._boundFolderListRenderer = this.folderListRenderer.bind(this);
+    this._boundQuotaRenderer = this.quotaRenderer.bind(this);
     this._getStorageProxyBackendInformation();
   }
 
@@ -529,7 +531,6 @@ export default class BackendAiStorageList extends BackendAIPage {
             </div>
           </template>
         </vaadin-grid-column>
-
         <vaadin-grid-column width="105px" flex-grow="0" resizable header="${_t('data.folders.Location')}">
           <template>
             <div class="layout vertical">
@@ -537,6 +538,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             </div>
           </template>
         </vaadin-grid-column>
+        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.FolderQuota')}" .renderer="${this._boundQuotaRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="45px" flex-grow="0" resizable header="${_t('data.folders.Type')}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="85px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
         <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.Owner')}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
@@ -1079,6 +1081,34 @@ export default class BackendAiStorageList extends BackendAIPage {
       `, root
     );
   }
+
+  quotaRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div class="horizontal layout center center-justified">${this._displayFolderQuota(rowData.item)}</div>
+      `, root
+    );
+  }
+
+  /**
+   * Display Folder Quota only if host supports folder quota
+   *
+   * @param {Object} folderInfo
+   */
+   _displayFolderQuota(folderInfo?) {
+     if (this._checkFolderSupportSizeQuota(folderInfo.host)) {
+      const job = globalThis.backendaiclient.vfolder.get_quota(folderInfo.host, folderInfo.id);
+      job.then((quota) => {
+        return globalThis.backendaiutils._humanReadableFileSize(quota / this.quotaUnit.MB);
+      }).catch((err) => {
+        console.log(err)
+        return '-';
+      });
+     } else {
+       return '-';
+     }
+   }
 
   /**
    * Add textfield to write email.

@@ -89,6 +89,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
   @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
+  @property({type: Object}) storageProxyInfo = Object();
   @property({type: Object}) quota = {
     value: 0,
     unit: 'MB'
@@ -102,6 +103,7 @@ export default class BackendAIData extends BackendAIPage {
 
   constructor() {
     super();
+    this._getStorageProxyBackendInformation();
   }
 
   static get styles(): CSSResultOrNative | CSSResultArray {
@@ -730,9 +732,27 @@ export default class BackendAIData extends BackendAIPage {
     quotaUnitEl.value = this.quota.unit;
   }
 
+  _getStorageProxyBackendInformation() {
+    globalThis.backendaiclient.storageproxy.list(
+      ['id', 'backend', 'capabilities']
+    ).then((resp) => {
+      const results = resp.storage_volume_list.items;
+      const storageInfo = {};
+      results.forEach((s) => {
+        storageInfo[s.id] = s;
+      });
+      this.storageProxyInfo = storageInfo;
+    }).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+  }
+
   _toggleQuotaConfiguration() {
-    let backend = '';
-    [backend, ] = this.vhost.split(':');
+    const backend = this.storageProxyInfo[this.vhost].backend;
     this.shadowRoot.querySelector('#quota-setting-section').style.display = this.quotaSupportStorageBackends.includes(backend) ? 'flex' : 'none';
   }
 
