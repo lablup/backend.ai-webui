@@ -124,6 +124,16 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Array}) filebrowserSupportedImages = [];
   @property({type: Object}) storageProxyInfo = Object();
   @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
+  @property({type: Object}) quotaUnit = {
+    MB: Math.pow(10, 6),
+    GB: Math.pow(10, 9),
+    TB: Math.pow(10, 12),
+    PB: Math.pow(10, 15)
+  }
+  @property({type: Object}) maxSize = {
+    value: 0,
+    unit: 'MB'
+  };
 
   constructor() {
     super();
@@ -298,6 +308,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-theme-primary: var(--paper-red-400) !important;
         }
 
+        mwc-textfield#modify-folder-quota {
+          width: 50%;
+        }
+
         mwc-button {
           --mdc-typography-button-font-size: 12px;
         }
@@ -360,6 +374,22 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-typography-label-font-size: 12px;
           --mdc-theme-primary: var(--general-textfield-selected-color);
         }
+        
+        mwc-select#modify-folder-quota-unit {
+          width: 50%;
+        }
+
+        mwc-select.full-width {
+          width: 100%;
+        }
+
+        mwc-select.full-width.fixed-position > mwc-list-item {
+          width: 327px; // default width
+        }
+
+        mwc-select.fixed-position > mwc-list-item {
+          width: 147px; // default width
+        }
 
         #textfields wl-textfield,
         wl-label {
@@ -384,6 +414,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         backend-ai-dialog {
           --component-min-width: 350px;
+          --component-max-width: 390px;
         }
 
         .apply-grayscale {
@@ -450,6 +481,27 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+  /**
+   * Update Quota Input to human readable value with proper unit
+   */
+     _updateQuotaInputHumanReadableValue() {
+      const currentQuotaInput = this.shadowRoot.querySelector('#modify-folder-quota');
+      const currentQuotaUnit = this.shadowRoot.querySelector('#modify-folder-quota-unit');
+      let unit = 'MB'; // default unit starts with MB.
+      let convertedCurrentQuota = currentQuotaInput.value * (this.quotaUnit[currentQuotaUnit.value] / this.quotaUnit[unit]);
+      const convertedQuota = this.maxSize.value * (this.quotaUnit[this.maxSize.unit] / this.quotaUnit[unit]);
+      [currentQuotaInput.value, unit]= globalThis.backendaiutils._humanReadableFileSize(convertedCurrentQuota, 10).split(' ');
+      currentQuotaInput.value = (unit === 'MB')? Math.round(currentQuotaInput.value) : parseFloat(currentQuotaInput.value).toFixed(1);
+      // apply step only when the unit is bigger than MB
+      currentQuotaInput.step = (currentQuotaUnit.value === 'MB')? 0 : 0.1;
+      if (convertedQuota < convertedCurrentQuota || currentQuotaInput.value <= 0 ) {
+        currentQuotaInput.value = this.maxSize.value;
+        unit = this.maxSize.unit;
+      }
+      const idx = currentQuotaUnit.items.findIndex(item => item.value === unit);
+      currentQuotaUnit.select(idx);
+    }
+
   render() {
     // language=HTML
     return html`
@@ -495,26 +547,34 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid-column auto-width resizable header="${_t('data.folders.Control')}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>-->
       </vaadin-grid>
 
-      <backend-ai-dialog id="folder-setting-dialog" fixed backdrop>
+      <backend-ai-dialog id="modify-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.folders.FolderOptionUpdate')}</span>
-        <div slot="content" class="vertical layout">
+        <div slot="content" class="vertical layout flex">
         <mwc-textfield id="clone-folder-src" label="${_t('data.ExistingFolderName')}" value="${this.renameFolderName}"
           disabled></mwc-textfield>
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
             pattern="^[a-zA-Z0-9\._-]*$" autoValidate validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
-            style="width:320px;" maxLength="64" placeholder="${_text('maxLength.64chars')}"
+            maxLength="64" placeholder="${_text('maxLength.64chars')}"
             @change="${() => {
     this._validateFolderName(true);
   }}"></mwc-textfield>
-          <div class="vertical center layout" id="dropdown-area">
-            <mwc-select id="update-folder-permission" style="width:100%;" label="${_t('data.Permission')}"
-              @opened="${() => this._controlHeightByPermissionCount(true)}"
-              @closed="${() => this._controlHeightByPermissionCount()}">
-              ${this.permissions.map((item, idx) => html`
-                <mwc-list-item value="${item}">${item}</mwc-list-item>
-              `)}
-            </mwc-select>
-          </div>
+        ${this._checkFolderSupportSizeQuota(this.folderInfo.host) ? html`
+          <div class="horizontal layout center justified">
+              <mwc-textfield id="modify-folder-quota" label="${_t('data.folders.FolderQuota')}"
+                  type="number" min="0" step="0.1" @change="${() => this._updateQuotaInputHumanReadableValue()}"></mwc-textfield>
+              <mwc-select class="fixed-position" id="modify-folder-quota-unit" @change="${() => this._updateQuotaInputHumanReadableValue()}" fixedMenuPosition>
+              ${Object.keys(this.quotaUnit).map((unit, idx) => html`
+                    <mwc-list-item value="${unit}" ?selected="${unit === this.maxSize.unit}">${unit}</mwc-list-item>
+                  `)}
+              </mwc-select>
+            </div>
+        ` : html``}
+          <mwc-select class="full-width fixed-position" id="update-folder-permission" style="width:100%;" label="${_t('data.Permission')}"
+                  fixedMenuPosition>
+                  ${this.permissions.map((item, idx) => html`
+                    <mwc-list-item value="${item}">${item}</mwc-list-item>
+                  `)}
+          </mwc-select>
           ${this.enableStorageProxy ? html`
           <!--<div class="horizontal layout flex wrap center justified">
             <p style="color:rgba(0, 0, 0, 0.6);">
@@ -617,8 +677,8 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-list-item twoline>
                 <span><strong>${_t('data.folders.FolderUsage')}</strong></span>
                 <span class="monospace" slot="secondary">
-                  ${_t('data.folders.FolderUsing')}: ${this.folderInfo.used_bytes ? this._humanReadableFileSize(this.folderInfo.used_bytes) : 'Undefined'} /
-                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size ? this._humanReadableFileSize(this.folderInfo.max_size * 2**20) : 'Undefined'}
+                  ${_t('data.folders.FolderUsing')}: ${this.folderInfo.used_bytes ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.used_bytes / this.quotaUnit.MB) : 'Undefined'} /
+                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size) : 'Undefined'}
                   ${this.folderInfo.used_bytes && this.folderInfo.max_size ? html`
                     <vaadin-progress-bar value="${this.folderInfo.used_bytes / this.folderInfo.max_size / 2**20}"></vaadin-progress-bar>
                   ` : html``}
@@ -947,8 +1007,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList(true, 'group-changed'));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({'detail': {'mini-ui': globalThis.mini_ui}});
-    // monkeypatch for height calculation.
-    this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '56px';
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._triggerFolderListChanged();
@@ -1017,24 +1075,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         <div class="indicator" @click="[[_folderExplorer()]]" .folder-id="${rowData.item.name}">${rowData.item.name}</div>
       `, root
     );
-  }
-
-  /**
-   *
-   * Expand or Shrink the dialog height by the number of items in the dropdown.
-   *
-   * @param {boolean} isOpened - true if dialog is opened.
-   */
-  _controlHeightByPermissionCount(isOpened = false) {
-    if (!isOpened) {
-      this.shadowRoot.querySelector('#dropdown-area').style.height = this.selectAreaHeight;
-      return;
-    }
-    const itemCount = this.shadowRoot.querySelector('#update-folder-permission').items.length;
-    const actualHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight;
-    if (itemCount > 0) {
-      this.shadowRoot.querySelector('#dropdown-area').style.height = (actualHeight + itemCount * 52) + 'px';
-    }
   }
 
   /**
@@ -1374,6 +1414,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
     this._folderRefreshing = true;
     this.lastQueryTime = Date.now();
+    this._getMaxSize();
     this.spinner.show();
     let groupId = null;
     groupId = globalThis.backendaiclient.current_group_id();
@@ -1530,7 +1571,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
-   * Open folder-setting-dialog to rename folder name.
+   * Open modify-folder-dialog to rename folder name.
    *
    * @param {Event} e - click the settings icon button
    * */
@@ -1559,7 +1600,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (cloneableEl) {
         cloneableEl.checked = this.folderInfo.cloneable;
       }
-      this.openDialog('folder-setting-dialog');
+      this.openDialog('modify-folder-dialog');
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
@@ -1581,6 +1622,9 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     const permissionEl = this.shadowRoot.querySelector('#update-folder-permission');
     const cloneableEl = this.shadowRoot.querySelector('#update-folder-cloneable');
+    const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
+    const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
+    const quota = quotaEl.value ? BigInt(quotaEl.value * this.quotaUnit[quotaUnitEl.value]): 0; // quota value unit starts with MB
     let isErrorOccurred = false;
     let permission = '';
     let cloneable = false;
@@ -1627,8 +1671,15 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     }
 
-    const job = globalThis.backendaiclient.vfolder.update_folder(input, this.renameFolderName);
-    job.then((value) => {
+    const modifyFolderJobQueue = [] as any;  
+    const updateFolderConfig = globalThis.backendaiclient.vfolder.update_folder(input, this.renameFolderName);
+    modifyFolderJobQueue.push(updateFolderConfig);
+    if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
+      const updateFolderQuota = globalThis.backendaiclient.vfolder.set_quota(this.folderInfo.host, this.folderInfo.id, quota.toString());
+      modifyFolderJobQueue.push(updateFolderQuota)
+    }
+
+    Promise.all(modifyFolderJobQueue).then((value) => {
       this.notification.text = _text('data.folders.FolderUpdated');
       this.notification.show();
       this._refreshFolderList(true, 'updateFolder');
@@ -1642,7 +1693,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     });
     if (!isErrorOccurred) {
-      this.closeDialog('folder-setting-dialog');
+      this.closeDialog('modify-folder-dialog');
     }
   }
 
@@ -1779,6 +1830,21 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  /**
+   * Get max_size of keypair resource policy
+   * 
+   */
+  async _getMaxSize() {
+    const accessKey = globalThis.backendaiclient._config.accessKey;
+    const res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
+    const policyName = res.keypair.resource_policy;
+    const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count', 'max_vfolder_size']);
+    const max_vfolder_size = resource_policy.keypair_resource_policy.max_vfolder_size;
+    // default unit starts with MB.
+    [this.maxSize.value, this.maxSize.unit] = globalThis.backendaiutils._humanReadableFileSize(max_vfolder_size / this.quotaUnit.MB).split(' ') ?? [0, 'MB'];
+    // fixed to the first decimal point
+    this.maxSize.value = Math.floor(this.maxSize.value * 10 ) / 10;
+  }
 
   /**
    * dispatch backend-ai-folder-list-changed event
@@ -2045,18 +2111,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     return Math.floor(value / 1000000);
   }
 
-  _humanReadableFileSize(value) {
-    if (value > 1000000000) {
-      return Math.floor(value / 1000000000) + 'GB';
-    } else if (value > 1000000) {
-      return Math.floor(value / 1000000) + 'MB';
-    } else if (value > 1000) {
-      return Math.floor(value / 1000) + 'KB';
-    } else {
-      return Math.floor(value) + 'Bytes';
-    }
-  }
-
   /* File upload and download */
   /**
    * Add eventListener to the dropzone - dragleave, dragover, drop.
@@ -2091,7 +2145,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             const file = e.dataTransfer.files[i];
             /* Drag & Drop file upload size limits to configuration */
             if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
-              this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
+              this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${globalThis.backendaiutils._humanReadableFileSize(this._maxFileUploadSize)})`;
               this.notification.show();
               return;
             } else {
@@ -2175,7 +2229,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       for (let i = 0; i < 5; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
       /* File upload size limits to configuration */
       if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
-        this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
+        this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${globalThis.backendaiutils._humanReadableFileSize(this._maxFileUploadSize)})`;
         this.notification.show();
         return;
       } else {

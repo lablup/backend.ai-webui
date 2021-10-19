@@ -88,6 +88,17 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) totalCount;
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
+  @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
+  @property({type: Object}) quota = {
+    value: 0,
+    unit: 'MB'
+  };
+  @property({type: Array}) quotaUnit = {
+    MB: Math.pow(10, 6),
+    GB: Math.pow(10, 9),
+    TB: Math.pow(10, 12),
+    PB: Math.pow(10, 15)
+};
 
   constructor() {
     super();
@@ -227,6 +238,11 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-list-vertical-padding: 5px;
         }
 
+        mwc-select#add-folder-quota-unit {
+          width: 40%;
+          margin-bottom: 0px;
+        }
+
         mwc-select.full-width {
           width: 100%;
         }
@@ -263,16 +279,6 @@ export default class BackendAIData extends BackendAIPage {
           margin-left: 10px;
         }
 
-        @media screen and (max-width: 750px) {
-          mwc-tab {
-            --mdc-typography-button-font-size: 10px;
-          }
-
-          mwc-button > span {
-            display: none;
-          }
-        }
-
         .storage-status-indicator {
           width: 90px;
           color: black;
@@ -286,6 +292,19 @@ export default class BackendAIData extends BackendAIPage {
           margin: 20px 50px 0px 50px;
         }
 
+        h4#default-quota-unit {
+          display:none;
+        }
+
+        @media screen and (max-width: 750px) {
+          mwc-tab {
+            --mdc-typography-button-font-size: 10px;
+          }
+
+          mwc-button > span {
+            display: none;
+          }
+        }
       `];
   }
 
@@ -345,11 +364,20 @@ export default class BackendAIData extends BackendAIPage {
       </div>
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.CreateANewStorageFolder')}</span>
-        <div slot="content">
+        <div slot="content" class="vertical layout flex">
           <mwc-textfield id="add-folder-name" label="${_t('data.Foldername')}"
           @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
             required validationMessage="${_t('data.Allowslettersnumbersand-_dot')}" maxLength="64"
             placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
+            <div id="quota-setting-section" class="horizontal layout center justified">
+                <mwc-textfield id="add-folder-quota" label="${_t('data.folders.FolderQuota')}"
+                    type="number" min="0" step="0.1" @change="${() => this._updateQuotaInputHumanReadableValue()}"></mwc-textfield>
+                <mwc-select id="add-folder-quota-unit" @change="${() => this._updateQuotaInputHumanReadableValue()}">
+                ${Object.keys(this.quotaUnit).map((unit, idx) => html`
+                      <mwc-list-item value="${unit}" ?selected="${unit === this.quota.unit}">${unit}</mwc-list-item>
+                    `)}
+                </mwc-select>
+            </div>
           <mwc-select class="full-width fixed-position" id="add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
             ${this.vhosts.map((item, idx) => html`
               <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
@@ -608,10 +636,15 @@ export default class BackendAIData extends BackendAIPage {
     const accessKey = globalThis.backendaiclient._config.accessKey;
     const res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
     const policyName = res.keypair.resource_policy;
-    const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count']);
+    const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count', 'max_vfolder_size']);
     const max_vfolder_count = resource_policy.keypair_resource_policy.max_vfolder_count;
+    const max_vfolder_size = resource_policy.keypair_resource_policy.max_vfolder_size;
     const groupId = globalThis.backendaiclient.current_group_id();
     const folders = await globalThis.backendaiclient.vfolder.list(groupId);
+    // default unit starts with MB.
+    [this.quota.value, this.quota.unit ] = globalThis.backendaiutils._humanReadableFileSize(max_vfolder_size / this.quotaUnit.MB).split(' ') ?? [0, 'MB'];
+    // fixed to the first decimal point
+    this.quota.value = Math.floor(this.quota.value * 10 ) / 10;
     this.createdCount = folders.filter((item) => item.is_owner).length;
     this.invitedCount = folders.length - this.createdCount;
     this.capacity = (this.createdCount < max_vfolder_count ? (max_vfolder_count - this.createdCount) : 0);
@@ -681,7 +714,15 @@ export default class BackendAIData extends BackendAIPage {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
     }
+    this._initFolderQuota();
     this.openDialog('add-folder-dialog');
+  }
+
+  _initFolderQuota() {
+    const quotaEl = this.shadowRoot.querySelector('#add-folder-quota');
+    const quotaUnitEl = this.shadowRoot.querySelector('#add-folder-quota-unit');
+    quotaEl.value = this.quota.value;
+    quotaUnitEl.value = this.quota.unit;
   }
 
   openDialog(id) {
@@ -729,9 +770,12 @@ export default class BackendAIData extends BackendAIPage {
     const usageModeEl = this.shadowRoot.querySelector('#add-folder-usage-mode');
     const permissionEl = this.shadowRoot.querySelector('#add-folder-permission');
     const cloneableEl = this.shadowRoot.querySelector('#add-folder-cloneable');
+    const quotaEl = this.shadowRoot.querySelector('#add-folder-quota');
+    const quotaUnitEl = this.shadowRoot.querySelector('#add-folder-quota-unit');
     let usageMode = '';
     let permission = '';
     let cloneable = false;
+    const quota = quotaEl.value ? BigInt(quotaEl.value * this.quotaUnit[quotaUnitEl.value]): 0; // quota value unit starts with MB
     if (['user', 'group'].includes(ownershipType) === false) {
       ownershipType = 'user';
     }
@@ -765,7 +809,7 @@ export default class BackendAIData extends BackendAIPage {
     }
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {
-      const job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission, cloneable);
+      const job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission, cloneable, quota.toString());
       job.then((value) => {
         this.notification.text = _text('data.folders.FolderCreated');
         this.notification.show();
@@ -891,6 +935,27 @@ export default class BackendAIData extends BackendAIPage {
         };
       }
     };
+  }
+
+  /**
+   * Update Quota Input to human readable value with proper unit
+   */
+  _updateQuotaInputHumanReadableValue() {
+    const currentQuotaInput = this.shadowRoot.querySelector('#add-folder-quota');
+    const currentQuotaUnit = this.shadowRoot.querySelector('#add-folder-quota-unit');
+    let unit = 'MB'; // default unit starts with MB.
+    let convertedCurrentQuota = currentQuotaInput.value * (this.quotaUnit[currentQuotaUnit.value] / this.quotaUnit[unit]);
+    const convertedQuota = this.quota.value * (this.quotaUnit[this.quota.unit] / this.quotaUnit[unit]);
+    [currentQuotaInput.value, unit]= globalThis.backendaiutils._humanReadableFileSize(convertedCurrentQuota, 10).split(' ');
+    currentQuotaInput.value = (unit === 'MB')? Math.round(currentQuotaInput.value) : parseFloat(currentQuotaInput.value).toFixed(1);
+    // apply step only when the unit is bigger than MB
+    currentQuotaInput.step = (currentQuotaUnit.value === 'MB')? 0 : 0.1;
+    if (convertedQuota < convertedCurrentQuota || currentQuotaInput.value <= 0 ) {
+      currentQuotaInput.value = this.quota.value;
+      unit = this.quota.unit;
+    }
+    const idx = currentQuotaUnit.items.findIndex(item => item.value === unit);
+    currentQuotaUnit.select(idx);
   }
 
   /**
