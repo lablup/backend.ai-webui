@@ -57,11 +57,11 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     globalThis.backendaioptions.delete('projectGroup.' + endpointId);
   }
 
-  _humanReadableFileSize(bytes, decimals = 10) {
+  _humanReadableFileSize(bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes';
-    const k = 1000;
+    const k = Math.pow(2, 10);
     const dm = decimals < 0 ? 0 : decimals;
-    let sizes = ['MB', 'GB', 'TB', 'PB'];
+    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
     let i = Math.floor(Math.log(bytes) / Math.log(k));
     i = i < 0 ? 0 : i; // avoid negative value
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
