@@ -1086,7 +1086,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div class="horizontal layout center center-justified">${this._displayFolderQuota(rowData.item)}</div>
+        <div class="horizontal layout center center-justified">
+         ${this._displayFolderQuota(rowData.item)}</div>
       `, root
     );
   }
@@ -1096,15 +1097,9 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    * @param {Object} folderInfo
    */
-   _displayFolderQuota(folderInfo?) {
+   _displayFolderQuota(folderInfo) {
      if (this._checkFolderSupportSizeQuota(folderInfo.host)) {
-      const job = globalThis.backendaiclient.vfolder.get_quota(folderInfo.host, folderInfo.id);
-      job.then((quota) => {
-        return globalThis.backendaiutils._humanReadableFileSize(quota / this.quotaUnit.MB);
-      }).catch((err) => {
-        console.log(err)
-        return '-';
-      });
+        return globalThis.backendaiutils._humanReadableFileSize(folderInfo.max_size);
      } else {
        return '-';
      }
