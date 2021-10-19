@@ -1612,8 +1612,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   _folderSettingsDialog(e) {
     this.renameFolderName = this._getControlName(e);
     const job = globalThis.backendaiclient.vfolder.info(this.renameFolderName);
-    const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
-    const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
     job.then((value) => {
       this.folderInfo = value;
       this.shadowRoot.querySelector('#new-folder-name').value = '';
@@ -1635,16 +1633,15 @@ export default class BackendAiStorageList extends BackendAIPage {
       const cloneableEl = this.shadowRoot.querySelector('#update-folder-cloneable');
       if (cloneableEl) {
         cloneableEl.checked = this.folderInfo.cloneable;
-      }
+      }      
       // get quota if host storage support per folder quota
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
-        globalThis.backendaiclient.vfolder.get_quota(this.folderInfo.host, this.folderInfo.id).then((quota) => {
-          [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(quota);
-        });
+        const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
+        const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
+        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size);
         quotaEl.value = this.quota.value;
         quotaUnitEl.value = this.quota.unit; 
       }
-
       this.openDialog('modify-folder-dialog');
     }).catch((err) => {
       console.log(err);
