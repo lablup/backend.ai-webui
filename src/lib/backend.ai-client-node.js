@@ -1332,8 +1332,9 @@ class VFolder {
      * @param {string} usageMode - Virtual folder's purpose of use. Can be "general" (normal folders), "data" (data storage), and "model" (pre-trained model storage).
      * @param {string} permission - Virtual folder's innate permission.
      * @param {boolean} cloneable - Whether Virtual folder is cloneable or not.
+     * @param {string} quota - Quota of the virtual folder to create
      */
-    async create(name, host = '', group = '', usageMode = 'general', permission = 'rw', cloneable = false) {
+    async create(name, host = '', group = '', usageMode = 'general', permission = 'rw', cloneable = false, quota = '') {
         let body;
         if (host !== '') {
             body = {
@@ -1358,6 +1359,7 @@ class VFolder {
         }
         if (this.client.supports('storage-proxy')) {
             body['cloneable'] = cloneable;
+            body['quota'] = quota;
         }
         let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}`, body);
         return this.client._wrapWithPromise(rqst);
