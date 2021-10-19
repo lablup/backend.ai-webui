@@ -682,8 +682,8 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-list-item twoline>
                 <span><strong>${_t('data.folders.FolderUsage')}</strong></span>
                 <span class="monospace" slot="secondary">
-                  ${_t('data.folders.FolderUsing')}: ${this.folderInfo.used_bytes ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.used_bytes / this.quotaUnit.MB) : 'Undefined'} /
-                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size) : 'Undefined'}
+                  ${_t('data.folders.FolderUsing')}: ${this.folderInfo.used_bytes ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.used_bytes / this.quotaUnit.MB, 2) : 'Undefined'} /
+                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size, 2) : 'Undefined'}
                   ${this.folderInfo.used_bytes && this.folderInfo.max_size ? html`
                     <vaadin-progress-bar value="${this.folderInfo.used_bytes / this.folderInfo.max_size / 2**20}"></vaadin-progress-bar>
                   ` : html``}
