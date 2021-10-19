@@ -1636,13 +1636,14 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (cloneableEl) {
         cloneableEl.checked = this.folderInfo.cloneable;
       }
-
-      // get quota
-      globalThis.backendaiclient.vfolder.get_quota(this.folderInfo.host, this.folderInfo.id).then((quota) => {
-       [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(quota);
-      });
-      quotaEl.value = this.quota.value;
-      quotaUnitEl.value = this.quota.unit;
+      // get quota if host storage support per folder quota
+      if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
+        globalThis.backendaiclient.vfolder.get_quota(this.folderInfo.host, this.folderInfo.id).then((quota) => {
+          [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(quota);
+        });
+        quotaEl.value = this.quota.value;
+        quotaUnitEl.value = this.quota.unit; 
+      }
 
       this.openDialog('modify-folder-dialog');
     }).catch((err) => {
