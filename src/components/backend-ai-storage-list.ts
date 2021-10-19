@@ -1101,7 +1101,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   quotaRenderer(root, column?, rowData?) {
     let quotaIndicator = '-';
     if (this._checkFolderSupportSizeQuota(rowData.item.host) && rowData.item.max_size) {
-      quotaIndicator = globalThis.backendaiutils._humanReadableFileSize(rowData.item.max_size);
+      quotaIndicator = globalThis.backendaiutils._humanReadableFileSize(rowData.item.max_size * (2**20));
     }
     render(
       // language=HTML
