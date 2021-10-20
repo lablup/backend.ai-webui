@@ -63,32 +63,19 @@ export default class BackendAiCommonUtils extends BackendAIPage {
    * @param {number} value
    * @return {number} converted value from byte to MB.
    */
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
   _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
+    const megabyte = Math.pow(10, 6);
+    return Math.floor(value / megabyte);
   }
 
   _bytesToGB(value) {
-    const gibibyte = Math.pow(1024, 3);
-    return Number(value / gibibyte).toFixed(1);
+    const gigabyte = Math.pow(10, 9);
+    return Number(value / gigabyte).toFixed(1);
   }
 
   _bytesToTB(value) {
-    const gibibyte = Math.pow(1024, 4);
-    return Number(value / gibibyte).toFixed(1);
-  }
-
-  /**
-   * Convert the value MB to GB.
-   *
-   * @param {number} value
-   * @return {number} converted value from MB to GB.
-   */
-  _MBtoGB(value) {
-    return Math.floor(value / 1024);
+    const terabyte = Math.pow(10, 12);
+    return Number(value / terabyte).toFixed(1);
   }
 
   /**

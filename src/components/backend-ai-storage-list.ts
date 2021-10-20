@@ -1283,7 +1283,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div class="layout vertical">
-            <span>${this._humanReadableTime(rowData.item.ctime)}</span>
+            <span>${this._humanReadableElapsedTime(rowData.item.ctime)}</span>
         </div>`, root
     );
   }
@@ -2552,8 +2552,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Date} d - date
    * @return {string} UTC time string
    * */
-  _humanReadableTime(d) {
-    const date = new Date();
+  _humanReadableElapsedTime(d) {
+    const date = new Date(d * 1000);
     const offset = date.getTimezoneOffset() / 60;
     const hours = date.getHours();
     date.setHours(hours - offset);
