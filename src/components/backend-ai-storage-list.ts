@@ -315,7 +315,9 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         mwc-textfield#modify-folder-quota {
-          width: 50%;
+          width: 100%;
+          max-width: 200px;
+          padding: 0;
         }
 
         mwc-button {
@@ -382,7 +384,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         mwc-select#modify-folder-quota-unit {
-          width: 50%;
+          width: 120px;
         }
 
         mwc-select.full-width {
@@ -390,11 +392,15 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         mwc-select.full-width.fixed-position > mwc-list-item {
-          width: 327px; // default width
+          width: 288px; // default width
         }
 
         mwc-select.fixed-position > mwc-list-item {
           width: 147px; // default width
+        }
+
+        mwc-select.fixed-position#modify-folder-quota-unit > mwc-list-item {
+          width: 88px; // default width
         }
 
         #textfields wl-textfield,
@@ -423,7 +429,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         backend-ai-dialog#modify-folder-dialog {
-          --component-max-width: 390px;
+          --component-max-width: 375px;
         }
 
         .apply-grayscale {
@@ -568,15 +574,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="modify-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.folders.FolderOptionUpdate')}</span>
         <div slot="content" class="vertical layout flex">
-        <mwc-textfield id="clone-folder-src" label="${_t('data.ExistingFolderName')}" value="${this.renameFolderName}"
-          disabled></mwc-textfield>
-          <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
-            pattern="^[a-zA-Z0-9\._-]*$" autoValidate validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
-            maxLength="64" placeholder="${_text('maxLength.64chars')}"
-            @change="${() => {
-    this._validateFolderName(true);
-  }}"></mwc-textfield>
-        ${this._checkFolderSupportSizeQuota(this.folderInfo.host) ? html`
+        ${this._checkFolderSupportSizeQuota(this.folderInfo.host) || true ? html`
           <div class="vertical layout">
             <div class="horizontal layout center justified">
                 <mwc-textfield id="modify-folder-quota" label="${_t('data.folders.FolderQuota')}" value="${this.maxSize.value}"
@@ -613,9 +611,27 @@ export default class BackendAiStorageList extends BackendAIPage {
         </div>
       </backend-ai-dialog>
 
+      <backend-ai-dialog id="modify-folder-name-dialog" fixed backdrop>
+        <span slot="title">${_t('data.folders.RenameAFolder')}</span>
+        <div slot="content" class="vertical layout flex">
+          <mwc-textfield 
+              id="clone-folder-src" label="${_t('data.ExistingFolderName')}" value="${this.renameFolderName}"
+              disabled></mwc-textfield>
+          <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
+              pattern="^[a-zA-Z0-9\._-]*$" autoValidate validationMessage="${_t('data.Allowslettersnumbersand-_dot')}"
+              maxLength="64" placeholder="${_text('maxLength.64chars')}"
+              @change="${() => this._validateFolderName(true)}"></mwc-textfield>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button unelevated fullwidth type="submit" icon="edit" id="update-button" @click="${() => this._updateFolderName()}">
+            ${_t('data.Update')}
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+
       <backend-ai-dialog id="delete-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.folders.DeleteAFolder')}</span>
-        <div slot="content" style="width:100%;">
+        <div slot="content">
           <div class="warning" style="margin-left:16px;">${_t('dialog.warning.CannotBeUndone')}</div>
           <mwc-textfield class="red" id="delete-folder-name" label="${_t('data.folders.TypeFolderNameToDelete')}"
                          maxLength="64" placeholder="${_text('maxLength.64chars')}"></mwc-textfield>
@@ -1214,11 +1230,23 @@ export default class BackendAiStorageList extends BackendAIPage {
           ${rowData.item.is_owner ?
     html`
               <mwc-icon-button
+                class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
+                icon="create"
+                @click="${(e) => this._renameFolderDialog(e)}"
+              ></mwc-icon-button>
+            ` :
+    html``
+}
+          ${rowData.item.is_owner ?
+    html`
+              <mwc-icon-button
                 class="fg blue controls-running"
                 icon="settings"
-                @click="${(e) => this._folderSettingsDialog(e)}"
+                @click="${(e) => this._modifyFolderOptionDialog(e)}"
               ></mwc-icon-button>
-            ` : html``}
+            ` : 
+    html``
+}
           ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd') || (rowData.item.type === 'group' && this.is_admin) ?
     html`
               <mwc-icon-button
@@ -1609,12 +1637,11 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    * @param {Event} e - click the settings icon button
    * */
-  _folderSettingsDialog(e) {
-    this.renameFolderName = this._getControlName(e);
-    const job = globalThis.backendaiclient.vfolder.info(this.renameFolderName);
+  _modifyFolderOptionDialog(e) {
+    globalThis.backendaiclient.vfolder.name = this._getControlName(e);
+    const job = globalThis.backendaiclient.vfolder.info(globalThis.backendaiclient.vfolder.name);
     job.then((value) => {
       this.folderInfo = value;
-      this.shadowRoot.querySelector('#new-folder-name').value = '';
       let permission = this.folderInfo.permission;
       switch (permission) {
       case 'rw':
@@ -1654,19 +1681,11 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   /**
-   * Update the folder with the name on the new-folder-name and options such as "permission" and "cloneable"
-   * */
-  _updateFolder() {
-    globalThis.backendaiclient.vfolder.name = this.renameFolderName;
-    const newNameEl = this.shadowRoot.querySelector('#new-folder-name');
-    const newName = newNameEl.value;
-    newNameEl.reportValidity();
-
+   * Update the folder options such as "permission" and "cloneable"
+   **/
+  async _updateFolder() {
     const permissionEl = this.shadowRoot.querySelector('#update-folder-permission');
     const cloneableEl = this.shadowRoot.querySelector('#update-folder-cloneable');
-    const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
-    const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
-    const quota = quotaEl.value ? BigInt(quotaEl.value * this.quotaUnit[quotaUnitEl.value]): 0; // quota value unit starts with MB
     let isErrorOccurred = false;
     let permission = '';
     let cloneable = false;
@@ -1674,70 +1693,98 @@ export default class BackendAiStorageList extends BackendAIPage {
     if (permissionEl) {
       permission = permissionEl.value;
       switch (permission) {
-      case 'Read-Write':
-        permission = 'rw';
-        break;
-      case 'Read-Only':
-        permission = 'ro';
-        break;
-      case 'Delete':
-        permission = 'wd';
-        break;
-      default:
-        permission = 'rw';
+        case 'Read-Write':
+          permission = 'rw';
+          break;
+        case 'Read-Only':
+          permission = 'ro';
+          break;
+        case 'Delete':
+          permission = 'wd';
+          break;
+        default:
+          permission = 'rw';
+        }
+      if (this.folderInfo.permission !== permission) {
+        input['permission'] = permission;
       }
-      input['permission'] = permission;
     }
     if (cloneableEl) {
       cloneable = cloneableEl.checked;
       input['cloneable'] = cloneable;
     }
 
+    const modifyFolderJobQueue = [] as any;
+    if (Object.keys(input).length > 0) {
+      console.log(input, globalThis.backendaiclient.vfolder.name)
+      const updateFolderConfig = globalThis.backendaiclient.vfolder.update_folder(input, globalThis.backendaiclient.vfolder.name);
+      modifyFolderJobQueue.push(updateFolderConfig);
+    }
+    if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
+      const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
+      const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
+      const quota = quotaEl.value ? BigInt(quotaEl.value * this.quotaUnit[quotaUnitEl.value]): 0;
+      if ((this.quota.value != quotaEl.value) || (this.quota.unit != quotaUnitEl.value)) {
+        const updateFolderQuota = globalThis.backendaiclient.vfolder.set_quota(this.folderInfo.host, this.folderInfo.id, quota.toString());
+        modifyFolderJobQueue.push(updateFolderQuota)
+      }
+    }
+    if (modifyFolderJobQueue.length > 0) {
+      await Promise.all(modifyFolderJobQueue).then((value) => {
+        this.notification.text = _text('data.folders.FolderUpdated');
+        this.notification.show();
+        this._refreshFolderList(true, 'updateFolder');
+      }).catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          isErrorOccurred = true;
+          this.notification.text = PainKiller.relieve(err.message);
+          this.notification.show(true, err);
+        }
+      });
+    }
+    if (!isErrorOccurred) {
+      this.closeDialog('modify-folder-dialog');
+    }
+  }
+
+  /**
+   * Update the folder with the name on the new-folder-name and
+   * 
+   */
+   async _updateFolderName() {
+    globalThis.backendaiclient.vfolder.name = this.renameFolderName;
+    const newNameEl = this.shadowRoot.querySelector('#new-folder-name');
+    const newName = newNameEl.value;
+    newNameEl.reportValidity();
     if (newName) {
       if (newNameEl.checkValidity()) {
-        const job = globalThis.backendaiclient.vfolder.rename(newName);
-        job.then((value) => {
+        try {
+          await globalThis.backendaiclient.vfolder.rename(newName);
           this.notification.text = _text('data.folders.FolderRenamed');
           this.notification.show();
-        }).catch((err) => {
-          console.log(err);
-          if (err && err.message) {
-            this.notification.text = PainKiller.relieve(err.title);
-            this.notification.detail = err.message;
-            this.notification.show(true, err);
-          }
-        });
+          this._refreshFolderList(true, 'updateFolder');
+          this.closeDialog('modify-folder-name-dialog');
+        } catch (err) {
+          this.notification.text = PainKiller.relieve(err.message);
+          this.notification.show(true, err);
+        }
       } else {
         // return when new folder name is invalid
         return;
       }
     }
 
-    const modifyFolderJobQueue = [] as any;
-    const updateFolderConfig = globalThis.backendaiclient.vfolder.update_folder(input, this.renameFolderName);
-    modifyFolderJobQueue.push(updateFolderConfig);
-    if (this._checkFolderSupportSizeQuota(this.folderInfo.host) &&
-        (this.quota.value != quotaEl.value) || (this.quota.unit != quotaUnitEl.value)) {
-      const updateFolderQuota = globalThis.backendaiclient.vfolder.set_quota(this.folderInfo.host, this.folderInfo.id, quota.toString());
-      modifyFolderJobQueue.push(updateFolderQuota)
-    }
+   }
 
-    Promise.all(modifyFolderJobQueue).then((value) => {
-      this.notification.text = _text('data.folders.FolderUpdated');
-      this.notification.show();
-      this._refreshFolderList(true, 'updateFolder');
-    }).catch((err) => {
-      console.log(err);
-      if (err && err.message) {
-        isErrorOccurred = true;
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
-    if (!isErrorOccurred) {
-      this.closeDialog('modify-folder-dialog');
-    }
+  /**
+   * 
+   * @param {Event} e - click the 
+   */
+  _renameFolderDialog(e) {
+    this.renameFolderName = this._getControlName(e);
+    this.shadowRoot.querySelector('#new-folder-name').value = '';
+    this.openDialog('modify-folder-name-dialog');
   }
 
   /**
