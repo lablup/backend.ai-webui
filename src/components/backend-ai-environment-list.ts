@@ -19,6 +19,7 @@ import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-template-renderer';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
 

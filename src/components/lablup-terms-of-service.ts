@@ -70,7 +70,7 @@ export default class LablupTermsOfService extends LitElement {
       css`
         @media screen and (max-width: 669px) {
           backend-ai-dialog.terms-of-service-dialog {
-            --component-width: 85% !important;
+            --component-width: auto !important;
             --component-height: 80vh;
           }
         }
@@ -83,7 +83,7 @@ export default class LablupTermsOfService extends LitElement {
         }
 
         mwc-select {
-          width: 100%;
+          width: 135px;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
           --mdc-theme-primary: var(--general-sidebar-color);
@@ -101,6 +101,10 @@ export default class LablupTermsOfService extends LitElement {
           --mdc-list-item__primary-text: {
             height: 20px;
           };
+        }
+
+        #terms-of-service-dialog-content h1 {
+          line-height: 1.2em;
         }
       `];
   }

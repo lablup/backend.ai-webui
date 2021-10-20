@@ -217,7 +217,8 @@
       "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
       "(Automatic)": "__NOT_TRANSLATED__",
       "NumOpenMPthreads": "__NOT_TRANSLATED__",
-      "NumOpenBLASthreads": "__NOT_TRANSLATED__"
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__",
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -269,7 +270,8 @@
     "UseThisArguments": "Utilisez cet argument",
     "UseYourFavoriteVNCApp": "Utilisez votre application VNC préférée",
     "XRDPconnection": "Connexion RDP",
-    "UseYourFavoriteMSTSCApp": "Utilisez votre application MS Remote Desktop préférée"
+    "UseYourFavoriteMSTSCApp": "Utilisez votre application MS Remote Desktop préférée",
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Annuler",
@@ -778,7 +780,8 @@
     "ResourceGroupDeleted": "Groupe de ressources supprimé avec succès",
     "EnterValidResourceGroupName": "Entrez un nom de groupe de ressources valide",
     "ResourceGroupNameRequired": "Le nom du groupe de ressources est requis.",
-    "ResourceGroupAlreadyExist": "Un groupe de ressources du même nom existe déjà."
+    "ResourceGroupAlreadyExist": "Un groupe de ressources du même nom existe déjà.",
+    "WsproxyAddress": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Général",
