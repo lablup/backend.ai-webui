@@ -578,7 +578,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="modify-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.folders.FolderOptionUpdate')}</span>
         <div slot="content" class="vertical layout flex">
-        ${this._checkFolderSupportSizeQuota(this.folderInfo.host) || true ? html`
+        ${this._checkFolderSupportSizeQuota(this.folderInfo.host) ? html`
           <div class="vertical layout">
             <div class="horizontal layout center justified">
                 <mwc-textfield id="modify-folder-quota" label="${_t('data.folders.FolderQuota')}" value="${this.maxSize.value}"
