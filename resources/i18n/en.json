@@ -1126,6 +1126,7 @@
     "WrongAPIServerAddress": "Wrong API server address.",
     "LoginFailed": "Login failed. Check login information.",
     "VirtualFolderAlreadyExist": "A virtual folder with the same name already exists. Delete your own folder or decline the invitation.",
+    "CannotChangeVirtualFolderOption": "You cannot change the options of a vfolder that is not owned by myself.",
     "MaximumVfolderCreation": "You cannot create more vfolders due to resource policy",
     "LoginInformationMismatch": "Login information mismatch. Check your information",
     "ReachedResourceLimit": "Reached your resource limit. Check resources and sessions.",

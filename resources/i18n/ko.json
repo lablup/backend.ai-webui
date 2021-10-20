@@ -1126,6 +1126,7 @@
     "WrongAPIServerAddress": "잘못된 API 서버 주소",
     "LoginFailed": "로그인 실패. 로그인 정보를 확인하세요.",
     "VirtualFolderAlreadyExist": "같은 이름의 폴더가 이미 존재합니다. 폴더를 삭제하거나 초대를 거절하세요.",
+    "CannotChangeVirtualFolderOption": "폴더 소유자가 아닌 경우 폴더 옵션을 변경할 수 없습니다.",
     "MaximumVfolderCreation": "자원 정책에 따라 더 이상의 폴더를 만들 수 없습니다.",
     "LoginInformationMismatch": "로그인 실패. 로그인 정보를 확인하세요.",
     "ReachedResourceLimit": "자원 제한에 도달했습니다. 자원 할당량을 확인하세요.",
