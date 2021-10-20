@@ -112,7 +112,11 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Boolean}) _folderRefreshing = false;
   @property({type: Number}) lastQueryTime = 0;
   @property({type: Boolean}) isWritable = false;
-  @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
+  @property({type: Object}) permissions = {
+    rw: 'Read-Write',
+    ro: 'Read-Only',
+    wd: 'Delete'
+  };
   @property({type: Number}) _maxFileUploadSize = -1;
   @property({type: Number}) selectAreaHeight;
   @property({type: String}) oldFileExtension = '';
@@ -590,8 +594,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         ` : html``}
           <mwc-select class="full-width fixed-position" id="update-folder-permission" style="width:100%;" label="${_t('data.Permission')}"
                   fixedMenuPosition>
-                  ${this.permissions.map((item, idx) => html`
-                    <mwc-list-item value="${item}">${item}</mwc-list-item>
+                  ${Object.keys(this.permissions).map((key) => html`
+                    <mwc-list-item value="${this.permissions[key]}">${this.permissions[key]}</mwc-list-item>
                   `)}
           </mwc-select>
           ${this.enableStorageProxy ? html`
@@ -1643,20 +1647,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     job.then((value) => {
       this.folderInfo = value;
       let permission = this.folderInfo.permission;
-      switch (permission) {
-      case 'rw':
-        permission = 'Read-Write';
-        break;
-      case 'ro':
-        permission = 'Read-Only';
-        break;
-      case 'wd':
-        permission = 'Delete';
-        break;
-      default:
-        permission = this.folderInfo.is_owner ? 'Read-Write' : 'Read-Only';
-      }
-      this.shadowRoot.querySelector('#update-folder-permission').select(this.permissions.indexOf(permission));
+      let idx = Object.keys(this.permissions).indexOf(permission);
+      idx = idx > 0 ? idx : 0;
+      this.shadowRoot.querySelector('#update-folder-permission').select(idx);
       const cloneableEl = this.shadowRoot.querySelector('#update-folder-cloneable');
       if (cloneableEl) {
         cloneableEl.checked = this.folderInfo.cloneable;
@@ -1687,25 +1680,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     const permissionEl = this.shadowRoot.querySelector('#update-folder-permission');
     const cloneableEl = this.shadowRoot.querySelector('#update-folder-cloneable');
     let isErrorOccurred = false;
-    let permission = '';
     let cloneable = false;
     const input = {};
     if (permissionEl) {
-      permission = permissionEl.value;
-      switch (permission) {
-        case 'Read-Write':
-          permission = 'rw';
-          break;
-        case 'Read-Only':
-          permission = 'ro';
-          break;
-        case 'Delete':
-          permission = 'wd';
-          break;
-        default:
-          permission = 'rw';
-        }
-      if (this.folderInfo.permission !== permission) {
+      let permission = permissionEl.value;
+      permission = Object.keys(this.permissions).find(key => this.permissions[key] === permission);
+      if (permission && this.folderInfo.permission !== permission) {
         input['permission'] = permission;
       }
     }
@@ -1730,7 +1710,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     }
     if (modifyFolderJobQueue.length > 0) {
-      await Promise.all(modifyFolderJobQueue).then((value) => {
+      await Promise.all(modifyFolderJobQueue).then((res) => {
         this.notification.text = _text('data.folders.FolderUpdated');
         this.notification.show();
         this._refreshFolderList(true, 'updateFolder');
