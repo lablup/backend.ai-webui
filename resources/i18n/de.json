@@ -142,7 +142,7 @@
       "ClusterMode": "Cluster-Modus",
       "ClusterSize": "Clustergröße",
       "Node": "Knoten",
-      "Container": "Container",      
+      "Container": "Container",
       "TotalAllocation": "Gesamtzuweisung",
       "Ownership": "Eigentum",
       "SetSessionOwner": "Sitzungsinhaber",
