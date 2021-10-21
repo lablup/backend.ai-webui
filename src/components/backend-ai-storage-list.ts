@@ -1657,11 +1657,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
         const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
         const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
-        // Why this line raises error?
-        // [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size).split(' ');
-        const valueUnit = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size).split(' ');
-        this.quota.value = valueUnit[0];
-        this.quota.unit = valueUnit[1];
+        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit['MiB']).split(' ');
         quotaEl.value = this.quota.value;
         quotaUnitEl.value = this.quota.unit;
       }
@@ -1699,7 +1695,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     const modifyFolderJobQueue = [] as any;
     if (Object.keys(input).length > 0) {
-      console.log(input, globalThis.backendaiclient.vfolder.name)
       const updateFolderConfig = globalThis.backendaiclient.vfolder.update_folder(input, globalThis.backendaiclient.vfolder.name);
       modifyFolderJobQueue.push(updateFolderConfig);
     }

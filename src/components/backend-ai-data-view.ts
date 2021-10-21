@@ -587,6 +587,7 @@ export default class BackendAIData extends BackendAIPage {
       this.authenticated = true;
       this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+      this._getStorageProxyBackendInformation();
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
         this._vfolderInnatePermissionSupport = true;
       }
