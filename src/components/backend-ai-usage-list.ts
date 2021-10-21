@@ -302,12 +302,10 @@ export default class BackendAIUsageList extends BackendAIPage {
         ${Object.keys(this.collection).length > 0 ?
     Object.keys(this._map).map((key, idx) =>
       html`
-              <div class="card">
-                <h3 class="horizontal center layout">
-                  <span>${this._map[key]}</span>
-                  <span class="flex"></span>
-                </h3>
-              </div>
+              <h3 class="horizontal center layout">
+                <span style="color:#222222;">${this._map[key]}</span>
+                <span class="flex"></span>
+              </h3>
               <div style="width:100%;min-height:180px;">
                 <backend-ai-chart
                   idx=${idx}
