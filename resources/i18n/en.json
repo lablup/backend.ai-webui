@@ -145,6 +145,7 @@
       "Node": "Node",
       "Container": "Container",
       "TotalAllocation": "Total Allocation",
+      "ImageSelected": "Selected Image",
       "Ownership": "Ownership",
       "SetSessionOwner": "Session owner",
       "OwnerAccessKey": "Owner access key",

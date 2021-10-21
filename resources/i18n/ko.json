@@ -145,6 +145,7 @@
       "Node": "노드",
       "Container": "컨테이너",
       "TotalAllocation": "총 자원 할당량",
+      "ImageSelected": "선택된 이미지",
       "Ownership": "소유자",
       "SetSessionOwner": "세션 소유자 설정",
       "OwnerAccessKey": "소유자 접근키",
