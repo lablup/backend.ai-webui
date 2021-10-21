@@ -93,7 +93,6 @@ export default class BackendAIData extends BackendAIPage {
 
   constructor() {
     super();
-    this._getStorageProxyBackendInformation();
   }
 
   static get styles(): CSSResultOrNative | CSSResultArray {
@@ -558,6 +557,13 @@ export default class BackendAIData extends BackendAIPage {
         }
       }
     };
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._getStorageProxyBackendInformation();
+      }, true);
+    } else { // already connected
+      this._getStorageProxyBackendInformation();
+    }
     document.addEventListener('backend-ai-folder-list-changed', () => {
       // this.shadowRoot.querySelector('#storage-status').updateChart();
       this._createStorageChart();

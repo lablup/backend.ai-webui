@@ -159,7 +159,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
     this._boundFolderListRenderer = this.folderListRenderer.bind(this);
     this._boundQuotaRenderer = this.quotaRenderer.bind(this);
-    this._getStorageProxyBackendInformation();
   }
 
   static get styles(): CSSResultOrNative | CSSResultArray {
@@ -1034,9 +1033,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._refreshFolderUI({'detail': {'mini-ui': globalThis.mini_ui}});
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this._getStorageProxyBackendInformation();
         this._triggerFolderListChanged();
       }, true);
     } else { // already connected
+      this._getStorageProxyBackendInformation();
       this._triggerFolderListChanged();
     }
   }
