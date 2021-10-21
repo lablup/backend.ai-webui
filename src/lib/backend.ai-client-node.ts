@@ -1915,6 +1915,40 @@ class VFolder {
     const rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}/unshare`, body);
     return this.client._wrapWithPromise(rqst);
   }
+
+  /**
+   * Get the size quota of a vfolder.
+   * Only available for some specific file system such as XFS.
+   *
+   * @param {string} host - Host name of a virtual folder.
+   * @param {string} vfolder_id - id of the vfolder.
+   */
+  async get_quota(host, vfolder_id) {
+    const params = {folder_host: host, id: vfolder_id};
+    let q = querystring.stringify(params);
+    const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/quota?${q}`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Set the size quota of a vfolder.
+   * Only available for some specific file system such as XFS.
+   *
+   * @param {string} host - Host name of a virtual folder.
+   * @param {string} vfolder_id - id of the vfolder.
+   * @param {number} quota - quota size of the vfolder.
+   */
+  async set_quota(host, vfolder_id, quota) {
+    const body = {
+      folder_host: host,
+      id: vfolder_id,
+      input: {
+        size_bytes: quota,
+      }
+    };
+    const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/_/quota`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class Agent {
