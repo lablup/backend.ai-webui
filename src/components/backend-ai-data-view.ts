@@ -88,9 +88,12 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) totalCount;
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
+  @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
+  @property({type: Object}) storageProxyInfo = Object();
 
   constructor() {
     super();
+    this._getStorageProxyBackendInformation();
   }
 
   static get styles(): CSSResultOrNative | CSSResultArray {
@@ -263,16 +266,6 @@ export default class BackendAIData extends BackendAIPage {
           margin-left: 10px;
         }
 
-        @media screen and (max-width: 750px) {
-          mwc-tab {
-            --mdc-typography-button-font-size: 10px;
-          }
-
-          mwc-button > span {
-            display: none;
-          }
-        }
-
         .storage-status-indicator {
           width: 90px;
           color: black;
@@ -286,6 +279,19 @@ export default class BackendAIData extends BackendAIPage {
           margin: 20px 50px 0px 50px;
         }
 
+        h4#default-quota-unit {
+          display:none;
+        }
+
+        @media screen and (max-width: 750px) {
+          mwc-tab {
+            --mdc-typography-button-font-size: 10px;
+          }
+
+          mwc-button > span {
+            display: none;
+          }
+        }
       `];
   }
 
@@ -345,14 +351,14 @@ export default class BackendAIData extends BackendAIPage {
       </div>
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.CreateANewStorageFolder')}</span>
-        <div slot="content">
+        <div slot="content" class="vertical layout flex">
           <mwc-textfield id="add-folder-name" label="${_t('data.Foldername')}"
           @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
             required validationMessage="${_t('data.Allowslettersnumbersand-_dot')}" maxLength="64"
             placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
           <mwc-select class="full-width fixed-position" id="add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
             ${this.vhosts.map((item, idx) => html`
-              <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
+              <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
                 <span>${item}</span>
                 <mwc-icon-button slot="meta" icon="info"
                     @click="${(e) => this._showStorageDescription(e, item)}">
@@ -581,6 +587,7 @@ export default class BackendAIData extends BackendAIPage {
       this.authenticated = true;
       this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+      this._getStorageProxyBackendInformation();
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
         this._vfolderInnatePermissionSupport = true;
       }
@@ -682,6 +689,25 @@ export default class BackendAIData extends BackendAIPage {
       this.allowedGroups = group_info.groups;
     }
     this.openDialog('add-folder-dialog');
+  }
+
+  _getStorageProxyBackendInformation() {
+    globalThis.backendaiclient.storageproxy.list(
+      ['id', 'backend', 'capabilities']
+    ).then((resp) => {
+      const results = resp.storage_volume_list.items;
+      const storageInfo = {};
+      results.forEach((s) => {
+        storageInfo[s.id] = s;
+      });
+      this.storageProxyInfo = storageInfo;
+    }).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
   }
 
   openDialog(id) {
