@@ -217,7 +217,8 @@
       "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
       "(Automatic)": "__NOT_TRANSLATED__",
       "NumOpenMPthreads": "__NOT_TRANSLATED__",
-      "NumOpenBLASthreads": "__NOT_TRANSLATED__"
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__",
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -269,7 +270,8 @@
     "UseThisArguments": "Gunakan argumen ini",
     "UseYourFavoriteVNCApp": "Gunakan aplikasi VNC favorit Anda",
     "XRDPconnection": "Koneksi RDP",
-    "UseYourFavoriteMSTSCApp": "Gunakan aplikasi MS Remote Desktop favorit Anda"
+    "UseYourFavoriteMSTSCApp": "Gunakan aplikasi MS Remote Desktop favorit Anda",
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -778,7 +780,8 @@
     "ResourceGroupDeleted": "Grup sumber daya berhasil dihapus",
     "EnterValidResourceGroupName": "Masukkan nama grup Sumber Daya yang valid",
     "ResourceGroupNameRequired": "Nama grup sumber daya wajib diisi.",
-    "ResourceGroupAlreadyExist": "Grup sumber daya dengan nama yang sama sudah ada."
+    "ResourceGroupAlreadyExist": "Grup sumber daya dengan nama yang sama sudah ada.",
+    "WsproxyAddress": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Umum",
