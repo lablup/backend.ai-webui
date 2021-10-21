@@ -578,8 +578,8 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="modify-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.folders.FolderOptionUpdate')}</span>
         <div slot="content" class="vertical layout flex">
-        ${this._checkFolderSupportSizeQuota(this.folderInfo.host) ? html`
-          <div class="vertical layout">
+          <div class="vertical layout" id="modify-quota-controls"
+               style="display:${this._checkFolderSupportSizeQuota(this.folderInfo.host) ? 'flex' : 'none'}">
             <div class="horizontal layout center justified">
                 <mwc-textfield id="modify-folder-quota" label="${_t('data.folders.FolderQuota')}" value="${this.maxSize.value}"
                     type="number" min="0" step="0.1" @change="${() => this._updateQuotaInputHumanReadableValue()}"></mwc-textfield>
@@ -591,7 +591,6 @@ export default class BackendAiStorageList extends BackendAIPage {
             </div>
             <span class="helper-text">${_t("data.folders.MaxFolderQuota")} : ${this.maxSize.value + ' ' + this.maxSize.unit}</span>
           </div>
-        ` : html``}
           <mwc-select class="full-width fixed-position" id="update-folder-permission" style="width:100%;" label="${_t('data.Permission')}"
                   fixedMenuPosition>
                   ${Object.keys(this.permissions).map((key) => html`
