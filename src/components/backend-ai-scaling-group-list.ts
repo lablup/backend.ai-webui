@@ -519,7 +519,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('resourceGroup.ModifyResourceGroup')}</span>
-        <div slot="content">
+        <div slot="content" class="vertical layout wrap">
           <div class="horizontal layout flex wrap center justified">
             <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
               ${_t('resourceGroup.Active')}
@@ -540,13 +540,13 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             id="modify-scaling-group-description"
             type="text"
             label="${_t('resourceGroup.Description')}"
-            value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].description}
+            value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].description ?? ''}
           ></mwc-textarea>
           <mwc-textfield
             id="modify-scaling-group-wsproxy-address"
             type="url"
             label="${_t('resourceGroup.WsproxyAddress')}"
-            value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].wsproxy_addr}
+            value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].wsproxy_addr ?? ''}
           ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
