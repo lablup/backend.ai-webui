@@ -23,6 +23,7 @@ import '@vaadin/vaadin-grid/vaadin-grid-column-group';
 import '@vaadin/vaadin-grid/vaadin-grid-filter';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@vaadin/vaadin-item/vaadin-item';
@@ -537,19 +538,8 @@ export default class BackendAiStorageList extends BackendAIPage {
       <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
         <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="200px" flex-grow="0" resizable .renderer="${this._boundFolderListRenderer}">
-          <template class="header">
-            <div class="horizontal layout start start-justified flex">
-              <span class="title" style="min-width:40px;margin-left:0;">${_t('data.folders.Name')}</span>
-              <vaadin-grid-sorter path="name" direction="asc" style="padding:0 10px;">
-                <vaadin-grid-filter path="name" value="[[_filterName]]">
-                  <vaadin-text-field slot="filter" focus-target theme="small" value="{{_filterName::input}}">
-                  </vaadin-text-field>
-                </vaadin-grid-filter>
-              </vaadin-grid-sorter>
-            </div>
-          </template>
-        </vaadin-grid-column>
+        <vaadin-grid-filter-column path="name" width="80px" resizable .renderer="${this._boundFolderListRenderer}"
+            header="${_t('data.folders.Name')}"></vaadin-grid-filter-column>
         <vaadin-grid-column width="135px" flex-grow="0" resizable  header="ID">
           <template>
             <div class="layout vertical">
@@ -557,13 +547,8 @@ export default class BackendAiStorageList extends BackendAIPage {
             </div>
           </template>
         </vaadin-grid-column>
-        <vaadin-grid-column width="105px" flex-grow="0" resizable header="${_t('data.folders.Location')}">
-          <template>
-            <div class="layout vertical">
-              <span>[[item.host]]</span>
-            </div>
-          </template>
-        </vaadin-grid-column>
+        <vaadin-grid-filter-column path="host" width="105px" flex-grow="0" resizable
+            header="${_t('data.folders.Location')}"></vaadin-grid-filter-column>
         <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.FolderQuota')}" .renderer="${this._boundQuotaRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="55px" flex-grow="0" resizable header="${_t('data.folders.Type')}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="95px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
