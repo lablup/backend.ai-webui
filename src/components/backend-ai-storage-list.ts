@@ -618,7 +618,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       <backend-ai-dialog id="modify-folder-name-dialog" fixed backdrop>
         <span slot="title">${_t('data.folders.RenameAFolder')}</span>
         <div slot="content" class="vertical layout flex">
-          <mwc-textfield 
+          <mwc-textfield
               id="clone-folder-src" label="${_t('data.ExistingFolderName')}" value="${this.renameFolderName}"
               disabled></mwc-textfield>
           <mwc-textfield class="red" id="new-folder-name" label="${_t('data.folders.TypeNewFolderName')}"
@@ -1248,7 +1248,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 icon="settings"
                 @click="${(e) => this._modifyFolderOptionDialog(e)}"
               ></mwc-icon-button>
-            ` : 
+            ` :
     html``
 }
           ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd') || (rowData.item.type === 'group' && this.is_admin) ?
@@ -1658,7 +1658,11 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
         const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
         const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
-        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size).split(' ');
+        // Why this line raises error?
+        // [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size).split(' ');
+        const valueUnit = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size).split(' ');
+        this.quota.value = valueUnit[0];
+        this.quota.unit = valueUnit[1];
         quotaEl.value = this.quota.value;
         quotaUnitEl.value = this.quota.unit;
       }
@@ -1730,7 +1734,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Update the folder with the name on the new-folder-name and
-   * 
+   *
    */
    async _updateFolderName() {
     globalThis.backendaiclient.vfolder.name = this.renameFolderName;
@@ -1758,8 +1762,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    }
 
   /**
-   * 
-   * @param {Event} e - click the 
+   *
+   * @param {Event} e - click the
    */
   _renameFolderDialog(e) {
     this.renameFolderName = this._getControlName(e);
