@@ -613,7 +613,6 @@ class Client {
       'password': this._config.password
     };
     let rqst = this.newSignedRequest('POST', `/server/login`, body);
-    console.log(rqst.body);
     let result;
     try {
       result = await this._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON. stringify({
