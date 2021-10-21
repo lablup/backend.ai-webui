@@ -503,32 +503,32 @@ export default class BackendAiStorageList extends BackendAIPage {
   /**
    * Update Quota Input to human readable value with proper unit
    */
-     _updateQuotaInputHumanReadableValue() {
-      const currentQuotaInput = this.shadowRoot.querySelector('#modify-folder-quota');
-      const currentQuotaUnit = this.shadowRoot.querySelector('#modify-folder-quota-unit');
-      let unit = 'MiB'; // default unit starts with MiB.
-      let convertedCurrentQuota = currentQuotaInput.value * (this.quotaUnit[currentQuotaUnit.value]);
-      const convertedQuota = this.maxSize.value * (this.quotaUnit[this.maxSize.unit]);
-      [currentQuotaInput.value, unit]= globalThis.backendaiutils._humanReadableFileSize(convertedCurrentQuota).split(' ');
-      if (['Bytes', 'KiB', 'MiB'].includes(unit)) {
-        if (unit === 'MiB') {
-          currentQuotaInput.value =  currentQuotaInput.value < 1 ? 1 : Math.round(currentQuotaInput.value);
-        } else {
-          currentQuotaInput.value = 1;
-        }
-        unit = 'MiB';
+  _updateQuotaInputHumanReadableValue() {
+    const currentQuotaInput = this.shadowRoot.querySelector('#modify-folder-quota');
+    const currentQuotaUnit = this.shadowRoot.querySelector('#modify-folder-quota-unit');
+    let unit = 'MiB'; // default unit starts with MiB.
+    const convertedCurrentQuota = currentQuotaInput.value * (this.quotaUnit[currentQuotaUnit.value]);
+    const convertedQuota = this.maxSize.value * (this.quotaUnit[this.maxSize.unit]);
+    [currentQuotaInput.value, unit]= globalThis.backendaiutils._humanReadableFileSize(convertedCurrentQuota).split(' ');
+    if (['Bytes', 'KiB', 'MiB'].includes(unit)) {
+      if (unit === 'MiB') {
+        currentQuotaInput.value = currentQuotaInput.value < 1 ? 1 : Math.round(currentQuotaInput.value);
       } else {
-        currentQuotaInput.value = parseFloat(currentQuotaInput.value).toFixed(1);
-        if (convertedQuota < convertedCurrentQuota) {
-          currentQuotaInput.value = this.maxSize.value;
-          unit = this.maxSize.unit;
-        }
+        currentQuotaInput.value = 1;
       }
-      // apply step only when the unit is bigger than MB
-      currentQuotaInput.step = (currentQuotaUnit.value === 'MiB')? 0 : 0.1;
-      const idx = currentQuotaUnit.items.findIndex(item => item.value === unit);
-      currentQuotaUnit.select(idx);
+      unit = 'MiB';
+    } else {
+      currentQuotaInput.value = parseFloat(currentQuotaInput.value).toFixed(1);
+      if (convertedQuota < convertedCurrentQuota) {
+        currentQuotaInput.value = this.maxSize.value;
+        unit = this.maxSize.unit;
+      }
     }
+    // apply step only when the unit is bigger than MB
+    currentQuotaInput.step = (currentQuotaUnit.value === 'MiB')? 0 : 0.1;
+    const idx = currentQuotaUnit.items.findIndex((item) => item.value === unit);
+    currentQuotaUnit.select(idx);
+  }
 
   render() {
     // language=HTML
