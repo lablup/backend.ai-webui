@@ -539,8 +539,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column width="200px" flex-grow="0" resizable .renderer="${this._boundFolderListRenderer}">
           <template class="header">
-            <div class="horizontal layout center justified flex" style="margin-right:15px;">
-              <span class="title">${_t('data.folders.Name')}</span>
+            <div class="horizontal layout start start-justified flex">
+              <span class="title" style="min-width:40px;margin-left:0;">${_t('data.folders.Name')}</span>
               <vaadin-grid-sorter path="name" direction="asc" style="padding:0 10px;">
                 <vaadin-grid-filter path="name" value="[[_filterName]]">
                   <vaadin-text-field slot="filter" focus-target theme="small" value="{{_filterName::input}}">
@@ -565,8 +565,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           </template>
         </vaadin-grid-column>
         <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.FolderQuota')}" .renderer="${this._boundQuotaRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="45px" flex-grow="0" resizable header="${_t('data.folders.Type')}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="85px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="55px" flex-grow="0" resizable header="${_t('data.folders.Type')}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="95px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
         <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.Owner')}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
         ${this.enableStorageProxy ? html`
           <!--<vaadin-grid-column
