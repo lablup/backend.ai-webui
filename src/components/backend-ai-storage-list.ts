@@ -65,7 +65,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
 export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Number}) _APIMajorVersion = 5;
   @property({type: String}) storageType = 'general';
-  @property({type: Object}) folders = Object();
+  @property({type: Array}) folders = [];
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) enableStorageProxy = false;
