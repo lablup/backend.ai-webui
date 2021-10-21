@@ -523,9 +523,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
 
     const scalingGroupId = kInfo.compute_session.scaling_group;
-    const wsproxyVersion = await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId);
-
-    let uri = (wsproxyVersion.version == 'v1') ? await this._resolveV1ProxyUri(sessionUuid, app) : await this._resolveV2ProxyUri(sessionUuid, app, port, envs, args);
+    // Apply v1 when executing in electron mode
+    let wsproxyVersion = (globalThis.isElectron) ? 'v1' : await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId).version;
+    let uri = (wsproxyVersion == 'v1') ? await this._resolveV1ProxyUri(sessionUuid, app) : await this._resolveV2ProxyUri(sessionUuid, app, port, envs, args);
     if (!uri) {
       return Promise.resolve(false);
     }
