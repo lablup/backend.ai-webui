@@ -261,14 +261,14 @@ class Client {
    * @param {AbortController.signal} signal - Request signal to abort fetch
    * @param {number} timeout - Custom timeout (sec.) If no timeout is given, default timeout is used.
    * @param {number} retry - an integer to retry this request
+   * @param {Object} opts - Options
    */
-  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0, retry: number = 0) {
+  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0, retry: number = 0, opts ={}) {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
     let errorDesc = '';
     let resp, body, requestTimer;
-
     try {
       if (rqst.method == 'GET') {
         rqst.body = undefined;
@@ -319,7 +319,7 @@ class Client {
     } catch (err) {
       if (retry > 0) {
         await new Promise(r => setTimeout(r, 2000)); // Retry after 2 seconds.
-        return this._wrapWithPromise(rqst, rawFile, signal, timeout, retry - 1);
+        return this._wrapWithPromise(rqst, rawFile, signal, timeout, retry - 1, opts);
       }
       let error_message;
       if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
@@ -434,7 +434,9 @@ class Client {
       "title": body.title,
       "message" : ""
     };
-
+    if ('log' in opts) {
+      current_log.requestParameters = opts['log'];
+    }
     log_stack.push(current_log);
 
     if(previous_log) {
@@ -613,7 +615,10 @@ class Client {
     let rqst = this.newSignedRequest('POST', `/server/login`, body);
     let result;
     try {
-      result = await this._wrapWithPromise(rqst);
+      result = await this._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON. stringify({
+        'username': this._config.userId,
+        'password': '********'
+      })});
       if (result.authenticated === true) {
         if (result.data.role === 'monitor') {
           this.logout();
@@ -652,6 +657,11 @@ class Client {
   logout() {
     let body = {};
     let rqst = this.newSignedRequest('POST', `/server/logout`, body);
+    // clean up log msg for security reason
+    const currentLogs = localStorage.getItem('backendaiwebui.logs');
+    if (currentLogs) {
+       localStorage.removeItem('backendaiwebui.logs');
+    }
     return this._wrapWithPromise(rqst);
   }
 
@@ -1111,7 +1121,7 @@ class Client {
    * @param {string} q - query string for GraphQL
    * @param {string} v - variable string for GraphQL
    * @param {number} timeout - Timeout to force terminate request
-   * @param {number} retry - The number of retry when request is failled
+   * @param {number} retry - The number of retry when request is failed
    */
   async query(q, v, signal = null, timeout: number = 0, retry: number = 0) {
     let query = {
@@ -1205,8 +1215,11 @@ class Client {
   /**
    * Same to newRequest() method but it does not sign the request.
    * Use this for unauthorized public APIs.
+   *
+   * @param {string} method - the HTTP method
+   * @param {string} queryString - the URI path and GET parameters
+   * @param {any} body - an object that will be encoded as JSON in the request body
    */
-
   newUnsignedRequest(method, queryString, body) {
     return this.newPublicRequest(method, queryString, body, this._config.apiVersionMajor);
   }
@@ -3306,7 +3319,7 @@ class ScalingGroup {
   async list_available() {
     if (this.client.is_superadmin === true) {
       const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
-      if (globalThis.backendaiclient.isManagerVersionCompatibleWith('21.09.0')) {
+      if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
         fields.push('wsproxy_addr');
       }
       const q = `query {` +
@@ -3332,7 +3345,7 @@ class ScalingGroup {
    * @param {string} group - Scaling group name
    */
   async getWsproxyVersion(group) {
-    if (!globalThis.backendaiclient.isManagerVersionCompatibleWith('21.09.0')) {
+    if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
       return Promise.resolve({version: 'v1'}); // for manager<=21.03 compatibility.
     }
     const queryString = `/scaling-groups/${group}/wsproxy-version`;
@@ -3356,7 +3369,7 @@ class ScalingGroup {
       driver_opts: "{}",
       scheduler_opts: "{}"
     };
-    if (globalThis.backendaiclient.isManagerVersionCompatibleWith('21.09.0')) {
+    if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
       input['wsproxy_addr'] = wsproxyAddress;
     }
     // if (this.client.is_admin === true) {
@@ -3411,7 +3424,7 @@ class ScalingGroup {
    * }
    */
   async update(name, input) {
-    if (!globalThis.backendaiclient.isManagerVersionCompatibleWith('21.09.0')) {
+    if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
       delete input.wsproxy_addr;
       if (Object.keys(input).length < 1) {
         return Promise.resolve({modify_scaling_group: {ok: true}});
