@@ -553,10 +553,10 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid-column width="95px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
         <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.Owner')}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
         ${this.enableStorageProxy ? html`
-          <!--<vaadin-grid-column
+          <vaadin-grid-column
               auto-width flex-grow="0" resizable header="${_t('data.folders.Cloneable')}"
               .renderer="${this._boundCloneableRenderer}"></vaadin-grid-column>` : html``}
-        <vaadin-grid-column auto-width resizable header="${_t('data.folders.Control')}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>-->
+        <vaadin-grid-column auto-width resizable header="${_t('data.folders.Control')}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
       </vaadin-grid>
 
       <backend-ai-dialog id="modify-folder-dialog" fixed backdrop>
@@ -582,13 +582,13 @@ export default class BackendAiStorageList extends BackendAIPage {
                   `)}
           </mwc-select>
           ${this.enableStorageProxy ? html`
-          <!--<div class="horizontal layout flex wrap center justified">
+          <div class="horizontal layout flex wrap center justified">
             <p style="color:rgba(0, 0, 0, 0.6);">
               ${_t('data.folders.Cloneable')}
             </p>
             <mwc-switch id="update-folder-cloneable" style="margin-right:10px;">
             </mwc-switch>
-          </div>-->
+          </div>
           ` : html``}
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
@@ -1185,16 +1185,15 @@ export default class BackendAiStorageList extends BackendAIPage {
             ` :
     html``
 }
-          <!--${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
+          ${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy && rowData.item.cloneable ?
     html`
             <mwc-icon-button
               class="fg blue controls-running"
               icon="content_copy"
-              disabled
               @click="${() => {
     this._requestCloneFolder(rowData.item);
   }}"></mwc-icon-button>
-            ` : html``}-->
+            ` : html``}
           ${rowData.item.is_owner ?
     html`
               <mwc-icon-button
@@ -1440,7 +1439,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     if (!host) {
       return false;
     }
-    const backend = this.storageProxyInfo[host].backend;
+    const backend = this.storageProxyInfo[host]?.backend;
     return this.quotaSupportStorageBackends.includes(backend) ? true : false;
   }
 
@@ -1612,7 +1611,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.folderInfo = value;
       this.openDialog('info-folder-dialog');
     }).catch((err) => {
-      console.log(err);
+      console.log(err.message);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -1832,8 +1831,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    */
   _requestCloneFolder(selectedItem) {
     // temporary diable cloning folder until the logic of cloning large size of virtual folder is optimized
-    /* const event = new CustomEvent('backend-ai-vfolder-cloning', {'detail': selectedItem});
-    document.dispatchEvent(event); */
+    const event = new CustomEvent('backend-ai-vfolder-cloning', {'detail': selectedItem});
+    document.dispatchEvent(event);
   }
 
   /**
