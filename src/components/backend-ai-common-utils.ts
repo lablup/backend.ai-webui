@@ -67,6 +67,27 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
+    /**
+   * Convert the value byte to MB.
+   *
+   * @param {number} value
+   * @return {number} converted value from byte to MB.
+   */
+     _bytesToMiB(value) {
+      const megabyte = Math.pow(2, 20);
+      return Math.floor(value / megabyte);
+    }
+  
+    _bytesToGiB(value) {
+      const gigabyte = Math.pow(2, 30);
+      return Number(value / gigabyte).toFixed(1);
+    }
+  
+    _bytesToTiB(value) {
+      const terabyte = Math.pow(2, 40);
+      return Number(value / terabyte).toFixed(1);
+    }
+
   render() {
     // language=HTML
     return html`
