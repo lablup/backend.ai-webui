@@ -59,7 +59,7 @@ export default class LablupPiechart extends LitElement {
     } else {
       chartFontSize = 0.9 / (this.currentNumber.toString().length);
     }
-    this.chartFontSize = chartFontSize.toString();
+    this.chartFontSize = (this.chartFontSize !== '0') ? this.chartFontSize: chartFontSize.toString();
     let chart: HTMLElement = this.shadowRoot.querySelector("#chart");
     let chartText: HTMLElement = this.shadowRoot.querySelector("#chart-text");
     let unitText: HTMLElement = this.shadowRoot.querySelector("#unit-text");
