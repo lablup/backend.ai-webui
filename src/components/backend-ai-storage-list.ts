@@ -1417,30 +1417,16 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
-  _getStorageProxyBackendInformation() {
-    globalThis.backendaiclient.storageproxy.list(
-      ['id', 'backend', 'capabilities']
-    ).then((resp) => {
-      const results = resp.storage_volume_list.items;
-      const storageInfo = {};
-      results.forEach((s) => {
-        storageInfo[s.id] = s;
-      });
-      this.storageProxyInfo = storageInfo;
-    }).catch((err) => {
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+  async _getStorageProxyBackendInformation() {
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    this.storageProxyInfo = vhostInfo.volume_info || {};
   }
 
   _checkFolderSupportSizeQuota(host: string) {
     if (!host) {
       return false;
     }
-    const backend = this.storageProxyInfo[host].backend;
+    const backend = this.storageProxyInfo[host]?.backend;
     return this.quotaSupportStorageBackends.includes(backend) ? true : false;
   }
 
