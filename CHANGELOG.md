@@ -1,5 +1,56 @@
 # Changelog
 
+## v21.09.1 (21/10/2021)
+
+#### Bug Fixes:
+
+- [**bug**][**minor**] List components generate allItems is not iterable error [#1156](https://github.com/lablup/backend.ai-webui/issues/1156)
+- [**bug**][**easy**][**blocker**][**urgency**] Web-UI always follows v2 wsproxy path [#1154](https://github.com/lablup/backend.ai-webui/issues/1154)
+- [**bug**] Data list is not shown when user refreshes on the folder list page [#1153](https://github.com/lablup/backend.ai-webui/issues/1153)
+
+
+## v21.09.0 (21/10/2021)
+
+#### Enhancements:
+
+- [**enhancement**][**minor**][**easy**][**UI / UX**] Update help link from console to webui [#1149](https://github.com/lablup/backend.ai-webui/issues/1149)
+- [**enhancement**][**minor**][**UI / UX**] Searchable filter on Data / virtual folder items [#1148](https://github.com/lablup/backend.ai-webui/issues/1148)
+- [**enhancement**][**major**][**UI / UX**][**urgency**] Support XFS backend-specific disk quota UI [#1146](https://github.com/lablup/backend.ai-webui/issues/1146)
+- [**enhancement**][**major**][**library / SDK**] Add support for direct wsproxy connection mode to agents [#1144](https://github.com/lablup/backend.ai-webui/issues/1144)
+- [**enhancement**] Hide specific information from log file [#1136](https://github.com/lablup/backend.ai-webui/issues/1136)
+- [**enhancement**] Option UI to turn off accelerated computing [#1119](https://github.com/lablup/backend.ai-webui/issues/1119)
+- [**enhancement**][**good first issue**][**easy**][**UI / UX**] Unify padding on all pages. [#1108](https://github.com/lablup/backend.ai-webui/issues/1108)
+- [**enhancement**][**UI / UX**] Support for modifying registry configurations [#1102](https://github.com/lablup/backend.ai-webui/issues/1102)
+
+#### Bug Fixes:
+
+- [**bug**] Remove one of the two scrolls in the TOS/PP dialog [#1139](https://github.com/lablup/backend.ai-webui/issues/1139)
+
+
+## v21.03.11 (13/09/2021)
+
+#### Bugfixes
+
+- [**bug**][**blocker**][**UI / UX**][**minor**]  remove legacy code in user creation [#1127](https://github.com/lablup/backend.ai-webui/pull/1127)
+
+
+## v21.03.10 (02/09/2021)
+
+#### Enhancements:
+
+- [**enhancement**][**UI / UX**] add overlay network settings dialog and increase code flexibility [#1120](https://github.com/lablup/backend.ai-webui/issues/1120)
+- [**enhancement**] Option UI to modify accelerated computing parameters [#1119](https://github.com/lablup/backend.ai-webui/issues/1119)
+- [**enhancement**] Change the width of the Resource Statistics panel to be the same as the Session list panel. [#1113](https://github.com/lablup/backend.ai-webui/issues/1113)
+- [**enhancement**] Support Indonesian language [#1100](https://github.com/lablup/backend.ai-webui/issues/1100)
+- [**enhancement**] Support Mongolian language [#1099](https://github.com/lablup/backend.ai-webui/issues/1099)
+
+#### Bugfixes
+
+- [**bug**][**UI / UX**] change width Resource Statics panel [#1117](https://github.com/lablup/backend.ai-webui/pull/1117)
+- [**bug**][**maintenance**][**minor**] cannot build docker-compose [#1116](https://github.com/lablup/backend.ai-webui/pull/1116)
+- [**blocker**][**UI / UX**][**minor**]  comment out number of file item in folder info dialog [#1101](https://github.com/lablup/backend.ai-webui/pull/1101)
+
+
 ## v21.03.9 (09/08/2021)
 
 #### Enhancements:

@@ -770,6 +770,12 @@ export const BackendAiStyles = [
       padding-bottom: 5px;
     }
 
+    span.helper-text {
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: var(--general-textfield-selected-color);
+    }
+
     .resource-name {
       width: 60px;
       text-align: right;

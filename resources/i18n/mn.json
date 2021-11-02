@@ -210,7 +210,15 @@
       "FolderAlias": "Фолдерын хоч нэр",
       "NoAvailableFolderToMount": "Холбох боломжтой фолдер байхгүй байна.",
       "MountedFolders": "Холбогдсон фолдерууд",
-      "EnvironmentVariablePaneTitle": "Environment хувьсагч тохируулах (заавал биш)"
+      "EnvironmentVariablePaneTitle": "Environment хувьсагч тохируулах (заавал биш)",
+      "OpenMPOptimization": "__NOT_TRANSLATED__",
+      "DescOpenMPOptimization": "__NOT_TRANSLATED__",
+      "HPCOptimization": "__NOT_TRANSLATED__",
+      "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
+      "(Automatic)": "__NOT_TRANSLATED__",
+      "NumOpenMPthreads": "__NOT_TRANSLATED__",
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__",
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -262,7 +270,8 @@
     "UseThisArguments": "Энэ аргументийг ашиглана уу",
     "UseYourFavoriteVNCApp": "Өөрийн дуртай VNC програмаа ашиглаарай",
     "XRDPconnection": "RDP холболт",
-    "UseYourFavoriteMSTSCApp": "Дуртай MS Remote Desktop програмаа ашиглаарай"
+    "UseYourFavoriteMSTSCApp": "Дуртай MS Remote Desktop програмаа ашиглаарай",
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -771,7 +780,8 @@
     "ResourceGroupDeleted": "Нөөцийн бүлгийг амжилттай устгалаа",
     "EnterValidResourceGroupName": "Зөв нөөцийн бүлгийн нэрийг оруулна уу",
     "ResourceGroupNameRequired": "Нөөцийн бүлгийн нэр шаардлагатай.",
-    "ResourceGroupAlreadyExist": "Ижил нэртэй нөөцийн бүлэг аль хэдийн бий болсон."
+    "ResourceGroupAlreadyExist": "Ижил нэртэй нөөцийн бүлэг аль хэдийн бий болсон.",
+    "WsproxyAddress": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Ерөнхий",
@@ -904,7 +914,13 @@
       "digest": "Боловсруулах",
       "tag": "Таг",
       "none": "Аль нь ч биш"
-    }
+    },
+    "OverlayNetwork": "__NOT_TRANSLATED__",
+    "OverlayNetworkConfiguration": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettings": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
+    "MTUDescription": "__NOT_TRANSLATED__",
+    "OutOfRange": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",

@@ -210,7 +210,15 @@
       "FolderAlias": "__NOT_TRANSLATED__",
       "NoAvailableFolderToMount": "__NOT_TRANSLATED__",
       "MountedFolders": "__NOT_TRANSLATED__",
-      "EnvironmentVariablePaneTitle": "__NOT_TRANSLATED__"
+      "EnvironmentVariablePaneTitle": "__NOT_TRANSLATED__",
+      "OpenMPOptimization": "__NOT_TRANSLATED__",
+      "DescOpenMPOptimization": "__NOT_TRANSLATED__",
+      "HPCOptimization": "__NOT_TRANSLATED__",
+      "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
+      "(Automatic)": "__NOT_TRANSLATED__",
+      "NumOpenMPthreads": "__NOT_TRANSLATED__",
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__",
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -262,7 +270,8 @@
     "UseThisArguments": "Используйте эти аргументы",
     "UseYourFavoriteVNCApp": "Используйте свое любимое приложение VNC",
     "XRDPconnection": "RDP-соединение",
-    "UseYourFavoriteMSTSCApp": "Используйте ваше любимое приложение MS Remote Desktop"
+    "UseYourFavoriteMSTSCApp": "Используйте ваше любимое приложение MS Remote Desktop",
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
@@ -771,7 +780,8 @@
     "ResourceGroupDeleted": "Группа ресурсов успешно удалена",
     "EnterValidResourceGroupName": "Введите действительное имя группы ресурсов",
     "ResourceGroupNameRequired": "Укажите название группы ресурсов.",
-    "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует."
+    "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует.",
+    "WsproxyAddress": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Общий",
@@ -904,7 +914,13 @@
       "digest": "Дайджест",
       "tag": "Тег",
       "none": "Никто"
-    }
+    },
+    "OverlayNetwork": "__NOT_TRANSLATED__",
+    "OverlayNetworkConfiguration": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettings": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
+    "MTUDescription": "__NOT_TRANSLATED__",
+    "OutOfRange": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",
