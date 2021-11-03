@@ -34,7 +34,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) visible = false;
   @property({type: Object}) keypairs = {};
-  @property({type: Object}) resourcePolicy = {};
+  @property({type: Array}) resourcePolicy = [];
   @property({type: Object}) keypairInfo = {};
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) active = false;
@@ -311,7 +311,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             <div class="horizontal layout justified" style="width:100%;">
               <div class="vertical layout flex">
                 <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GB)</wl-label>
-                <mwc-textfield class="discrete" id="vfolder-capacity-limit" type="number" min="0" max="1024"
+                <mwc-textfield id="vfolder-capacity-limit" type="number" min="0" max="1024" step="0.1"
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
@@ -404,7 +404,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">cloud_queue</wl-icon>
-            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.max_vfolder_size)}</span>
+            <span>${this._markIfUnlimited(rowData.item.max_vfolder_size, true)}</span>
             <span class="indicator">GB</span>
           </div>
           <div class="layout horizontal configuration">
@@ -431,7 +431,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div id="controls" class="layout horizontal flex center"
              .policy-name="${rowData.item.name}">
         ${this.is_admin ? html`
-              <wl-button fab flat inverted class="fg green controls-running" icon="settings"
+              <wl-button fab flat inverted class="fg blue controls-running" icon="settings"
                                  @click="${(e) => this._launchResourcePolicyDialog(e)}"><wl-icon>settings</wl-icon></wl-button>
                                  ` : html``}
         ${this.is_admin ? html`
@@ -507,7 +507,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this._updateInputStatus(this.vfolder_capacity);
 
     this.shadowRoot.querySelector('#vfolder-count-limit').value = resourcePolicy.max_vfolder_count;
-    this.shadowRoot.querySelector('#vfolder-capacity-limit').value = resourcePolicy.max_vfolder_size;
+    this.shadowRoot.querySelector('#vfolder-capacity-limit').value = this._byteToGB(resourcePolicy.max_vfolder_size, 1);
     this.shadowRoot.querySelector('#allowed_vfolder-hosts').layout(true).then( ()=>{
       this.shadowRoot.querySelector('#allowed_vfolder-hosts').select(0);
       this.shadowRoot.querySelector('#allowed_vfolder-hosts').value = resourcePolicy.allowed_vfolder_hosts[0];
@@ -572,6 +572,17 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     return this.condition === 'active';
   }
 
+  _byteToGB(value: number, decimals: number=0) {
+    const gigabyte = Math.pow(2, 30);
+    const unitToFix = Math.pow(10, decimals);
+    return (Math.round(value / gigabyte * unitToFix) / unitToFix).toFixed(decimals);
+  }
+
+  _gBToByte(value: number = 0) {
+    const gigabyte = Math.pow(2, 30);
+    return Math.round(gigabyte * value);
+  }
+
   _readResourcePolicyInput() {
     const total_resource_slots = {};
     const vfolder_hosts: string[] | null = [];
@@ -595,7 +606,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.concurrency_limit['value'] = this.concurrency_limit['value'] === '' ? 1000000 : parseInt(this.concurrency_limit['value']);
     this.idle_timeout['value'] = this.idle_timeout['value'] === '' ? 0 : parseInt(this.idle_timeout['value']);
     this.container_per_session_limit['value'] = this.container_per_session_limit['value'] === '' ? 0 : parseInt(this.container_per_session_limit['value']);
-    this.vfolder_capacity['value'] = this.vfolder_capacity['value'] === '' ? 0 : parseInt(this.vfolder_capacity['value']);
+    this.vfolder_capacity['value'] = this.vfolder_capacity['value'] === '' ? 0 : parseFloat(this.vfolder_capacity['value']);
     this.vfolder_max_limit['value'] = this.vfolder_max_limit['value'] === '' ? 0 : parseInt(this.vfolder_max_limit['value']);
 
     Object.keys(total_resource_slots).map((resource) => {
@@ -611,7 +622,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       'max_containers_per_session': this.container_per_session_limit['value'],
       'idle_timeout': this.idle_timeout['value'],
       'max_vfolder_count': this.vfolder_max_limit['value'],
-      'max_vfolder_size': this.vfolder_capacity['value'],
+      'max_vfolder_size': this._gBToByte(this.vfolder_capacity['value']),
       'allowed_vfolder_hosts': vfolder_hosts
     };
     return input;
@@ -754,6 +765,23 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     } else {
       textfield.disabled = false;
       checkbox.checked = false;
+    }
+  }
+
+  /**
+   * Returns human-readable value according to certain conditions
+   *
+   * @param value - raw value
+   * @param enableUnitConvert - if true it enable unit conversion
+   * @returns if number then returns number, else if then string
+   */
+  _markIfUnlimited(value, enableUnitConvert = false) {
+    if (['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value)) {
+      return '∞';
+    } else if (['NaN', NaN].includes(value)) {
+      return '-';
+    } else {
+      return enableUnitConvert ? this._byteToGB(value, 1) : value;
     }
   }
 

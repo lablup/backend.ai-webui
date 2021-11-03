@@ -89,6 +89,8 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) totalCount;
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
+  @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
+  @property({type: Object}) storageProxyInfo = Object();
 
   constructor() {
     super();
@@ -264,16 +266,6 @@ export default class BackendAIData extends BackendAIPage {
           margin-left: 10px;
         }
 
-        @media screen and (max-width: 750px) {
-          mwc-tab {
-            --mdc-typography-button-font-size: 10px;
-          }
-
-          mwc-button > span {
-            display: none;
-          }
-        }
-
         .storage-status-indicator {
           width: 90px;
           color: black;
@@ -287,6 +279,19 @@ export default class BackendAIData extends BackendAIPage {
           margin: 20px 50px 0px 50px;
         }
 
+        h4#default-quota-unit {
+          display:none;
+        }
+
+        @media screen and (max-width: 750px) {
+          mwc-tab {
+            --mdc-typography-button-font-size: 10px;
+          }
+
+          mwc-button > span {
+            display: none;
+          }
+        }
       `];
   }
 
@@ -294,7 +299,7 @@ export default class BackendAIData extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <div class="vertical layout" style="margin:20px;">
+      <div class="vertical layout">
         <lablup-activity-panel elevation="1" narrow title=${_t('data.StorageStatus')} autowidth>
           <div slot="message">
             <div class="horizontal layout wrap flex center center-justified">
@@ -346,14 +351,14 @@ export default class BackendAIData extends BackendAIPage {
       </div>
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.CreateANewStorageFolder')}</span>
-        <div slot="content">
+        <div slot="content" class="vertical layout flex">
           <mwc-textfield id="add-folder-name" label="${_t('data.Foldername')}"
           @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
             required validationMessage="${_t('data.Allowslettersnumbersand-_dot')}" maxLength="64"
             placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
           <mwc-select class="full-width fixed-position" id="add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
             ${this.vhosts.map((item, idx) => html`
-              <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
+              <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
                 <span>${item}</span>
                 <mwc-icon-button slot="meta" icon="info"
                     @click="${(e) => this._showStorageDescription(e, item)}">
@@ -553,6 +558,13 @@ export default class BackendAIData extends BackendAIPage {
         }
       }
     };
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._getStorageProxyBackendInformation();
+      }, true);
+    } else { // already connected
+      this._getStorageProxyBackendInformation();
+    }
     document.addEventListener('backend-ai-folder-list-changed', () => {
       // this.shadowRoot.querySelector('#storage-status').updateChart();
       this._createStorageChart();
@@ -582,6 +594,7 @@ export default class BackendAIData extends BackendAIPage {
       this.authenticated = true;
       this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+      this._getStorageProxyBackendInformation();
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
         this._vfolderInnatePermissionSupport = true;
       }
@@ -683,6 +696,11 @@ export default class BackendAIData extends BackendAIPage {
       this.allowedGroups = group_info.groups;
     }
     this.openDialog('add-folder-dialog');
+  }
+
+  async _getStorageProxyBackendInformation() {
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    this.storageProxyInfo = vhostInfo.volume_info || {};
   }
 
   openDialog(id) {

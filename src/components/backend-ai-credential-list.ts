@@ -66,7 +66,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   };
   @property({type: Boolean}) isAdmin = false;
   @property({type: String}) condition = 'active';
-  @property({type: Object}) keypairs = Object();
+  @property({type: Array}) keypairs = [];
   @property({type: Object}) resourcePolicy = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) _boundKeyageRenderer = this.keyageRenderer.bind(this);
@@ -401,7 +401,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   _mutateKey(e, is_active) {
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
-    const original = this.keypairs.find(this._findKeyItem, accessKey);
+    const original: any = this.keypairs.find(this._findKeyItem, accessKey);
     const input = {
       'is_active': is_active,
       'is_admin': original.is_admin,

@@ -479,7 +479,11 @@
       "Edit": "Edit",
       "EditDelete": "Edit+Delete",
       "KickOut": "Kick out user",
-      "CannotDeleteFolder": "Cannot delete folder mounted in one or more sessions. Please terminate the session first."
+      "CannotDeleteFolder": "Cannot delete folder mounted in one or more sessions. Please terminate the session first.",
+      "FolderUsage": "Folder usage",
+      "FolderUsing": "Using",
+      "FolderQuota": "Capacity",
+      "MaxFolderQuota": "Max Folder Quota"
     },
     "explorer": {
       "Delete": "Delete...",
@@ -755,7 +759,10 @@
     "RegistryUpdateFailed": "Registry update failed.",
     "RescanImages": "Rescanning Images...",
     "RescanFailed": "Rescan Failed.",
-    "PleaseSelectOption": "Please select one option."
+    "PleaseSelectOption": "Please select one option.",
+    "ModifyRegistryConfigurations": "Modify registry configurations",
+    "RegistrySuccessfullyModified": "Registry successfully modified.",
+    "NoChangeMade": "No changes were made."
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",
@@ -780,7 +787,8 @@
     "ResourceGroupDeleted": "Resource group successfully deleted",
     "EnterValidResourceGroupName": "Enter valid Resource group name",
     "ResourceGroupNameRequired": "Resource group name is required.",
-    "ResourceGroupAlreadyExist": "A resource group with the same name already exists."
+    "ResourceGroupAlreadyExist": "A resource group with the same name already exists.",
+    "WsproxyAddress": "WSProxy Server Address"
   },
   "maintenance": {
     "General": "General",
@@ -1119,6 +1127,7 @@
     "WrongAPIServerAddress": "Wrong API server address.",
     "LoginFailed": "Login failed. Check login information.",
     "VirtualFolderAlreadyExist": "A virtual folder with the same name already exists. Delete your own folder or decline the invitation.",
+    "CannotChangeVirtualFolderOption": "You cannot change the options of a vfolder that is not owned by myself.",
     "MaximumVfolderCreation": "You cannot create more vfolders due to resource policy",
     "LoginInformationMismatch": "Login information mismatch. Check your information",
     "ReachedResourceLimit": "Reached your resource limit. Check resources and sessions.",

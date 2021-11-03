@@ -780,7 +780,8 @@
     "ResourceGroupDeleted": "Группа ресурсов успешно удалена",
     "EnterValidResourceGroupName": "Введите действительное имя группы ресурсов",
     "ResourceGroupNameRequired": "Укажите название группы ресурсов.",
-    "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует."
+    "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует.",
+    "WsproxyAddress": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Общий",
