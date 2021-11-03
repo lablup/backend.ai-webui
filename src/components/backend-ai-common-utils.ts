@@ -67,16 +67,16 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     return Math.floor(value / 1000000);
   }
 
-  _bytesToMB(value) {
+  _bytesToMiB(value) {
     return Number(value / (1024 * 1024)).toFixed(1);
   }
 
-  _bytesToGB(value) {
+  _bytesToGiB(value) {
     const gibibyte = Math.pow(1024, 3);
     return Number(value / gibibyte).toFixed(1);
   }
 
-  _bytesToTB(value) {
+  _bytesToTiB(value) {
     const gibibyte = Math.pow(1024, 4);
     return Number(value / gibibyte).toFixed(1);
   }
@@ -87,7 +87,7 @@ export default class BackendAiCommonUtils extends BackendAIPage {
    * @param {number} value
    * @return {number} converted value from MB to GB.
    */
-  _MBtoGB(value) {
+  _MiBtoGiB(value) {
     return Math.floor(value / 1024);
   }
 
