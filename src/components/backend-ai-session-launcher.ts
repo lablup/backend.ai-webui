@@ -184,7 +184,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) progressLength;
   @property({type: Object}) _grid = Object();
   @property({type: Boolean}) _debug = false;
-  @property({type: String}) selected_img;
+  @property({type: String}) selectedImg;
   @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
 
   constructor() {
@@ -792,7 +792,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.ownerKeypairs = [];
     this.ownerGroups = [];
     this.ownerScalingGroups = [];
-    this.selected_img = '';
+    this.selectedImg = '';
   }
 
   firstUpdated() {
@@ -2702,12 +2702,21 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
     this._grid?.clearCache();
+    
+    this._showselectedImg
+  }
+  
+  /**
+   * when session laucher page reach at last page,
+   * refresh selected Image and display it in view
+   */
 
-    if (this.currentIndex==4){
+  _showselectedImg(){
+    if (this.currentIndex==this.progressLength){
       let selected_env = this.shadowRoot.querySelector('#environment').selected.value.split("/");
-      this.selected_img = selected_env[1] + "/";      
-      this.selected_img += selected_env[2] + "/";
-      this.selected_img += this.shadowRoot.querySelector('#version').value; 
+      this.selectedImg = selected_env[1] + "/";      
+      this.selectedImg += selected_env[2] + "/";
+      this.selectedImg += this.shadowRoot.querySelector('#version').value; 
     };
   }
 
@@ -3181,7 +3190,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
           <div id="progress-04" class="progress center layout fade">
             <p class="title">${_t('session.launcher.ImageSelected')}</p>                                    
-            <p class="vertical layout center flex blank-box" id="selected_img">${this.selected_img}</p>  
+            <p class="vertical layout center flex blank-box" id="selectedImg">${this.selectedImg}</p>  
             <p class="title">${_t('session.launcher.TotalAllocation')}</p>
             <div class="vertical layout center center-justified cluster-total-allocation-container">
               <div id="cluster-allocation-pane" style="position:relative;${this.cluster_size <= 1 ? 'display:none;' : ''}">
