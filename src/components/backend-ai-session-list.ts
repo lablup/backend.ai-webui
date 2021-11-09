@@ -7,11 +7,11 @@ import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} f
 import {render} from 'lit-html';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-tree-column';
 import '@vaadin/vaadin-grid/vaadin-grid-tree-toggle';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 
 import {default as AnsiUp} from '../lib/ansiup';
@@ -68,6 +68,8 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundConfigRenderer = this.configRenderer.bind(this);
   @property({type: Object}) _boundUsageRenderer = this.usageRenderer.bind(this);
+  @property({type: Object}) _boundReservationRenderer = this.reservationRenderer.bind(this);
+  @property({type: Object}) _boundAgentRenderer = this.agentRenderer.bind(this);
   @property({type: Object}) _boundSessionInfoRenderer = this.sessionInfoRenderer.bind(this);
   @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   @property({type: Object}) _boundUserInfoRenderer = this.userInfoRenderer.bind(this);
@@ -1107,21 +1109,22 @@ export default class BackendAiSessionList extends BackendAIPage {
     menu.setAttribute('x', 10);
     menu.setAttribute('y', 15);
 
-    if (mounts.length > 1) {
+    if (mounts.length >= 1) {
       mounts.map((key, index) => {
-        if (index > 0) {
-          const mountedFolderItem = document.createElement('mwc-list-item');
-          mountedFolderItem.innerHTML = key.replace(regExp, '').split(' ')[0];
-          mountedFolderItem.style.height = '25px';
-          mountedFolderItem.style.fontWeight = '400';
-          mountedFolderItem.style.fontSize = '14px';
-          mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
-
-          menu.appendChild(mountedFolderItem);
+        const mountedFolderItem = document.createElement('mwc-list-item');
+        mountedFolderItem.style.height = '25px';
+        mountedFolderItem.style.fontWeight = '400';
+        mountedFolderItem.style.fontSize = '14px';
+        mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
+        if (mounts.length > 1) {
+          mountedFolderItem.innerHTML = ` ${key.replace(regExp, '').split(' ')[0]}`;
+        } else {
+          mountedFolderItem.innerHTML = _text('session.OnlyOneFolderAttached');
         }
+        menu.appendChild(mountedFolderItem);
       });
+      document.body.appendChild(menu);
     }
-    document.body.appendChild(menu);
   }
 
 
@@ -1496,6 +1499,41 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
+  /**
+   * Render reservation time
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
+  reservationRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout vertical">
+          <span>${rowData.item.created_at_hr}</span>
+          <span>(${rowData.item.elapsed})</span>
+        </div>
+      `, root);
+  }
+
+  /**
+   * Render agent name
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
+  agentRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout vertical">
+          <span>${rowData.item.agent}</span>
+        </div>
+      `, root);
+  }
+
   _toggleCheckbox(object) {
     const exist = this._selected_items.findIndex((x) => x['session_id'] == object['session_id']);
     if (exist === -1) {
@@ -1569,7 +1607,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
-          <wl-button outlined class="multiple-action-button" @click="${() => this._openTerminateSelectedSessionsDialog()}">
+          <wl-button outlined class="multiple-action-button" style="margin:8px;--button-shadow-color:0;--button-shadow-color-hover:0;" @click="${() => this._openTerminateSelectedSessionsDialog()}">
             <wl-icon style="--icon-size: 20px;">delete</wl-icon>
             ${_t('session.Terminate')}
           </wl-button>
@@ -1593,39 +1631,37 @@ export default class BackendAiSessionList extends BackendAIPage {
         ` : html``}
         <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
-          <vaadin-grid-sort-column resizable width="130px" header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" flex-grow="0" path="access_key" .renderer="${this._boundUserInfoRenderer}">
-          </vaadin-grid-sort-column>
+          <vaadin-grid-filter-column path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
+                                     header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable
+                                     .renderer="${this._boundUserInfoRenderer}">
+          </vaadin-grid-filter-column>
         ` : html``}
-        <vaadin-grid-column width="150px" resizable header="${_t('session.SessionInfo')}" .renderer="${this._boundSessionInfoRenderer}">
+        <vaadin-grid-filter-column path="${this.sessionNameField}" header="${_t('session.SessionInfo')}" resizable
+                                   .renderer="${this._boundSessionInfoRenderer}">
+        </vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="status" header="${_t('session.Status')}" resizable
+                                   .renderer="${this._boundStatusRenderer}">
+        </vaadin-grid-filter-column>
+        <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}"
+                            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('session.Configuration')}"
+                            .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}"
+                            .renderer="${this._boundUsageRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="90px" flex-grow="0" header="${_t('session.Status')}" resizable .renderer="${this._boundStatusRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('session.Configuration')}" .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}" .renderer="${this._boundUsageRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}" path="created_at">
-          <template>
-            <div class="layout vertical">
-              <span>[[item.created_at_hr]]</span>
-              <span>([[item.elapsed]])</span>
-            </div>
-          </template>
+        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}"
+                                 path="created_at" .renderer="${this._boundReservationRenderer}">
         </vaadin-grid-sort-column>
         ${this.is_superadmin ? html`
-          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}">
-            <template>
-              <div class="layout vertical">
-                <span>[[item.agent]]</span>
-              </div>
-            </template>
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
+                              .renderer="${this._boundAgentRenderer}">
           </vaadin-grid-column>
-            ` : html``}
+        ` : html``}
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
-      <mwc-icon-button
-      class="pagination"
-      id="previous-page"
+        <mwc-icon-button
+          class="pagination"
+          id="previous-page"
       icon="navigate_before"
       ?disabled="${this.current_page === 1}"
       @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>

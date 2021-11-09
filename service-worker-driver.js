@@ -1,5 +1,5 @@
 window.isUpdateAvailable = new Promise(function(resolve, reject) {
-  if ('serviceWorker' in navigator && ['localhost', '127'].indexOf(location.hostname) === -1) {
+  if ('serviceWorker' in navigator && ['localhost', '127.0.0.1'].indexOf(location.hostname) === -1) {
     window.addEventListener('load', function() {
       navigator.serviceWorker.register('service-worker.js').then((registration) => {
         console.log('ServiceWorker registered with scope: ', registration.scope);

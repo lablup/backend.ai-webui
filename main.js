@@ -221,7 +221,7 @@ app.once('ready', function() {
           {
             label: 'Online Manual',
             click: function() {
-              shell.openExternal('https://console.docs.backend.ai/');
+              shell.openExternal('https://webui.docs.backend.ai/');
             }
           },
           {
@@ -298,7 +298,7 @@ app.once('ready', function() {
           {
             label: 'Online Manual',
             click: function() {
-              shell.openExternal('https://console.docs.backend.ai/');
+              shell.openExternal('https://webui.docs.backend.ai/');
             }
           },
           {

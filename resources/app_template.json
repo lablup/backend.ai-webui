@@ -194,10 +194,10 @@
     "xrdp": [
       {
         "name": "xrdp",
-        "title": "XRDP",
+        "title": "RDP",
         "category": "6.Desktop Environment",
         "redirect": "",
-        "src": "./resources/icons/gnome.svg"
+        "src": "./resources/icons/xrdp.svg"
       }
     ],
     "rstudio": [
@@ -225,6 +225,15 @@
         "category": "7.Scientific Computing",
         "redirect": "",
         "src": "./resources/icons/default_app.svg"
+      }
+    ],
+    "submit": [
+      {
+        "name": "submit",
+        "title": "Submit",
+        "category": "9.ETC",
+        "redirect": "",
+        "src": "./resources/icons/check-list.svg"
       }
     ]
   }

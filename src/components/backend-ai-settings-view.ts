@@ -43,7 +43,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
   @property({type: Object}) options = Object();
   @property({type: Object}) schedulerOptions = Object();
-  @property({type: Object}) schedulerOptionsAndId = Object();
+  @property({type: Object}) networkOptions = Object();
+  @property({type: Object}) optionsAndId = Object();
   @property({type: Object}) notification = Object();
   @property({type: Array}) imagePullingBehavior = [
     {name: _text('settings.image.digest'), behavior: 'digest'},
@@ -55,10 +56,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: String}) selectedSchedulerType = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescription = '';
-  @property({type: Object}) numRetriesRange = {
-    'min': 0,
-    'max': 1000
-  }
+  @property({type: Object}) optionRange = Object();
+
   constructor() {
     super();
     this.options = {
@@ -67,14 +66,27 @@ export default class BackendAiSettingsView extends BackendAIPage {
       cuda_fgpu: false,
       rocm_gpu: false,
       tpu: false,
-      scheduler: 'fifo',
+      schedulerType: 'fifo',
+      scheduler: {
+        num_retries_to_skip: '0',
+      },
+      network: {
+        mtu: '',
+      }
     };
-    this.schedulerOptions = {
-      num_retries_to_skip: '0'
+    this.optionRange = {
+      numRetries: {
+        min: 0,
+        max: 1000
+      },
+      mtu: {
+        min: 0
+      },
     };
-    // Stores scheduler option keys and id.
-    this.schedulerOptionsAndId = [
-      {option: 'num_retries_to_skip', id: 'num-retries'}
+    // Save the key and ID of the options.
+    this.optionsAndId = [
+      {option: 'num_retries_to_skip', id: 'num-retries'},
+      {option: 'mtu', id: 'mtu'},
     ];
   }
 
@@ -142,6 +154,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
         .setting-button {
           float: right;
           width: 35px;
+          white-space: nowrap;
         }
 
         .setting-desc-pulldown {
@@ -156,7 +169,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           --component-width: 350px;
         }
 
-        #env-dialog {
+        #scheduler-env-dialog {
           --component-max-height: 800px;
           --component-width: 400px;
         }
@@ -282,19 +295,39 @@ export default class BackendAiSettingsView extends BackendAIPage {
               </p>
             </div>
             <div style="margin:auto 16px;">
-                <h3 class="horizontal center layout">
+              <h3 class="horizontal center layout">
                 <span>${_t('settings.Scaling')}</span>
                 <span class="flex"></span>
               </h3>
-              <div class="horizontal wrap layout">
-                <div class="horizontal layout wrap setting-item">
-                  <div class="vertical center-justified layout setting-desc-shrink">
-                    <div class="title">${_t('settings.AllowAgentSideRegistration')}</div>
-                    <div class="description-shrink">${_tr('settings.DescAllowAgentSideRegistration')}
+              <div class="vertical wrap layout">
+                <div class="horizontal layout wrap start start-justified">
+                  <div class="horizontal layout setting-item">
+                    <div class="vertical center-justified layout setting-desc-shrink">
+                      <div class="title">${_t('settings.AllowAgentSideRegistration')}</div>
+                      <div class="description-shrink">${_tr('settings.DescAllowAgentSideRegistration')}
+                      </div>
+                    </div>
+                    <div class="vertical center-justified layout setting-button">
+                      <mwc-switch id="allow-agent-registration-switch" checked disabled></mwc-switch>
                     </div>
                   </div>
-                  <div class="vertical center-justified layout setting-button">
-                    <mwc-switch id="allow-agent-registration-switch" checked disabled></mwc-switch>
+                  <div class="horizontal layout setting-item">
+                    <div class="vertical center-justified layout setting-desc-shrink">
+                      <div class="title">${_t('settings.OverlayNetwork')}</div>
+                      <div class="description-shrink">${_tr('settings.OverlayNetworkConfiguration')}
+                      </div>
+                    </div>
+                    <div class="vertical center-justified layout">
+                      <mwc-button
+                        unelevated
+                        icon="rule"
+                        label="${_t('settings.Config')}"
+                        style="float: right;"
+                        @click="${() => {
+                          this.updateNetworkOptionElements();
+                          this._openDialogWithConfirmation('overlay-network-env-dialog');
+                        }}"></mwc-button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -333,12 +366,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                     </div>
                     <div class="vertical center-justified layout">
-                      <mwc-button
+                      <mwc-button style="white-space: nowrap;"
                         unelevated
                         icon="rule"
                         label="${_t('settings.Config')}"
-                        style="float: right;"
-                        @click="${()=>this._showEnvDialog()}"></mwc-button>
+                        @click="${()=>this._openDialogWithConfirmation('scheduler-env-dialog')}"></mwc-button>
                     </div>
                   </div>
                 </div>
@@ -372,12 +404,12 @@ export default class BackendAiSettingsView extends BackendAIPage {
             </div>
           </div>
         </lablup-activity-panel>
-        <backend-ai-dialog id="env-dialog" fixed backdrop persistent closeWithConfirmation>
+        <backend-ai-dialog id="scheduler-env-dialog" class="env-dialog" fixed backdrop persistent closeWithConfirmation>
           <span slot="title" class="horizontal layout center">${_tr('settings.ConfigPerJobSchduler')}</span>
           <span slot="action">
             <mwc-icon-button icon="info" @click="${(e) => this._showConfigDescription(e, 'default')}" style="pointer-events:auto;"></mwc-icon-button>
           </span>
-          <div slot="content" id="env-container" class="vertical layout centered" style="width: 100%;">
+          <div slot="content" id="scheduler-env-container" class="vertical layout centered env-container" style="width: 100%;">
             <mwc-select
               id="scheduler-switch"
               required
@@ -395,25 +427,24 @@ export default class BackendAiSettingsView extends BackendAIPage {
               <span slot="title">${_t('settings.SessionCreationRetries')}</span>
               <mwc-icon-button icon="info" @click="${(e) => this._showConfigDescription(e, 'retries')}" style="pointer-events:auto;"></mwc-icon-button>
               <mwc-textfield  id="num-retries"
-                              outlined
                               required
                               autoValidate
                               validationMessage="${_t('settings.InputRequired')}"
                               type="number"
                               pattern="[0-9]+"
-                              min="${this.numRetriesRange.min}"
-                              max="${this.numRetriesRange.max}"
+                              min="${this.optionRange.numRetries.min}"
+                              max="${this.optionRange.numRetries.max}"
                               style="margin-top: 18px"
                               @change="${(e) => this._validateInput(e)}"
                               @input="${(e) => this._customizeValidationMessage(e)}"></mwc-textfield>
             </div>
           </div>
-          <div slot="footer" class="horizontal end-justified flex layout" style="margin-top: 20px;">
+          <div slot="footer" class="horizontal end-justified flex layout">
             <mwc-button
               id="config-cancel-button"
               style="width:auto;margin-right:10px;"
               icon="delete"
-              @click="${() => this._clearOptions()}"
+              @click="${() => this._clearOptions('scheduler-env-container')}"
               label="${_t('button.DeleteAll')}"></mwc-button>
             <mwc-button
               unelevated
@@ -421,6 +452,47 @@ export default class BackendAiSettingsView extends BackendAIPage {
               style="width:auto;"
               icon="check"
               @click="${() => this.saveAndCloseDialog()}"
+              label="${_t('button.Save')}"></mwc-button>
+          </div>
+        </backend-ai-dialog>
+        <backend-ai-dialog id="overlay-network-env-dialog" class="env-dialog" fixed backdrop persistent closeWithConfirmation>
+          <span slot="title" class="horizontal layout center">${_tr('settings.OverlayNetworkSettings')}</span>
+          <span slot="action">
+            <mwc-icon-button icon="info" @click="${(e) => this._showConfigDescription(e, 'overlayNetwork')}" style="pointer-events:auto;"></mwc-icon-button>
+          </span>
+          <div slot="content" id="overlay-network-env-container" class="vertical layout centered env-container" style="width: 100%;">
+            <div class="horizontal center layout flex row justified">
+              <div class="horizontal center layout">
+                <span slot="title">MTU</span>
+                <mwc-icon-button icon="info" @click="${(e) => this._showConfigDescription(e, 'mtu')}" style="pointer-events:auto;"></mwc-icon-button>
+              </div>
+              <mwc-textfield id="mtu"
+                             class="network-option"
+                             value="${this.options.network.mtu}"
+                             required
+                             autoValidate
+                             validationMessage="${_t('settings.InputRequired')}"
+                             type="number"
+                             pattern="[0-9]+"
+                             min="${this.optionRange.mtu.min}"
+                             style="margin-top:18px;min-width:240px;"
+                             @change="${(e) => this._validateInput(e)}"
+                             @input="${(e) => this._customizeValidationMessage(e)}"></mwc-textfield>
+            </div>
+          </div>
+          <div slot="footer" class="horizontal end-justified flex layout">
+            <mwc-button
+              id="config-cancel-button"
+              style="width:auto;margin-right:10px;"
+              icon="delete"
+              @click="${() => this._clearOptions('overlay-network-env-container')}"
+              label="${_t('button.DeleteAll')}"></mwc-button>
+            <mwc-button
+              unelevated
+              id="config-save-button"
+              style="width:auto;"
+              icon="check"
+              @click="${() => this.saveAndCloseOverlayNetworkDialog()}"
               label="${_t('button.Save')}"></mwc-button>
           </div>
         </backend-ai-dialog>
@@ -436,18 +508,17 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
           <div slot="footer" class="horizontal end-justified flex layout">
             <mwc-button
+               id="env-config-remain-button"
+               style="width:auto;"
+               label="${_t('button.Cancel')}"
+               @click="${() => this.closeDialog('env-config-confirmation')}">
+           </mwc-button>
+            <mwc-button
                 unelevated
                 id="env-config-reset-button"
                 style="width:auto;margin-right:10px;"
+                label="${_t('button.DismissAndProceed')}"
                 @click="${() => this.closeAndResetEnvInput()}">
-              <span id="launch-button-msg">${_t('button.DismissAndProceed')}</span>
-            </mwc-button>
-            <mwc-button
-                outlined
-                id="env-config-remain-button"
-                style="width:auto;"
-                @click="${() => this.closeDialog('env-config-confirmation')}">
-              <span id="launch-button-msg">${_t('button.Cancel')}</span>
             </mwc-button>
           </div>
         </backend-ai-dialog>
@@ -465,17 +536,29 @@ export default class BackendAiSettingsView extends BackendAIPage {
       this.updateSettings();
     }
     // if user wants to modify the scheduler options and close the dialog, open the confirm dialog.
-    const envDialog = this.shadowRoot.querySelector('#env-dialog');
-    envDialog.addEventListener('dialog-closing-confirm', (e) => {
-      const container = this.shadowRoot.querySelector('#env-container');
+    const schedulerEnvDialog = this.shadowRoot.querySelector('#scheduler-env-dialog');
+    schedulerEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
+      const container = this.shadowRoot.querySelector('#scheduler-env-container');
       const rows = container.querySelectorAll('mwc-textfield');
       for (const row of rows) {
-        if (this.schedulerOptions[this._findOptionById(row.id)] !== row.value && this.selectedSchedulerType !== '') {
+        if (this.options.scheduler[this._findOptionById(row.id)] !== row.value && this.selectedSchedulerType !== '') {
           this.openDialog('env-config-confirmation');
           break;
         } else {
-          this.closeDialog('env-config-confirmation');
-          this._hideEnvDialog();
+          this._closeDialogWithConfirmation('scheduler-env-dialog');
+        }
+      }
+    });
+    const networkEnvDialog = this.shadowRoot.querySelector('#overlay-network-env-dialog');
+    networkEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
+      const container = this.shadowRoot.querySelector('#overlay-network-env-container');
+      const rows = container.querySelectorAll('mwc-textfield');
+      for (const row of rows) {
+        if (this.options.network[this._findOptionById(row.id)] !== row.value) {
+          this.openDialog('env-config-confirmation');
+          break;
+        } else {
+          this._closeDialogWithConfirmation('overlay-network-env-dialog');
         }
       }
     });
@@ -487,10 +570,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     }
   }
 
-  /**
-   * Image pulling behavior, scheduler, and resource slots setting update
-   * */
-  updateSettings() {
+  updatePulling() {
     globalThis.backendaiclient.setting.get('docker/image/auto_pull').then((response) => {
       if (response['result'] === null || response['result'] === 'digest') { // digest mode
         this.options['image_pulling_behavior'] = 'digest';
@@ -501,16 +581,27 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       this.update(this.options);
     });
-    for (const [key] of Object.entries(this.schedulerOptions)) {
+  }
+
+  updateScheduler() {
+    for (const [key] of Object.entries(this.options.scheduler)) {
       globalThis.backendaiclient.setting.get(`plugins/scheduler/${this.selectedSchedulerType}/${key}`).then((response) => {
-        if (response['result'] === null) {
-          this.schedulerOptions[key] = '0';
-        } else {
-          this.schedulerOptions[key] = response['result'];
-        }
+        this.options.scheduler[key] = response['result'] || '0';
       });
-      this.update(this.schedulerOptions);
+      this.update(this.options.scheduler);
     }
+  }
+
+  updateNetwork() {
+    for (const [key] of Object.entries(this.options.network)) {
+      globalThis.backendaiclient.setting.get(`network/overlay/${key}`).then((response) => {
+        this.options.network[key] = response['result'] || '';
+      });
+      this.update(this.options.network);
+    }
+  }
+
+  updateResourceSlots() {
     globalThis.backendaiclient.get_resource_slots().then((response) => {
       if ('cuda.device' in response) {
         this.options['cuda_gpu'] = true;
@@ -526,6 +617,28 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       this.update(this.options);
     });
+  }
+
+  /**
+   * Image pulling behavior, scheduler, network, and resource slots setting update
+   * */
+  updateSettings() {
+    this.updatePulling();
+    this.updateScheduler();
+    this.updateNetwork();
+    this.updateResourceSlots();
+  }
+
+  /**
+   * Update the values of elements whose class name is network option.
+   * */
+  updateNetworkOptionElements() {
+    this.updateNetwork();
+    const networkOptions = [...this.shadowRoot.querySelectorAll('.network-option')];
+    for (const networkOption of networkOptions) {
+      const key = this._findOptionById(networkOption.id);
+      networkOption.value = this.options.network[key] || '';
+    }
   }
 
   /**
@@ -552,42 +665,43 @@ export default class BackendAiSettingsView extends BackendAIPage {
   /**
    * find id in html by scheduler option key.
    *
-   * @param {object} option - scheduler option key
-   * @return {string} - id of scheduler
+   * @param {object} option - option name
+   * @return {string} - id
    */
   _findIdByOption(option) {
-    return this.schedulerOptionsAndId.find((elm) => elm.option === option).id;
+    return this.optionsAndId.find((elm) => elm.option === option).id;
   }
 
   /**
    * find scheduler option key by id in html.
    *
-   * @param {string} id - id of scheduler
-   * @return {object} - options in scheduler
+   * @param {string} id - id of option
+   * @return {object} - option name
    */
   _findOptionById(id) {
-    return this.schedulerOptionsAndId.find((elm) => elm.id === id).option;
+    return this.optionsAndId.find((elm) => elm.id === id).option;
   }
 
   /**
    * Clear option values from environment container.
+   * @param {string} id - id of option
    */
-  _clearOptions() {
-    const container = this.shadowRoot.querySelector('#env-container');
+  _clearOptions(id) {
+    const container = this.shadowRoot.querySelector('#' + id);
     // initialize options (textfield values)
     container.querySelectorAll('mwc-textfield').forEach((tf) => {
       tf.value = '';
     });
   }
 
-  _showEnvDialog() {
-    const envDialog = this.shadowRoot.querySelector('#env-dialog');
+  _openDialogWithConfirmation(id) {
+    const envDialog = this.shadowRoot.querySelector('#' + id);
     envDialog.closeWithConfirmation = true;
     envDialog.show();
   }
 
-  _hideEnvDialog() {
-    const envDialog = this.shadowRoot.querySelector('#env-dialog');
+  _closeDialogWithConfirmation(id) {
+    const envDialog = this.shadowRoot.querySelector('#' + id);
     envDialog.closeWithConfirmation = false;
     envDialog.hide();
   }
@@ -596,23 +710,40 @@ export default class BackendAiSettingsView extends BackendAIPage {
    * Close confirmation dialog and environment variable dialog and reset the option values.
    */
   closeAndResetEnvInput() {
-    const schedulerSwitch = this.shadowRoot.querySelector('#scheduler-switch');
-    schedulerSwitch.value = null;
-    this._clearOptions();
-    this.closeDialog('env-config-confirmation');
-    this._hideEnvDialog();
+    const envDialogs = this.shadowRoot.querySelectorAll('.env-dialog');
+    for (const envDialog of envDialogs) {
+      if (envDialog.open) {
+        const envContainer = envDialog.querySelector('.env-container');
+        this._clearOptions(envContainer.id);
+        this.closeDialog('env-config-confirmation');
+        this._closeDialogWithConfirmation(envDialog.id);
+        if (envDialog.id === 'scheduler-env-dialog') {
+          const schedulerSwitch = this.shadowRoot.querySelector('#scheduler-switch');
+          schedulerSwitch.value = null;
+        }
+        break;
+      }
+    }
   }
 
   _showConfigDescription(e, item) {
     e.stopPropagation();
     const schedulerConfigDescription = {
       'default': {
-        'title': _tr('settings.ConfigPerJobSchduler'),
+        'title': _text('settings.ConfigPerJobSchduler'),
         'desc': _text('settings.ConfigPerJobSchdulerDescription')
       },
       'retries': {
         'title': _text('settings.SessionCreationRetries'),
         'desc': _text('settings.SessionCreationRetriesDescription') + '\n' + _text('settings.FifoOnly')
+      },
+      'overlayNetwork': {
+        'title': _text('settings.OverlayNetworkSettings'),
+        'desc': _text('settings.OverlayNetworkSettingsDescription')
+      },
+      'mtu': {
+        'title': 'MTU',
+        'desc': _text('settings.MTUDescription')
       }
     };
     if (item in schedulerConfigDescription) {
@@ -655,11 +786,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
           .then((response) => {
             this.notification.text = _text('notification.SuccessfullyUpdated');
             this.notification.show();
-            this.options['scheduler'] = this.selectedSchedulerType;
-            this.schedulerOptions = {...this.schedulerOptions, ...options};
+            this.options.schedulerType = this.selectedSchedulerType;
+            this.options.scheduler = {...this.options.scheduler, ...options};
             this.update(this.options);
-            this.update(this.schedulerOptions);
-            this._hideEnvDialog();
+            this._closeDialogWithConfirmation('scheduler-env-dialog');
           })
           .catch((err) => {
             this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');
@@ -674,6 +804,36 @@ export default class BackendAiSettingsView extends BackendAIPage {
     }
   }
 
+  saveAndCloseOverlayNetworkDialog() {
+    const networkOptions = [...this.shadowRoot.querySelectorAll('.network-option')];
+    if (networkOptions.filter((elem) => elem.reportValidity()).length < networkOptions.length) {
+      return;
+    }
+    const options = {};
+    for (const networkOption of networkOptions) {
+      const key = this._findOptionById(networkOption.id);
+      const value = networkOption.value;
+      if (value !== '' || value !== null || value !== undefined) {
+        options[key] = value;
+      } else {
+        return;
+      }
+    }
+    globalThis.backendaiclient.setting.set(`network/overlay`, options)
+      .then((response) => {
+        this.notification.text = _text('notification.SuccessfullyUpdated');
+        this.notification.show();
+        this.options.network = {...this.options.network, ...options};
+        this.update(this.options);
+        this._closeDialogWithConfirmation('overlay-network-env-dialog');
+      })
+      .catch((err) => {
+        this.notification.text = PainKiller.relieve('Couldn\'t update scheduler setting.');
+        this.notification.detail = err;
+        this.notification.show(true, err);
+      });
+  }
+
   /**
    * Change this.selectedSchedulerType value and the scheduler options
    *
@@ -681,14 +841,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
    */
   changeSelectedScheduleType(e) {
     this.selectedSchedulerType = e.target.value;
-    this.updateSettings();
-    for (const [key] of Object.entries(this.schedulerOptions)) {
+    this.updateScheduler();
+    for (const [key] of Object.entries(this.options.scheduler)) {
       globalThis.backendaiclient.setting.get(`plugins/scheduler/${this.selectedSchedulerType}/${key}`).then((response) => {
-        if (response['result'] === null) {
-          this.shadowRoot.querySelector('#' + this._findIdByOption(key)).value = '0';
-        } else {
-          this.shadowRoot.querySelector('#' + this._findIdByOption(key)).value = response['result'];
-        }
+        this.shadowRoot.querySelector('#' + this._findIdByOption(key)).value = response['result'] || '0';
       });
     }
   }
@@ -700,12 +856,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
    */
   _validateInput(e) {
     const textfield = e.target.closest('mwc-textfield');
-    const clamp = (value: number, min: number, max: number) => {
-      return Math.max(min, Math.min(value, max));
-    };
     if (textfield.value) {
       textfield.value = Math.round(textfield.value);
-      textfield.value = clamp(textfield.value, textfield.min, textfield.max);
+      if (textfield.min && textfield.max) {
+        textfield.value = globalThis.backendaiclient.utils.clamp(textfield.value, textfield.min, textfield.max);
+      }
     }
   }
 
@@ -725,7 +880,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
             customError: !nativeValidity.valid
           };
         } else if (nativeValidity.rangeOverflow || nativeValidity.rangeUnderflow) {
-          textfield.validationMessage = _text('settings.InputRange0to1000');
+          textfield.validationMessage = _text('settings.OutOfRange');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid

@@ -103,7 +103,7 @@ export default class BackendAiDialog extends LitElement {
         mwc-dialog[scrollable] div.content-area {
           overflow-y: scroll; /* Has to be scroll (not auto) to get smooth scrolling on iOS */
           -webkit-overflow-scrolling: touch;
-          max-height: calc(100vh - 120px);
+          max-height: calc(80vh - 127px);
         }
 
         mwc-dialog div.content h4 {
@@ -174,6 +174,7 @@ export default class BackendAiDialog extends LitElement {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <mwc-dialog id="dialog"
                     ?fixed="${(this.fixed)}"
                     ?narrow="${(this.narrowLayout)}"

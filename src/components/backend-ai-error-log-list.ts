@@ -11,6 +11,7 @@ import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
+import '@vaadin/vaadin-template-renderer';
 
 import 'weightless/card';
 import 'weightless/dialog';
@@ -51,7 +52,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: Array}) _selected_items = [];
   @property({type: Object}) spinner = Object();
   @property({type: Object}) _grid = Object();
-  @property({type: Object}) logView = Object();
+  @property({type: Array}) logView = [];
   @property({type: Number}) _pageSize = 25;
   @property({type: Number}) _currentPage = 1;
   @property({type: Number}) _totalLogCount = 0;

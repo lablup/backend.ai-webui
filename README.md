@@ -27,7 +27,7 @@ Backend.AI Web UI focuses to
     * Monitor current resources sessions using
     * Choose and run environment-supported apps
     * Web-based Terminal for each session
-    * Fully-featured VSCode editor and environments
+    * Fully-featured Visual Studio Code editor and environments
  * Pipeline
     * Experiments (with SACRED / Microsoft NNI / Apache MLFlow)
     * AutoML (with Microsoft NNI / Apache MLFlow)
@@ -50,6 +50,7 @@ Backend.AI Web UI focuses to
     * Insight (working)
  * Configurations
     * User-specific web / app configurations
+    * System maintenances
     * Beta features
     * WebUI logs / errors
  * License
@@ -58,7 +59,7 @@ Backend.AI Web UI focuses to
     * Per-site specific plugin architecture
     * Device plugins / storage plugins
  * Help & manuals
-
+    * Online manual
 
 ## Management Features
 
@@ -111,6 +112,7 @@ allowSignout = false # Let users signout from service. Signup plugin is required
 allowAnonymousChangePassword = false # Enable / disable anonymous user can send change password email. Manager plugin is required.
 allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
 autoLogout = false # If true, user will be automatically logout when they close all Backend.AI tab / window.
+allowManualImageNameForSession = false # If true, user will be able to use the specific environment image by typing the exact name.
 debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
 
 [wsproxy]
@@ -121,9 +123,16 @@ proxyListenIP = "[Websocket proxy configuration IP.]"
 [resources]
 openPortToPublic = true # Show option to open app proxy port to anyone.
 maxCPUCoresPerContainer = 256 # Maximum CPU per container.
+maxMemoryPerContainer = 64 # Maximum memory per container.
 maxCUDADevicesPerContainer = 16  # Maximum CUDA devices per container.
+maxCUDASharesPerContainer = 8  # Maximum CUDA shares per container.
 maxShmPerContainer = 1 # Maximum shared memory per container.
 maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
+
+[environments]
+#allowlist = "" # Comma-separated image name. Image name should contain the repository (registry path and image name) part of the full image URL, excluding the protocol and tag
+# e.g. cr.backend.ai/stable/python
+# You should pick default_environment in general section too.
 
 [server]
 webServerURL = "[Web server website URL. App will use the site instead of local app.]"
@@ -139,7 +148,7 @@ webServerURL = "[Web server website URL. App will use the site instead of local 
 
 ## Branches
 
- * master : Development branch
+ * main : Development branch
  * release : Latest release branch
  * feature/[feature-branch] : Feature branch. Uses `git flow` development scheme.
  * tags/v[versions] : version tags. Each tag represents release versions.
@@ -264,7 +273,7 @@ e.g. You will download the `backend.ai-webserver` package.
 $ make compile
 ```
 
-#### Web server
+#### Backend.AI WebServer
 Good for develop phase. Not recommended for production environment.
 
 Note: This command will use Web UI source in `build/rollup` directory. No certificate will be used therefore web server will serve as HTTP.
@@ -279,7 +288,7 @@ $ docker-compose up -d webui-dev // as a daemon
 
 Visit `http://127.0.0.1:8080` to test web server.
 
-#### Web server with SSL
+#### Backend.AI WebServer with SSL
 Recommended for production.
 
 Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `certificates` directory. Otherwise, you will have an error during container initialization.
@@ -381,7 +390,9 @@ Electron building is automated using `Makefile`.
 
 ```
 $ make clean  # clean prebuilt codes
-$ make mac # build macOS app
+$ make mac # build macOS app (both Intel/Apple)
+$ make mac_intel # build macOS app (Intel x64)
+$ make mac_apple # build macOS app (Apple Silicon)
 $ make win # build win64 app
 $ make linux # build linux app
 $ make all # build win64/macos/linux app
@@ -397,9 +408,20 @@ Note: On macOS Catalina, use scripts/build-windows-app.sh to build Windows 32bit
 Note: Now the `make win` command support only Windows x64 app, therefore you do not need to use `build-windows-app.sh` anymore.
 
 #### macOS version
-
+##### All versions (Intel/Apple)
 ```
 $ make mac
+```
+NOTE: Sometimes Apple silicon version compiled on Intel machine does not work.
+
+##### Intel x64
+```
+$ make mac_intel
+```
+
+##### Apple Silicon (Apple M1 and above)
+```
+$ make mac_apple
 ```
 
 #### Linux x86-64 version
@@ -410,15 +432,9 @@ $ make linux
 
 ### Packaging as zip files
 
-Note: this command only works on macOS, because packaging uses `ditto`, that supports both PKZIP and compressed CPIO format.
-
 Note: Packaging usually performs right after app building. Therefore you do not need this option in normal condition.
 
-Note: Requires electron-installer-dmg to make macOS disk image. It requires Python 2+ to build binary for package.
-
-```
-$ make pack
-```
+Note: Packaging macOS disk image requires electron-installer-dmg to make macOS disk image. It requires Python 2+ to build binary for package.
 
 ### Manual run to test Electron
 
@@ -431,6 +447,14 @@ $ npm run electron:d  # OR, ./node_modules/electron/cli.js .
 
 ### Localization
 Locale resources are JSON files located in `resources/i18n`.
+
+Currently WebUI supports these languages:
+ * English
+ * Korean
+ * French
+ * Russian
+ * Mongolian
+ * Indonesian
 
 #### Extracting i18n resources
 

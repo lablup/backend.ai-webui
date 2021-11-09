@@ -10,6 +10,7 @@ allowSignout = false
 allowProjectResourceMonitor = true
 #loginAttemptLimit = 5
 #loginBlockTime = 180
+allowManualImageNameForSession = false
 debug = true
 
 [wsproxy]
@@ -28,6 +29,8 @@ maxCUDASharesPerContainer = 16
 maxShmPerContainer = 1
 maxFileUploadSize = 4294967296 # 4GB. 4294967296
 
+[environments]
+#allowlist = ""
 
 [server]
 consoleServerURL =

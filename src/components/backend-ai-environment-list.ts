@@ -19,6 +19,7 @@ import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-template-renderer';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
@@ -151,7 +152,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         span.resource-limit-title {
           font-size: 14px;
           font-family: var(--general-font-family);
-          font-align: left;
+          text-align: left;
           width: 70px;
         }
 
@@ -928,9 +929,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             </div>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
+              fullwidth
               icon="check"
               label="${_t('button.SaveChanges')}"
               @click="${() => this.modifyImage()}"></mwc-button>
@@ -1424,9 +1426,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       'py38': 'Python 3.8',
       'py39': 'Python 3.9',
       'py310': 'Python 3.10',
+      'ji15': 'Julia 1.5',
+      'ji16': 'Julia 1.6',
+      'ji17': 'Julia 1.7',
       'lxde': 'LXDE',
       'lxqt': 'LXQt',
       'xfce': 'XFCE',
+      'xrdp': 'XRDP',
       'gnome': 'GNOME',
       'kde': 'KDE',
       'ubuntu16.04': 'Ubuntu 16.04',

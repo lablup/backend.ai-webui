@@ -49,6 +49,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
+  @property({type: Number}) xrdpPort = 0;
   @property({type: String}) tensorboardPath = '';
   @property({type: Boolean}) isPathConfigured = false;
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
@@ -205,7 +206,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           padding: 0px 3px;
           display: inline-block;
         }
-        
+
         @media screen and (max-width: 810px) {
           #terminal-guide {
             --component-width: calc(100% - 50px);
@@ -434,26 +435,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this.shadowRoot.querySelector('#app-dialog').hide();
   }
 
-  /**
-   * Open a WsProxy with session and app and port number.
-   *
-   * @param {string} sessionUuid
-   * @param {string} app
-   * @param {number} port
-   * @param {object | null} envs
-   * @param {object | null} args
-   */
-  async _open_wsproxy(sessionUuid, app = 'jupyter', port: number | null = null, envs: Record<string, unknown> | null = null, args: Record<string, unknown> | null = null) {
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      return false;
-    }
-    const openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
-    let openToPublic = false;
-    if (openToPublicCheckBox == null) { // Null or undefined
-    } else {
-      openToPublic = openToPublicCheckBox.checked;
-      openToPublicCheckBox.checked = false;
-    }
+  async _resolveV1ProxyUri(sessionUuid: string, app: string): Promise<string | undefined> {
     const param = {
       endpoint: globalThis.backendaiclient._config.endpoint
     };
@@ -471,7 +453,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.notification.text = _text('session.launcher.ProxyNotReady');
 
       this.notification.show();
-      return Promise.resolve(false);
+      return;
     }
     const rqst = {
       method: 'PUT',
@@ -488,10 +470,73 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.indicator.end();
       this.notification.text = _text('session.launcher.ProxyConfiguratorNotResponding');
       this.notification.show();
-      return Promise.resolve(false);
+      return;
     }
     const token = response.token;
-    let uri = this._getProxyURL() + `proxy/${token}/${sessionUuid}/add?app=${app}`;
+    return new URL(`proxy/${token}/${sessionUuid}/add?app=${app}`, this._getProxyURL()).href;
+  }
+
+  /**
+   * Open V2 WsProxy (direct connection) with session and app and port number.
+   *
+   * @param {string} sessionUuid
+   * @param {string} app
+   * @param {number} port
+   * @param {object | null} envs
+   * @param {object | null} args
+   */
+  async _resolveV2ProxyUri(sessionUuid: string, app: string, port: number | null = null, envs: Record<string, unknown> | null = null, args: Record<string, unknown> | null = null): Promise<string | undefined> {
+    const tokenResponse = await globalThis.backendaiclient.computeSession.startService(
+      sessionUuid, app, port, envs, args
+    );
+    if (tokenResponse === undefined) {
+      this.indicator.end();
+      this.notification.text = _text('session.launcher.ProxyConfiguratorNotResponding');
+      this.notification.show();
+      return;
+    }
+    const token = tokenResponse.token;
+    return new URL(`v2/proxy/${token}/${sessionUuid}/add?app=${app}`, tokenResponse.wsproxy_addr).href;
+  }
+
+  /**
+   * Open a WsProxy with session and app and port number.
+   *
+   * @param {string} sessionUuid
+   * @param {string} app
+   * @param {number} port
+   * @param {object | null} envs
+   * @param {object | null} args
+   */
+  async _open_wsproxy(sessionUuid, app = 'jupyter', port: number | null = null, envs: Record<string, unknown> | null = null, args: Record<string, unknown> | null = null) {
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      return false;
+    }
+
+    const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group'], sessionUuid);
+    if (kInfo === undefined) {
+      this.indicator.end();
+      this.notification.text = _text('session.CreationFailed'); // TODO: Change text
+
+      this.notification.show();
+      return Promise.resolve(false);
+    }
+
+    const scalingGroupId = kInfo.compute_session.scaling_group;
+    // Apply v1 when executing in electron mode
+    const wsproxyVersion = (globalThis.isElectron) ? 'v1' : (await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId)).version;
+    let uri = (wsproxyVersion == 'v1') ? await this._resolveV1ProxyUri(sessionUuid, app) : await this._resolveV2ProxyUri(sessionUuid, app, port, envs, args);
+    if (!uri) {
+      return Promise.resolve(false);
+    }
+    const openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
+    let openToPublic = false;
+    if (openToPublicCheckBox == null) { // Null or undefined
+    } else {
+      openToPublic = openToPublicCheckBox.checked;
+      openToPublicCheckBox.checked = false;
+    }
+
     if (port !== null && port > 1024 && port < 65535) {
       uri += `&port=${port}`;
     }
@@ -512,6 +557,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     };
     return await this.sendRequest(rqst_proxy);
   }
+
   /**
    * Close a WsProxy with session and app.
    *
@@ -702,6 +748,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             this.vncPort = response.port;
             this._openVNCDialog();
+          } else if (appName === 'xrdp') {
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
+            this.xrdpPort = response.port;
+            this._openXRDPDialog();
           } else if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
@@ -783,6 +833,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   _openVNCDialog() {
     const dialog = this.shadowRoot.querySelector('#vnc-dialog');
+    dialog.show();
+  }
+
+  /**
+   * Open a XRDP dialog.
+   */
+  _openXRDPDialog() {
+    const dialog = this.shadowRoot.querySelector('#xrdp-dialog');
     dialog.show();
   }
 
@@ -896,7 +954,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     div.setAttribute('class', 'vertical layout flex');
     let lang = globalThis.backendaioptions.get('current_language');
     // if current_language is OS default, then link to English docs
-    if (!['ko', 'en'].includes(lang)) {
+    if (!['en', 'ko', 'ru', 'fr', 'mn', 'id'].includes(lang)) {
       lang = 'en';
     }
     div.innerHTML = `
@@ -986,10 +1044,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a>
             </div>
             <div><span>Port:</span> ${this.sshPort}</div>
-            <a id="sshkey-download-link" style="margin-top:15px;" href="">
-              <mwc-button class="fg apps green">${_t('DownloadSSHKey')}</mwc-button>
-            </a>
           </section>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <a id="sshkey-download-link" style="margin-top:15px;width:100%;" href="">
+            <mwc-button unelevated fullwidth>${_t('DownloadSSHKey')}</mwc-button>
+          </a>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="tensorboard-dialog" fixed>
@@ -999,7 +1059,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <mwc-textfield id="tensorboard-path" value="${_t('session.DefaultTensorboardPath')}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified center flex layout">
-          <mwc-button unelevated
+          <mwc-button unelevated fullwidth
               icon="rowing" class="bg green" @click="${(e) => this._addTensorboardPath(e)}">
             ${_t('session.UseThisPath')}
           </mwc-button>
@@ -1012,7 +1072,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <mwc-textfield value=""></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button style="width:100%;" class="fg apps green" @click="${(e) => this._addTensorboardPath(e)}">
+          <mwc-button unelevated fullwidth class="fg apps green" @click="${(e) => this._addTensorboardPath(e)}">
             ${_t('session.UseThisArguments')}
           </mwc-button>
         </div>
@@ -1020,10 +1080,21 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <backend-ai-dialog id="vnc-dialog" fixed backdrop>
         <span slot="title">${_t('session.VNCconnection')}</span>
         <div slot="content" style="padding:15px;">
-          <div style="padding:15px 0;">${_t('session.UseYourFavoriteSSHApp')}</div>
+          <div style="padding:15px 0;">${_t('session.UseYourFavoriteVNCApp')}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t('session.ConnectionInformation')}</h4>
             <div><span>VNC URL:</span> <a href="ssh://127.0.0.1:${this.vncPort}">vnc://127.0.0.1:${this.vncPort}</a>
+            </div>
+          </section>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="xrdp-dialog" fixed backdrop>
+        <span slot="title">${_t('session.XRDPconnection')}</span>
+        <div slot="content" style="padding:15px;">
+          <div style="padding:15px 0;">${_t('session.UseYourFavoriteMSTSCApp')}</div>
+          <section class="vertical layout wrap start start-justified">
+            <h4>${_t('session.ConnectionInformation')}</h4>
+            <div><span>RDP URL:</span> <a href="rdp://127.0.0.1:${this.xrdpPort}">rdp://127.0.0.1:${this.xrdpPort}</a>
             </div>
           </section>
         </div>
@@ -1040,7 +1111,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             id="app-launch-confirmation-button"
             icon="rowing"
             label="${_t('session.applauncher.ConfirmAndRun')}"
-            style="width:100%;"
+            fullwidth
             @click="${() => this._runApp(this.appController)}">
           </mwc-button>
         </div>

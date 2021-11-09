@@ -456,7 +456,7 @@ export default class BackendAISummary extends BackendAIPage {
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css">
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <div class="item" elevation="1" style="padding-bottom:20px;">
+      <div class="item" elevation="1">
         ${this.announcement != '' ? html`
           <div class="notice-ticker horizontal center layout wrap flex">
             <lablup-shields app="" color="red" description="Notice" ui="round"></lablup-shields>
@@ -516,16 +516,16 @@ export default class BackendAISummary extends BackendAIPage {
                                         description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;
   })}
                           </div>
-                          <div style="margin:15px auto;" class="horizontal layout justified">
+                          <div style="margin:15px auto;" class="horizontal layout end-justified">
+                            <mwc-button
+                                outlined
+                                label="${_t('summary.Decline')}"
+                                @click="${(e) => this._deleteInvitation(e, invitation)}"></mwc-button>
                             <mwc-button
                                 unelevated
                                 label="${_t('summary.Accept')}"
                                 @click="${(e) => this._acceptInvitation(e, invitation)}"></mwc-button>
                             <span class="flex"></span>
-                            <mwc-button
-                                outlined
-                                label="${_t('summary.Decline')}"
-                                @click="${(e) => this._deleteInvitation(e, invitation)}"></mwc-button>
                           </div>
                         </div>
                       </lablup-activity-panel>`) : html`

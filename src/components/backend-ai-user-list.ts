@@ -60,7 +60,7 @@ import {
 export default class BackendAIUserList extends BackendAIPage {
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) editMode = false;
-  @property({type: Object}) users = Object();
+  @property({type: Array}) users = [];
   @property({type: Object}) userInfo = Object();
   @property({type: Array}) userInfoGroups = [];
   @property({type: String}) condition = 'active';
@@ -226,7 +226,7 @@ export default class BackendAIUserList extends BackendAIPage {
       is_active = false;
     }
     this.spinner.hide();
-    const fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
+    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       const users = response.users;
       // Object.keys(users).map((objectKey, index) => {
@@ -302,7 +302,7 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   async _getUserData(user_id) {
-    const fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
+    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.get(user_id, fields);
   }
 
@@ -551,7 +551,7 @@ export default class BackendAIUserList extends BackendAIPage {
           <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>.</p>
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout distancing">
+        <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               label="${_t('button.Cancel')}"
               @click="${(e) => this._hideDialog(e)}"></mwc-button>
@@ -677,10 +677,11 @@ export default class BackendAIUserList extends BackendAIPage {
           </div>
         `}
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout distancing">
         ${this.editMode ? html`
           <mwc-button
               unelevated
+              fullwidth
               label="${_t('button.SaveChanges')}"
               icon="check"
               @click=${(e) => this._saveChanges(e)}></mwc-button>`:html``}

@@ -116,5 +116,5 @@ pack:
 i18n:
 	 ./node_modules/i18next-scanner/bin/cli.js --config ./i18n.config.js
 clean:
-	cd app;	rm -rf ./backend*
+	cd app;	rm -rf ./backend*; rm -rf ./Backend*
 	cd build;rm -rf ./unbundle ./bundle ./rollup ./electron-app

@@ -14,6 +14,7 @@ import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
+import '@vaadin/vaadin-template-renderer';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
@@ -65,7 +66,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   };
   @property({type: Boolean}) isAdmin = false;
   @property({type: String}) condition = 'active';
-  @property({type: Object}) keypairs = Object();
+  @property({type: Array}) keypairs = [];
   @property({type: Object}) resourcePolicy = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) _boundKeyageRenderer = this.keyageRenderer.bind(this);
@@ -400,7 +401,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   _mutateKey(e, is_active) {
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
-    const original = this.keypairs.find(this._findKeyItem, accessKey);
+    const original: any = this.keypairs.find(this._findKeyItem, accessKey);
     const input = {
       'is_active': is_active,
       'is_admin': original.is_admin,
@@ -631,6 +632,9 @@ export default class BackendAICredentialList extends BackendAIPage {
           <template class="header">${_t('credential.ResourcePolicy')}</template>
           <template>
             <div class="layout horizontal wrap center">
+              <span>[[item.resource_policy]]</span>
+            </div>
+            <div class="layout horizontal wrap center">
               <div class="layout horizontal configuration">
                 <mwc-icon class="fg green">developer_board</mwc-icon>
                 <span>[[item.total_resource_slots.cpu]]</span>
@@ -783,9 +787,10 @@ export default class BackendAICredentialList extends BackendAIPage {
                 value="${this.keypairInfo.rate_limit}"></mwc-textfield>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
+              fullwidth
               id="keypair-modify-save"
               icon="check"
               label="${_t('button.SaveChanges')}"

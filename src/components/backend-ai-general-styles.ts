@@ -65,7 +65,7 @@ export const BackendAiStyles = [
       --general-slider-color: var(--general-textfield-selected-color);
       --general-dialog-background-color: #ffffff;
       --general-font-family: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-      --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
+      --general-monospace-font-family: 'Ubuntu Mono', Menlo, Courier, "Courier New", RobotoMono, sans-serif;
       --general-progress-bar-bg: #e8e8e8;
       --general-progress-bar-reserved: linear-gradient(to left, #722cd7, #5c7cfa);
       --general-progress-bar-using: linear-gradient(to left, #18aa7c, #60bb43),
@@ -768,6 +768,12 @@ export const BackendAiStyles = [
       margin-top: 5px;
       margin-left: 5px;
       padding-bottom: 5px;
+    }
+
+    span.helper-text {
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: var(--general-textfield-selected-color);
     }
 
     .resource-name {
