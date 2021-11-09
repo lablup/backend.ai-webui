@@ -65,7 +65,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
 export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Number}) _APIMajorVersion = 5;
   @property({type: String}) storageType = 'general';
-  @property({type: Object}) folders = Object();
+  @property({type: Array}) folders = [];
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) enableStorageProxy = false;
@@ -159,7 +159,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
     this._boundFolderListRenderer = this.folderListRenderer.bind(this);
     this._boundQuotaRenderer = this.quotaRenderer.bind(this);
-    this._getStorageProxyBackendInformation();
   }
 
   static get styles(): CSSResultOrNative | CSSResultArray {
@@ -1034,9 +1033,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._refreshFolderUI({'detail': {'mini-ui': globalThis.mini_ui}});
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this._getStorageProxyBackendInformation();
         this._triggerFolderListChanged();
       }, true);
     } else { // already connected
+      this._getStorageProxyBackendInformation();
       this._triggerFolderListChanged();
     }
   }
@@ -1416,30 +1417,16 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
-  _getStorageProxyBackendInformation() {
-    globalThis.backendaiclient.storageproxy.list(
-      ['id', 'backend', 'capabilities']
-    ).then((resp) => {
-      const results = resp.storage_volume_list.items;
-      const storageInfo = {};
-      results.forEach((s) => {
-        storageInfo[s.id] = s;
-      });
-      this.storageProxyInfo = storageInfo;
-    }).catch((err) => {
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+  async _getStorageProxyBackendInformation() {
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    this.storageProxyInfo = vhostInfo.volume_info || {};
   }
 
   _checkFolderSupportSizeQuota(host: string) {
     if (!host) {
       return false;
     }
-    const backend = this.storageProxyInfo[host].backend;
+    const backend = this.storageProxyInfo[host]?.backend;
     return this.quotaSupportStorageBackends.includes(backend) ? true : false;
   }
 

@@ -82,7 +82,6 @@ export default class BackendAIChart extends LitElement {
 
   _updateChartData() {
     if (this.collection.unit_hint === 'bytes') this.scaleData();
-
     const temp = this.collection.data[0]
       .map((e) => (format(e.x, 'MMM dd HH:mm')));
     const colors = {
@@ -129,9 +128,9 @@ export default class BackendAIChart extends LitElement {
             sampleSize: 100,
             maxTicksLimit: maxTicksLimit,
             maxRotation: maxRotation,
-            callback: function(value) {
+            /* callback: function(value) {
               return value.slice(0, -2) + '00';
-            },
+            },*/
             font: function(context) {
               const width = context.chart.width;
               const size = Math.round(width / 64) < 12 ? Math.round(width / 64) : 12;

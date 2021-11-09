@@ -34,7 +34,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) visible = false;
   @property({type: Object}) keypairs = {};
-  @property({type: Object}) resourcePolicy = {};
+  @property({type: Array}) resourcePolicy = [];
   @property({type: Object}) keypairInfo = {};
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) active = false;
