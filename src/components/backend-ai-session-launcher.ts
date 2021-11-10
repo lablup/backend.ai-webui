@@ -2703,7 +2703,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
     this._grid?.clearCache();
     
-    this._showselectedImg
+    this._showSelectedImg();
   }
   
   /**
@@ -2711,7 +2711,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * refresh selected Image and display it in view
    */
 
-  _showselectedImg(){
+  _showSelectedImg(){
     if (this.currentIndex==this.progressLength){
       let selected_env = this.shadowRoot.querySelector('#environment').selected.value.split("/");
       this.selectedImg = selected_env[1] + "/";      
