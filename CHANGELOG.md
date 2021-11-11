@@ -1,5 +1,12 @@
 # Changelog
 
+## v21.09.2 (11/11/2021)
+
+#### Bug Fixes:
+
+- [**bug**] Error on visiting Data & Storage page [#1158](https://github.com/lablup/backend.ai-webui/issues/1158)
+
+
 ## v21.09.1 (21/10/2021)
 
 #### Bug Fixes:
