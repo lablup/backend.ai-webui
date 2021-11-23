@@ -991,7 +991,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
-  _gBToByte(value: number = 0) {
+  _gBToByte(value = 0) {
     const gigabyte = Math.pow(2, 30);
     return Math.round(gigabyte * value);
   }

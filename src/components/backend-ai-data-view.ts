@@ -735,11 +735,11 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   /**
-   * 
+   *
    * Get the list of vfolder names
    */
   _getVfolderNames() {
-    let folderNameList: Array<any> = [];
+    const folderNameList: Array<any> = [];
     Array.prototype.forEach.call(this.folderLists, (elem, index) => {
       Array.prototype.forEach.call(elem.folders, (folder, index) => {
         folderNameList.push(folder.name);
