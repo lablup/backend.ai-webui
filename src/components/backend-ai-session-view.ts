@@ -378,12 +378,12 @@ export default class BackendAiSessionView extends BackendAIPage {
               exportListItem.cpu_used_time = 0;
             }
             if (liveStat.io_read) {
-              exportListItem.io_read_bytes_mb = globalThis.backendaiutils._bytesToMB(liveStat.io_read.current);
+              exportListItem.io_read_bytes_mb = globalThis.backendaiutils._bytesToMiB(liveStat.io_read.current);
             } else {
               exportListItem.io_read_bytes_mb = 0;
             }
             if (liveStat.io_write) {
-              exportListItem.io_write_bytes_mb = globalThis.backendaiutils._bytesToMB(liveStat.io_write.current);
+              exportListItem.io_write_bytes_mb = globalThis.backendaiutils._bytesToMiB(liveStat.io_write.current);
             } else {
               exportListItem.io_write_bytes_mb = 0;
             }

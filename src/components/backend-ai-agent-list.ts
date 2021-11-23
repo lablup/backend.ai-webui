@@ -794,8 +794,8 @@ export default class BackendAIAgentList extends BackendAIPage {
               </div>
               <h3>Network</h3>
               ${this.agentDetail?.live_stat?.node ? html`
-                <div>TX: ${globalThis.backendaiutils._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
-                <div>RX: ${globalThis.backendaiutils._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
+                <div>TX: ${globalThis.backendaiutils._bytesToMiB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
+                <div>RX: ${globalThis.backendaiutils._bytesToMiB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
               ` : html`
                 <p>${_t('agent.NoNetworkSignal')}</p>
               `}

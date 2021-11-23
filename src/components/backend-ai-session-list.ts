@@ -499,12 +499,12 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].mem_current = 0;
             }
             if (liveStat && liveStat.io_read) {
-              sessions[objectKey].io_read_bytes_mb = globalThis.backendaiutils._bytesToMB(liveStat.io_read.current);
+              sessions[objectKey].io_read_bytes_mb = globalThis.backendaiutils._bytesToMiB(liveStat.io_read.current);
             } else {
               sessions[objectKey].io_read_bytes_mb = 0;
             }
             if (liveStat && liveStat.io_write) {
-              sessions[objectKey].io_write_bytes_mb = globalThis.backendaiutils._bytesToMB(liveStat.io_write.current);
+              sessions[objectKey].io_write_bytes_mb = globalThis.backendaiutils._bytesToMiB(liveStat.io_write.current);
             } else {
               sessions[objectKey].io_write_bytes_mb = 0;
             }
