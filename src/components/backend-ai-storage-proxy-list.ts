@@ -258,6 +258,16 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   /**
+   * Convert the value byte to MB.
+   *
+   * @param {number} value
+   * @return {number} converted value from byte to MB.
+   */
+  _bytesToMB(value) {
+    return Math.floor(value / 1000000);
+  }
+
+  /**
    * Render regions by platforms and locations.
    *
    * @param {DOMelement} root
@@ -426,7 +436,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         <vaadin-grid-column width="120px" flex-grow="0" resizable header="${this.defaultDescription?.backendType ?? _t('agent.BackendType')}"
                             .renderer="${this._boundTypeRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column auto-width flex-grow="0" resizable header="${this.defaultDescription?.usage ??  _t('agent.Resources')}"
+        <vaadin-grid-column auto-width flex-grow="0" resizable header="${this.defaultDescription?.usage ?? _t('agent.Resources')}"
                             .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="120px" flex-grow="0" resizable header="${this.defaultDescription?.capabilities ??_t('agent.Capabilities')}"
@@ -463,8 +473,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
               </div>
               <h3>Network</h3>
               ${'live_stat' in this.storageProxyDetail && 'node' in this.storageProxyDetail.live_stat ? html`
-                <div>TX: ${globalThis.backendaiutils._bytesToMiB(this.storageProxyDetail.live_stat.node.net_tx.current)}MB</div>
-                <div>RX: ${globalThis.backendaiutils._bytesToMiB(this.storageProxyDetail.live_stat.node.net_rx.current)}MB</div>
+                <div>TX: ${this._bytesToMB(this.storageProxyDetail.live_stat.node.net_tx.current)}MB</div>
+                <div>RX: ${this._bytesToMB(this.storageProxyDetail.live_stat.node.net_rx.current)}MB</div>
               ` : html``}
             </div>
           </div>

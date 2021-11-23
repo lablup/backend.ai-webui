@@ -572,13 +572,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     return this.condition === 'active';
   }
 
-  _byteToGB(value: number, decimals: number=0) {
+  _byteToGB(value: number, decimals=0) {
     const gigabyte = Math.pow(2, 30);
     const unitToFix = Math.pow(10, decimals);
     return (Math.round(value / gigabyte * unitToFix) / unitToFix).toFixed(decimals);
   }
 
-  _gBToByte(value: number = 0) {
+  _gBToByte(value = 0) {
     const gigabyte = Math.pow(2, 30);
     return Math.round(gigabyte * value);
   }
@@ -773,7 +773,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
    *
    * @param value - raw value
    * @param enableUnitConvert - if true it enable unit conversion
-   * @returns if number then returns number, else if then string
+   * @return if number then returns number, else if then string
    */
   _markIfUnlimited(value, enableUnitConvert = false) {
     if (['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value)) {

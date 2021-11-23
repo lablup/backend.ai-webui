@@ -295,6 +295,16 @@ export default class BackendAiSessionList extends BackendAIPage {
     return status === 'ERROR';
   }
 
+  /**
+   * Convert the value byte to MB.
+   *
+   * @param {number} value
+   * @return {number} converted value from byte to MB.
+   */
+  _bytesToMB(value) {
+    return Math.floor(value / 1000000);
+  }
+
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this._grid = this.shadowRoot.querySelector('#list-grid');
@@ -478,7 +488,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
           // Readable text
           sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
-          sessions[objectKey].created_at_hr = globalThis.backendaiutils._humanReadableTime(sessions[objectKey].created_at);
+          sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
           if (sessions[objectKey].containers && sessions[objectKey].containers.length > 0) {
             const container = sessions[objectKey].containers[0];
             const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
@@ -499,12 +509,12 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].mem_current = 0;
             }
             if (liveStat && liveStat.io_read) {
-              sessions[objectKey].io_read_bytes_mb = globalThis.backendaiutils._bytesToMiB(liveStat.io_read.current);
+              sessions[objectKey].io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
             } else {
               sessions[objectKey].io_read_bytes_mb = 0;
             }
             if (liveStat && liveStat.io_write) {
-              sessions[objectKey].io_write_bytes_mb = globalThis.backendaiutils._bytesToMiB(liveStat.io_write.current);
+              sessions[objectKey].io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
             } else {
               sessions[objectKey].io_write_bytes_mb = 0;
             }
@@ -618,6 +628,18 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+  }
+
+  /**
+   * Change d of any type to human readable date time.
+   *
+   * @param {string | Date} d - Data string or object
+   * @return {string} Human readable time string
+   */
+  _humanReadableTime(d: any) {
+    d = new Date(d);
+    const option = {hour12: false};
+    return d.toLocaleString('en-US', option);
   }
 
   /**

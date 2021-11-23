@@ -177,11 +177,23 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     if (this.logs.length > 0) {
       const logData = this.logs.slice(start, end);
       logData.forEach((item: any) => {
-        item.timestamp_hr = globalThis.backendaiutils._humanReadableTime(item.timestamp);
+        item.timestamp_hr = this._humanReadableTime(item.timestamp);
       });
 
       this.logView = logData; // this.logs.slice(start, end);
     }
+  }
+
+  /**
+   * Change d of any type to human readable date time.
+   *
+   * @param {string | Date} d - Data string or object
+   * @return {string} Human readable time string
+   */
+  _humanReadableTime(d: any) {
+    d = new Date(d);
+    const option = {hour12: false};
+    return d.toLocaleString('en-US', option);
   }
 
 

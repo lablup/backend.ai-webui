@@ -546,6 +546,17 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
+   * Convert start date to human readable date.
+   *
+   * @param {Date} start date
+   * @return {string} Human-readable date
+   */
+  _humanReadableDate(start) {
+    const d = new Date(start);
+    return d.toLocaleString();
+  }
+
+  /**
    * Render a first contact date.
    *
    * @param {DOMelement} root
@@ -560,7 +571,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         // language=HTML
         html`
           <div class="layout vertical">
-            <span>${globalThis.backendaiutils._humanReadableDate(rowData.item.first_contact)}</span>
+            <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
             <lablup-shields app="${_t('agent.Terminated')}" color="yellow"
                             description="${elapsed}" ui="round"></lablup-shields>
 
@@ -572,7 +583,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         // language=HTML
         html`
           <div class="layout vertical">
-            <span>${globalThis.backendaiutils._humanReadableDate(rowData.item.first_contact)}</span>
+            <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
             <lablup-shields app="${_t('agent.Running')}" color="darkgreen"
                             description="${elapsed}" ui="round"></lablup-shields>
 
@@ -741,6 +752,16 @@ export default class BackendAIAgentList extends BackendAIPage {
     );
   }
 
+  /**
+   * Convert the value byte to MB.
+   *
+   * @param {number} value
+   * @return {number} converted value from byte to MB.
+   */
+  _bytesToMB(value) {
+    return Math.floor(value / 1000000);
+  }
+
   render() {
     // language=HTML
     return html`
@@ -794,8 +815,8 @@ export default class BackendAIAgentList extends BackendAIPage {
               </div>
               <h3>Network</h3>
               ${this.agentDetail?.live_stat?.node ? html`
-                <div>TX: ${globalThis.backendaiutils._bytesToMiB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
-                <div>RX: ${globalThis.backendaiutils._bytesToMiB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
+                <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
+                <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
               ` : html`
                 <p>${_t('agent.NoNetworkSignal')}</p>
               `}

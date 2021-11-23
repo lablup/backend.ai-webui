@@ -2719,6 +2719,32 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.shadowRoot.querySelector('#HPCOptimizationOptions').style.display = isOpenMPChecked ? 'none' : 'block';
   }
 
+  /**
+   * Get MB value when input is less than 1 GB.
+   *
+   * @param {number} value - value with GB unit.
+   * @return {number} MB value if input is smaller than 1GB. Otherwise, GB value.
+   * */
+  _conditionalGBtoMB(value) {
+    if (value < 1.0) {
+      return (value * 1024).toFixed(0);
+    }
+    return value;
+  }
+
+  /**
+   * Get MB unit when input is less than 1 GB.
+   *
+   * @param {number} value - value with GB unit.
+   * @return {string} MB if input is smaller than 1GB. Otherwise, GB.
+   * */
+  _conditionalGBtoMBunit(value) {
+    if (value < 1.0) {
+      return 'MB';
+    }
+    return 'GB';
+  }
+
   render() {
     // language=HTML
     return html`
@@ -3079,8 +3105,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     </mwc-textfield>
                     <mwc-icon-button icon="info" class="fg green info"
                                     @click="${(e) => {
-      this._showResourceDescription(e, 'openmp-optimization');
-    }}"></mwc-icon-button>
+    this._showResourceDescription(e, 'openmp-optimization');
+  }}"></mwc-icon-button>
                   </div>
                   <div class="horizontal center layout">
                     <div style="width:200px;">${_t('session.launcher.NumOpenBLASthreads')}</div>
@@ -3090,8 +3116,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     </mwc-textfield>
                     <mwc-icon-button icon="info" class="fg green info"
                                       @click="${(e) => {
-      this._showResourceDescription(e, 'openmp-optimization');
-    }}"></mwc-icon-button>
+    this._showResourceDescription(e, 'openmp-optimization');
+  }}"></mwc-icon-button>
                   </div>
                 </div>
               </div>
@@ -3161,8 +3187,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                    <span>${globalThis.backendaiutils._conditionalGBtoMB(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</span>
-                    <p>${globalThis.backendaiutils._conditionalGBtoMBunit(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</p>
+                    <span>${this._conditionalGBtoMB(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</span>
+                    <p>${this._conditionalGBtoMBunit(this.shmem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size))}</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.GPU')}</p>
@@ -3186,8 +3212,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     </div>
                     <div class="vertical layout center center-justified resource-allocated">
                       <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                      <span>${globalThis.backendaiutils._conditionalGBtoMB(this.shmem_request)}</span>
-                      <p>${globalThis.backendaiutils._conditionalGBtoMBunit(this.shmem_request)}</p>
+                      <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
+                      <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
                     </div>
                     <div class="vertical layout center center-justified resource-allocated">
                       <p>${_t('session.launcher.GPU')}</p>
