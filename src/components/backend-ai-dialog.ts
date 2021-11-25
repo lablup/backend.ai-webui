@@ -149,12 +149,7 @@ export default class BackendAiDialog extends LitElement {
    * Hide a dialog.
    */
   _hideDialog() {
-    if (this.dialog.parentNode.host.id === 'terms-of-service-dialog') {
-      const closeTOS = new CustomEvent('tos-dialog-closing', {detail: ''});
-      this.dispatchEvent(closeTOS);
-    } else {
-      this.hide();
-    }
+    this.hide();
   }
 
   /**
