@@ -1641,6 +1641,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }, true);
     } else {
       this.metric_updating = true;
+      let enqueue_session = false;
+      if (globalThis.backendaiclient._config.always_enqueue_compute_session === true) {
+        enqueue_session = true;
+      }
       await this._aggregateResourceUse('update-metric');
       await this._updateVirtualFolderList();
       this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
@@ -1700,6 +1704,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (item.key === 'cpu') {
           const cpu_metric = {...item};
           cpu_metric.min = parseInt(cpu_metric.min);
+          if (enqueue_session) {
+            available_slot['cpu'] = Infinity;
+            available_slot['mem'] = Infinity;
+            available_slot['cuda_device'] = Infinity;
+            available_slot['cuda_shares'] = Infinity;
+            available_slot['rocm_device'] = Infinity;
+            available_slot['tpu_device'] = Infinity;
+          }
+
           if ('cpu' in this.userResourceLimit) {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && !isNaN(cpu_metric.max)) {
               cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu'], this.max_cpu_core_per_session);
