@@ -136,8 +136,10 @@ export default class BackendAiDialog extends LitElement {
       /**
        * custom event for bubbling event of closing dialog
        */
-      const closeEvent = new CustomEvent('dialog-closed', {detail: ''});
-      this.dispatchEvent(closeEvent);
+      if (e.target.id === 'dialog' && 'action' in e.detail && e.detail.action === 'close') {
+        const closeEvent = new CustomEvent('dialog-closed', {detail: ''});
+        this.dispatchEvent(closeEvent);
+      }
     });
   }
 
