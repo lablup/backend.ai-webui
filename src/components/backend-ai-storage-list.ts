@@ -27,7 +27,7 @@ import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@vaadin/vaadin-item/vaadin-item';
-import '@vaadin/vaadin-template-renderer';
+// import '@vaadin/vaadin-template-renderer';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -716,8 +716,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
-        <span slot="title">${this.explorer.id}</span>
-        <div slot="action" class="horizontal layout flex folder-action-buttons">
+        <span slot="title" style="margin-right:1rem;">${this.explorer.id}</span>
+        <div slot="action" class="horizontal layout space-between folder-action-buttons">
           <div class="flex"></div>
           ${this.isWritable ? html`
             <mwc-button
@@ -2674,7 +2674,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       });
       const job = globalThis.backendaiclient.vfolder.delete_files(filenames, true, this.explorer.id);
       job.then((res) => {
-        this.notification.text = _text('data.folders.MultipleFilesDeleted');
+        this.notification.text = (files.length == 1) ? _text('data.folders.FileDeleted') :_text('data.folders.MultipleFilesDeleted');
         this.notification.show();
         this._clearExplorer();
         this.deleteFileDialog.hide();
