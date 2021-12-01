@@ -119,7 +119,7 @@ export default class LablupTermsOfService extends LitElement {
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable>
+      <backend-ai-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable @dialog-closed=${() => this.close()}>
         <span slot="title">${this.title}</span>
         <div slot="action" class="horizontal end-justified center flex layout">
           ${this.tosLanguages ? html`

@@ -1025,7 +1025,7 @@
     "PolicyAgreement_2": " 및 ",
     "PolicyAgreement_3": "을 확인했으며, 이에 동의합니다.",
     "TermsOfService": "약관",
-    "RequestAgreementTermsOfService": "상기 서비스 이용약관에 동의합니다.",
+    "RequestAgreementTermsOfService": "약관 및 개인정보보호정책 동의는 필수 체크 항목입니다.",
     "PrivacyPolicy": "개인정보보호정책",
     "ThankYou": "감사합니다!",
     "VerificationMessage": "인증 메일을 전송했습니다. 가입하신 계정으로 로그인 하기 전에 전송된 메일을 읽고 인증을 완료해 주십시오.",
