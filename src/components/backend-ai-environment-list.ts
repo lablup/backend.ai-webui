@@ -154,7 +154,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         span.resource-limit-title {
           font-size: 14px;
           font-family: var(--general-font-family);
-          font-align: left;
+          text-align: left;
           width: 70px;
         }
 

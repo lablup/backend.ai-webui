@@ -101,6 +101,13 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
     const webUIShell: any = document.querySelector('#webui-shell');
     // webUIShell.appBody.style.visibility = 'visible';
+    if (apiEndpoint === '') {
+      const api_endpoint: any = localStorage.getItem('backendaiwebui.api_endpoint');
+      if (api_endpoint != null) {
+        apiEndpoint = api_endpoint.replace(/^"+|"+$/g, '');
+      }
+    }
+    apiEndpoint = apiEndpoint.trim();
     this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
     globalThis.backendaiclient = new ai.backend.Client(
       this.clientConfig,
@@ -209,7 +216,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       console.log('Reusing an existing session ...');
       const sessionStatus = sessions.compute_session_list.items[0].status;
       if (sessionStatus !== 'RUNNING') {
-        this.notification.text = _text('eduapi.sessionStatusIs') + `${sessionStatus}. ` + _text('eduapi.PleaseReload');
+        this.notification.text = _text('eduapi.sessionStatusIs') + ` ${sessionStatus}. ` + _text('eduapi.PleaseReload');
         this.notification.show(true);
         return;
       }
@@ -281,7 +288,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         let response;
         try {
           appLauncher.indicator.set(60, _text('eduapi.CreatingComputeSession'));
-          response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources);
+          response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources, 20000);
         } catch (err) {
           console.error(err);
           if (err && err.message) {

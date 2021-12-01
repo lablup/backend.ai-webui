@@ -62,7 +62,7 @@ import {
 export default class BackendAIUserList extends BackendAIPage {
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) editMode = false;
-  @property({type: Object}) users = Object();
+  @property({type: Array}) users = [];
   @property({type: Object}) userInfo = Object();
   @property({type: Array}) userInfoGroups = [];
   @property({type: String}) condition = 'active';

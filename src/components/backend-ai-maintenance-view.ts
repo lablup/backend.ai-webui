@@ -165,7 +165,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
                   outlined
                   disabled
                   label="${_t('maintenance.CleanupImages')}"
-                  icon="delete"
+                  icon="delete">
               </mwc-button>
             </div>
           </div>
