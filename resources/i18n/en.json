@@ -311,6 +311,7 @@
     "Terminated": "Terminated",
     "Maintaining": "Maintaining",
     "Status": "Status",
+    "Schedulable": "Schedulable",
     "DetailedInformation": "Detailed Information",
     "Running": "Running",
     "BackendType": "Backend Type",

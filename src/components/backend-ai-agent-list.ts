@@ -53,6 +53,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) _boundSchedulableRenderer = this.schedulableRenderer.bind(this);
   @property({type: String}) filter = '';
 
   constructor() {
@@ -74,6 +75,10 @@ export default class BackendAIAgentList extends BackendAIPage {
 
         mwc-icon {
           --mdc-icon-size: 16px;
+        }
+
+        mwc-icon.schedulable {
+          --mdc-icon-size: 24px;
         }
 
         img.indicator-icon {
@@ -182,18 +187,18 @@ export default class BackendAIAgentList extends BackendAIPage {
     switch (this.condition) {
     case 'running':
       status = 'ALIVE';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact', 'schedulable',
         'lost_at', 'status_changed', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
       break;
     case 'terminated':
       status = 'TERMINATED';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact', 'schedulable',
         'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
       break;
     case 'archived':
     default:
       status = 'ALIVE';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact', 'schedulable',
         'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     }
     if (this.useHardwareMetadata && globalThis.backendaiclient.supports('hardware-metadata')) {
@@ -346,6 +351,9 @@ export default class BackendAIAgentList extends BackendAIPage {
             }
             if ('hardware_metadata' in agent) {
               agents[objectKey].hardware_metadata = JSON.parse(agent.hardware_metadata);
+            }
+            if ('schedulable' in agent) {
+              agents[objectKey].schedulable = agent.schedulable;
             }
             this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
           }
@@ -711,6 +719,26 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
+   * Render whether the agent is schedulable or not
+   * 
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  schedulableRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+    html`
+    ${rowData.item?.schedulable ? html`
+      <div class="layout horizontal center center-justified wrap">
+        <mwc-icon class="fg green schedulable">check_circle</mwc-icon>
+      </div>
+    ` : html``}
+    `
+      , root);
+  }
+
+  /**
    * Render a heartbeat status.
    *
    * @param {DOMelement} root
@@ -807,6 +835,8 @@ export default class BackendAIAgentList extends BackendAIPage {
                                  header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
         <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Status')}"
                             .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
+                            .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t('general.Control')}"
                             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
