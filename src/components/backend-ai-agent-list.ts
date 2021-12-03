@@ -3,7 +3,7 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from 'lit-translate';
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
 import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
@@ -15,9 +15,11 @@ import '../plastics/lablup-shields/lablup-shields';
 
 import '@material/mwc-linear-progress';
 import '@material/mwc-icon-button';
+import '@material/mwc-switch';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon/mwc-icon';
+
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -47,6 +49,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) agentDetailDialog = Object();
+  @property({type: Object}) agentSettingDialog = Object();
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
@@ -108,6 +111,11 @@ export default class BackendAIAgentList extends BackendAIPage {
           --component-min-width: 350px;
         }
 
+        backend-ai-dialog {
+          --component-width: 350px;
+        }
+
+
         lablup-progress-bar {
           --progress-bar-width: 100px;
           border-radius: 3px;
@@ -146,6 +154,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
+    this.agentSettingDialog = this.shadowRoot.querySelector('#agent-setting');
   }
 
   connectedCallback() {
@@ -720,7 +729,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   /**
    * Render whether the agent is schedulable or not
-   * 
+   *
    * @param {DOMelement} root
    * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
@@ -728,12 +737,14 @@ export default class BackendAIAgentList extends BackendAIPage {
   schedulableRenderer(root, column?, rowData?) {
     render(
       // language=HTML
-    html`
+      html`
+    <div class="layout horizontal center center-justified wrap">
     ${rowData.item?.schedulable ? html`
-      <div class="layout horizontal center center-justified wrap">
         <mwc-icon class="fg green schedulable">check_circle</mwc-icon>
-      </div>
-    ` : html``}
+    ` : html`
+        <mwc-icon class="fg red schedulable">block</mwc-icon>
+    `}
+    </div>
     `
       , root);
   }
@@ -792,9 +803,11 @@ export default class BackendAIAgentList extends BackendAIPage {
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment"
+          <mwc-icon-button class="fg green controls-running" icon="assignment"
                            @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
+          <mwc-icon-button class="fg blue controls-running" icon="settings"
+                           @click="${(e) => this._showConfigDialog(rowData.item.id)}"></mwc-icon-button>
             <mwc-icon-button class="temporarily-hide fg green controls-running" icon="refresh"
                              @click="${() => this._loadAgentList()}"></mwc-icon-button>
             <mwc-icon-button class="temporarily-hide fg controls-running" disabled
@@ -810,8 +823,40 @@ export default class BackendAIAgentList extends BackendAIPage {
     );
   }
 
+  /**
+   * Show configuration field of agent in dialog form.
+   *
+   * @param {string} agentId - ID of agent to configure
+   */
+  _showConfigDialog(agentId) {
+    this.agentDetail = this.agentsObject[agentId];
+    const schedulableToggle = this.shadowRoot.querySelector('#schedulable-switch');
+    schedulableToggle.checked = this.agentDetail?.schedulable ?? false;
+    this.agentSettingDialog.show();
+    return;
+  }
+
+
   _bytesToMB(value) {
     return Number(value / (1024 * 1024)).toFixed(1);
+  }
+
+  _modifyAgentSetting() {
+    const schedulable = this.shadowRoot.querySelector('#schedulable-switch').checked;
+    if (this.agentDetail?.schedulable !== schedulable) {
+      globalThis.backendaiclient.agent.update(this.agentDetail.id, {'schedulable': schedulable}).then( (res) => {
+        this.notification.text = _text('agent.AgentSettingUpdated');
+        this.notification.show();
+      }).catch((err) => {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      });
+    } else {
+      this.notification.text = _text('agent.NoChanges');
+      this.notification.show();
+      this.agentSettingDialog.hide();
+    }
   }
 
   render() {
@@ -968,6 +1013,21 @@ export default class BackendAIAgentList extends BackendAIPage {
             icon="check"
             label="${_t('button.Close')}"
             @click="${(e) => this._hideDialog(e)}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="agent-setting" fixed backdrop blockscrolling persistent scrollable>
+        <span slot="title">${_t('agent.AgentSetting')}</span>
+        <div slot="content" class="horizontal layout justified center">
+          <span>${_t('agent.Schedulable')}</span>
+          <mwc-switch id="schedulable-switch" ?checked="${this.agentDetail?.schedulable}"></mwc-switch>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+        <mwc-button
+          unelevated
+          id="update-agent-setting-button"
+          icon="check"
+          label="${_t('button.Update')}"
+          @click="${() => this._modifyAgentSetting()}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

@@ -1995,6 +1995,32 @@ class Agent {
     let v = {'status': status};
     return this.client.query(q, v, null, timeout);
   }
+
+  /**
+   * modify agent configuration with given name and fields.
+   *
+   * @param {string} agent_id - resource preset name.
+   * @param {json} input - resource preset specification and data. Required fields are:
+   * {
+   *   'schedulable': schedulable 
+   * };
+   */
+   async update(id = null, input) {
+    if (this.client.is_superadmin === true && id !== null) {
+      let q = `mutation($id: String!, $input: ModifyAgentInput!) {` +
+        `  modify_agent(id: $id, props: $input) {` +
+        `    ok msg ` +
+        `  }` +
+        `}`;
+      let v = {
+        'id': id,
+        'input': input
+      };
+      return this.client.query(q, v);
+    } else {
+      return Promise.resolve(false);
+    }
+  }
 }
 
 class StorageProxy {
@@ -2229,7 +2255,7 @@ class Keypair {
    *   'is_active': is_active,
    *   'is_admin': is_admin,
    *   'resource_policy': resource_policy,
-   *   'rate_limit': rate_limit
+   *   'rate_limit': rate_limitx
    * }
    */
   async mutate(accessKey, input) {
