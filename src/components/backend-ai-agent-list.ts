@@ -855,6 +855,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       globalThis.backendaiclient.agent.update(this.agentDetail.id, {'schedulable': schedulable}).then( (res) => {
         this.notification.text = _text('agent.AgentSettingUpdated');
         this.notification.show();
+        this.agentSettingDialog.hide();
       }).catch((err) => {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
