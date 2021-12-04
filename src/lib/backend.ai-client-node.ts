@@ -556,6 +556,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('20.09.16')) {
       this._features['avoid-hol-blocking'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('21.09')) {
+      this._features['schedulable'] = true;
+    }
   }
 
   /**
@@ -2255,7 +2258,7 @@ class Keypair {
    *   'is_active': is_active,
    *   'is_admin': is_admin,
    *   'resource_policy': resource_policy,
-   *   'rate_limit': rate_limitx
+   *   'rate_limit': rate_limit
    * }
    */
   async mutate(accessKey, input) {

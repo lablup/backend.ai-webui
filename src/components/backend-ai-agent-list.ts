@@ -50,6 +50,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) agentDetailDialog = Object();
   @property({type: Object}) agentSettingDialog = Object();
+  @property({type: Boolean}) enableAgentSchedulable = false;
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
@@ -174,10 +175,12 @@ export default class BackendAIAgentList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
         const status = 'ALIVE';
         this._loadAgentList(status);
       }, true);
     } else { // already connected
+      this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
       const status = 'ALIVE';
       this._loadAgentList(status);
     }
@@ -196,22 +199,26 @@ export default class BackendAIAgentList extends BackendAIPage {
     switch (this.condition) {
     case 'running':
       status = 'ALIVE';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact', 'schedulable',
+      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
       break;
     case 'terminated':
       status = 'TERMINATED';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact', 'schedulable',
+      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
       break;
     case 'archived':
     default:
       status = 'ALIVE';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact', 'schedulable',
+      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     }
     if (this.useHardwareMetadata && globalThis.backendaiclient.supports('hardware-metadata')) {
       fields.push('hardware_metadata');
+    }
+
+    if (globalThis.backendaiclient.supports('schedulable')) {
+      fields.push('schedulable');
     }
 
     globalThis.backendaiclient.agent.list(status, fields, 10 * 1000).then((response) => {
@@ -738,15 +745,14 @@ export default class BackendAIAgentList extends BackendAIPage {
     render(
       // language=HTML
       html`
-    <div class="layout horizontal center center-justified wrap">
-    ${rowData.item?.schedulable ? html`
-        <mwc-icon class="fg green schedulable">check_circle</mwc-icon>
-    ` : html`
-        <mwc-icon class="fg red schedulable">block</mwc-icon>
-    `}
-    </div>
-    `
-      , root);
+        <div class="layout horizontal center center-justified wrap">
+          ${rowData.item?.schedulable ? html`
+            <mwc-icon class="fg green schedulable">check_circle</mwc-icon>
+          ` : html`
+            <mwc-icon class="fg red schedulable">block</mwc-icon>
+          `}
+        </div>`, root
+    );
   }
 
   /**
@@ -806,8 +812,10 @@ export default class BackendAIAgentList extends BackendAIPage {
           <mwc-icon-button class="fg green controls-running" icon="assignment"
                            @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
-          <mwc-icon-button class="fg blue controls-running" icon="settings"
-                           @click="${(e) => this._showConfigDialog(rowData.item.id)}"></mwc-icon-button>
+            ${this.enableAgentSchedulable ? html`
+              <mwc-icon-button class="fg blue controls-running" icon="settings"
+                               @click="${(e) => this._showConfigDialog(rowData.item.id)}"></mwc-icon-button>
+            ` : html``}
             <mwc-icon-button class="temporarily-hide fg green controls-running" icon="refresh"
                              @click="${() => this._loadAgentList()}"></mwc-icon-button>
             <mwc-icon-button class="temporarily-hide fg controls-running" disabled
@@ -880,8 +888,10 @@ export default class BackendAIAgentList extends BackendAIPage {
                                  header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
         <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Status')}"
                             .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
+        ${this.enableAgentSchedulable ? html`
         <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
-                            .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
+                          .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
+        ` : html``}
         <vaadin-grid-column resizable header="${_t('general.Control')}"
                             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
