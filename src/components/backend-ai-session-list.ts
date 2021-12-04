@@ -226,7 +226,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
 
         div.configuration {
-          width: 70px !important;
+          width: 90px !important;
+          height: 20px;
         }
 
         div.configuration wl-icon {
@@ -269,6 +270,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           background: none;
           padding: 0;
           outline-style: none;
+        }
+
+        .no-mount {
+          color: var(--paper-grey-400);
         }
 
         span#access-key-filter-helper-text {
@@ -1301,28 +1306,42 @@ export default class BackendAiSessionList extends BackendAIPage {
   configRenderer(root, column?, rowData?) {
     render(
       html`
+        <div class="layout horizontal center flex">
+          <div class="layout horizontal center configuration">
+            ${rowData.item.mounts.length > 0 ? html`
+              <wl-icon class="fg green indicator">folder_open</wl-icon>
+              <button class="mount-button"
+                @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
+                @mouseleave="${() => this._removeMountedFolderDropdown()}"
+              >
+                ${rowData.item.mounts[0].replace(/[[\],'"]/g, '').split(' ')[0]}
+              </button>
+            ` : html`
+            <wl-icon class="indicator no-mount">folder_open</wl-icon>
+            <span class="no-mount">No mount</span>
+            `}
+          </div>
+        </div>
         ${rowData.item.scaling_group ? html`
         <div class="layout horizontal center flex">
-          <div class="layout horizontal configuration">
+          <div class="layout horizontal center configuration">
             <wl-icon class="fg green indicator">work</wl-icon>
             <span>${rowData.item.scaling_group}</span>
             <span class="indicator">RG</span>
           </div>
         </div>` : html``}
-        <div class="layout horizontal center flex">
-          <div class="layout horizontal configuration">
+        <div class="layout vertical flex" style="padding-left: 25px">
+          <div class="layout horizontal center configuration">
             <wl-icon class="fg green indicator">developer_board</wl-icon>
             <span>${rowData.item.cpu_slot}</span>
             <span class="indicator">${_t('session.core')}</span>
           </div>
-          <div class="layout horizontal configuration">
+          <div class="layout horizontal center configuration">
             <wl-icon class="fg green indicator">memory</wl-icon>
             <span>${rowData.item.mem_slot}</span>
             <span class="indicator">GB</span>
           </div>
-        </div>
-        <div class="layout horizontal center flex">
-          <div class="layout horizontal configuration">
+          <div class="layout horizontal center configuration">
             ${rowData.item.cuda_gpu_slot ? html`
               <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
               <span>${rowData.item.cuda_gpu_slot}</span>
@@ -1350,17 +1369,6 @@ export default class BackendAiSessionList extends BackendAIPage {
               <wl-icon class="fg green indicator">view_module</wl-icon>
               <span>-</span>
               <span class="indicator">GPU</span>
-              ` : html``}
-          </div>
-          <div class="layout horizontal configuration">
-            <wl-icon class="fg green indicator">folder_open</wl-icon>
-              ${rowData.item.mounts.length > 0 ? html`
-                <button class="mount-button"
-                  @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
-                  @mouseleave="${() => this._removeMountedFolderDropdown()}"
-                >
-                  ${rowData.item.mounts[0].replace(/[[\],'"]/g, '').split(' ')[0]}
-                </button>
               ` : html``}
           </div>
         </div>
