@@ -856,6 +856,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         this.notification.text = _text('agent.AgentSettingUpdated');
         this.notification.show();
         this.agentSettingDialog.hide();
+        this._loadAgentList();
       }).catch((err) => {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
