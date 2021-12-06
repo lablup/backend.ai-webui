@@ -332,6 +332,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshWorkDialogUI(e));
     this._refreshWorkDialogUI({'detail': {'mini-ui': globalThis.mini_ui}});
+    this._appendStyle();
   }
 
   async _viewStateChanged(active) {
@@ -380,6 +381,16 @@ export default class BackendAiSessionList extends BackendAIPage {
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._refreshJobData();
     }
+  }
+
+  // Styling the shadow DOM
+  _appendStyle() {
+    const style = document.createElement('style');
+    style.innerHTML = `
+:host(:not([theme~='no-row-borders'])) [part='row']:last-child [part~='body-cell']:not([part~='details-cell']) {
+  border-bottom: var(--_lumo-grid-border-width) solid var(--_lumo-grid-secondary-border-color);
+}`;
+    this.shadowRoot.querySelector('vaadin-grid').shadowRoot.appendChild(style);
   }
 
   /**
