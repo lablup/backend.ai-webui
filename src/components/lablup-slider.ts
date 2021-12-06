@@ -110,8 +110,11 @@ export default class LablupSlider extends LitElement {
     super.disconnectedCallback();
   }
 
-  update(changedProperties) {
-    this.min = (this.min > this.max) ? this.max : this.min;
+  update(changedProperties: Map<any, any>) {
+    if (Array.from(changedProperties.keys()).some(item => ['value', 'min', 'max'].includes(item))) {
+      this.min = (this.min >= this.max) ? 0 : this.min;
+    }
+    // this.min = (this.min > this.max) ? this.max : this.min;
     super.update(changedProperties);
   }
 

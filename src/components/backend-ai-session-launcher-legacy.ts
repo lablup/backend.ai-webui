@@ -75,11 +75,11 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
   @property({type: Array}) gpu_modes = [];
   @property({type: Number}) gpu_step = 0.1;
   @property({type: Object}) cpu_metric = {
-    'min': '1',
+    'min': '0',
     'max': '1'
   };
   @property({type: Object}) mem_metric = {
-    'min': '1',
+    'min': '0',
     'max': '1'
   };
   @property({type: Object}) shmem_metric = {
@@ -89,19 +89,19 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
   };
   @property({type: Object}) cuda_device_metric = {
     'min': 0,
-    'max': 0
+    'max': 1
   };
   @property({type: Object}) cuda_shares_metric;
   @property({type: Object}) rocm_device_metric = {
     'min': '0',
-    'max': '0'
+    'max': '1'
   };
   @property({type: Object}) tpu_device_metric = {
-    'min': '1',
+    'min': '0',
     'max': '1'
   };
   @property({type: Object}) cluster_metric = {
-    'min': 1,
+    'min': 0,
     'max': 1
   };
   @property({type: Array}) cluster_mode_list = [
