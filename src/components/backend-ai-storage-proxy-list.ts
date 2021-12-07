@@ -4,10 +4,8 @@
  */
 
 import {translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
+import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-
-import {render} from 'lit';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';

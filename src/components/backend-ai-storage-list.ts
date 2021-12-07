@@ -4,10 +4,8 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
+import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-
-import {render} from 'lit';
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
@@ -22,14 +20,11 @@ import '@material/mwc-button/mwc-button';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column-group';
-import '@vaadin/vaadin-grid/vaadin-grid-filter';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@vaadin/vaadin-item/vaadin-item';
-// import '@vaadin/vaadin-template-renderer';
 
 import 'weightless/button';
 import 'weightless/card';

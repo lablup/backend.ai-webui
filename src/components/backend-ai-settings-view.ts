@@ -18,7 +18,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 
 import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-select';

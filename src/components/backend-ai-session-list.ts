@@ -3,15 +3,12 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
+import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-
-import {render} from 'lit';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-tree-toggle';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
