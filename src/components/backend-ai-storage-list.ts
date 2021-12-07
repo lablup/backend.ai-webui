@@ -2790,7 +2790,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     globalThis.backendaiclient.vfolder.list_invitees(vfolder_id)
       .then((res) => {
         this.invitees = res.shared;
-        this.shadowRoot.querySelector('#modify-permission-dialog').requestUpdate().then(()=>{
+        this.shadowRoot.querySelector('#modify-permission-dialog').updateComplete.then(()=>{
           this.openDialog('modify-permission-dialog');
         });
       });
