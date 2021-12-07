@@ -106,6 +106,7 @@ export default class LablupCodemirror extends LitElement {
       IronFlexAlignment,
       CodemirrorThemeMonokai,
       CodemirrorBaseStyle,
+      // language=CSS
       css`
         .CodeMirror {
           height: auto !important;
@@ -116,8 +117,11 @@ export default class LablupCodemirror extends LitElement {
   }
 
   render() {
+    // language=HTML
     return html`
-      <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai"></wc-codemirror>
+      <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai">
+        <link rel="stylesheet" href="node_modules/@vanillawc/wc-codemirror/theme/monokai.css">
+      </wc-codemirror>
     `;
   }
 }
