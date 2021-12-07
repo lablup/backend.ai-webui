@@ -485,7 +485,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   toggleRegistry(e, hostname) {
-    if (!e.target.checked) {
+    if (!e.target.selected) {
       this._changeRegistryState(hostname, false);
     } else {
       this._changeRegistryState(hostname, true);
@@ -560,8 +560,8 @@ class BackendAIRegistryList extends BackendAIPage {
       html`
         <div>
           <mwc-switch
-              @change="${(e) => this.toggleRegistry(e, rowData.item['hostname'])}"
-              ?checked="${this.allowed_registries.includes(rowData.item['hostname'])}"></mwc-switch>
+              @click="${(e) => this.toggleRegistry(e, rowData.item['hostname'])}"
+              ?selected="${this.allowed_registries.includes(rowData.item['hostname'])}"></mwc-switch>
         </div>
       `,
       root

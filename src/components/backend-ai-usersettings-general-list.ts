@@ -316,7 +316,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * @param {Event} e - click the desktop-notification-switch
    * */
   toggleDesktopNotification(e) {
-    if (e.target.checked === false) {
+    if (e.target.selected === false) {
       globalThis.backendaioptions.set('desktop_notification', false);
       this.notification.supportDesktopNotification = false;
     } else {
@@ -331,7 +331,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * @param {Event} e - click the compact-sidebar-switch
    * */
   toggleCompactSidebar(e) {
-    if (e.target.checked === false) {
+    if (e.target.selected === false) {
       globalThis.backendaioptions.set('compact_sidebar', false);
     } else {
       globalThis.backendaioptions.set('compact_sidebar', true);
@@ -344,7 +344,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * @param {Event} e - click the preserve-login-switch
    * */
   togglePreserveLogin(e) {
-    if (e.target.checked === false) {
+    if (e.target.selected === false) {
       globalThis.backendaioptions.set('preserve_login', false);
     } else {
       globalThis.backendaioptions.set('preserve_login', true);
@@ -357,7 +357,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * @param {Event} e  - click the auto-logout-switch
    */
   toggleAutoLogout(e) {
-    if (e.target.checked === false) {
+    if (e.target.selected === false) {
       globalThis.backendaioptions.set('auto_logout', false);
       const event = new CustomEvent('backend-ai-auto-logout', {detail: false});
       document.dispatchEvent(event);
@@ -374,7 +374,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * @param {Event} e - click the automatic-update-check-switch
    * */
   toggleAutomaticUploadCheck(e) {
-    if (e.target.checked === false) {
+    if (e.target.selected === false) {
       globalThis.backendaioptions.set('automatic_update_check', false);
     } else {
       globalThis.backendaioptions.set('automatic_update_check', true);
@@ -429,7 +429,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * @param {Event} e - click the beta-feature-switch
    * */
   toggleBetaFeature(e) {
-    if (e.target.checked === false) {
+    if (e.target.selected === false) {
       globalThis.backendaioptions.set('beta_feature', false);
       this.beta_feature_panel = false;
     } else {
@@ -884,7 +884,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </div>
           </div>
           <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="desktop-notification-switch" @change="${(e) => this.toggleDesktopNotification(e)}" ?checked="${globalThis.backendaioptions.get('desktop_notification')}"></mwc-switch>
+            <mwc-switch id="desktop-notification-switch" @click="${(e) => this.toggleDesktopNotification(e)}" ?selected="${globalThis.backendaioptions.get('desktop_notification')}"></mwc-switch>
           </div>
         </div>
         <div class="horizontal layout wrap setting-item">
@@ -893,7 +893,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <div class="description">${_tr('usersettings.DescUseCompactSidebar')}</div>
           </div>
           <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="compact-sidebar-switch" @change="${(e) => this.toggleCompactSidebar(e)}" ?checked="${globalThis.backendaioptions.get('compact_sidebar')}"></mwc-switch>
+            <mwc-switch id="compact-sidebar-switch" @click="${(e) => this.toggleCompactSidebar(e)}" ?selected="${globalThis.backendaioptions.get('compact_sidebar')}"></mwc-switch>
           </div>
         </div>
         <div class="horizontal layout wrap setting-item">
@@ -921,7 +921,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <div class="description">${_tr('usersettings.DescKeepLoginSessionInformation')}</div>
           </div>
           <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="preserve-login-switch" @change="${(e) => this.togglePreserveLogin(e)}" ?checked="${globalThis.backendaioptions.get('preserve_login')}"></mwc-switch>
+            <mwc-switch id="preserve-login-switch" @click="${(e) => this.togglePreserveLogin(e)}" ?selected="${globalThis.backendaioptions.get('preserve_login')}"></mwc-switch>
           </div>
         </div>
         <div class="horizontal layout wrap setting-item">
@@ -954,7 +954,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <div class="description">${_tr('usersettings.DescAutomaticUpdateCheck')}</div>
           </div>
           <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="automatic-update-check-switch" @change="${(e) => this.toggleAutomaticUploadCheck(e)}" ?checked="${globalThis.backendaioptions.get('automatic_update_check')}"></mwc-switch>
+            <mwc-switch id="automatic-update-check-switch" @click="${(e) => this.toggleAutomaticUploadCheck(e)}" ?selected="${globalThis.backendaioptions.get('automatic_update_check')}"></mwc-switch>
           </div>
         </div>
         <div class="horizontal layout wrap setting-item" style="display:none;">
@@ -963,7 +963,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <div class="description">${_tr('usersettings.DescBetaFeatures')}</div>
           </div>
           <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="beta-feature-switch" @change="${(e) => this.toggleBetaFeature(e)}" ?checked="${globalThis.backendaioptions.get('beta_feature')}"></mwc-switch>
+            <mwc-switch id="beta-feature-switch" @click="${(e) => this.toggleBetaFeature(e)}" ?selected="${globalThis.backendaioptions.get('beta_feature')}"></mwc-switch>
           </div>
         </div>
         <div class="horizontal layout wrap setting-item">
@@ -973,8 +973,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             </div>
           </div>
           <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="auto-logout-switch" @change="${(e) => this.toggleAutoLogout(e)}"
-                        ?checked="${globalThis.backendaioptions.get('auto_logout', false)}"></mwc-switch>
+            <mwc-switch id="auto-logout-switch" @click="${(e) => this.toggleAutoLogout(e)}"
+                        ?selected="${globalThis.backendaioptions.get('auto_logout', false)}"></mwc-switch>
           </div>
         </div>
         ${this.beta_feature_panel ? html`
