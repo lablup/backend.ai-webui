@@ -1251,7 +1251,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.environ_values !== {}) {
       config['env'] = this.environ_values;
     }
-    if (this.shadowRoot.querySelector('#OpenMPswitch').checked === false) {
+    if (this.shadowRoot.querySelector('#OpenMPswitch').selected === false) {
       const openMPCoreValue = this.shadowRoot.querySelector('#OpenMPCore').value;
       const openBLASCoreValue = this.shadowRoot.querySelector('#OpenBLASCore').value;
       config['env']['OMP_NUM_THREADS'] = openMPCoreValue ? Math.max(0, parseInt(openMPCoreValue)).toString() : '1';
@@ -2743,7 +2743,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Show HPC optimization options only if OpenMPswitch is not checked.
    */
   _toggleHPCOptimization() {
-    const isOpenMPChecked = this.shadowRoot.querySelector('#OpenMPswitch').checked;
+    const isOpenMPChecked = this.shadowRoot.querySelector('#OpenMPswitch').selected;
     this.shadowRoot.querySelector('#HPCOptimizationOptions').style.display = isOpenMPChecked ? 'none' : 'block';
   }
 
@@ -3096,7 +3096,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="vertical center layout">
                 <div class="horizontal center center-justified flex layout">
                   <div style="width:313px;">${_t('session.launcher.SwitchOpenMPoptimization')}</div>
-                  <mwc-switch id="OpenMPswitch" checked @change="${this._toggleHPCOptimization}"></mwc-switch>
+                  <mwc-switch id="OpenMPswitch" selected @click="${this._toggleHPCOptimization}"></mwc-switch>
                 </div>
                 <div id="HPCOptimizationOptions" style="display:none;">
                   <div class="horizontal center layout">
