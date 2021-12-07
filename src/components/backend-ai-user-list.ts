@@ -3,12 +3,10 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
+import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
-
-import {render} from 'lit';
 
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
@@ -311,7 +309,7 @@ export default class BackendAIUserList extends BackendAIPage {
   refresh() {
     this._refreshUserData();
     // update current grid to new data
-    this.shadowRoot.querySelector('#user-grid').render();
+    this.userGrid.clearCache();
   }
 
   _isActive() {

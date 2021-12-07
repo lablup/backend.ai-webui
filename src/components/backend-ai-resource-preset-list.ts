@@ -4,18 +4,14 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
+import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-
 import {BackendAIPage} from './backend-ai-page';
 
-import {render} from 'lit';
-
 import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
-import '@vaadin/vaadin-template-renderer';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
@@ -42,7 +38,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: Object}) resourcePresets;
   @property({type: Array}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Array}) _boundControlRenderer = this.controlRenderer.bind(this);
-
   constructor() {
     super();
   }
@@ -217,21 +212,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
           <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
                       .items="${this.resourcePresets}">
             <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-
-            <vaadin-grid-column resizable>
-              <template class="header">
-                <vaadin-grid-sorter path="name">${_t('resourcePreset.Name')}</vaadin-grid-sorter>
-              </template>
-              <template>
-                <div class="layout horizontal center flex">
-                  <div>[[item.name]]</div>
-                </div>
-              </template>
-            </vaadin-grid-column>
-
+            <vaadin-grid-sort-column resizable path="name" header="${_t('resourcePreset.Name')}">
+            </vaadin-grid-sort-column>
             <vaadin-grid-column width="150px" resizable header="${_t('resourcePreset.Resources')}" .renderer="${this._boundResourceRenderer}">
             </vaadin-grid-column>
-
             <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
             </vaadin-grid-column>
           </vaadin-grid>
