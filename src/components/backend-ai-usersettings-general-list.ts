@@ -279,13 +279,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.preferredSSHPort = globalThis.backendaioptions.get('custom_ssh_port');
-        if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
-          this.shell_script_edit = true;
-          this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
-          this.userconfigDialog = this.shadowRoot.querySelector('#userconfig-dialog');
-          this.rcfile = '.bashrc';
-        }
       });
+      if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
+        this.shell_script_edit = true;
+        this.bootstrapDialog = this.shadowRoot.querySelector('#bootstrap-dialog');
+        this.userconfigDialog = this.shadowRoot.querySelector('#userconfig-dialog');
+        this.rcfile = '.bashrc';
+      }
     } else { // already connected
       this.preferredSSHPort = globalThis.backendaioptions.get('custom_ssh_port');
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191231')) {
