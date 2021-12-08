@@ -4,7 +4,9 @@
  */
 
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -16,7 +18,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 
 import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-select';
@@ -94,7 +96,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     return 'backend-ai-settings-view';
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,

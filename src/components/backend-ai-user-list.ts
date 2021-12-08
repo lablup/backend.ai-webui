@@ -3,10 +3,10 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {BackendAIPage} from './backend-ai-page';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
-import {render} from 'lit-html';
+import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
@@ -77,7 +77,7 @@ export default class BackendAIUserList extends BackendAIPage {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -309,7 +309,7 @@ export default class BackendAIUserList extends BackendAIPage {
   refresh() {
     this._refreshUserData();
     // update current grid to new data
-    this.shadowRoot.querySelector('#user-grid').render();
+    this.userGrid.clearCache();
   }
 
   _isActive() {

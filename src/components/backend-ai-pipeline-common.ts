@@ -3,7 +3,8 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {customElement, property} from 'lit-element';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import tus from '../lib/tus';
