@@ -259,7 +259,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             class="fg blue"
             @click=${() => {
     this.selectedIndex = rowData.index;
-    this.shadowRoot.querySelector('#modify-scaling-group-active').checked = this.scalingGroups[rowData.index].is_active;
+    this.shadowRoot.querySelector('#modify-scaling-group-active').selected = this.scalingGroups[rowData.index].is_active;
     this._launchDialogById('#modify-scaling-group-dialog');
   }}
           ><wl-icon>settings</wl-icon></wl-button>

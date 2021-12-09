@@ -454,8 +454,8 @@ export default class BackendAIUserList extends BackendAIPage {
     const confirmEl = this.shadowRoot.querySelector('#confirm');
     const confirm = confirmEl.value;
     const description = this.shadowRoot.querySelector('#description').value;
-    const is_active = this.shadowRoot.querySelector('#is_active').checked;
-    const need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
+    const is_active = this.shadowRoot.querySelector('#is_active').selected;
+    const need_password_change = this.shadowRoot.querySelector('#need_password_change').selected;
 
     this._togglePasswordInputRequired();
 
@@ -632,13 +632,13 @@ export default class BackendAIUserList extends BackendAIPage {
                   <p class="label">${_text('credential.DescActiveUser')}</p>
                   <mwc-switch
                       id="is_active"
-                      ?checked="${this.userInfo.is_active}"></mwc-switch>
+                      ?selected="${this.userInfo.is_active}"></mwc-switch>
                 </div>
                 <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text('credential.DescRequirePasswordChange')}</p>
                   <mwc-switch
                       id="need_password_change"
-                      ?checked=${this.userInfo.need_password_change}></mwc-switch>
+                      ?selected=${this.userInfo.need_password_change}></mwc-switch>
                 </div>` : html`
                     <mwc-textfield
                         disabled
