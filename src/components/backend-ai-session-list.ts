@@ -1314,13 +1314,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                 @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
                 @mouseleave="${() => this._removeMountedFolderDropdown()}"
               >
-                ${rowData.item.mounts.map((item, index, list) => {
-                  if (index + 1 === list.length) {
-                    return `${item.replace(/[[\],'"]/g, '').split(' ')[0]}`
-                  } else {
-                    return `${item.replace(/[[\],'"]/g, '').split(' ')[0]}, `
-                  }
-                })}
+                ${rowData.item.mounts.map((item, index, list) => index + 1 === list.length ? `${item.replace(/[[\],'"]/g, '').split(' ')[0]}` : `${item.replace(/[[\],'"]/g, '').split(' ')[0]}, ` )}
               </button>
             ` : html`
             <wl-icon class="indicator no-mount">folder_open</wl-icon>
