@@ -846,7 +846,7 @@ export default class BackendAIData extends BackendAIPage {
         permission = 'rw';
       }
     }
-    cloneable = cloneableEl ? cloneableEl.checked : false;
+    cloneable = cloneableEl ? cloneableEl.selected : false;
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {
       const input = {

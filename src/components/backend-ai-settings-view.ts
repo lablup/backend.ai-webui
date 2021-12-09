@@ -310,7 +310,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                      <mwc-switch id="allow-agent-registration-switch" checked disabled></mwc-switch>
+                      <mwc-switch id="allow-agent-registration-switch" selected disabled></mwc-switch>
                     </div>
                   </div>
                   <div class="horizontal layout setting-item">
@@ -347,7 +347,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                      <mwc-switch id="cuda-gpu-support-switch" ?checked="${this.options['cuda_gpu']}" disabled></mwc-switch>
+                      <mwc-switch id="cuda-gpu-support-switch" ?selected="${this.options['cuda_gpu']}" disabled></mwc-switch>
                     </div>
                   </div>
                   <div class="horizontal layout setting-item">
@@ -357,7 +357,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                      <mwc-switch id="rocm-gpu-support-switch" ?checked="${this.options['rocm_gpu']}" disabled></mwc-switch>
+                      <mwc-switch id="rocm-gpu-support-switch" ?selected="${this.options['rocm_gpu']}" disabled></mwc-switch>
                     </div>
                   </div>
                   <div class="horizontal layout setting-item">
@@ -388,7 +388,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                      <mwc-switch id="fractional-gpu-switch" ?checked="${this.options['cuda_fgpu']}" disabled></mwc-switch>
+                      <mwc-switch id="fractional-gpu-switch" ?selected="${this.options['cuda_fgpu']}" disabled></mwc-switch>
                     </div>
                   </div>
                   <div class="horizontal layout setting-item">
@@ -398,7 +398,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                      <mwc-switch id="tpu-switch" ?checked="${this.options['tpu']}" disabled></mwc-switch>
+                      <mwc-switch id="tpu-switch" ?selected="${this.options['tpu']}" disabled></mwc-switch>
                     </div>
                   </div>
                 </div>
