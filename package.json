@@ -53,6 +53,7 @@
     "@vaadin/vaadin-item": "^22.0.0",
     "@vaadin/vaadin-progress-bar": "^22.0.0",
     "@vaadin/vaadin-template-renderer": "^22.0.0",
+    "@vaadin/vaadin-text-field": "^22.0.1",
     "@vanillawc/wc-codemirror": "^2.1.0",
     "@webcomponents/webcomponentsjs": "^2.6.0",
     "bufferutil": "^4.0.5",
