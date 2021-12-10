@@ -839,7 +839,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   _showConfigDialog(agentId) {
     this.agentDetail = this.agentsObject[agentId];
     const schedulableToggle = this.shadowRoot.querySelector('#schedulable-switch');
-    schedulableToggle.checked = this.agentDetail?.schedulable ?? false;
+    schedulableToggle.selected = this.agentDetail?.schedulable ?? false;
     this.agentSettingDialog.show();
     return;
   }
@@ -850,7 +850,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   _modifyAgentSetting() {
-    const schedulable = this.shadowRoot.querySelector('#schedulable-switch').checked;
+    const schedulable = this.shadowRoot.querySelector('#schedulable-switch').selected;
     if (this.agentDetail?.schedulable !== schedulable) {
       globalThis.backendaiclient.agent.update(this.agentDetail.id, {'schedulable': schedulable}).then( (res) => {
         this.notification.text = _text('agent.AgentSettingUpdated');
@@ -1031,7 +1031,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         <span slot="title">${_t('agent.AgentSetting')}</span>
         <div slot="content" class="horizontal layout justified center">
           <span>${_t('agent.Schedulable')}</span>
-          <mwc-switch id="schedulable-switch" ?checked="${this.agentDetail?.schedulable}"></mwc-switch>
+          <mwc-switch id="schedulable-switch" ?selected="${this.agentDetail?.schedulable}"></mwc-switch>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
         <mwc-button
