@@ -4,8 +4,10 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {unsafeHTML} from 'lit-html/directives/unsafe-html';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
@@ -25,7 +27,7 @@ import './backend-ai-session-launcher';
 import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
 import '../plastics/lablup-piechart/lablup-piechart';
-import marked from 'marked/lib/marked.esm.js';
+import {marked} from 'marked';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -85,7 +87,7 @@ export default class BackendAISummary extends BackendAIPage {
     this.invitations = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,

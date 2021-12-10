@@ -71,7 +71,7 @@
  @demo demo/index.html
  */
 
-import {css} from 'lit-element';
+import {css} from 'lit';
 
 export const IronFlexLayout =
   // language=CSS

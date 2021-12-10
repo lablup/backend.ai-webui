@@ -3,10 +3,11 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property, query} from 'lit-element';
-import {unsafeHTML} from 'lit-html/directives/unsafe-html';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
+
 import {BackendAIPage} from './backend-ai-page';
-import {render} from 'lit-html';
 
 import '@material/mwc-button';
 import '@material/mwc-checkbox/mwc-checkbox';
@@ -202,7 +203,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return 'backend-ai-session-launcher';
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -1249,7 +1250,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.environ_values !== {}) {
       config['env'] = this.environ_values;
     }
-    if (this.shadowRoot.querySelector('#OpenMPswitch').checked === false) {
+    if (this.shadowRoot.querySelector('#OpenMPswitch').selected === false) {
       const openMPCoreValue = this.shadowRoot.querySelector('#OpenMPCore').value;
       const openBLASCoreValue = this.shadowRoot.querySelector('#OpenBLASCore').value;
       config['env']['OMP_NUM_THREADS'] = openMPCoreValue ? Math.max(0, parseInt(openMPCoreValue)).toString() : '1';
@@ -2741,7 +2742,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Show HPC optimization options only if OpenMPswitch is not checked.
    */
   _toggleHPCOptimization() {
-    const isOpenMPChecked = this.shadowRoot.querySelector('#OpenMPswitch').checked;
+    const isOpenMPChecked = this.shadowRoot.querySelector('#OpenMPswitch').selected;
     this.shadowRoot.querySelector('#HPCOptimizationOptions').style.display = isOpenMPChecked ? 'none' : 'block';
   }
 
@@ -3094,7 +3095,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="vertical center layout">
                 <div class="horizontal center center-justified flex layout">
                   <div style="width:313px;">${_t('session.launcher.SwitchOpenMPoptimization')}</div>
-                  <mwc-switch id="OpenMPswitch" checked @change="${this._toggleHPCOptimization}"></mwc-switch>
+                  <mwc-switch id="OpenMPswitch" selected @click="${this._toggleHPCOptimization}"></mwc-switch>
                 </div>
                 <div id="HPCOptimizationOptions" style="display:none;">
                   <div class="horizontal center layout">

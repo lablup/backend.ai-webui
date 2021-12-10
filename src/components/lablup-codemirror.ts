@@ -2,7 +2,8 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
@@ -99,12 +100,13 @@ export default class LablupCodemirror extends LitElement {
     this.refresh();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       IronFlex,
       IronFlexAlignment,
       CodemirrorThemeMonokai,
       CodemirrorBaseStyle,
+      // language=CSS
       css`
         .CodeMirror {
           height: auto !important;
@@ -115,8 +117,11 @@ export default class LablupCodemirror extends LitElement {
   }
 
   render() {
+    // language=HTML
     return html`
-      <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai"></wc-codemirror>
+      <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai">
+        <link rel="stylesheet" href="node_modules/@vanillawc/wc-codemirror/theme/monokai.css">
+      </wc-codemirror>
     `;
   }
 }
