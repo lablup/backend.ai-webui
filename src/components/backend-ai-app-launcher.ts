@@ -56,6 +56,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
   @property({type: Object}) appController = Object();
   @property({type: Object}) openPortToPublic = false;
+  @property({type: Array}) allowedHosts = [];
   @property({type: Array}) appOrder;
   @property({type: Array}) appSupportWithCategory = [];
   @property({type: Object}) appEnvs = Object();
@@ -125,6 +126,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         #app-dialog {
           --component-width: 400px;
+        }
+
+        #allowed-hosts-container {
+          margin-left: 2em;
+          margin-bottom: 1em;
+          display:none;
         }
 
         mwc-textfield {
@@ -994,6 +1001,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     content.appendChild(div);
   }
 
+  _toggleChkOpenToPublic() {
+    const checkbox = this.shadowRoot.querySelector('#chk-open-to-public');
+    const allowedHostsContainer = this.shadowRoot.querySelector('#allowed-hosts-container');
+    if (checkbox.checked) {
+      allowedHostsContainer.style.display = 'block';
+    } else {
+      allowedHostsContainer.style.display = 'none';
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -1020,15 +1037,21 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div style="padding:10px 20px 15px 20px">
             ${globalThis.isElectron || !this.openPortToPublic ? `` : html`
               <div class="horizontal layout center">
-                <mwc-checkbox id="chk-open-to-public" style="margin-right:0.5em"></mwc-checkbox>
+                <mwc-checkbox id="chk-open-to-public" style="margin-right:0.5em"
+                              @change="${this._toggleChkOpenToPublic}"></mwc-checkbox>
                 ${_t('session.OpenToPublic')}
+              </div>
+              <div class="horizontal layout center" id="allowed-hosts-container">
+                ${_t('session.AllowedHosts')}
+                <mwc-textfield id="allowed-hosts" style="margin-left:1em;" helperPersistent
+                               value="${this.allowedHosts}" .helper="(${_t('session.CommaSeparated')})"></mwc-textfield>
               </div>
             `}
             <div class="horizontal layout center">
-              <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em"></mwc-checkbox>
+              <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em;"></mwc-checkbox>
               ${_t('session.TryPreferredPort')}
               <mwc-textfield id="app-port" type="number" no-label-float value="10250"
-                             min="1025" max="65534" style="margin-left:1em; width:90px"
+                             min="1025" max="65534" style="margin-left:1em;width:90px"
                              @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
             </div>
           </div>

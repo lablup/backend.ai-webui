@@ -236,6 +236,8 @@
     "Agent": "Agent",
     "Usage": "Usage",
     "OpenToPublic": "Open app to public",
+    "AllowedHosts":"Allowed Hosts",
+    "CommaSeparated": "comma-separated",
     "TryPreferredPort": "Try preferred port",
     "SFTPDescription": "Use your favorite SSH/SFTP application to connect.",
     "ConnectionInformation": "Connection Information",
