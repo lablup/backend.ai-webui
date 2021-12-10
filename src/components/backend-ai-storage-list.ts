@@ -127,7 +127,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Number}) minimumResource = {
     cpu: 1,
     mem: 0.5
-  }
+  };
   @property({type: Array}) filebrowserSupportedImages = [];
   @property({type: Object}) storageProxyInfo = Object();
   @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
@@ -136,7 +136,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     GiB: Math.pow(2, 30),
     TiB: Math.pow(2, 40),
     PiB: Math.pow(2, 50)
-  }
+  };
   @property({type: Object}) maxSize = {
     value: 0,
     unit: 'MiB'
