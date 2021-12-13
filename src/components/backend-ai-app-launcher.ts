@@ -537,7 +537,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return Promise.resolve(false);
     }
     const openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
-    const allowedHosts = this.shadowRoot.querySelector('#allowed-hosts').value;
+    const allowedHosts = this.shadowRoot.querySelector('#allowed-hosts')?.value;
     let openToPublic = false;
     if (openToPublicCheckBox == null) { // Null or undefined
     } else {
@@ -551,7 +551,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (openToPublic) {
       uri += '&open_to_public=true';
     }
-    if (openToPublic && allowedHosts.length > 0) {
+    if (openToPublic && allowedHosts?.length > 0) {
       uri += '&allowed_hosts=' + allowedHosts.replace(/\s/g, '');
     }
     if (envs !== null && Object.keys(envs).length > 0) {
