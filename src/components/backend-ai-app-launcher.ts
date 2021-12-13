@@ -56,7 +56,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
   @property({type: Object}) appController = Object();
   @property({type: Object}) openPortToPublic = false;
-  @property({type: Array}) allowedHosts = [];
   @property({type: Array}) appOrder;
   @property({type: Array}) appSupportWithCategory = [];
   @property({type: Object}) appEnvs = Object();
@@ -538,6 +537,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return Promise.resolve(false);
     }
     const openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
+    const allowedHosts = this.shadowRoot.querySelector('#allowed-hosts').value;
     let openToPublic = false;
     if (openToPublicCheckBox == null) { // Null or undefined
     } else {
@@ -550,6 +550,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     if (openToPublic) {
       uri += '&open_to_public=true';
+    }
+    if (openToPublic && allowedHosts.length > 0) {
+      uri += '&allowed_hosts=' + allowedHosts.replace(/\s/g, '');
     }
     if (envs !== null && Object.keys(envs).length > 0) {
       uri = uri + '&envs=' + encodeURI(JSON.stringify(envs));
@@ -1044,7 +1047,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               <div class="horizontal layout center" id="allowed-hosts-container">
                 ${_t('session.AllowedHosts')}
                 <mwc-textfield id="allowed-hosts" style="margin-left:1em;" helperPersistent
-                               value="${this.allowedHosts}" .helper="(${_t('session.CommaSeparated')})"></mwc-textfield>
+                               .helper="(${_t('session.CommaSeparated')})"></mwc-textfield>
               </div>
             `}
             <div class="horizontal layout center">
