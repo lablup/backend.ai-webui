@@ -1314,6 +1314,8 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   configRenderer(root, column?, rowData?) {
+    // extract mounted folder names and convert them to an array.
+    let mountedFolderList: Array<string> = rowData.item.mounts.map(elem => JSON.parse(elem.replace(/'/g, '"'))[0]);
     render(
       html`
         <div class="layout horizontal center flex">
@@ -1324,7 +1326,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                 @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
                 @mouseleave="${() => this._removeMountedFolderDropdown()}"
               >
-                ${rowData.item.mounts.map((item, index, list) => index + 1 === list.length ? `${item.replace(/[[\],'"]/g, '').split(' ')[0]}` : `${item.replace(/[[\],'"]/g, '').split(' ')[0]}, ` )}
+                ${mountedFolderList.join(", ")}
               </button>
             ` : html`
             <wl-icon class="indicator no-mount">folder_open</wl-icon>
@@ -1662,7 +1664,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         </vaadin-grid-filter-column>
         <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}"
                             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('session.Configuration')}"
+        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
                             .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}"
                             .renderer="${this._boundUsageRenderer}">
