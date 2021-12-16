@@ -3,7 +3,8 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -41,7 +42,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   @property({type: Object}) client = Object();
   @property({type: Object}) notification = Object();
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -68,6 +69,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
   detectIE() {
     try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const isIE = /* @cc_on!@*/false || !!document.documentMode;
       if (! isIE) {
@@ -242,6 +244,12 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         // return;
         launchNewSession = true; // no existing session can launch the requested app
       }
+      if (sess !== null && 'session_id' in sess) {
+        sessionId = sess.session_id;
+      } else {
+        sessionId = null;
+      }
+    } else { // no existing compute session. create one.
     }
 
     if (launchNewSession) { // no existing compute session. create one.

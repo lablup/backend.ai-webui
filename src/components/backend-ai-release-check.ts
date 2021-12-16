@@ -4,7 +4,8 @@
  */
 
 import {get as _text} from 'lit-translate';
-import {CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 /**
  Backend AI Release Check
@@ -37,7 +38,7 @@ export default class BackendAiReleaseCheck extends LitElement {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [];
   }
 

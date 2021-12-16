@@ -3,7 +3,9 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import '@material/mwc-select';
@@ -78,7 +80,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return 'backend-ai-resource-monitor';
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -707,7 +709,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
    */
   _toggleResourceGauge(e) {
     const legend = this.shadowRoot.querySelector('#resource-legend');
-    if (e.target.checked) {
+    if (e.target.selected) {
       this.resourceGauge.style.display = 'flex';
       if (legend) {
         legend.style.display = 'flex';
@@ -895,7 +897,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             ${_t('session.launcher.ResourceMonitorToggle')}
           </p>
           <mwc-switch class="fg blue ${this.direction}" id="resource-gauge-switch-button"
-            @change="${(e) => this._toggleResourceGauge(e)}">
+            @click="${(e) => this._toggleResourceGauge(e)}">
           </mwc-switch>
         </div>
       </div>
