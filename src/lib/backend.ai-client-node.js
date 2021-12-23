@@ -473,6 +473,9 @@ class Client {
             this._features['avoid-hol-blocking'] = true;
             this._features['session-detail-status'] = true;
         }
+        if (this.isManagerVersionCompatibleWith('21.09')) {
+            this._features['schedulable'] = true;
+        }
     }
     /**
      * Return if manager is compatible with given version.
@@ -1850,6 +1853,32 @@ class Agent {
             `}`;
         let v = { 'status': status };
         return this.client.query(q, v, null, timeout);
+    }
+    /**
+     * modify agent configuration with given name and fields.
+     *
+     * @param {string} agent_id - resource preset name.
+     * @param {json} input - resource preset specification and data. Required fields are:
+     * {
+     *   'schedulable': schedulable
+     * };
+     */
+    async update(id = null, input) {
+        if (this.client.is_superadmin === true && id !== null) {
+            let q = `mutation($id: String!, $input: ModifyAgentInput!) {` +
+                `  modify_agent(id: $id, props: $input) {` +
+                `    ok msg ` +
+                `  }` +
+                `}`;
+            let v = {
+                'id': id,
+                'input': input
+            };
+            return this.client.query(q, v);
+        }
+        else {
+            return Promise.resolve(false);
+        }
     }
 }
 class StorageProxy {
