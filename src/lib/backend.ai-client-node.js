@@ -471,6 +471,7 @@ class Client {
         }
         if (this.isManagerVersionCompatibleWith('20.09.16')) {
             this._features['avoid-hol-blocking'] = true;
+            this._features['session-detail-status'] = true;
         }
         if (this.isManagerVersionCompatibleWith('21.09')) {
             this._features['schedulable'] = true;
