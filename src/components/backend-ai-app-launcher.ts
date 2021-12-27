@@ -681,7 +681,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   async _runThisApp(e) {
-    const controller = e.target;
+    const controller = e.target.closest('mwc-icon-button');
     this.appController['app-name'] = controller['app-name'];
     const controls = controller.closest('#app-dialog');
     this.appController['session-uuid'] = controls.getAttribute('session-uuid');
