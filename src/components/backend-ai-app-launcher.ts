@@ -428,6 +428,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
     });
     this.openPortToPublic = globalThis.backendaiclient._config.openPortToPublic;
+    this._toggleChkOpenToPublic();
     const dialog = this.shadowRoot.querySelector('#app-dialog');
     dialog.setAttribute('session-uuid', sessionUuid);
     dialog.setAttribute('access-key', accessKey);
@@ -1007,6 +1008,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   _toggleChkOpenToPublic() {
     const checkbox = this.shadowRoot.querySelector('#chk-open-to-public');
     const allowedHostsContainer = this.shadowRoot.querySelector('#allowed-hosts-container');
+    if (!checkbox || !allowedHostsContainer) return;
     if (checkbox.checked) {
       allowedHostsContainer.style.display = 'block';
     } else {
@@ -1040,7 +1042,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div style="padding:10px 20px 15px 20px">
             ${globalThis.isElectron || !this.openPortToPublic ? `` : html`
               <div class="horizontal layout center">
-                <mwc-checkbox id="chk-open-to-public" style="margin-right:0.5em"
+                <mwc-checkbox id="chk-open-to-public" style="margin-right:0.5em;"
                               @change="${this._toggleChkOpenToPublic}"></mwc-checkbox>
                 ${_t('session.OpenToPublic')}
               </div>
@@ -1054,7 +1056,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em;"></mwc-checkbox>
               ${_t('session.TryPreferredPort')}
               <mwc-textfield id="app-port" type="number" no-label-float value="10250"
-                             min="1025" max="65534" style="margin-left:1em;width:90px"
+                             min="1025" max="65534" style="margin-left:1em;width:90px;"
                              @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
             </div>
           </div>
