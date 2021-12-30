@@ -1320,6 +1320,80 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.sessionStatusInfoDialog.show();
   }
 
+  _validateSessionName(e) {
+    const sessionNames: string[] = this.compute_sessions.map((sessions) => sessions[this.sessionNameField]);
+    const sessionNameContainer = e.target.parentNode;
+    const currentName = sessionNameContainer.querySelector('#session-name-field').innerText;
+    const renameField = sessionNameContainer.querySelector('#session-rename-field');
+    renameField.validityTransform = (value, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          renameField.validationMessage = _text('session.SessionNameRequired');
+          return {
+            valid: nativeValidity.valid,
+            valueMissing: !nativeValidity.valid
+          };
+        } else {
+          renameField.validationMessage = _text('session.EnterValidSessionName');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        const isValid = (!sessionNames.includes(value) || value === currentName);
+        if (!isValid) {
+          renameField.validationMessage = _text('session.SessionNameAlreadyExist');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
+    };
+  }
+
+  _renameSessionName(id, e) {
+    const sessionNameContainer = e.target.parentNode;
+    const nameField = sessionNameContainer.querySelector('#session-name-field');
+    const renameField = sessionNameContainer.querySelector('#session-rename-field');
+
+    if (nameField.style.display === 'none') {
+      if (renameField.checkValidity()) {
+        const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? nameField.value : id;
+        globalThis.backendaiclient.rename(sessionId, renameField.value).then((req) => {
+          this.refreshList();
+          this.notification.text = _text('session.SessionRenamed');
+          this.notification.show();
+        }).catch((err) => {
+          renameField.value = nameField.value;
+          if (err && err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          }
+        }).finally(() => {
+          this._toggleSessionNameField(nameField, renameField);
+        });
+      } else {
+        renameField.reportValidity();
+        return;
+      }
+    } else {
+      this._toggleSessionNameField(nameField, renameField);
+    }
+  }
+
+  _toggleSessionNameField(nameField, renameField) {
+    if (renameField.style.display === 'block') {
+      nameField.style.display = 'block';
+      renameField.style.display = 'none';
+    } else {
+      nameField.style.display = 'none';
+      renameField.style.display = 'block';
+    }
+  }
+
   /**
    * Render session information - category, color, description, etc.
    *
@@ -1330,8 +1404,32 @@ export default class BackendAiSessionList extends BackendAIPage {
   sessionInfoRenderer(root, column?, rowData?) {
     render(
       html`
+        <style>
+          #session-name-field {
+            display: block;
+            margin-left: 16px;
+          }
+          #session-rename-field {
+            display: none;
+            --mdc-text-field-fill-color: transparent;
+            --mdc-text-field-disabled-fill-color: transparent;
+            --mdc-ripple-color: transparent;
+          }
+        </style>
         <div class="layout vertical start">
-          <div>${rowData.item[this.sessionNameField]}</div>
+          <div class="horizontal center center-justified layout">
+            <div id="session-name-field">${rowData.item[this.sessionNameField]}</div>
+            ${(this._isRunning && !this._isPreparing(rowData.item.status)) ? html`
+              <mwc-textfield id="session-rename-field" no-label-float autofocus
+                             pattern="[a-zA-Z0-9_-]{4,}" maxLength="64" required
+                             helper="${_t('maxLength.64chars')}" autoValidate
+                             validationMessage="${_t('session.EnterValidSessionName')}"
+                             value="${rowData.item[this.sessionNameField]}"
+                             @input="${(e) => this._validateSessionName(e)}"></mwc-textfield>
+              <mwc-icon-button @click="${(e) => this._renameSessionName(rowData.item.session_id, e)}" icon="edit"></mwc-icon-button>
+            ` : html`
+            `}
+          </div>
           <div class="horizontal center center-justified layout">
           ${rowData.item.icon ? html`
             <img src="resources/icons/${rowData.item.icon}" style="width:32px;height:32px;margin-right:10px;" />
@@ -1356,28 +1454,29 @@ export default class BackendAiSessionList extends BackendAIPage {
                     `;
   })}
               </div>`) : html``}
-          ${rowData.item.additional_reqs ? html`
-            <div class="layout horizontal center wrap">
-              ${rowData.item.additional_reqs.map((tag) => {
+              ${rowData.item.additional_reqs ? html`
+                <div class="layout horizontal center wrap">
+                  ${rowData.item.additional_reqs.map((tag) => {
     return html`
-                  <lablup-shields app=""
-                                  color="green"
-                                  description="${tag}"
+                      <lablup-shields app=""
+                                      color="green"
+                                      description="${tag}"
+                                      ui="round"
+                                      style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                    `;
+  })}
+                </div>
+              ` : html``}
+              ${rowData.item.cluster_size > 1 ? html`
+                <div class="layout horizontal center wrap">
+                  <lablup-shields app="${rowData.item.cluster_mode === 'single-node' ? 'Multi-container': 'Multi-node'}"
+                                  color="blue"
+                                  description="${ 'X ' + rowData.item.cluster_size}"
                                   ui="round"
                                   style="margin-top:3px;margin-right:3px;"></lablup-shields>
-                `;
-  })}
+                </div>
+              `: html``}
             </div>
-          ` : html``}
-          ${rowData.item.cluster_size > 1 ? html`
-            <div class="layout horizontal center wrap">
-              <lablup-shields app="${rowData.item.cluster_mode === 'single-node' ? 'Multi-container': 'Multi-node'}"
-                              color="blue"
-                              description="${ 'X ' + rowData.item.cluster_size}"
-                              ui="round"
-                              style="margin-top:3px;margin-right:3px;"></lablup-shields>
-            </div>
-          `: html``}
           </div>
         </div>
       `, root
@@ -1455,7 +1554,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * */
   configRenderer(root, column?, rowData?) {
     // extract mounted folder names and convert them to an array.
-    let mountedFolderList: Array<string> = rowData.item.mounts.map(elem => JSON.parse(elem.replace(/'/g, '"'))[0]);
+    const mountedFolderList: Array<string> = rowData.item.mounts.map((elem) => JSON.parse(elem.replace(/'/g, '"'))[0]);
     render(
       html`
         <div class="layout horizontal center flex">
@@ -1464,9 +1563,8 @@ export default class BackendAiSessionList extends BackendAIPage {
               <wl-icon class="fg green indicator">folder_open</wl-icon>
               <button class="mount-button"
                 @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
-                @mouseleave="${() => this._removeMountedFolderDropdown()}"
-              >
-                ${mountedFolderList.join(", ")}
+                @mouseleave="${() => this._removeMountedFolderDropdown()}">
+                ${mountedFolderList.join(', ')}
               </button>
             ` : html`
             <wl-icon class="indicator no-mount">folder_open</wl-icon>
