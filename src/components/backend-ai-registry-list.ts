@@ -253,11 +253,8 @@ class BackendAIRegistryList extends BackendAIPage {
     const input = {};
     input[''] = url;
 
-    if (username !== '') {
-      input['username'] = username;
-
-      if (password !== '') input['password'] = password;
-    }
+    input['username'] = username;
+    input['password'] = password;
 
     input['type'] = registerType;
     if (['harbor', 'harbor2'].includes(registerType)) {
@@ -519,7 +516,7 @@ class BackendAIRegistryList extends BackendAIPage {
     render(
       html`
         <div>
-          <input type="password" id="registry-password" readonly value="[[item.password]]"/>
+          <input type="password" id="registry-password" readonly value="${rowData.item['password']}"/>
         </div>
       `
       , root
