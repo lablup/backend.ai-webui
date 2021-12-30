@@ -1353,6 +1353,13 @@ export default class BackendAiSessionList extends BackendAIPage {
     };
   }
 
+  /**
+   * Update a session's name if session-rename-field is visiable.
+   * 
+   * @param {String} id - original session id
+   * @param {Object} e - click the edit icon
+   * @returns {void}
+   */
   _renameSessionName(id, e) {
     const sessionNameContainer = e.target.parentNode;
     const nameField = sessionNameContainer.querySelector('#session-name-field');
@@ -1391,6 +1398,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     } else {
       nameField.style.display = 'none';
       renameField.style.display = 'block';
+      renameField.focus();
     }
   }
 
@@ -1420,8 +1428,8 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div class="horizontal center center-justified layout">
             <div id="session-name-field">${rowData.item[this.sessionNameField]}</div>
             ${(this._isRunning && !this._isPreparing(rowData.item.status)) ? html`
-              <mwc-textfield id="session-rename-field" no-label-float autofocus
-                             pattern="[a-zA-Z0-9_-]{4,}" maxLength="64" required
+              <mwc-textfield id="session-rename-field" required
+                             pattern="[a-zA-Z0-9_-]{4,}" maxLength="64"
                              helper="${_t('maxLength.64chars')}" autoValidate
                              validationMessage="${_t('session.EnterValidSessionName')}"
                              value="${rowData.item[this.sessionNameField]}"
