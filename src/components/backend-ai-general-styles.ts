@@ -1,4 +1,4 @@
-import {css} from 'lit-element';
+import {css} from 'lit';
 import {PaperColor} from './paper-color';
 
 export const BackendAiStyles = [
@@ -768,6 +768,12 @@ export const BackendAiStyles = [
       margin-top: 5px;
       margin-left: 5px;
       padding-bottom: 5px;
+    }
+
+    span.helper-text {
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: var(--general-textfield-selected-color);
     }
 
     .resource-name {

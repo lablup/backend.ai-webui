@@ -228,6 +228,10 @@
     "Terminate": "강제종료",
     "SessionInfo": "세션 정보",
     "Status": "상태",
+    "StatusInfo": "상태 정보",
+    "StatusDetail": "상세 정보",
+    "TotalRetries": "생성 시도 횟수",
+    "LastTry": "최근 시도한 시간",
     "Control": "제어",
     "Configuration": "구성",
     "core": "코어",
@@ -311,6 +315,10 @@
     "Terminated": "종료됨",
     "Maintaining": "보수중",
     "Status": "상태",
+    "Schedulable": "스케쥴링 가능 여부",
+    "AgentSetting": "에이전트 설정",
+    "AgentSettingUpdated": "에이전트 설정이 변경되었습니다.",
+    "NoChanges": "변경 사항이 없습니다.",
     "DetailedInformation": "상세 정보",
     "Running": "실행중",
     "BackendType": "백엔드",
@@ -478,7 +486,11 @@
       "Edit": "수정",
       "EditDelete": "수정 및 삭제",
       "KickOut": "권한 회수",
-      "CannotDeleteFolder": "폴더가 하나 이상의 세션에 마운트 되어있어 삭제할 수 없습니다. 세션 종료 후 삭제가 가능합니다."
+      "CannotDeleteFolder": "폴더가 하나 이상의 세션에 마운트 되어있어 삭제할 수 없습니다. 세션 종료 후 삭제가 가능합니다.",
+      "FolderUsage": "폴더 사용량",
+      "FolderUsing": "사용량",
+      "FolderQuota": "가용량",
+      "MaxFolderQuota": "최대 할당 가능 용량"
     },
     "explorer": {
       "Delete": "삭제...",
@@ -780,7 +792,8 @@
     "ResourceGroupDeleted": "자원 그룹이 성공적으로 삭제되었습니다.",
     "EnterValidResourceGroupName": "올바른 자원 그룹 명을 입력해주세요.",
     "ResourceGroupNameRequired": "자원 그룹 이름이 필요합니다.",
-    "ResourceGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다."
+    "ResourceGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다.",
+    "WsproxyAddress": "WSProxy 서버 주소"
   },
   "maintenance": {
     "General": "일반",
@@ -1018,7 +1031,7 @@
     "PolicyAgreement_2": " 및 ",
     "PolicyAgreement_3": "을 확인했으며, 이에 동의합니다.",
     "TermsOfService": "약관",
-    "RequestAgreementTermsOfService": "상기 서비스 이용약관에 동의합니다.",
+    "RequestAgreementTermsOfService": "약관 및 개인정보보호정책 동의는 필수 체크 항목입니다.",
     "PrivacyPolicy": "개인정보보호정책",
     "ThankYou": "감사합니다!",
     "VerificationMessage": "인증 메일을 전송했습니다. 가입하신 계정으로 로그인 하기 전에 전송된 메일을 읽고 인증을 완료해 주십시오.",
@@ -1119,6 +1132,7 @@
     "WrongAPIServerAddress": "잘못된 API 서버 주소",
     "LoginFailed": "로그인 실패. 로그인 정보를 확인하세요.",
     "VirtualFolderAlreadyExist": "같은 이름의 폴더가 이미 존재합니다. 폴더를 삭제하거나 초대를 거절하세요.",
+    "CannotChangeVirtualFolderOption": "폴더 소유자가 아닌 경우 폴더 옵션을 변경할 수 없습니다.",
     "MaximumVfolderCreation": "자원 정책에 따라 더 이상의 폴더를 만들 수 없습니다.",
     "LoginInformationMismatch": "로그인 실패. 로그인 정보를 확인하세요.",
     "ReachedResourceLimit": "자원 제한에 도달했습니다. 자원 할당량을 확인하세요.",

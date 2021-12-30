@@ -261,14 +261,14 @@ class Client {
    * @param {AbortController.signal} signal - Request signal to abort fetch
    * @param {number} timeout - Custom timeout (sec.) If no timeout is given, default timeout is used.
    * @param {number} retry - an integer to retry this request
+   * @param {Object} opts - Options
    */
-  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0, retry: number = 0) {
+  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0, retry: number = 0, opts ={}) {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
     let errorDesc = '';
     let resp, body, requestTimer;
-
     try {
       if (rqst.method == 'GET') {
         rqst.body = undefined;
@@ -319,7 +319,7 @@ class Client {
     } catch (err) {
       if (retry > 0) {
         await new Promise(r => setTimeout(r, 2000)); // Retry after 2 seconds.
-        return this._wrapWithPromise(rqst, rawFile, signal, timeout, retry - 1);
+        return this._wrapWithPromise(rqst, rawFile, signal, timeout, retry - 1, opts);
       }
       let error_message;
       if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
@@ -434,7 +434,9 @@ class Client {
       "title": body.title,
       "message" : ""
     };
-
+    if ('log' in opts) {
+      current_log.requestParameters = opts['log'];
+    }
     log_stack.push(current_log);
 
     if(previous_log) {
@@ -553,6 +555,10 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('20.09.16')) {
       this._features['avoid-hol-blocking'] = true;
+      this._features['session-detail-status'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('21.09')) {
+      this._features['schedulable'] = true;
     }
   }
 
@@ -613,7 +619,10 @@ class Client {
     let rqst = this.newSignedRequest('POST', `/server/login`, body);
     let result;
     try {
-      result = await this._wrapWithPromise(rqst);
+      result = await this._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON. stringify({
+        'username': this._config.userId,
+        'password': '********'
+      })});
       if (result.authenticated === true) {
         if (result.data.role === 'monitor') {
           this.logout();
@@ -652,6 +661,11 @@ class Client {
   logout() {
     let body = {};
     let rqst = this.newSignedRequest('POST', `/server/logout`, body);
+    // clean up log msg for security reason
+    const currentLogs = localStorage.getItem('backendaiwebui.logs');
+    if (currentLogs) {
+       localStorage.removeItem('backendaiwebui.logs');
+    }
     return this._wrapWithPromise(rqst);
   }
 
@@ -1111,7 +1125,7 @@ class Client {
    * @param {string} q - query string for GraphQL
    * @param {string} v - variable string for GraphQL
    * @param {number} timeout - Timeout to force terminate request
-   * @param {number} retry - The number of retry when request is failled
+   * @param {number} retry - The number of retry when request is failed
    */
   async query(q, v, signal = null, timeout: number = 0, retry: number = 0) {
     let query = {
@@ -1205,8 +1219,11 @@ class Client {
   /**
    * Same to newRequest() method but it does not sign the request.
    * Use this for unauthorized public APIs.
+   *
+   * @param {string} method - the HTTP method
+   * @param {string} queryString - the URI path and GET parameters
+   * @param {any} body - an object that will be encoded as JSON in the request body
    */
-
   newUnsignedRequest(method, queryString, body) {
     return this.newPublicRequest(method, queryString, body, this._config.apiVersionMajor);
   }
@@ -1915,6 +1932,40 @@ class VFolder {
     const rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}/unshare`, body);
     return this.client._wrapWithPromise(rqst);
   }
+
+  /**
+   * Get the size quota of a vfolder.
+   * Only available for some specific file system such as XFS.
+   *
+   * @param {string} host - Host name of a virtual folder.
+   * @param {string} vfolder_id - id of the vfolder.
+   */
+  async get_quota(host, vfolder_id) {
+    const params = {folder_host: host, id: vfolder_id};
+    let q = querystring.stringify(params);
+    const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/quota?${q}`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Set the size quota of a vfolder.
+   * Only available for some specific file system such as XFS.
+   *
+   * @param {string} host - Host name of a virtual folder.
+   * @param {string} vfolder_id - id of the vfolder.
+   * @param {number} quota - quota size of the vfolder.
+   */
+  async set_quota(host, vfolder_id, quota) {
+    const body = {
+      folder_host: host,
+      id: vfolder_id,
+      input: {
+        size_bytes: quota,
+      }
+    };
+    const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/_/quota`, body);
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class Agent {
@@ -1947,6 +1998,32 @@ class Agent {
       `}`;
     let v = {'status': status};
     return this.client.query(q, v, null, timeout);
+  }
+
+  /**
+   * modify agent configuration with given name and fields.
+   *
+   * @param {string} agent_id - resource preset name.
+   * @param {json} input - resource preset specification and data. Required fields are:
+   * {
+   *   'schedulable': schedulable 
+   * };
+   */
+   async update(id = null, input) {
+    if (this.client.is_superadmin === true && id !== null) {
+      let q = `mutation($id: String!, $input: ModifyAgentInput!) {` +
+        `  modify_agent(id: $id, props: $input) {` +
+        `    ok msg ` +
+        `  }` +
+        `}`;
+      let v = {
+        'id': id,
+        'input': input
+      };
+      return this.client.query(q, v);
+    } else {
+      return Promise.resolve(false);
+    }
   }
 }
 
@@ -2631,7 +2708,7 @@ class ComputeSession {
    * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
    * @param {string} sessionUuid - session ID to query specific compute session.
    */
-  async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"],
+  async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "scaling_group"],
             sessionUuid = '') {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
@@ -2642,6 +2719,17 @@ class ComputeSession {
     }`;
     v = {session_uuid: sessionUuid};
     return this.client.query(q, v);
+  }
+
+  async startService(session: string, app: string, port: number | null = null, envs: Record<string, unknown> | null = null, args: Record<string, unknown> | null = null) {
+    let rqst = this.client.newSignedRequest('POST', `/session/${session}/start-service`, {
+      app,
+      port: port || undefined,
+      envs: envs || undefined,
+      args: args || undefined,
+    });
+
+    return this.client._wrapWithPromise(rqst);
   }
 }
 
@@ -3261,6 +3349,9 @@ class ScalingGroup {
   async list_available() {
     if (this.client.is_superadmin === true) {
       const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
+      if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
+        fields.push('wsproxy_addr');
+      }
       const q = `query {` +
         `  scaling_groups { ${fields.join(" ")} }` +
         `}`;
@@ -3278,12 +3369,28 @@ class ScalingGroup {
   }
 
   /**
+   * Get the version of WSProxy for a specific scaling group.
+   * (NEW) manager version 21.09.
+   *
+   * @param {string} group - Scaling group name
+   */
+  async getWsproxyVersion(group) {
+    if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
+      return Promise.resolve({version: 'v1'}); // for manager<=21.03 compatibility.
+    }
+    const queryString = `/scaling-groups/${group}/wsproxy-version`;
+    const rqst = this.client.newSignedRequest("GET", queryString, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
    * Create a scaling group
    *
    * @param {string} name - Scaling group name
    * @param {string} description - Scaling group description
+   * @param {string} wsproxyAddress - wsproxy url (NEW in manager 21.09)
    */
-  async create(name, description = "") {
+  async create(name, description = "", wsproxyAddress = null) {
     const input = {
       description: description,
       is_active: true,
@@ -3292,6 +3399,9 @@ class ScalingGroup {
       driver_opts: "{}",
       scheduler_opts: "{}"
     };
+    if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
+      input['wsproxy_addr'] = wsproxyAddress;
+    }
     // if (this.client.is_admin === true) {
     let q = `mutation($name: String!, $input: CreateScalingGroupInput!) {` +
       `  create_scaling_group(name: $name, props: $input) {` +
@@ -3340,9 +3450,16 @@ class ScalingGroup {
    *   'driver_opts': JSONString
    *   'scheduler': String
    *   'scheduler_opts': JSONString
+   *   'wsproxy_addr': String         // NEW in manager 21.09
    * }
    */
   async update(name, input) {
+    if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
+      delete input.wsproxy_addr;
+      if (Object.keys(input).length < 1) {
+        return Promise.resolve({modify_scaling_group: {ok: true}});
+      }
+    }
     let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
       `  modify_scaling_group(name: $name, props: $input) {` +
       `    ok msg` +

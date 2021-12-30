@@ -780,7 +780,8 @@
     "ResourceGroupDeleted": "Grup sumber daya berhasil dihapus",
     "EnterValidResourceGroupName": "Masukkan nama grup Sumber Daya yang valid",
     "ResourceGroupNameRequired": "Nama grup sumber daya wajib diisi.",
-    "ResourceGroupAlreadyExist": "Grup sumber daya dengan nama yang sama sudah ada."
+    "ResourceGroupAlreadyExist": "Grup sumber daya dengan nama yang sama sudah ada.",
+    "WsproxyAddress": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Umum",

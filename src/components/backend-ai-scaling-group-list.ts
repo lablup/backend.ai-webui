@@ -4,12 +4,12 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {render} from 'lit-html';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-template-renderer';
+import '@vaadin/vaadin-grid/vaadin-grid-column';
 
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -64,7 +64,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     this.domains = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -170,25 +170,41 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         globalThis.backendaiclient.scalingGroup.list_available()
           .then((res) => {
             this.scalingGroups = res.scaling_groups;
-          });
+          }).catch((err) => {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          });;
 
         globalThis.backendaiclient.domain.list()
           .then(({domains}) => {
             this.domains = domains;
             this.requestUpdate(); // without this render is called beforehands, so update is required
-          });
+          }).catch((err) => {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          });;
       }, true);
     } else { // already connected
       globalThis.backendaiclient.scalingGroup.list_available()
         .then((res) => {
           this.scalingGroups = res.scaling_groups;
+        }).catch((err) => {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
         });
 
       globalThis.backendaiclient.domain.list()
         .then(({domains}) => {
           this.domains = domains;
           this.requestUpdate(); // without this render is called beforehands, so update is required
-        });
+        }).catch((err) => {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        });;
     }
   }
 
@@ -243,7 +259,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             class="fg blue"
             @click=${() => {
     this.selectedIndex = rowData.index;
-    this.shadowRoot.querySelector('#modify-scaling-group-active').checked = this.scalingGroups[rowData.index].is_active;
+    this.shadowRoot.querySelector('#modify-scaling-group-active').selected = this.scalingGroups[rowData.index].is_active;
     this._launchDialogById('#modify-scaling-group-dialog');
   }}
           ><wl-icon>settings</wl-icon></wl-button>
@@ -299,7 +315,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       const scalingGroup = this.shadowRoot.querySelector('#scaling-group-name').value;
       const description = this.shadowRoot.querySelector('#scaling-group-description').value;
       const domain = this.shadowRoot.querySelector('#scaling-group-domain').value;
-      globalThis.backendaiclient.scalingGroup.create(scalingGroup, description)
+      const wsproxyAddress = this.shadowRoot.querySelector('#scaling-group-wsproxy-address').value;
+      globalThis.backendaiclient.scalingGroup.create(scalingGroup, description, wsproxyAddress)
         .then(({create_scaling_group: res}) => {
           if (res.ok) {
             return globalThis.backendaiclient.scalingGroup.associate_domain(domain, scalingGroup);
@@ -343,12 +360,17 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     const description = this.shadowRoot.querySelector('#modify-scaling-group-description').value;
     const scheduler = this.shadowRoot.querySelector('#modify-scaling-group-scheduler').value;
     const is_active = this.shadowRoot.querySelector('#modify-scaling-group-active').checked;
+    let wsproxy_addr: string = this.shadowRoot.querySelector('#modify-scaling-group-wsproxy-address').value;
+    if (wsproxy_addr.endsWith('/')) {
+      wsproxy_addr = wsproxy_addr.slice(0, wsproxy_addr.length - 1);
+    }
     const name = this.scalingGroups[this.selectedIndex].name;
 
     const input = {};
     if (description !== this.scalingGroups[this.selectedIndex].description) input['description'] = description;
     if (scheduler !== this.scalingGroups[this.selectedIndex].scheduler) input['scheduler'] = scheduler;
     if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input['is_active'] = is_active;
+    if (wsproxy_addr !== this.scalingGroups[this.selectedIndex].wsproxy_addr) input['wsproxy_addr'] = wsproxy_addr;
 
     if (Object.keys(input).length === 0) {
       this.notification.text = _text('resourceGroup.NochangesMade');
@@ -422,37 +444,21 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scalingGroups}">
         <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Name')}">
-          <template>
-            <div> [[item.name]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Name')}" path="name">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Description')}">
-          <template>
-            <div> [[item.description]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Description')}" path="description">
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.ActiveStatus')}" .renderer=${this._activeStatusRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Driver')}">
-          <template>
-            <div> [[item.driver]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Driver')}" path="driver">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.DriverOptions')}">
-          <template>
-            <div> [[item.driver_opts]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.DriverOptions')}" path="driver_opts">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}">
-          <template>
-            <div> [[item.scheduler]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}" path="scheduler">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.SchedulerOptions')}">
-          <template>
-            <div> [[item.scheduler_opts]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.SchedulerOptions')}" path="scheduler_opts">
+        </vaadin-grid-column>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.WsproxyAddress')}" path="wsproxy_addr">
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
         </vaadin-grid-column>
@@ -488,6 +494,12 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             maxLength="512"
             placeholder="${_t('maxLength.512chars')}"
           ></mwc-textarea>
+          <mwc-textfield
+            id="scaling-group-wsproxy-address"
+            type="url"
+            label="${_t('resourceGroup.WsproxyAddress')}"
+            placeholder="http://localhost:10200"
+          ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
@@ -502,7 +514,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('resourceGroup.ModifyResourceGroup')}</span>
-        <div slot="content">
+        <div slot="content" class="vertical layout wrap">
           <div class="horizontal layout flex wrap center justified">
             <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
               ${_t('resourceGroup.Active')}
@@ -523,8 +535,14 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             id="modify-scaling-group-description"
             type="text"
             label="${_t('resourceGroup.Description')}"
-            value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].description}
+            value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].description ?? ''}
           ></mwc-textarea>
+          <mwc-textfield
+            id="modify-scaling-group-wsproxy-address"
+            type="url"
+            label="${_t('resourceGroup.WsproxyAddress')}"
+            value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].wsproxy_addr ?? ''}
+          ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button

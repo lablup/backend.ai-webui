@@ -1,4 +1,4 @@
-import {css} from 'lit-element';
+import {css} from 'lit';
 import {BackendAiStyles} from './backend-ai-general-styles';
 
 export const BackendAIWebUIStyles = [

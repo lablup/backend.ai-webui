@@ -2,8 +2,11 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
+import {LitElement, html, CSSResultGroup} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+
 // PWA components
 import {connect} from 'pwa-helpers/connect-mixin';
 import {installOfflineWatcher} from 'pwa-helpers/network';
@@ -147,15 +150,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.blockedMenuitem = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAIWebUIStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
-      IronPositioning,
-      css`
-    `];
+      IronPositioning
+    ];
   }
 
   firstUpdated() {
@@ -286,10 +288,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   disconnectedCallback() {
     document.removeEventListener('backend-ai-connected', () => this.refreshPage());
     super.disconnectedCallback();
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    super.attributeChangedCallback(name, oldval, newval);
   }
 
   shouldUpdate(changedProperties) {
@@ -1362,7 +1360,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">21.03.11.210913</small>
+                <small class="sidebar-footer" style="font-size:9px;">21.09.2.211109</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1386,7 +1384,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">21.03.11.210913</small>
+              <small class="sidebar-footer" style="font-size:9px;">21.09.2.211109</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1470,7 +1468,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       <div class="vertical-line" style="height:35px;"></div>
                       <div class="horizontal layout center" style="margin:auto 10px;padding-top:10px;">
                         <span class="log_out" style="font-size:12px;margin:auto 0px;color:#8c8484;">
-                          ${_text('webui.menu.LogOut')}
+                          ${_t('webui.menu.LogOut')}
                         </span>
                         <mwc-icon-button @click="${() => this.logout()}" style="padding-bottom:5px;">
                           <i class="fas fa-sign-out-alt fa-xs" style="color:#8c8484;"></i>

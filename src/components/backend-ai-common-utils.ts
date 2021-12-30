@@ -2,7 +2,9 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {customElement, html, property} from 'lit-element';
+import {html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 /**
@@ -55,6 +57,16 @@ export default class BackendAiCommonUtils extends BackendAIPage {
   _deleteRecentProjectGroupInfo() {
     const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
     globalThis.backendaioptions.delete('projectGroup.' + endpointId);
+  }
+
+  _humanReadableFileSize(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = Math.pow(2, 10);
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+    let i = Math.floor(Math.log(bytes) / Math.log(k));
+    i = i < 0 ? 0 : i; // avoid negative value
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
   render() {

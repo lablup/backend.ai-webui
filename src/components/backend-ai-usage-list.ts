@@ -4,7 +4,9 @@
  */
 
 import {translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
@@ -65,7 +67,7 @@ export default class BackendAIUsageList extends BackendAIPage {
     this.data = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -302,12 +304,10 @@ export default class BackendAIUsageList extends BackendAIPage {
         ${Object.keys(this.collection).length > 0 ?
     Object.keys(this._map).map((key, idx) =>
       html`
-              <div class="card">
-                <h3 class="horizontal center layout">
-                  <span>${this._map[key]}</span>
-                  <span class="flex"></span>
-                </h3>
-              </div>
+              <h3 class="horizontal center layout">
+                <span style="color:#222222;">${this._map[key]}</span>
+                <span class="flex"></span>
+              </h3>
               <div style="width:100%;min-height:180px;">
                 <backend-ai-chart
                   idx=${idx}

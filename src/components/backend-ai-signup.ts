@@ -3,7 +3,9 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import 'weightless/icon';
 import 'weightless/card';
 import '@material/mwc-checkbox';
@@ -56,7 +58,7 @@ export default class BackendAiSignup extends BackendAIPage {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -96,7 +98,7 @@ export default class BackendAiSignup extends BackendAIPage {
           }
 
           mwc-button.full {
-            width: 335px;
+            width: 70%;
           }
 
           mwc-button {
@@ -418,7 +420,7 @@ export default class BackendAiSignup extends BackendAIPage {
     return html`
       <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <span slot="title">${_t('signup.SignupBETA')}</span>
-        <div slot="content">
+        <div slot="content" class="vertical flex layout">
           <mwc-textfield type="email" name="user_email" id="id_user_email" autofocus
                        maxlength="64" placeholder="${_text('maxLength.64chars')}"
                        label="${_t('signup.E-mail')}" validateOnInitialRender

@@ -3,12 +3,12 @@
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {render} from 'lit-html';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-template-renderer';
 
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -42,8 +42,9 @@ class BackendAIRegistryList extends BackendAIPage {
   public registryList: any;
   @property({type: Object}) indicator = Object();
   @property({type: Number}) selectedIndex = -1;
-  @property({type: String}) boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
-  @property({type: String}) boundControlsRenderer = this._controlsRenderer.bind(this);
+  @property({type: Object}) _boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
+  @property({type: Object}) _boundControlsRenderer = this._controlsRenderer.bind(this);
+  @property({type: Object}) _boundPasswordRenderer = this._passwordRenderer.bind(this);
   @property({type: Array}) _registryTypes;
   @property({type: Array}) allowed_registries;
   @property({type: Array}) hostnames;
@@ -59,7 +60,7 @@ class BackendAIRegistryList extends BackendAIPage {
     this.editMode = false;
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -115,8 +116,15 @@ class BackendAIRegistryList extends BackendAIPage {
           --label-font-size: 11px;
         }
 
-        mwc-select#select-registry-type {
+        mwc-select.full-width {
           width: 100%;
+        }
+
+        mwc-select.full-width.fixed-position > mwc-list-item {
+          width: 330px; // default width
+        }
+
+        mwc-select#select-registry-type {
           padding-right: 10px;
           --mdc-select-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
@@ -444,7 +452,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   toggleRegistry(e, hostname) {
-    if (!e.target.checked) {
+    if (!e.target.selected) {
       this._changeRegistryState(hostname, false);
     } else {
       this._changeRegistryState(hostname, true);
@@ -507,6 +515,17 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
+  _passwordRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <div>
+          <input type="password" id="registry-password" readonly value="[[item.password]]"/>
+        </div>
+      `
+      , root
+    );
+  }
+
   /**
    * Render a switch to check that registry is turned on or off.
    *
@@ -519,8 +538,8 @@ class BackendAIRegistryList extends BackendAIPage {
       html`
         <div>
           <mwc-switch
-              @change="${(e) => this.toggleRegistry(e, rowData.item['hostname'])}"
-              ?checked="${this.allowed_registries.includes(rowData.item['hostname'])}"></mwc-switch>
+              @click="${(e) => this.toggleRegistry(e, rowData.item['hostname'])}"
+              ?selected="${this.allowed_registries.includes(rowData.item['hostname'])}"></mwc-switch>
         </div>
       `,
       root
@@ -591,30 +610,16 @@ class BackendAIRegistryList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="2" auto-width header="${_t('registry.RegistryURL')}" resizable .renderer=${this._registryRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.Type')}">
-          <template>
-            <div> [[item.type]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.Type')}" path="type">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.HarborProject')}">
-          <template>
-            <div> [[item.project]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.HarborProject')}" path="project">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('registry.Username')}">
-          <template>
-            <div> [[item.username]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('registry.Username')}" path="username">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('registry.Password')}">
-          <template>
-            <div>
-              <input type="password" id="registry-password" readonly value="[[item.password]]"/>
-            </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('registry.Password')}" .renderer="${this._boundPasswordRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="0" width="60px" header="${_t('general.Enabled')}" .renderer=${this.boundIsEnabledRenderer}></vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this.boundControlsRenderer}>
+        <vaadin-grid-column flex-grow="0" width="60px" header="${_t('general.Enabled')}" .renderer=${this._boundIsEnabledRenderer}></vaadin-grid-column>
+        <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="add-registry-dialog" fixed backdrop blockscrolling>
