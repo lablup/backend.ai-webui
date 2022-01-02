@@ -127,7 +127,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           --component-width: 400px;
         }
 
-        #allowed-hosts-container {
+        #allowed-client-ips-container {
           margin-left: 2em;
           margin-bottom: 1em;
           display:none;
@@ -538,7 +538,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return Promise.resolve(false);
     }
     const openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
-    const allowedHosts = this.shadowRoot.querySelector('#allowed-hosts')?.value;
+    const allowedClientIps = this.shadowRoot.querySelector('#allowed-client-ips')?.value;
     let openToPublic = false;
     if (openToPublicCheckBox == null) { // Null or undefined
     } else {
@@ -552,8 +552,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (openToPublic) {
       uri += '&open_to_public=true';
     }
-    if (openToPublic && allowedHosts?.length > 0) {
-      uri += '&allowed_hosts=' + allowedHosts.replace(/\s/g, '');
+    if (openToPublic && allowedClientIps?.length > 0) {
+      uri += '&allowed_client_ips=' + allowedClientIps.replace(/\s/g, '');
     }
     if (envs !== null && Object.keys(envs).length > 0) {
       uri = uri + '&envs=' + encodeURI(JSON.stringify(envs));
@@ -1007,12 +1007,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
   _toggleChkOpenToPublic() {
     const checkbox = this.shadowRoot.querySelector('#chk-open-to-public');
-    const allowedHostsContainer = this.shadowRoot.querySelector('#allowed-hosts-container');
-    if (!checkbox || !allowedHostsContainer) return;
+    const allowedClientIpsContainer = this.shadowRoot.querySelector('#allowed-client-ips-container');
+    if (!checkbox || !allowedClientIpsContainer) return;
     if (checkbox.checked) {
-      allowedHostsContainer.style.display = 'block';
+      allowedClientIpsContainer.style.display = 'block';
     } else {
-      allowedHostsContainer.style.display = 'none';
+      allowedClientIpsContainer.style.display = 'none';
     }
   }
 
@@ -1046,9 +1046,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                               @change="${this._toggleChkOpenToPublic}"></mwc-checkbox>
                 ${_t('session.OpenToPublic')}
               </div>
-              <div class="horizontal layout center" id="allowed-hosts-container">
-                ${_t('session.AllowedHosts')}
-                <mwc-textfield id="allowed-hosts" style="margin-left:1em;" helperPersistent
+              <div class="horizontal layout center" id="allowed-client-ips-container">
+                ${_t('session.AllowedClientIps')}
+                <mwc-textfield id="allowed-client-ips" style="margin-left:1em;" helperPersistent
                                .helper="(${_t('session.CommaSeparated')})"></mwc-textfield>
               </div>
             `}
