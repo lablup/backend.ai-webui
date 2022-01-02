@@ -8,28 +8,6 @@ export const UPDATE_DRAWER_STATE = 'UPDATE_DRAWER_STATE';
 export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
-// Prevent Uncaught DOMException: Failed to execute 'define' on
-// 'CustomElementRegistry' exception which is raised when the same compoent
-// is defined twice.
-// Reference: https://github.com/vaadin/vaadin-lumo-styles/issues/105
-function safeDecorator(fn) {
-  return function(...args) {
-    try {
-      return fn.apply(this, args);
-    } catch (error) {
-      if (
-        error instanceof DOMException &&
-        error.message.includes('has already been used with this registry')
-      ) {
-        // return customElements.get(args[0]);
-        return false;
-      }
-      throw error;
-    }
-  };
-}
-customElements.define = safeDecorator(customElements.define);
-
 export const navigate = (path: any, params: Record<string, unknown> = {}) => (dispatch: any) => {
   // Extract the page name from path.
   if (['/summary', '/job', '/pipeline', '/experiment', '/data', '/statistics', '/usersettings',
