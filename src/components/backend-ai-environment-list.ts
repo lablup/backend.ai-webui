@@ -741,7 +741,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
-  controlsRenderer(root, column?, rowData?)  {
+  controlsRenderer(root, column?, rowData?) {
     render(
       html`
         <div id="controls" class="layout horizontal flex center">
@@ -807,10 +807,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       `
       , root);
   }
-  
+
 
   /**
-   * 
+   *
    * Render an base image label for each image
    *
    * @param {DOMelement} root
@@ -821,15 +821,15 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        ${rowData.item.baseimage.map((image) => 
-          html`
+        ${rowData.item.baseimage.map((image) =>
+    html`
             <lablup-shields app="" color="blue" ui="round" description="${image}"></lablup-shields>
         `)}
         `, root);
   }
 
   /**
-   * 
+   *
    * Render an constraint for each image
    *
    * @param {DOMelement} root
@@ -847,7 +847,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * 
+   *
    * Render digest information for each image
    *
    * @param {DOMelement} root
@@ -862,7 +862,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         <span class="indicator monospace">${rowData.item.digest}</span>
       </div>
       `
-    , root);
+      , root);
   }
 
   render() {

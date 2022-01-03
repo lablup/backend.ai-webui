@@ -224,7 +224,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    * */
   timeStampRenderer(root, column?, rowData?) {
     render(
-      //language=HTML
+      // language=HTML
       html`
         <div class="layout vertical">
           <span class="monospace ${rowData.item.isError ? `error-cell` : ``}">${rowData.item.timestamp_hr}</span>
@@ -238,9 +238,9 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-   statusRenderer(root, column?, rowData?) {
+  statusRenderer(root, column?, rowData?) {
     render(
-      //language=HTML
+      // language=HTML
       html`
         <div class="layout vertical">
           <span class="${rowData.item.isError ? `error-cell` : ``}">${rowData.item.statusCode+` `+rowData.item.statusText}</span>
@@ -254,9 +254,9 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-   errTitleRenderer(root, column?, rowData?) {
+  errTitleRenderer(root, column?, rowData?) {
     render(
-      //language=HTML
+      // language=HTML
       html`
       <div class="layout vertical">
         <span class="${rowData.item.isError ? `error-cell` : ``}">${rowData.item.title}</span>
@@ -270,9 +270,9 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-   errMsgRenderer(root, column?, rowData?) {
+  errMsgRenderer(root, column?, rowData?) {
     render(
-      //language=HTML
+      // language=HTML
       html`
         <div class="layout vertical">
           <span class="${rowData.item.isError ? `error-cell` : ``}">${rowData.item.message}</span>
@@ -286,9 +286,9 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-   errTypeRenderer(root, column?, rowData?) {
+  errTypeRenderer(root, column?, rowData?) {
     render(
-      //language=HTML
+      // language=HTML
       html`
         <div class="layout vertical">
           <span class="${rowData.item.isError ? `error-cell` : ``}">${rowData.item.type}</span>
@@ -302,9 +302,9 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-   methodRenderer(root, column?, rowData?) {
+  methodRenderer(root, column?, rowData?) {
     render(
-      //language=HTML
+      // language=HTML
       html`
         <div class="layout vertical">
           <span class="${rowData.item.isError ? `error-cell` : ``}">${rowData.item.requestMethod}</span>
@@ -318,9 +318,9 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-   reqUrlRender(root, column?, rowData?) {
+  reqUrlRender(root, column?, rowData?) {
     render(
-      //language=HTML
+      // language=HTML
       html`
         <div class="layout vertical">
           <span class="monospace ${rowData.item.isError ? `error-cell` : ``}">${rowData.item.requestUrl}</span>
@@ -334,9 +334,9 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-   paramRenderer(root, column?, rowData?) {
+  paramRenderer(root, column?, rowData?) {
     render(
-      //language=HTML
+      // language=HTML
       html`
         <div class="layout vertical">
           <span class="monospace ${rowData.item.isError ? `error-cell` : ``}">${rowData.item.requestParameters}</span>

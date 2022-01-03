@@ -545,7 +545,7 @@ export default class BackendAICredentialList extends BackendAIPage {
    *
    * @param {DOMelement} root
    * @param {object} column (<vaadin-grid-column> element)
-   * @param rowData 
+   * @param rowData
    */
   accessKeyRenderer(root, column?, rowData?) {
     render(
@@ -561,7 +561,7 @@ export default class BackendAICredentialList extends BackendAIPage {
    *
    * @param {DOMelement} root
    * @param {object} column (<vaadin-grid-column> element)
-   * @param rowData 
+   * @param rowData
    */
   permissionRenderer(root, column?, rowData?) {
     render(
@@ -578,11 +578,11 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   /**
-   * Render resourcePolicy column 
+   * Render resourcePolicy column
    *
    * @param {DOMelement} root
    * @param {object} column (<vaadin-grid-column> element)
-   * @param rowData 
+   * @param rowData
    */
   resourcePolicyRenderer(root, column?, rowData?) {
     render(
@@ -636,11 +636,11 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   /**
-   * Render allocation column 
+   * Render allocation column
    *
    * @param {DOMelement} root
    * @param {object} column (<vaadin-grid-column> element)
-   * @param rowData 
+   * @param rowData
    */
   allocationRenderer(root, column?, rowData?) {
     render(

@@ -436,27 +436,27 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _toggleProjectNameInput() {
-    const select = this.editMode 
-      ? this.shadowRoot.querySelector('#modify-select-registry-type')
-      : this.shadowRoot.querySelector('#select-registry-type');
-    const projectNameValidationEl = this.editMode
-      ? this.shadowRoot.querySelector('#modify-project-name-validation')
-      : this.shadowRoot.querySelector('#project-name-validation');
-    const projectTextEl = this.editMode 
-      ? this.shadowRoot.querySelector('#modify-project-name')
-      : this.shadowRoot.querySelector('#add-project-name');
+    const select = this.editMode ?
+      this.shadowRoot.querySelector('#modify-select-registry-type') :
+      this.shadowRoot.querySelector('#select-registry-type');
+    const projectNameValidationEl = this.editMode ?
+      this.shadowRoot.querySelector('#modify-project-name-validation') :
+      this.shadowRoot.querySelector('#project-name-validation');
+    const projectTextEl = this.editMode ?
+      this.shadowRoot.querySelector('#modify-project-name') :
+      this.shadowRoot.querySelector('#add-project-name');
     projectTextEl.disabled = !(select.value && ['harbor', 'harbor2'].includes(select.value));
     projectNameValidationEl.style.display = 'block';
     this._validateProjectName();
   }
 
   _validateUrl() {
-    const url = this.editMode
-      ? this.shadowRoot.querySelector('#modify-registry-url')
-      : this.shadowRoot.querySelector('#add-registry-url');
-    const validationMessage = this.editMode
-      ? this.shadowRoot.querySelector('#modify-registry-url-validation')
-      : this.shadowRoot.querySelector('#registry-url-validation');
+    const url = this.editMode ?
+      this.shadowRoot.querySelector('#modify-registry-url') :
+      this.shadowRoot.querySelector('#add-registry-url');
+    const validationMessage = this.editMode ?
+      this.shadowRoot.querySelector('#modify-registry-url-validation') :
+      this.shadowRoot.querySelector('#registry-url-validation');
     validationMessage.style.display = url.valid ? 'none' : 'block';
   }
 
@@ -471,12 +471,12 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _validateProjectName() {
-    const projectTextEl = this.editMode 
-      ? this.shadowRoot.querySelector('#modify-project-name')
-      : this.shadowRoot.querySelector('#add-project-name');
-    const projectNameValidationEl = this.editMode
-      ? this.shadowRoot.querySelector('#modify-project-name-validation')
-      : this.shadowRoot.querySelector('#project-name-validation');
+    const projectTextEl = this.editMode ?
+      this.shadowRoot.querySelector('#modify-project-name') :
+      this.shadowRoot.querySelector('#add-project-name');
+    const projectNameValidationEl = this.editMode ?
+      this.shadowRoot.querySelector('#modify-project-name-validation') :
+      this.shadowRoot.querySelector('#project-name-validation');
     projectTextEl.value = projectTextEl.value.replace(/\s/g, '');
     if (projectTextEl && projectTextEl.value !== '' && !projectTextEl.disabled) {
       projectNameValidationEl.style.display = 'none';
@@ -484,7 +484,7 @@ class BackendAIRegistryList extends BackendAIPage {
       projectNameValidationEl.style.display = 'block';
       if (projectTextEl.disabled) {
         projectNameValidationEl.textContent = _text('registry.ForHarborOnly');
-      } else  {
+      } else {
         projectNameValidationEl.textContent = _text('registry.ProjectNameIsRequired');
       }
     }
@@ -758,55 +758,55 @@ class BackendAIRegistryList extends BackendAIPage {
       </backend-ai-dialog>
 
       <backend-ai-dialog id="modify-registry-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${_t("registry.ModifyRegistryConfigurations")}</span>
+        <span slot="title">${_t('registry.ModifyRegistryConfigurations')}</span>
         <div slot="content" class="login-panel intro centered">
           <wl-textfield
             id="modify-registry-hostname"
             class="helper-text"
             type="text"
-            label="${_t("registry.RegistryHostname")}"
+            label="${_t('registry.RegistryHostname')}"
             disabled
           ></wl-textfield>
           <wl-textfield
             id="modify-registry-url"
             class="helper-text"
-            label="${_t("registry.RegistryURL")}"
+            label="${_t('registry.RegistryURL')}"
             required
             pattern="^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$";"
             @click=${() => this._validateUrl()}
             @change=${() => this._validateUrl()}
           ></wl-textfield>
           <wl-label class="helper-text" id="modify-registry-url-validation" style="display:none;">${_t(
-            "registry.DescURLStartString"
-          )}</wl-label>
+    'registry.DescURLStartString'
+  )}</wl-label>
          <div class="horizontal layout flex">
           <wl-textfield
             id="modify-registry-username"
             type="text"
-            label="${_t("registry.UsernameOptional")}"
+            label="${_t('registry.UsernameOptional')}"
             style="padding-right:10px;"
           ></wl-textfield>
           <wl-textfield
             id="modify-registry-password"
             type="password"
-            label="${_t("registry.PasswordOptional")}"
+            label="${_t('registry.PasswordOptional')}"
             style="padding-left:10px;"
           ></wl-textfield>
          </div>
-         <mwc-select class="full-width fixed-position" id="modify-select-registry-type" label="${_t("registry.RegistryType")}"
+         <mwc-select class="full-width fixed-position" id="modify-select-registry-type" label="${_t('registry.RegistryType')}"
                       @change=${this._toggleProjectNameInput} required fixedMenuPosition
-                      validationMessage="${_t("registry.PleaseSelectOption")}"> 
+                      validationMessage="${_t('registry.PleaseSelectOption')}"> 
             ${this._registryType.map((item) => html`
                 <mwc-list-item value="${item}">${item}</mwc-list-item>
               `
-            )}
+  )}
           </mwc-select>
           <div class="vertical layout end-justified">
             <wl-textfield
               id="modify-project-name"
               class="helper-text"
               type="text"
-              label="${_t("registry.ProjectName")}"
+              label="${_t('registry.ProjectName')}"
               required
               @click=${this._validateProjectName}
               @change=${this._validateProjectName}
@@ -815,7 +815,7 @@ class BackendAIRegistryList extends BackendAIPage {
          </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button unelevated fullwidth icon="check" label="${_t("button.Save")}"
+          <mwc-button unelevated fullwidth icon="check" label="${_t('button.Save')}"
                       @click=${this._modifyRegistry}></mwc-button>
         </div>
       </backend-ai-dialog>

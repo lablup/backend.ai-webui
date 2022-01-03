@@ -174,7 +174,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
             this.notification.show(true, err);
-          });;
+          });
 
         globalThis.backendaiclient.domain.list()
           .then(({domains}) => {
@@ -184,7 +184,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
             this.notification.show(true, err);
-          });;
+          });
       }, true);
     } else { // already connected
       globalThis.backendaiclient.scalingGroup.list_available()
@@ -204,7 +204,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
           this.notification.show(true, err);
-        });;
+        });
     }
   }
 
