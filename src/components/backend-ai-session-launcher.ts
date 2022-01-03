@@ -30,6 +30,7 @@ import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
 
+import './lablup-codemirror';
 import './lablup-progress-bar';
 import './lablup-slider';
 import './backend-ai-dialog';
@@ -154,6 +155,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) aggregate_updating = false;
   @property({type: Object}) scaling_group_selection_box;
   @property({type: Object}) resourceGauge = Object();
+  @property({type: String}) sessionType = 'interactive';
   /* Parameters required to launch a session on behalf of other user */
   @property({type: Boolean}) ownerFeatureInitialized = false;
   @property({type: String}) ownerDomain = '';
@@ -497,7 +499,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-weight: normal;
         }
 
-        wl-expansion.vfolder {
+        wl-expansion.vfolder,
+        wl-expansion.editor {
           --expansion-content-padding: 0;
           border-bottom: 1px
         }
@@ -799,6 +802,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.version_selector = this.shadowRoot.querySelector('#version');
     this.version_selector.addEventListener('selected', () => {
       this.updateResourceAllocationPane();
+    });
+
+    this.shadowRoot.querySelectorAll('wl-expansion').forEach((element) => {
+      element.addEventListener('keydown', (event) => {
+        event.stopPropagation();
+      }, true);
     });
 
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
@@ -1148,6 +1157,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       kernel = selectedItem.id;
       version = this.shadowRoot.querySelector('#version').value;
     }
+    this.sessionType = this.shadowRoot.querySelector('#session-type').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     const isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
     const vfolder = this.selectedVfolders;
@@ -1178,6 +1188,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     config['group_name'] = globalThis.backendaiclient.current_group;
     config['domain'] = globalThis.backendaiclient._config.domainName;
     config['scaling_group'] = this.scaling_group;
+    config['type'] = this.sessionType;
     if (globalThis.backendaiclient.supports('multi-container')) {
       config['cluster_mode'] = this.cluster_mode;
       config['cluster_size'] = this.cluster_size;
@@ -1246,6 +1257,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     if (this.mode === 'import' && this.importScript !== '') {
       config['bootstrap_script'] = this.importScript;
+    }
+    if (this.sessionType === 'batch') {
+      const editor = this.shadowRoot.querySelector('lablup-codemirror#command-editor');
+      config['startupCommand'] = editor.getValue();
     }
     if (this.environ_values !== {}) {
       config['env'] = this.environ_values;
@@ -2746,6 +2761,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.shadowRoot.querySelector('#HPCOptimizationOptions').style.display = isOpenMPChecked ? 'none' : 'block';
   }
 
+  /**
+   * Toggle startup code input section according to session type
+   * 
+   * @param @param {Event} e
+   */
+  _toggleStartUpCommandEditor(e) {
+    this.sessionType = e.target.value;
+    let startUpCommandEditor = this.shadowRoot.querySelector('lablup-codemirror#command-editor');
+    startUpCommandEditor.style.display = (this.sessionType === 'batch') ? 'block' : 'none';
+  }
+
   render() {
     // language=HTML
     return html`
@@ -2759,6 +2785,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
         <form slot="content" id="launch-session-form" class="centered" style="position:relative;">
           <div id="progress-01" class="progress center layout fade active">
+            <mwc-select id="session-type" icon="category" label="${_t('session.launcher.SessionType')}" required fixedMenuPosition
+                        value="${this.sessionType}" @selected="${(e) => this._toggleStartUpCommandEditor(e)}">
+              <mwc-list-item value="batch">
+                ${_t('session.launcher.BatchMode')}
+              </mwc-list-item>
+              <mwc-list-item value="interactive" selected>
+                ${_t('session.launcher.InteractiveMode')}
+              </mwc-list-item>
+            </mwc-select>
             <mwc-select id="environment" icon="code" label="${_t('session.launcher.Environments')}" required fixedMenuPosition
                         value="${this.default_language}">
               <mwc-list-item selected graphic="icon" style="display:none!important;">
@@ -2824,6 +2859,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            helper="${_t('maxLength.64chars')}"
                            validationMessage="${_t('session.launcher.SessionNameAllowCondition')}">
             </mwc-textfield>
+            <wl-expansion class="editor" name="editor" ?disabled="${this.sessionType === 'interactive'}">
+              <span slot="title">${_t('session.launcher.BatchModeConfig')}</span>
+              <lablup-codemirror id="command-editor" mode="shell" style="display:none;"></lablup-codemirror>
+            </wl-expansion>
             <div class="horizontal layout center justified">
               <span class="launcher-item-title" style="padding-left:16px;">${_t('session.launcher.SetEnvironmentVariable')}</span>
               <mwc-button
