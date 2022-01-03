@@ -34,7 +34,7 @@ export default class LablupProgressBar extends LitElement {
   @property({type: Object}) frontDesc;
   @property({type: Object}) backDesc;
   @property({type: String}) progress = '';
-  @property({type: String}) description = ''
+  @property({type: String}) description = '';
 
   static get styles(): CSSResultGroup | undefined {
     return [

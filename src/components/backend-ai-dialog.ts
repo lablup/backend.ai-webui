@@ -175,13 +175,13 @@ export default class BackendAiDialog extends LitElement {
       this._resetScroll();
     }
   }
-  
+
   /**
    * Move to top of the dialog.
    */
   _resetScroll() {
     const content = this.shadowRoot.querySelector('.content-area');
-    content.scrollTo(0,0);
+    content.scrollTo(0, 0);
   }
 
   render() {
