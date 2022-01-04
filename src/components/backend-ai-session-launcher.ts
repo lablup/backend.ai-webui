@@ -24,6 +24,7 @@ import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-text-field/vaadin-text-field';
+import '@vaadin/vaadin-date-time-picker/vaadin-date-time-picker';
 
 import 'weightless/checkbox';
 import 'weightless/expansion';
@@ -188,6 +189,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) _grid = Object();
   @property({type: Boolean}) _debug = false;
   @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
+  @property({type: Boolean}) useScheduledTime = false;
 
   constructor() {
     super();
@@ -499,10 +501,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-weight: normal;
         }
 
-        wl-expansion.vfolder,
         wl-expansion.editor {
           --expansion-content-padding: 0;
-          border-bottom: 1px
+          border-bottom: 1px;
         }
 
         wl-expansion span {
@@ -521,6 +522,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .resources.vertical .monitor div:first-child {
           width: 40px;
+        }
+
+        vaadin-date-time-picker {
+          width: 370px;
+          margin-bottom: 10px;
+        }
+
+        lablup-codemirror {
+          width: 370px;
         }
 
         mwc-select {
@@ -2764,12 +2774,87 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   /**
    * Toggle startup code input section according to session type
    * 
-   * @param @param {Event} e
+   * @param {Event} e
    */
   _toggleStartUpCommandEditor(e) {
     this.sessionType = e.target.value;
     let startUpCommandEditor = this.shadowRoot.querySelector('lablup-codemirror#command-editor');
     startUpCommandEditor.style.display = (this.sessionType === 'batch') ? 'block' : 'none';
+  }
+
+  /**
+   * Toggle scheduling time when session type is in batch
+   * 
+   */
+  _toggleScheduleTime() {
+    this.useScheduledTime = this.shadowRoot.querySelector('#use-scheduled-time').selected;
+    this.shadowRoot.querySelector('vaadin-date-time-picker').style.display = this.useScheduledTime ? 'block': 'none';
+    this._getSchedulableTime();
+  }
+
+  /**
+   * Returns schedulable time according to current time (default: 1min after current time)
+   * 
+   * @returns {string} 
+   */
+  _getSchedulableTime() {
+    const getFormattedTime = (date) => {
+      // YYYY-MM-DD`T`hh:mm:ss
+      return date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + 
+            "T" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    }
+    let schedulerEl = this.shadowRoot.querySelector('vaadin-date-time-picker');
+    let currentTime = new Date();
+    const oneMinute = 60 * 1000;
+    // add 1min
+    let futureTime = new Date(currentTime.getTime() + oneMinute);
+    // disable scheduling in past
+    schedulerEl.min = getFormattedTime(currentTime);
+    // schedulerEl.value = getFormattedTime(futureTime);
+
+    if (schedulerEl.value) {
+      let scheduledTime = new Date(schedulerEl.value).getTime();
+      currentTime = new Date();
+      if (scheduledTime <= currentTime.getTime()) {
+        schedulerEl.value = getFormattedTime(futureTime);
+      }
+    } else {
+      schedulerEl.value = getFormattedTime(futureTime);
+    }
+    this._setRelativeTimeStamp();
+  }
+
+  _setRelativeTimeStamp() {
+    // in miliseconds
+    const units = {
+      "year"  : 24 * 60 * 60 * 1000 * 365,
+      "month" : 24 * 60 * 60 * 1000 * 365/12,
+      "day"   : 24 * 60 * 60 * 1000,
+      "hour"  : 60 * 60 * 1000,
+      "minute" : 60 * 1000,
+      "second" : 1000
+    }
+    const i18n = globalThis.backendaioptions.get('current_language') ?? 'en';
+    const rtf = new Intl.RelativeTimeFormat( i18n, { numeric: 'auto' })
+    
+    const getRelativeTime = (d1: number, d2 = +new Date()) => {
+      let elapsed = d1 - d2;
+      for (let u in units) {
+        // "Math.abs" accounts for both "past" & "future" scenarios
+        if (Math.abs(elapsed) > units[u] || u == 'second')  {
+          // type casting
+          let formatString: Intl.RelativeTimeFormatUnit = <Intl.RelativeTimeFormatUnit>u;
+          return rtf.format(Math.round(elapsed/units[u]), formatString);
+        }
+      }
+      return _text('session.launcher.InfiniteTime')
+    }
+    let schedulerEl = this.shadowRoot.querySelector('vaadin-date-time-picker');
+    if (schedulerEl.invalid) {
+      schedulerEl.helperText = _text('session.launcher.ResetStartTime');
+    } else {
+      schedulerEl.helperText = _text('session.launcher.SessionStartTime') + getRelativeTime(+new Date(schedulerEl.value));
+    }
   }
 
   render() {
@@ -2859,9 +2944,26 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            helper="${_t('maxLength.64chars')}"
                            validationMessage="${_t('session.launcher.SessionNameAllowCondition')}">
             </mwc-textfield>
-            <wl-expansion class="editor" name="editor" ?disabled="${this.sessionType === 'interactive'}">
+            <wl-expansion class="editor" name="editor" ?disabled="${this.sessionType === 'interactive'}"
+                @change="${() => this._getSchedulableTime()}">
               <span slot="title">${_t('session.launcher.BatchModeConfig')}</span>
-              <lablup-codemirror id="command-editor" mode="shell" style="display:none;"></lablup-codemirror>
+              <div class="vertical layout center flex">
+                <div class="horizontal layout start-justified">
+                  <div style="width:370px;">${_t('session.launcher.StartUpCommand')}</div>
+                </div>
+                <lablup-codemirror id="command-editor" mode="shell" style="display:none;"></lablup-codemirror>
+                <div class="horizontal center layout justified" style="margin: 10px auto;">
+                  <div style="width:330px;">${_t('session.launcher.ScheduleTime')}</div>
+                  <mwc-switch id="use-scheduled-time" @click="${() => this._toggleScheduleTime()}"></mwc-switch>
+                </div>
+                <vaadin-date-time-picker step="1"
+                  date-placeholder="DD/MM/YYYY"
+                  time-placeholder="hh:mm:ss"
+                  ?required="${this.useScheduledTime}"
+                  @click="${() => this._getSchedulableTime()}"
+                  @value-changed="${() => this._getSchedulableTime()}"
+                  style="display:none;"></vaadin-date-time-picker>
+              </div>
             </wl-expansion>
             <div class="horizontal layout center justified">
               <span class="launcher-item-title" style="padding-left:16px;">${_t('session.launcher.SetEnvironmentVariable')}</span>
