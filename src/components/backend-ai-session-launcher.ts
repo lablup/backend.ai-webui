@@ -2793,7 +2793,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * Returns schedulable time according to current time (default: 1min after current time)
+   * Returns schedulable time according to current time (default: 2min after current time)
    * 
    * @returns {string} 
    */
@@ -2805,23 +2805,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     let schedulerEl = this.shadowRoot.querySelector('vaadin-date-time-picker');
     let currentTime = new Date();
-    const oneMinute = 60 * 1000;
-    // add 1min
-    let futureTime = new Date(currentTime.getTime() + oneMinute);
+    const extraMinutes = 60 * 2 * 1000;
+    // add 2min
+    let futureTime = new Date(currentTime.getTime() + extraMinutes);
     // disable scheduling in past
     schedulerEl.min = getFormattedTime(currentTime);
     // schedulerEl.value = getFormattedTime(futureTime);
 
-    if (schedulerEl.value) {
+    if (schedulerEl.value && schedulerEl.value !== '') {
       let scheduledTime = new Date(schedulerEl.value).getTime();
       currentTime = new Date();
       if (scheduledTime <= currentTime.getTime()) {
+        futureTime = new Date(currentTime.getTime() + extraMinutes);
         schedulerEl.value = getFormattedTime(futureTime);
       }
     } else {
       schedulerEl.value = getFormattedTime(futureTime);
     }
     this._setRelativeTimeStamp();
+
+    // interval every 1 sec.
+    setTimeout(() => {
+      this._getSchedulableTime();
+    }, 1000);
   }
 
   _setRelativeTimeStamp() {
@@ -2944,8 +2950,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            helper="${_t('maxLength.64chars')}"
                            validationMessage="${_t('session.launcher.SessionNameAllowCondition')}">
             </mwc-textfield>
-            <wl-expansion class="editor" name="editor" ?disabled="${this.sessionType === 'interactive'}"
-                @change="${() => this._getSchedulableTime()}">
+            <wl-expansion class="editor" name="editor" ?disabled="${this.sessionType === 'interactive'}">
               <span slot="title">${_t('session.launcher.BatchModeConfig')}</span>
               <div class="vertical layout center flex">
                 <div class="horizontal layout start-justified">
@@ -2960,7 +2965,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   date-placeholder="DD/MM/YYYY"
                   time-placeholder="hh:mm:ss"
                   ?required="${this.useScheduledTime}"
-                  @click="${() => this._getSchedulableTime()}"
                   @value-changed="${() => this._getSchedulableTime()}"
                   style="display:none;"></vaadin-date-time-picker>
               </div>
