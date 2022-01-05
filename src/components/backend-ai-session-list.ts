@@ -326,11 +326,11 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   get _isRunning() {
-    return this.condition === 'running';
+    return ['batch', 'interactive', 'running'].includes(this.condition);
   }
 
   _isPreparing(status) {
-    const preparingStatuses = ['RESTARTING', 'PREPARING', 'PULLING'];
+    const preparingStatuses = ['RESTARTING', 'PREPARING', 'PULLING', 'PENDING'];
     if (preparingStatuses.indexOf(status) === -1) {
       return false;
     }
@@ -454,6 +454,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     status = 'RUNNING';
     switch (this.condition) {
     case 'running':
+    case 'interactive':
+    case 'batch':
       status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
       break;
     case 'finished':
@@ -477,7 +479,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       'id', 'session_id', 'name', 'image',
       'created_at', 'terminated_at', 'status', 'status_info',
       'service_ports', 'mounts',
-      'occupied_slots', 'access_key', 'starts_at'
+      'occupied_slots', 'access_key', 'starts_at', 'type'
     ];
     if (globalThis.backendaiclient.supports('multi-container')) {
       fields.push('cluster_size');
@@ -507,7 +509,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       if (this.total_session_count === 0) {
         this.total_session_count = 1;
       }
-      const sessions = response.compute_session_list.items;
+      let sessions = response.compute_session_list.items;
       if (sessions !== undefined && sessions.length != 0) {
         const previousSessions = this.compute_sessions;
         const previousSessionKeys: any = [];
@@ -583,13 +585,13 @@ export default class BackendAiSessionList extends BackendAIPage {
             sessions[objectKey].app_services = [];
             sessions[objectKey].app_services_option = {};
           }
-          if (sessions[objectKey].app_services.length === 0 || this.condition != 'running') {
+          if (sessions[objectKey].app_services.length === 0 || !['batch', 'interactive', 'running'].includes(this.condition)) {
             sessions[objectKey].appSupport = false;
           } else {
             sessions[objectKey].appSupport = true;
           }
 
-          if (this.condition === 'running') {
+          if (['batch', 'interactive', 'running'].includes(this.condition)) {
             sessions[objectKey].running = true;
           } else {
             sessions[objectKey].running = false;
@@ -630,6 +632,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
         });
       }
+      if (['batch', 'interactive'].includes(this.condition)) {
+        const result = sessions.reduce((res, session) => {
+          res[session.type === 'BATCH' ? 'batch' : 'interactive'].push(session);
+          return res;
+        }, {batch: [], interactive: []});
+        sessions = result[this.condition === 'batch' ? 'batch': 'interactive'];
+      }
+
       this.compute_sessions = sessions;
       this.requestUpdate();
       let refreshTime;
@@ -641,7 +651,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           document.dispatchEvent(event);
         }
         if (repeat === true) {
-          refreshTime = this.condition === 'running' ? 5000 : 30000;
+          refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 5000 : 30000;
           this.refreshTimer = setTimeout(() => {
             this._refreshJobData();
           }, refreshTime);
@@ -651,7 +661,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.refreshing = false;
       if (this.active && repeat) {
         // Keep trying to fetch session list with more delay
-        const refreshTime = this.condition === 'running' ? 20000 : 120000;
+        const refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 20000 : 120000;
         this.refreshTimer = setTimeout(() => {
           this._refreshJobData();
         }, refreshTime);
@@ -1414,10 +1424,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           ${rowData.item.appSupport ? html`
             <mwc-icon-button class="fg controls-running green"
                                @click="${(e) => this._showAppLauncher(e)}"
-                               ?disabled="${!mySession}"
+                               ?disabled="${!mySession || rowData.item.type === 'BATCH'}"
                                icon="apps"></mwc-icon-button>
             <mwc-icon-button class="fg controls-running"
-                               ?disabled="${!mySession}"
+                               ?disabled="${!mySession || rowData.item.type === 'BATCH'}"
                                @click="${(e) => this._runTerminal(e)}">
               <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                  width="471.362px" height="471.362px" viewBox="0 0 471.362 471.362" style="enable-background:new 0 0 471.362 471.362;"
@@ -1441,7 +1451,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <mwc-icon-button class="fg red controls-running"
                                icon="power_settings_new" @click="${(e) => this._openTerminateSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
-          ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status)) && this._APIMajorVersion > 4 ? html`
             <mwc-icon-button class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"
                                icon="assignment"></mwc-icon-button>
@@ -1543,7 +1553,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   usageRenderer(root, column?, rowData?) {
-    if (this.condition === 'running') {
+    if (['batch', 'interactive', 'running'].includes(this.condition)) {
       render(
         // language=HTML
         html`

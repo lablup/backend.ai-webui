@@ -445,6 +445,8 @@ export default class BackendAiSessionView extends BackendAIPage {
             <div class="horizontal layout flex start-justified">
             <mwc-tab-bar>
               <mwc-tab title="running" label="${_t('session.Running')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="interactive" label="${_t('session.Interactive')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="batch" label="${_t('session.Batch')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               <mwc-tab title="finished" label="${_t('session.Finished')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
               <mwc-tab title="others" label="${_t('session.Others')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
@@ -469,6 +471,12 @@ export default class BackendAiSessionView extends BackendAIPage {
           </h3>
           <div id="running-lists" class="tab-content">
             <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
+          </div>
+          <div id="interactive-lists" class="tab-content" style="display:none;">
+            <backend-ai-session-list id="interactive-jobs" condition="interactive"></backend-ai-session-list>
+          </div>
+          <div id="batch-lists" class="tab-content" style="display:none;">
+            <backend-ai-session-list id="batch-jobs" condition="batch"></backend-ai-session-list>
           </div>
           <div id="finished-lists" class="tab-content" style="display:none;">
             <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>

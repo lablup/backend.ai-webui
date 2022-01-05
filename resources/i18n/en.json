@@ -231,6 +231,8 @@
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
     "Running": "Running",
+    "Interactive": "Interactive",
+    "Batch": "Batch",
     "Finished": "Finished",
     "Others": "Others",
     "exportCSV": "export CSV",

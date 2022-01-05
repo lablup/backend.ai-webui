@@ -231,6 +231,8 @@
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
     "Running": "실행중",
+    "Interactive": "바로 실행",
+    "Batch": "일괄 실행",
     "Finished": "종료",
     "Others": "기타",
     "exportCSV": "CSV로 내보내기",
