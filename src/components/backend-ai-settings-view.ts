@@ -326,9 +326,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         label="${_t('settings.Config')}"
                         style="float: right;"
                         @click="${() => {
-                          this.updateNetworkOptionElements();
-                          this._openDialogWithConfirmation('overlay-network-env-dialog');
-                        }}"></mwc-button>
+    this.updateNetworkOptionElements();
+    this._openDialogWithConfirmation('overlay-network-env-dialog');
+  }}"></mwc-button>
                     </div>
                   </div>
                 </div>

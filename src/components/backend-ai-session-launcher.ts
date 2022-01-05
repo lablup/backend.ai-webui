@@ -3263,8 +3263,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     </mwc-textfield>
                     <mwc-icon-button icon="info" class="fg green info"
                                     @click="${(e) => {
-      this._showResourceDescription(e, 'openmp-optimization');
-    }}"></mwc-icon-button>
+    this._showResourceDescription(e, 'openmp-optimization');
+  }}"></mwc-icon-button>
                   </div>
                   <div class="horizontal center layout">
                     <div style="width:200px;">${_t('session.launcher.NumOpenBLASthreads')}</div>
@@ -3274,8 +3274,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     </mwc-textfield>
                     <mwc-icon-button icon="info" class="fg green info"
                                       @click="${(e) => {
-      this._showResourceDescription(e, 'openmp-optimization');
-    }}"></mwc-icon-button>
+    this._showResourceDescription(e, 'openmp-optimization');
+  }}"></mwc-icon-button>
                   </div>
                 </div>
               </div>

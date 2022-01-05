@@ -1472,7 +1472,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * */
   configRenderer(root, column?, rowData?) {
     // extract mounted folder names and convert them to an array.
-    let mountedFolderList: Array<string> = rowData.item.mounts.map(elem => JSON.parse(elem.replace(/'/g, '"'))[0]);
+    const mountedFolderList: Array<string> = rowData.item.mounts.map((elem) => JSON.parse(elem.replace(/'/g, '"'))[0]);
     render(
       html`
         <div class="layout horizontal center flex">
@@ -1483,7 +1483,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                 @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
                 @mouseleave="${() => this._removeMountedFolderDropdown()}"
               >
-                ${mountedFolderList.join(", ")}
+                ${mountedFolderList.join(', ')}
               </button>
             ` : html`
             <wl-icon class="indicator no-mount">folder_open</wl-icon>
