@@ -1271,6 +1271,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.sessionType === 'batch') {
       const editor = this.shadowRoot.querySelector('lablup-codemirror#command-editor');
       config['startupCommand'] = editor.getValue();
+
+      const scheduledTime = this.shadowRoot.querySelector('vaadin-date-time-picker').value;
+      if (scheduledTime) {
+        // modify client timezone offset
+        const getClientTimezoneOffset = () => {
+          let offset = new Date().getTimezoneOffset();
+          const sign = offset <0? '+' : '-';
+          offset = Math.abs(offset);
+          return sign + (offset / 60 | 0).toString().padStart(2, "0") + ':' + (offset % 60).toString().padStart(2, "0");
+        }
+        config['startsAt'] = scheduledTime + getClientTimezoneOffset();
+      }
     }
     if (this.environ_values !== {}) {
       config['env'] = this.environ_values;

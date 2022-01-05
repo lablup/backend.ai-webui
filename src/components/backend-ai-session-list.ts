@@ -477,7 +477,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       'id', 'session_id', 'name', 'image',
       'created_at', 'terminated_at', 'status', 'status_info',
       'service_ports', 'mounts',
-      'occupied_slots', 'access_key'
+      'occupied_slots', 'access_key', 'starts_at'
     ];
     if (globalThis.backendaiclient.supports('multi-container')) {
       fields.push('cluster_size');
@@ -508,10 +508,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.total_session_count = 1;
       }
       const sessions = response.compute_session_list.items;
-      // console.log(sessions);
       if (sessions !== undefined && sessions.length != 0) {
         const previousSessions = this.compute_sessions;
-
         const previousSessionKeys: any = [];
         Object.keys(previousSessions).map((objectKey, index) => {
           previousSessionKeys.push(previousSessions[objectKey]['session_id']);
@@ -526,6 +524,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           // Readable text
           sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
           sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
+          sessions[objectKey].starts_at_hr = sessions[objectKey].starts_at ? this._humanReadableTime(sessions[objectKey].starts_at) : '';
           if (sessions[objectKey].containers && sessions[objectKey].containers.length > 0) {
             const container = sessions[objectKey].containers[0];
             const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
@@ -1184,7 +1183,8 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _renderStatusDetail() {
-    const tmpSessionStatus = JSON.parse(this.selectedSessionStatus.data);
+    let tmpSessionStatus = JSON.parse(this.selectedSessionStatus.data);
+    tmpSessionStatus.reserved_time = this.selectedSessionStatus.reserved_time;
     const statusDetailEl = this.shadowRoot.querySelector('#status-detail');
 
     statusDetailEl.innerHTML = `
@@ -1249,11 +1249,17 @@ export default class BackendAiSessionList extends BackendAIPage {
           <mwc-list>
           ${tmpSessionStatus.scheduler.failed_predicates.map((item) => {
     return `
+          ${item.name === 'reserved_time' ? `
+              <mwc-list-item twoline graphic="icon" noninteractive>
+                <span>${item.name}</span>
+                <span slot="secondary" style="white-space:pre-wrap;">${item.msg + ": " + tmpSessionStatus.reserved_time}</span>
+                <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
+              </mwc-list-item>` : `
               <mwc-list-item twoline graphic="icon" noninteractive>
                 <span>${item.name}</span>
                 <span slot="secondary" style="white-space:pre-wrap;">${item.msg}</span>
                 <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
-              </mwc-list-item>
+              </mwc-list-item>`}
               <li divider role="separator"></li>
               `;
   }).join('')}
@@ -1311,10 +1317,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  _openStatusDetailDialog(statusInfo: string, statusData: string) {
+  _openStatusDetailDialog(statusInfo: string, statusData: string, reservedTime: string) {
     this.selectedSessionStatus = {
       info: statusInfo,
-      data: statusData
+      data: statusData,
+      reserved_time: reservedTime
     };
     this._renderStatusDetail();
     this.sessionStatusInfoDialog.show();
@@ -1751,7 +1758,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           <span style="font-size: 12px;">${rowData.item.status}</span>
           ${( !rowData.item.status_data || rowData.item.status_data === '{}') ? html`` : html`
             <mwc-icon-button class="fg green status" icon="help"
-                @click="${() => this._openStatusDetailDialog(rowData.item.status_info ?? '', rowData.item.status_data)}"></mwc-icon-button>
+                @click="${() => this._openStatusDetailDialog(rowData.item.status_info ?? '', rowData.item.status_data, rowData.item.starts_at_hr)}"></mwc-icon-button>
           `}
         </div>
         ${rowData.item.status_info ? html`

@@ -2454,7 +2454,7 @@ class ComputeSession {
      * @param {string} group - project group id to query. Default returns sessions from all groups.
      * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
      */
-    async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout = 0) {
+    async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}", "starts_at"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout = 0) {
         fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
         let q, v;
         q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
