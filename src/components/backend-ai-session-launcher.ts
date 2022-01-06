@@ -682,10 +682,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-weight: 400;
         }
 
+        #batch-mode-config-section {
+          width: 100%;
+          border-bottom: solid 1px rgba(0, 0, 0, 0.42);
+          margin-bottom: 15px;
+        }
+
         .launcher-item-title {
-          font-size: 12px;
+          font-size: 14px;
           color: #404040;
           font-weight: 400;
+          padding-left:16px;
+          width: 100%;
         }
 
         .allocation-shadow {
@@ -2793,8 +2801,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _toggleStartUpCommandEditor(e) {
     this.sessionType = e.target.value;
-    const startUpCommandEditor = this.shadowRoot.querySelector('lablup-codemirror#command-editor');
-    startUpCommandEditor.style.display = (this.sessionType === 'batch') ? 'block' : 'none';
+    const startUpCommandEditor = this.shadowRoot.querySelector('#batch-mode-config-section');
+    startUpCommandEditor.style.display = (this.sessionType === 'batch') ? 'inline-flex' : 'none';
   }
 
   /**
@@ -2965,27 +2973,25 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            helper="${_t('maxLength.64chars')}"
                            validationMessage="${_t('session.launcher.SessionNameAllowCondition')}">
             </mwc-textfield>
-            <wl-expansion class="editor" name="editor" ?disabled="${this.sessionType === 'interactive'}" ?open="${this.sessionType === 'batch'}">
-              <span slot="title">${_t('session.launcher.BatchModeConfig')}</span>
-              <div class="vertical layout center flex">
-                <div class="horizontal layout start-justified">
-                  <div style="width:370px;">${_t('session.launcher.StartUpCommand')}</div>
-                </div>
-                <lablup-codemirror id="command-editor" mode="shell" style="display:none;"></lablup-codemirror>
-                <div class="horizontal center layout justified" style="margin: 10px auto;">
-                  <div style="width:330px;">${_t('session.launcher.ScheduleTime')}</div>
-                  <mwc-switch id="use-scheduled-time" @click="${() => this._toggleScheduleTime()}"></mwc-switch>
-                </div>
-                <vaadin-date-time-picker step="1"
-                  date-placeholder="DD/MM/YYYY"
-                  time-placeholder="hh:mm:ss"
-                  ?required="${this.useScheduledTime}"
-                  @value-changed="${() => this._getSchedulableTime()}"
-                  style="display:none;"></vaadin-date-time-picker>
+            <div class="vertical layout center flex" id="batch-mode-config-section" style="display:none;">
+              <span class="launcher-item-title" style="width:386px;">${_t('session.launcher.BatchModeConfig')}</span>
+              <div class="horizontal layout start-justified">
+                <div style="width:370px;font-size:12px;">${_t('session.launcher.StartUpCommand')}</div>
               </div>
-            </wl-expansion>
+              <lablup-codemirror id="command-editor" mode="shell"></lablup-codemirror>
+              <div class="horizontal center layout justified" style="margin: 10px auto;">
+                <div style="width:330px;font-size:12px;">${_t('session.launcher.ScheduleTime')}</div>
+                <mwc-switch id="use-scheduled-time" @click="${() => this._toggleScheduleTime()}"></mwc-switch>
+              </div>
+              <vaadin-date-time-picker step="1"
+                date-placeholder="DD/MM/YYYY"
+                time-placeholder="hh:mm:ss"
+                ?required="${this.useScheduledTime}"
+                @value-changed="${() => this._getSchedulableTime()}"
+                style="display:none;"></vaadin-date-time-picker>
+            </div>
             <div class="horizontal layout center justified">
-              <span class="launcher-item-title" style="padding-left:16px;">${_t('session.launcher.SetEnvironmentVariable')}</span>
+              <span class="launcher-item-title">${_t('session.launcher.SetEnvironmentVariable')}</span>
               <mwc-button
                 unelevated
                 icon="rule"
