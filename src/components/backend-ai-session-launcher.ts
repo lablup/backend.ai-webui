@@ -1274,7 +1274,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['startupCommand'] = editor.getValue();
 
       const scheduledTime = this.shadowRoot.querySelector('vaadin-date-time-picker').value;
-      if (scheduledTime) {
+      const useScheduledTime = this.shadowRoot.querySelector('#use-scheduled-time').selected;
+      if (scheduledTime && useScheduledTime) {
         // modify client timezone offset
         const getClientTimezoneOffset = () => {
           let offset = new Date().getTimezoneOffset();
@@ -2963,7 +2964,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            helper="${_t('maxLength.64chars')}"
                            validationMessage="${_t('session.launcher.SessionNameAllowCondition')}">
             </mwc-textfield>
-            <wl-expansion class="editor" name="editor" ?disabled="${this.sessionType === 'interactive'}">
+            <wl-expansion class="editor" name="editor" ?disabled="${this.sessionType === 'interactive'}" ?open="${this.sessionType === 'batch'}">
               <span slot="title">${_t('session.launcher.BatchModeConfig')}</span>
               <div class="vertical layout center flex">
                 <div class="horizontal layout start-justified">
