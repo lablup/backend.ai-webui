@@ -1332,7 +1332,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }, 1500);
       const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
-      if (res.length === 1) {
+      // only open appLauncher when session type is 'interactive'
+      if (res.length === 1 && this.sessionType !== 'batch') {
         res[0].taskobj.then((res) => {
           let appOptions;
           if ('kernelId' in res) { // API v4
