@@ -1193,7 +1193,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _renderStatusDetail() {
-    let tmpSessionStatus = JSON.parse(this.selectedSessionStatus.data);
+    const tmpSessionStatus = JSON.parse(this.selectedSessionStatus.data);
     tmpSessionStatus.reserved_time = this.selectedSessionStatus.reserved_time;
     const statusDetailEl = this.shadowRoot.querySelector('#status-detail');
 
@@ -1262,7 +1262,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           ${item.name === 'reserved_time' ? `
               <mwc-list-item twoline graphic="icon" noninteractive>
                 <span>${item.name}</span>
-                <span slot="secondary" style="white-space:pre-wrap;">${item.msg + ": " + tmpSessionStatus.reserved_time}</span>
+                <span slot="secondary" style="white-space:pre-wrap;">${item.msg + ': ' + tmpSessionStatus.reserved_time}</span>
                 <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
               </mwc-list-item>` : `
               <mwc-list-item twoline graphic="icon" noninteractive>

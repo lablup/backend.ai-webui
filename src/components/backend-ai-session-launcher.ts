@@ -501,6 +501,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-weight: normal;
         }
 
+        wl-expansion.vfolder,
         wl-expansion.editor {
           --expansion-content-padding: 0;
           border-bottom: 1px;
@@ -1277,10 +1278,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         // modify client timezone offset
         const getClientTimezoneOffset = () => {
           let offset = new Date().getTimezoneOffset();
-          const sign = offset <0? '+' : '-';
+          const sign = offset < 0 ? '+' : '-';
           offset = Math.abs(offset);
-          return sign + (offset / 60 | 0).toString().padStart(2, "0") + ':' + (offset % 60).toString().padStart(2, "0");
-        }
+          return sign + (offset / 60 | 0).toString().padStart(2, '0') + ':' + (offset % 60).toString().padStart(2, '0');
+        };
         config['startsAt'] = scheduledTime + getClientTimezoneOffset();
       }
     }
@@ -2785,18 +2786,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Toggle startup code input section according to session type
-   * 
+   *
    * @param {Event} e
    */
   _toggleStartUpCommandEditor(e) {
     this.sessionType = e.target.value;
-    let startUpCommandEditor = this.shadowRoot.querySelector('lablup-codemirror#command-editor');
+    const startUpCommandEditor = this.shadowRoot.querySelector('lablup-codemirror#command-editor');
     startUpCommandEditor.style.display = (this.sessionType === 'batch') ? 'block' : 'none';
   }
 
   /**
    * Toggle scheduling time when session type is in batch
-   * 
+   *
    */
   _toggleScheduleTime() {
     this.useScheduledTime = this.shadowRoot.querySelector('#use-scheduled-time').selected;
@@ -2806,16 +2807,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Returns schedulable time according to current time (default: 2min after current time)
-   * 
-   * @returns {string} 
+   *
+   * @return {string}
    */
   _getSchedulableTime() {
     const getFormattedTime = (date) => {
       // YYYY-MM-DD`T`hh:mm:ss
-      return date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + 
-            "T" + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-    }
-    let schedulerEl = this.shadowRoot.querySelector('vaadin-date-time-picker');
+      return date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate() +
+            'T' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+    };
+    const schedulerEl = this.shadowRoot.querySelector('vaadin-date-time-picker');
     let currentTime = new Date();
     const extraMinutes = 60 * 2 * 1000;
     // add 2min
@@ -2825,7 +2826,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     // schedulerEl.value = getFormattedTime(futureTime);
 
     if (schedulerEl.value && schedulerEl.value !== '') {
-      let scheduledTime = new Date(schedulerEl.value).getTime();
+      const scheduledTime = new Date(schedulerEl.value).getTime();
       currentTime = new Date();
       if (scheduledTime <= currentTime.getTime()) {
         futureTime = new Date(currentTime.getTime() + extraMinutes);
@@ -2845,29 +2846,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _setRelativeTimeStamp() {
     // in miliseconds
     const units = {
-      "year"  : 24 * 60 * 60 * 1000 * 365,
-      "month" : 24 * 60 * 60 * 1000 * 365/12,
-      "day"   : 24 * 60 * 60 * 1000,
-      "hour"  : 60 * 60 * 1000,
-      "minute" : 60 * 1000,
-      "second" : 1000
-    }
+      'year': 24 * 60 * 60 * 1000 * 365,
+      'month': 24 * 60 * 60 * 1000 * 365/12,
+      'day': 24 * 60 * 60 * 1000,
+      'hour': 60 * 60 * 1000,
+      'minute': 60 * 1000,
+      'second': 1000
+    };
     const i18n = globalThis.backendaioptions.get('current_language') ?? 'en';
-    const rtf = new Intl.RelativeTimeFormat( i18n, { numeric: 'auto' })
-    
+    const rtf = new Intl.RelativeTimeFormat( i18n, {numeric: 'auto'});
+
     const getRelativeTime = (d1: number, d2 = +new Date()) => {
-      let elapsed = d1 - d2;
-      for (let u in units) {
+      const elapsed = d1 - d2;
+      for (const u in units) {
         // "Math.abs" accounts for both "past" & "future" scenarios
-        if (Math.abs(elapsed) > units[u] || u == 'second')  {
+        if (Math.abs(elapsed) > units[u] || u == 'second') {
           // type casting
-          let formatString: Intl.RelativeTimeFormatUnit = <Intl.RelativeTimeFormatUnit>u;
+          const formatString: Intl.RelativeTimeFormatUnit = <Intl.RelativeTimeFormatUnit>u;
           return rtf.format(Math.round(elapsed/units[u]), formatString);
         }
       }
-      return _text('session.launcher.InfiniteTime')
-    }
-    let schedulerEl = this.shadowRoot.querySelector('vaadin-date-time-picker');
+      return _text('session.launcher.InfiniteTime');
+    };
+    const schedulerEl = this.shadowRoot.querySelector('vaadin-date-time-picker');
     if (schedulerEl.invalid) {
       schedulerEl.helperText = _text('session.launcher.ResetStartTime');
     } else {
