@@ -1197,7 +1197,6 @@ export default class BackendAILogin extends BackendAIPage {
                       fullwidth
                       label="${_t('login.Login')}"
                       @click="${() => this._login()}"></mwc-button>
-                ${this.signup_support && this.allowAnonymousChangePassword ? html`
                 <div class="layout horizontal" style="margin-top:2em;">
                   ${this.signup_support ? html`
                     <div class="vertical center-justified layout" style="width:100%;">
@@ -1220,7 +1219,7 @@ export default class BackendAILogin extends BackendAIPage {
                           @click="${() => this._showChangePasswordEmailDialog()}"></mwc-button>
                     </div>
                   ` : html``}
-                </div>`:html``}
+                </div>
               </fieldset>
             </form>
           </div>
