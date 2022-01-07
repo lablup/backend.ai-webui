@@ -2866,7 +2866,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   aria-label="vfolder list"
                   height-by-rows
                   .items="${this.nonAutoMountedVfolders}"
-                  @click="${() => this._updateSelectedFolder()}">
+                  @selected-items-changed="${() => this._updateSelectedFolder()}">
                 <vaadin-grid-selection-column id="select-column"
                                               flex-grow="0"
                                               text-align="center"
