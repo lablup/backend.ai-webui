@@ -2801,8 +2801,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _toggleStartUpCommandEditor(e) {
     this.sessionType = e.target.value;
+    const isBatchmode: boolean = (this.sessionType === 'batch');
     const startUpCommandEditor = this.shadowRoot.querySelector('#batch-mode-config-section');
-    startUpCommandEditor.style.display = (this.sessionType === 'batch') ? 'inline-flex' : 'none';
+    startUpCommandEditor.style.display = isBatchmode ? 'inline-flex' : 'none';
+    if (isBatchmode) {
+      const editor = this.shadowRoot.querySelector('#command-editor');
+      editor.refresh();
+      editor.focus();
+    }
   }
 
   /**
