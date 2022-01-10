@@ -75,6 +75,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   @property({type: Object}) _boundUserInfoRenderer = this.userInfoRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
+  @property({type: Object}) _boundSessionTypeRenderer = this.sessionTypeRenderer.bind(this);
   @property({type: Boolean}) refreshing = false;
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
@@ -329,8 +330,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     return ['batch', 'interactive', 'running'].includes(this.condition);
   }
 
+  get _isIntegratedCondition() {
+    return ['running', 'finished', 'others'].includes(this.condition);
+  }
+
   _isPreparing(status) {
-    const preparingStatuses = ['RESTARTING', 'PREPARING', 'PULLING', 'PENDING'];
+    const preparingStatuses = ['RESTARTING', 'PREPARING', 'PULLING'];
     if (preparingStatuses.indexOf(status) === -1) {
       return false;
     }
@@ -1338,6 +1343,25 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   /**
+   * Render session type - batch or interactive
+   * 
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  sessionTypeRenderer(root, column?, rowData?) {
+    console.log(rowData)
+    render(
+      html`
+        <div class="layout vertical center">
+        <lablup-shields color="blue" description="${rowData.item.type === 'BATCH' ? 'BATCH': 'INTERACTIVE'}"
+          ui="round" style="margin-top:3px;margin-right:3px;"></lablup-shields>
+        </div>
+      `, root
+    );
+  }
+
+  /**
    * Render session information - category, color, description, etc.
    *
    * @param {Element} root - the row details content DOM element
@@ -1451,10 +1475,9 @@ export default class BackendAiSessionList extends BackendAIPage {
             <mwc-icon-button class="fg red controls-running"
                                icon="power_settings_new" @click="${(e) => this._openTerminateSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
-          ${(this._isRunning && !this._isPreparing(rowData.item.status)) && this._APIMajorVersion > 4 ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
             <mwc-icon-button class="fg blue controls-running" icon="assignment"
-                               @click="${(e) => this._showLogs(e)}"
-                               icon="assignment"></mwc-icon-button>
+                               @click="${(e) => this._showLogs(e)}"></mwc-icon-button>
           ` : html`
             <mwc-icon-button fab flat inverted disabled class="fg controls-running" icon="assignment"></mwc-icon-button>
           `}
@@ -1816,9 +1839,13 @@ export default class BackendAiSessionList extends BackendAIPage {
                                      .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-filter-column>
         ` : html``}
-        <vaadin-grid-filter-column path="${this.sessionNameField}" header="${_t('session.SessionInfo')}" resizable
+        <vaadin-grid-filter-column auto-width flex-grow="0" path="${this.sessionNameField}" header="${_t('session.SessionInfo')}" resizable
                                    .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-filter-column>
+        ${this._isIntegratedCondition ? html`
+          <vaadin-grid-filter-column path="type" width="100px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
+        `
+        : html``}
         <vaadin-grid-filter-column path="status" auto-width header="${_t('session.Status')}" resizable
                                    .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-filter-column>
