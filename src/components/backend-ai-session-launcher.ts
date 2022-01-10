@@ -190,6 +190,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) _debug = false;
   @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
   @property({type: Boolean}) useScheduledTime = false;
+  @property({type: Object}) schedulerTimer;
 
   constructor() {
     super();
@@ -1119,6 +1120,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       /* To reflect current resource policy */
       await this._refreshResourcePolicy();
       this.requestUpdate();
+      this._toggleScheduleTime(!this.useScheduledTime);
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
   }
@@ -2812,13 +2814,30 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * Toggle scheduling time when session type is in batch
+   * Toggle scheduling time UI when session type is in batch
    *
    */
-  _toggleScheduleTime() {
+  _toggleScheduleTimeDisplay() {
     this.useScheduledTime = this.shadowRoot.querySelector('#use-scheduled-time').selected;
     this.shadowRoot.querySelector('vaadin-date-time-picker').style.display = this.useScheduledTime ? 'block': 'none';
-    this._getSchedulableTime();
+    this._toggleScheduleTime(!this.useScheduledTime);
+  }
+
+  /**
+   * Toggle scheduling time interval according to `isActive` parameter
+   * 
+   * @param {Boolean} isActive 
+   */
+
+  _toggleScheduleTime(isActive = false) {
+    if (isActive) {
+      clearInterval(this.schedulerTimer);
+    } else {
+      this.schedulerTimer = setInterval(() => {
+        // interval every 1 sec.
+        this._getSchedulableTime();
+      }, 1000);
+    }
   }
 
   /**
@@ -2852,11 +2871,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       schedulerEl.value = getFormattedTime(futureTime);
     }
     this._setRelativeTimeStamp();
-
-    // interval every 1 sec.
-    setTimeout(() => {
-      this._getSchedulableTime();
-    }, 1000);
   }
 
   _setRelativeTimeStamp() {
@@ -2901,7 +2915,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <wl-icon>power_settings_new</wl-icon>
         <span>${_t('session.launcher.Start')}</span>
       </wl-button>
-      <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent>
+      <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent @dialog-closed="${this._toggleScheduleTime}">
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
         <form slot="content" id="launch-session-form" class="centered" style="position:relative;">
           <div id="progress-01" class="progress center layout fade active">
@@ -2987,13 +3001,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <lablup-codemirror id="command-editor" mode="shell"></lablup-codemirror>
               <div class="horizontal center layout justified" style="margin: 10px auto;">
                 <div style="width:330px;font-size:12px;">${_t('session.launcher.ScheduleTime')}</div>
-                <mwc-switch id="use-scheduled-time" @click="${() => this._toggleScheduleTime()}"></mwc-switch>
+                <mwc-switch id="use-scheduled-time" @click="${() => this._toggleScheduleTimeDisplay()}"></mwc-switch>
               </div>
               <vaadin-date-time-picker step="1"
                 date-placeholder="DD/MM/YYYY"
                 time-placeholder="hh:mm:ss"
                 ?required="${this.useScheduledTime}"
-                @value-changed="${() => this._getSchedulableTime()}"
+                @change="${this._getSchedulableTime}"
                 style="display:none;"></vaadin-date-time-picker>
             </div>
             <div class="horizontal layout center justified">
