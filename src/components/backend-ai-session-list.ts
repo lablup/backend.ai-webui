@@ -1356,15 +1356,16 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   /**
    * Update a session's name if session-rename-field is visiable.
-   * 
+   *
    * @param {String} id - original session id
    * @param {Object} e - click the edit icon
-   * @returns {void}
+   * @return {void}
    */
   _renameSessionName(id, e) {
     const sessionNameContainer = e.target.parentNode;
     const nameField = sessionNameContainer.querySelector('#session-name-field');
     const renameField = sessionNameContainer.querySelector('#session-rename-field');
+    const icon = sessionNameContainer.querySelector('#session-rename-icon');
 
     if (nameField.style.display === 'none') {
       if (renameField.checkValidity()) {
@@ -1385,6 +1386,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         });
       } else {
         renameField.reportValidity();
+        icon.on = true;
         return;
       }
     } else {
@@ -1423,6 +1425,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             --mdc-text-field-fill-color: transparent;
             --mdc-text-field-disabled-fill-color: transparent;
             --mdc-ripple-color: transparent;
+            width: min-content;
           }
           #session-rename-icon {
             --mdc-icon-size: 20px;
@@ -1432,7 +1435,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div class="horizontal center center-justified layout">
             <div id="session-name-field">${rowData.item[this.sessionNameField]}</div>
             ${(this._isRunning && !this._isPreparing(rowData.item.status)) ? html`
-              <mwc-textfield id="session-rename-field" required
+            <mwc-textfield id="session-rename-field" required
                              pattern="[a-zA-Z0-9_-]{4,}" maxLength="64"
                              helper="${_t('maxLength.64chars')}" autoValidate
                              validationMessage="${_t('session.EnterValidSessionName')}"
