@@ -1350,7 +1350,6 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
   sessionTypeRenderer(root, column?, rowData?) {
-    console.log(rowData)
     render(
       html`
         <div class="layout vertical center">
