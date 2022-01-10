@@ -21,6 +21,7 @@ import 'weightless/icon';
 import 'weightless/textfield';
 
 import '@material/mwc-icon-button';
+import '@material/mwc-icon-button-toggle';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu';
@@ -1423,6 +1424,9 @@ export default class BackendAiSessionList extends BackendAIPage {
             --mdc-text-field-disabled-fill-color: transparent;
             --mdc-ripple-color: transparent;
           }
+          #session-rename-icon {
+            --mdc-icon-size: 20px;
+          }
         </style>
         <div class="layout vertical start">
           <div class="horizontal center center-justified layout">
@@ -1434,7 +1438,8 @@ export default class BackendAiSessionList extends BackendAIPage {
                              validationMessage="${_t('session.EnterValidSessionName')}"
                              value="${rowData.item[this.sessionNameField]}"
                              @input="${(e) => this._validateSessionName(e)}"></mwc-textfield>
-              <mwc-icon-button @click="${(e) => this._renameSessionName(rowData.item.session_id, e)}" icon="edit"></mwc-icon-button>
+              <mwc-icon-button-toggle id="session-rename-icon" onIcon="done" offIcon="edit"
+                                      @click="${(e) => this._renameSessionName(rowData.item.session_id, e)}"></mwc-icon-button-toggle>
             ` : html`
             `}
           </div>
