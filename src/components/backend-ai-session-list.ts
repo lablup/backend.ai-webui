@@ -1428,6 +1428,9 @@ export default class BackendAiSessionList extends BackendAIPage {
             --mdc-text-field-disabled-fill-color: transparent;
             --mdc-ripple-color: transparent;
             width: min-content;
+            font-family: var(--general-monospace-font-family);
+            --mdc-typography-font-family: var(--general-monospace-font-family);
+            --mdc-typography-subtitle1-font-family: var(--general-monospace-font-family);
           }
           #session-rename-icon {
             --mdc-icon-size: 20px;
