@@ -1419,6 +1419,8 @@ export default class BackendAiSessionList extends BackendAIPage {
           #session-name-field {
             display: block;
             margin-left: 16px;
+            white-space: pre-wrap;
+            word-break: break-all;
           }
           #session-rename-field {
             display: none;
@@ -1433,7 +1435,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         </style>
         <div class="layout vertical start">
           <div class="horizontal center center-justified layout">
-            <div id="session-name-field">${rowData.item[this.sessionNameField]}</div>
+            <pre id="session-name-field">${rowData.item[this.sessionNameField]}</pre>
             ${(this._isRunning && !this._isPreparing(rowData.item.status)) ? html`
             <mwc-textfield id="session-rename-field" required
                              pattern="[a-zA-Z0-9_-]{4,}" maxLength="64"
