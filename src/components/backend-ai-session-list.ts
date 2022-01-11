@@ -19,6 +19,7 @@ import 'weightless/checkbox';
 import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/textfield';
+import 'weightless/tooltip/tooltip';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list';
@@ -178,6 +179,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-fab-size: 32px;
           --button-padding: 3px;
           margin-right: 5px;
+        }
+
+        wl-tooltip.log-disabled-msg {
+          position: absolute;
+          top: 80%;
+          left: 100%;
+          transform: translate(-50%, -50%);
+          z-index: 1; /* used for overlay */
         }
 
         img.indicator-icon {
@@ -1192,13 +1201,36 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-
   /**
    * Remove the dropdown menu when mouseleave the mount-button.
    * */
   _removeMountedFolderDropdown() {
     const menu = document.getElementsByClassName('dropdown-menu') as any;
     while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
+  }
+
+  /**
+   * Show tooltip when mouseenter the corresponding element
+   * 
+   * @param {string} elementId
+   */
+  _showTooltip(elementId = '') {
+    if (elementId) {
+      const tooltip = this.shadowRoot.querySelector(`#${elementId}`);
+      tooltip.open = true;
+    }
+  }
+
+  /**
+   * Hide tooltip when mouseleave the corresponding element
+   * 
+   * @param {string} elementId
+   */
+  _hideTooltip(elementId = '') {
+    if (elementId) {
+      const tooltip = this.shadowRoot.querySelector(`#${elementId}`);
+      tooltip.open = false;
+    }
   }
 
   _renderStatusDetail() {
@@ -1482,7 +1514,10 @@ export default class BackendAiSessionList extends BackendAIPage {
             <mwc-icon-button class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"></mwc-icon-button>
           ` : html`
-            <mwc-icon-button fab flat inverted disabled class="fg controls-running" icon="assignment" @hover="${() => console.log('hover')}"></mwc-icon-button>
+            <div @mouseenter="${() => this._showTooltip('tooltip-'+rowData.item.session_id)}" @mouseleave="${() => this._hideTooltip('tooltip-'+rowData.item.session_id)}">
+              <mwc-icon-button fab flat inverted disabled class="fg controls-running" icon="assignment"></mwc-icon-button>
+            </div>
+            <wl-tooltip class="log-disabled-msg" id="tooltip-${rowData.item.session_id}">${_t('session.NoLogMsgAvailable')}</wl-tooltip>
           `}
         </div>
       `, root

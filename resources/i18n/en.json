@@ -287,7 +287,8 @@
     "UseYourFavoriteVNCApp": "Use your favorite VNC app",
     "XRDPconnection": "RDP Connection",
     "UseYourFavoriteMSTSCApp": "Use your favorite MS Remote Desktop app",
-    "OnlyOneFolderAttached": "Only one folder is attached."
+    "OnlyOneFolderAttached": "Only one folder is attached.",
+    "NoLogMsgAvailable": "No log message available on current state"
   },
   "button": {
     "Cancel": "Cancel",
