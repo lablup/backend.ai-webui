@@ -346,6 +346,10 @@ export default class BackendAiSessionList extends BackendAIPage {
     return status === 'ERROR';
   }
 
+  _isPending(status) {
+    return status === 'PENDING';
+  }
+
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this._grid = this.shadowRoot.querySelector('#list-grid');
@@ -1474,11 +1478,11 @@ export default class BackendAiSessionList extends BackendAIPage {
             <mwc-icon-button class="fg red controls-running"
                                icon="power_settings_new" @click="${(e) => this._openTerminateSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
-          ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status) || this._APIMajorVersion > 4)  && !this._isPending(rowData.item.status) ? html`
             <mwc-icon-button class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"></mwc-icon-button>
           ` : html`
-            <mwc-icon-button fab flat inverted disabled class="fg controls-running" icon="assignment"></mwc-icon-button>
+            <mwc-icon-button fab flat inverted disabled class="fg controls-running" icon="assignment" @hover="${() => console.log('hover')}"></mwc-icon-button>
           `}
         </div>
       `, root
