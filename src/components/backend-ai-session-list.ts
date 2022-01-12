@@ -1918,7 +1918,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                      .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-filter-column>
         ` : html``}
-        <vaadin-grid-filter-column path="${this.sessionNameField}" header="${_t('session.SessionInfo')}" resizable
+        <vaadin-grid-filter-column path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
                                    .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-filter-column>
         <vaadin-grid-filter-column path="status" auto-width header="${_t('session.Status')}" resizable
