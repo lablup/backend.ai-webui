@@ -1388,9 +1388,8 @@ export default class BackendAiSessionList extends BackendAIPage {
   sessionTypeRenderer(root, column?, rowData?) {
     render(
       html`
-        <div class="layout vertical center">
-        <lablup-shields color="blue" description="${rowData.item.type === 'BATCH' ? 'BATCH': 'INTERACTIVE'}"
-          ui="round" style="margin-top:3px;margin-right:3px;"></lablup-shields>
+        <div class="layout vertical start">
+          <span style="font-size: 12px;">${rowData.item.type}</span>
         </div>
       `, root
     );
@@ -1881,7 +1880,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                    .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-filter-column>
         ${this._isIntegratedCondition ? html`
-          <vaadin-grid-filter-column path="type" width="100px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
         `
         : html``}
         <vaadin-grid-filter-column path="status" auto-width header="${_t('session.Status')}" resizable
