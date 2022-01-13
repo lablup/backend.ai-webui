@@ -762,6 +762,7 @@
     "Username": "Username",
     "Password": "Password",
     "AddRegistry": "Add Registry",
+    "ModifyRegistry": "Modify Registry",
     "RegistryHostname": "Registry Hostname",
     "DescHostnameIsEmpty": "Hostname is empty",
     "DescURLStartString": "URL Starts with http:// or https://",
@@ -784,10 +785,7 @@
     "RegistryUpdateFailed": "Registry update failed.",
     "RescanImages": "Rescanning Images...",
     "RescanFailed": "Rescan Failed.",
-    "PleaseSelectOption": "Please select one option.",
-    "ModifyRegistryConfigurations": "Modify registry configurations",
-    "RegistrySuccessfullyModified": "Registry successfully modified.",
-    "NoChangeMade": "No changes were made."
+    "RegistrySuccessfullyModified": "Registry successfully modified."
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",
