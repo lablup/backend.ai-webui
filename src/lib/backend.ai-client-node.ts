@@ -1078,6 +1078,14 @@ class Client {
     return this.execute(sessionId, runId, mode, code, {});
   }
 
+  async rename(sessionId, newId) {
+    let params = {
+      'name': newId
+    }
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/rename`, params);
+    return this._wrapWithPromise(rqst);
+  }
+
   async shutdown_service(sessionId, service_name) {
     let params = {
       'service_name': service_name

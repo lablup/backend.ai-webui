@@ -226,7 +226,11 @@
       "(Automatic)": "(자동설정)",
       "NumOpenMPthreads": "OpenMP 쓰레드 수",
       "NumOpenBLASthreads": "OpenBLAS 쓰레드 수",
-      "SwitchOpenMPoptimization": "OpenMP 자동 최적화 사용"
+      "SwitchOpenMPoptimization": "OpenMP 자동 최적화 사용",
+      "SessionRenamed": "세션 이름이 변경되었습니다",
+      "SessionNameRequired": "세션 이름을 입력해주세요",
+      "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
+      "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

@@ -288,7 +288,11 @@
     "XRDPconnection": "RDP Connection",
     "UseYourFavoriteMSTSCApp": "Use your favorite MS Remote Desktop app",
     "OnlyOneFolderAttached": "Only one folder is attached.",
-    "NoLogMsgAvailable": "No log message available on current state"
+    "NoLogMsgAvailable": "No log message available on current state",
+    "SessionRenamed": "Session renamed",
+    "SessionNameRequired": "Session name is required",
+    "EnterValidSessionName": "Enter valid session name",
+    "SessionNameAlreadyExist": "Session name already exists"
   },
   "button": {
     "Cancel": "Cancel",

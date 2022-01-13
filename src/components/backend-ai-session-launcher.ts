@@ -1970,7 +1970,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.shadowRoot.querySelector('#cluster-size').disabled = false;
         }
       }
-      if (this.cuda_device_metric.min == this.cuda_device_metric.max) {
+      if (this.cuda_device_metric.min == this.cuda_device_metric.max &&
+          this.cuda_device_metric.max < 1) {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
       if (this.concurrency_limit <= 1) {
