@@ -19,6 +19,7 @@ import 'weightless/checkbox';
 import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/textfield';
+import 'weightless/tooltip/tooltip';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
@@ -76,6 +77,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   @property({type: Object}) _boundUserInfoRenderer = this.userInfoRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
+  @property({type: Object}) _boundSessionTypeRenderer = this.sessionTypeRenderer.bind(this);
   @property({type: Boolean}) refreshing = false;
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
@@ -178,6 +180,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-fab-size: 32px;
           --button-padding: 3px;
           margin-right: 5px;
+        }
+
+        wl-tooltip.log-disabled-msg {
+          position: absolute;
+          top: 80%;
+          left: 100%;
+          transform: translate(-50%, -50%);
+          z-index: 1; /* used for overlay */
         }
 
         img.indicator-icon {
@@ -327,7 +337,11 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   get _isRunning() {
-    return this.condition === 'running';
+    return ['batch', 'interactive', 'running'].includes(this.condition);
+  }
+
+  get _isIntegratedCondition() {
+    return ['running', 'finished', 'others'].includes(this.condition);
   }
 
   _isPreparing(status) {
@@ -340,6 +354,10 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _isError(status) {
     return status === 'ERROR';
+  }
+
+  _isPending(status) {
+    return status === 'PENDING';
   }
 
   firstUpdated() {
@@ -455,6 +473,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     status = 'RUNNING';
     switch (this.condition) {
     case 'running':
+    case 'interactive':
+    case 'batch':
       status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
       break;
     case 'finished':
@@ -478,7 +498,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       'id', 'session_id', 'name', 'image',
       'created_at', 'terminated_at', 'status', 'status_info',
       'service_ports', 'mounts',
-      'occupied_slots', 'access_key'
+      'occupied_slots', 'access_key', 'starts_at', 'type'
     ];
     if (globalThis.backendaiclient.supports('multi-container')) {
       fields.push('cluster_size');
@@ -508,11 +528,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       if (this.total_session_count === 0) {
         this.total_session_count = 1;
       }
-      const sessions = response.compute_session_list.items;
-      // console.log(sessions);
+      let sessions = response.compute_session_list.items;
       if (sessions !== undefined && sessions.length != 0) {
         const previousSessions = this.compute_sessions;
-
         const previousSessionKeys: any = [];
         Object.keys(previousSessions).map((objectKey, index) => {
           previousSessionKeys.push(previousSessions[objectKey]['session_id']);
@@ -527,6 +545,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           // Readable text
           sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
           sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
+          sessions[objectKey].starts_at_hr = sessions[objectKey].starts_at ? this._humanReadableTime(sessions[objectKey].starts_at) : '';
           if (sessions[objectKey].containers && sessions[objectKey].containers.length > 0) {
             const container = sessions[objectKey].containers[0];
             const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
@@ -585,13 +604,13 @@ export default class BackendAiSessionList extends BackendAIPage {
             sessions[objectKey].app_services = [];
             sessions[objectKey].app_services_option = {};
           }
-          if (sessions[objectKey].app_services.length === 0 || this.condition != 'running') {
+          if (sessions[objectKey].app_services.length === 0 || !['batch', 'interactive', 'running'].includes(this.condition)) {
             sessions[objectKey].appSupport = false;
           } else {
             sessions[objectKey].appSupport = true;
           }
 
-          if (this.condition === 'running') {
+          if (['batch', 'interactive', 'running'].includes(this.condition)) {
             sessions[objectKey].running = true;
           } else {
             sessions[objectKey].running = false;
@@ -632,6 +651,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
         });
       }
+      if (['batch', 'interactive'].includes(this.condition)) {
+        const result = sessions.reduce((res, session) => {
+          res[session.type === 'BATCH' ? 'batch' : 'interactive'].push(session);
+          return res;
+        }, {batch: [], interactive: []});
+        sessions = result[this.condition === 'batch' ? 'batch': 'interactive'];
+      }
+
       this.compute_sessions = sessions;
       this.requestUpdate();
       let refreshTime;
@@ -643,7 +670,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           document.dispatchEvent(event);
         }
         if (repeat === true) {
-          refreshTime = this.condition === 'running' ? 5000 : 30000;
+          refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 5000 : 30000;
           this.refreshTimer = setTimeout(() => {
             this._refreshJobData();
           }, refreshTime);
@@ -653,7 +680,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.refreshing = false;
       if (this.active && repeat) {
         // Keep trying to fetch session list with more delay
-        const refreshTime = this.condition === 'running' ? 20000 : 120000;
+        const refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 20000 : 120000;
         this.refreshTimer = setTimeout(() => {
           this._refreshJobData();
         }, refreshTime);
@@ -1175,7 +1202,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-
   /**
    * Remove the dropdown menu when mouseleave the mount-button.
    * */
@@ -1184,8 +1210,33 @@ export default class BackendAiSessionList extends BackendAIPage {
     while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
   }
 
+  /**
+   * Show tooltip when mouseenter the corresponding element
+   * 
+   * @param {string} elementId
+   */
+  _showTooltip(elementId = '') {
+    if (elementId) {
+      const tooltip = this.shadowRoot.querySelector(`#${elementId}`);
+      tooltip.open = true;
+    }
+  }
+
+  /**
+   * Hide tooltip when mouseleave the corresponding element
+   * 
+   * @param {string} elementId
+   */
+  _hideTooltip(elementId = '') {
+    if (elementId) {
+      const tooltip = this.shadowRoot.querySelector(`#${elementId}`);
+      tooltip.open = false;
+    }
+  }
+
   _renderStatusDetail() {
     const tmpSessionStatus = JSON.parse(this.selectedSessionStatus.data);
+    tmpSessionStatus.reserved_time = this.selectedSessionStatus.reserved_time;
     const statusDetailEl = this.shadowRoot.querySelector('#status-detail');
 
     statusDetailEl.innerHTML = `
@@ -1250,11 +1301,17 @@ export default class BackendAiSessionList extends BackendAIPage {
           <mwc-list>
           ${tmpSessionStatus.scheduler.failed_predicates.map((item) => {
     return `
+          ${item.name === 'reserved_time' ? `
+              <mwc-list-item twoline graphic="icon" noninteractive>
+                <span>${item.name}</span>
+                <span slot="secondary" style="white-space:pre-wrap;">${item.msg + ': ' + tmpSessionStatus.reserved_time}</span>
+                <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
+              </mwc-list-item>` : `
               <mwc-list-item twoline graphic="icon" noninteractive>
                 <span>${item.name}</span>
                 <span slot="secondary" style="white-space:pre-wrap;">${item.msg}</span>
                 <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
-              </mwc-list-item>
+              </mwc-list-item>`}
               <li divider role="separator"></li>
               `;
   }).join('')}
@@ -1312,10 +1369,11 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  _openStatusDetailDialog(statusInfo: string, statusData: string) {
+  _openStatusDetailDialog(statusInfo: string, statusData: string, reservedTime: string) {
     this.selectedSessionStatus = {
       info: statusInfo,
-      data: statusData
+      data: statusData,
+      reserved_time: reservedTime
     };
     this._renderStatusDetail();
     this.sessionStatusInfoDialog.show();
@@ -1403,6 +1461,23 @@ export default class BackendAiSessionList extends BackendAIPage {
       renameField.style.display = 'block';
       renameField.focus();
     }
+  }
+
+  /**
+   * Render session type - batch or interactive
+   * 
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  sessionTypeRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <div class="layout vertical start">
+          <span style="font-size: 12px;">${rowData.item.type}</span>
+        </div>
+      `, root
+    );
   }
 
   /**
@@ -1527,10 +1602,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           ${rowData.item.appSupport ? html`
             <mwc-icon-button class="fg controls-running green"
                                @click="${(e) => this._showAppLauncher(e)}"
-                               ?disabled="${!mySession}"
+                               ?disabled="${!mySession || rowData.item.type === 'BATCH'}"
                                icon="apps"></mwc-icon-button>
             <mwc-icon-button class="fg controls-running"
-                               ?disabled="${!mySession}"
+                               ?disabled="${!mySession || rowData.item.type === 'BATCH'}"
                                @click="${(e) => this._runTerminal(e)}">
               <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                  width="471.362px" height="471.362px" viewBox="0 0 471.362 471.362" style="enable-background:new 0 0 471.362 471.362;"
@@ -1554,12 +1629,14 @@ export default class BackendAiSessionList extends BackendAIPage {
             <mwc-icon-button class="fg red controls-running"
                                icon="power_settings_new" @click="${(e) => this._openTerminateSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
-          ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4 ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status) || this._APIMajorVersion > 4)  && !this._isPending(rowData.item.status) ? html`
             <mwc-icon-button class="fg blue controls-running" icon="assignment"
-                               @click="${(e) => this._showLogs(e)}"
-                               icon="assignment"></mwc-icon-button>
+                               @click="${(e) => this._showLogs(e)}"></mwc-icon-button>
           ` : html`
-            <mwc-icon-button fab flat inverted disabled class="fg controls-running" icon="assignment"></mwc-icon-button>
+            <div @mouseenter="${() => this._showTooltip('tooltip-'+rowData.item.session_id)}" @mouseleave="${() => this._hideTooltip('tooltip-'+rowData.item.session_id)}">
+              <mwc-icon-button fab flat inverted disabled class="fg controls-running" icon="assignment"></mwc-icon-button>
+            </div>
+            <wl-tooltip class="log-disabled-msg" id="tooltip-${rowData.item.session_id}">${_t('session.NoLogMsgAvailable')}</wl-tooltip>
           `}
         </div>
       `, root
@@ -1655,7 +1732,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   usageRenderer(root, column?, rowData?) {
-    if (this.condition === 'running') {
+    if (['batch', 'interactive', 'running'].includes(this.condition)) {
       render(
         // language=HTML
         html`
@@ -1870,7 +1947,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           <span style="font-size: 12px;">${rowData.item.status}</span>
           ${( !rowData.item.status_data || rowData.item.status_data === '{}') ? html`` : html`
             <mwc-icon-button class="fg green status" icon="help"
-                @click="${() => this._openStatusDetailDialog(rowData.item.status_info ?? '', rowData.item.status_data)}"></mwc-icon-button>
+                @click="${() => this._openStatusDetailDialog(rowData.item.status_info ?? '', rowData.item.status_data, rowData.item.starts_at_hr)}"></mwc-icon-button>
           `}
         </div>
         ${rowData.item.status_info ? html`
@@ -1921,6 +1998,10 @@ export default class BackendAiSessionList extends BackendAIPage {
         <vaadin-grid-filter-column path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
                                    .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-filter-column>
+        ${this._isIntegratedCondition ? html`
+          <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
+        `
+        : html``}
         <vaadin-grid-filter-column path="status" auto-width header="${_t('session.Status')}" resizable
                                    .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-filter-column>

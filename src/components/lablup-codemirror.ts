@@ -82,6 +82,13 @@ export default class LablupCodemirror extends LitElement {
   }
 
   /**
+   * Give the editor focus
+   * */
+  focus() {
+    globalThis.setTimeout(() => this.editor.focus(), 100);
+    }
+
+  /**
    * Get the editor's contents.
    *
    * @return {string} Editor's contents

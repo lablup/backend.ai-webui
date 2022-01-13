@@ -48,6 +48,7 @@
     "@material/mwc-textarea": "^0.25.3",
     "@material/mwc-textfield": "^0.25.3",
     "@material/mwc-top-app-bar-fixed": "^0.25.3",
+    "@vaadin/vaadin-date-time-picker": "^22.0.2",
     "@vaadin/vaadin-grid": "^22.0.2",
     "@vaadin/vaadin-icons": "^22.0.2",
     "@vaadin/vaadin-item": "^22.0.2",
