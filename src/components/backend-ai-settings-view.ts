@@ -82,7 +82,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
         max: 1000
       },
       mtu: {
-        min: 0
+        min: 0,
+        max: 15000
       },
     };
     // Save the key and ID of the options.
@@ -477,6 +478,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                              type="number"
                              pattern="[0-9]+"
                              min="${this.optionRange.mtu.min}"
+                             max="${this.optionRange.mtu.max}"
                              style="margin-top:18px;min-width:240px;"
                              @change="${(e) => this._validateInput(e)}"
                              @input="${(e) => this._customizeValidationMessage(e)}"></mwc-textfield>
