@@ -240,6 +240,8 @@
     "Agent": "실행노드",
     "Usage": "사용량",
     "OpenToPublic": "앱을 외부에 공개",
+    "AllowedClientIps":"허용된 클라이언트 IP",
+    "CommaSeparated": "콤마로 구분",
     "TryPreferredPort": "선호 포트",
     "SFTPDescription": "SSH/SFTP 클라이언트를 이용해서 접속하세요.",
     "ConnectionInformation": "연결 정보",

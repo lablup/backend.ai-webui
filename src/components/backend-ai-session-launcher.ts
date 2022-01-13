@@ -1920,7 +1920,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.shadowRoot.querySelector('#cluster-size').disabled = false;
         }
       }
-      if (this.cuda_device_metric.min == this.cuda_device_metric.max) {
+      if (this.cuda_device_metric.min == this.cuda_device_metric.max &&
+          this.cuda_device_metric.max < 1) {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
       if (this.concurrency_limit <= 1) {
@@ -2866,7 +2867,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   aria-label="vfolder list"
                   height-by-rows
                   .items="${this.nonAutoMountedVfolders}"
-                  @click="${() => this._updateSelectedFolder()}">
+                  @selected-items-changed="${() => this._updateSelectedFolder()}">
                 <vaadin-grid-selection-column id="select-column"
                                               flex-grow="0"
                                               text-align="center"
