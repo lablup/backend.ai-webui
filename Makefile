@@ -32,7 +32,8 @@ compile_wsproxy:
 all: dep mac win linux
 dep:
 	#cp -u ./scripts/pre-commit ./.git/hooks/pre-commit && chmod 755 ./.git/hooks/pre-commit
-	cd ./src/plastics/weightless && bash ./patch-input-behavior.sh
+	#cd ./src/plastics/weightless && bash ./patch-input-behavior.sh
+	#cp ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js # Temporary fix for lit-2 rc stage.
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
 		make compile_wsproxy; \
@@ -116,5 +117,5 @@ pack:
 i18n:
 	 ./node_modules/i18next-scanner/bin/cli.js --config ./i18n.config.js
 clean:
-	cd app;	rm -rf ./backend*
+	cd app;	rm -rf ./backend*; rm -rf ./Backend*
 	cd build;rm -rf ./unbundle ./bundle ./rollup ./electron-app

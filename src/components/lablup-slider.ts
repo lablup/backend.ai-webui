@@ -3,7 +3,9 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property, query} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
+
 import '@material/mwc-slider';
 import 'weightless/textfield';
 
@@ -36,15 +38,15 @@ export default class LablupSlider extends LitElement {
   @property({type: Number}) value;
   @property({type: Number}) max;
   @property({type: Number}) min;
-  @property({type: Boolean}) editable = null;
-  @property({type: Boolean}) pin = null;
-  @property({type: Boolean}) markers = null;
+  @property({type: Boolean}) editable = false;
+  @property({type: Boolean}) pin = false;
+  @property({type: Boolean}) markers = false;
   @property({type: Number}) marker_limit = 30;
-  @property({type: Boolean}) disabled = null;
+  @property({type: Boolean}) disabled = false;
   @property({type: Object}) textfield;
   @query('#slider', true) slider;
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -108,8 +110,11 @@ export default class LablupSlider extends LitElement {
     super.disconnectedCallback();
   }
 
-  update(changedProperties) {
-    this.min = (this.min > this.max) ? this.max : this.min;
+  update(changedProperties: Map<any, any>) {
+    if (Array.from(changedProperties.keys()).some((item) => ['value', 'min', 'max'].includes(item))) {
+      this.min = (this.min >= this.max) ? 0 : this.min;
+    }
+    // this.min = (this.min > this.max) ? this.max : this.min;
     super.update(changedProperties);
   }
 

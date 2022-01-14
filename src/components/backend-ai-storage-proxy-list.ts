@@ -4,8 +4,8 @@
  */
 
 import {translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {render} from 'lit-html';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -26,7 +26,7 @@ import './backend-ai-dialog';
 import './lablup-progress-bar';
 
 /**
- Backend.AI Agent List
+ Backend.AI Storage Proxy List
 
  Example:
 
@@ -41,11 +41,11 @@ import './lablup-progress-bar';
 @customElement('backend-ai-storage-proxy-list')
 export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: String}) condition = 'running';
-  @property({type: Array}) agents;
-  @property({type: Object}) agentsObject = Object();
-  @property({type: Object}) agentDetail = Object();
+  @property({type: Array}) storages;
+  @property({type: Object}) storagesObject = Object();
+  @property({type: Object}) storageProxyDetail = Object();
   @property({type: Object}) notification = Object();
-  @property({type: Object}) agentDetailDialog = Object();
+  @property({type: Object}) storageProxyDetailDialog = Object();
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundTypeRenderer = this.typeRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
@@ -55,10 +55,10 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
 
   constructor() {
     super();
-    this.agents = [];
+    this.storages = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -97,7 +97,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
           margin-right: 5px;
         }
 
-        #agent-detail {
+        #storage-proxy-detail {
           --component-max-width: 90%;
         }
 
@@ -138,7 +138,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
+    this.storageProxyDetailDialog = this.shadowRoot.querySelector('#storage-proxy-detail');
   }
 
   connectedCallback() {
@@ -158,44 +158,43 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this._loadAgentList();
+        this._loadStorageProxyList();
       }, true);
     } else { // already connected
-      this._loadAgentList();
+      this._loadStorageProxyList();
     }
   }
 
   /**
    * Load an storage proxy informations.
    *
-   * @param {string} status - The agent's backend.ai client status.
    */
-  _loadAgentList() {
+  _loadStorageProxyList() {
     if (this.active !== true) {
       return;
     }
     globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric', 'usage']).then((response) => {
       const storage_volumes = response.storage_volume_list.items;
-      const agents: Array<any> = [];
+      const storages: Array<any> = [];
       if (storage_volumes !== undefined && storage_volumes.length != 0) {
         Object.keys(storage_volumes).map((objectKey, index) => {
-          const agent: any = storage_volumes[objectKey];
+          const storage: any = storage_volumes[objectKey];
           if (this.filter !== '') {
             const filter = this.filter.split(':');
-            if (filter[0] in agent && agent[filter[0]] === filter[1]) {
-              agents.push(agent);
+            if (filter[0] in storage && storage[filter[0]] === filter[1]) {
+              storages.push(storage);
             }
           } else {
-            agents.push(agent);
+            storages.push(storage);
           }
         });
       }
-      this.agents = agents;
+      this.storages = storages;
       const event = new CustomEvent('backend-ai-storage-proxy-updated', {});
       this.dispatchEvent(event);
       if (this.active === true) {
         setTimeout(() => {
-          this._loadAgentList();
+          this._loadStorageProxyList();
         }, 15000);
       }
     }).catch((err) => {
@@ -407,14 +406,14 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   /**
    * Show storage proxy detailed dialog.
    *
-   * @param {string} agentId - agent ID
+   * @param {string} storageProxyId - storage proxy ID
    * @return {void}
    */
-  showStorageProxyDetailDialog(agentId) {
-    const event = new CustomEvent('backend-ai-selected-storage-proxy', {'detail': agentId});
+  showStorageProxyDetailDialog(storageProxyId) {
+    const event = new CustomEvent('backend-ai-selected-storage-proxy', {'detail': storageProxyId});
     document.dispatchEvent(event);
-    // this.agentDetail = this.agentsObject[agentId];
-    // this.agentDetailDialog.show();
+    // this.storageProxyDetail = this.storagesObject[storageProxyId];
+    // this.storageProxyDetailDialog.show();
     return;
   }
 
@@ -426,12 +425,20 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
    * @param {object} rowData
    */
   controlRenderer(root, column?, rowData?) {
+    let perfMetricDisabled;
+    try {
+      const perfMetric = JSON.parse(rowData.item.performance_metric);
+      perfMetricDisabled = Object.keys(perfMetric).length > 0 ? false : true;
+    } catch {
+      perfMetricDisabled = true;
+    }
     render(
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.id}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment"
-                           @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
+          <mwc-icon-button class="fg blue controls-running" icon="assignment" 
+                          ?disabled="${perfMetricDisabled}"
+                          @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
         </div>`, root
     );
   }
@@ -444,7 +451,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     // language=HTML
     return html`
       <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
-                   .items="${this.agents}">
+                   .items="${this.storages}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
@@ -460,16 +467,16 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t('general.Control')}"
                             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
-      <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
+      <backend-ai-dialog id="storage-proxy-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">
           <div class="horizontal start start-justified layout">
-            ${'cpu_util_live' in this.agentDetail ?
+            ${'cpu_util_live' in this.storageProxyDetail ?
     html`
                 <div>
                   <h3>CPU</h3>
                   <div class="horizontal wrap layout" style="max-width:600px;">
-                    ${this.agentDetail.cpu_util_live.map((item) => html`
+                    ${this.storageProxyDetail.cpu_util_live.map((item) => html`
                       <div class="horizontal start-justified center layout" style="padding:0 5px;">
                         <div style="font-size:8px;width:35px;">CPU${item.num}</div>
                         <lablup-progress-bar class="cpu"
@@ -483,14 +490,14 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
               <h3>Memory</h3>
               <div>
                 <lablup-progress-bar class="mem"
-                                     progress="${this.agentDetail.mem_current_usage_ratio}"
-                                     description="${this.agentDetail.current_mem}GB/${this.agentDetail.mem_slots}GB"
+                                     progress="${this.storageProxyDetail.mem_current_usage_ratio}"
+                                     description="${this.storageProxyDetail.current_mem}GB/${this.storageProxyDetail.mem_slots}GB"
                 ></lablup-progress-bar>
               </div>
               <h3>Network</h3>
-              ${'live_stat' in this.agentDetail && 'node' in this.agentDetail.live_stat ? html`
-                <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
-                <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
+              ${'live_stat' in this.storageProxyDetail && 'node' in this.storageProxyDetail.live_stat ? html`
+                <div>TX: ${this._bytesToMB(this.storageProxyDetail.live_stat.node.net_tx.current)}MB</div>
+                <div>RX: ${this._bytesToMB(this.storageProxyDetail.live_stat.node.net_rx.current)}MB</div>
               ` : html``}
             </div>
           </div>

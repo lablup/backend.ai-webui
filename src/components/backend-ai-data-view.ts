@@ -3,15 +3,17 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {unsafeHTML} from 'lit-html/directives/unsafe-html';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
 import '@material/mwc-button';
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
-import '../plastics/mwc/mwc-multi-select';
+import '@material/mwc-select';
 import '@material/mwc-switch';
 import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-tab-bar/mwc-tab-bar';
@@ -88,12 +90,14 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) totalCount;
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
+  @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
+  @property({type: Object}) storageProxyInfo = Object();
 
   constructor() {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -216,9 +220,8 @@ export default class BackendAIData extends BackendAIPage {
           --label-color: black;
         }
 
-        mwc-multi-select {
-          width: 173px;
-          --mdc-select-min-width: 173px;
+        mwc-select {
+          width: 50%;
           margin-bottom: 10px;
           --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-select-fill-color: transparent;
@@ -228,17 +231,29 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-list-vertical-padding: 5px;
         }
 
+        mwc-select.full-width {
+          width: 100%;
+        }
+
+        mwc-select.full-width.fixed-position > mwc-list-item {
+          width: 314px; // default width
+        }
+
+        mwc-select.fixed-position > mwc-list-item {
+          width: 140px; // default width
+        }
+
+        mwc-select mwc-icon-button {
+          --mdc-icon-button-size: 24px;
+          color: var(--general-textfield-selected-color);
+        }
+
         #help-description {
           --dialog-width: 350px;
         }
 
         #help-description p {
           padding: 5px !important;
-        }
-
-        mwc-multi-select mwc-icon-button {
-          --mdc-icon-button-size: 24px;
-          color: var(--general-textfield-selected-color);
         }
 
         #automount-folder-lists > div {
@@ -250,16 +265,6 @@ export default class BackendAIData extends BackendAIPage {
         #automount-folder-lists > div > p {
           color: var(--general-sidebar-color);
           margin-left: 10px;
-        }
-
-        @media screen and (max-width: 750px) {
-          mwc-tab {
-            --mdc-typography-button-font-size: 10px;
-          }
-
-          mwc-button > span {
-            display: none;
-          }
         }
 
         .storage-status-indicator {
@@ -275,6 +280,19 @@ export default class BackendAIData extends BackendAIPage {
           margin: 20px 50px 0px 50px;
         }
 
+        h4#default-quota-unit {
+          display:none;
+        }
+
+        @media screen and (max-width: 750px) {
+          mwc-tab {
+            --mdc-typography-button-font-size: 10px;
+          }
+
+          mwc-button > span {
+            display: none;
+          }
+        }
       `];
   }
 
@@ -282,7 +300,7 @@ export default class BackendAIData extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <div class="vertical layout" style="margin:20px;">
+      <div class="vertical layout">
         <lablup-activity-panel elevation="1" narrow title=${_t('data.StorageStatus')} autowidth>
           <div slot="message">
             <div class="horizontal layout wrap flex center center-justified">
@@ -334,52 +352,52 @@ export default class BackendAIData extends BackendAIPage {
       </div>
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.CreateANewStorageFolder')}</span>
-        <div slot="content">
+        <div slot="content" class="vertical layout flex">
           <mwc-textfield id="add-folder-name" label="${_t('data.Foldername')}"
           @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
             required validationMessage="${_t('data.Allowslettersnumbersand-_dot')}" maxLength="64"
             placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
+          <mwc-select class="full-width fixed-position" id="add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+            ${this.vhosts.map((item, idx) => html`
+              <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
+                <span>${item}</span>
+                <mwc-icon-button slot="meta" icon="info"
+                    @click="${(e) => this._showStorageDescription(e, item)}">
+                </mwc-icon-button>
+              </mwc-list-item>
+            `)}
+          </mwc-select>
           <div class="horizontal layout">
-            <mwc-multi-select id="add-folder-host" label="${_t('data.Host')}">
-              ${this.vhosts.map((item, idx) => html`
-                <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
-                  <span>${item}</span>
-                  <mwc-icon-button slot="meta" icon="info"
-                      @click="${(e) => this._showStorageDescription(e, item)}">
-                  </mwc-icon-button>
-                </mwc-list-item>
-              `)}
-            </mwc-multi-select>
-            <mwc-multi-select id="add-folder-type" label="${_t('data.Type')}">
+            <mwc-select id="add-folder-type" label="${_t('data.Type')}"
+                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}">
               ${(this.allowed_folder_type as string[]).includes('user') ? html`
                 <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
               ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
                 <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Project')}</mwc-list-item>
               ` : html``}
-            </mwc-multi-select>
-          </div>
-          ${this._vfolderInnatePermissionSupport ? html`
-            <div class="horizontal layout">
-              <mwc-multi-select id="add-folder-usage-mode" label="${_t('data.UsageMode')}">
-                ${this.usageModes.map((item, idx) => html`
-                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
-                `)}
-              </mwc-multi-select>
-              <mwc-multi-select id="add-folder-permission" label="${_t('data.Type')}">
-                ${this.permissions.map((item, idx) => html`
-                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
-                `)}
-              </mwc-multi-select>
-            </div>
-          ` : html``}
-          ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-            <div class="horizontal layout">
-              <mwc-multi-select id="add-folder-group" label="${_t('data.Project')}">
+            </mwc-select>
+            ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
+              <mwc-select class="fixed-position" id="add-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
                 ${(this.allowedGroups as any).map((item, idx) => html`
                   <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
-              </mwc-multi-select>
+              </mwc-select>
+            </div>
+          ` : html``}
+          </div>
+          ${this._vfolderInnatePermissionSupport ? html`
+            <div class="horizontal layout">
+              <mwc-select class="fixed-position" id="add-folder-usage-mode" label="${_t('data.UsageMode')}" fixedMenuPosition>
+                ${this.usageModes.map((item, idx) => html`
+                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+                `)}
+              </mwc-select>
+              <mwc-select class="fixed-position" id="add-folder-permission" label="${_t('data.Permission')}" fixedMenuPosition>
+                ${this.permissions.map((item, idx) => html`
+                  <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
+                `)}
+              </mwc-select>
             </div>
           ` : html``}
           ${this.enableStorageProxy ?
@@ -396,13 +414,13 @@ export default class BackendAIData extends BackendAIPage {
             ${_t('data.DialogFolderStartingWithDotAutomount')}
           </div>
         </div>
-        <div slot="footer" class="horizontal flex">
+        <div slot="footer" class="horizontal center-justified flex">
           <mwc-button
               unelevated
+              fullwidth
               id="add-button"
               icon="rowing"
               label="${_t('data.Create')}"
-              style="width:100%;"
               @click="${() => this._addFolder()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -415,47 +433,46 @@ export default class BackendAIData extends BackendAIPage {
               @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
               required validationMessage="${_t('data.Allowslettersnumbersand-_dot')}" maxLength="64"
               placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
+          <mwc-select class="full-width fixed-position" id="clone-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+            ${this.vhosts.map((item, idx) => html`
+              <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
+                <span>${item}</span>
+                <mwc-icon-button slot="meta" icon="info"
+                    @click="${(e) => this._showStorageDescription(e, item)}">
+                </mwc-icon-button>
+              </mwc-list-item>
+            `)}
+          </mwc-select>
           <div class="horizontal layout">
-            <mwc-multi-select id="clone-folder-host" label="${_t('data.Host')}">
-              ${this.vhosts.map((item, idx) => html`
-                <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
-                  <span>${item}</span>
-                  <mwc-icon-button slot="meta" icon="info"
-                      @click="${(e) => this._showStorageDescription(e, item)}">
-                  </mwc-icon-button>
-                </mwc-list-item>
-              `)}
-            </mwc-multi-select>
-            <mwc-multi-select id="clone-folder-type" label="${_t('data.Type')}">
+            <mwc-select id="clone-folder-type" label="${_t('data.Type')}"
+                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}">
               ${(this.allowed_folder_type as string[]).includes('user') ? html`
                 <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
               ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
                 <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Project')}</mwc-list-item>
               ` : html``}
-            </mwc-multi-select>
+            </mwc-select>
+            ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
+                <mwc-select class="fixed-position" id="clone-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
+                  ${(this.allowedGroups as any).map((item, idx) => html`
+                    <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                  `)}
+                </mwc-select>
+            ` : html``}
           </div>
           ${this._vfolderInnatePermissionSupport ? html`
             <div class="horizontal layout">
-              <mwc-multi-select id="clone-folder-usage-mode" label="${_t('data.UsageMode')}">
+              <mwc-select class="fixed-position" id="clone-folder-usage-mode" label="${_t('data.UsageMode')}" FixedMenuPosition>
                 ${this.usageModes.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
-              </mwc-multi-select>
-              <mwc-multi-select id="clone-folder-permission" label="${_t('data.Type')}">
+              </mwc-select>
+              <mwc-select class="fixed-position" id="clone-folder-permission" label="${_t('data.Permission')}" FixedMenuPosition>
                 ${this.permissions.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
-              </mwc-multi-select>
-            </div>
-          ` : html``}
-          ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-            <div class="horizontal layout">
-              <mwc-multi-select id="clone-folder-group" label="${_t('data.Project')}">
-                ${(this.allowedGroups as any).map((item, idx) => html`
-                  <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
-                `)}
-              </mwc-multi-select>
+              </mwc-select>
             </div>
           ` : html``}
           ${this.enableStorageProxy ?
@@ -472,13 +489,13 @@ export default class BackendAIData extends BackendAIPage {
             ${_t('data.DialogFolderStartingWithDotAutomount')}
           </div>
         </div>
-        <div slot="footer" class="horizontal flex">
+        <div slot="footer" class="horizontal center-justified flex">
           <mwc-button
               unelevated
+              fullwidth
               id="clone-button"
               icon="file_copy"
               label="${_t('data.Create')}"
-              style="width:100%;"
               @click="${() => this._cloneFolder()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -542,6 +559,13 @@ export default class BackendAIData extends BackendAIPage {
         }
       }
     };
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._getStorageProxyBackendInformation();
+      }, true);
+    } else { // already connected
+      this._getStorageProxyBackendInformation();
+    }
     document.addEventListener('backend-ai-folder-list-changed', () => {
       // this.shadowRoot.querySelector('#storage-status').updateChart();
       this._createStorageChart();
@@ -571,6 +595,7 @@ export default class BackendAIData extends BackendAIPage {
       this.authenticated = true;
       this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+      this._getStorageProxyBackendInformation();
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
         this._vfolderInnatePermissionSupport = true;
       }
@@ -672,6 +697,11 @@ export default class BackendAIData extends BackendAIPage {
       this.allowedGroups = group_info.groups;
     }
     this.openDialog('add-folder-dialog');
+  }
+
+  async _getStorageProxyBackendInformation() {
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    this.storageProxyInfo = vhostInfo.volume_info || {};
   }
 
   openDialog(id) {
@@ -816,7 +846,7 @@ export default class BackendAIData extends BackendAIPage {
         permission = 'rw';
       }
     }
-    cloneable = cloneableEl ? cloneableEl.checked : false;
+    cloneable = cloneableEl ? cloneableEl.selected : false;
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {
       const input = {

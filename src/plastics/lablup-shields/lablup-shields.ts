@@ -2,11 +2,13 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {css, customElement, html, LitElement, property} from "lit-element";
+import {css, html, LitElement} from "lit";
+import {customElement, property} from 'lit/decorators.js';
+
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../layout/iron-flex-layout-classes";
 
 /**
- `<lablup-shields>` is a complement lit-element of shields.io
+ `<lablup-shields>` is a complement webcomponent of shields.io
 
  Example:
  <lablup-shields app="test" description="0.1" ui="flat"></lablup-shields>

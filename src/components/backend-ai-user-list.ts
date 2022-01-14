@@ -3,10 +3,10 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {BackendAIPage} from './backend-ai-page';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
-import {render} from 'lit-html';
+import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
@@ -60,7 +60,7 @@ import {
 export default class BackendAIUserList extends BackendAIPage {
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) editMode = false;
-  @property({type: Object}) users = Object();
+  @property({type: Array}) users = [];
   @property({type: Object}) userInfo = Object();
   @property({type: Array}) userInfoGroups = [];
   @property({type: String}) condition = 'active';
@@ -77,7 +77,7 @@ export default class BackendAIUserList extends BackendAIPage {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -226,7 +226,7 @@ export default class BackendAIUserList extends BackendAIPage {
       is_active = false;
     }
     this.spinner.hide();
-    const fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
+    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       const users = response.users;
       // Object.keys(users).map((objectKey, index) => {
@@ -302,14 +302,14 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   async _getUserData(user_id) {
-    const fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
+    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.get(user_id, fields);
   }
 
   refresh() {
     this._refreshUserData();
     // update current grid to new data
-    this.shadowRoot.querySelector('#user-grid').render();
+    this.userGrid.clearCache();
   }
 
   _isActive() {
@@ -454,8 +454,8 @@ export default class BackendAIUserList extends BackendAIPage {
     const confirmEl = this.shadowRoot.querySelector('#confirm');
     const confirm = confirmEl.value;
     const description = this.shadowRoot.querySelector('#description').value;
-    const is_active = this.shadowRoot.querySelector('#is_active').checked;
-    const need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
+    const is_active = this.shadowRoot.querySelector('#is_active').selected;
+    const need_password_change = this.shadowRoot.querySelector('#need_password_change').selected;
 
     this._togglePasswordInputRequired();
 
@@ -551,7 +551,7 @@ export default class BackendAIUserList extends BackendAIPage {
           <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>.</p>
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout distancing">
+        <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               label="${_t('button.Cancel')}"
               @click="${(e) => this._hideDialog(e)}"></mwc-button>
@@ -632,13 +632,13 @@ export default class BackendAIUserList extends BackendAIPage {
                   <p class="label">${_text('credential.DescActiveUser')}</p>
                   <mwc-switch
                       id="is_active"
-                      ?checked="${this.userInfo.is_active}"></mwc-switch>
+                      ?selected="${this.userInfo.is_active}"></mwc-switch>
                 </div>
                 <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text('credential.DescRequirePasswordChange')}</p>
                   <mwc-switch
                       id="need_password_change"
-                      ?checked=${this.userInfo.need_password_change}></mwc-switch>
+                      ?selected=${this.userInfo.need_password_change}></mwc-switch>
                 </div>` : html`
                     <mwc-textfield
                         disabled
@@ -677,10 +677,11 @@ export default class BackendAIUserList extends BackendAIPage {
           </div>
         `}
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout distancing">
         ${this.editMode ? html`
           <mwc-button
               unelevated
+              fullwidth
               label="${_t('button.SaveChanges')}"
               icon="check"
               @click=${(e) => this._saveChanges(e)}></mwc-button>`:html``}

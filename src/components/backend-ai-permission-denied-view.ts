@@ -4,7 +4,9 @@
  */
 
 import {translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
@@ -32,7 +34,7 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -129,9 +131,10 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
       <div class="vertical layout desc">
         <div class="title">${_tr('webui.UNAUTHORIZEDACCESS')}</div>
         <p class="description">${_tr('webui.AdminOnlyPage')}</p>
-        <div style="width:auto;">
+        <div>
           <mwc-button
               unelevated
+              fullwidth
               id="go-to-summary"
               label="${_t('button.GoBackToSummaryPage')}"
               @click="${() => this._moveTo('summary')}"></mwc-button>

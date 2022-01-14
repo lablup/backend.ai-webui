@@ -6,8 +6,11 @@ UI / UX:
   - resources/icons/*
   - resources/*.css
   - src/plastics/**/*
+  - resources/i18n/*
 
 library / SDK:
   - resources/lib/**/*
   - resources/wsproxy/**/*
 
+localization:
+  - resources/i18n/*
