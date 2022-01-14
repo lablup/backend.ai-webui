@@ -137,7 +137,7 @@
       "SessionNameOptional": "Session name (optional)",
       "Environments": "Environments",
       "Start": "Start",
-      "FolderToMount": "Folder to mount (don't use pre-existing name)",
+      "FolderToMount": "Folder to mount (don't use pre-existing folder name)",
       "MountedFolders": "Mounted folders",
       "ResourceAllocation": "Resource allocation",
       "NoSuitablePreset": "No suitable preset",
