@@ -260,6 +260,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           color: #efefef;
         }
 
+        #work-area pre {
+          white-space: pre-wrap;
+          white-space: -moz-pre-wrap;
+          white-space: -pre-wrap;
+          white-space: -o-pre-wrap;
+          word-wrap: break-word;
+        }
+
         div.indicator,
         span.indicator {
           font-size: 9px;
