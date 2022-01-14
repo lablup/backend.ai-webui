@@ -1271,7 +1271,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         config['mount_map'] = {};
         for (const f in this.folderMapping) {
           if ({}.hasOwnProperty.call(this.folderMapping, f)) {
-            config['mount_map'][f] = '/home/work/' + this.folderMapping[f];
+            config['mount_map'][f] = '/' + this.folderMapping[f];
           }
         }
       }
