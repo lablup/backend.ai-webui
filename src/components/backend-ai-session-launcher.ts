@@ -3359,6 +3359,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </wl-expansion>
           </div>
           <div id="progress-04" class="progress center layout fade">
+            <p class="title">${_t('session.SessionInfo')}</p>
+            <div class="vertical layout center center-justified cluster-total-allocation-container">
+              <div class="horizontal center center-justified layout">
+                <img alt="language icon"
+                     src="resources/icons/${this.kernel !== undefined ? this.kernel.split('/').pop() : 'default'}.png"
+                     style="width:32px;height:32px;margin-right:10px;margin-bottom:8px;" />
+                <div class="vertical layout">
+                  ${this.kernel !== undefined && this.version_selector.disabled === false ? html`
+                  <lablup-shields app="${this.kernel.split('/').pop()?.toUpperCase()}"
+                                  color="blue"
+                                 description="${this.version_selector.selectedText.split('/')[0]}"
+                                 ui="round" 
+                                 style="margin-right:3px;"></lablup-shields>
+                  ` : html``}
+                  ${this.version_selector.disabled === false ? html`
+                  <lablup-shields color="green"
+                                  description="${this.version_selector.selectedText.split('/')[1]?.toUpperCase()}"
+                                  ui="round"
+                                  style="margin-top:3px;margin-right:3px;margin-bottom:9px;"></lablup-shields>
+                  ` : html``}
+                </div>
+              </div>
+            </div>
             <p class="title">${_t('session.launcher.TotalAllocation')}</p>
             <div class="vertical layout center center-justified cluster-total-allocation-container">
               <div id="cluster-allocation-pane" style="position:relative;${this.cluster_size <= 1 ? 'display:none;' : ''}">
