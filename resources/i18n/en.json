@@ -218,7 +218,7 @@
       "EnvConfigWillDisappear": "Any unsaved environment variable and value will be disappeared.",
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Slot",
-      "FolderAlias": "Alias(※ be careful about overridden of pre-existing folder)",
+      "FolderAlias": "Alias",
       "FolderAliasOverlapping": "Aliases overlap with other names that already exist",
       "OpenMPOptimization": "OpenMP/OpenBLAS Optimization",
       "DescOpenMPOptimization": "<p>This value sets the number of threads to use for parallel regions by setting the initial value of the nthreads-var internal control variable.</p><p>Backend.AI sets this value equal to the number of CPU cores, which has the effect of accelerating typical high-performance computing workloads. However, for some multi-threaded workloads, multiple processes using OpenMP are used at the same time, resulting in an abnormally large number of threads and significant performance degradation. In this case, please adjust this value to 1 or 2.</p>",
