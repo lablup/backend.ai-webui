@@ -1332,11 +1332,12 @@ export default class BackendAiSessionList extends BackendAIPage {
       const sanitizeErrMsg = (msg) => {
         return msg ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : '';
       };
+      const errorList = tmpSessionStatus.error.collection ?? [tmpSessionStatus.error];
       statusDetailEl.innerHTML += `
       <div class="vertical layout start flex" style="width:100%;">
         <div style="width:100%;">
           <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
-            ${tmpSessionStatus.error.collection.map((item) => {
+            ${errorList.map((item) => {
     return `
               <div style="border-radius: 4px;background-color:var(--paper-grey-300);padding:10px;margin:10px;">
                 <div class="vertical layout start">
