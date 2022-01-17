@@ -3363,21 +3363,42 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <div class="vertical layout center center-justified cluster-total-allocation-container">
               <div class="horizontal center center-justified layout">
                 <img alt="language icon"
-                     src="resources/icons/${this.kernel !== undefined ? this.kernel.split('/').pop() : 'default'}.png"
-                     style="width:32px;height:32px;margin-right:10px;margin-bottom:8px;" />
+                     src="
+                ${this.languages.map((item) => {
+    if ((this.kernel !== undefined && this.version_selector.disabled === false) && item.name === this.kernel) {
+      return `resources/icons/${item.icon}`;
+    } else if (this.manualImageName?.value && item.name === this.manualImageName.value.split(':').shift()) {
+      return `resources/icons/${item.icon}`;
+    }
+  }).join('')}"
+                     onerror="this.src='resources/icons/default.png'"
+                     style="width:32px;height:32px;margin-left:8px;margin-right:8px;margin-bottom:8px;" />
                 <div class="vertical layout">
+                  <lablup-shields color="blue"
+                                  description="${this.sessionType.toUpperCase()}"
+                                  ui="round" 
+                                  style="margin-right:8px;"></lablup-shields>
                   ${this.kernel !== undefined && this.version_selector.disabled === false ? html`
                   <lablup-shields app="${this.kernel.split('/').pop()?.toUpperCase()}"
-                                  color="blue"
-                                 description="${this.version_selector.selectedText.split('/')[0]}"
-                                 ui="round" 
-                                 style="margin-right:3px;"></lablup-shields>
-                  ` : html``}
-                  ${this.version_selector.disabled === false ? html`
+                                  color="green"
+                                  description="${this.version_selector.selectedText.split('/').shift()}"
+                                  ui="round" 
+                                  style="margin-top:3px;margin-right:8px;"></lablup-shields>
                   <lablup-shields color="green"
-                                  description="${this.version_selector.selectedText.split('/')[1]?.toUpperCase()}"
+                                  description="${this.version_selector.selectedText.split('/').pop()?.toUpperCase()}"
                                   ui="round"
-                                  style="margin-top:3px;margin-right:3px;margin-bottom:9px;"></lablup-shields>
+                                  style="margin-top:3px;margin-right:8px;margin-bottom:9px;"></lablup-shields>
+                  ` : html``}
+                  ${this.manualImageName?.value ? html`
+                  <lablup-shields app="${this.manualImageName.value.split(':').shift()?.split('/').pop()?.toUpperCase()}"
+                                  color="green"
+                                  description="${this.manualImageName.value.split(':').pop()?.split('-').shift()?.toUpperCase()}"
+                                  ui="round"
+                                  style="margin-top:3px;margin-right:8px;"></lablup-shields>
+                  <lablup-shields color="green"
+                                  description="${this.manualImageName.value.split(':').pop()?.split('-').pop()?.toUpperCase()}"
+                                  ui="round"
+                                  style="margin-top:3px;margin-right:8px;margin-bottom:9px;"></lablup-shields>
                   ` : html``}
                 </div>
               </div>
