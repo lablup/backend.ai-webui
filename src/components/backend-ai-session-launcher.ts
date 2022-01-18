@@ -194,10 +194,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) sessionInfoObj = {
     'selectorEnvironment': '',
     'selectorVersion': ['', ''],
-    'isSelectorTrue': false,
+    'isVersionSelected': false,
     'manualEnvironment': '',
     'manualVersion': ['', ''],
-    'isManualTrue': false
+    'isManualImageName': false
   };
 
   constructor() {
@@ -1046,23 +1046,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    */
   _preProcessingSessionInfo() {
-    if (this.kernel !== undefined && this.version_selector.disabled === false) {
-      this.sessionInfoObj.isSelectorTrue = true;
-    } else {
-      this.sessionInfoObj.isSelectorTrue = false;
-    }
+    this.sessionInfoObj.isVersionSelected = (this.kernel !== undefined && this.version_selector.disabled === false);
+    this.sessionInfoObj.isManualImageName = this.manualImageName?.value;
 
-    if (this.manualImageName?.value) {
-      this.sessionInfoObj.isManualTrue = true;
-    } else {
-      this.sessionInfoObj.isManualTrue = false;
-    }
-
-    if (this.sessionInfoObj.isSelectorTrue) {
+    if (this.sessionInfoObj.isVersionSelected) {
       this.sessionInfoObj.selectorEnvironment = this.kernel;
       this.sessionInfoObj.selectorVersion = this.version_selector.selectedText.split('/');
     }
-    if (this.sessionInfoObj.isManualTrue) {
+    if (this.sessionInfoObj.isManualImageName) {
       const nameFragments = this.manualImageName.value.split(':');
       this.sessionInfoObj.manualEnvironment = nameFragments[0];
       this.sessionInfoObj.manualVersion = nameFragments.slice(-1)[0].split('-');
@@ -3422,16 +3413,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <img alt="language icon"
                      src="
                 ${this.languages.map((item) => {
-    if ((this.sessionInfoObj.isSelectorTrue) && item.name === this.sessionInfoObj.selectorEnvironment) {
+    if ((this.sessionInfoObj.isVersionSelected) && item.name === this.sessionInfoObj.selectorEnvironment) {
       return `resources/icons/${item.icon}`;
-    } else if (this.sessionInfoObj.isManualTrue && item.name === this.sessionInfoObj.manualEnvironment) {
+    } else if ((this.sessionInfoObj.isManualImageName) && item.name === this.sessionInfoObj.manualEnvironment) {
       return `resources/icons/${item.icon}`;
+    } else {
+      return ``;
     }
   }).join('')}"
                      onerror="this.src='resources/icons/default.png'"
                      style="width:32px;height:32px;margin-left:8px;margin-right:8px;margin-bottom:8px;" />
                 <div class="vertical layout">
-                  ${this.sessionInfoObj.isSelectorTrue ? html`
+                  ${this.sessionInfoObj.isVersionSelected ? html`
                   <lablup-shields app="${this._processingSessionEnvironment(this.sessionInfoObj.selectorEnvironment)}"
                                   color="green"
                                   description="${this.sessionInfoObj.selectorVersion[0]}"
@@ -3442,7 +3435,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                   ui="round"
                                   style="margin-top:3px;margin-right:8px;"></lablup-shields>
                   ` : html``}
-                  ${this.sessionInfoObj.isManualTrue ? html`
+                  ${this.sessionInfoObj.isManualImageName ? html`
                   <lablup-shields app="${this._processingSessionEnvironment(this.sessionInfoObj.manualEnvironment)}"
                                   color="green"
                                   description="${this.sessionInfoObj.manualVersion[0]}"
