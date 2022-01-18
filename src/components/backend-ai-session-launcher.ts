@@ -191,9 +191,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
   @property({type: Boolean}) useScheduledTime = false;
   @property({type: Object}) schedulerTimer;
-  @property({type: Object}) manualImageInfo = {
-    'environment': '',
-    'version': ['', '']
+  @property({type: Object}) sessionInfoObj = {
+    'selectorEnvironment': '',
+    'selectorVersion': ['', ''],
+    'isSelectorTrue': false,
+    'manualEnvironment': '',
+    'manualVersion': ['', ''],
+    'isManualTrue': false
   };
 
   constructor() {
@@ -1038,13 +1042,51 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * derive kernel infomation from manualImageName and save it in manualImageInfo.
+   * derive session infomation from manualImageName or selector and save it in sessionInfoObj.
    *
    */
-  _preProcessingManualImageInfo() {
-    const nameFragments = this.manualImageName.value.split(':');
-    this.manualImageInfo.environment = nameFragments.shift();
-    this.manualImageInfo.version = nameFragments.pop()?.split('-');
+  _preProcessingSessionInfo() {
+    if (this.kernel !== undefined && this.version_selector.disabled === false) {
+      this.sessionInfoObj.isSelectorTrue = true;
+    } else {
+      this.sessionInfoObj.isSelectorTrue = false;
+    }
+
+    if (this.manualImageName?.value) {
+      this.sessionInfoObj.isManualTrue = true;
+    } else {
+      this.sessionInfoObj.isManualTrue = false;
+    }
+
+    if (this.sessionInfoObj.isSelectorTrue) {
+      this.sessionInfoObj.selectorEnvironment = this.kernel;
+      this.sessionInfoObj.selectorVersion = this.version_selector.selectedText.split('/');
+    }
+    if (this.sessionInfoObj.isManualTrue) {
+      const nameFragments = this.manualImageName.value.split(':');
+      this.sessionInfoObj.manualEnvironment = nameFragments[0];
+      this.sessionInfoObj.manualVersion = nameFragments.slice(-1)[0].split('-');
+    }
+  }
+
+  /**
+   * processing sessionEnvironment value for sessionInfo
+   *
+   * @param {String} sessionEnvironment
+   * @return {String}
+   * */
+  _processingSessionEnvironment(sessionEnvironment) {
+    return sessionEnvironment.split('/').slice(-1)[0].toUpperCase();
+  }
+
+  /**
+   * processing sessionVersion value for sessionInfo
+   *
+   * @param {Array} sessionVersion
+   * @return {String}
+   * */
+  _processingSessionVersion(sessionVersion) {
+    return sessionVersion.slice(-1)[0].toUpperCase();
   }
 
   /**
@@ -3373,6 +3415,51 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </wl-expansion>
           </div>
           <div id="progress-04" class="progress center layout fade">
+            <p class="title">${_t('session.SessionInfo')}</p>
+            <div class="vertical layout center center-justified cluster-total-allocation-container">
+              <div class="horizontal center center-justified layout">
+                ${this._preProcessingSessionInfo()}
+                <img alt="language icon"
+                     src="
+                ${this.languages.map((item) => {
+    if ((this.sessionInfoObj.isSelectorTrue) && item.name === this.sessionInfoObj.selectorEnvironment) {
+      return `resources/icons/${item.icon}`;
+    } else if (this.sessionInfoObj.isManualTrue && item.name === this.sessionInfoObj.manualEnvironment) {
+      return `resources/icons/${item.icon}`;
+    }
+  }).join('')}"
+                     onerror="this.src='resources/icons/default.png'"
+                     style="width:32px;height:32px;margin-left:8px;margin-right:8px;margin-bottom:8px;" />
+                <div class="vertical layout">
+                  ${this.sessionInfoObj.isSelectorTrue ? html`
+                  <lablup-shields app="${this._processingSessionEnvironment(this.sessionInfoObj.selectorEnvironment)}"
+                                  color="green"
+                                  description="${this.sessionInfoObj.selectorVersion[0]}"
+                                  ui="round" 
+                                  style="margin-right:8px;"></lablup-shields>
+                  <lablup-shields color="green"
+                                  description="${this._processingSessionVersion(this.sessionInfoObj.selectorVersion)}"
+                                  ui="round"
+                                  style="margin-top:3px;margin-right:8px;"></lablup-shields>
+                  ` : html``}
+                  ${this.sessionInfoObj.isManualTrue ? html`
+                  <lablup-shields app="${this._processingSessionEnvironment(this.sessionInfoObj.manualEnvironment)}"
+                                  color="green"
+                                  description="${this.sessionInfoObj.manualVersion[0]}"
+                                  ui="round"
+                                  style="margin-right:8px;"></lablup-shields>
+                  <lablup-shields color="green"
+                                  description="${this._processingSessionVersion(this.sessionInfoObj.manualVersion)}"
+                                  ui="round"
+                                  style="margin-top:3px;margin-right:8px;"></lablup-shields>
+                  ` : html``}
+                  <lablup-shields color="blue"
+                                  description="${this.sessionType.toUpperCase()}"
+                                  ui="round" 
+                                  style="margin-top:3px;margin-right:8px;margin-bottom:9px;"></lablup-shields>
+                </div>
+              </div>
+            </div>
             <p class="title">${_t('session.launcher.TotalAllocation')}</p>
             <div class="vertical layout center center-justified cluster-total-allocation-container">
               <div id="cluster-allocation-pane" style="position:relative;${this.cluster_size <= 1 ? 'display:none;' : ''}">
@@ -3482,51 +3569,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     <span>${_t('session.launcher.NoEnvConfigured')}</span>
                   </div>
                 `}
-            </div>
-            <p class="title">${_t('session.SessionInfo')}</p>
-            <div class="vertical layout center center-justified cluster-total-allocation-container">
-              <div class="horizontal center center-justified layout">
-                ${this.manualImageName?.value ? this._preProcessingManualImageInfo() : ''}
-                <img alt="language icon"
-                     src="
-                ${this.languages.map((item) => {
-    if ((this.kernel !== undefined && this.version_selector.disabled === false) && item.name === this.kernel) {
-      return `resources/icons/${item.icon}`;
-    } else if (this.manualImageName?.value && item.name === this.manualImageInfo.environment) {
-      return `resources/icons/${item.icon}`;
-    }
-  }).join('')}"
-                     onerror="this.src='resources/icons/default.png'"
-                     style="width:32px;height:32px;margin-left:8px;margin-right:8px;margin-bottom:8px;" />
-                <div class="vertical layout">
-                  <lablup-shields color="blue"
-                                  description="${this.sessionType.toUpperCase()}"
-                                  ui="round" 
-                                  style="margin-right:8px;"></lablup-shields>
-                  ${this.kernel !== undefined && this.version_selector.disabled === false ? html`
-                  <lablup-shields app="${this.kernel.split('/').pop()?.toUpperCase()}"
-                                  color="green"
-                                  description="${this.version_selector.selectedText.split('/').shift()}"
-                                  ui="round" 
-                                  style="margin-top:3px;margin-right:8px;"></lablup-shields>
-                  <lablup-shields color="green"
-                                  description="${this.version_selector.selectedText.split('/').pop()?.toUpperCase()}"
-                                  ui="round"
-                                  style="margin-top:3px;margin-right:8px;margin-bottom:9px;"></lablup-shields>
-                  ` : html``}
-                  ${this.manualImageName?.value ? html`
-                  <lablup-shields app="${this.manualImageInfo.environment?.split('/').pop()?.toUpperCase()}"
-                                  color="green"
-                                  description="${this.manualImageInfo.version.shift()?.toUpperCase()}"
-                                  ui="round"
-                                  style="margin-top:3px;margin-right:8px;"></lablup-shields>
-                  <lablup-shields color="green"
-                                  description="${this.manualImageInfo.version.pop()?.toUpperCase()}"
-                                  ui="round"
-                                  style="margin-top:3px;margin-right:8px;margin-bottom:9px;"></lablup-shields>
-                  ` : html``}
-                </div>
-              </div>
             </div>
           </div>
         </form>
