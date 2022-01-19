@@ -192,12 +192,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) useScheduledTime = false;
   @property({type: Object}) schedulerTimer;
   @property({type: Object}) sessionInfoObj = {
-    'selectorEnvironment': '',
-    'selectorVersion': ['', ''],
-    'isVersionSelected': false,
-    'manualEnvironment': '',
-    'manualVersion': ['', ''],
-    'isManualImageName': false
+    'environment': [''],
+    'version': ['']
   };
 
   constructor() {
@@ -1044,40 +1040,30 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   /**
    * derive session infomation from manualImageName or selector and save it in sessionInfoObj.
    *
-   */
+   * @return {Boolean}
+   * */
   _preProcessingSessionInfo() {
-    this.sessionInfoObj.isVersionSelected = (this.kernel !== undefined && this.version_selector.disabled === false);
-    this.sessionInfoObj.isManualImageName = this.manualImageName?.value;
+    let environmentString;
+    let versionArray;
 
-    if (this.sessionInfoObj.isVersionSelected) {
-      this.sessionInfoObj.selectorEnvironment = this.kernel;
-      this.sessionInfoObj.selectorVersion = this.version_selector.selectedText.split('/');
-    }
-    if (this.sessionInfoObj.isManualImageName) {
+    if (this.manualImageName?.value) {
       const nameFragments = this.manualImageName.value.split(':');
-      this.sessionInfoObj.manualEnvironment = nameFragments[0];
-      this.sessionInfoObj.manualVersion = nameFragments.slice(-1)[0].split('-');
+      environmentString = nameFragments[0];
+      versionArray = nameFragments.slice(-1)[0].split('-');
+    } else if (this.kernel !== undefined && this.version_selector.disabled === false) {
+      environmentString = this.kernel;
+      versionArray = this.version_selector.selectedText.split('/');
+    } else {
+      return false;
     }
-  }
 
-  /**
-   * processing sessionEnvironment value for sessionInfo
-   *
-   * @param {String} sessionEnvironment
-   * @return {String}
-   * */
-  _processingSessionEnvironment(sessionEnvironment) {
-    return sessionEnvironment.split('/').slice(-1)[0].toUpperCase();
-  }
+    const languageInfoObj = this.languages.find((item) => item.name === environmentString);
+    this.sessionInfoObj.environment = [(languageInfoObj?.icon || 'default.png'),
+      (languageInfoObj?.basename || environmentString.split('/').pop().toUpperCase())];
 
-  /**
-   * processing sessionVersion value for sessionInfo
-   *
-   * @param {Array} sessionVersion
-   * @return {String}
-   * */
-  _processingSessionVersion(sessionVersion) {
-    return sessionVersion.slice(-1)[0].toUpperCase();
+    this.sessionInfoObj.version = [versionArray[0].toUpperCase(),
+      (versionArray.length !== 1 ? versionArray.slice(1).join('-').toUpperCase() : '')];
+    return true;
   }
 
   /**
@@ -3409,48 +3395,26 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <p class="title">${_t('session.SessionInfo')}</p>
             <div class="vertical layout center center-justified cluster-total-allocation-container">
               <div class="horizontal center center-justified layout">
-                ${this._preProcessingSessionInfo()}
-                <img alt="language icon"
-                     src="
-                ${this.languages.map((item) => {
-    if ((this.sessionInfoObj.isVersionSelected) && item.name === this.sessionInfoObj.selectorEnvironment) {
-      return `resources/icons/${item.icon}`;
-    } else if ((this.sessionInfoObj.isManualImageName) && item.name === this.sessionInfoObj.manualEnvironment) {
-      return `resources/icons/${item.icon}`;
-    } else {
-      return ``;
-    }
-  }).join('')}"
-                     onerror="this.src='resources/icons/default.png'"
-                     style="width:32px;height:32px;margin-left:8px;margin-right:8px;margin-bottom:8px;" />
-                <div class="vertical layout">
-                  ${this.sessionInfoObj.isVersionSelected ? html`
-                  <lablup-shields app="${this._processingSessionEnvironment(this.sessionInfoObj.selectorEnvironment)}"
-                                  color="green"
-                                  description="${this.sessionInfoObj.selectorVersion[0]}"
-                                  ui="round" 
-                                  style="margin-right:8px;"></lablup-shields>
-                  <lablup-shields color="green"
-                                  description="${this._processingSessionVersion(this.sessionInfoObj.selectorVersion)}"
-                                  ui="round"
-                                  style="margin-top:3px;margin-right:8px;"></lablup-shields>
-                  ` : html``}
-                  ${this.sessionInfoObj.isManualImageName ? html`
-                  <lablup-shields app="${this._processingSessionEnvironment(this.sessionInfoObj.manualEnvironment)}"
-                                  color="green"
-                                  description="${this.sessionInfoObj.manualVersion[0]}"
-                                  ui="round"
-                                  style="margin-right:8px;"></lablup-shields>
-                  <lablup-shields color="green"
-                                  description="${this._processingSessionVersion(this.sessionInfoObj.manualVersion)}"
-                                  ui="round"
-                                  style="margin-top:3px;margin-right:8px;"></lablup-shields>
-                  ` : html``}
-                  <lablup-shields color="blue"
-                                  description="${this.sessionType.toUpperCase()}"
-                                  ui="round" 
-                                  style="margin-top:3px;margin-right:8px;margin-bottom:9px;"></lablup-shields>
-                </div>
+                ${this._preProcessingSessionInfo() ? html`
+                  <img alt="language icon"
+                       src="resources/icons/${this.sessionInfoObj.environment[0]}"
+                       onerror="this.src='resources/icons/default.png'"
+                       style="width:32px;height:32px;margin-left:8px;margin-right:8px;margin-bottom:8px;" />
+                  <div class="vertical layout">
+                    <lablup-shields app="${this.sessionInfoObj.environment[1]}"
+                                    color="green"
+                                    description="${this.sessionInfoObj.version[0]}"
+                                    ui="round" 
+                                    style="margin-right:8px;"></lablup-shields>
+                    <lablup-shields color="green"
+                                    description="${this.sessionInfoObj.version[1]}"
+                                    ui="round"
+                                    style="margin-top:3px;margin-right:8px;"></lablup-shields>
+                    <lablup-shields color="blue"
+                                    description="${this.sessionType.toUpperCase()}"
+                                    ui="round" 
+                                    style="margin-top:3px;margin-right:8px;margin-bottom:9px;"></lablup-shields>
+                  </div>` : html``}
               </div>
             </div>
             <p class="title">${_t('session.launcher.TotalAllocation')}</p>
