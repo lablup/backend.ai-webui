@@ -226,7 +226,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 .includes('reload')
           );
           tabcount.tabsCount(true);
-          if (this.auto_logout === true && tabcount.tabsCounter === 1 && !isPageReloaded && globalThis.backendaioptions.get('auto_logout', false) === true) {
+          if (this.auto_logout === true && tabcount.tabsCounter === 1 && !isPageReloaded) {
             this.loginPanel.check_login().then((result) => {
               const current_time: number = new Date().getTime() / 1000;
               if (result === true && (current_time - globalThis.backendaioptions.get('last_window_close_time', current_time) > 3.0)) { // currently login.
@@ -306,7 +306,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.connection_server = config.general.connectionServer;
       // console.log(this.connection_server);
     }
-    this.auto_logout = (typeof config.general !== 'undefined' && 'autoLogout' in config.general) ? config.general.autoLogout : globalThis.backendaioptions.get('auto_logout', false);
+    this.auto_logout = (typeof config.general !== 'undefined' && 'autoLogout' in config.general && globalThis.backendaioptions.get('auto_logout') === null) ?
+      config.general.autoLogout :
+      globalThis.backendaioptions.get('auto_logout', false);
     if (typeof config.license !== 'undefined' && 'edition' in config.license) {
       this.edition = config.license.edition;
     }
