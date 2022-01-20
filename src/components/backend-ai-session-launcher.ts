@@ -192,7 +192,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) useScheduledTime = false;
   @property({type: Object}) schedulerTimer;
   @property({type: Object}) sessionInfoObj = {
-    'environment': [''],
+    'environment': '',
     'version': ['']
   };
 
@@ -1057,12 +1057,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return false;
     }
 
-    const languageInfoObj = this.languages.find((item) => item.name === environmentString);
-    this.sessionInfoObj.environment = [(languageInfoObj?.icon || 'default.png'),
-      (languageInfoObj?.basename || environmentString.split('/').pop().toUpperCase())];
-
-    this.sessionInfoObj.version = [versionArray[0].toUpperCase(),
-      (versionArray.length !== 1 ? versionArray.slice(1).join('-').toUpperCase() : '')];
+    this.sessionInfoObj.environment = environmentString.split('/').pop();
+    this.sessionInfoObj.version = [versionArray[0].toUpperCase()].concat(
+      (versionArray.length !== 1 ? versionArray.slice(1).map((item) => item.toUpperCase()) : ['']));
     return true;
   }
 
@@ -3397,23 +3394,33 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="horizontal center center-justified layout">
                 ${this._preProcessingSessionInfo() ? html`
                   <img alt="language icon"
-                       src="resources/icons/${this.sessionInfoObj.environment[0]}"
+                       src="resources/icons/${this.resourceBroker.imageInfo[this.sessionInfoObj.environment]?.icon}"
                        onerror="this.src='resources/icons/default.png'"
                        style="width:32px;height:32px;margin-left:8px;margin-right:8px;margin-bottom:8px;" />
                   <div class="vertical layout">
-                    <lablup-shields app="${this.sessionInfoObj.environment[1]}"
+                    <lablup-shields app="${(this.resourceBroker.imageInfo[this.sessionInfoObj.environment]?.name ||
+                       this.sessionInfoObj.environment).toUpperCase()}"
                                     color="green"
                                     description="${this.sessionInfoObj.version[0]}"
                                     ui="round" 
-                                    style="margin-right:8px;"></lablup-shields>
-                    <lablup-shields color="green"
-                                    description="${this.sessionInfoObj.version[1]}"
-                                    ui="round"
-                                    style="margin-top:3px;margin-right:8px;"></lablup-shields>
+                                    style="margin-right:3px;"></lablup-shields>
+                    <div class="horizontal layout">
+                      ${this.sessionInfoObj.version.map((item, index) => {
+    if (index > 0) {
+      return html`
+                          <lablup-shields color="green"
+                                          description="${item}"
+                                          ui="round"
+                                          style="margin-top:3px;margin-right:3px;"></lablup-shields>`;
+    } else {
+      return html``;
+    }
+  })}
+                    </div>
                     <lablup-shields color="blue"
                                     description="${this.sessionType.toUpperCase()}"
                                     ui="round" 
-                                    style="margin-top:3px;margin-right:8px;margin-bottom:9px;"></lablup-shields>
+                                    style="margin-top:3px;margin-right:3px;margin-bottom:9px;"></lablup-shields>
                   </div>` : html``}
               </div>
             </div>
