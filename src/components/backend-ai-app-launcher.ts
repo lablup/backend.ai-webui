@@ -521,7 +521,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return false;
     }
 
-    const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group'], sessionUuid);
+    const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group', 'service_ports'], sessionUuid);
     if (kInfo === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.CreationFailed'); // TODO: Change text
@@ -529,9 +529,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.notification.show();
       return Promise.resolve(false);
     }
+    console.log(kInfo.compute_session.service_ports)
+    const servicePortInfo = JSON.parse(kInfo.compute_session.service_ports).find(({name}) => name === app)
+    if (servicePortInfo === undefined) {
+      this.indicator.end();
+      this.notification.text = _text('session.CreationFailed'); // TODO: Change text
+
+      this.notification.show();
+      return Promise.resolve(false);      
+    }
 
     const scalingGroupId = kInfo.compute_session.scaling_group;
-    // Apply v1 when executing in electron mode
     const wsproxyVersion = (globalThis.isElectron) ? 'v1' : (await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId)).version;
     let uri = (wsproxyVersion == 'v1') ? await this._resolveV1ProxyUri(sessionUuid, app) : await this._resolveV2ProxyUri(sessionUuid, app, port, envs, args);
     if (!uri) {
@@ -561,6 +569,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (args !== null && Object.keys(args).length > 0) {
       uri = uri + '&args=' + encodeURI(JSON.stringify(args));
     }
+    uri += '&protocol=' + (servicePortInfo.protocol || 'tcp');
     this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
     const rqst_proxy = {
       method: 'GET',
