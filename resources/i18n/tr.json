@@ -129,6 +129,7 @@
       "Environments": "ortamlar",
       "Start": "Başlat",
       "FolderToMount": "Bağlanacak klasör",
+      "FolderToMountList": "Bağlanacak klasör",
       "ResourceAllocation": "Kaynak tahsisi",
       "NoSuitablePreset": "Uygun ön ayar yok",
       "Advanced": "ileri",

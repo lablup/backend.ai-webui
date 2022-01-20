@@ -1271,7 +1271,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         config['mount_map'] = {};
         for (const f in this.folderMapping) {
           if ({}.hasOwnProperty.call(this.folderMapping, f)) {
-            config['mount_map'][f] = '/' + this.folderMapping[f];
+            if (!(this.folderMapping[f].startsWith("/"))) {
+              config['mount_map'][f] = '/home/work/' + this.folderMapping[f];
+            } else {
+              config['mount_map'][f] = this.folderMapping[f];
+            }
           }
         }
       }
@@ -2001,8 +2005,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     render(
       html`
         <vaadin-text-field id="vfolder-alias-${rowData.item.name}" clear-button-visible prevent-invalid-input
-                           pattern="^[a-zA-Z0-9\._-]*$" ?disabled="${!rowData.selected}"
-                           theme="small" placeholder="${rowData.item.name}"
+                           pattern="^[a-zA-Z0-9\./_-]*$" ?disabled="${!rowData.selected}"
+                           theme="small" placeholder="/home/work/${rowData.item.name}"
                            @change="${(e) => this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
         </template>
       `,
@@ -3058,7 +3062,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                               flex-grow="0"
                                               text-align="center"
                                               auto-select></vaadin-grid-selection-column>
-                <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
+                <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMountList')}"
                                           path="name" resizable></vaadin-grid-filter-column>
                 <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" header="${_t('session.launcher.FolderAlias')}">
                 </vaadin-grid-column>
@@ -3077,7 +3081,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <ul class="vfolder-list">
                     ${this.selectedVfolders.map((item) => html`
                       <li><mwc-icon>folder_open</mwc-icon>${item}
-                      ${item in this.folderMapping ? html` (&#10140; ${this.folderMapping[item]})`: html``}
+                      ${item in this.folderMapping ?
+                        this.folderMapping[item].startsWith('/') ? html` (&#10140; ${this.folderMapping[item]})`: 
+                        html`(&#10140; /home/work/${this.folderMapping[item]})` : 
+                        html`(&#10140; /home/work/${item})`}
                       </li>
                     `)}
                     ${this.autoMountedVfolders.map((item) => html`
@@ -3433,7 +3440,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <ul class="vfolder-list">
                   ${this.selectedVfolders.map((item) => html`
                     <li><mwc-icon>folder_open</mwc-icon>${item}
-                    ${item in this.folderMapping ? html` (&#10140; ${this.folderMapping[item]})`: html``}
+                    ${item in this.folderMapping ?
+                      this.folderMapping[item].startsWith('/') ? html` (&#10140; ${this.folderMapping[item]})`: 
+                      html`(&#10140; /home/work/${this.folderMapping[item]})` : 
+                      html`(&#10140; /home/work/${item})`}
                     </li>
                   `)}
                   ${this.autoMountedVfolders.map((item) => html`
