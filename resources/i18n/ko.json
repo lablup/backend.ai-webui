@@ -219,7 +219,7 @@
       "EnvConfigWillDisappear": "저장되지 않은 환경 변수 설정값은 사라집니다.",
       "SharedMemoryAbbr": "공유메모리",
       "GPUSlot": "슬롯",
-      "FolderAlias": "대체이름",
+      "FolderAlias": "경로 & 대체이름",
       "FolderAliasOverlapping": "대체 이름이 이미 존재하는 다른 이름과 겹칩니다.",
       "DescFolderAlias":"<p>1. 이 입력을 채우면 폴더 이름이 마운트될 때 별칭으로 변경됩니다.<br/>2. /로 시작: 절대 경로<br/>3. / 또는 공백으로 시작하지 않음: /home/work의 하위 경로<br/>4. linux의 기본 시스템 폴더와 같은 별칭을 사용하지 마십시오.<br/>5. 아래의 '마운트된 폴더'에서 최종 경로를 확인하십시오.</p>",
       "OpenMPOptimization": "OpenMP/OpenBLAS 최적화",

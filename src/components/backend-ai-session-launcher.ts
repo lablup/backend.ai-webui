@@ -189,6 +189,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) _grid = Object();
   @property({type: Boolean}) _debug = false;
   @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
+  @property({type: Object}) _boundPathRenderer = this.infoHeaderRenderer.bind(this);
   @property({type: Boolean}) useScheduledTime = false;
   @property({type: Object}) schedulerTimer;
 
@@ -2013,6 +2014,25 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       root
     );
   }
+
+  infoHeaderRenderer(root, column?) {
+    render(
+      html`
+      <div style='display: flex; align-items: center'>
+        <span style='text-align:center; font-size:16px; font-family: var(--general-font-family); font-weight: 500'>${_t('session.launcher.FolderAlias')}</span>
+        <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
+          e.stopPropagation();
+          this._helpDescriptionTitle = _text('session.launcher.FolderAlias');
+          this._helpDescription = _text('session.launcher.DescFolderAlias');
+          this._helpDescriptionIcon = '';
+          this.shadowRoot.querySelector('#help-description').show();
+        }}"></mwc-icon-button>
+      </div>
+      `,
+      root
+    );
+  }
+
   async _updateFolderMap(folder, alias) {
     if (alias === '') {
       if (folder in this.folderMapping) {
@@ -3064,7 +3084,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                               auto-select></vaadin-grid-selection-column>
                 <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMountList')}"
                                           path="name" resizable></vaadin-grid-filter-column>
-                <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" header="${_t('session.launcher.FolderAlias')}">
+                                          <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" path=" ${_t('session.launcher.FolderAlias')}" .headerRenderer="${this._boundPathRenderer}">
                 </vaadin-grid-column>
               </vaadin-grid>
               ${this.vfolders.length > 0 ? html`` : html`
