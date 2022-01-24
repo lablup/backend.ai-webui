@@ -1741,7 +1741,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       let shmem_metric: any = {
         'min': 0.0625,
         'max': 2,
-        'preferred': 0.125
+        'preferred': 0.0625
       };
       this.cuda_device_metric = {
         'min': 0,
@@ -3139,7 +3139,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       <div style="width:50px;text-align:right;">${item.mem}GB</div>
                       <div style="width:60px;text-align:right;">${item.shmem ? html`
                             ${parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g')).toFixed(2)} GB` :
-    html`128MB`}
+    html`64MB`}
                       </div>
                       <div style="width:80px;text-align:right;">
                         ${item.cuda_device && item.cuda_device > 0 ? html`${item.cuda_device} CUDA GPU` : html``}
