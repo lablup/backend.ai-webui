@@ -221,7 +221,7 @@
       "GPUSlot": "Slot",
       "FolderAlias": "Path & Alias",
       "FolderAliasOverlapping": "Aliases overlap with other names that already exist",
-      "DescFolderAlias":"<p>1. If you fill out this input, folder name will change to alias when it mount<br/>2. Start with /: absolute path<br/>3. Not start with / or blank: sub path of /home/work<br/>4. Don't use alias same as default system folder of linux.<br/>5. Please check final path in 'Mounted folders' below.</p>",
+      "DescFolderAlias":"<ul style='list-style-type:disc'><li>If you fill out this input, folder name will change to alias when it mount.</li><li>Start with /: absolute path</li><li>The others: sub path of /home/work</li><li>Don't use alias same as system folders.</li><li>Please check final path which is printed in 'Mounted folders' below.</li><li>If you want to see this window again, click icon next to the 'Path & Alias'</li></ul>",
       "OpenMPOptimization": "OpenMP/OpenBLAS Optimization",
       "DescOpenMPOptimization": "<p>This value sets the number of threads to use for parallel regions by setting the initial value of the nthreads-var internal control variable.</p><p>Backend.AI sets this value equal to the number of CPU cores, which has the effect of accelerating typical high-performance computing workloads. However, for some multi-threaded workloads, multiple processes using OpenMP are used at the same time, resulting in an abnormally large number of threads and significant performance degradation. In this case, please adjust this value to 1 or 2.</p>",
       "HPCOptimization": "High-Performance Computing Optimizations",
