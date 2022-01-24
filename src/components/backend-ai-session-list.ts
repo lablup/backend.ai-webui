@@ -222,7 +222,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
 
         #work-dialog {
-          --component-height: calc(100vh - 50px);
+          --component-width: calc(100% - 80px);
+          --component-height: auto;
           right: 0;
           top: 50px;
         }
@@ -235,19 +236,17 @@ export default class BackendAiSessionList extends BackendAIPage {
           #work-dialog,
           #work-dialog.mini_ui {
             left: 0;
-            --component-width: 100%;
+            --component-width: 95%;
           }
         }
 
         @media screen and (min-width: 900px) {
           #work-dialog {
             left: 100px;
-            --component-width: calc(100% - 50px);
           }
 
           #work-dialog.mini_ui {
             left: 40px;
-            --component-width: calc(100% - 50px);
           }
         }
 
@@ -259,6 +258,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           height: calc(100vh - 120px);
           background-color: #222222;
           color: #efefef;
+        }
+
+        #work-area pre {
+          white-space: pre-wrap;
+          white-space: -moz-pre-wrap;
+          white-space: -pre-wrap;
+          white-space: -o-pre-wrap;
+          word-wrap: break-word;
         }
 
         div.indicator,
@@ -1332,11 +1339,12 @@ export default class BackendAiSessionList extends BackendAIPage {
       const sanitizeErrMsg = (msg) => {
         return msg ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : '';
       };
+      const errorList = tmpSessionStatus.error.collection ?? [tmpSessionStatus.error];
       statusDetailEl.innerHTML += `
       <div class="vertical layout start flex" style="width:100%;">
         <div style="width:100%;">
           <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
-            ${tmpSessionStatus.error.collection.map((item) => {
+            ${errorList.map((item) => {
     return `
               <div style="border-radius: 4px;background-color:var(--paper-grey-300);padding:10px;margin:10px;">
                 <div class="vertical layout start">
