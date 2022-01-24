@@ -2018,7 +2018,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   infoHeaderRenderer(root, column?) {
     render(
       html`
-      <div style='display: flex; align-items: center'>
+      <div class="horizontal layout center">
         <span style='text-align:center; font-size:16px; font-family: var(--general-font-family); font-weight: 500'>${_t('session.launcher.FolderAlias')}</span>
         <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
           e.stopPropagation();
@@ -3084,7 +3084,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                               auto-select></vaadin-grid-selection-column>
                 <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMountList')}"
                                           path="name" resizable></vaadin-grid-filter-column>
-                                          <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" path=" ${_t('session.launcher.FolderAlias')}" .headerRenderer="${this._boundPathRenderer}">
+                <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" path=" ${_t('session.launcher.FolderAlias')}" .headerRenderer="${this._boundPathRenderer}">
                 </vaadin-grid-column>
               </vaadin-grid>
               ${this.vfolders.length > 0 ? html`` : html`
