@@ -306,9 +306,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.connection_server = config.general.connectionServer;
       // console.log(this.connection_server);
     }
-    this.auto_logout = (typeof config.general !== 'undefined' && 'autoLogout' in config.general && globalThis.backendaioptions.get('auto_logout') === null) ?
-      config.general.autoLogout :
-      globalThis.backendaioptions.get('auto_logout', false);
+    if ((typeof config.general !== 'undefined' && 'autoLogout' in config.general) && globalThis.backendaioptions.get('auto_logout') === null) {
+      this.auto_logout = config.general.autoLogout;
+    } else {
+      this.auto_logout = globalThis.backendaioptions.get('auto_logout', false);
+    }
     if (typeof config.license !== 'undefined' && 'edition' in config.license) {
       this.edition = config.license.edition;
     }
