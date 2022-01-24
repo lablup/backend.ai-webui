@@ -2020,17 +2020,21 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       html`
       <div class="horizontal layout center">
         <span style='text-align:center; font-size:16px; font-family: var(--general-font-family); font-weight: 500'>${_t('session.launcher.FolderAlias')}</span>
-        <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
-          e.stopPropagation();
-          this._helpDescriptionTitle = _text('session.launcher.FolderAlias');
-          this._helpDescription = _text('session.launcher.DescFolderAlias');
-          this._helpDescriptionIcon = '';
-          this.shadowRoot.querySelector('#help-description').show();
-        }}"></mwc-icon-button>
+        <mwc-icon-button icon="info" class="fg green info" @click="${(e) => this._showPathDescription(e)}"></mwc-icon-button>
       </div>
       `,
       root
     );
+  }
+
+  _showPathDescription(e?) {
+    if (e != undefined) {
+      e.stopPropagation();
+    }
+    this._helpDescriptionTitle = _text('session.launcher.FolderAlias');
+    this._helpDescription = _text('session.launcher.DescFolderAlias');
+    this._helpDescriptionIcon = '';
+    this.shadowRoot.querySelector('#help-description').show();
   }
 
   async _updateFolderMap(folder, alias) {
