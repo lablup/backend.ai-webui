@@ -2359,7 +2359,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _resourceTemplateToCustom() {
-    this.shadowRoot.querySelector('#resource-templates').selectedText = _text('session.launcher.CustomResourceApplied');
+    const customItem = this.shadowRoot.querySelector('#custom-item');
+    const resourceTemplates = this.shadowRoot.querySelector('#resource-templates');
+
+    if (!customItem.hasAttribute('value')) resourceTemplates.focus();
+    customItem.setAttribute('value', 'custom');
+    resourceTemplates.selectedText = _text('session.launcher.CustomResourceApplied');
   }
 
   /**
@@ -2828,8 +2833,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Toggle scheduling time interval according to `isActive` parameter
-   * 
-   * @param {Boolean} isActive 
+   *
+   * @param {Boolean} isActive
    */
 
   _toggleScheduleTime(isActive = false) {
@@ -3112,13 +3117,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <div class="vertical center layout" style="position:relative;">
               <mwc-select id="resource-templates" label="${_t('session.launcher.ResourceAllocation')}"
                           icon="dashboard_customize" required fixedMenuPosition>
-                <mwc-list-item selected style="display:none!important"></mwc-list-item>
+                <mwc-list-item id="custom-item" selected style="display:none!important"></mwc-list-item>
                 <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
                     role="separator" disabled="true" class="horizontal layout center">
                   <div style="width:110px;">Name</div>
                   <div style="width:50px;text-align:right;">CPU</div>
                   <div style="width:50px;text-align:right;">RAM</div>
-                  <div style="width:50px;text-align:right;">${_t('session.launcher.SharedMemory')}</div>
+                  <div style="width:70px;text-align:right;">${_t('session.launcher.SharedMemory')}</div>
                   <div style="width:90px;text-align:right;">${_t('session.launcher.Accelerator')}</div>
                 </h5>
                 ${this.resource_templates_filtered.map((item) => html`
@@ -3155,7 +3160,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `)}
               ${this.isEmpty(this.resource_templates_filtered) ? html`
                 <mwc-list-item class="resource-button vertical center start layout" role="option"
-                              style="height:140px;width:350px;" type="button"
+                              style="height:140px;width:388px;" type="button"
                               flat inverted outlined disabled>
                   <div>
                     <h4>${_t('session.launcher.NoSuitablePreset')}</h4>
@@ -3187,8 +3192,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div class="resource-type">RAM</div>
                   <lablup-slider id="mem-resource" class="mem"
                                 pin snaps step=0.05 editable markers
-                                  @click="${() => {
-    this._resourceTemplateToCustom();
+                                  @click="${(e) => {
+    this._applyResourceValueChanges(e);
   }}"
                                   @changed="${() => {
     this._updateShmemLimit();
