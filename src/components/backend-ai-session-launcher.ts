@@ -2778,6 +2778,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     nextButton.style.visibility = this.currentIndex == this.progressLength ? 'hidden' : 'visible';
     this.shadowRoot.querySelector('#launch-button-msg').textContent = this.progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
 
+    if (this.currentIndex == 2) {
+      this._showPathDescription();
+    }
+
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
     this._grid?.clearCache();
   }
