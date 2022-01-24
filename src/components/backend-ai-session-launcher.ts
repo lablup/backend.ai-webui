@@ -1126,7 +1126,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._toggleScheduleTime(!this.useScheduledTime);
 
       // monkeypatch for mwc-list-item width adjustment
-      const scrollEnabledNum = 7;
+      const scrollEnabledNum = 11;
       const environmentListItems = this.shadowRoot.querySelectorAll('mwc-select#environment > mwc-list-item');
       if (this.languages.length > scrollEnabledNum) {
         environmentListItems.forEach((element) => element.style.paddingRight = `0`);
