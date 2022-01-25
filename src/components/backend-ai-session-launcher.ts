@@ -217,31 +217,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
+        .slider-list-item {
+          padding: 0;
+        }
+
         lablup-slider {
-          width: 200px !important;
-          --textfield-width: 50px;
-          --slider-width: 120px;
-        }
-
-        lablup-slider.mem,
-        lablup-slider.shmem {
-          --slider-color: var(--paper-orange-400);
-        }
-
-        lablup-slider.cpu {
-          --slider-color: var(--paper-light-green-400);
-        }
-
-        lablup-slider.gpu {
-          --slider-color: var(--paper-cyan-400);
-        }
-
-        lablup-slider.session {
-          --slider-color: var(--paper-pink-400);
-        }
-
-        lablup-slider.cluster {
-          --slider-color: var(--paper-blue-500);
+          width: 350px !important;
+          --textfield-min-width: 135px;
+          --slider-width: 210px;
+          --mdc-theme-primary: var(--paper-green-400);
         }
 
         lablup-progress-bar {
@@ -297,10 +281,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           height: 24px;
         }
 
-        div.resource-type {
+        mwc-list-item.resource-type {
+          color: #040716;
           font-size: 14px;
-          width: 70px;
-          margin-right: 10px;
+          font-weight: 500;
+          height: 20px;
+          padding: 5px;
         }
 
         div.vfolder-list,
@@ -731,13 +717,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --input-color-disabled: #222;
         }
 
-        @media screen and (max-width: 375px) {
-          lablup-slider {
-            width: 180px;
-            --textfield-width: 50px;
-            --slider-width: 100px;
-          }
+        [name='resource-group'] mwc-list-item {
+          --mdc-ripple-color: transparent;
+        }
 
+        @media screen and (max-width: 400px) {
           backend-ai-dialog {
             --component-min-width: 350px;
           }
@@ -3162,85 +3146,101 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </div>
             <wl-expansion name="resource-group">
               <span slot="title">${_t('session.launcher.CustomAllocation')}</span>
-              <div class="vertical center layout">
-                <div class="horizontal center layout">
-                  <div class="resource-type" style="width:70px;">CPU</div>
-                  <lablup-slider id="cpu-resource" class="cpu"
-                                pin snaps expand editable markers
-                                @click="${(e) => this._applyResourceValueChanges(e)}"
-                                @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                                marker_limit="${this.marker_limit}"
-                                min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
-                                value="${this.cpu_request}"></lablup-slider>
-                  <span class="caption">${_t('session.launcher.Core')}</span>
-                  <mwc-icon-button icon="info" class="fg green info"
-                                    @click="${(e) => {
+              <div class="vertical layout">
+                <mwc-list multi>
+                  <mwc-list-item hasMeta class="resource-type">
+                    <div>CPU</div>
+                    <mwc-icon-button slot="meta" icon="info" class="fg info"
+                                @click="${(e) => {
     this._showResourceDescription(e, 'cpu');
   }}"></mwc-icon-button>
-                </div>
-                <div class="horizontal center layout">
-                  <div class="resource-type">RAM</div>
-                  <lablup-slider id="mem-resource" class="mem"
-                                pin snaps step=0.05 editable markers
-                                  @click="${() => {
-    this._resourceTemplateToCustom();
-  }}"
-                                  @changed="${() => {
-    this._updateShmemLimit();
-  }}"
-                                  @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                                marker_limit="${this.marker_limit}"
-                                min="${this.mem_metric.min}" max="${this.mem_metric.max}"
-                                value="${this.mem_request}"></lablup-slider>
-                  <span class="caption">GB</span>
-                  <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
+                  </mwc-list-item>
+                  <li divider role="separator"></li>
+                  <mwc-list-item class="slider-list-item">
+                    <lablup-slider id="cpu-resource" class="cpu"
+                              pin snaps expand editable markers
+                              @click="${(e) => this._applyResourceValueChanges(e)}"
+                              @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                              marker_limit="${this.marker_limit}"
+                              suffix="${_text('session.launcher.Core')}"
+                              min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
+                              value="${this.cpu_request}"></lablup-slider>
+                  </mwc-list-item>
+                  <mwc-list-item hasMeta class="resource-type">
+                    <div>RAM</div>
+                    <mwc-icon-button slot="meta" icon="info" class="fg info"
+                                    @click="${(e) => {
     this._showResourceDescription(e, 'mem');
   }}"></mwc-icon-button>
-                </div>
-                <div class="horizontal center layout">
-                  <div class="resource-type">${_t('session.launcher.SharedMemory')}</div>
+                  </mwc-list-item>
+                  <li divider role="separator"></li>
+                  <mwc-list-item  class="slider-list-item">
+                    <lablup-slider id="mem-resource" class="mem"
+                                  pin snaps expand step=0.05 editable markers
+                                    @click="${() => {
+    this._resourceTemplateToCustom();
+  }}"
+                                    @changed="${() => {
+    this._updateShmemLimit();
+  }}"
+                                    @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                                  marker_limit="${this.marker_limit}" suffix="GB"
+                                  min="${this.mem_metric.min}" max="${this.mem_metric.max}"
+                                  value="${this.mem_request}"></lablup-slider>
+                  </mwc-list-item>
+                <mwc-list-item hasMeta class="resource-type">
+                  <div>${_t('session.launcher.SharedMemory')}</div>
+                  <mwc-icon-button slot="meta" icon="info" class="fg info" @click="${(e) => {
+    this._showResourceDescription(e, 'shmem');
+  }}"></mwc-icon-button>
+                </mwc-list-item>
+                <li divider role="separator"></li>
+                <mwc-list-item class="slider-list-item">
                   <lablup-slider id="shmem-resource" class="mem"
                                 pin snaps step="0.0025" editable markers
                                 @click="${(e) => this._applyResourceValueChanges(e)}"
                                 @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                                marker_limit="${this.marker_limit}"
+                                marker_limit="${this.marker_limit}" suffix="GB"
                                 min="0.0625" max="${this.shmem_metric.max}"
                                 value="${this.shmem_request}"></lablup-slider>
-                  <span class="caption">GB</span>
-                  <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
-    this._showResourceDescription(e, 'shmem');
+                </mwc-list-item>
+                <mwc-list-item hasMeta class="resource-type">
+                  <div>GPU</div>
+                  <mwc-icon-button slot="meta" icon="info" class="fg info" @click="${(e) => {
+    this._showResourceDescription(e, 'gpu');
   }}"></mwc-icon-button>
-                </div>
-                <div class="horizontal center layout">
-                  <div class="resource-type">GPU</div>
+                  </mwc-list-item>
+                  <li divider role="separator"></li>
+                  <mwc-list-item class="slider-list-item">
                   <lablup-slider id="gpu-resource" class="gpu"
                                 pin snaps editable markers step="${this.gpu_step}"
                                 @click="${(e) => this._applyResourceValueChanges(e)}"
                                 @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                                marker_limit="${this.marker_limit}"
-                                min="0.0" max="${this.cuda_device_metric.max}" value="${this.gpu_request}"></lablup-slider>
-                  <span class="caption">GPU</span>
-                  <mwc-icon-button icon="info" class="fg blue info" @click="${(e) => {
-    this._showResourceDescription(e, 'gpu');
+                                marker_limit="${this.marker_limit}" suffix="GPU"
+                                min="0.0" max="${this.cuda_device_metric.max}"
+                                value="${this.gpu_request}"></lablup-slider>
+                </mwc-list-item>
+                <mwc-list-item hasMeta class="resource-type">
+                  <div>${_t('webui.menu.Sessions')}</div>
+                  <mwc-icon-button slot="meta" icon="info" class="fg info" @click="${(e) => {
+    this._showResourceDescription(e, 'session');
   }}"></mwc-icon-button>
-                </div>
-                <div class="horizontal center layout">
-                  <div class="resource-type">${_t('webui.menu.Sessions')}</div>
+                  </mwc-list-item>
+                  <li divider role="separator"></li>
+                  <mwc-list-item class="slider-list-item">
                   <lablup-slider id="session-resource" class="session"
                                 pin snaps editable markers step="1"
                                 @click="${(e) => this._applyResourceValueChanges(e)}"
                                 @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                                marker_limit="${this.marker_limit}"
-                                min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
-                  <span class="caption">#</span>
-                  <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
-    this._showResourceDescription(e, 'session');
-  }}"></mwc-icon-button>
-                </div>
+                                marker_limit="${this.marker_limit}" suffix="#"
+                                min="1" max="${this.concurrency_limit}"
+                                value="${this.session_request}"></lablup-slider>
+                </mwc-list-item>
+                </mwc-list>
               </div>
             </wl-expansion>
             ${this.cluster_support ? html`
-              <mwc-select id="cluster-mode" label="${_t('session.launcher.ClusterMode')}" required
+              <mwc-select id="cluster-mode" label="${_text('session.launcher.ClusterMode')}" required
                           icon="account_tree" fixedMenuPosition
                           value="${this.cluster_mode}" @change="${(e) => this._setClusterMode(e)}">
                 ${this.cluster_mode_list.map((item) => html`
@@ -3258,20 +3258,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </mwc-list-item>
                 `)}
               </mwc-select>
-              <div class="horizontal layout center" style="padding:0 24px;">
-                <div class="resource-type">${_t('session.launcher.ClusterSize')}</div>
-                <lablup-slider id="cluster-size" class="cluster"
-                              pin snaps expand editable markers
-                              marker_limit="${this.marker_limit}"
-                              min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
-                              value="${this.cluster_size}"
-                              @click="${(e) => this._applyResourceValueChanges(e, false)}"
-                              @focusout="${(e) => this._applyResourceValueChanges(e, false)}"></lablup-slider>
-                ${this.cluster_mode === 'single-node' ? html`
-                  <span class="caption" style="width:60px;">${_t('session.launcher.Container')}</span>
-                ` : html`
-                  <span class="caption">${_t('session.launcher.Node')}</span>
-                `}
+              <div class="horizontal layout center flex center-justified">
+                <mwc-list multi>
+                  <mwc-list-item class="resource-type">
+                    <div class="resource-type">${_t('session.launcher.ClusterSize')}</div>
+                  </mwc-list-item>
+                  <li divider role="separator"></li>
+                  <mwc-list-item class="slider-list-item">
+                    <lablup-slider id="cluster-size" class="cluster"
+                                  pin snaps expand editable markers
+                                  marker_limit="${this.marker_limit}"
+                                  min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
+                                  value="${this.cluster_size}"
+                                  @click="${(e) => this._applyResourceValueChanges(e, false)}"
+                                  @focusout="${(e) => this._applyResourceValueChanges(e, false)}"
+                                  suffix="${this.cluster_mode === 'single-node' ? _text('session.launcher.Container') : _text('session.launcher.Node')}"></lablup-slider>
+                  </mwc-list-item>
+                </mwc-list>
               </div>
              ` : html``}
             <wl-expansion name="hpc-option-group">
