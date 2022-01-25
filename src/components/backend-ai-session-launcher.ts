@@ -571,10 +571,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-select-min-width: 190px;
         }
 
-        mwc-select > mwc-list-item {
-          width: 370px; // default width
-        }
-
         mwc-textfield {
           width: 100%;
           font-family: var(--general-font-family);
@@ -1124,15 +1120,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       await this._refreshResourcePolicy();
       this.requestUpdate();
       this._toggleScheduleTime(!this.useScheduledTime);
-
-      // monkeypatch for mwc-list-item width adjustment
-      const scrollEnabledNum = 11;
-      const environmentListItems = this.shadowRoot.querySelectorAll('mwc-select#environment > mwc-list-item');
-      if (this.languages.length > scrollEnabledNum) {
-        environmentListItems.forEach((element) => element.style.paddingRight = `0`);
-      } else {
-        environmentListItems.forEach((element) => element.style.paddingRight = `15px`);
-      }
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
   }
