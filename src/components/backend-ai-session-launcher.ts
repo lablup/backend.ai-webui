@@ -557,6 +557,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-list-item__primary-text: {
             height: 20px;
           };
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 400px;
+          --mdc-menu-min-width: 400px;
         }
 
         mwc-select#owner-group,
@@ -566,10 +569,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 50%;
           --mdc-menu-max-width: 200px;
           --mdc-select-min-width: 190px;
-        }
-
-        mwc-select > mwc-list-item {
-          width: 370px; // default width
         }
 
         mwc-textfield {
@@ -2826,8 +2825,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Toggle scheduling time interval according to `isActive` parameter
-   * 
-   * @param {Boolean} isActive 
+   *
+   * @param {Boolean} isActive
    */
 
   _toggleScheduleTime(isActive = false) {
@@ -2942,14 +2941,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
                     <img slot="graphic" alt="language icon" src="resources/icons/${item.icon}"
                          style="width:24px;height:24px;"/>
-                    <div class="horizontal justified center flex layout" style="width:340px;">
+                    <div class="horizontal justified center flex layout" style="width:325px;">
                       <div style="padding-right:5px;">${item.basename}</div>
-                      <div class="flex"></div>
                       <div class="horizontal layout end-justified center flex">
                         ${item.tags ? item.tags.map((item) => html`
-                          <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}"
-                                          description="${item.tag}"></lablup-shields>
-                          <span style="display:none">(${item.tag})</span>
+                          <lablup-shields style="margin-right:5px;" color="${item.color}"
+                                          description=""></lablup-shields>
                         `) : ''}
                         <mwc-icon-button icon="info"
                                          class="fg blue info"
