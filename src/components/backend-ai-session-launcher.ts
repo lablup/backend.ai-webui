@@ -362,6 +362,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding-top:10px;
           margin-left:15px;
           margin-right:15px;
+          display:flex;
+          flex-wrap:wrap;
         }
 
         .resource-button {
@@ -379,6 +381,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-size: 16px;
           margin: 5px;
           opacity: 1;
+          flex-grow: 2;
           z-index:11;
         }
 
@@ -410,6 +413,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding: 0px 5px;
           background-color: var(--general-button-background-color);
           color: white;
+          flex-grow: 2;
         }
 
         .cluster-allocated > div.horizontal > p {
@@ -428,7 +432,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .allocation-check {
-          margin-bottom: 7px;
+          margin-bottom: 10px;
+          display: flex;
+          flex-wrap: wrap;
         }
 
         .resource-allocated-box {
@@ -749,18 +755,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           mwc-button > mwc-icon {
             display: inline-block;
           }
-        }
-
-        .allocation-scrollbar {
-          overflow-x:scroll;
-        }
-        .allocation-scrollbar::-webkit-scrollbar {
-          max-height: 3px;
-        }
-        .allocation-scrollbar::-webkit-scrollbar-thumb {
-          border-left: 5px solid transparent;
-          border-right: 5px solid transparent;
-          background-clip: padding-box;
         }
 
         /* Fading animation */
@@ -3373,7 +3367,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
           <div id="progress-04" class="progress center layout fade">
             <p class="title">${_t('session.launcher.TotalAllocation')}</p>
-            <div class="allocation-scrollbar vertical layout cluster-total-allocation-container">
+            <div class="vertical layout center center-justified cluster-total-allocation-container">
               <div id="cluster-allocation-pane" style="position:relative;${this.cluster_size <= 1 ? 'display:none;' : ''}">
                 <div class="horizontal layout">
                   <div class="vertical layout center center-justified resource-allocated">
@@ -3398,8 +3392,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                 </div>
               </div>
-              <div id="total-allocation-container" class="horizontal layout allocation-check">
-                <div id="total-allocation-pane" style="position:relative;">
+              <div id="total-allocation-container" class="horizontal layout center center-justified allocation-check">
+                <div id="total-allocation-pane" style="position:relative;flex-grow:1;">
                   <div class="horizontal layout resource-allocated-box">
                     <div class="vertical layout center center-justified resource-allocated">
                       <p>${_t('session.launcher.CPU')}</p>
@@ -3424,7 +3418,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                   <div id="resource-allocated-box-shadow"></div>
                 </div>
-                <div class="horizontal layout" style="margin:auto;">
+                <div class="horizontal layout center center-justified" style="flex-grow:1;">
                   <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
                     <div class="horizontal layout">
                       <p>×</p>
@@ -3432,7 +3426,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     </div>
                     <p class="small">${_t('session.launcher.Container')}</p>
                   </div>
-                  <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;width:55px;">
+                  <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
                     <div class="horizontal layout">
                       <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
                       <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
