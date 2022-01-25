@@ -1219,7 +1219,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   /**
    * Show tooltip when mouseenter the corresponding element
-   * 
+   *
    * @param {string} elementId
    */
   _showTooltip(elementId = '') {
@@ -1231,7 +1231,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   /**
    * Hide tooltip when mouseleave the corresponding element
-   * 
+   *
    * @param {string} elementId
    */
   _hideTooltip(elementId = '') {
@@ -1473,7 +1473,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   /**
    * Render session type - batch or interactive
-   * 
+   *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
@@ -1637,7 +1637,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <mwc-icon-button class="fg red controls-running"
                                icon="power_settings_new" @click="${(e) => this._openTerminateSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
-          ${(this._isRunning && !this._isPreparing(rowData.item.status) || this._APIMajorVersion > 4)  && !this._isPending(rowData.item.status) ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status) || this._APIMajorVersion > 4) && !this._isPending(rowData.item.status) ? html`
             <mwc-icon-button class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"></mwc-icon-button>
           ` : html`
@@ -2008,8 +2008,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         </vaadin-grid-filter-column>
         ${this._isIntegratedCondition ? html`
           <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
-        `
-        : html``}
+        ` :
+    html``}
         <vaadin-grid-filter-column path="status" auto-width header="${_t('session.Status')}" resizable
                                    .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-filter-column>

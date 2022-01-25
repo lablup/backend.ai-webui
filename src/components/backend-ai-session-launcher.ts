@@ -2825,8 +2825,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Toggle scheduling time interval according to `isActive` parameter
-   * 
-   * @param {Boolean} isActive 
+   *
+   * @param {Boolean} isActive
    */
 
   _toggleScheduleTime(isActive = false) {

@@ -231,7 +231,7 @@ export default class BackendAiSignup extends BackendAIPage {
     this._toggleInputField(true);
     let inputFields: Array<string> = ['#id_user_email', '#id_token', '#id_password1', '#id_password2'];
     if (this.allowSignupWithoutConfirmation) {
-      inputFields = inputFields.filter((el: string) => el !== '#id_token')
+      inputFields = inputFields.filter((el: string) => el !== '#id_token');
     }
     inputFields.forEach((el: string) => {
       this.shadowRoot.querySelector(el).value = '';
@@ -242,7 +242,7 @@ export default class BackendAiSignup extends BackendAIPage {
   _toggleInputField(isActive: boolean) {
     let inputFields: Array<string> = ['#id_user_name', '#id_token', '#signup-button'];
     if (this.allowSignupWithoutConfirmation) {
-      inputFields = inputFields.filter((el: string) => el !== '#id_token')
+      inputFields = inputFields.filter((el: string) => el !== '#id_token');
     }
     inputFields.forEach((el: string) => {
       if (isActive) {
@@ -256,7 +256,7 @@ export default class BackendAiSignup extends BackendAIPage {
   _signup() {
     let inputFields: Array<string> = ['#id_user_email', '#id_token', '#id_password1', '#id_password2'];
     if (this.allowSignupWithoutConfirmation) {
-      inputFields = inputFields.filter((el: string) => el !== '#id_token')
+      inputFields = inputFields.filter((el: string) => el !== '#id_token');
     }
     const inputFieldsValidity: Array<boolean> = inputFields.map((el: string) => {
       this.shadowRoot.querySelector(el).reportValidity();
@@ -299,7 +299,7 @@ export default class BackendAiSignup extends BackendAIPage {
       setTimeout(() => {
         this.signupPanel.hide();
         this._clearUserInput();
-        if(!this.allowSignupWithoutConfirmation) {
+        if (!this.allowSignupWithoutConfirmation) {
           this.shadowRoot.querySelector('#email-sent-dialog').show();
         }
       }, 1000);
@@ -433,8 +433,8 @@ export default class BackendAiSignup extends BackendAIPage {
     return html`
       <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <span slot="title">${this.allowSignupWithoutConfirmation ? html`
-          ${_t('signup.Signup')}` : 
-            html`${_t('signup.SignupBETA')}
+          ${_t('signup.Signup')}` :
+    html`${_t('signup.SignupBETA')}
           `}
         </span>
         <div slot="content" class="vertical flex layout">
