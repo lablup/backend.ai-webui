@@ -66,7 +66,7 @@
     "lit-translate": "^2.0.0-rc.1",
     "log": "^6.3.1",
     "macro-carousel": "^1.0.0",
-    "marked": "^4.0.8",
+    "marked": "^4.0.10",
     "markty-toml": "0.1.1",
     "tus-js-client": "^2.3.0",
     "utf-8-validate": "^5.0.7",
