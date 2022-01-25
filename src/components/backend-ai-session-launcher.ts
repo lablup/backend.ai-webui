@@ -1740,7 +1740,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       let shmem_metric: any = {
         'min': 0.0625,
         'max': 2,
-        'preferred': 0.125
+        'preferred': 0.0625
       };
       this.cuda_device_metric = {
         'min': 0,
