@@ -362,8 +362,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding-top:10px;
           margin-left:15px;
           margin-right:15px;
-          display:flex;
-          flex-wrap:wrap;
         }
 
         .resource-button {
@@ -375,13 +373,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .resource-allocated {
-          width: auto;
-          min-width: 45px;
+          width: 45px;
           height: 60px;
           font-size: 16px;
           margin: 5px;
           opacity: 1;
-          flex-grow: 2;
           z-index:11;
         }
 
@@ -413,7 +409,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding: 0px 5px;
           background-color: var(--general-button-background-color);
           color: white;
-          flex-grow: 2;
         }
 
         .cluster-allocated > div.horizontal > p {
@@ -433,8 +428,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .allocation-check {
           margin-bottom: 10px;
-          display: flex;
-          flex-wrap: wrap;
         }
 
         .resource-allocated-box {
@@ -2448,6 +2441,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Round the value according to the specified number of digits.
+   *
+   * @param {string} allocation - size of allocated resource.
+   * @param {string} digit - number of digits.
+   * @return {string} rounded value according specified number of digits.
+   * */
+  _roundResourceAllocation(allocation, digit) {
+    return parseFloat(allocation).toFixed(digit);
+  }
+
+  /**
    * Get MB value when input is less than 1 GB.
    *
    * @param {number} value - value with GB unit.
@@ -2455,9 +2459,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   _conditionalGBtoMB(value) {
     if (value < 1.0) {
-      return (value * 1024).toFixed(0);
+      return this._roundResourceAllocation((value * 1024).toFixed(0), 2);
     }
-    return value;
+    return this._roundResourceAllocation(value, 2);
   }
 
   /**
@@ -3210,7 +3214,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <div class="horizontal center layout">
                   <div class="resource-type">${_t('session.launcher.SharedMemory')}</div>
                   <lablup-slider id="shmem-resource" class="mem"
-                                pin snaps step="0.0025" editable markers
+                                pin snaps step="0.0125" editable markers
                                 @click="${(e) => this._applyResourceValueChanges(e)}"
                                 @focusout="${(e) => this._applyResourceValueChanges(e)}"
                                 marker_limit="${this.marker_limit}"
@@ -3377,7 +3381,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.Memory')}</p>
-                    <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
+                    <span>${this._roundResourceAllocation(this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size), 1)}</span>
                     <p>GB</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
@@ -3393,7 +3397,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               </div>
               <div id="total-allocation-container" class="horizontal layout center center-justified allocation-check">
-                <div id="total-allocation-pane" style="position:relative;flex-grow:1;">
+                <div id="total-allocation-pane" style="position:relative;">
                   <div class="horizontal layout resource-allocated-box">
                     <div class="vertical layout center center-justified resource-allocated">
                       <p>${_t('session.launcher.CPU')}</p>
@@ -3402,7 +3406,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     </div>
                     <div class="vertical layout center center-justified resource-allocated">
                       <p>${_t('session.launcher.Memory')}</p>
-                      <span>${this.mem_request}</span>
+                      <span>${this._roundResourceAllocation(this.mem_request, 1)}</span>
                       <p>GB</p>
                     </div>
                     <div class="vertical layout center center-justified resource-allocated">
@@ -3418,21 +3422,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                   <div id="resource-allocated-box-shadow"></div>
                 </div>
-                <div class="horizontal layout center center-justified" style="flex-grow:1;">
-                  <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
-                    <div class="horizontal layout">
-                      <p>×</p>
-                      <span>${this.cluster_size <= 1 ? this.session_request : this.cluster_size}</span>
-                    </div>
-                    <p class="small">${_t('session.launcher.Container')}</p>
+                <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
+                  <div class="horizontal layout">
+                    <p>×</p>
+                    <span>${this.cluster_size <= 1 ? this.session_request : this.cluster_size}</span>
                   </div>
-                  <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
-                    <div class="horizontal layout">
-                      <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
-                      <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
-                    </div>
-                    <p class="small">${_t('session.launcher.AllocateNode')}</p>
+                  <p class="small">${_t('session.launcher.Container')}</p>
+                </div>
+                <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
+                  <div class="horizontal layout">
+                    <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
+                    <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
                   </div>
+                  <p class="small">${_t('session.launcher.AllocateNode')}</p>
                 </div>
               </div>
             </div>
