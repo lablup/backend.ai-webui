@@ -4,7 +4,8 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -84,6 +85,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Boolean}) allow_manual_image_name_for_session = false;
   @property({type: Boolean}) always_enqueue_compute_session = false;
+  @property({type: Boolean}) allowSignupWithoutConfirmation = false;
   @property({type: Boolean}) openPortToPublic = false;
   @property({type: Boolean}) maxCPUCoresPerContainer = 64;
   @property({type: Boolean}) maxMemoryPerContainer = 16;
@@ -102,7 +104,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.endpoints = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -350,6 +352,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.endpoints = globalThis.backendaioptions.get('endpoints', []);
   }
 
+
   /**
    * Change the signin mode with SESSION or API
    * */
@@ -494,6 +497,11 @@ export default class BackendAILogin extends BackendAIPage {
       }
       (this.shadowRoot.querySelector('#id_api_endpoint') as any).disabled = true;
       (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).disabled = true;
+    }
+    if (typeof config.general === 'undefined' || typeof config.general.allowSignupWithoutConfirmation === 'undefined' || config.general.allowSignupWithoutConfirmation === '' || config.general.allowSignupWithoutConfirmation == false) {
+      this.allowSignupWithoutConfirmation = false;
+    } else {
+      this.allowSignupWithoutConfirmation = true;
     }
 
     if (typeof config.general === 'undefined' || typeof config.general.defaultSessionEnvironment === 'undefined' || config.general.defaultSessionEnvironment === '') {
@@ -671,9 +679,10 @@ export default class BackendAILogin extends BackendAIPage {
       this.notification.show();
       return;
     }
-    (this.shadowRoot.querySelector('#signup-dialog') as any).endpoint = this.api_endpoint;
-    // this.shadowRoot.querySelector('#signup-dialog').receiveAgreement();
-    (this.shadowRoot.querySelector('#signup-dialog') as any).open();
+    const signupDialog = this.shadowRoot.querySelector('#signup-dialog');
+    signupDialog.endpoint = this.api_endpoint;
+    signupDialog.allowSignupWithoutConfirmation = this.allowSignupWithoutConfirmation;
+    signupDialog.open();
   }
 
   _showChangePasswordEmailDialog() {
@@ -1202,7 +1211,6 @@ export default class BackendAILogin extends BackendAIPage {
                       fullwidth
                       label="${_t('login.Login')}"
                       @click="${() => this._login()}"></mwc-button>
-                ${this.signup_support && this.allowAnonymousChangePassword ? html`
                 <div class="layout horizontal" style="margin-top:2em;">
                   ${this.signup_support ? html`
                     <div class="vertical center-justified layout" style="width:100%;">
@@ -1225,7 +1233,7 @@ export default class BackendAILogin extends BackendAIPage {
                           @click="${() => this._showChangePasswordEmailDialog()}"></mwc-button>
                     </div>
                   ` : html``}
-                </div>`:html``}
+                </div>
               </fieldset>
             </form>
           </div>

@@ -4,18 +4,19 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
-import {render} from 'lit-html';
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
+import '@material/mwc-select/mwc-select';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
-import '@vaadin/vaadin-template-renderer';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -53,17 +54,21 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Array}) resource_policy_names;
   @property({type: String}) current_policy_name = '';
   @property({type: Number}) selectAreaHeight;
-  @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
+  @property({type: Object}) _boundResourceRenderer = Object();
   @property({type: Object}) _boundConcurrencyRenderer = this.concurrencyRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) _boundPolicyNameRenderer = this.policyNameRenderer.bind(this);
+  @property({type: Object}) _boundClusterSizeRenderer = this.clusterSizeRenderer.bind(this);
+  @property({type: Object}) _boundStorageNodesRenderer = this.storageNodesRenderer.bind(this);
 
   constructor() {
     super();
     this.allowed_vfolder_hosts = [];
     this.resource_policy_names = [];
+    this._boundResourceRenderer = this.resourceRenderer.bind(this);
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -180,44 +185,15 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
                    .items="${this.resourcePolicy}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="name">${_t('resourcePolicy.Name')}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout horizontal center flex">
-              <div>[[item.name]]</div>
-            </div>
-          </template>
-        </vaadin-grid-column>
-
+        <vaadin-grid-sort-column resizable header="${_t('resourcePolicy.Name')}" path="name" .renderer="${this._boundPolicyNameRenderer}"></vaadin-grid-sort-column>
         <vaadin-grid-column width="150px" resizable header="${_t('resourcePolicy.Resources')}" .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
-
         <vaadin-grid-column resizable header="${_t('resourcePolicy.Concurrency')}" .renderer="${this._boundConcurrencyRenderer}">
         </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="max_containers_per_session">${_t('resourcePolicy.ClusterSize')}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div>[[item.max_containers_per_session]]</div>
-          </template>
+        <vaadin-grid-sort-column resizable header="${_t('resourcePolicy.ClusterSize')}" path="max_containers_per_session"
+            .renderer="${this._boundClusterSizeRenderer}"></vaadin-grid-sort-column>
+        <vaadin-grid-column resizable header="${_t('resourcePolicy.StorageNodes')}" .renderer="${this._boundStorageNodesRenderer}">
         </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">${_t('resourcePolicy.StorageNodes')}</template>
-          <template>
-            <div class="layout horizontal center flex">
-              <div class="vertical start layout">
-                <div>[[item.allowed_vfolder_hosts]]
-                </div>
-              </div>
-            </div>
-          </template>
-        </vaadin-grid-column>
-
         <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
 
@@ -443,6 +419,39 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  policyNameRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+      <div class="layout horizontal center flex">
+        <div>${rowData.item.name}</div>
+      </div>
+      `, root
+    );
+  }
+
+  clusterSizeRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+      <div>${rowData.item.max_containers_per_session}</div>
+      `, root
+    );
+  }
+
+  storageNodesRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+      <div class="layout horizontal center flex">
+        <div class="vertical start layout">
+          ${rowData.item.allowed_vfolder_hosts}
+        </div>
+      </div>
+      `, root
+    );
+  }
+
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     // monkeypatch for height calculation.
@@ -572,13 +581,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     return this.condition === 'active';
   }
 
-  _byteToGB(value: number, decimals: number=0) {
+  _byteToGB(value: number, decimals=0) {
     const gigabyte = Math.pow(2, 30);
     const unitToFix = Math.pow(10, decimals);
     return (Math.round(value / gigabyte * unitToFix) / unitToFix).toFixed(decimals);
   }
 
-  _gBToByte(value: number = 0) {
+  _gBToByte(value = 0) {
     const gigabyte = Math.pow(2, 30);
     return Math.round(gigabyte * value);
   }
@@ -773,7 +782,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
    *
    * @param value - raw value
    * @param enableUnitConvert - if true it enable unit conversion
-   * @returns if number then returns number, else if then string
+   * @return if number then returns number, else if then string
    */
   _markIfUnlimited(value, enableUnitConvert = false) {
     if (['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value)) {

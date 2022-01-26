@@ -4,8 +4,8 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {render} from 'lit-html';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
@@ -20,14 +20,11 @@ import '@material/mwc-button/mwc-button';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column-group';
-import '@vaadin/vaadin-grid/vaadin-grid-filter';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
 import '@vaadin/vaadin-item/vaadin-item';
-import '@vaadin/vaadin-template-renderer';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -109,6 +106,10 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) _boundPermissionRenderer = Object();
   @property({type: Object}) _boundCloneableRenderer = Object();
   @property({type: Object}) _boundQuotaRenderer = Object();
+  @property({type: Object}) _boundUploadListRenderer = Object();
+  @property({type: Object}) _boundUploadProgressRenderer = Object();
+  @property({type: Object}) _boundInviteeInfoRenderer = Object();
+  @property({type: Object}) _boundIDRenderer = Object();
   @property({type: Boolean}) _uploadFlag = true;
   @property({type: Boolean}) _folderRefreshing = false;
   @property({type: Number}) lastQueryTime = 0;
@@ -126,7 +127,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Number}) minimumResource = {
     cpu: 1,
     mem: 0.5
-  }
+  };
   @property({type: Array}) filebrowserSupportedImages = [];
   @property({type: Object}) storageProxyInfo = Object();
   @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
@@ -135,7 +136,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     GiB: Math.pow(2, 30),
     TiB: Math.pow(2, 40),
     PiB: Math.pow(2, 50)
-  }
+  };
   @property({type: Object}) maxSize = {
     value: 0,
     unit: 'MiB'
@@ -159,9 +160,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundPermissionRenderer = this.permissionRenderer.bind(this);
     this._boundFolderListRenderer = this.folderListRenderer.bind(this);
     this._boundQuotaRenderer = this.quotaRenderer.bind(this);
+    this._boundUploadListRenderer = this.uploadListRenderer.bind(this);
+    this._boundUploadProgressRenderer = this.uploadProgressRenderer.bind(this);
+    this._boundInviteeInfoRenderer = this.inviteeInfoRenderer.bind(this);
+    this._boundIDRenderer = this.iDRenderer.bind(this);
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -539,12 +544,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-filter-column path="name" width="80px" resizable .renderer="${this._boundFolderListRenderer}"
             header="${_t('data.folders.Name')}"></vaadin-grid-filter-column>
-        <vaadin-grid-column width="135px" flex-grow="0" resizable  header="ID">
-          <template>
-            <div class="layout vertical">
-              <span class="indicator monospace">[[item.id]]</span>
-            </div>
-          </template>
+        <vaadin-grid-column width="135px" flex-grow="0" resizable header="ID" .renderer="${this._boundIDRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-filter-column path="host" width="105px" flex-grow="0" resizable
             header="${_t('data.folders.Location')}"></vaadin-grid-filter-column>
@@ -573,7 +573,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                     `)}
                 </mwc-select>
             </div>
-            <span class="helper-text">${_t("data.folders.MaxFolderQuota")} : ${this.maxSize.value + ' ' + this.maxSize.unit}</span>
+            <span class="helper-text">${_t('data.folders.MaxFolderQuota')} : ${this.maxSize.value + ' ' + this.maxSize.unit}</span>
           </div>
           <mwc-select class="full-width fixed-position" id="update-folder-permission" style="width:100%;" label="${_t('data.Permission')}"
                   fixedMenuPosition>
@@ -713,8 +713,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
-        <span slot="title">${this.explorer.id}</span>
-        <div slot="action" class="horizontal layout flex folder-action-buttons">
+        <span slot="title" style="margin-right:1rem;">${this.explorer.id}</span>
+        <div slot="action" class="horizontal layout space-between folder-action-buttons">
           <div class="flex"></div>
           ${this.isWritable ? html`
             <mwc-button
@@ -765,82 +765,48 @@ export default class BackendAiStorageList extends BackendAIPage {
           `}
         </div>
         <div slot="content">
-          <div class="breadcrumb">
-            ${this.explorer.breadcrumb ? html`
-              <ul>
-                ${this.explorer.breadcrumb.map((item) => html`
-                  <li>
-                    ${item === '.' ? html`
-                      <mwc-icon-button
-                        icon="folder_open" dest="${item}"
-                        @click="${(e) => this._gotoFolder(e)}"
-                      ></mwc-icon-button>
-                    ` : html`
-                      <a outlined class="goto" path="item" @click="${(e) => this._gotoFolder(e)}" dest="${item}">${item}</a>
-                    `}
-                  </li>
-                `)}
-              </ul>
-            ` : html``}
-          </div>
-          <div id="dropzone"><p>drag</p></div>
-          <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
-          ${this.uploadFilesExist ? html`
-          <mwc-button icon="cancel" id="cancel_upload" @click="${() => this._cancelUpload()}">
-            ${_t('data.explorer.StopUploading')}
-          </mwc-button>
-          <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}"
-                       height-by-rows>
-            <vaadin-grid-column width="100px" flex-grow="0">
-              <template>
-                <vaadin-item class="progress-item">
-                  <div>
-                    <template is="dom-if" if="[[item.complete]]">
-                      <wl-icon>check</wl-icon>
-                    </template>
-                  </div>
-                </vaadin-item>
-              </template>
-            </vaadin-grid-column>
-
-            <vaadin-grid-column>
-              <template>
-                <vaadin-item>
-                  <span>[[item.name]]</span>
-                  <template is="dom-if" if="[[!item.complete]]">
-                    <div>
-                      <vaadin-progress-bar value="[[item.progress]]"></vaadin-progress-bar>
-                    </div>
-                    <div>
-                      <span>[[item.caption]]</span>
-                    </div>
-                  </template>
-                </vaadin-item>
-              </template>
-            </vaadin-grid-column>
+            <div class="breadcrumb">
+              ${this.explorer.breadcrumb ? html`
+                <ul>
+                  ${this.explorer.breadcrumb.map((item) => html`
+                    <li>
+                      ${item === '.' ? html`
+                        <mwc-icon-button
+                          icon="folder_open" dest="${item}"
+                          @click="${(e) => this._gotoFolder(e)}"
+                        ></mwc-icon-button>
+                      ` : html`
+                        <a outlined class="goto" path="item" @click="${(e) => this._gotoFolder(e)}" dest="${item}">${item}</a>
+                      `}
+                    </li>
+                  `)}
+                </ul>
+              ` : html``}
+            </div>
+            <div id="dropzone"><p>drag</p></div>
+            <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
+            ${this.uploadFilesExist ? html`
+            <div class="horizontal layout start-justified">
+              <mwc-button icon="cancel" id="cancel_upload" @click="${() => this._cancelUpload()}">
+                ${_t('data.explorer.StopUploading')}
+              </mwc-button>
+            </div>
+          <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}" height-by-rows>
+            <vaadin-grid-column width="100px" flex-grow="0" .renderer="${this._boundUploadListRenderer}"></vaadin-grid-column>
+            <vaadin-grid-column .renderer="${this._boundUploadProgressRenderer}"></vaadin-grid-column>
           </vaadin-grid>` : html``}
           <vaadin-grid id="fileList-grid" class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
             <vaadin-grid-selection-column auto-select></vaadin-grid-selection-column>
             <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
             </vaadin-grid-column>
-
             <vaadin-grid-sort-column flex-grow="2" resizable header="${_t('data.explorer.Name')}" path="filename" .renderer="${this._boundFileNameRenderer}">
             </vaadin-grid-sort-column>
-
             <vaadin-grid-sort-column flex-grow="2" resizable header="${_t('data.explorer.Created')}" path="ctime" .renderer="${this._boundCreatedTimeRenderer}">
             </vaadin-grid-sort-column>
-
-            <vaadin-grid-column auto-width resizable>
-              <template class="header">
-                <vaadin-grid-sorter path="size">${_t('data.explorer.Size')}</vaadin-grid-sorter>
-              </template>
-              <template>
-                <div class="layout vertical">
-                  <span>[[item.size]]</span>
-                </div>
-              </template>
+            <vaadin-grid-sort-column path="size" auto-width resizable header="${_t('data.explorer.Size')}">
+            </vaadin-grid-sort-column>
+            <vaadin-grid-column resizable auto-width header="${_t('data.explorer.Actions')}" .renderer="${this._boundControlFileListRenderer}">
             </vaadin-grid-column>
-            <vaadin-grid-column resizable auto-width header="${_t('data.explorer.Actions')}" .renderer="${this._boundControlFileListRenderer}"></vaadin-grid-column>
           </vaadin-grid>
         </div>
       </backend-ai-dialog>
@@ -918,10 +884,7 @@ export default class BackendAiStorageList extends BackendAIPage {
               header="#"
               .renderer="${this._boundIndexRenderer}"
             ></vaadin-grid-column>
-            <vaadin-grid-column header="${_t('data.explorer.InviteeEmail')}">
-              <template>
-                <div>[[item.shared_to.email]]</div>
-              </template>
+            <vaadin-grid-column header="${_t('data.explorer.InviteeEmail')}" .renderer="${this._boundInviteeInfoRenderer}">
             </vaadin-grid-column>
             <vaadin-grid-column header="${_t('data.explorer.Permission')}" .renderer="${this._boundPermissionRenderer}">
             </vaadin-grid-column>
@@ -1112,6 +1075,60 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div class="horizontal layout center center-justified">${quotaIndicator}</div>
+      `, root
+    );
+  }
+
+  uploadListRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+      <vaadin-item class="progress-item">
+        <div>
+          ${rowData.item.complete ? html`
+            <wl-icon>check</wl-icon>
+          ` : html``}
+        </div>
+      </vaadin-item>
+      `, root
+    );
+  }
+
+  uploadProgressRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+      <vaadin-item>
+        <span>${rowData.item.name}</span>
+        ${rowData.item.complete ? html`` : html`
+        <div>
+            <vaadin-progress-bar value="${rowData.item.progress}"></vaadin-progress-bar>
+          </div>
+          <div>
+            <span>${rowData.item.caption}</span>
+          </div>
+        `}
+      </vaadin-item>
+      `, root
+    );
+  }
+
+  inviteeInfoRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div>${rowData.shared_to.email}</div>
+      `, root
+    );
+  }
+
+  iDRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+      <div class="layout vertical">
+        <span class="indicator monospace">${rowData.id}</span>
+      </div>
       `, root
     );
   }
@@ -1617,7 +1634,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const job = globalThis.backendaiclient.vfolder.info(globalThis.backendaiclient.vfolder.name);
     job.then((value) => {
       this.folderInfo = value;
-      let permission = this.folderInfo.permission;
+      const permission = this.folderInfo.permission;
       let idx = Object.keys(this.permissions).indexOf(permission);
       idx = idx > 0 ? idx : 0;
       this.shadowRoot.querySelector('#update-folder-permission').select(idx);
@@ -1655,7 +1672,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const input = {};
     if (permissionEl) {
       let permission = permissionEl.value;
-      permission = Object.keys(this.permissions).find(key => this.permissions[key] === permission);
+      permission = Object.keys(this.permissions).find((key) => this.permissions[key] === permission);
       if (permission && this.folderInfo.permission !== permission) {
         input['permission'] = permission;
       }
@@ -1676,7 +1693,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       const quota = quotaEl.value ? BigInt(quotaEl.value * this.quotaUnit[quotaUnitEl.value]): 0;
       if ((this.quota.value != quotaEl.value) || (this.quota.unit != quotaUnitEl.value)) {
         const updateFolderQuota = globalThis.backendaiclient.vfolder.set_quota(this.folderInfo.host, this.folderInfo.id, quota.toString());
-        modifyFolderJobQueue.push(updateFolderQuota)
+        modifyFolderJobQueue.push(updateFolderQuota);
       }
     }
     if (modifyFolderJobQueue.length > 0) {
@@ -1702,7 +1719,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Update the folder with the name on the new-folder-name and
    *
    */
-   async _updateFolderName() {
+  async _updateFolderName() {
     globalThis.backendaiclient.vfolder.name = this.renameFolderName;
     const newNameEl = this.shadowRoot.querySelector('#new-folder-name');
     const newName = newNameEl.value;
@@ -1724,8 +1741,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         return;
       }
     }
-
-   }
+  }
 
   /**
    *
@@ -2655,7 +2671,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       });
       const job = globalThis.backendaiclient.vfolder.delete_files(filenames, true, this.explorer.id);
       job.then((res) => {
-        this.notification.text = _text('data.folders.MultipleFilesDeleted');
+        this.notification.text = (files.length == 1) ? _text('data.folders.FileDeleted') :_text('data.folders.MultipleFilesDeleted');
         this.notification.show();
         this._clearExplorer();
         this.deleteFileDialog.hide();
@@ -2769,7 +2785,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     globalThis.backendaiclient.vfolder.list_invitees(vfolder_id)
       .then((res) => {
         this.invitees = res.shared;
-        this.shadowRoot.querySelector('#modify-permission-dialog').requestUpdate().then(()=>{
+        this.shadowRoot.querySelector('#modify-permission-dialog').updateComplete.then(()=>{
           this.openDialog('modify-permission-dialog');
         });
       });

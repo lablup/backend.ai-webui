@@ -471,6 +471,10 @@ class Client {
         }
         if (this.isManagerVersionCompatibleWith('20.09.16')) {
             this._features['avoid-hol-blocking'] = true;
+            this._features['session-detail-status'] = true;
+        }
+        if (this.isManagerVersionCompatibleWith('21.09')) {
+            this._features['schedulable'] = true;
         }
     }
     /**
@@ -978,6 +982,13 @@ class Client {
     // legacy aliases (DO NOT USE for new codes)
     runCode(code, sessionId, runId, mode) {
         return this.execute(sessionId, runId, mode, code, {});
+    }
+    async rename(sessionId, newId) {
+        let params = {
+            'name': newId
+        };
+        let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/rename`, params);
+        return this._wrapWithPromise(rqst);
     }
     async shutdown_service(sessionId, service_name) {
         let params = {
@@ -1850,6 +1861,32 @@ class Agent {
         let v = { 'status': status };
         return this.client.query(q, v, null, timeout);
     }
+    /**
+     * modify agent configuration with given name and fields.
+     *
+     * @param {string} agent_id - resource preset name.
+     * @param {json} input - resource preset specification and data. Required fields are:
+     * {
+     *   'schedulable': schedulable
+     * };
+     */
+    async update(id = null, input) {
+        if (this.client.is_superadmin === true && id !== null) {
+            let q = `mutation($id: String!, $input: ModifyAgentInput!) {` +
+                `  modify_agent(id: $id, props: $input) {` +
+                `    ok msg ` +
+                `  }` +
+                `}`;
+            let v = {
+                'id': id,
+                'input': input
+            };
+            return this.client.query(q, v);
+        }
+        else {
+            return Promise.resolve(false);
+        }
+    }
 }
 class StorageProxy {
     /**
@@ -2424,7 +2461,7 @@ class ComputeSession {
      * @param {string} group - project group id to query. Default returns sessions from all groups.
      * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
      */
-    async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout = 0) {
+    async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}", "starts_at"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout = 0) {
         fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
         let q, v;
         q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {

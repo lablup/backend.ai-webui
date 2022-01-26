@@ -1,5 +1,26 @@
 # Changelog
 
+## v21.09.3 (13/01/2022)
+
+#### Enhancements:
+
+- [**bug**][**enhancement**][**minor**][**easy**][**urgency**] Add an option to hide the [invitation token field] and [email sent dialog] during user signup [#1185](https://github.com/lablup/backend.ai-webui/issues/1185)
+- [**enhancement**][**UI / UX**][**urgency**] Let's support batch session UI. [#1180](https://github.com/lablup/backend.ai-webui/issues/1180)
+- [**enhancement**][**good first issue**][**easy**][**UI / UX**][**urgency**] UI to query and update Agent's schedulable field [#1166](https://github.com/lablup/backend.ai-webui/issues/1166)
+- [**enhancement**][**major**][**hard**][**library / SDK**][**UI / UX**][**maintenance**] Migrate lit-element to lit 1.0 rc [#966](https://github.com/lablup/backend.ai-webui/issues/966)
+- [**enhancement**][**major**][**library / SDK**][**UI / UX**] Let's show status detail when user created session is pending or failed in session list  [#882](https://github.com/lablup/backend.ai-webui/issues/882)
+
+#### Bug Fixes:
+
+- [**bug**] Unable to allocate a GPU in device mode when there is only on GPU is left and the minimum required GPU of an environment image is set to 1 [#1191](https://github.com/lablup/backend.ai-webui/issues/1191)
+- [**bug**][**blocker**] Unable to mount a data folder in creating a compute session [#1184](https://github.com/lablup/backend.ai-webui/issues/1184)
+- [**bug**][**good first issue**][**easy**][**UI / UX**] Let's split the display for signup button and change password button independently [#1179](https://github.com/lablup/backend.ai-webui/issues/1179)
+- [**bug**][**good first issue**][**UI / UX**] App does not launch when clicking image part of the app button [#1175](https://github.com/lablup/backend.ai-webui/issues/1175)
+- [**bug**][**UI / UX**][**urgency**] Progress bar does not appear in uploading a file in the file explorer [#1164](https://github.com/lablup/backend.ai-webui/issues/1164)
+- [**bug**][**good first issue**][**easy**][**UI / UX**] Resources description in Configuration column of session list record overlaps when resource exceeds certain values. [#1125](https://github.com/lablup/backend.ai-webui/issues/1125)
+- [**bug**][**good first issue**][**easy**][**UI / UX**] ToS(Terms of Service) / Privacy Policy dialog disappears after closing one of them. [#1123](https://github.com/lablup/backend.ai-webui/issues/1123)
+
+
 ## v21.09.2 (11/11/2021)
 
 #### Bug Fixes:

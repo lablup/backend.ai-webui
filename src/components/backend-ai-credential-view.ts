@@ -3,8 +3,8 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-list/mwc-list-item';
@@ -81,7 +81,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     this.resource_policy_names = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -991,7 +991,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
   }
 
-  _gBToByte(value: number = 0) {
+  _gBToByte(value = 0) {
     const gigabyte = Math.pow(2, 30);
     return Math.round(gigabyte * value);
   }

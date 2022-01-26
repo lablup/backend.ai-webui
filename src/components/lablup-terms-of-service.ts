@@ -3,7 +3,8 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -59,7 +60,7 @@ export default class LablupTermsOfService extends LitElement {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -118,7 +119,7 @@ export default class LablupTermsOfService extends LitElement {
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable>
+      <backend-ai-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable @dialog-closed=${() => this.close()}>
         <span slot="title">${this.title}</span>
         <div slot="action" class="horizontal end-justified center flex layout">
           ${this.tosLanguages ? html`
@@ -164,11 +165,6 @@ export default class LablupTermsOfService extends LitElement {
     if (this.show) {
       this._showTOSdialog();
     }
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    // eslint-disable-next-line wc/guard-super-call
-    super.attributeChangedCallback(name, oldval, newval);
   }
 
   _syncOpenState() {

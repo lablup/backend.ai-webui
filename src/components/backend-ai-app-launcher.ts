@@ -3,7 +3,8 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
@@ -66,7 +67,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this.appSupportOption = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -124,6 +125,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         #app-dialog {
           --component-width: 400px;
+        }
+
+        #allowed-client-ips-container {
+          margin-left: 2em;
+          margin-bottom: 1em;
+          display:none;
         }
 
         mwc-textfield {
@@ -421,6 +428,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
     });
     this.openPortToPublic = globalThis.backendaiclient._config.openPortToPublic;
+    this._toggleChkOpenToPublic();
     const dialog = this.shadowRoot.querySelector('#app-dialog');
     dialog.setAttribute('session-uuid', sessionUuid);
     dialog.setAttribute('access-key', accessKey);
@@ -530,6 +538,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return Promise.resolve(false);
     }
     const openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
+    const allowedClientIps = this.shadowRoot.querySelector('#allowed-client-ips')?.value;
     let openToPublic = false;
     if (openToPublicCheckBox == null) { // Null or undefined
     } else {
@@ -542,6 +551,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     if (openToPublic) {
       uri += '&open_to_public=true';
+    }
+    if (openToPublic && allowedClientIps?.length > 0) {
+      uri += '&allowed_client_ips=' + allowedClientIps.replace(/\s/g, '');
     }
     if (envs !== null && Object.keys(envs).length > 0) {
       uri = uri + '&envs=' + encodeURI(JSON.stringify(envs));
@@ -680,7 +692,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   async _runThisApp(e) {
-    const controller = e.target;
+    const controller = e.target.closest('mwc-icon-button');
     this.appController['app-name'] = controller['app-name'];
     const controls = controller.closest('#app-dialog');
     this.appController['session-uuid'] = controls.getAttribute('session-uuid');
@@ -993,6 +1005,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     content.appendChild(div);
   }
 
+  _toggleChkOpenToPublic() {
+    const checkbox = this.shadowRoot.querySelector('#chk-open-to-public');
+    const allowedClientIpsContainer = this.shadowRoot.querySelector('#allowed-client-ips-container');
+    if (!checkbox || !allowedClientIpsContainer) return;
+    if (checkbox.checked) {
+      allowedClientIpsContainer.style.display = 'block';
+    } else {
+      allowedClientIpsContainer.style.display = 'none';
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -1019,15 +1042,21 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div style="padding:10px 20px 15px 20px">
             ${globalThis.isElectron || !this.openPortToPublic ? `` : html`
               <div class="horizontal layout center">
-                <mwc-checkbox id="chk-open-to-public" style="margin-right:0.5em"></mwc-checkbox>
+                <mwc-checkbox id="chk-open-to-public" style="margin-right:0.5em;"
+                              @change="${this._toggleChkOpenToPublic}"></mwc-checkbox>
                 ${_t('session.OpenToPublic')}
+              </div>
+              <div class="horizontal layout center" id="allowed-client-ips-container">
+                ${_t('session.AllowedClientIps')}
+                <mwc-textfield id="allowed-client-ips" style="margin-left:1em;" helperPersistent
+                               .helper="(${_t('session.CommaSeparated')})"></mwc-textfield>
               </div>
             `}
             <div class="horizontal layout center">
-              <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em"></mwc-checkbox>
+              <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em;"></mwc-checkbox>
               ${_t('session.TryPreferredPort')}
               <mwc-textfield id="app-port" type="number" no-label-float value="10250"
-                             min="1025" max="65534" style="margin-left:1em; width:90px"
+                             min="1025" max="65534" style="margin-left:1em;width:90px;"
                              @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
             </div>
           </div>

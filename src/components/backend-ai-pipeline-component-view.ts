@@ -4,7 +4,8 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-list/mwc-list-item';
@@ -275,7 +276,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     return;
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,

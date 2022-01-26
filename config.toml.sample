@@ -10,6 +10,7 @@ signupSupport = false
 allowSignout = false
 allowAnonymousChangePassword = false
 allowProjectResourceMonitor = true
+allowSignupWithoutConfirmation = false
 autoLogout = false
 debug = false
 

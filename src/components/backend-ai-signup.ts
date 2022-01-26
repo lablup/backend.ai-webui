@@ -3,7 +3,9 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import 'weightless/icon';
 import 'weightless/card';
 import '@material/mwc-checkbox';
@@ -51,12 +53,13 @@ export default class BackendAiSignup extends BackendAIPage {
   @property({type: Object}) client;
   @property({type: String}) TOSlanguage = 'en';
   @property({type: Object}) TOSdialog = Object();
+  @property({type: Boolean}) allowSignupWithoutConfirmation;
 
   constructor() {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -226,27 +229,35 @@ export default class BackendAiSignup extends BackendAIPage {
 
   _clearUserInput() {
     this._toggleInputField(true);
-    const inputFields: Array<string> = ['#id_user_email', '#id_token', '#id_password1', '#id_password2'];
-    inputFields.map((el: string) => {
+    let inputFields: Array<string> = ['#id_user_email', '#id_token', '#id_password1', '#id_password2'];
+    if (this.allowSignupWithoutConfirmation) {
+      inputFields = inputFields.filter((el: string) => el !== '#id_token');
+    }
+    inputFields.forEach((el: string) => {
       this.shadowRoot.querySelector(el).value = '';
     });
     this.shadowRoot.querySelector('#signup-button-message').innerHTML = _text('signup.Signup');
   }
 
   _toggleInputField(isActive: boolean) {
-    if (isActive) {
-      this.shadowRoot.querySelector('#id_user_name').removeAttribute('disabled');
-      this.shadowRoot.querySelector('#id_token').removeAttribute('disabled');
-      this.shadowRoot.querySelector('#signup-button').removeAttribute('disabled');
-    } else {
-      this.shadowRoot.querySelector('#id_user_name').setAttribute('disabled', 'true');
-      this.shadowRoot.querySelector('#id_token').setAttribute('disabled', 'true');
-      this.shadowRoot.querySelector('#signup-button').setAttribute('disabled', 'true');
+    let inputFields: Array<string> = ['#id_user_name', '#id_token', '#signup-button'];
+    if (this.allowSignupWithoutConfirmation) {
+      inputFields = inputFields.filter((el: string) => el !== '#id_token');
     }
+    inputFields.forEach((el: string) => {
+      if (isActive) {
+        this.shadowRoot.querySelector(el).removeAttribute('disabled');
+      } else {
+        this.shadowRoot.querySelector(el).removeAttribute('disabled', 'true');
+      }
+    });
   }
 
   _signup() {
-    const inputFields: Array<string> = ['#id_user_email', '#id_token', '#id_password1', '#id_password2'];
+    let inputFields: Array<string> = ['#id_user_email', '#id_token', '#id_password1', '#id_password2'];
+    if (this.allowSignupWithoutConfirmation) {
+      inputFields = inputFields.filter((el: string) => el !== '#id_token');
+    }
     const inputFieldsValidity: Array<boolean> = inputFields.map((el: string) => {
       this.shadowRoot.querySelector(el).reportValidity();
       return this.shadowRoot.querySelector(el).checkValidity();
@@ -263,8 +274,7 @@ export default class BackendAiSignup extends BackendAIPage {
     if (inputFieldsValidity.includes(false)) {
       return;
     }
-
-    const token = (this.shadowRoot.querySelector('#id_token') as HTMLInputElement).value;
+    const token = (this.shadowRoot.querySelector('#id_token') as HTMLInputElement)?.value;
     const user_email = (this.shadowRoot.querySelector('#id_user_email') as HTMLInputElement).value;
     const user_name = (this.shadowRoot.querySelector('#id_user_name') as HTMLInputElement).value;
     const password = (this.shadowRoot.querySelector('#id_password1') as HTMLInputElement).value;
@@ -276,6 +286,9 @@ export default class BackendAiSignup extends BackendAIPage {
       'password': password,
       'token': token
     };
+    if (this.allowSignupWithoutConfirmation) {
+      delete body[token];
+    }
     this.init_client();
     const rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
     this.client._wrapWithPromise(rqst).then((response) => {
@@ -286,7 +299,9 @@ export default class BackendAiSignup extends BackendAIPage {
       setTimeout(() => {
         this.signupPanel.hide();
         this._clearUserInput();
-        this.shadowRoot.querySelector('#email-sent-dialog').show();
+        if (!this.allowSignupWithoutConfirmation) {
+          this.shadowRoot.querySelector('#email-sent-dialog').show();
+        }
       }, 1000);
     }).catch((e) => {
       if (e.message) {
@@ -417,7 +432,11 @@ export default class BackendAiSignup extends BackendAIPage {
     // language=HTML
     return html`
       <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
-        <span slot="title">${_t('signup.SignupBETA')}</span>
+        <span slot="title">${this.allowSignupWithoutConfirmation ? html`
+          ${_t('signup.Signup')}` :
+    html`${_t('signup.SignupBETA')}
+          `}
+        </span>
         <div slot="content" class="vertical flex layout">
           <mwc-textfield type="email" name="user_email" id="id_user_email" autofocus
                        maxlength="64" placeholder="${_text('maxLength.64chars')}"
@@ -428,9 +447,12 @@ export default class BackendAiSignup extends BackendAIPage {
           <mwc-textfield type="text" name="user_name" id="id_user_name"
                        maxlength="64" placeholder="${_text('maxLength.64chars')}"
                        label="${_t('signup.UserName')}" value="${this.user_name}"></mwc-textfield>
-          <mwc-textfield type="text" name="token" id="id_token" maxlength="50"
-                       label="${_t('signup.InvitationToken')}"
-                       validationMessage="${_t('signup.TokenInputRequired')}" required></mwc-textfield>
+          ${this.allowSignupWithoutConfirmation ? html`` : html`
+            <mwc-textfield type="text" name="token" id="id_token"
+                        maxlength="50"
+                        label="${_t('signup.InvitationToken')}"
+                        validationMessage="${_t('signup.TokenInputRequired')}" required></mwc-textfield>
+          `}
           <div class="horizontal flex layout">
             <mwc-textfield type="password" name="password1" id="id_password1"
                         label="${_t('signup.Password')}" maxLength="64"

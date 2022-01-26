@@ -4,12 +4,12 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {render} from 'lit-html';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-template-renderer';
+import '@vaadin/vaadin-grid/vaadin-grid-column';
 
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -64,7 +64,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     this.domains = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -170,24 +170,40 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         globalThis.backendaiclient.scalingGroup.list_available()
           .then((res) => {
             this.scalingGroups = res.scaling_groups;
+          }).catch((err) => {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
           });
 
         globalThis.backendaiclient.domain.list()
           .then(({domains}) => {
             this.domains = domains;
             this.requestUpdate(); // without this render is called beforehands, so update is required
+          }).catch((err) => {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
           });
       }, true);
     } else { // already connected
       globalThis.backendaiclient.scalingGroup.list_available()
         .then((res) => {
           this.scalingGroups = res.scaling_groups;
+        }).catch((err) => {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
         });
 
       globalThis.backendaiclient.domain.list()
         .then(({domains}) => {
           this.domains = domains;
           this.requestUpdate(); // without this render is called beforehands, so update is required
+        }).catch((err) => {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
         });
     }
   }
@@ -243,7 +259,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             class="fg blue"
             @click=${() => {
     this.selectedIndex = rowData.index;
-    this.shadowRoot.querySelector('#modify-scaling-group-active').checked = this.scalingGroups[rowData.index].is_active;
+    this.shadowRoot.querySelector('#modify-scaling-group-active').selected = this.scalingGroups[rowData.index].is_active;
     this._launchDialogById('#modify-scaling-group-dialog');
   }}
           ><wl-icon>settings</wl-icon></wl-button>
@@ -428,42 +444,21 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scalingGroups}">
         <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Name')}">
-          <template>
-            <div> [[item.name]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Name')}" path="name">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Description')}">
-          <template>
-            <div> [[item.description]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Description')}" path="description">
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.ActiveStatus')}" .renderer=${this._activeStatusRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Driver')}">
-          <template>
-            <div> [[item.driver]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Driver')}" path="driver">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.DriverOptions')}">
-          <template>
-            <div> [[item.driver_opts]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.DriverOptions')}" path="driver_opts">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}">
-          <template>
-            <div> [[item.scheduler]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}" path="scheduler">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.SchedulerOptions')}">
-          <template>
-            <div> [[item.scheduler_opts]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.SchedulerOptions')}" path="scheduler_opts">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.WsproxyAddress')}">
-          <template>
-            <div> [[item.wsproxy_addr]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.WsproxyAddress')}" path="wsproxy_addr">
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
         </vaadin-grid-column>

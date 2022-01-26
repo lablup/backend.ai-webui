@@ -3,10 +3,11 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property, query} from 'lit-element';
-import {unsafeHTML} from 'lit-html/directives/unsafe-html';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
+
 import {BackendAIPage} from './backend-ai-page';
-import {render} from 'lit-html';
 
 import '@material/mwc-button';
 import '@material/mwc-checkbox/mwc-checkbox';
@@ -23,12 +24,14 @@ import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-text-field/vaadin-text-field';
+import '@vaadin/vaadin-date-time-picker/vaadin-date-time-picker';
 
 import 'weightless/checkbox';
 import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
 
+import './lablup-codemirror';
 import './lablup-progress-bar';
 import './lablup-slider';
 import './backend-ai-dialog';
@@ -153,6 +156,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) aggregate_updating = false;
   @property({type: Object}) scaling_group_selection_box;
   @property({type: Object}) resourceGauge = Object();
+  @property({type: String}) sessionType = 'interactive';
   /* Parameters required to launch a session on behalf of other user */
   @property({type: Boolean}) ownerFeatureInitialized = false;
   @property({type: String}) ownerDomain = '';
@@ -185,6 +189,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) _grid = Object();
   @property({type: Boolean}) _debug = false;
   @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
+  @property({type: Boolean}) useScheduledTime = false;
+  @property({type: Object}) schedulerTimer;
 
   constructor() {
     super();
@@ -202,7 +208,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return 'backend-ai-session-launcher';
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -496,9 +502,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-weight: normal;
         }
 
-        wl-expansion.vfolder {
+        wl-expansion.vfolder,
+        wl-expansion.editor {
           --expansion-content-padding: 0;
-          border-bottom: 1px
+          border-bottom: 1px;
         }
 
         wl-expansion span {
@@ -517,6 +524,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         .resources.vertical .monitor div:first-child {
           width: 40px;
+        }
+
+        vaadin-date-time-picker {
+          width: 370px;
+          margin-bottom: 10px;
+        }
+
+        lablup-codemirror {
+          width: 370px;
         }
 
         mwc-select {
@@ -541,6 +557,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-list-item__primary-text: {
             height: 20px;
           };
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 400px;
+          --mdc-menu-min-width: 400px;
         }
 
         mwc-select#owner-group,
@@ -550,10 +569,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 50%;
           --mdc-menu-max-width: 200px;
           --mdc-select-min-width: 190px;
-        }
-
-        mwc-select > mwc-list-item {
-          width: 370px; // default width
         }
 
         mwc-textfield {
@@ -667,10 +682,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-weight: 400;
         }
 
+        #batch-mode-config-section {
+          width: 100%;
+          border-bottom: solid 1px rgba(0, 0, 0, 0.42);
+          margin-bottom: 15px;
+        }
+
         .launcher-item-title {
-          font-size: 12px;
+          font-size: 14px;
           color: #404040;
           font-weight: 400;
+          padding-left:16px;
+          width: 100%;
         }
 
         .allocation-shadow {
@@ -798,6 +821,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.version_selector = this.shadowRoot.querySelector('#version');
     this.version_selector.addEventListener('selected', () => {
       this.updateResourceAllocationPane();
+    });
+
+    this.shadowRoot.querySelectorAll('wl-expansion').forEach((element) => {
+      element.addEventListener('keydown', (event) => {
+        event.stopPropagation();
+      }, true);
     });
 
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
@@ -1090,6 +1119,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       /* To reflect current resource policy */
       await this._refreshResourcePolicy();
       this.requestUpdate();
+      this._toggleScheduleTime(!this.useScheduledTime);
       this.shadowRoot.querySelector('#new-session-dialog').show();
     }
   }
@@ -1147,6 +1177,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       kernel = selectedItem.id;
       version = this.shadowRoot.querySelector('#version').value;
     }
+    this.sessionType = this.shadowRoot.querySelector('#session-type').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
     const isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
     const vfolder = this.selectedVfolders;
@@ -1177,6 +1208,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     config['group_name'] = globalThis.backendaiclient.current_group;
     config['domain'] = globalThis.backendaiclient._config.domainName;
     config['scaling_group'] = this.scaling_group;
+    config['type'] = this.sessionType;
     if (globalThis.backendaiclient.supports('multi-container')) {
       config['cluster_mode'] = this.cluster_mode;
       config['cluster_size'] = this.cluster_size;
@@ -1246,10 +1278,27 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.mode === 'import' && this.importScript !== '') {
       config['bootstrap_script'] = this.importScript;
     }
+    if (this.sessionType === 'batch') {
+      const editor = this.shadowRoot.querySelector('lablup-codemirror#command-editor');
+      config['startupCommand'] = editor.getValue();
+
+      const scheduledTime = this.shadowRoot.querySelector('vaadin-date-time-picker').value;
+      const useScheduledTime = this.shadowRoot.querySelector('#use-scheduled-time').selected;
+      if (scheduledTime && useScheduledTime) {
+        // modify client timezone offset
+        const getClientTimezoneOffset = () => {
+          let offset = new Date().getTimezoneOffset();
+          const sign = offset < 0 ? '+' : '-';
+          offset = Math.abs(offset);
+          return sign + (offset / 60 | 0).toString().padStart(2, '0') + ':' + (offset % 60).toString().padStart(2, '0');
+        };
+        config['startsAt'] = scheduledTime + getClientTimezoneOffset();
+      }
+    }
     if (this.environ_values !== {}) {
       config['env'] = this.environ_values;
     }
-    if (this.shadowRoot.querySelector('#OpenMPswitch').checked === false) {
+    if (this.shadowRoot.querySelector('#OpenMPswitch').selected === false) {
       const openMPCoreValue = this.shadowRoot.querySelector('#OpenMPCore').value;
       const openBLASCoreValue = this.shadowRoot.querySelector('#OpenBLASCore').value;
       config['env']['OMP_NUM_THREADS'] = openMPCoreValue ? Math.max(0, parseInt(openMPCoreValue)).toString() : '1';
@@ -1292,7 +1341,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }, 1500);
       const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
-      if (res.length === 1) {
+      // only open appLauncher when session type is 'interactive'
+      if (res.length === 1 && this.sessionType !== 'batch') {
         res[0].taskobj.then((res) => {
           let appOptions;
           if ('kernelId' in res) { // API v4
@@ -1694,7 +1744,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       let shmem_metric: any = {
         'min': 0.0625,
         'max': 2,
-        'preferred': 0.125
+        'preferred': 0.0625
       };
       this.cuda_device_metric = {
         'min': 0,
@@ -1932,7 +1982,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.shadowRoot.querySelector('#cluster-size').disabled = false;
         }
       }
-      if (this.cuda_device_metric.min == this.cuda_device_metric.max) {
+      if (this.cuda_device_metric.min == this.cuda_device_metric.max &&
+          this.cuda_device_metric.max < 1) {
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
       }
       if (this.concurrency_limit <= 1) {
@@ -2754,8 +2805,118 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Show HPC optimization options only if OpenMPswitch is not checked.
    */
   _toggleHPCOptimization() {
-    const isOpenMPChecked = this.shadowRoot.querySelector('#OpenMPswitch').checked;
+    const isOpenMPChecked = this.shadowRoot.querySelector('#OpenMPswitch').selected;
     this.shadowRoot.querySelector('#HPCOptimizationOptions').style.display = isOpenMPChecked ? 'none' : 'block';
+  }
+
+  /**
+   * Toggle startup code input section according to session type
+   *
+   * @param {Event} e
+   */
+  _toggleStartUpCommandEditor(e) {
+    this.sessionType = e.target.value;
+    const isBatchmode: boolean = (this.sessionType === 'batch');
+    const startUpCommandEditor = this.shadowRoot.querySelector('#batch-mode-config-section');
+    startUpCommandEditor.style.display = isBatchmode ? 'inline-flex' : 'none';
+    if (isBatchmode) {
+      const editor = this.shadowRoot.querySelector('#command-editor');
+      editor.refresh();
+      editor.focus();
+    }
+  }
+
+  /**
+   * Toggle scheduling time UI when session type is in batch
+   *
+   */
+  _toggleScheduleTimeDisplay() {
+    this.useScheduledTime = this.shadowRoot.querySelector('#use-scheduled-time').selected;
+    this.shadowRoot.querySelector('vaadin-date-time-picker').style.display = this.useScheduledTime ? 'block': 'none';
+    this._toggleScheduleTime(!this.useScheduledTime);
+  }
+
+  /**
+   * Toggle scheduling time interval according to `isActive` parameter
+   *
+   * @param {Boolean} isActive
+   */
+
+  _toggleScheduleTime(isActive = false) {
+    if (isActive) {
+      clearInterval(this.schedulerTimer);
+    } else {
+      this.schedulerTimer = setInterval(() => {
+        // interval every 1 sec.
+        this._getSchedulableTime();
+      }, 1000);
+    }
+  }
+
+  /**
+   * Returns schedulable time according to current time (default: 2min after current time)
+   *
+   * @return {string}
+   */
+  _getSchedulableTime() {
+    const getFormattedTime = (date) => {
+      // YYYY-MM-DD`T`hh:mm:ss
+      return date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate() +
+            'T' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+    };
+    const schedulerEl = this.shadowRoot.querySelector('vaadin-date-time-picker');
+    let currentTime = new Date();
+    const extraMinutes = 60 * 2 * 1000;
+    // add 2min
+    let futureTime = new Date(currentTime.getTime() + extraMinutes);
+    // disable scheduling in past
+    schedulerEl.min = getFormattedTime(currentTime);
+    // schedulerEl.value = getFormattedTime(futureTime);
+
+    if (schedulerEl.value && schedulerEl.value !== '') {
+      const scheduledTime = new Date(schedulerEl.value).getTime();
+      currentTime = new Date();
+      if (scheduledTime <= currentTime.getTime()) {
+        futureTime = new Date(currentTime.getTime() + extraMinutes);
+        schedulerEl.value = getFormattedTime(futureTime);
+      }
+    } else {
+      schedulerEl.value = getFormattedTime(futureTime);
+    }
+    this._setRelativeTimeStamp();
+  }
+
+  _setRelativeTimeStamp() {
+    // in miliseconds
+    const units = {
+      'year': 24 * 60 * 60 * 1000 * 365,
+      'month': 24 * 60 * 60 * 1000 * 365/12,
+      'day': 24 * 60 * 60 * 1000,
+      'hour': 60 * 60 * 1000,
+      'minute': 60 * 1000,
+      'second': 1000
+    };
+    const i18n = globalThis.backendaioptions.get('current_language') ?? 'en';
+    const rtf = new Intl.RelativeTimeFormat( i18n, {numeric: 'auto'});
+
+    const getRelativeTime = (d1: number, d2 = +new Date()) => {
+      const elapsed = d1 - d2;
+      for (const u in units) {
+        // "Math.abs" accounts for both "past" & "future" scenarios
+        if (Math.abs(elapsed) > units[u] || u == 'second') {
+          // type casting
+          const formatString: Intl.RelativeTimeFormatUnit = <Intl.RelativeTimeFormatUnit>u;
+          return rtf.format(Math.round(elapsed/units[u]), formatString);
+        }
+      }
+      return _text('session.launcher.InfiniteTime');
+    };
+    const schedulerEl = this.shadowRoot.querySelector('vaadin-date-time-picker');
+    if (schedulerEl.invalid) {
+      schedulerEl.helperText = _text('session.launcher.ResetStartTime');
+    } else {
+      schedulerEl.helperText = _text('session.launcher.SessionStartTime') + getRelativeTime(+new Date(schedulerEl.value));
+    }
   }
 
   render() {
@@ -2767,10 +2928,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <wl-icon>power_settings_new</wl-icon>
         <span>${_t('session.launcher.Start')}</span>
       </wl-button>
-      <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent>
+      <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent @dialog-closed="${() => this._toggleScheduleTime(true)}">
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
         <form slot="content" id="launch-session-form" class="centered" style="position:relative;">
           <div id="progress-01" class="progress center layout fade active">
+            <mwc-select id="session-type" icon="category" label="${_t('session.launcher.SessionType')}" required fixedMenuPosition
+                        value="${this.sessionType}" @selected="${(e) => this._toggleStartUpCommandEditor(e)}">
+              <mwc-list-item value="batch">
+                ${_t('session.launcher.BatchMode')}
+              </mwc-list-item>
+              <mwc-list-item value="interactive" selected>
+                ${_t('session.launcher.InteractiveMode')}
+              </mwc-list-item>
+            </mwc-select>
             <mwc-select id="environment" icon="code" label="${_t('session.launcher.Environments')}" required fixedMenuPosition
                         value="${this.default_language}">
               <mwc-list-item selected graphic="icon" style="display:none!important;">
@@ -2784,14 +2954,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
                     <img slot="graphic" alt="language icon" src="resources/icons/${item.icon}"
                          style="width:24px;height:24px;"/>
-                    <div class="horizontal justified center flex layout" style="width:340px;">
+                    <div class="horizontal justified center flex layout" style="width:325px;">
                       <div style="padding-right:5px;">${item.basename}</div>
-                      <div class="flex"></div>
                       <div class="horizontal layout end-justified center flex">
                         ${item.tags ? item.tags.map((item) => html`
-                          <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}"
-                                          description="${item.tag}"></lablup-shields>
-                          <span style="display:none">(${item.tag})</span>
+                          <lablup-shields style="margin-right:5px;" color="${item.color}"
+                                          description=""></lablup-shields>
                         `) : ''}
                         <mwc-icon-button icon="info"
                                          class="fg blue info"
@@ -2836,8 +3004,25 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            helper="${_t('maxLength.64chars')}"
                            validationMessage="${_t('session.launcher.SessionNameAllowCondition')}">
             </mwc-textfield>
+            <div class="vertical layout center flex" id="batch-mode-config-section" style="display:none;">
+              <span class="launcher-item-title" style="width:386px;">${_t('session.launcher.BatchModeConfig')}</span>
+              <div class="horizontal layout start-justified">
+                <div style="width:370px;font-size:12px;">${_t('session.launcher.StartUpCommand')}</div>
+              </div>
+              <lablup-codemirror id="command-editor" mode="shell"></lablup-codemirror>
+              <div class="horizontal center layout justified" style="margin: 10px auto;">
+                <div style="width:330px;font-size:12px;">${_t('session.launcher.ScheduleTime')}</div>
+                <mwc-switch id="use-scheduled-time" @click="${() => this._toggleScheduleTimeDisplay()}"></mwc-switch>
+              </div>
+              <vaadin-date-time-picker step="1"
+                date-placeholder="DD/MM/YYYY"
+                time-placeholder="hh:mm:ss"
+                ?required="${this.useScheduledTime}"
+                @change="${this._getSchedulableTime}"
+                style="display:none;"></vaadin-date-time-picker>
+            </div>
             <div class="horizontal layout center justified">
-              <span class="launcher-item-title" style="padding-left:16px;">${_t('session.launcher.SetEnvironmentVariable')}</span>
+              <span class="launcher-item-title">${_t('session.launcher.SetEnvironmentVariable')}</span>
               <mwc-button
                 unelevated
                 icon="rule"
@@ -2878,7 +3063,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   aria-label="vfolder list"
                   height-by-rows
                   .items="${this.nonAutoMountedVfolders}"
-                  @click="${() => this._updateSelectedFolder()}">
+                  @selected-items-changed="${() => this._updateSelectedFolder()}">
                 <vaadin-grid-selection-column id="select-column"
                                               flex-grow="0"
                                               text-align="center"
@@ -3107,7 +3292,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="vertical center layout">
                 <div class="horizontal center center-justified flex layout">
                   <div style="width:313px;">${_t('session.launcher.SwitchOpenMPoptimization')}</div>
-                  <mwc-switch id="OpenMPswitch" checked @change="${this._toggleHPCOptimization}"></mwc-switch>
+                  <mwc-switch id="OpenMPswitch" selected @click="${this._toggleHPCOptimization}"></mwc-switch>
                 </div>
                 <div id="HPCOptimizationOptions" style="display:none;">
                   <div class="horizontal center layout">
@@ -3118,8 +3303,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     </mwc-textfield>
                     <mwc-icon-button icon="info" class="fg green info"
                                     @click="${(e) => {
-      this._showResourceDescription(e, 'openmp-optimization');
-    }}"></mwc-icon-button>
+    this._showResourceDescription(e, 'openmp-optimization');
+  }}"></mwc-icon-button>
                   </div>
                   <div class="horizontal center layout">
                     <div style="width:200px;">${_t('session.launcher.NumOpenBLASthreads')}</div>
@@ -3129,8 +3314,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     </mwc-textfield>
                     <mwc-icon-button icon="info" class="fg green info"
                                       @click="${(e) => {
-      this._showResourceDescription(e, 'openmp-optimization');
-    }}"></mwc-icon-button>
+    this._showResourceDescription(e, 'openmp-optimization');
+  }}"></mwc-icon-button>
                   </div>
                 </div>
               </div>
