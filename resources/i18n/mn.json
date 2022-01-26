@@ -208,7 +208,7 @@
       "ConfirmAndLaunch": "Шалгасан тул эхлүүлж болно",
       "FolderAliasOverlapping": "Фолдерын хоч нэр давхцалт",
       "NoEnvConfigured": "Environment тохируулагдаагүй байна",
-      "FolderAlias": "Фолдерын хоч нэр",
+      "FolderAlias": "хавтас зам & Фолдерын хоч нэр",
       "NoAvailableFolderToMount": "Холбох боломжтой фолдер байхгүй байна.",
       "MountedFolders": "Холбогдсон фолдерууд",
       "EnvironmentVariablePaneTitle": "Environment хувьсагч тохируулах (заавал биш)",

@@ -137,7 +137,7 @@
       "SessionNameOptional": "세션 이름 (옵션)",
       "Environments": "실행 환경",
       "Start": "시작",
-      "FolderToMount": "마운트할 폴더 (중복 폴더명 사용 주의)",
+      "FolderToMount": "마운트할 폴더",
       "FolderToMountList": "마운트할 폴더",
       "MountedFolders": "마운트된 폴더",
       "ResourceAllocation": "자원 할당",

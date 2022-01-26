@@ -622,6 +622,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           background-color: rgba(255, 0, 0, 0.04) !important;
         }
 
+        #vfolder-header-title {
+          text-align: center; 
+          font-size: 16px;
+          font-family: var(--general-font-family);
+          font-weight: 500;
+        }
+
         wl-label {
           margin-right: 10px;
           outline: none;
@@ -2019,7 +2026,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     render(
       html`
       <div class="horizontal layout center">
-        <span style='text-align:center; font-size:16px; font-family: var(--general-font-family); font-weight: 500'>${_t('session.launcher.FolderAlias')}</span>
+        <span id="vfolder-header-title">${_t('session.launcher.FolderAlias')}</span>
         <mwc-icon-button icon="info" class="fg green info" @click="${(e) => this._showPathDescription(e)}"></mwc-icon-button>
       </div>
       `,
@@ -3091,9 +3098,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                               text-align="center"
                                               auto-select></vaadin-grid-selection-column>
                 <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMountList')}"
-                                          path="name" resizable></vaadin-grid-filter-column>
-                <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" path=" ${_t('session.launcher.FolderAlias')}" .headerRenderer="${this._boundPathRenderer}">
-                </vaadin-grid-column>
+                                           path="name" resizable></vaadin-grid-filter-column>
+                <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" 
+                                    path=" ${_t('session.launcher.FolderAlias')}"
+                                    .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
               </vaadin-grid>
               ${this.vfolders.length > 0 ? html`` : html`
               <div class="vertical layout center flex blank-box-medium">
