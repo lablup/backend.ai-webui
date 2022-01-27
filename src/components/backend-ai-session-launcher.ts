@@ -3136,8 +3136,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                               auto-select></vaadin-grid-selection-column>
                 <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMountList')}"
                                            path="name" resizable></vaadin-grid-filter-column>
-                <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" 
+                <vaadin-grid-column width="135px"
                                     path=" ${_t('session.launcher.FolderAlias')}"
+                                    .renderer="${this._boundFolderMapRenderer}" 
                                     .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
               </vaadin-grid>
               ${this.vfolders.length > 0 ? html`` : html`
