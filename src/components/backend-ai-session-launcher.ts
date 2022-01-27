@@ -191,6 +191,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
   @property({type: Boolean}) useScheduledTime = false;
   @property({type: Object}) schedulerTimer;
+  @property({type: Object}) sessionInfoObj = {
+    'environment': '',
+    'version': ['']
+  };
 
   constructor() {
     super();
@@ -1030,6 +1034,32 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._grid.selectedItems = [];
     }
     this.selectedVfolders = [];
+  }
+
+  /**
+   * derive session infomation from manualImageName or selector and save it in sessionInfoObj.
+   *
+   * @return {Boolean}
+   * */
+  _preProcessingSessionInfo() {
+    let environmentString;
+    let versionArray;
+
+    if (this.manualImageName?.value) {
+      const nameFragments = this.manualImageName.value.split(':');
+      environmentString = nameFragments[0];
+      versionArray = nameFragments.slice(-1)[0].split('-');
+    } else if (this.kernel !== undefined && this.version_selector.disabled === false) {
+      environmentString = this.kernel;
+      versionArray = this.version_selector.selectedText.split('/');
+    } else {
+      return false;
+    }
+
+    this.sessionInfoObj.environment = environmentString.split('/').pop();
+    this.sessionInfoObj.version = [versionArray[0].toUpperCase()].concat(
+      (versionArray.length !== 1 ? versionArray.slice(1).map((item) => item.toUpperCase()) : ['']));
+    return true;
   }
 
   /**
@@ -3356,6 +3386,41 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </wl-expansion>
           </div>
           <div id="progress-04" class="progress center layout fade">
+            <p class="title">${_t('session.SessionInfo')}</p>
+            <div class="vertical layout center center-justified cluster-total-allocation-container">
+              <div class="horizontal center center-justified layout">
+                ${this._preProcessingSessionInfo() ? html`
+                  <img alt="language icon"
+                       src="resources/icons/${this.resourceBroker.imageInfo[this.sessionInfoObj.environment]?.icon}"
+                       onerror="this.src='resources/icons/default.png'"
+                       style="width:32px;height:32px;margin-left:8px;margin-right:8px;margin-bottom:8px;" />
+                  <div class="vertical layout">
+                    <lablup-shields app="${(this.resourceBroker.imageInfo[this.sessionInfoObj.environment]?.name ||
+                       this.sessionInfoObj.environment).toUpperCase()}"
+                                    color="green"
+                                    description="${this.sessionInfoObj.version[0]}"
+                                    ui="round" 
+                                    style="margin-right:3px;"></lablup-shields>
+                    <div class="horizontal layout">
+                      ${this.sessionInfoObj.version.map((item, index) => {
+    if (index > 0) {
+      return html`
+                          <lablup-shields color="green"
+                                          description="${item}"
+                                          ui="round"
+                                          style="margin-top:3px;margin-right:3px;"></lablup-shields>`;
+    } else {
+      return html``;
+    }
+  })}
+                    </div>
+                    <lablup-shields color="blue"
+                                    description="${this.sessionType.toUpperCase()}"
+                                    ui="round" 
+                                    style="margin-top:3px;margin-right:3px;margin-bottom:9px;"></lablup-shields>
+                  </div>` : html``}
+              </div>
+            </div>
             <p class="title">${_t('session.launcher.TotalAllocation')}</p>
             <div class="vertical layout center center-justified cluster-total-allocation-container">
               <div id="cluster-allocation-pane" style="position:relative;${this.cluster_size <= 1 ? 'display:none;' : ''}">
