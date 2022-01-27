@@ -128,6 +128,7 @@ class Manager extends EventEmitter {
       let p = sessionId + "|" + app;
       let args = req.query.args ? JSON.parse(decodeURI(req.query.args)) : {};
       let envs = req.query.envs ? JSON.parse(decodeURI(req.query.envs)) : {};
+      const protocol = req.query.protocol || 'http';
       let gateway;
       let ip = "127.0.0.1"; //FIXME: Update needed
       //let port = undefined;
@@ -173,33 +174,9 @@ class Manager extends EventEmitter {
       }
 
       let proxy_target = "http://localhost:" + port;
-      if (app == 'sftp') {
+      if (protocol === 'tcp') {
         logger.debug('proxy target: ' + proxy_target);
-        res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/sftp?port=" + port + "&dummy=1"});
-      } else if (app == 'sshd') {
-        logger.debug('proxy target: ' + proxy_target);
-        res.send({
-          "code": 200,
-          "proxy": proxy_target,
-          "port": port,
-          "url": this.baseURL + "/sshd?port=" + port + "&dummy=1"
-        });
-      } else if (app == 'vnc') {
-        logger.debug('proxy target: ' + proxy_target);
-        res.send({
-          "code": 200,
-          "proxy": proxy_target,
-          "port": port,
-          "url": this.baseURL + "/vnc?port=" + port + "&dummy=1"
-        });
-      } else if (app == 'xrdp') {
-        logger.debug('proxy target: ' + proxy_target);
-        res.send({
-          "code": 200,
-          "proxy": proxy_target,
-          "port": port,
-          "url": this.baseURL + "/xrdp?port=" + port + "&dummy=1"
-        });
+        res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + `/${app}?port=` + port + "&dummy=1"});
       } else {
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/redirect?port=" + port});
       }
