@@ -529,7 +529,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.notification.show();
       return Promise.resolve(false);
     }
-    console.log(kInfo.compute_session.service_ports)
     const servicePortInfo = JSON.parse(kInfo.compute_session.service_ports).find(({name}) => name === app)
     if (servicePortInfo === undefined) {
       this.indicator.end();
