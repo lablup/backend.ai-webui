@@ -601,6 +601,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-theme-secondary: var(--general-checkbox-color);
         }
 
+        mwc-checkbox#hide-guide {
+          margin-right: 10px;
+        }
+
         #prev-button, #next-button {
           color: #27824F;
         }
@@ -2041,7 +2045,37 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._helpDescriptionTitle = _text('session.launcher.FolderAlias');
     this._helpDescription = _text('session.launcher.DescFolderAlias');
     this._helpDescriptionIcon = '';
-    this.shadowRoot.querySelector('#help-description').show();
+    const pathDialog = this.shadowRoot.querySelector('#help-description');
+    setTimeout(() => this.setPathContent(pathDialog));
+    pathDialog.show();
+  }
+
+  setPathContent(pathDialog) {
+    const pathLastChild = pathDialog.children[pathDialog.children.length - 1];
+    const pathContentLastChild = pathLastChild.children[pathLastChild.children.length - 1];
+    if (pathContentLastChild.children.length < 6) {
+      const div: HTMLElement = document.createElement('div');
+      div.setAttribute('class', 'horizontal layout flex center');
+      const pathCheckbox = document.createElement('mwc-checkbox');
+      pathCheckbox.setAttribute('id', 'hide-guide');
+      const checkboxMsg = document.createElement('span');
+      checkboxMsg.innerHTML = `${_text('dialog.hide.DonotShowThisAgain')}`;
+      div.appendChild(pathCheckbox);
+      div.appendChild(checkboxMsg);
+      pathContentLastChild.appendChild(div);
+      const eventCheckbox = this.shadowRoot.querySelector('#hide-guide');
+      eventCheckbox.addEventListener('change', (event) => {
+        if(event.target !== null) {
+          event.stopPropagation();
+          const eventTarget = event.target as HTMLInputElement;
+          if (!eventTarget.checked) {
+            localStorage.setItem('backendaiwebui.pathguide', 'true');
+          } else {
+            localStorage.setItem('backendaiwebui.pathguide', 'false');
+          }
+        }
+      });
+    }
   }
 
   async _updateFolderMap(folder, alias) {
