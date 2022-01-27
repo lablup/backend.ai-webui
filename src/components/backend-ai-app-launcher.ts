@@ -540,6 +540,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
 
     const scalingGroupId = kInfo.compute_session.scaling_group;
+    // Apply v1 when executing in electron mode
     const wsproxyVersion = (globalThis.isElectron) ? 'v1' : (await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId)).version;
     let uri = (wsproxyVersion == 'v1') ? await this._resolveV1ProxyUri(sessionUuid, app) : await this._resolveV2ProxyUri(sessionUuid, app, port, envs, args);
     if (!uri) {
