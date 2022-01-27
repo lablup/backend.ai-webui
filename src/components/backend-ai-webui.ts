@@ -537,6 +537,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.appBody.type = 'modal';
       this.appBody.open = false;
       // this.contentBody.style.width = 'calc('+width+'px - 190px)';
+      this.contentBody.style.width = width + 'px';
       this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
       this.drawerToggleButton.style.display = 'block';
       if (this.mini_ui) {
@@ -1430,11 +1431,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                           </mwc-list-item>
                           ` : html``}
                           <mwc-list-item class="horizontal layout start center" style="border-bottom:1px solid #ccc;">
-                              <mwc-icon class="dropdown-menu">perm_identity</mwc-icon> 
+                              <mwc-icon class="dropdown-menu">perm_identity</mwc-icon>
                               <span class="dropdown-menu-name">${this.user_id}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                              <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon> 
+                              <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon>
                               <span class="dropdown-menu-name">${this.roleInfo.role}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
