@@ -289,6 +289,7 @@ class BackendAIRegistryList extends BackendAIPage {
           this.notification.text = _text('dialog.ErrorOccurred');
         }
         this._hideDialogById('#add-registry-dialog');
+        this._resetRegistryField();
         this.notification.show();
       });
   }
@@ -446,6 +447,22 @@ class BackendAIRegistryList extends BackendAIPage {
       validationEl.textContent = _text('registry.ForHarborOnly');
       projectTextEl.disabled = true;
     }
+  }
+
+  _resetRegistryField() {
+    const registryHostname = this.shadowRoot.querySelector('#add-registry-hostname');
+    const registryURL = this.shadowRoot.querySelector('#add-registry-url');
+    const registryUsername = this.shadowRoot.querySelector('#add-registry-username');
+    const registryPassword = this.shadowRoot.querySelector('#add-registry-password');
+    const registrySelect = this.shadowRoot.querySelector('#select-registry-type');
+    const registryProjectName = this.shadowRoot.querySelector('#add-project-name');
+
+    registryHostname.value = '';
+    registryURL.value = '';
+    registryUsername.value = '';
+    registryPassword.value = '';
+    registrySelect.value = '';
+    registryProjectName.value = '';
   }
 
   toggleRegistry(e, hostname) {
