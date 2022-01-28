@@ -472,7 +472,7 @@ export default class BackendAiSessionView extends BackendAIPage {
                 </div>
               ` : html``}
             <div class="horizontal layout flex end-justified" style="margin-right:20px;">
-              <backend-ai-session-launcher location="session" id="session-launcher" ?active="${this.active === true}" isSupportingFab></backend-ai-session-launcher>
+              <backend-ai-session-launcher location="session" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
             </div>
           </h3>
           <div id="running-lists" class="tab-content">
