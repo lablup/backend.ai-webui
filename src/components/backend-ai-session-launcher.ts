@@ -2903,7 +2903,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
         <form slot="content" id="launch-session-form" class="centered" style="position:relative;">
           <div id="progress-01" class="progress center layout fade active">
-            <mwc-select id="session-type" icon="category" label="${_t('session.launcher.SessionType')}" required fixedMenuPosition
+            <mwc-select id="session-type" icon="category" label="${_text('session.launcher.SessionType')}" required fixedMenuPosition
                         value="${this.sessionType}" @selected="${(e) => this._toggleStartUpCommandEditor(e)}">
               <mwc-list-item value="batch">
                 ${_t('session.launcher.BatchMode')}
@@ -2912,7 +2912,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 ${_t('session.launcher.InteractiveMode')}
               </mwc-list-item>
             </mwc-select>
-            <mwc-select id="environment" icon="code" label="${_t('session.launcher.Environments')}" required fixedMenuPosition
+            <mwc-select id="environment" icon="code" label="${_text('session.launcher.Environments')}" required fixedMenuPosition
                         value="${this.default_language}">
               <mwc-list-item selected graphic="icon" style="display:none!important;">
                 ${_t('session.launcher.ChooseEnvironment')}
@@ -2942,7 +2942,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 `}
               `)}
             </mwc-select>
-            <mwc-select id="version" icon="architecture" label="${_t('session.launcher.Version')}" required fixedMenuPosition>
+            <mwc-select id="version" icon="architecture" label="${_text('session.launcher.Version')}" required fixedMenuPosition>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
               <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
                   role="separator" disabled="true" class="horizontal layout">
@@ -2967,13 +2967,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </mwc-select>
             ${this._debug || this.allow_manual_image_name_for_session ? html`
             <mwc-textfield id="image-name" type="text" class="flex" value="" icon="assignment_turned_in"
-              label="${_t('session.launcher.ManualImageName')}"
+              label="${_text('session.launcher.ManualImageName')}"
               @change=${(e) => this._toggleEnvironmentSelectUI()}></mwc-textfield>
             `:html``}
-            <mwc-textfield id="session-name" placeholder="${_t('session.launcher.SessionNameOptional')}"
+            <mwc-textfield id="session-name" placeholder="${_text('session.launcher.SessionNameOptional')}"
                            pattern="[a-zA-Z0-9_-]{4,}" maxLength="64" icon="label"
-                           helper="${_t('maxLength.64chars')}"
-                           validationMessage="${_t('session.launcher.SessionNameAllowCondition')}">
+                           helper="${_text('maxLength.64chars')}"
+                           validationMessage="${_text('session.launcher.SessionNameAllowCondition')}">
             </mwc-textfield>
             <div class="vertical layout center flex" id="batch-mode-config-section" style="display:none;">
               <span class="launcher-item-title" style="width:386px;">${_t('session.launcher.BatchModeConfig')}</span>
@@ -2986,18 +2986,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <mwc-switch id="use-scheduled-time" @click="${() => this._toggleScheduleTimeDisplay()}"></mwc-switch>
               </div>
               <vaadin-date-time-picker step="1"
-                date-placeholder="DD/MM/YYYY"
-                time-placeholder="hh:mm:ss"
-                ?required="${this.useScheduledTime}"
-                @change="${this._getSchedulableTime}"
-                style="display:none;"></vaadin-date-time-picker>
+                                       date-placeholder="DD/MM/YYYY"
+                                       time-placeholder="hh:mm:ss"
+                                       ?required="${this.useScheduledTime}"
+                                       @change="${this._getSchedulableTime}"
+                                       style="display:none;"></vaadin-date-time-picker>
             </div>
             <div class="horizontal layout center justified">
               <span class="launcher-item-title">${_t('session.launcher.SetEnvironmentVariable')}</span>
               <mwc-button
                 unelevated
                 icon="rule"
-                label="${_t('session.launcher.Config')}"
+                label="${_text('session.launcher.Config')}"
                 style="width:auto;margin-right:15px;"
                 @click="${() => this._showEnvDialog()}"></mwc-button>
             </div>
@@ -3039,9 +3039,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                               flex-grow="0"
                                               text-align="center"
                                               auto-select></vaadin-grid-selection-column>
-                <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMount')}"
-                                          path="name" resizable></vaadin-grid-filter-column>
-                <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" header="${_t('session.launcher.FolderAlias')}">
+                <vaadin-grid-filter-column header="${_text('session.launcher.FolderToMount')}"
+                                           path="name" resizable></vaadin-grid-filter-column>
+                <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" header="${_text('session.launcher.FolderAlias')}">
                 </vaadin-grid-column>
               </vaadin-grid>
               ${this.vfolders.length > 0 ? html`` : html`
@@ -3076,20 +3076,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
           <div id="progress-03" class="progress center layout fade">
             <div class="horizontal center layout">
-              <mwc-select id="scaling-groups" label="${_t('session.launcher.ResourceGroup')}"
+              <mwc-select id="scaling-groups" label="${_text('session.launcher.ResourceGroup')}"
                           icon="storage" required fixedMenuPosition
                           @selected="${(e) => this.updateScalingGroup(false, e)}">
                 ${this.scaling_groups.map((item) => html`
                   <mwc-list-item class="scaling-group-dropdown"
-                                id="${item.name}" graphic="icon"
-                                value="${item.name}">
+                                 id="${item.name}" graphic="icon"
+                                 value="${item.name}">
                     ${item.name}
                   </mwc-list-item>
                 `)}
               </mwc-select>
             </div>
             <div class="vertical center layout" style="position:relative;">
-              <mwc-select id="resource-templates" label="${_t('session.launcher.ResourceAllocation')}"
+              <mwc-select id="resource-templates" label="${_text('session.launcher.ResourceAllocation')}"
                           icon="dashboard_customize" required fixedMenuPosition>
                 <mwc-list-item selected style="display:none!important"></mwc-list-item>
                 <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
@@ -3134,8 +3134,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `)}
               ${this.isEmpty(this.resource_templates_filtered) ? html`
                 <mwc-list-item class="resource-button vertical center start layout" role="option"
-                              style="height:140px;width:350px;" type="button"
-                              flat inverted outlined disabled>
+                               style="height:140px;width:350px;" type="button"
+                               flat inverted outlined disabled>
                   <div>
                     <h4>${_t('session.launcher.NoSuitablePreset')}</h4>
                     <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
@@ -3151,42 +3151,42 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <mwc-list-item hasMeta class="resource-type">
                     <div>CPU</div>
                     <mwc-icon-button slot="meta" icon="info" class="fg info"
-                                @click="${(e) => {
+                                     @click="${(e) => {
     this._showResourceDescription(e, 'cpu');
   }}"></mwc-icon-button>
                   </mwc-list-item>
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
                     <lablup-slider id="cpu-resource" class="cpu"
-                              pin snaps expand editable markers
-                              @click="${(e) => this._applyResourceValueChanges(e)}"
-                              @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                              marker_limit="${this.marker_limit}"
-                              suffix="${_text('session.launcher.Core')}"
-                              min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
-                              value="${this.cpu_request}"></lablup-slider>
+                                   pin snaps expand editable markers
+                                   @click="${(e) => this._applyResourceValueChanges(e)}"
+                                   @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                                   marker_limit="${this.marker_limit}"
+                                   suffix="${_text('session.launcher.Core')}"
+                                   min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
+                                   value="${this.cpu_request}"></lablup-slider>
                   </mwc-list-item>
                   <mwc-list-item hasMeta class="resource-type">
                     <div>RAM</div>
                     <mwc-icon-button slot="meta" icon="info" class="fg info"
-                                    @click="${(e) => {
+                                     @click="${(e) => {
     this._showResourceDescription(e, 'mem');
   }}"></mwc-icon-button>
                   </mwc-list-item>
                   <li divider role="separator"></li>
                   <mwc-list-item  class="slider-list-item">
                     <lablup-slider id="mem-resource" class="mem"
-                                  pin snaps expand step=0.05 editable markers
-                                    @click="${() => {
+                                   pin snaps expand step=0.05 editable markers
+                                   @click="${() => {
     this._resourceTemplateToCustom();
   }}"
-                                    @changed="${() => {
+                                   @changed="${() => {
     this._updateShmemLimit();
   }}"
-                                    @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                                  marker_limit="${this.marker_limit}" suffix="GB"
-                                  min="${this.mem_metric.min}" max="${this.mem_metric.max}"
-                                  value="${this.mem_request}"></lablup-slider>
+                                   @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                                   marker_limit="${this.marker_limit}" suffix="GB"
+                                   min="${this.mem_metric.min}" max="${this.mem_metric.max}"
+                                   value="${this.mem_request}"></lablup-slider>
                   </mwc-list-item>
                 <mwc-list-item hasMeta class="resource-type">
                   <div>${_t('session.launcher.SharedMemory')}</div>
@@ -3197,12 +3197,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <li divider role="separator"></li>
                 <mwc-list-item class="slider-list-item">
                   <lablup-slider id="shmem-resource" class="mem"
-                                pin snaps step="0.0025" editable markers
-                                @click="${(e) => this._applyResourceValueChanges(e)}"
-                                @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                                marker_limit="${this.marker_limit}" suffix="GB"
-                                min="0.0625" max="${this.shmem_metric.max}"
-                                value="${this.shmem_request}"></lablup-slider>
+                                 pin snaps step="0.0025" editable markers
+                                 @click="${(e) => this._applyResourceValueChanges(e)}"
+                                 @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                                 marker_limit="${this.marker_limit}" suffix="GB"
+                                 min="0.0625" max="${this.shmem_metric.max}"
+                                 value="${this.shmem_request}"></lablup-slider>
                 </mwc-list-item>
                 <mwc-list-item hasMeta class="resource-type">
                   <div>GPU</div>
@@ -3213,12 +3213,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
                   <lablup-slider id="gpu-resource" class="gpu"
-                                pin snaps editable markers step="${this.gpu_step}"
-                                @click="${(e) => this._applyResourceValueChanges(e)}"
-                                @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                                marker_limit="${this.marker_limit}" suffix="GPU"
-                                min="0.0" max="${this.cuda_device_metric.max}"
-                                value="${this.gpu_request}"></lablup-slider>
+                                 pin snaps editable markers step="${this.gpu_step}"
+                                 @click="${(e) => this._applyResourceValueChanges(e)}"
+                                 @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                                 marker_limit="${this.marker_limit}" suffix="GPU"
+                                 min="0.0" max="${this.cuda_device_metric.max}"
+                                 value="${this.gpu_request}"></lablup-slider>
                 </mwc-list-item>
                 <mwc-list-item hasMeta class="resource-type">
                   <div>${_t('webui.menu.Sessions')}</div>
@@ -3229,12 +3229,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
                   <lablup-slider id="session-resource" class="session"
-                                pin snaps editable markers step="1"
-                                @click="${(e) => this._applyResourceValueChanges(e)}"
-                                @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                                marker_limit="${this.marker_limit}" suffix="#"
-                                min="1" max="${this.concurrency_limit}"
-                                value="${this.session_request}"></lablup-slider>
+                                 pin snaps editable markers step="1"
+                                 @click="${(e) => this._applyResourceValueChanges(e)}"
+                                 @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                                 marker_limit="${this.marker_limit}" suffix="#"
+                                 min="1" max="${this.concurrency_limit}"
+                                 value="${this.session_request}"></lablup-slider>
                 </mwc-list-item>
                 </mwc-list>
               </div>
@@ -3266,13 +3266,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
                     <lablup-slider id="cluster-size" class="cluster"
-                                  pin snaps expand editable markers
-                                  marker_limit="${this.marker_limit}"
-                                  min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
-                                  value="${this.cluster_size}"
-                                  @click="${(e) => this._applyResourceValueChanges(e, false)}"
-                                  @focusout="${(e) => this._applyResourceValueChanges(e, false)}"
-                                  suffix="${this.cluster_mode === 'single-node' ? _text('session.launcher.Container') : _text('session.launcher.Node')}"></lablup-slider>
+                                   pin snaps expand editable markers
+                                   marker_limit="${this.marker_limit}"
+                                   min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
+                                   value="${this.cluster_size}"
+                                   @click="${(e) => this._applyResourceValueChanges(e, false)}"
+                                   @focusout="${(e) => this._applyResourceValueChanges(e, false)}"
+                                   suffix="${this.cluster_mode === 'single-node' ? _text('session.launcher.Container') : _text('session.launcher.Node')}"></lablup-slider>
                   </mwc-list-item>
                 </mwc-list>
               </div>
@@ -3288,19 +3288,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div class="horizontal center layout">
                     <div style="width:200px;">${_t('session.launcher.NumOpenMPthreads')}</div>
                     <mwc-textfield id="OpenMPCore" type="number" placeholder="1"
-                                  value="" min="0" max="1000" step="1" style="width:120px;"
-                                  pattern="[0-9]+" @change="${(e) => this._validateInput(e)}">
+                                   value="" min="0" max="1000" step="1" style="width:120px;"
+                                   pattern="[0-9]+" @change="${(e) => this._validateInput(e)}">
                     </mwc-textfield>
                     <mwc-icon-button icon="info" class="fg green info"
-                                    @click="${(e) => {
+                                     @click="${(e) => {
     this._showResourceDescription(e, 'openmp-optimization');
   }}"></mwc-icon-button>
                   </div>
                   <div class="horizontal center layout">
                     <div style="width:200px;">${_t('session.launcher.NumOpenBLASthreads')}</div>
                     <mwc-textfield id="OpenBLASCore" type="number" placeholder="1"
-                                  value="" min="0" max="1000" step="1" style="width:120px;"
-                                  pattern="[0-9]+" @change="${(e) => this._validateInput(e)}">
+                                   value="" min="0" max="1000" step="1" style="width:120px;"
+                                   pattern="[0-9]+" @change="${(e) => this._validateInput(e)}">
                     </mwc-textfield>
                     <mwc-icon-button icon="info" class="fg green info"
                                       @click="${(e) => {
@@ -3315,37 +3315,37 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="vertical layout">
                 <div class="horizontal center layout">
                   <mwc-textfield id="owner-email" type="email" class="flex" value=""
-                                pattern="^.+@.+\..+$" icon="mail"
-                                label="${_t('session.launcher.OwnerEmail')}" size="40"></mwc-textfield>
+                                 pattern="^.+@.+\..+$" icon="mail"
+                                 label="${_text('session.launcher.OwnerEmail')}" size="40"></mwc-textfield>
                   <mwc-icon-button icon="refresh" class="blue"
-                                  @click="${() => this._fetchSessionOwnerGroups()}">
+                                   @click="${() => this._fetchSessionOwnerGroups()}">
                   </mwc-icon-button>
                 </div>
-                <mwc-select id="owner-accesskey" label="${_t('session.launcher.OwnerAccessKey')}" icon="vpn_key" fixedMenuPosition naturalMenuWidth>
+                <mwc-select id="owner-accesskey" label="${_text('session.launcher.OwnerAccessKey')}" icon="vpn_key" fixedMenuPosition naturalMenuWidth>
                   ${this.ownerKeypairs.map((item) => html`
                     <mwc-list-item class="owner-group-dropdown"
-                                  id="${item.access_key}"
-                                  value="${item.access_key}">
+                                   id="${item.access_key}"
+                                   value="${item.access_key}">
                       ${item.access_key}
                     </mwc-list-item>
                   `)}
                 </mwc-select>
                 <div class="horizontal center layout">
-                  <mwc-select id="owner-group" label="${_t('session.launcher.OwnerGroup')}" icon="group_work" fixedMenuPosition naturalMenuWidth>
+                  <mwc-select id="owner-group" label="${_text('session.launcher.OwnerGroup')}" icon="group_work" fixedMenuPosition naturalMenuWidth>
                     ${this.ownerGroups.map((item) => html`
                       <mwc-list-item class="owner-group-dropdown"
-                                    id="${item.name}"
-                                    value="${item.name}">
+                                     id="${item.name}"
+                                     value="${item.name}">
                         ${item.name}
                       </mwc-list-item>
                     `)}
                   </mwc-select>
-                  <mwc-select id="owner-scaling-group" label="${_t('session.launcher.OwnerResourceGroup')}"
+                  <mwc-select id="owner-scaling-group" label="${_text('session.launcher.OwnerResourceGroup')}"
                               icon="storage" fixedMenuPosition>
                     ${this.ownerScalingGroups.map((item) => html`
                       <mwc-list-item class="owner-group-dropdown"
-                                    id="${item.name}"
-                                    value="${item.name}">
+                                     id="${item.name}"
+                                     value="${item.name}">
                         ${item.name}
                       </mwc-list-item>
                     `)}
@@ -3474,9 +3474,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <div slot="footer" class="vertical flex layout">
           <div class="horizontal flex layout distancing center-center">
             <mwc-icon-button id="prev-button"
-                            icon="arrow_back"
-                            style="visibility:hidden;margin-right:12px;"
-                            @click="${() => this.moveProgress(-1)}"></mwc-icon-button>
+                             icon="arrow_back"
+                             style="visibility:hidden;margin-right:12px;"
+                             @click="${() => this.moveProgress(-1)}"></mwc-icon-button>
             <mwc-button
                 unelevated
                 class="launch-button"
@@ -3486,9 +3486,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
             </mwc-button>
             <mwc-icon-button id="next-button"
-                            icon="arrow_forward"
-                            style="margin-left:12px;"
-                            @click="${() => this.moveProgress(1)}"></mwc-icon-button>
+                             icon="arrow_forward"
+                             style="margin-left:12px;"
+                             @click="${() => this.moveProgress(1)}"></mwc-icon-button>
           </div>
           <div class="horizontal flex layout">
             <lablup-progress-bar progress="${this._calculateProgress()}"></lablup-progress-bar>
@@ -3540,13 +3540,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               icon="delete"
-              label="${_t('button.DeleteAll')}"
+              label="${_text('button.DeleteAll')}"
               @click="${()=>this._clearRows()}"></mwc-button>
           <mwc-button
               unelevated
               slot="footer"
               icon="check"
-              label="${_t('button.Save')}"
+              label="${_text('button.Save')}"
               @click="${()=>this.modifyEnv()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -3587,14 +3587,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               id="env-config-remain-button"
-              label="${_t('button.Cancel')}"
+              label="${_text('button.Cancel')}"
               @click="${() => this.closeDialog('env-config-confirmation')}"
               style="width:auto;margin-right:10px;">
           </mwc-button>
           <mwc-button
               unelevated
               id="env-config-reset-button"
-              label="${_t('button.DismissAndProceed')}"
+              label="${_text('button.DismissAndProceed')}"
               @click="${() => this._closeAndResetEnvInput()}"
               style="width:auto;">
           </mwc-button>
