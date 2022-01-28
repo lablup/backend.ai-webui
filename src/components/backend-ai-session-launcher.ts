@@ -2046,14 +2046,25 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._helpDescription = _text('session.launcher.DescFolderAlias');
     this._helpDescriptionIcon = '';
     const pathDialog = this.shadowRoot.querySelector('#help-description');
-    setTimeout(() => this.setPathContent(pathDialog));
+    setTimeout(() => this.setPathContent(pathDialog, this.helpDescTagCount(this._helpDescription)));
     pathDialog.show();
   }
 
-  setPathContent(pathDialog) {
+  helpDescTagCount(helpDescription) {
+    let childCount = 0;
+    let searchChild = '<p>';
+    let descPos = helpDescription.indexOf(helpDescription); 
+    while (descPos !== -1) {
+      childCount++;
+      descPos = helpDescription.indexOf(searchChild, descPos + 1); 
+    }
+    return childCount;
+  }
+
+  setPathContent(pathDialog, helpDescChildNum) {
     const pathLastChild = pathDialog.children[pathDialog.children.length - 1];
     const pathContentLastChild = pathLastChild.children[pathLastChild.children.length - 1];
-    if (pathContentLastChild.children.length < 6) {
+    if (pathContentLastChild.children.length < helpDescChildNum + 1) {
       const div: HTMLElement = document.createElement('div');
       div.setAttribute('class', 'horizontal layout flex center');
       const pathCheckbox = document.createElement('mwc-checkbox');
