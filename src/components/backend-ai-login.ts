@@ -567,6 +567,11 @@ export default class BackendAILogin extends BackendAIPage {
   block(message = '', type = '') {
     this.blockMessage = message;
     this.blockType = type;
+    if (message === _text('login.PleaseWait') && type === _text('login.ConnectingToCluster')) {
+      this.blockPanel.addEventListener('dialog-closed', (e) => {
+        this._cancelLogin(e);
+      });
+    }
     setTimeout(() => {
       if (this.blockPanel.open === false && this.is_connected === false && this.loginPanel.open === false) {
         this.blockPanel.show();
