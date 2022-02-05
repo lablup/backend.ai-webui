@@ -8,6 +8,8 @@
       "Import&Run": "가져오기 & 실행",
       "Data&Storage": "데이터 & 폴더",
       "Pipeline": "파이프라인(베타)",
+      "PipelineTemplate": "파이프라인 템플릿",
+      "PipelineRunner": "파이프라인",
       "Statistics": "통계",
       "Help": "도움말",
       "Settings": "설정",

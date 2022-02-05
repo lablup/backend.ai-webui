@@ -8,6 +8,8 @@
       "Import&Run": "Import & Run",
       "Data&Storage": "Data & Storage",
       "Pipeline": "Pipeline (Beta)",
+      "PipelineTemplate": "Pipeline Template",
+      "PipelineRunner": "Pipeline Runner",
       "Statistics": "Statistics",
       "Help": "Help",
       "Settings": "Settings",

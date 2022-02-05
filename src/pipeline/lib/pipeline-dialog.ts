@@ -3,7 +3,7 @@
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
  import {css, CSSResultGroup, html, LitElement} from 'lit';
- import {customElement, property, query} from 'lit/decorators';
+ import {customElement, property, query} from 'lit/decorators.js';
 
 /**
  Pipeline Dialog
