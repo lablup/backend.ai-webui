@@ -216,6 +216,12 @@ export default class PipelineFlow extends LitElement {
       }
     });
 
+    document.addEventListener('export-flow', () => {
+      const data = this.editor.export();
+      const exportFlowEvent = new CustomEvent('flow-response', {'detail': data});
+      document.dispatchEvent(exportFlowEvent);
+    });
+
     // measure pane size when event triggered
     const paneResizeObserver = new ResizeObserver(() => {
       this.paneSize = {
