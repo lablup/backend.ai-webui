@@ -13,6 +13,8 @@ import '@vaadin/vaadin-grid/vaadin-grid-column';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 
+import '@material/mwc-icon/mwc-icon';
+import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button/mwc-icon-button';
 
 import PipelineUtils from './pipeline-utils';
@@ -61,6 +63,13 @@ export default class PipelineList extends LitElement {
         #pipeline-table {
           height: calc(100vh - 265px);
         }
+
+        mwc-icon {
+          padding-right: 10px;
+          position: relative;
+          top: 2px;
+          --mdc-icon-size: 16px;
+        }
       `];
   }
 
@@ -98,8 +107,14 @@ export default class PipelineList extends LitElement {
       `;
     };
     columns[2].renderer = (root, column, rowData) => { // duration
+      const createdAt = PipelineUtils._humanReadablePassedTime(rowData.item.created_at);
       const duration = PipelineUtils._humanReadableTimeDuration(rowData.item.created_at, rowData.item.last_updated);
-      root.innerText = duration;
+      render(html`
+        <mwc-list-item class="vertical layout start center-justified" style="font-size:15px;">
+          <span class="horizontal layout"><mwc-icon>calendar_today</mwc-icon>${createdAt}</span>
+          <span class="horizontal layout"><mwc-icon>alarm</mwc-icon>${duration}</span>
+        </mwc-list-item>
+      `, root);
     };
     columns[3].renderer = (root, column, rowData) => { // control
       const isCompleted = ['terminal', 'errorneous'].includes(PipelineUtils._categorizeStatus(rowData.item.status));
@@ -130,7 +145,7 @@ export default class PipelineList extends LitElement {
         <vaadin-grid-sort-column path="version" header="Version" resizable></vaadin-grid-sort-column>
         <vaadin-grid-filter-column path="vfolder" header="Mounted folder" resizable></vaadin-grid-filter-column>
         <vaadin-grid-column header="Status" resizable></vaadin-grid-column>
-        <vaadin-grid-column header="Duration" resizable></vaadin-grid-column>
+        <vaadin-grid-column width="150px" header="Duration" resizable></vaadin-grid-column>
         <vaadin-grid-column id="pipeline-control" width="160px" flex-grow="0" header="Control" resizable></vaadin-grid-column>
       </vaadin-grid>
     `;

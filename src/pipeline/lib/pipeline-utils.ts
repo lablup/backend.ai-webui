@@ -38,6 +38,27 @@ export default class PipelineUtils extends LitElement {
     return result;
   }
 
+  static _humanReadablePassedTime(d) {
+    const distance = new Date().getTime() - d;
+    const days = Math.floor(distance / 86400000);
+    if (days > 0) {
+      return `${days}d ago`;
+    }
+    d -= days * 86400000;
+    const hours = Math.floor(distance / 3600000);
+    if (hours > 0) {
+      return `${hours}h ago`;
+    }
+    d -= hours * 3600000;
+    const minutes = Math.floor(distance / 60000);
+    if (minutes > 0) {
+      return `${minutes}m ago`;
+    }
+    d -= minutes * 60000;
+    const seconds = Math.floor(distance / 1000);
+    return `${seconds}s ago`;
+  }
+
   static _categorizeStatus(status) {
     switch (status) {
     case 'PENDING':
