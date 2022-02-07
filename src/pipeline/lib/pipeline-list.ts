@@ -39,7 +39,6 @@ export default class PipelineList extends LitElement {
   @property({type: String}) theme = 'row-stripes column-borders compact';
   @property({type: String}) ariaLabel = '';
   @property({type: Array}) items = [];
-  @property({type: Boolean}) _isRunning = false;
   /**
    * Controls
    * e.g) <pipeline-list .editFunction="${function}"></pipeline-list>
