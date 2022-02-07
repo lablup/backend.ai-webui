@@ -40,6 +40,10 @@ export default class PipelineFlow extends LitElement {
   @property({type: Object}) editor;
   @property({type: Object}) data;
   @property({type: Boolean}) isEditable = false;
+  @property({type: Object}) paneSize = {
+    width: 0,
+    height: 0
+  };
 
   static get styles() {
     return [
@@ -54,7 +58,7 @@ export default class PipelineFlow extends LitElement {
           display: inline-flex;
           position: relative;
           width: 100%;
-          height: 500px;
+          height: 800px;
           background: var(--dfBackgroundColor);
           background-size: var(--dfBackgroundSize) var(--dfBackgroundSize);
           background-image: var(--dfBackgroundImage);
@@ -193,8 +197,8 @@ export default class PipelineFlow extends LitElement {
   }
 
   firstUpdated() {
-    const element: HTMLElement = this.shadowRoot?.getElementById('drawflow')!;
-    this.editor = new Drawflow(element);
+    const parentDrawflowElement: HTMLElement = this.shadowRoot?.getElementById('drawflow')!;
+    this.editor = new Drawflow(parentDrawflowElement);
     this.editor.start();
 
     this.data = {};
@@ -212,6 +216,16 @@ export default class PipelineFlow extends LitElement {
       }
     });
 
+    // measure pane size when event triggered
+    const paneResizeObserver = new ResizeObserver(() => {
+      this.paneSize = {
+        width: this.editor.precanvas.clientWidth,
+        height: this.editor.precanvas.clientHeight
+      };
+    });
+
+    paneResizeObserver.observe(this.editor.precanvas);
+
     this.editor.on('nodeSelected', (nodeId: any) => {
       const nodeInfo: DrawflowNode = this.editor.getNodeFromId(nodeId);
       const nodeSelectedEvent = new CustomEvent('node-selected', {'detail': nodeInfo});
@@ -221,8 +235,7 @@ export default class PipelineFlow extends LitElement {
     this.editor.on('nodeUnselected', () => {
       const nodeUnselectedEvent = new CustomEvent('node-unselected', {'detail': false});
       document.dispatchEvent(nodeUnselectedEvent);
-    })
-
+    });
     // Example data
     // this.editor.addNode('MNIST', 1, 1, 100, 200, 'foo', this.data, 'MNIST');
     // this.editor.addNode('CNN_3conv2_FC_flatten_hidden_Adam', 1, 1, 400, 100, 'bar', this.data, 'CNN_3conv2_FC_flatten_hidden_Adam');

@@ -116,12 +116,14 @@ export default class PipelineTemplateView extends LitElement {
 
     // step 3. Trigger custom event to add corresponding node into pipeline-flow pane.
     // detail: {name, inputs #, outputs #, pos_x, pos_y, class, data, html, typenode}
+    const paneElement = this.shadowRoot.querySelector('pipeline-flow');
+    const paneSize = paneElement.paneSize;
     const dummyNodeInfo = {
       name: 'dummy',
       inputs: 1,
       outputs: 1,
-      pos_x: 100,
-      pos_y: 200,
+      pos_x: paneSize.width / 2 ,
+      pos_y: paneSize.height / 3,
       class: 'new-task',
       data: {},
       html: 'dummy', // put raw html code
