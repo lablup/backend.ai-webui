@@ -118,14 +118,14 @@ export default class PipelineList extends LitElement {
     };
     columns[3].renderer = (root, column, rowData) => { // control
       const isCompleted = ['terminal', 'errorneous'].includes(PipelineUtils._categorizeStatus(rowData.item.status));
-      const isRunning = ['waiting', 'transitional', 'ongoing'].includes(PipelineUtils._categorizeStatus(rowData.item.status));
+      const isRunning = ['ongoing'].includes(PipelineUtils._categorizeStatus(rowData.item.status));
       render(html`
         <div id="controls" class="layout horizontal flex center" pipeline-id="${rowData.item.id}">
           <mwc-icon-button class="fg green info" icon="assignment"></mwc-icon-button>
           <mwc-icon-button class="fg blue settings" icon="settings" @click="${this.editFunction}"></mwc-icon-button>
           ${isCompleted ? html`` :
     isRunning ?
-      html`<mwc-icon-button id="pause-pipeline-btn" class="fg green start" icon="pause" @click="${this.pauseFunction}></mwc-icon-button>` :
+      html`<mwc-icon-button id="pause-pipeline-btn" class="fg green start" icon="pause" @click="${this.pauseFunction}"></mwc-icon-button>` :
       html`<mwc-icon-button id="start-pipeline-btn" class="fg green stop" icon="play_arrow" @click="${this.startFunction}"></mwc-icon-button>`
 }
         </div>
