@@ -55,6 +55,7 @@ export default class PipelineTemplateView extends LitElement {
     this.templateInfo = {
       name: "Flow-01",
       project: "default",
+      type: "Custom template",
       data: {},
     }
   }
