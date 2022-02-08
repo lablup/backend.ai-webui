@@ -59,27 +59,37 @@ export default class PipelineUtils extends LitElement {
     return `${seconds}s ago`;
   }
 
-  static _categorizeStatus(status) {
+  /**
+   * Change d of any type to locale date time.
+   *
+   * @param {string | Date} d - Data string or object
+   * @return {string} Locale time string
+   */
+  static _toLocaleString(d: any) {
+    d = new Date(d);
+    return d.toLocaleString();
+  }
+
+  static _getStatusColor(status) {
+    let color = 'lightgrey';
     switch (status) {
-    case 'PENDING':
-      return 'waiting';
-
-    case 'SCHEDULED':
-    case 'PREPARING':
-    case 'TERMINATING':
-    case 'RESTARTING':
-      return 'transitional';
-
+    case 'SUCCESS':
+      color = 'green';
+      break;
+    case 'FAILED':
+      color = 'red';
+      break;
+    case 'WAITING':
+      color = 'yellow';
+      break;
     case 'RUNNING':
-      return 'ongoing';
-
-    case 'TERMINATED':
-      return 'terminal';
-
-    case 'ERROR':
-      return 'errorneous';
+      color = 'blue';
+      break;
+    case 'STOPPED':
+      color = 'lightgrey';
+      break;
     }
-    return '';
+    return color;
   }
 
   render() {

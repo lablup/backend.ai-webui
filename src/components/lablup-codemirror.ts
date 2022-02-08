@@ -10,6 +10,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 import '@vanillawc/wc-codemirror/index';
 import '@vanillawc/wc-codemirror/mode/python/python';
 import '@vanillawc/wc-codemirror/mode/shell/shell';
+import '@vanillawc/wc-codemirror/mode/yaml/yaml';
 import {CodemirrorThemeMonokai} from '../lib/codemirror/theme/monokai.css';
 import {CodemirrorBaseStyle} from '../lib/codemirror/base-style.css';
 
