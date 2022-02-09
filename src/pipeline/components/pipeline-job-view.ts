@@ -21,26 +21,27 @@ import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
 import PipelineUtils from '../lib/pipeline-utils';
-import './pipeline-runner-list';
+import './pipeline-job-list';
 import '../lib/pipeline-flow';
 import '../../components/lablup-activity-panel';
+import '../../components/backend-ai-dialog';
 
 /**
- Pipeline Runner View
+ Pipeline Job View
 
- `pipeline-runner-view` is wrapper component of instantiated pipeline list and flow display
+ `pipeline-job-view` is wrapper component of instantiated pipeline list and flow display
 
  Example:
 
- <pipeline-runner-view>
+ <pipeline-job-view>
  ...
- </pipeline-runner-view>
+ </pipeline-job-view>
 
 @group Backend.AI pipeline
- @element pipeline-runner-view
+ @element pipeline-job-view
 */
-@customElement('pipeline-runner-view')
-export default class PipelineRunnerView extends LitElement {
+@customElement('pipeline-job-view')
+export default class PipelineJobView extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: String}) _activeTab = 'runner-list';
   @property({type: Object}) pipeline = Object();
@@ -172,12 +173,12 @@ export default class PipelineRunnerView extends LitElement {
         <div slot="message">
           <h3 class="tab horizontal center layout">
             <mwc-tab-bar>
-              <mwc-tab title="runner-list" label="Runner List" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="runner-view" label="Runner View" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="runner-list" label="Job List" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+              <mwc-tab title="runner-view" label="Job View" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
             </mwc-tab-bar>
           </h3>
           <div id="runner-list" class="tab-content">
-            <pipeline-runner-list></pipeline-runner-list>
+            <pipeline-job-list></pipeline-job-list>
           </div>
           <div id="runner-view" class="tab-content item card" style="display:none;">
             <h4 class="horizontal flex center center-justified layout">
@@ -202,22 +203,31 @@ export default class PipelineRunnerView extends LitElement {
                 </mwc-menu>
               </div>
             </h4>
-            <pipeline-flow id="pipeline-flow"></pipeline-flow>
+            <pipeline-flow id="pipeline-job-flow"></pipeline-flow>
+            <vaadin-grid id="pipeline-task-list" theme="row-stripes column-borders compact">
+              <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" frozen></vaadin-grid-column>
+              <vaadin-grid-filter-column id="pipeline-name" width="120px" path="name" header="Name" resizable frozen></vaadin-grid-filter-column>
+              <vaadin-grid-column header="Resources" resizable></vaadin-grid-column>
+              <vaadin-grid-column header="Status" resizable></vaadin-grid-column>
+              <vaadin-grid-sort-column path="start_time" header="Start Time" resizable></vaadin-grid-sort-column>
+              <vaadin-grid-sort-column path="end_time" header="End Time" resizable></vaadin-grid-sort-column>
+              <vaadin-grid-column width="150px" header="Duration" resizable></vaadin-grid-column>
+            </vaadin-grid>
           </div>
         </div>
       </lablup-activity-panel>
-      <pipeline-dialog id="workflow-dialog">
+      <backend-ai-dialog id="workflow-dialog">
         <span id="workflow-dialog-title" slot="title">Workflow file</span>
         <div slot="content">
           <lablup-codemirror id="workflow-editor" mode="yaml"></lablup-codemirror>
         </div>
-      </pipeline-dialog>
+      </backend-ai-dialog>
     `;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'pipeline-runner-view': PipelineRunnerView;
+    'pipeline-job-view': PipelineJobView;
   }
 }

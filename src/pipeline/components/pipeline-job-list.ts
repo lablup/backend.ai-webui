@@ -19,29 +19,81 @@ import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button/mwc-icon-button';
 
 import PipelineUtils from '../lib/pipeline-utils';
-import '../lib/pipeline-dialog';
 import '../../plastics/lablup-shields/lablup-shields';
 import '../../components/lablup-codemirror';
+import '../../components/backend-ai-dialog';
 
 /**
- Pipeline Runner List
+ Pipeline Job List
 
- `pipeline-runner-list` is fetches and lists of instantiated pipelines
+ `pipeline-job-list` is fetches and lists of instantiated pipelines
 
  Example:
 
- <pipeline-runner-list>
+ <pipeline-job-list>
  ...
- </pipeline-runner-list>
+ </pipeline-job-list>
 
  @group Backend.AI pipeline
- @element pipeline-runner-list
+ @element pipeline-job-list
 */
 
-@customElement('pipeline-runner-list')
-export default class PipelineRunnerList extends LitElement {
+@customElement('pipeline-job-list')
+export default class PipelineJobList extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: Array}) pipelines = [];
+  // @property({type: Array}) pipelines = [];
+  @property({type: Array}) pipelines = [
+    {
+      id: 1,
+      name: 'test1',
+      version: 1,
+      vfolder: '/home',
+      status: 'SUCCESS',
+      created_at: 1644288651967,
+      ownership: 'admin',
+      last_updated: new Date(),
+    },
+    {
+      id: 2,
+      name: 'test2',
+      version: 1,
+      vfolder: '/home',
+      status: 'FAILED',
+      created_at: 1644288491967,
+      last_updated: new Date(),
+    },
+    {
+      id: 3,
+      name: 'test3',
+      version: 1,
+      vfolder: '/home',
+      status: 'STOPPED',
+      created_at: 1644188391967,
+      ownership: 'admin',
+      last_updated: new Date(),
+    },
+    {
+      id: 4,
+      name: 'test4',
+      version: 1,
+      vfolder: '/home',
+      status: 'WAITING',
+      created_at: 1644088291967,
+      ownership: 'admin',
+      last_updated: new Date(),
+    },
+    {
+      id: 5,
+      name: 'test5',
+      version: 1,
+      vfolder: '/home',
+      status: 'RUNNING',
+      created_at: 1643988191967,
+      ownership: 'admin',
+      last_updated: new Date(),
+    },
+  ];
+
   @property({type: Object}) pipeline = Object();
 
   constructor() {
@@ -55,8 +107,10 @@ export default class PipelineRunnerList extends LitElement {
       IronFlexAlignment,
       // language=CSS
       css`
-        #pipeline-table {
-          height: calc(100vh - 265px);
+        #pipeline-job-list {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 235px);
         }
 
         #info-status {
@@ -65,14 +119,14 @@ export default class PipelineRunnerList extends LitElement {
         }
 
         #workflow-item {
-          padding-bottom:6px;
+          padding-bottom: 6px;
         }
 
         #view-workflow-button {
-          margin:10px auto;
+          margin: 10px auto;
         }
 
-        #workflow-dialog-title {
+        #workflow-file-dialog-title {
           min-width: 530px;
         }
 
@@ -107,7 +161,7 @@ export default class PipelineRunnerList extends LitElement {
   }
 
   _setVaadinGridRenderers() {
-    const columns = this.shadowRoot.querySelectorAll('#pipeline-table vaadin-grid-column');
+    const columns = this.shadowRoot.querySelectorAll('#pipeline-job-list vaadin-grid-column');
     columns[0].renderer = (root, column, rowData) => { // #
       root.textContent = rowData.index + 1;
     };
@@ -137,7 +191,7 @@ export default class PipelineRunnerList extends LitElement {
             icon="assignment"
             @click="${() => {
     this.pipeline = rowData.item;
-    this._showDialog('pipeline-detail-dialog');
+    this._showDialog('pipeline-job-detail-dialog');
   }}"></mwc-icon-button>
           <mwc-icon-button class="fg blue settings" icon="settings"></mwc-icon-button>
           ${!isCompleted ? html`
@@ -155,8 +209,8 @@ export default class PipelineRunnerList extends LitElement {
   render() {
     // language=HTML
     return html`
-      <vaadin-grid id="pipeline-table" theme="row-stripes column-borders compact"
-        aria-label="Pipeline Runner List" .items="${this.pipelines}">
+      <vaadin-grid id="pipeline-job-list" theme="row-stripes column-borders compact"
+        aria-label="Pipeline Job List" .items="${this.pipelines}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" frozen></vaadin-grid-column>
         <vaadin-grid-filter-column id="pipeline-name" width="120px" path="name" header="Name" resizable frozen></vaadin-grid-filter-column>
         <vaadin-grid-sort-column path="version" header="Version" resizable></vaadin-grid-sort-column>
@@ -165,7 +219,7 @@ export default class PipelineRunnerList extends LitElement {
         <vaadin-grid-column width="150px" header="Duration" resizable></vaadin-grid-column>
         <vaadin-grid-column id="pipeline-control" width="160px" flex-grow="0" header="Control" resizable></vaadin-grid-column>
       </vaadin-grid>
-      <pipeline-dialog id="pipeline-detail-dialog" fixed backdrop>
+      <backend-ai-dialog id="pipeline-job-detail-dialog" fixed backdrop>
         <span slot="title">${this.pipeline.name || 'Pipeline Details'}</span>
         <div slot="content" role="listbox" class="horizontal center layout">
           <mwc-list class="vertical center layout right-border">
@@ -214,26 +268,26 @@ export default class PipelineRunnerList extends LitElement {
               <mwc-button id="view-workflow-button" unelevated slot="secondary" 
                 icon="assignment" label="View workflow file"
                 @click="${() => {
-    this._showDialog('workflow-dialog');
+    this._showDialog('workflow-file-dialog');
     this.shadowRoot.querySelector('#workflow-editor').refresh();
   }}">
               </mwc-button>
             </mwc-list-item>
           </mwc-list>
         </div>
-      </pipeline-dialog>
-      <pipeline-dialog id="workflow-dialog">
-        <span id="workflow-dialog-title" slot="title">Workflow file</span>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="workflow-file-dialog">
+        <span id="workflow-file-dialog-title" slot="title">Workflow file</span>
         <div slot="content">
           <lablup-codemirror id="workflow-editor" mode="yaml"></lablup-codemirror>
         </div>
-      </pipeline-dialog>
+      </backend-ai-dialog>
     `;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'pipeline-runner-list': PipelineRunnerList;
+    'pipeline-job-list': PipelineJobList;
   }
 }
