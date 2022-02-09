@@ -19,6 +19,7 @@ import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button/mwc-icon-button';
 
 import PipelineUtils from '../lib/pipeline-utils';
+import '../../plastics/chart-js';
 import '../../plastics/lablup-shields/lablup-shields';
 import '../../components/lablup-codemirror';
 import '../../components/backend-ai-dialog';
@@ -42,7 +43,7 @@ import '../../components/backend-ai-dialog';
 export default class PipelineJobList extends LitElement {
   public shadowRoot: any; // ShadowRoot
   // @property({type: Array}) pipelines = [];
-  @property({type: Array}) pipelines = [
+  @property({type: Array}) pipelines = [ // hard coded for demo
     {
       id: 1,
       name: 'test1',
@@ -95,6 +96,8 @@ export default class PipelineJobList extends LitElement {
   ];
 
   @property({type: Object}) pipeline = Object();
+  @property({type: Object}) tasks;
+  @property({type: Object}) options;
 
   constructor() {
     super();
@@ -113,7 +116,11 @@ export default class PipelineJobList extends LitElement {
           height: calc(100vh - 235px);
         }
 
-        #info-status {
+        #status {
+          height: auto;
+        }
+
+        #pipeline-status, #tasks-status {
           position: relative;
           top: -10px;
         }
@@ -137,14 +144,84 @@ export default class PipelineJobList extends LitElement {
           --mdc-icon-size: 16px;
         }
 
-        mwc-list.right-border mwc-list-item {
-          border-right: 1px solid #ccc;
+        mwc-list.left-border mwc-list-item {
+          border-left: 1px solid #ccc;
         }
       `];
   }
 
   firstUpdated() {
     this._setVaadinGridRenderers();
+    this.options = {
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'right',
+          labels: {
+            boxWidth: 7,
+            boxHeight: 7,
+            padding: 1,
+            font: {
+              size: 10,
+              family: 'monospace',
+            }
+          },
+        },
+        tooltip: {
+          enabled: false,
+        },
+      },
+    };
+  }
+
+  /**
+   * Create Task Progress Chart when backend.ai client connected.
+   *
+   * @param {Boolean} active - The component will work if active is true.
+   */
+  async _viewStateChanged(active: boolean) {
+    await this.updateComplete;
+    if (active === false) {
+      return;
+    }
+    // If disconnected
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._createTaskProgressChart();
+      }, true);
+    } else { // already connected
+      this._createTaskProgressChart();
+    }
+  }
+
+  /**
+   * Create Task Progress Doughnut Chart
+   */
+  async _createTaskProgressChart() {
+    // number of tasks' status is hard coded for demo
+    const numRunningTasks = 2;
+    const numSuccessTasks = 3;
+    const numFailedTasks = 1;
+    this.tasks = {
+      labels: [
+        `${numRunningTasks} RUNNING`,
+        `${numSuccessTasks} SUCCESS`,
+        `${numFailedTasks} FAILED`,
+      ],
+      datasets: [{
+        data: [
+          numRunningTasks,
+          numSuccessTasks,
+          numFailedTasks,
+        ],
+        backgroundColor: [
+          '#007ec6',
+          '#97ca00',
+          '#e05d44'
+        ]
+      }]
+    };
   }
 
   _showDialog(id) {
@@ -191,6 +268,7 @@ export default class PipelineJobList extends LitElement {
             icon="assignment"
             @click="${() => {
     this.pipeline = rowData.item;
+    this._createTaskProgressChart();
     this._showDialog('pipeline-job-detail-dialog');
   }}"></mwc-icon-button>
           <mwc-icon-button class="fg blue settings" icon="settings"></mwc-icon-button>
@@ -222,7 +300,7 @@ export default class PipelineJobList extends LitElement {
       <backend-ai-dialog id="pipeline-job-detail-dialog" fixed backdrop>
         <span slot="title">${this.pipeline.name || 'Pipeline Details'}</span>
         <div slot="content" role="listbox" class="horizontal center layout">
-          <mwc-list class="vertical center layout right-border">
+          <mwc-list class="vertical center layout">
             <mwc-list-item twoline>
               <span><strong>ID</strong></span>
               <span class="monospace" slot="secondary">${this.pipeline.id}</span>
@@ -246,12 +324,14 @@ export default class PipelineJobList extends LitElement {
               </span>
             </mwc-list-item>
           </mwc-list>
-          <mwc-list class="vertical center layout">
-            <mwc-list-item twoline>
+          <mwc-list class="vertical center layout left-border">
+            <mwc-list-item id="status" twoline>
               <span><strong>Status</strong></span>
-              <lablup-shields id="info-status" slot="secondary" description="${this.pipeline.status}"
-                color="${PipelineUtils._getStatusColor(this.pipeline.status)}"></lablup-shields>
-              <!-- TODO: circular progress -->
+              <div slot="secondary" class="horizontal center layout">
+                <lablup-shields id="pipeline-status" description="${this.pipeline.status}"
+                  color="${PipelineUtils._getStatusColor(this.pipeline.status)}"></lablup-shields>
+                <chart-js id="tasks-status" type="doughnut" .data="${this.tasks}" .options="${this.options}" width="160" height="40"></chart-js>
+              </div>
             </mwc-list-item>
             ${this.pipeline.ownership ? html`
               <mwc-list-item twoline>
