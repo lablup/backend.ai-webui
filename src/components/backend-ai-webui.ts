@@ -1301,7 +1301,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <i class="fas fa-stream" slot="graphic" id="pipeline-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Pipeline')}</span>
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline_job'}" @click="${() => this._moveTo('/pipeline-job')}" ?disabled="${this.blockedMenuitem.includes('pipeline-job')}">
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline-job'}" @click="${() => this._moveTo('/pipeline-job')}" ?disabled="${this.blockedMenuitem.includes('pipeline-job')}">
               <i class="fas fa-sitemap" slot="graphic" id="pipeline-job-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.PipelineJob')}</span>
             </mwc-list-item>
