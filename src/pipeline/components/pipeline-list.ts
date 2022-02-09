@@ -16,7 +16,7 @@ import {
 import '@material/mwc-button';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select';
-import '../lib/pipeline-dialog';
+import '../../components/backend-ai-dialog';
 
 /**
  Pipeline List
@@ -72,8 +72,9 @@ export default class PipelineList extends LitElement {
           --mdc-menu-min-width: 320px;
         }
 
-        pipeline-dialog {
+        backend-ai-dialog {
           --component-min-width: 350px;
+          --component-max-width: 390px;
         }
       `
     ];
@@ -105,7 +106,7 @@ export default class PipelineList extends LitElement {
     <div class="horizontal layout flex center end-justified">
       <mwc-button unelevated icon="add" label="New Pipeline" @click="${() => this._launchDialogById('#create-pipeline')}"></mwc-button>
     </div>
-    <pipeline-dialog id="create-pipeline" fixed backdrop blockscrolling persistent>
+    <backend-ai-dialog id="create-pipeline" fixed backdrop blockscrolling persistent>
       <span slot="title">New Pipeline</span>
       <div slot="content" class="vertical layout flex">
         <mwc-textfield id="pipeline-name" label="Pipeline Name"></mwc-textfield>
@@ -124,7 +125,7 @@ export default class PipelineList extends LitElement {
         <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#create-pipeline')}"></mwc-button>
         <mwc-button unelevated label="Create" @click="${() => this._createPipeline()}"></mwc-button>
       </div>
-    </pipeline-dialog>
+    </backend-ai-dialog>
     `;
   }
 }
