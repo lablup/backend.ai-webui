@@ -21,41 +21,41 @@ import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-textfield';
 import '../lib/pipeline-flow';
-import './pipeline-template-list';
+import './pipeline-list';
 import '../lib/pipeline-dialog';
 
 /**
- Pipeline Template View
+ Pipeline View
 
- `pipeline-template-view` is wrapper component of pipeline template list and flow editor
+ `pipeline-view` is wrapper component of pipeline list and flow editor
 
  Example:
 
- <pipeline-template-view>
+ <pipeline-view>
  ...
- </pipeline-template-view>
+ </pipeline-view>
 
 @group Backend.AI pipeline
- @element pipeline-template-view
+ @element pipeline-view
 */
 
-@customElement('pipeline-template-view')
-export default class PipelineTemplateView extends LitElement {
+@customElement('pipeline-view')
+export default class PipelineView extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: String}) _activeTab = 'template-list';
+  @property({type: String}) _activeTab = 'pipeline-list';
   @property({type: Boolean}) isNodeSelected = false;
   @property({type: Object}) selectedNode;
-  @property({type: Object}) templateInfo;
+  @property({type: Object}) pipelineInfo;
   @property({type: Object}) taskInfo;
   @property({type: Array}) projectGroups = ['default']; // contains project groups that user can access
 
   constructor() {
     super();
-    // dummy data for template info
-    this.templateInfo = {
+    // dummy data for pipeline info
+    this.pipelineInfo = {
       name: "Flow-01",
       project: "default",
-      type: "Custom template",
+      type: "custom",
       data: {},
     }
   }
@@ -75,7 +75,7 @@ export default class PipelineTemplateView extends LitElement {
           margin: 0px auto;
         }
 
-        span#template-name {
+        span#pipeline-name {
           font-size: 1.2rem;
           margin: auto 10px;
           color: #555;
@@ -100,7 +100,7 @@ export default class PipelineTemplateView extends LitElement {
           --mdc-menu-min-width: 385px;
         }
 
-        mwc-select#template-version {
+        mwc-select#pipeline-version {
           width: 130px;
         }
 
@@ -115,11 +115,11 @@ export default class PipelineTemplateView extends LitElement {
           width: 100%;
         }
 
-        mwc-textfield#edit-template-name {
+        mwc-textfield#edit-pipeline-name {
           margin-bottom: 10px;
         }
 
-        mwc-textfield#template-name {
+        mwc-textfield#pipeline-name {
           margin:auto 10px;
           height: 36px;
           width: auto;
@@ -145,7 +145,7 @@ export default class PipelineTemplateView extends LitElement {
     });
     document.addEventListener('flow-response', (e:any) => {
       if (e.detail) {
-        this.templateInfo.data = e.detail;
+        this.pipelineInfo.data = e.detail;
       }
     })
   }
@@ -160,7 +160,7 @@ export default class PipelineTemplateView extends LitElement {
   }
 
   /**
-   * Create a task in pipeline template
+   * Create a task in pipeline
    */
   _createTask() {
     /**
@@ -195,7 +195,7 @@ export default class PipelineTemplateView extends LitElement {
   }
 
   /**
-   * Edit the selected task in pipeline template
+   * Edit the selected task in pipeline
    */
   _editTask() {
     /**
@@ -216,7 +216,7 @@ export default class PipelineTemplateView extends LitElement {
   }
 
   /**
-   * Remove the selected task in pipeline template
+   * Remove the selected task in pipeline
    */
   _removeTask() {
     /**
@@ -236,30 +236,30 @@ export default class PipelineTemplateView extends LitElement {
   }
 
   /**
-   * Update Template Information to current change
+   * Update Pipeline Information to current change
    * 
    */
-   _updateTemplate() {
-     const name = this.shadowRoot.querySelector('#edit-template-name').value;
+   _updatePipelineInfo() {
+     const name = this.shadowRoot.querySelector('#edit-pipeline-name').value;
      const selectedProject = this.shadowRoot.querySelector('#edit-project').value;
      /**
-      * TODO: Update Template info based on current value
+      * TODO: Update pipeline info based on current value
       * 
       * procedure:
       *     step 1. Send update request to corresponding API server
-      *     step 2. Receive the response and if succeeds, then change current template info
-      *     step 3. Close the edit-template dialog
+      *     step 2. Receive the response and if succeeds, then change current pipeline info
+      *     step 3. Close the edit-pipeline dialog
       */
 
     // step 1. Send update request to corresponding API server
 
-    // step 2. Receive the response and if succeeds, then change current template info
-    this.templateInfo.name = name;
-    this.templateInfo.project = selectedProject;
+    // step 2. Receive the response and if succeeds, then change current pipeline info
+    this.pipelineInfo.name = name;
+    this.pipelineInfo.project = selectedProject;
 
-    this.shadowRoot.querySelector('#template-name').value = this.templateInfo.name;
+    this.shadowRoot.querySelector('#pipeline-name').value = this.pipelineInfo.name;
 
-    this._hideDialogById('#edit-template');
+    this._hideDialogById('#edit-pipeline');
   }
 
 
@@ -283,23 +283,23 @@ export default class PipelineTemplateView extends LitElement {
         <div slot="message">
           <h3 class="tab horizontal center layout">
             <mwc-tab-bar>
-              <mwc-tab title="template-list" label="Template List" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
-              <mwc-tab title="template-view" label="Template View" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
+              <mwc-tab title="pipeline-list" label="List" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
+              <mwc-tab title="pipeline-view" label="View" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
             </mwc-tab-bar>
           </h3>
-        <div id="template-list" class="tab-content">
-          <pipeline-template-list></pipeline-template-list>
+        <div id="pipeline-list" class="tab-content">
+          <pipeline-list></pipeline-list>
         </div>
-        <div id="template-view" class="tab-content" style="display:none;">
+        <div id="pipeline-view" class="tab-content" style="display:none;">
           <div class="horizontal layout flex justified">
             <div class="horizontal layout flex center start-justified">
-            <span id="template-name">${this.templateInfo.name}</span>
-            <mwc-select id="template-version" label="Version">
+            <span id="pipeline-name">${this.pipelineInfo.name}</span>
+            <mwc-select id="pipeline-version" label="Version">
               <mwc-list-item selected value="Latest">Latest</mwc-list-item>
             </mwc-select>
             <mwc-icon-button icon="save" @click="${() => this._getCurrentFlowData()}"></mwc-icon-button>
-            <mwc-icon-button icon="play_arrow" @click="${() => this._launchDialogById('#run-template')}"></mwc-icon-button>
-            <mwc-icon-button icon="settings" @click="${() => this._launchDialogById('#edit-template')}"></mwc-icon-button>
+            <mwc-icon-button icon="play_arrow" @click="${() => this._launchDialogById('#run-pipeline')}"></mwc-icon-button>
+            <mwc-icon-button icon="settings" @click="${() => this._launchDialogById('#edit-pipeline')}"></mwc-icon-button>
             </div>
             <div class="horizontal layout flex center end-justified">
               ${this.isNodeSelected ? html`
@@ -312,27 +312,27 @@ export default class PipelineTemplateView extends LitElement {
           <pipeline-flow isEditable></pipeline-flow>
         </div>
       </lablup-activity-panel>
-      <pipeline-dialog id="run-template" fixed backdrop blockscrolling persistent>
-        <span slot="title">Run Template</span>
+      <pipeline-dialog id="run-pipeline" fixed backdrop blockscrolling persistent>
+        <span slot="title">Run Pipeline</span>
         <div slot="content"></div>
         <div slot="footer" class="horizontal layout end-justified flex">
-          <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#run-template')}"></mwc-button>
+          <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#run-pipeline')}"></mwc-button>
           <mwc-button unelevated label="Proceed"></mwc-button>
         </div>
       </pipeline-dialog>
-      <pipeline-dialog id="edit-template" fixed backdrop blockscrolling persistent>
-        <span slot="title">Edit Template</span>
+      <pipeline-dialog id="edit-pipeline" fixed backdrop blockscrolling persistent>
+        <span slot="title">Edit Pipeline</span>
         <div slot="content">
-          <mwc-textfield id="edit-template-name" label="Template Name" value="${this.templateInfo.name}"></mwc-textfield>
+          <mwc-textfield id="edit-pipeline-name" label="Pipeline Name" value="${this.pipelineInfo.name}"></mwc-textfield>
           <mwc-select class="full-width" id="edit-project" label="Project" fixedMenuPosition>
             ${this.projectGroups.map((item) => {
-              return html`<mwc-list-item id="${item}" value="${item}" ?selected="${item === this.templateInfo.project}">${item}</mwc-list-item>`
+              return html`<mwc-list-item id="${item}" value="${item}" ?selected="${item === this.pipelineInfo.project}">${item}</mwc-list-item>`
             })}
           </mwc-select>
         </div>
         <div slot="footer" class="horizontal layout end-justified flex">
-          <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#edit-template')}"></mwc-button>
-          <mwc-button unelevated label="Update" @click="${() => this._updateTemplate()}"></mwc-button>
+          <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#edit-pipeline')}"></mwc-button>
+          <mwc-button unelevated label="Update" @click="${() => this._updatePipelineInfo()}"></mwc-button>
         </div>
       </pipeline-dialog>
       <pipeline-dialog id="edit-task" fixed backdrop blockscrolling persistent>
@@ -358,6 +358,6 @@ export default class PipelineTemplateView extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'pipeline-template-view': PipelineTemplateView;
+    'pipeline-view': PipelineView;
   }
 }

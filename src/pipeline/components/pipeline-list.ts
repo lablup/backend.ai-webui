@@ -19,29 +19,29 @@ import '@material/mwc-select';
 import '../lib/pipeline-dialog';
 
 /**
- Pipeline Template List
+ Pipeline List
 
- `pipeline-template-list` is fetches and lists of created/imported pipeline templates
+ `pipeline-list` is fetches and lists of created/imported pipelines
 
  Example:
 
- <pipeline-template-list>
+ <pipeline-list>
  ...
- </pipeline-template-list>
+ </pipeline-list>
 
 @group Backend.AI pipeline
- @element pipeline-template-list
+ @element pipeline-list
 */
-@customElement('pipeline-template-list')
-export default class PipelineTemplateList extends LitElement {
+@customElement('pipeline-list')
+export default class PipelineList extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Array}) projectGroups = ['default']; // contains project groups that user can access
-  @property({type: Array}) templateType = ['from URL', 'YAML', 'Custom template'];
-  @property({type: Object}) templateInfo;
+  @property({type: Array}) pipelineType = ['from Template', 'YAML', 'Custom'];
+  @property({type: Object}) pipelineInfo;
 
   constructor() {
     super();
-    this.templateInfo = {
+    this.pipelineInfo = {
       name: "",
       project: "",
       type: "",
@@ -80,15 +80,15 @@ export default class PipelineTemplateList extends LitElement {
   }
   
   /**
-   * Create a pipeline template
+   * Create a pipeline
    */
-  _createTemplate() {
+  _createPipeline() {
     /**
-     * TODO: Add pipeline template according to selected template type
+     * TODO: Add pipeline according to selected type
      * 
      */
-    console.log('_createTempalte function called!');
-    this._hideDialogById('#create-template');
+    console.log('_createPipeline function called!');
+    this._hideDialogById('#create-pipeline');
   }
 
   _launchDialogById(id) {
@@ -103,26 +103,26 @@ export default class PipelineTemplateList extends LitElement {
     // language=HTML
     return html`
     <div class="horizontal layout flex center end-justified">
-      <mwc-button unelevated icon="add" label="New Template" @click="${() => this._launchDialogById('#create-template')}"></mwc-button>
+      <mwc-button unelevated icon="add" label="New Pipeline" @click="${() => this._launchDialogById('#create-pipeline')}"></mwc-button>
     </div>
-    <pipeline-dialog id="create-template" fixed backdrop blockscrolling persistent>
-      <span slot="title">New Template</span>
+    <pipeline-dialog id="create-pipeline" fixed backdrop blockscrolling persistent>
+      <span slot="title">New Pipeline</span>
       <div slot="content" class="vertical layout flex">
-        <mwc-textfield id="template-name" label="Template Name"></mwc-textfield>
+        <mwc-textfield id="pipeline-name" label="Pipeline Name"></mwc-textfield>
         <mwc-select class="full-width" id="project" label="Project" fixedMenuPosition>
           ${this.projectGroups.map((item, idx) => {
             return html`<mwc-list-item id="${item}" value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>`
           })}
         </mwc-select>
-        <mwc-select class="full-width" id="template-type" label="Template Type" fixedMenuPosition>
-          ${this.templateType.map((item) => {
-            return html`<mwc-list-item id="${item}" value="${item}" ?selected="${item === 'Custom template'}">${item}</mwc-list-item>`
+        <mwc-select class="full-width" id="pipeline-type" label="Pipeline Type" fixedMenuPosition>
+          ${this.pipelineType.map((item) => {
+            return html`<mwc-list-item id="${item}" value="${item}" ?selected="${item === 'Custom'}">${item}</mwc-list-item>`
           })}
         </mwc-select>
       </div>
       <div slot="footer" class="horizontal layout end-justified flex">
-        <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#create-template')}"></mwc-button>
-        <mwc-button unelevated label="Create" @click="${() => this._createTemplate()}"></mwc-button>
+        <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#create-pipeline')}"></mwc-button>
+        <mwc-button unelevated label="Create" @click="${() => this._createPipeline()}"></mwc-button>
       </div>
     </pipeline-dialog>
     `;
@@ -131,6 +131,6 @@ export default class PipelineTemplateList extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'pipeline-template-list': PipelineTemplateList;
+    'pipeline-list': PipelineList;
   }
 }
