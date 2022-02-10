@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {css, CSSResultGroup, html, LitElement, render} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
 import {BackendAiStyles} from '../../components/backend-ai-general-styles';
@@ -20,7 +20,6 @@ import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
-import PipelineUtils from '../lib/pipeline-utils';
 import './pipeline-job-list';
 import '../lib/pipeline-flow';
 import '../../components/lablup-activity-panel';
@@ -44,9 +43,33 @@ import '../../components/backend-ai-dialog';
 export default class PipelineJobView extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: String}) _activeTab = 'runner-list';
-  @property({type: Object}) pipeline = Object();
   @property({type: String}) totalDuration;
   @property({type: Boolean}) isRunning = false;
+  // @property({type: Object}) pipeline = Object();
+  @property({type: Object}) pipeline = { // hard coded for demo
+    tasks: [
+      {
+        name: 'task1',
+        description: 'task1',
+        type: 'github',
+        module_uri: 'github.com/lablup/backend.ai-modules@v2',
+        command: ['ls', '-al'],
+        environment: {
+          'scaling-group': 'default',
+          'image': 'cr.backend.ai/testing/ngc-pytorch:20.11-py3',
+          'envs': '{"ENV1":"hello world"}',
+        },
+        resources: {
+          'cpu': 2,
+          'mem': 4,
+          'cuda.shares': 0.2,
+        },
+        mounts: ['folder1', 'folder2'],
+        depends: ['task3', 'task5'],
+      },
+    ],
+  };
+
 
   constructor() {
     super();
@@ -73,13 +96,32 @@ export default class PipelineJobView extends LitElement {
           --mdc-tab-color-default: var(--general-tabbar-background-color);
           --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
         }
+        
+        mwc-icon-button {
+          color: var(--general-button-background-color);
+        }
+
+        div.configuration {
+          width: 90px !important;
+          height: 20px;
+        }
+
+        div.configuration mwc-icon {
+          padding-right: 5px;
+        }
+
+        mwc-icon.indicator {
+          --mdc-icon-size: 16px;
+        }
+
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
 
         .tab-content {
           width: 100%;
-        }
-
-        mwc-icon-button {
-          color: var(--general-button-background-color);
         }
 
         #pipeline-list {
@@ -116,9 +158,7 @@ export default class PipelineJobView extends LitElement {
   }
 
   firstUpdated() {
-    if (this.pipeline?.started_at && this.pipeline?.last_updated) {
-      this.totalDuration = PipelineUtils._humanReadableTimeDuration(this.pipeline.started_at, this.pipeline.last_updated);
-    }
+    this._setVaadinGridRenderers();
   }
 
   _showTab(tab) {
@@ -166,6 +206,36 @@ export default class PipelineJobView extends LitElement {
     }
   }
 
+  _setVaadinGridRenderers() {
+    const columns = this.shadowRoot.querySelectorAll('#pipeline-task-list vaadin-grid-column');
+    columns[0].renderer = (root, column, rowData) => { // #
+      root.textContent = rowData.index + 1;
+    };
+    columns[1].renderer = (root, column, rowData) => { // resources
+      render(html`
+        <div class="layout vertical flex">
+          <div class="layout horizontal center configuration">
+            <mwc-icon class="fg green indicator">developer_board</mwc-icon>
+            <span>${rowData.item.resources.cpu}</span>
+            <span class="indicator">core</span>
+          </div>
+          <div class="layout horizontal center configuration">
+            <mwc-icon class="fg green indicator">memory</mwc-icon>
+            <span>${rowData.item.resources.mem}</span>
+            <span class="indicator">GB</span>
+          </div>
+          ${rowData.item.resources['cuda.shares'] ? html`
+            <div class="layout horizontal center configuration">
+              <mwc-icon class="fg green indicator">view_module</mwc-icon>
+              <span>${rowData.item.resources['cuda.shares']}</span>
+              <span class="indicator">GPU</span>
+            </div>
+          ` : html``}
+        </div>
+      `, root);
+    };
+  }
+
   render() {
     // language=HTML
     return html`
@@ -204,14 +274,13 @@ export default class PipelineJobView extends LitElement {
               </div>
             </h4>
             <pipeline-flow id="pipeline-job-flow"></pipeline-flow>
-            <vaadin-grid id="pipeline-task-list" theme="row-stripes column-borders compact">
+            <vaadin-grid id="pipeline-task-list" theme="row-stripes column-borders compact"
+              aria-label="Pipeline Task List" .items="${this.pipeline.tasks}">
               <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" frozen></vaadin-grid-column>
-              <vaadin-grid-filter-column id="pipeline-name" width="120px" path="name" header="Name" resizable frozen></vaadin-grid-filter-column>
-              <vaadin-grid-column header="Resources" resizable></vaadin-grid-column>
-              <vaadin-grid-column header="Status" resizable></vaadin-grid-column>
-              <vaadin-grid-sort-column path="start_time" header="Start Time" resizable></vaadin-grid-sort-column>
-              <vaadin-grid-sort-column path="end_time" header="End Time" resizable></vaadin-grid-sort-column>
-              <vaadin-grid-column width="150px" header="Duration" resizable></vaadin-grid-column>
+              <vaadin-grid-filter-column width="120px" path="name" header="Name" resizable frozen></vaadin-grid-filter-column>
+              <vaadin-grid-sort-column path="type" header="Type" resizable></vaadin-grid-sort-column>
+              <vaadin-grid-column path="resources" header="Resources" resizable></vaadin-grid-column>
+              <vaadin-grid-column path="command" header="Command" resizable></vaadin-grid-column>
             </vaadin-grid>
           </div>
         </div>
