@@ -351,7 +351,6 @@ export default class BackendAILogin extends BackendAIPage {
     this.endpoints = globalThis.backendaioptions.get('endpoints', []);
   }
 
-  
 
   /**
    * Change the signin mode with SESSION or API

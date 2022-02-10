@@ -222,7 +222,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
 
         #work-dialog {
-          --component-height: calc(100vh - 50px);
+          --component-width: calc(100% - 80px);
+          --component-height: auto;
           right: 0;
           top: 50px;
         }
@@ -235,19 +236,17 @@ export default class BackendAiSessionList extends BackendAIPage {
           #work-dialog,
           #work-dialog.mini_ui {
             left: 0;
-            --component-width: 100%;
+            --component-width: 95%;
           }
         }
 
         @media screen and (min-width: 900px) {
           #work-dialog {
             left: 100px;
-            --component-width: calc(100% - 50px);
           }
 
           #work-dialog.mini_ui {
             left: 40px;
-            --component-width: calc(100% - 50px);
           }
         }
 
@@ -259,6 +258,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           height: calc(100vh - 120px);
           background-color: #222222;
           color: #efefef;
+        }
+
+        #work-area pre {
+          white-space: pre-wrap;
+          white-space: -moz-pre-wrap;
+          white-space: -pre-wrap;
+          white-space: -o-pre-wrap;
+          word-wrap: break-word;
         }
 
         div.indicator,
@@ -1212,7 +1219,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   /**
    * Show tooltip when mouseenter the corresponding element
-   * 
+   *
    * @param {string} elementId
    */
   _showTooltip(elementId = '') {
@@ -1224,7 +1231,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   /**
    * Hide tooltip when mouseleave the corresponding element
-   * 
+   *
    * @param {string} elementId
    */
   _hideTooltip(elementId = '') {
@@ -1332,11 +1339,12 @@ export default class BackendAiSessionList extends BackendAIPage {
       const sanitizeErrMsg = (msg) => {
         return msg ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : '';
       };
+      const errorList = tmpSessionStatus.error.collection ?? [tmpSessionStatus.error];
       statusDetailEl.innerHTML += `
       <div class="vertical layout start flex" style="width:100%;">
         <div style="width:100%;">
           <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
-            ${tmpSessionStatus.error.collection.map((item) => {
+            ${errorList.map((item) => {
     return `
               <div style="border-radius: 4px;background-color:var(--paper-grey-300);padding:10px;margin:10px;">
                 <div class="vertical layout start">
@@ -1465,7 +1473,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   /**
    * Render session type - batch or interactive
-   * 
+   *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
@@ -1629,7 +1637,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <mwc-icon-button class="fg red controls-running"
                                icon="power_settings_new" @click="${(e) => this._openTerminateSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
-          ${(this._isRunning && !this._isPreparing(rowData.item.status) || this._APIMajorVersion > 4)  && !this._isPending(rowData.item.status) ? html`
+          ${(this._isRunning && !this._isPreparing(rowData.item.status) || this._APIMajorVersion > 4) && !this._isPending(rowData.item.status) ? html`
             <mwc-icon-button class="fg blue controls-running" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"></mwc-icon-button>
           ` : html`
@@ -2000,8 +2008,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         </vaadin-grid-filter-column>
         ${this._isIntegratedCondition ? html`
           <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
-        `
-        : html``}
+        ` :
+    html``}
         <vaadin-grid-filter-column path="status" auto-width header="${_t('session.Status')}" resizable
                                    .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-filter-column>
