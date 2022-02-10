@@ -58,7 +58,7 @@ export default class PipelineFlow extends LitElement {
           display: inline-flex;
           position: relative;
           width: 100%;
-          height: 800px;
+          height: var(--pane-height, 800px); // height of pipeline-flow pane
           background: var(--dfBackgroundColor);
           background-size: var(--dfBackgroundSize) var(--dfBackgroundSize);
           background-image: var(--dfBackgroundImage);

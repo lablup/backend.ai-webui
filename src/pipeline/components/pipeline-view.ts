@@ -25,6 +25,7 @@ import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-textfield';
 import '../lib/pipeline-flow';
 import './pipeline-list';
+import * as e from 'express';
 
 /**
  Pipeline View
@@ -86,9 +87,12 @@ export default class PipelineView extends LitElement {
 
     // dummy data for pipeline info
     this.pipelineInfo = {
-      name: "Flow-01",
-      project: "default",
-      type: "custom",
+      name: "",
+      scaling_group: "",
+      owner: "",
+      type: "",
+      created_at: "",
+      modified_at: "",
       data: {},
     };
 
@@ -197,6 +201,10 @@ export default class PipelineView extends LitElement {
           color: #555;
           min-width: 100px; 
         }
+
+        pipeline-flow {
+          --pane-height: 500px;
+        }
       `
     ];
   }
@@ -256,7 +264,19 @@ export default class PipelineView extends LitElement {
       if (e.detail) {
         this.pipelineInfo.data = e.detail;
       }
-    })
+    });
+    document.addEventListener('pipeline-view-active-tab-change', (e:any) => {
+      if (e.detail) {
+        const tabGroup = [...this.shadowRoot.querySelector('#pipeline-pane').children];
+        this.shadowRoot.querySelector('#pipeline-pane').activeIndex = tabGroup.map(tab => tab.title).indexOf(e.detail.activeTab.title);
+        this._showTab(e.detail.activeTab, '.tab-content');
+        this.pipelineInfo = e.detail.pipeline;
+        /**
+         * TODO: load pipeline infomation to pipeline-flow pane
+         */
+        this.shadowRoot.querySelector('#pipeline-name').innerHTML = this.pipelineInfo.name;
+      }
+    });
   }
 
   _showTab(tab, tabClass='') {
@@ -591,7 +611,7 @@ export default class PipelineView extends LitElement {
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal center layout">
-            <mwc-tab-bar>
+            <mwc-tab-bar id="pipeline-pane">
               <mwc-tab title="pipeline-list" label="List" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
               <mwc-tab title="pipeline-view" label="View" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
             </mwc-tab-bar>
@@ -602,7 +622,7 @@ export default class PipelineView extends LitElement {
         <div id="pipeline-view" class="tab-content" style="display:none;">
           <div class="horizontal layout flex justified">
             <div class="horizontal layout flex center start-justified">
-            <span id="pipeline-name">${this.pipelineInfo.name}</span>
+            <span id="pipeline-name"></span>
             <mwc-select id="pipeline-version" label="Version">
               <mwc-list-item selected value="Latest">Latest</mwc-list-item>
             </mwc-select>
@@ -614,8 +634,9 @@ export default class PipelineView extends LitElement {
               ${this.isNodeSelected ? html`
                 <mwc-button outlined icon="delete" label="Remove Task" @click="${() => this._removeTask()}"></mwc-button>
                 <mwc-button outlined icon="edit" label="Edit Task" @click="${() => this._showTaskEditDialog()}"></mwc-button>
-              ` : html``}
+              ` : html`
                 <mwc-button unelevated icon="add" label="New Task" @click="${() => this._showTaskCreateDialog()}"></mwc-button>
+              `}
             </div>
           </div>
           <pipeline-flow isEditable></pipeline-flow>
