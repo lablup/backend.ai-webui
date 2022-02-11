@@ -256,7 +256,7 @@ export default class PipelineJobView extends LitElement {
           <div id="pipeline-job-view" class="tab-content item card" style="display:none;">
             <h4 class="horizontal flex center center-justified layout">
               <mwc-select id="pipeline-list" label="Pipeline">
-                ${this.pipelineJobs?.filter((job) => ['WAITING', 'RUNNING', 'STOPPED'].includes(job.status)).map((job) => {
+                ${this.pipelineJobs?.map((job) => {
     return html`
                 <mwc-list-item value="${job.name}" 
                   ?selected="${job.name === this.pipelineJob.name}"
@@ -268,7 +268,9 @@ export default class PipelineJobView extends LitElement {
                 <span class="monospace" slot="secondary">${PipelineUtils._humanReadableTimeDuration(this.pipelineJob.created_at, this.pipelineJob.last_updated)}</span>
               </mwc-list-item>
               <span class="flex"></span>
-              <mwc-button label="Start" icon="play_arrow" @click="${(e) => this._toggleRunning(e)}"></mwc-button>
+              ${['WAITING', 'RUNNING', 'STOPPED'].includes(this.pipelineJob.status) ? html`
+                <mwc-button label="Start" icon="play_arrow" @click="${(e) => this._toggleRunning(e)}"></mwc-button>
+              ` : html``}
               <div id="dropdown-menu-container">
                 <mwc-icon-button icon="more_horiz" @click="${(e) => this._toggleDropDown(e)}"></mwc-icon-button>
                 <mwc-menu id="dropdown-menu" corner="BOTTOM_LEFT">
