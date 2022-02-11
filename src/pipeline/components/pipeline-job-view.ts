@@ -47,6 +47,7 @@ export default class PipelineJobView extends LitElement {
   @property({type: String}) totalDuration;
   @property({type: Boolean}) isRunning = false;
   @property({type: Object}) pipelineJob = Object();
+  @property({type: Array}) pipelineJobs;
 
 
   constructor() {
@@ -143,10 +144,12 @@ export default class PipelineJobView extends LitElement {
     this._setVaadinGridRenderers();
     document.addEventListener('pipeline-job-view-active-tab-change', (e: any) => {
       if (e.detail) {
+        this.shadowRoot.querySelector('#pipeline-task-list').items = []; // init task list for re-rendering.
         const tabGroup = [...this.shadowRoot.querySelector('#pipeline-job-pane').children];
         this.shadowRoot.querySelector('#pipeline-job-pane').activeIndex = tabGroup.map((tab) => tab.title).indexOf(e.detail.activeTab.title);
         this._showTab(e.detail.activeTab, '.tab-content');
         this.pipelineJob = e.detail.pipelineJob;
+        this.pipelineJobs = e.detail.pipelineJobs;
       }
     });
   }
@@ -242,7 +245,11 @@ export default class PipelineJobView extends LitElement {
           </div>
           <div id="pipeline-job-view" class="tab-content item card" style="display:none;">
             <h4 class="horizontal flex center center-justified layout">
-              <mwc-select id="pipeline-list" label="Pipeline"></mwc-select>
+              <mwc-select id="pipeline-list" label="Pipeline">
+                ${this.pipelineJobs?.filter((job) => ['WAITING', 'RUNNING', 'STOPPED'].includes(job.status)).map((job) => {
+    return html`<mwc-list-item value="${job.name}" ?selected="${job.name === this.pipelineJob.name}">${job.name}</mwc-list-item>`;
+  })}
+              </mwc-select>
               <mwc-list-item twoline>
                 <span><strong>Duration</strong></span>
                 <span class="monospace" slot="secondary">${PipelineUtils._humanReadableTimeDuration(this.pipelineJob.created_at, this.pipelineJob.last_updated)}</span>
