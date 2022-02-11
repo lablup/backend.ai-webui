@@ -159,8 +159,8 @@ export default class PipelineView extends LitElement {
           --mdc-theme-primary: var(--general-sidebar-color);
           --mdc-menu-item-height: auto;
           /* Need to be set when fixedMenuPosition attribute is enabled */
-          --mdc-menu-max-width: 385px;
-          --mdc-menu-min-width: 385px;
+          --mdc-menu-max-width: 360px;
+          --mdc-menu-min-width: 360px;
         }
 
         mwc-select#pipeline-version {
@@ -654,9 +654,9 @@ export default class PipelineView extends LitElement {
         <span slot="title">Edit Pipeline</span>
         <div slot="content">
           <mwc-textfield id="edit-pipeline-name" label="Pipeline Name" value="${this.pipelineInfo.name}" required></mwc-textfield>
-          <mwc-select class="full-width" id="edit-project" label="Project" fixedMenuPosition required>
+          <mwc-select class="full-width" id="edit-scaling-group" label="ScalingGroup" fixedMenuPosition required>
             ${this.projectGroups.map((item) => {
-              return html`<mwc-list-item id="${item}" value="${item}" ?selected="${item === this.pipelineInfo.project}">${item}</mwc-list-item>`
+              return html`<mwc-list-item id="${item}" value="${item}" ?selected="${item === this.pipelineInfo.scaling_group}">${item}</mwc-list-item>`
             })}
           </mwc-select>
         </div>
@@ -665,7 +665,7 @@ export default class PipelineView extends LitElement {
           <mwc-button unelevated label="Update" @click="${() => this._updatePipelineInfo()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="task-dialog" fixed backdrop blockscrolling persistent narrowLayout>
+      <backend-ai-dialog id="task-dialog" fixed backdrop blockscrolling persistent>
         <span slot="title">${this.isNodeSelected ? "Edit Task" : "Add Task"}</span>
         <div slot="content" class="vertical layout center flex">
           <mwc-tab-bar class="task-tab">

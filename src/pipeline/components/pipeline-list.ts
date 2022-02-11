@@ -110,6 +110,10 @@ export default class PipelineList extends LitElement {
           margin: 10px;
         }
 
+        mwc-button.full-width {
+          width: 100%;
+        }
+
         mwc-select.full-width {
           width: 100%;
           font-family: var(--general-font-family);
@@ -345,8 +349,7 @@ export default class PipelineList extends LitElement {
         </mwc-select>
       </div>
       <div slot="footer" class="horizontal layout end-justified flex">
-        <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#create-pipeline')}"></mwc-button>
-        <mwc-button unelevated label="Create" @click="${() => this._createPipeline()}"></mwc-button>
+        <mwc-button class="full-width" unelevated label="Create Pipeline" @click="${() => this._createPipeline()}"></mwc-button>
       </div>
     </backend-ai-dialog>
     `;
