@@ -115,6 +115,10 @@ export default class LablupSlider extends LitElement {
   update(changedProperties: Map<any, any>) {
     if (Array.from(changedProperties.keys()).some((item) => ['value', 'min', 'max'].includes(item))) {
       this.min = (this.min >= this.max) ? 0 : this.min;
+      if (this.min == this.max && this.max == 0) {
+        this.max = this.max + 1;
+        this.disabled = true;
+      }
     }
     // this.min = (this.min > this.max) ? this.max : this.min;
     super.update(changedProperties);

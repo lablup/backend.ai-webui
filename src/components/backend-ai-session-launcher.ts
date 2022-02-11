@@ -387,7 +387,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width:70px;
           opacity: 1;
         }
-        
+
         .cluster-allocated {
           min-width: 40px;
           min-height: 40px;
@@ -2971,7 +2971,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       <div class="horizontal layout end-justified center flex">
                         ${item.tags ? item.tags.map((item) => html`
                           <lablup-shields style="margin-right:5px;" color="${item.color}"
-                                          description=""></lablup-shields>
+                                          description="${item.tag}"></lablup-shields>
                         `) : ''}
                         <mwc-icon-button icon="info"
                                          class="fg blue info"
@@ -3413,7 +3413,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                        this.sessionInfoObj.environment).toUpperCase()}"
                                     color="green"
                                     description="${this.sessionInfoObj.version[0]}"
-                                    ui="round" 
+                                    ui="round"
                                     style="margin-right:3px;"></lablup-shields>
                     <div class="horizontal layout">
                       ${this.sessionInfoObj.version.map((item, index) => {
@@ -3430,7 +3430,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     </div>
                     <lablup-shields color="blue"
                                     description="${this.sessionType.toUpperCase()}"
-                                    ui="round" 
+                                    ui="round"
                                     style="margin-top:3px;margin-right:3px;margin-bottom:9px;"></lablup-shields>
                   </div>` : html``}
               </div>
