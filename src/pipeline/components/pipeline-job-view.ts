@@ -20,6 +20,7 @@ import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
+import PipelineUtils from '../lib/pipeline-utils';
 import './pipeline-job-list';
 import '../lib/pipeline-flow';
 import '../../components/lablup-activity-panel';
@@ -42,33 +43,10 @@ import '../../components/backend-ai-dialog';
 @customElement('pipeline-job-view')
 export default class PipelineJobView extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: String}) _activeTab = 'runner-list';
+  @property({type: String}) _activeTab = 'job-list';
   @property({type: String}) totalDuration;
   @property({type: Boolean}) isRunning = false;
-  // @property({type: Object}) pipeline = Object();
-  @property({type: Object}) pipeline = { // hard coded for demo
-    tasks: [
-      {
-        name: 'task1',
-        description: 'task1',
-        type: 'github',
-        module_uri: 'github.com/lablup/backend.ai-modules@v2',
-        command: ['ls', '-al'],
-        environment: {
-          'scaling-group': 'default',
-          'image': 'cr.backend.ai/testing/ngc-pytorch:20.11-py3',
-          'envs': '{"ENV1":"hello world"}',
-        },
-        resources: {
-          'cpu': 2,
-          'mem': 4,
-          'cuda.shares': 0.2,
-        },
-        mounts: ['folder1', 'folder2'],
-        depends: ['task3', 'task5'],
-      },
-    ],
-  };
+  @property({type: Object}) pipelineJob = Object();
 
 
   constructor() {
@@ -129,6 +107,10 @@ export default class PipelineJobView extends LitElement {
           margin-right: 20px;
         }
 
+        #pipeline-job-flow {
+          --pane-height: 300px;
+        }
+
         #dropdown-menu-container {
           position: relative;
         }
@@ -159,10 +141,18 @@ export default class PipelineJobView extends LitElement {
 
   firstUpdated() {
     this._setVaadinGridRenderers();
+    document.addEventListener('pipeline-job-view-active-tab-change', (e: any) => {
+      if (e.detail) {
+        const tabGroup = [...this.shadowRoot.querySelector('#pipeline-job-pane').children];
+        this.shadowRoot.querySelector('#pipeline-job-pane').activeIndex = tabGroup.map((tab) => tab.title).indexOf(e.detail.activeTab.title);
+        this._showTab(e.detail.activeTab, '.tab-content');
+        this.pipelineJob = e.detail.pipelineJob;
+      }
+    });
   }
 
-  _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+  _showTab(tab, tabClass='') {
+    const els = this.shadowRoot.querySelectorAll(tabClass);
     for (const obj of els) {
       obj.style.display = 'none';
     }
@@ -242,20 +232,20 @@ export default class PipelineJobView extends LitElement {
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal center layout">
-            <mwc-tab-bar>
-              <mwc-tab title="runner-list" label="Job List" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="runner-view" label="Job View" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+            <mwc-tab-bar id="pipeline-job-pane">
+              <mwc-tab title="pipeline-job-list" label="Job List" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
+              <mwc-tab title="pipeline-job-view" label="Job View" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
             </mwc-tab-bar>
           </h3>
-          <div id="runner-list" class="tab-content">
+          <div id="pipeline-job-list" class="tab-content">
             <pipeline-job-list></pipeline-job-list>
           </div>
-          <div id="runner-view" class="tab-content item card" style="display:none;">
+          <div id="pipeline-job-view" class="tab-content item card" style="display:none;">
             <h4 class="horizontal flex center center-justified layout">
               <mwc-select id="pipeline-list" label="Pipeline"></mwc-select>
               <mwc-list-item twoline>
                 <span><strong>Duration</strong></span>
-                <span class="monospace" slot="secondary">${this.totalDuration}</span>
+                <span class="monospace" slot="secondary">${PipelineUtils._humanReadableTimeDuration(this.pipelineJob.created_at, this.pipelineJob.last_updated)}</span>
               </mwc-list-item>
               <span class="flex"></span>
               <mwc-button label="Start" icon="play_arrow" @click="${(e) => this._toggleRunning(e)}"></mwc-button>
@@ -275,7 +265,7 @@ export default class PipelineJobView extends LitElement {
             </h4>
             <pipeline-flow id="pipeline-job-flow"></pipeline-flow>
             <vaadin-grid id="pipeline-task-list" theme="row-stripes column-borders compact"
-              aria-label="Pipeline Task List" .items="${this.pipeline.tasks}">
+              aria-label="Pipeline Task List" .items="${this.pipelineJob.tasks}">
               <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" frozen></vaadin-grid-column>
               <vaadin-grid-filter-column width="120px" path="name" header="Name" resizable frozen></vaadin-grid-filter-column>
               <vaadin-grid-sort-column path="type" header="Type" resizable></vaadin-grid-sort-column>

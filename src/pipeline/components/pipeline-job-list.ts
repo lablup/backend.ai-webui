@@ -42,8 +42,8 @@ import '../../components/backend-ai-dialog';
 @customElement('pipeline-job-list')
 export default class PipelineJobList extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  // @property({type: Array}) pipelines = [];
-  @property({type: Array}) pipelines = [ // hard coded for demo
+  // @property({type: Array}) pipelineJobs = [];
+  @property({type: Array}) pipelineJobs = [ // hard coded for demo
     {
       id: 1,
       name: 'test1',
@@ -53,6 +53,27 @@ export default class PipelineJobList extends LitElement {
       created_at: 1644288651967,
       ownership: 'admin',
       last_updated: new Date(),
+      tasks: [
+        {
+          name: 'task1',
+          description: 'task1',
+          type: 'github',
+          module_uri: 'github.com/lablup/backend.ai-modules@v2',
+          command: ['ls', '-al'],
+          environment: {
+            'scaling-group': 'default',
+            'image': 'cr.backend.ai/testing/ngc-pytorch:20.11-py3',
+            'envs': '{"ENV1":"hello world"}',
+          },
+          resources: {
+            'cpu': 2,
+            'mem': 4,
+            'cuda.shares': 0.2,
+          },
+          mounts: ['folder1', 'folder2'],
+          depends: ['task3', 'task5'],
+        },
+      ],
     },
     {
       id: 2,
@@ -95,7 +116,7 @@ export default class PipelineJobList extends LitElement {
     },
   ];
 
-  @property({type: Object}) pipeline = Object();
+  @property({type: Object}) pipelineJob = Object();
   @property({type: Object}) tasks;
   @property({type: Object}) options;
 
@@ -237,8 +258,22 @@ export default class PipelineJobList extends LitElement {
     }
   }
 
+  _loadPipelineView(pipelineJob) {
+    this.pipelineJob = pipelineJob;
+    PipelineUtils._setCustomEvent('pipeline-job-view-active-tab-change',
+      {
+        detail: {
+          activeTab: {
+            title: 'pipeline-job-view',
+          },
+          pipelineJob: this.pipelineJob,
+        }
+      }
+    );
+  }
+
   _setVaadinGridRenderers() {
-    const columns = this.shadowRoot.querySelectorAll('#pipeline-job-list vaadin-grid-column');
+    let columns = this.shadowRoot.querySelectorAll('#pipeline-job-list vaadin-grid-column');
     columns[0].renderer = (root, column, rowData) => { // #
       root.textContent = rowData.index + 1;
     };
@@ -267,7 +302,7 @@ export default class PipelineJobList extends LitElement {
           <mwc-icon-button class="fg green info"
             icon="assignment"
             @click="${() => {
-    this.pipeline = rowData.item;
+    this.pipelineJob = rowData.item;
     this._createTaskProgressChart();
     this._showDialog('pipeline-job-detail-dialog');
   }}"></mwc-icon-button>
@@ -276,10 +311,17 @@ export default class PipelineJobList extends LitElement {
             <mwc-icon-button class="fg green start"
               icon="${icon}"
               @click="${(e) => {
-    this.pipeline = rowData.item;
+    this.pipelineJob = rowData.item;
     this._toggleRunningIcon(e);
   }}"></mwc-icon-button>` : html``}
         </div>
+      `, root);
+    };
+
+    columns = this.shadowRoot.querySelectorAll('#pipeline-job-list vaadin-grid-filter-column');
+    columns[0].renderer = (root, column, rowData) => { // name
+      render(html`
+        <a @click="${() => this._loadPipelineView(rowData.item)}">${rowData.item.name}</a>
       `, root);
     };
   }
@@ -288,7 +330,7 @@ export default class PipelineJobList extends LitElement {
     // language=HTML
     return html`
       <vaadin-grid id="pipeline-job-list" theme="row-stripes column-borders compact"
-        aria-label="Pipeline Job List" .items="${this.pipelines}">
+        aria-label="Pipeline Job List" .items="${this.pipelineJobs}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" frozen></vaadin-grid-column>
         <vaadin-grid-filter-column id="pipeline-name" width="120px" path="name" header="Name" resizable frozen></vaadin-grid-filter-column>
         <vaadin-grid-sort-column path="version" header="Version" resizable></vaadin-grid-sort-column>
@@ -298,29 +340,29 @@ export default class PipelineJobList extends LitElement {
         <vaadin-grid-column id="pipeline-control" width="160px" flex-grow="0" header="Control" resizable></vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="pipeline-job-detail-dialog" fixed backdrop>
-        <span slot="title">${this.pipeline.name || 'Pipeline Details'}</span>
+        <span slot="title">${this.pipelineJob.name || 'Pipeline Details'}</span>
         <div slot="content" role="listbox" class="horizontal center layout">
           <mwc-list class="vertical center layout">
             <mwc-list-item twoline>
               <span><strong>ID</strong></span>
-              <span class="monospace" slot="secondary">${this.pipeline.id}</span>
+              <span class="monospace" slot="secondary">${this.pipelineJob.id}</span>
             </mwc-list-item>
             <mwc-list-item twoline>
               <span><strong>Created At</strong></span>
               <span class="monospace" slot="secondary">
-                ${PipelineUtils._toLocaleString(this.pipeline.created_at)}
+                ${PipelineUtils._toLocaleString(this.pipelineJob.created_at)}
               </span>
             </mwc-list-item>
             <mwc-list-item twoline>
               <span><strong>Updated At</strong></span>
               <span class="monospace" slot="secondary">
-                ${PipelineUtils._toLocaleString(this.pipeline.last_updated)}
+                ${PipelineUtils._toLocaleString(this.pipelineJob.last_updated)}
               </span>
             </mwc-list-item>
             <mwc-list-item twoline>
               <span><strong>Duration</strong></span>
               <span class="monospace" slot="secondary">
-                ${PipelineUtils._humanReadableTimeDuration(this.pipeline.created_at, this.pipeline.last_updated)}
+                ${PipelineUtils._humanReadableTimeDuration(this.pipelineJob.created_at, this.pipelineJob.last_updated)}
               </span>
             </mwc-list-item>
           </mwc-list>
@@ -328,20 +370,20 @@ export default class PipelineJobList extends LitElement {
             <mwc-list-item id="status" twoline>
               <span><strong>Status</strong></span>
               <div slot="secondary" class="horizontal center layout">
-                <lablup-shields id="pipeline-status" description="${this.pipeline.status}"
-                  color="${PipelineUtils._getStatusColor(this.pipeline.status)}"></lablup-shields>
+                <lablup-shields id="pipeline-status" description="${this.pipelineJob.status}"
+                  color="${PipelineUtils._getStatusColor(this.pipelineJob.status)}"></lablup-shields>
                 <chart-js id="tasks-status" type="doughnut" .data="${this.tasks}" .options="${this.options}" width="160" height="40"></chart-js>
               </div>
             </mwc-list-item>
-            ${this.pipeline.ownership ? html`
+            ${this.pipelineJob.ownership ? html`
               <mwc-list-item twoline>
                 <span><strong>Ownership</strong></span>
-                <span class="monospace" slot="secondary">${this.pipeline.ownership}</span>
+                <span class="monospace" slot="secondary">${this.pipelineJob.ownership}</span>
               </mwc-list-item>
             ` : html``}
             <mwc-list-item twoline>
               <span><strong>Mounted Folder</strong></span>
-              <span class="monospace" slot="secondary">${this.pipeline.vfolder}</span>
+              <span class="monospace" slot="secondary">${this.pipelineJob.vfolder}</span>
             </mwc-list-item>
             <mwc-list-item id="workflow-item" twoline>
               <span><strong>View Workflow File</strong></span>

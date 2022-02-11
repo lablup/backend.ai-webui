@@ -92,6 +92,11 @@ export default class PipelineUtils extends LitElement {
     return color;
   }
 
+  static _setCustomEvent(eventName: string, detail: any) {
+    const moveToViewEvent = new CustomEvent(eventName, detail);
+    document.dispatchEvent(moveToViewEvent);
+  }
+
   render() {
     // language=HTML
     return html`
