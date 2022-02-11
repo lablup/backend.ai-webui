@@ -144,7 +144,7 @@ export default class PipelineJobView extends LitElement {
     this._setVaadinGridRenderers();
     document.addEventListener('pipeline-job-view-active-tab-change', (e: any) => {
       if (e.detail) {
-        this.shadowRoot.querySelector('#pipeline-task-list').items = []; // init task list for re-rendering.
+        this._initPipelineTaskListItem();
         const tabGroup = [...this.shadowRoot.querySelector('#pipeline-job-pane').children];
         this.shadowRoot.querySelector('#pipeline-job-pane').activeIndex = tabGroup.map((tab) => tab.title).indexOf(e.detail.activeTab.title);
         this._showTab(e.detail.activeTab, '.tab-content');
@@ -165,6 +165,16 @@ export default class PipelineJobView extends LitElement {
 
   _showDialog(id) {
     this.shadowRoot.querySelector('#' + id).show();
+  }
+
+  _initPipelineTaskListItem() {
+    this.shadowRoot.querySelector('#pipeline-task-list').items = [];
+  }
+
+  _changePipelineJob(e) {
+    const selectedPipelineJobName = e.target.value;
+    this._initPipelineTaskListItem();
+    this.pipelineJob = this.pipelineJobs.filter((job) => job.name === selectedPipelineJobName)[0];
   }
 
   /**
@@ -247,7 +257,10 @@ export default class PipelineJobView extends LitElement {
             <h4 class="horizontal flex center center-justified layout">
               <mwc-select id="pipeline-list" label="Pipeline">
                 ${this.pipelineJobs?.filter((job) => ['WAITING', 'RUNNING', 'STOPPED'].includes(job.status)).map((job) => {
-    return html`<mwc-list-item value="${job.name}" ?selected="${job.name === this.pipelineJob.name}">${job.name}</mwc-list-item>`;
+    return html`
+                <mwc-list-item value="${job.name}" 
+                  ?selected="${job.name === this.pipelineJob.name}"
+                  @click="${(e) => this._changePipelineJob(e)}">${job.name}</mwc-list-item>`;
   })}
               </mwc-select>
               <mwc-list-item twoline>
