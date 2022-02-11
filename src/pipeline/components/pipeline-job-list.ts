@@ -258,7 +258,7 @@ export default class PipelineJobList extends LitElement {
     }
   }
 
-  _loadPipelineView(pipelineJob) {
+  _loadPipelineJobView(pipelineJob) {
     this.pipelineJob = pipelineJob;
     PipelineUtils._setCustomEvent('pipeline-job-view-active-tab-change',
       {
@@ -321,7 +321,7 @@ export default class PipelineJobList extends LitElement {
     columns = this.shadowRoot.querySelectorAll('#pipeline-job-list vaadin-grid-filter-column');
     columns[0].renderer = (root, column, rowData) => { // name
       render(html`
-        <a @click="${() => this._loadPipelineView(rowData.item)}">${rowData.item.name}</a>
+        <a @click="${() => this._loadPipelineJobView(rowData.item)}">${rowData.item.name}</a>
       `, root);
     };
   }
