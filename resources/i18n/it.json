@@ -763,7 +763,12 @@
     "ResourceGroupDeleted": "Gruppo di risorse eliminato con successo",
     "EnterValidResourceGroupName": "Inserisci un nome del gruppo di risorse valido",
     "ResourceGroupNameRequired": "Il nome del gruppo di risorse è obbligatorio.",
-    "ResourceGroupAlreadyExist": "Esiste già un gruppo di risorse con lo stesso nome."
+    "ResourceGroupAlreadyExist": "Esiste già un gruppo di risorse con lo stesso nome.",
+    "SetSchedulerOptions": "Imposta le opzioni di pianificazione",
+    "SchedulerOptsKey": "Chiave",
+    "SchedulerOptsValue": "Valore",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
+    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Generale",

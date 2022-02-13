@@ -3398,14 +3398,14 @@ class ScalingGroup {
    * @param {string} description - Scaling group description
    * @param {string} wsproxyAddress - wsproxy url (NEW in manager 21.09)
    */
-  async create(name, description = "", wsproxyAddress = null) {
+  async create(name, description = "", seheduler_opts = "{}", wsproxyAddress = null) {
     const input = {
       description: description,
       is_active: true,
       driver: "static",
       scheduler: "fifo",
       driver_opts: "{}",
-      scheduler_opts: "{}"
+      scheduler_opts: seheduler_opts
     };
     if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
       input['wsproxy_addr'] = wsproxyAddress;
@@ -3442,7 +3442,6 @@ class ScalingGroup {
       domain,
       scaling_group
     };
-
     return this.client.query(q, v);
   }
 

@@ -55,6 +55,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Array}) domains;
   @property({type: Array}) scalingGroups;
   @property({type: Array}) schedulerTypes;
+  @property({type: Object}) schedulerOpts;
 
   constructor() {
     super();
@@ -117,6 +118,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           --switch-bg-checked: #bbdefb;
         }
 
+        #modify-scheduler-opts-dialog wl-textfield {
+          --input-label-color: red;
+        }
+
         wl-select {
           --input-color-disabled: #222;
           --input-label-color-disabled: #222;
@@ -146,6 +151,31 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
         backend-ai-dialog {
           --component-min-width: 350px;
+        }
+
+        .scaling-option-title {
+          font-size: 15px;
+          color: #404040;
+          font-weight: 400;
+          margin: auto;
+          width: 100%;
+        }
+
+        #modify-scheduler-opts-dialog {
+          --component-max-height: 550px;
+          --component-width: 400px;
+        }
+
+        #modify-scheduler-opts-dialog div.container {
+          display: flex;
+          flex-direction: column;
+          padding: 0px 30px;
+        }
+
+        #modify-scheduler-opts-dialog div.row {
+          display: grid;
+          grid-template-columns: 4fr 4fr 1fr;
+          margin-bottom: 10px;
         }
       `
     ];
@@ -260,6 +290,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             @click=${() => {
     this.selectedIndex = rowData.index;
     this.shadowRoot.querySelector('#modify-scaling-group-active').selected = this.scalingGroups[rowData.index].is_active;
+    this._clearRows();
+    Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts)).map((item: any, index) => {
+      this._initializeSchedulerOptsRow(item[0], item[1]);
+    });
     this._launchDialogById('#modify-scaling-group-dialog');
   }}
           ><wl-icon>settings</wl-icon></wl-button>
@@ -273,6 +307,23 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         </div>
       `, root
     );
+  }
+
+  _schedulerOptionsRenderer(root, column, rowData) {
+    const scheduler_opts = Object.entries(JSON.parse(rowData.item.scheduler_opts));
+    render(
+      scheduler_opts.map((item) => {
+        return html`
+        <div style="margin-bottom:3px;">
+          <lablup-shields
+            app="${item[0]}"
+            color="green"
+            description="${item[1]}"
+            ui="flat"
+          ></lablup-shields>
+        </div>`;
+      })
+      , root);
   }
 
   _validateResourceGroupName() {
@@ -316,7 +367,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       const description = this.shadowRoot.querySelector('#scaling-group-description').value;
       const domain = this.shadowRoot.querySelector('#scaling-group-domain').value;
       const wsproxyAddress = this.shadowRoot.querySelector('#scaling-group-wsproxy-address').value;
-      globalThis.backendaiclient.scalingGroup.create(scalingGroup, description, wsproxyAddress)
+      const schedulerOptions = JSON.stringify(this.schedulerOpts);
+      globalThis.backendaiclient.scalingGroup.create(scalingGroup, description, schedulerOptions, wsproxyAddress)
         .then(({create_scaling_group: res}) => {
           if (res.ok) {
             return globalThis.backendaiclient.scalingGroup.associate_domain(domain, scalingGroup);
@@ -361,6 +413,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     const scheduler = this.shadowRoot.querySelector('#modify-scaling-group-scheduler').value;
     const is_active = this.shadowRoot.querySelector('#modify-scaling-group-active').checked;
     let wsproxy_addr: string = this.shadowRoot.querySelector('#modify-scaling-group-wsproxy-address').value;
+    const schedulerOptions = this.schedulerOpts;
     if (wsproxy_addr.endsWith('/')) {
       wsproxy_addr = wsproxy_addr.slice(0, wsproxy_addr.length - 1);
     }
@@ -371,6 +424,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     if (scheduler !== this.scalingGroups[this.selectedIndex].scheduler) input['scheduler'] = scheduler;
     if (is_active !== this.scalingGroups[this.selectedIndex].is_active) input['is_active'] = is_active;
     if (wsproxy_addr !== this.scalingGroups[this.selectedIndex].wsproxy_addr) input['wsproxy_addr'] = wsproxy_addr;
+    if (schedulerOptions !== this.scalingGroups[this.selectedIndex].scheduler_opts) input['scheduler_opts'] = JSON.stringify(schedulerOptions);
 
     if (Object.keys(input).length === 0) {
       this.notification.text = _text('resourceGroup.NochangesMade');
@@ -381,7 +435,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     globalThis.backendaiclient.scalingGroup.update(name, input)
       .then(({modify_scaling_group}) => {
         if (modify_scaling_group.ok) {
-          this.notification.text = _text('resourceGroup.ResourceGroupCreated');
+          this.notification.text = _text('resourceGroup.ResourceGroupModified');
           this._refreshList();
         } else {
           this.notification.text = PainKiller.relieve(modify_scaling_group.msg);
@@ -427,6 +481,198 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       });
   }
 
+  _removeEmptySchedulerOpts() {
+    const container = this.shadowRoot.querySelector('#modify-scheduler-opts-container');
+    const rows = container.querySelectorAll('.row.extra');
+    const empty = (row) => Array.prototype.filter.call(
+      row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
+    ).length === 2;
+    Array.prototype.filter.call(rows, (row) => empty(row)).map((row) => row.parentNode.removeChild(row));
+  }
+
+  _showSchedulerOptsDialog() {
+    this._removeEmptySchedulerOpts();
+    const modifySchedulerOptsDialog = this.shadowRoot.querySelector('#modify-scheduler-opts-dialog');
+    modifySchedulerOptsDialog.show();
+  }
+
+  _removeSchedulerOptsItem(e) {
+    e.target.parentNode?.remove();
+  }
+
+  _initializeSchedulerOptsRow(name = '', value = '') {
+    const container = this.shadowRoot.querySelector('#modify-scheduler-opts-container');
+    const lastChild = container.children[container.children.length - 1];
+    const div = this._createSchedulerOptsRow(name, value);
+    container.insertBefore(div, lastChild.nextSibling);
+  }
+
+  _appendSchedulerOptsRow(name = '', value = '') {
+    const container = this.shadowRoot.querySelector('#modify-scheduler-opts-container');
+    const lastChild = container.children[1];
+    const div = this._createSchedulerOptsRow(name, value);
+    container.insertBefore(div, lastChild.nextSibling);
+  }
+
+  _createSchedulerOptsRow(name = '', value = '') {
+    const div = document.createElement('div');
+    div.setAttribute('class', 'row extra');
+
+    const env = document.createElement('wl-textfield');
+    env.setAttribute('type', 'text');
+    env.setAttribute('style', 'margin-right:5px;');
+    env.setAttribute('value', name);
+
+    const val = document.createElement('wl-textfield');
+    val.setAttribute('type', 'text');
+    val.setAttribute('value', value);
+
+    const button = document.createElement('wl-button');
+    button.setAttribute('class', 'fg pink');
+    button.setAttribute('fab', '');
+    button.setAttribute('flat', '');
+    button.addEventListener('click', (e) => this._removeSchedulerOptsItem(e));
+
+    const icon = document.createElement('wl-icon');
+    icon.innerHTML = 'remove';
+    button.appendChild(icon);
+
+    div.appendChild(env);
+    div.appendChild(val);
+    div.appendChild(button);
+    return div;
+  }
+
+  _clearRows() {
+    const container = this.shadowRoot.querySelector('#modify-scheduler-opts-container');
+    const rows = container.querySelectorAll('.row.first');
+    const firstRow = rows[0];
+
+    // remain first row element and clear values
+    firstRow.querySelectorAll('wl-textfield').forEach((tf) => {
+      tf.value = '';
+    });
+
+    // delete extra rows
+    container.querySelectorAll('.row.extra').forEach((e) => {
+      e.remove();
+    });
+  }
+
+  /**
+   * save schedulerOptions to schedulerOpts and hide schedulerOptsDialog
+   * */
+  modifySchedulerOpts() {
+    this.notification.text = '';
+    if (this._verifySchulerOpts() === false) {
+      this.notification.text += `${_text('resourceGroup.SchedulerOptsSaveFailed')}`;
+      this.notification.show();
+      this.notification.text = '';
+      return;
+    }
+    this._parseSchedulerOptsList();
+    const modifySchedulerOptsDialog = this.shadowRoot.querySelector('#modify-scheduler-opts-dialog');
+    modifySchedulerOptsDialog.hide();
+    this.notification.text = _text('session.launcher.EnvironmentVariableConfigurationDone');
+    this.notification.show();
+  }
+
+  /**
+   * verify schedulerOptions key and value
+   *
+   * @return {Boolean} key-value is vaild => true, key-value is invaild => false
+   * */
+  _verifySchulerOpts() {
+    let isVaild = true;
+    let checkAllowedSessionTypes = false;
+    let checkPendingTimeout = false;
+    let wlTextFieldKey;
+    let wlTextFieldValue;
+    const container = this.shadowRoot.querySelector('#modify-scheduler-opts-container');
+    const rows = container.querySelectorAll('.row');
+
+    // alert key overlap
+    const overlapInvaild = (keyItem) => {
+      const errormsg = `${_text('resourceGroup.SchedulerOptsKeyOverlap')}`;
+      wlTextFieldKey.label = errormsg;
+      wlTextFieldKey.filled = true;
+      wlTextFieldValue.label = '';
+      isVaild = false;
+      this.notification.text += `${keyItem} ${errormsg}<br><br>`;
+    };
+
+    // alert value invaild
+    const valueInvaild = (errormsg, keyItem) => {
+      wlTextFieldKey.label = `${wlTextFieldKey.label ? wlTextFieldKey.label : ''}`;
+      wlTextFieldValue.label = errormsg;
+      wlTextFieldValue.filled = true;
+      isVaild = false;
+      this.notification.text += `${keyItem} ${errormsg}<br><br>`;
+    };
+
+    // save wlTextfield to variable and remove alert
+    const initializeRow = (tf, index) => {
+      switch (index) {
+      case 0:
+        wlTextFieldKey = tf;
+        break;
+      case 1:
+        wlTextFieldValue = tf;
+        break;
+      }
+      tf?.removeAttribute('label');
+      tf?.removeAttribute('filled');
+      return tf.value;
+    };
+
+    const verifyRow = (row) => {
+      const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf, index) => initializeRow(tf, index));
+      if (items[0] === 'allowed_session_types') { // check allowed_session_types key-value invaild
+        if (checkAllowedSessionTypes) { // check key overlap
+          overlapInvaild(items[0]);
+        } else {
+          checkAllowedSessionTypes = true;
+        }
+
+        if (!(items[1] === 'interactive' || items[1] === 'batch')) { // check value invaild
+          valueInvaild(`${_text('resourceGroup.SchedulerOptsValue')}: interactive, batch`, items[0]);
+        }
+      } else if (items[0] === 'pending_timeout') { // check pending_timeout key-value invaild
+        if (checkPendingTimeout) { // check key overlap
+          overlapInvaild(items[0]);
+        } else {
+          checkPendingTimeout = true;
+        }
+
+        if (!(items[1] >= 0)) { // check value invaild
+          valueInvaild(`${_text('resourceGroup.SchedulerOptsValue')}: >= 0`, items[0]);
+        }
+      }
+    };
+    Array.prototype.map.call(rows, (row) => {
+      verifyRow(row);
+    });
+    return isVaild;
+  }
+
+  /**
+   * save wl-textfield value to schedulerOpts
+   * */
+  _parseSchedulerOptsList() {
+    this.schedulerOpts = {};
+    const container = this.shadowRoot.querySelector('#modify-scheduler-opts-container');
+    const rows = container.querySelectorAll('.row');
+    const nonempty = (row) => Array.prototype.filter.call(
+      row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
+    ).length === 0;
+    const encodeRow = (row) => {
+      const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf) => tf.value);
+      this.schedulerOpts[items[0]] = items[1];
+      return items;
+    };
+    Array.prototype.filter.call(rows, (row) => nonempty(row)).map((row) => encodeRow(row));
+  }
+
   render() {
     // languate=HTML
     return html`
@@ -438,7 +684,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               id="add-scaling-group"
               icon="add"
               label="${_t('button.Add')}"
-              @click=${() => this._launchDialogById('#create-scaling-group-dialog')}>
+              @click=${() => {
+    this._clearRows();
+    this._launchDialogById('#create-scaling-group-dialog');
+  }}>
           </mwc-button>
       </h4>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scalingGroups}">
@@ -456,7 +705,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}" path="scheduler">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.SchedulerOptions')}" path="scheduler_opts">
+        <vaadin-grid-column flex-grow="2" width="250px" header="${_t('resourceGroup.SchedulerOptions')}" .renderer=${this._schedulerOptionsRenderer}>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.WsproxyAddress')}" path="wsproxy_addr">
         </vaadin-grid-column>
@@ -500,6 +749,15 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             label="${_t('resourceGroup.WsproxyAddress')}"
             placeholder="http://localhost:10200"
           ></mwc-textfield>
+          <div class="horizontal layout center justified">
+            <span class="scaling-option-title">${_t('resourceGroup.SchedulerOptions')}</span>
+            <mwc-button
+              unelevated
+              icon="rule"
+              label="${_t('session.launcher.Config')}"
+              @click="${() => this._showSchedulerOptsDialog()}"
+              style="width:auto;"></mwc-button>
+          </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
@@ -543,6 +801,15 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             label="${_t('resourceGroup.WsproxyAddress')}"
             value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].wsproxy_addr ?? ''}
           ></mwc-textfield>
+          <div class="horizontal layout center justified">
+            <span class="scaling-option-title">${_t('resourceGroup.SchedulerOptions')}</span>
+            <mwc-button
+              unelevated
+              icon="rule"
+              label="${_t('session.launcher.Config')}"
+              @click="${() => this._showSchedulerOptsDialog()}"
+              style="width:auto;"></mwc-button>
+          </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
@@ -575,6 +842,40 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             @click="${this._deleteScalingGroup}">
             </mwc-button>
        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="modify-scheduler-opts-dialog" fixed backdrop persistent>
+        <span slot="title">${_t('resourceGroup.SetSchedulerOptions')}</span>
+        <div slot="content" id="modify-scheduler-opts-container">
+          <div class="row header">
+            <div style="margin-right:5px;"> ${_t('resourceGroup.SchedulerOptsKey')} </div>
+            <div> ${_t('resourceGroup.SchedulerOptsValue')} </div>
+          </div>
+          <div class="row first">
+            <wl-textfield type="text" style="margin-right:5px;"></wl-textfield>
+            <wl-textfield type="text"></wl-textfield>
+            <wl-button
+              fab flat
+              class="fg pink"
+              @click=${()=>this._appendSchedulerOptsRow()}
+            >
+              <wl-icon>add</wl-icon>
+            </wl-button>
+          </div>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              icon="delete"
+              label="${_t('button.DeleteAll')}"
+              @click="${()=>this._clearRows()}"
+              style="width:100%"></mwc-button>
+          <mwc-button
+              unelevated
+              slot="footer"
+              icon="check"
+              label="${_t('button.Save')}"
+              @click="${()=>this.modifySchedulerOpts()}"
+              style="width:100%"></mwc-button>
+        </div>
       </backend-ai-dialog>
     `;
   }

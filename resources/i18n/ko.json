@@ -811,7 +811,12 @@
     "EnterValidResourceGroupName": "올바른 자원 그룹 명을 입력해주세요.",
     "ResourceGroupNameRequired": "자원 그룹 이름이 필요합니다.",
     "ResourceGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다.",
-    "WsproxyAddress": "WSProxy 서버 주소"
+    "WsproxyAddress": "WSProxy 서버 주소",
+    "SetSchedulerOptions": "스케쥴러 옵션 설정 (옵션)",
+    "SchedulerOptsKey": "키",
+    "SchedulerOptsValue": "값",
+    "SchedulerOptsSaveFailed": "스케쥴러 옵션 저장에 실패하였습니다.",
+    "SchedulerOptsKeyOverlap": "키 중복"
   },
   "maintenance": {
     "General": "일반",

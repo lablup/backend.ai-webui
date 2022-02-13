@@ -811,7 +811,12 @@
     "EnterValidResourceGroupName": "Enter valid Resource group name",
     "ResourceGroupNameRequired": "Resource group name is required.",
     "ResourceGroupAlreadyExist": "A resource group with the same name already exists.",
-    "WsproxyAddress": "WSProxy Server Address"
+    "WsproxyAddress": "WSProxy Server Address",
+    "SetSchedulerOptions": "Set Scheduler Options (optional)",
+    "SchedulerOptsKey": "Key",
+    "SchedulerOptsValue": "Value",
+    "SchedulerOptsSaveFailed": "Scheduler options save failed!",
+    "SchedulerOptsKeyOverlap": "Key Overlap"
   },
   "maintenance": {
     "General": "General",

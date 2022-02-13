@@ -763,7 +763,12 @@
     "ResourceGroupDeleted": "Đã xóa thành công nhóm tài nguyên",
     "EnterValidResourceGroupName": "Nhập tên nhóm tài nguyên hợp lệ",
     "ResourceGroupNameRequired": "Tên nhóm tài nguyên là bắt buộc.",
-    "ResourceGroupAlreadyExist": "Một nhóm tài nguyên có cùng tên đã tồn tại."
+    "ResourceGroupAlreadyExist": "Một nhóm tài nguyên có cùng tên đã tồn tại.",
+    "SetSchedulerOptions": "Đặt các tùy chọn của bộ lập lịch biểu",
+    "SchedulerOptsKey": "Chìa khóa",
+    "SchedulerOptsValue": "Giá trị",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
+    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Chung",

@@ -781,7 +781,12 @@
     "EnterValidResourceGroupName": "Зөв нөөцийн бүлгийн нэрийг оруулна уу",
     "ResourceGroupNameRequired": "Нөөцийн бүлгийн нэр шаардлагатай.",
     "ResourceGroupAlreadyExist": "Ижил нэртэй нөөцийн бүлэг аль хэдийн бий болсон.",
-    "WsproxyAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Хуваарьлагчийн сонголтыг тохируулна уу",
+    "SchedulerOptsKey": "Түлхүүр",
+    "SchedulerOptsValue": "цэнэ",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
+    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Ерөнхий",

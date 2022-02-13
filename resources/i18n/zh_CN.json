@@ -763,7 +763,12 @@
     "ResourceGroupDeleted": "资源组删除成功",
     "EnterValidResourceGroupName": "输入有效的资源组名称",
     "ResourceGroupNameRequired": "需要资源组名称。",
-    "ResourceGroupAlreadyExist": "已存在同名的资源组。"
+    "ResourceGroupAlreadyExist": "已存在同名的资源组。",
+    "SetSchedulerOptions": "设置调度程序选项",
+    "SchedulerOptsKey": "钥匙",
+    "SchedulerOptsValue": "价值",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
+    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "一般的",

@@ -763,7 +763,12 @@
     "ResourceGroupDeleted": "リソースグループが正常に削除されました",
     "EnterValidResourceGroupName": "有効なリソースグループ名を入力してください",
     "ResourceGroupNameRequired": "リソースグループ名が必要です。",
-    "ResourceGroupAlreadyExist": "同じ名前のリソースグループがすでに存在します。"
+    "ResourceGroupAlreadyExist": "同じ名前のリソースグループがすでに存在します。",
+    "SetSchedulerOptions": "スケジューラオプションの設定",
+    "SchedulerOptsKey": "キー",
+    "SchedulerOptsValue": "バリュー",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
+    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "一般",

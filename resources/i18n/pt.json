@@ -763,7 +763,12 @@
     "ResourceGroupDeleted": "Grupo de recursos excluído com sucesso",
     "EnterValidResourceGroupName": "Insira um nome de grupo de recursos válido",
     "ResourceGroupNameRequired": "O nome do grupo de recursos é obrigatório.",
-    "ResourceGroupAlreadyExist": "Já existe um grupo de recursos com o mesmo nome."
+    "ResourceGroupAlreadyExist": "Já existe um grupo de recursos com o mesmo nome.",
+    "SetSchedulerOptions": "Definir opções do agendador",
+    "SchedulerOptsKey": "Chave",
+    "SchedulerOptsValue": "Valor",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
+    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Em geral",
