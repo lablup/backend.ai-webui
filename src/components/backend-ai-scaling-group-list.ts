@@ -580,10 +580,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   /**
    * verify schedulerOptions key and value
    *
-   * @return {Boolean} key-value is vaild => true, key-value is invaild => false
+   * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
   _verifySchulerOpts() {
-    let isVaild = true;
+    let isValid = true;
     let checkAllowedSessionTypes = false;
     let checkPendingTimeout = false;
     let wlTextFieldKey;
@@ -592,21 +592,21 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     const rows = container.querySelectorAll('.row');
 
     // alert key overlap
-    const overlapInvaild = (keyItem) => {
+    const overlapInvalid = (keyItem) => {
       const errormsg = `${_text('resourceGroup.SchedulerOptsKeyOverlap')}`;
       wlTextFieldKey.label = errormsg;
       wlTextFieldKey.filled = true;
       wlTextFieldValue.label = '';
-      isVaild = false;
+      isValid = false;
       this.notification.text += `${keyItem} ${errormsg}<br><br>`;
     };
 
-    // alert value invaild
-    const valueInvaild = (errormsg, keyItem) => {
+    // alert value invalid
+    const valueInvalid = (errormsg, keyItem) => {
       wlTextFieldKey.label = `${wlTextFieldKey.label ? wlTextFieldKey.label : ''}`;
       wlTextFieldValue.label = errormsg;
       wlTextFieldValue.filled = true;
-      isVaild = false;
+      isValid = false;
       this.notification.text += `${keyItem} ${errormsg}<br><br>`;
     };
 
@@ -627,32 +627,32 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
     const verifyRow = (row) => {
       const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf, index) => initializeRow(tf, index));
-      if (items[0] === 'allowed_session_types') { // check allowed_session_types key-value invaild
+      if (items[0] === 'allowed_session_types') { // check allowed_session_types key-value invalid
         if (checkAllowedSessionTypes) { // check key overlap
-          overlapInvaild(items[0]);
+          overlapInvalid(items[0]);
         } else {
           checkAllowedSessionTypes = true;
         }
 
-        if (!(items[1] === 'interactive' || items[1] === 'batch')) { // check value invaild
-          valueInvaild(`${_text('resourceGroup.SchedulerOptsValue')}: interactive, batch`, items[0]);
+        if (!(items[1] === 'interactive' || items[1] === 'batch')) { // check value invalid
+          valueInvalid(`${_text('resourceGroup.SchedulerOptsValue')}: interactive, batch`, items[0]);
         }
-      } else if (items[0] === 'pending_timeout') { // check pending_timeout key-value invaild
+      } else if (items[0] === 'pending_timeout') { // check pending_timeout key-value invalid
         if (checkPendingTimeout) { // check key overlap
-          overlapInvaild(items[0]);
+          overlapInvalid(items[0]);
         } else {
           checkPendingTimeout = true;
         }
 
-        if (!(items[1] >= 0)) { // check value invaild
-          valueInvaild(`${_text('resourceGroup.SchedulerOptsValue')}: >= 0`, items[0]);
+        if (!(items[1] >= 0)) { // check value invalid
+          valueInvalid(`${_text('resourceGroup.SchedulerOptsValue')}: >= 0`, items[0]);
         }
       }
     };
     Array.prototype.map.call(rows, (row) => {
       verifyRow(row);
     });
-    return isVaild;
+    return isValid;
   }
 
   /**
