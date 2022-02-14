@@ -363,7 +363,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         .resource-allocated {
-          width: 40px;
+          width: 45px;
           height: 60px;
           font-size: 16px;
           margin: 5px;
@@ -2454,6 +2454,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Round the value according to the specified number of digits.
+   *
+   * @param {string} allocation - size of allocated resource.
+   * @param {string} digit - number of digits.
+   * @return {string} rounded value according specified number of digits.
+   * */
+  _roundResourceAllocation(allocation, digit) {
+    return parseFloat(allocation).toFixed(digit);
+  }
+
+  /**
    * Get MB value when input is less than 1 GB.
    *
    * @param {number} value - value with GB unit.
@@ -2461,9 +2472,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   _conditionalGBtoMB(value) {
     if (value < 1.0) {
-      return (value * 1024).toFixed(0);
+      return this._roundResourceAllocation((value * 1024).toFixed(0), 2);
     }
-    return value;
+    return this._roundResourceAllocation(value, 2);
   }
 
   /**
@@ -2960,7 +2971,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       <div class="horizontal layout end-justified center flex">
                         ${item.tags ? item.tags.map((item) => html`
                           <lablup-shields style="margin-right:5px;" color="${item.color}"
-                                          description=""></lablup-shields>
+                                          description="${item.tag}"></lablup-shields>
                         `) : ''}
                         <mwc-icon-button icon="info"
                                          class="fg blue info"
@@ -3227,7 +3238,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <li divider role="separator"></li>
                 <mwc-list-item class="slider-list-item">
                   <lablup-slider id="shmem-resource" class="mem"
-                                 pin snaps step="0.0025" editable markers
+                                 pin snaps step="0.0125" editable markers
                                  @click="${(e) => this._applyResourceValueChanges(e)}"
                                  @focusout="${(e) => this._applyResourceValueChanges(e)}"
                                  marker_limit="${this.marker_limit}" suffix="GB"
@@ -3402,7 +3413,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                        this.sessionInfoObj.environment).toUpperCase()}"
                                     color="green"
                                     description="${this.sessionInfoObj.version[0]}"
-                                    ui="round" 
+                                    ui="round"
                                     style="margin-right:3px;"></lablup-shields>
                     <div class="horizontal layout">
                       ${this.sessionInfoObj.version.map((item, index) => {
@@ -3419,7 +3430,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     </div>
                     <lablup-shields color="blue"
                                     description="${this.sessionType.toUpperCase()}"
-                                    ui="round" 
+                                    ui="round"
                                     style="margin-top:3px;margin-right:3px;margin-bottom:9px;"></lablup-shields>
                   </div>` : html``}
               </div>
@@ -3435,7 +3446,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.Memory')}</p>
-                    <span>${this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size)}</span>
+                    <span>${this._roundResourceAllocation(this.mem_request * (this.cluster_size <= 1 ? this.session_request : this.cluster_size), 1)}</span>
                     <p>GB</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
@@ -3460,7 +3471,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     </div>
                     <div class="vertical layout center center-justified resource-allocated">
                       <p>${_t('session.launcher.Memory')}</p>
-                      <span>${this.mem_request}</span>
+                      <span>${this._roundResourceAllocation(this.mem_request, 1)}</span>
                       <p>GB</p>
                     </div>
                     <div class="vertical layout center center-justified resource-allocated">
