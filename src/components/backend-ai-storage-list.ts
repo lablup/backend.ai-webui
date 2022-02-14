@@ -1127,7 +1127,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
       <div class="layout vertical">
-        <span class="indicator monospace">${rowData.id}</span>
+        <span class="indicator monospace">${rowData.item.id}</span>
       </div>
       `, root
     );
