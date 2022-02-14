@@ -459,6 +459,21 @@ export default class PipelineView extends LitElement {
    * Create a task in pipeline
    */
   _createTask() {
+    let taskInfo = this._readCurrentTaskInfo();
+
+    // detail: {name, inputs #, outputs #, pos_x, pos_y, class, data, html, typenode}
+    const paneElement = this.shadowRoot.querySelector('pipeline-flow');
+    const paneSize = paneElement.paneSize;
+    Object.assign(taskInfo, {
+      pos_x: paneSize.width / 2,
+      pos_y: paneSize.height / 3,
+    });
+    const addTaskEvent = new CustomEvent("add-task", {'detail': taskInfo});
+    document.dispatchEvent(addTaskEvent);
+    this._hideDialogById('#task-dialog');
+  }
+
+  _readCurrentTaskInfo() {
     const taskName = this.shadowRoot.querySelector('#task-name').value;
     const taskType = this.shadowRoot.querySelector('#task-type').value;
     const taskEnvironment = {
@@ -474,15 +489,13 @@ export default class PipelineView extends LitElement {
     const taskCommand = this.shadowRoot.querySelector('#command-editor').getValue();
     // TODO: Trigger custom event to add corresponding node into pipeline-flow pane.
     // detail: {name, inputs #, outputs #, pos_x, pos_y, class, data, html, typenode}
-    const paneElement = this.shadowRoot.querySelector('pipeline-flow');
-    const paneSize = paneElement.paneSize;
-    const dummyNodeInfo = {
+    return {
       name: taskName,
       inputs: 1,
       outputs: 1,
-      pos_x: paneSize.width / 2 ,
-      pos_y: paneSize.height / 3,
       class: 'new-task',
+      pos_x: 0,
+      pos_y: 0,
       data: {
         type: taskType,
         environment: taskEnvironment,
@@ -491,30 +504,26 @@ export default class PipelineView extends LitElement {
       },
       html: `${taskName}`, // put raw html code
     };
-    const addTaskEvent = new CustomEvent("add-task", {'detail': dummyNodeInfo});
-    document.dispatchEvent(addTaskEvent);
-    this._hideDialogById('#task-dialog');
   }
 
   /**
-   * Edit the selected task in pipeline
+   * Update the selected task in pipeline
    */
-  _editTask() {
-    /**
-     * TODO: Edit task in config launcher
-     * 
-     * * NOTE *
-     * For now, when task is created, the user cannot change the type of task.
-     * 
-     * procedure:
-     *    step 1. Show task configuration dialog
-     *    step 2. Update the task
-     */
+  _updateTask() {
+    let taskInfo = this._readCurrentTaskInfo();
 
-    // step 1. Show task configuration dialog
-
-    // step 2. Update the task
-    console.log('_editTask function Called!');
+    // detail: {name, inputs #, outputs #, pos_x, pos_y, class, data, html, typenode}
+    Object.assign(taskInfo, {
+      pos_x: this.selectedNode.pos_x,
+      pos_y: this.selectedNode.pos_y,
+    });
+    const updateTaskEvent = new CustomEvent("update-task", {'detail': {
+        nodeId: this.selectedNode.id,
+        data: taskInfo
+      }
+    });
+    document.dispatchEvent(updateTaskEvent);
+    this._hideDialogById('#task-dialog');
   }
 
   /**
@@ -534,7 +543,6 @@ export default class PipelineView extends LitElement {
     // step 2. If confirmation dialog returns true, then dispatchEvent to remove the node.
     const removeTaskEvent = new CustomEvent("remove-task", {'detail': this.selectedNode.id});
     document.dispatchEvent(removeTaskEvent);
-    console.log('_removeTask function Called!');
   }
 
   /**
@@ -577,7 +585,6 @@ export default class PipelineView extends LitElement {
 
   _loadDataToCmdEditor() {
     const cmdEditor = this.shadowRoot.querySelector('#command-editor');
-    console.log(this.selectedNode.data)
     cmdEditor.setValue(this.selectedNode.data?.cmd ?? '');
   }
 
@@ -739,7 +746,7 @@ export default class PipelineView extends LitElement {
         <div slot="footer" class="horizontal layout center center-justified flex">
           ${this.isNodeSelected ? html`
             <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#task-dialog')}"></mwc-button>
-            <mwc-button unelevated label="Update"></mwc-button>
+            <mwc-button unelevated label="Update" @click="${() => this._updateTask()}"></mwc-button>
           `: html`
             <mwc-button unelevated class="full-width" label="CREATE TASK" @click="${()=> this._createTask()}"></mwc-button>
           `}

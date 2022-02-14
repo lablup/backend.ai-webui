@@ -210,6 +210,13 @@ export default class PipelineFlow extends LitElement {
       }
     });
 
+    document.addEventListener('update-task', (e: any) => {
+      const isEditorMode = this.editor.editor_mode === 'edit';
+      if (e.detail && isEditorMode) {
+        this._updateNode(e.detail.nodeId, e.detail.data);
+      }
+    })
+
     document.addEventListener('remove-task', (e: any) => {
       if (e.detail) {
         this._removeNode(e.detail);
@@ -292,13 +299,26 @@ export default class PipelineFlow extends LitElement {
   }
 
   /**
+   * Update node according to data
+   */
+  _updateNode(id: number, nodeInfo: DrawflowNode) {
+    const moduleName = this.editor.getModuleFromNodeId(id);
+    this.editor.drawflow.drawflow[moduleName].data[id] = nodeInfo;
+    
+    // monkeypatch: manually update node name
+    const nodeElem = this.shadowRoot.querySelector(`.${nodeInfo.class}.selected`);
+    const titleElement = [...nodeElem.children].find(elem => elem.className === 'drawflow_content_node');
+    titleElement.innerHTML = nodeInfo.html;
+  }
+
+  /**
    * Remove node from pane
    * 
    * @param id 
    */
-  _removeNode(id: number) {
+   _removeNode(id: number) {
     // NOTE: every node element id starts with 'node-'
-    const nodeId = 'node-' + id;
+    const nodeId = `node-${id}`;
     this.editor.removeNodeId(nodeId);
   }
 
