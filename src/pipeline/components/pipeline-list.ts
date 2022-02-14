@@ -128,6 +128,10 @@ export default class PipelineList extends LitElement {
           --component-min-width: 350px;
           --component-max-width: 390px;
         }
+
+        a.pipeline-link:hover {
+          color: var(--general-textfield-selected-color);
+        }
       `
     ];
   }
@@ -226,7 +230,7 @@ export default class PipelineList extends LitElement {
     render(
       html`
         <div>
-          <a @click="${()=> this.loadPipeline(rowData.item)}">${rowData.item.name}</a>
+          <a class="pipeline-link" @click="${()=> this.loadPipeline(rowData.item)}">${rowData.item.name}</a>
         </div>
       `,
       root
@@ -325,7 +329,7 @@ export default class PipelineList extends LitElement {
     <div class="horizontal layout flex center end-justified">
       <mwc-button unelevated icon="add" label="New Pipeline" @click="${() => this._launchDialogById('#create-pipeline')}"></mwc-button>
     </div>
-    <vaadin-grid id="pipeline-list" thme="row-stripes column-borders compact" aria-label="Pipeline List" .items="${this.pipelines}" height-by-rows>
+    <vaadin-grid id="pipeline-list" theme="row-stripes column-borders compact" aria-label="Pipeline List" .items="${this.pipelines}">
       <vaadin-grid-column auto-width flex-grow="0" header="#" text-align="center" .renderer="${this._boundIndexRenderer}"></vaadin-grid-column>
       <vaadin-grid-filter-column id="name" auto-width header="Name" resizable .renderer="${this._boundNameRenderer}"></vaadin-grid-filter-column>
       <vaadin-grid-column id="owner" header="Owner" path="owner"></vaadin-grid-column>
