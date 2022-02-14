@@ -216,6 +216,18 @@ export default class PipelineFlow extends LitElement {
       }
     });
 
+    document.addEventListener('import-flow', (e: any) => {
+      if (e.detail) {
+        const data: object = e.detail;
+        if (Object.keys(data).length > 0) {
+          this.editor.import(data);
+        } else {
+          // clear editor when saved data is empty
+          this.editor.clear();
+        }
+      }
+    });
+
     document.addEventListener('export-flow', () => {
       const data = this.editor.export();
       const exportFlowEvent = new CustomEvent('flow-response', {'detail': data});

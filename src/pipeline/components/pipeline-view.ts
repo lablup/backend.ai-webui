@@ -263,6 +263,7 @@ export default class PipelineView extends LitElement {
     document.addEventListener('flow-response', (e:any) => {
       if (e.detail) {
         this.pipelineInfo.data = e.detail;
+        localStorage.setItem(`pipeline-${this.pipelineInfo.name}`, JSON.stringify(this.pipelineInfo.data));        
       }
     });
     document.addEventListener('pipeline-view-active-tab-change', (e:any) => {
@@ -271,9 +272,7 @@ export default class PipelineView extends LitElement {
         this.shadowRoot.querySelector('#pipeline-pane').activeIndex = tabGroup.map(tab => tab.title).indexOf(e.detail.activeTab.title);
         this._showTab(e.detail.activeTab, '.tab-content');
         this.pipelineInfo = e.detail.pipeline;
-        /**
-         * TODO: load pipeline infomation to pipeline-flow pane
-         */
+        this._loadCurrentFlowData();
         this.shadowRoot.querySelector('#pipeline-name').innerHTML = this.pipelineInfo.name;
       }
     });
@@ -582,9 +581,20 @@ export default class PipelineView extends LitElement {
     cmdEditor.setValue(this.selectedNode.data?.cmd ?? '');
   }
 
-  _getCurrentFlowData() {
+  _loadCurrentFlowData() {
+    const currentFlowData = JSON.parse(localStorage.getItem(`pipeline-${this.pipelineInfo.name}`) || '{}');
+    const flowDataReqEvent = new CustomEvent('import-flow', {'detail': currentFlowData});
+    document.dispatchEvent(flowDataReqEvent);
+    document.dispatchEvent(flowDataReqEvent);
+    this.notification.text = `Pipeline ${this.pipelineInfo.name} loaded.`;
+    this.notification.show();
+  }
+
+  _saveCurrentFlowData() {
     const flowDataReqEvent = new CustomEvent('export-flow');
     document.dispatchEvent(flowDataReqEvent);
+    this.notification.text = `Pipeline ${this.pipelineInfo.name} saved.`;
+    this.notification.show();
   }
 
   _showTaskCreateDialog() {
@@ -626,7 +636,7 @@ export default class PipelineView extends LitElement {
             <mwc-select id="pipeline-version" label="Version">
               <mwc-list-item selected value="Latest">Latest</mwc-list-item>
             </mwc-select>
-            <mwc-icon-button icon="save" @click="${() => this._getCurrentFlowData()}"></mwc-icon-button>
+            <mwc-icon-button icon="save" @click="${() => this._saveCurrentFlowData()}"></mwc-icon-button>
             <mwc-icon-button icon="play_arrow" @click="${() => this._launchDialogById('#run-pipeline')}"></mwc-icon-button>
             <mwc-icon-button icon="settings" @click="${() => this._launchDialogById('#edit-pipeline')}"></mwc-icon-button>
             </div>
