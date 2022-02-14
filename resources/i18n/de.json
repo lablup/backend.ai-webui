@@ -765,10 +765,9 @@
     "ResourceGroupNameRequired": "Der Name der Ressourcengruppe ist erforderlich.",
     "ResourceGroupAlreadyExist": "Eine Ressourcengruppe mit demselben Namen ist bereits vorhanden.",
     "SetSchedulerOptions": "Planer-Optionen festlegen",
-    "SchedulerOptsKey": "Schlüssel",
-    "SchedulerOptsValue": "Wert",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
-    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
+    "TimeoutSeconds": "Sekunden",
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Allgemeines",

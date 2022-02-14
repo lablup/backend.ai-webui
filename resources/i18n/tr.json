@@ -765,10 +765,9 @@
     "ResourceGroupNameRequired": "Kaynak grubu adı gerekli.",
     "ResourceGroupAlreadyExist": "Aynı ada sahip bir kaynak grubu zaten var.",
     "SetSchedulerOptions": "Zamanlayıcı Seçeneklerini Ayarla",
-    "SchedulerOptsKey": "Anahtar",
-    "SchedulerOptsValue": "Değer",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
-    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
+    "TimeoutSeconds": "saniye",
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Genel",

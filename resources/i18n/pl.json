@@ -765,10 +765,9 @@
     "ResourceGroupNameRequired": "Nazwa grupy zasobów jest wymagana.",
     "ResourceGroupAlreadyExist": "Grupa zasobów o tej samej nazwie już istnieje.",
     "SetSchedulerOptions": "Ustaw opcje harmonogramu",
-    "SchedulerOptsKey": "Klucz",
-    "SchedulerOptsValue": "Wartość",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
-    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
+    "TimeoutSeconds": "sekundy",
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Generał",

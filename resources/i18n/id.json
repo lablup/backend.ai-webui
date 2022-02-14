@@ -783,10 +783,9 @@
     "ResourceGroupAlreadyExist": "Grup sumber daya dengan nama yang sama sudah ada.",
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Setel Opsi Penjadwal",
-    "SchedulerOptsKey": "Kunci",
-    "SchedulerOptsValue": "Nilai",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
-    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
+    "TimeoutSeconds": "Detik",
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Umum",

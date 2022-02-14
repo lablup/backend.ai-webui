@@ -765,10 +765,9 @@
     "ResourceGroupNameRequired": "Se requiere el nombre del grupo de recursos.",
     "ResourceGroupAlreadyExist": "Ya existe un grupo de recursos con el mismo nombre.",
     "SetSchedulerOptions": "Establecer opciones del programador",
-    "SchedulerOptsKey": "Llave",
-    "SchedulerOptsValue": "Valor",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
-    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
+    "TimeoutSeconds": "Segundos",
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "General",

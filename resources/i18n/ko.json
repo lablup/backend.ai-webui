@@ -812,11 +812,10 @@
     "ResourceGroupNameRequired": "자원 그룹 이름이 필요합니다.",
     "ResourceGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다.",
     "WsproxyAddress": "WSProxy 서버 주소",
-    "SetSchedulerOptions": "스케쥴러 옵션 설정 (옵션)",
-    "SchedulerOptsKey": "키",
-    "SchedulerOptsValue": "값",
-    "SchedulerOptsSaveFailed": "스케쥴러 옵션 저장에 실패하였습니다.",
-    "SchedulerOptsKeyOverlap": "키 중복"
+    "SetSchedulerOptions": "스케쥴러 옵션 설정",
+    "TimeoutSeconds": "초",
+    "PendingTimeoutValueError": "Pending timeout의 값은 반드시 양수이거나 0이어야 합니다.",
+    "SchedulerOptsSaveFailed": "스케쥴러 옵션 저장에 실패하였습니다."
   },
   "maintenance": {
     "General": "일반",

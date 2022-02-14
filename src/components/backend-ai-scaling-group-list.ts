@@ -118,10 +118,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           --switch-bg-checked: #bbdefb;
         }
 
-        #modify-scheduler-opts-dialog wl-textfield {
-          --input-label-color: red;
-        }
-
         wl-select {
           --input-color-disabled: #222;
           --input-label-color-disabled: #222;
@@ -166,16 +162,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           --component-width: 400px;
         }
 
-        #modify-scheduler-opts-dialog div.container {
-          display: flex;
-          flex-direction: column;
-          padding: 0px 30px;
-        }
-
-        #modify-scheduler-opts-dialog div.row {
-          display: grid;
-          grid-template-columns: 4fr 4fr 1fr;
-          margin-bottom: 10px;
+        #show-detail-dialog {
+          --component-width: 600px;
         }
       `
     ];
@@ -284,15 +272,23 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           id="controls"
           class="layout horizontal flex center"
         >
+        <wl-button fab flat inverted
+          icon="device_hub"
+          class="fg green"
+          @click=${() => {
+    this.selectedIndex = rowData.index;
+    this._launchDialogById('#show-detail-dialog');
+  }}
+      ><wl-icon>assignment</wl-icon></wl-button>
           <wl-button fab flat inverted
             icon="settings"
             class="fg blue"
             @click=${() => {
     this.selectedIndex = rowData.index;
     this.shadowRoot.querySelector('#modify-scaling-group-active').selected = this.scalingGroups[rowData.index].is_active;
-    this._clearRows();
+    this._clearValues();
     Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts)).map((item: any, index) => {
-      this._initializeSchedulerOptsRow(item[0], item[1]);
+      this._initializeSchedulerOpts(item[0], item[1]);
     });
     this._launchDialogById('#modify-scaling-group-dialog');
   }}
@@ -309,8 +305,25 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     );
   }
 
+  _driverOptionsRenderer(root, column, rowData) {
+    const driver_opts = Object.entries(JSON.parse(rowData.item['driver_opts']));
+    render(
+      driver_opts.map((item) => {
+        return html`
+        <div style="margin-bottom:3px;">
+          <lablup-shields
+            app="${item[0]}"
+            color="green"
+            description="${item[1]}"
+            ui="flat"
+          ></lablup-shields>
+        </div>`;
+      })
+      , root);
+  }
+
   _schedulerOptionsRenderer(root, column, rowData) {
-    const scheduler_opts = Object.entries(JSON.parse(rowData.item.scheduler_opts));
+    const scheduler_opts = Object.entries(JSON.parse(rowData.item['scheduler_opts']));
     render(
       scheduler_opts.map((item) => {
         return html`
@@ -324,6 +337,36 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         </div>`;
       })
       , root);
+  }
+
+  _validatePendingTimeout() {
+    const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
+    pendingTimeout.validityTransform = (value, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          pendingTimeout.validationMessage = _text('data.explorer.ValueRequired');
+          return {
+            valid: nativeValidity.valid,
+            valueMissing: !nativeValidity.valid
+          };
+        } else {
+          pendingTimeout.validationMessage = _text('data.explorer.ValueRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        const isValid = (parseFloat(value) >= 0);
+        if (!isValid) {
+          pendingTimeout.validationMessage = _text('resourceGroup.PendingTimeoutValueError');
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
+    };
   }
 
   _validateResourceGroupName() {
@@ -481,93 +524,46 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       });
   }
 
-  _removeEmptySchedulerOpts() {
-    const container = this.shadowRoot.querySelector('#modify-scheduler-opts-container');
-    const rows = container.querySelectorAll('.row.extra');
-    const empty = (row) => Array.prototype.filter.call(
-      row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
-    ).length === 2;
-    Array.prototype.filter.call(rows, (row) => empty(row)).map((row) => row.parentNode.removeChild(row));
-  }
-
   _showSchedulerOptsDialog() {
-    this._removeEmptySchedulerOpts();
     const modifySchedulerOptsDialog = this.shadowRoot.querySelector('#modify-scheduler-opts-dialog');
     modifySchedulerOptsDialog.show();
   }
 
-  _removeSchedulerOptsItem(e) {
-    e.target.parentNode?.remove();
+  _initializeSchedulerOpts(name = '', value = '') {
+    const allowedSessionType = this.shadowRoot.querySelector('#allowed-session-types');
+    const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
+
+    switch (name) {
+    case 'allowed_session_types':
+      if (value.length === 2) {
+        allowedSessionType.value = 'both';
+      } else {
+        allowedSessionType.value = value[0];
+      }
+      break;
+    case 'pending_timeout':
+      pendingTimeout.value = value;
+      break;
+    }
   }
 
-  _initializeSchedulerOptsRow(name = '', value = '') {
-    const container = this.shadowRoot.querySelector('#modify-scheduler-opts-container');
-    const lastChild = container.children[container.children.length - 1];
-    const div = this._createSchedulerOptsRow(name, value);
-    container.insertBefore(div, lastChild.nextSibling);
-  }
+  _clearValues() {
+    const allowedSessionType = this.shadowRoot.querySelector('#allowed-session-types');
+    const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
 
-  _appendSchedulerOptsRow(name = '', value = '') {
-    const container = this.shadowRoot.querySelector('#modify-scheduler-opts-container');
-    const lastChild = container.children[1];
-    const div = this._createSchedulerOptsRow(name, value);
-    container.insertBefore(div, lastChild.nextSibling);
-  }
-
-  _createSchedulerOptsRow(name = '', value = '') {
-    const div = document.createElement('div');
-    div.setAttribute('class', 'row extra');
-
-    const env = document.createElement('wl-textfield');
-    env.setAttribute('type', 'text');
-    env.setAttribute('style', 'margin-right:5px;');
-    env.setAttribute('value', name);
-
-    const val = document.createElement('wl-textfield');
-    val.setAttribute('type', 'text');
-    val.setAttribute('value', value);
-
-    const button = document.createElement('wl-button');
-    button.setAttribute('class', 'fg pink');
-    button.setAttribute('fab', '');
-    button.setAttribute('flat', '');
-    button.addEventListener('click', (e) => this._removeSchedulerOptsItem(e));
-
-    const icon = document.createElement('wl-icon');
-    icon.innerHTML = 'remove';
-    button.appendChild(icon);
-
-    div.appendChild(env);
-    div.appendChild(val);
-    div.appendChild(button);
-    return div;
-  }
-
-  _clearRows() {
-    const container = this.shadowRoot.querySelector('#modify-scheduler-opts-container');
-    const rows = container.querySelectorAll('.row.first');
-    const firstRow = rows[0];
-
-    // remain first row element and clear values
-    firstRow.querySelectorAll('wl-textfield').forEach((tf) => {
-      tf.value = '';
-    });
-
-    // delete extra rows
-    container.querySelectorAll('.row.extra').forEach((e) => {
-      e.remove();
-    });
+    allowedSessionType.value= 'both';
+    if (pendingTimeout?.value) {
+      pendingTimeout.value = 0;
+    }
   }
 
   /**
    * save schedulerOptions to schedulerOpts and hide schedulerOptsDialog
    * */
   modifySchedulerOpts() {
-    this.notification.text = '';
     if (this._verifySchulerOpts() === false) {
-      this.notification.text += `${_text('resourceGroup.SchedulerOptsSaveFailed')}`;
+      this.notification.text = `${_text('resourceGroup.SchedulerOptsSaveFailed')}`;
       this.notification.show();
-      this.notification.text = '';
       return;
     }
     this._parseSchedulerOptsList();
@@ -584,93 +580,30 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * */
   _verifySchulerOpts() {
     let isValid = true;
-    let checkAllowedSessionTypes = false;
-    let checkPendingTimeout = false;
-    let wlTextFieldKey;
-    let wlTextFieldValue;
-    const container = this.shadowRoot.querySelector('#modify-scheduler-opts-container');
-    const rows = container.querySelectorAll('.row');
+    const allowedSessionType = this.shadowRoot.querySelector('#allowed-session-types');
+    const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
 
-    // alert key overlap
-    const overlapInvalid = (keyItem) => {
-      const errormsg = `${_text('resourceGroup.SchedulerOptsKeyOverlap')}`;
-      wlTextFieldKey.label = errormsg;
-      wlTextFieldKey.filled = true;
-      wlTextFieldValue.label = '';
+    if (allowedSessionType.checkValidity() === false || pendingTimeout.checkValidity() === false) {
       isValid = false;
-      this.notification.text += `${keyItem} ${errormsg}<br><br>`;
-    };
-
-    // alert value invalid
-    const valueInvalid = (errormsg, keyItem) => {
-      wlTextFieldKey.label = `${wlTextFieldKey.label ? wlTextFieldKey.label : ''}`;
-      wlTextFieldValue.label = errormsg;
-      wlTextFieldValue.filled = true;
-      isValid = false;
-      this.notification.text += `${keyItem} ${errormsg}<br><br>`;
-    };
-
-    // save wlTextfield to variable and remove alert
-    const initializeRow = (tf, index) => {
-      switch (index) {
-      case 0:
-        wlTextFieldKey = tf;
-        break;
-      case 1:
-        wlTextFieldValue = tf;
-        break;
-      }
-      tf?.removeAttribute('label');
-      tf?.removeAttribute('filled');
-      return tf.value;
-    };
-
-    const verifyRow = (row) => {
-      const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf, index) => initializeRow(tf, index));
-      if (items[0] === 'allowed_session_types') { // check allowed_session_types key-value invalid
-        if (checkAllowedSessionTypes) { // check key overlap
-          overlapInvalid(items[0]);
-        } else {
-          checkAllowedSessionTypes = true;
-        }
-
-        if (!(items[1] === 'interactive' || items[1] === 'batch')) { // check value invalid
-          valueInvalid(`${_text('resourceGroup.SchedulerOptsValue')}: interactive, batch`, items[0]);
-        }
-      } else if (items[0] === 'pending_timeout') { // check pending_timeout key-value invalid
-        if (checkPendingTimeout) { // check key overlap
-          overlapInvalid(items[0]);
-        } else {
-          checkPendingTimeout = true;
-        }
-
-        if (!(items[1] >= 0)) { // check value invalid
-          valueInvalid(`${_text('resourceGroup.SchedulerOptsValue')}: >= 0`, items[0]);
-        }
-      }
-    };
-    Array.prototype.map.call(rows, (row) => {
-      verifyRow(row);
-    });
+    }
     return isValid;
   }
 
   /**
-   * save wl-textfield value to schedulerOpts
+   * save schedulerOptsDialog value to schedulerOpts
    * */
   _parseSchedulerOptsList() {
     this.schedulerOpts = {};
-    const container = this.shadowRoot.querySelector('#modify-scheduler-opts-container');
-    const rows = container.querySelectorAll('.row');
-    const nonempty = (row) => Array.prototype.filter.call(
-      row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
-    ).length === 0;
-    const encodeRow = (row) => {
-      const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf) => tf.value);
-      this.schedulerOpts[items[0]] = items[1];
-      return items;
-    };
-    Array.prototype.filter.call(rows, (row) => nonempty(row)).map((row) => encodeRow(row));
+    const allowedSessionType = this.shadowRoot.querySelector('#allowed-session-types');
+    const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
+
+    if (allowedSessionType.value === 'both') {
+      this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
+    } else {
+      this.schedulerOpts['allowed_session_types'] = [allowedSessionType.value];
+    }
+
+    this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
   }
 
   render() {
@@ -685,7 +618,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               icon="add"
               label="${_t('button.Add')}"
               @click=${() => {
-    this._clearRows();
+    this._clearValues();
     this._launchDialogById('#create-scaling-group-dialog');
   }}>
           </mwc-button>
@@ -701,11 +634,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Driver')}" path="driver">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.DriverOptions')}" path="driver_opts">
-        </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}" path="scheduler">
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="2" width="250px" header="${_t('resourceGroup.SchedulerOptions')}" .renderer=${this._schedulerOptionsRenderer}>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.WsproxyAddress')}" path="wsproxy_addr">
         </vaadin-grid-column>
@@ -846,27 +775,32 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       <backend-ai-dialog id="modify-scheduler-opts-dialog" fixed backdrop persistent>
         <span slot="title">${_t('resourceGroup.SetSchedulerOptions')}</span>
         <div slot="content" id="modify-scheduler-opts-container">
-          <div class="row header">
-            <div style="margin-right:5px;"> ${_t('resourceGroup.SchedulerOptsKey')} </div>
-            <div> ${_t('resourceGroup.SchedulerOptsValue')} </div>
-          </div>
-          <div class="row first">
-            <wl-textfield type="text" style="margin-right:5px;"></wl-textfield>
-            <wl-textfield type="text"></wl-textfield>
-            <wl-button
-              fab flat
-              class="fg pink"
-              @click=${()=>this._appendSchedulerOptsRow()}
-            >
-              <wl-icon>add</wl-icon>
-            </wl-button>
-          </div>
+          <mwc-select
+          id="allowed-session-types"
+          label="allowed_session_types"
+          required>
+            <mwc-list-item style="height:auto;" value="interactive">interactive</mwc-list-item>
+            <mwc-list-item style="height:auto;" value="batch">batch</mwc-list-item>
+            <mwc-list-item style="height:auto;" value="both">both</mwc-list-item>
+          </mwc-select>
+          <mwc-textfield
+            type="text"
+            value="0"
+            id="pending-timeout"
+            label="pending_timeout"
+            placeholder="0"
+            suffix="${_t('resourceGroup.TimeoutSeconds')}"
+            validationMessage="${_t('data.explorer.ValueRequired')}"
+            required
+            autoValidate
+            @input="${() => this._validatePendingTimeout()}"
+          ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
               icon="delete"
-              label="${_t('button.DeleteAll')}"
-              @click="${()=>this._clearRows()}"
+              label="${_t('button.Refresh')}"
+              @click="${()=>this._clearValues()}"
               style="width:100%"></mwc-button>
           <mwc-button
               unelevated
@@ -875,6 +809,17 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               label="${_t('button.Save')}"
               @click="${()=>this.modifySchedulerOpts()}"
               style="width:100%"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="show-detail-dialog" fixed backdrop persistent>
+        <span slot="title">${_t('agent.DetailedInformation')}</span>
+        <div slot="content" id="modify-scheduler-opts-container">
+          <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${[this.scalingGroups[this.selectedIndex]]}">
+            <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.DriverOptions')}" .renderer=${this._driverOptionsRenderer}>
+            </vaadin-grid-column>
+            <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.SchedulerOptions')}" .renderer=${this._schedulerOptionsRenderer}>
+            </vaadin-grid-column>
+          </vaadin-grid>
         </div>
       </backend-ai-dialog>
     `;

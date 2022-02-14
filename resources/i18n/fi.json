@@ -765,10 +765,9 @@
     "ResourceGroupNameRequired": "Resurssiryhmän nimi vaaditaan.",
     "ResourceGroupAlreadyExist": "Samanniminen resurssiryhmä on jo olemassa.",
     "SetSchedulerOptions": "Aseta ajoitusasetukset",
-    "SchedulerOptsKey": "Avain",
-    "SchedulerOptsValue": "Arvo",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
-    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
+    "TimeoutSeconds": "Sekuntia",
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Kenraali",

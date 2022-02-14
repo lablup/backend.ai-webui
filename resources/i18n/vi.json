@@ -765,10 +765,9 @@
     "ResourceGroupNameRequired": "Tên nhóm tài nguyên là bắt buộc.",
     "ResourceGroupAlreadyExist": "Một nhóm tài nguyên có cùng tên đã tồn tại.",
     "SetSchedulerOptions": "Đặt các tùy chọn của bộ lập lịch biểu",
-    "SchedulerOptsKey": "Chìa khóa",
-    "SchedulerOptsValue": "Giá trị",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
-    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
+    "TimeoutSeconds": "Giây",
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Chung",

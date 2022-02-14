@@ -783,10 +783,9 @@
     "ResourceGroupAlreadyExist": "Un groupe de ressources du même nom existe déjà.",
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Définir les options du planificateur",
-    "SchedulerOptsKey": "Clé",
-    "SchedulerOptsValue": "Valeur",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
-    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
+    "TimeoutSeconds": "Seconds",
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Général",

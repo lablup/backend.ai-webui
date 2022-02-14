@@ -765,10 +765,9 @@
     "ResourceGroupNameRequired": "Nama kumpulan sumber diperlukan.",
     "ResourceGroupAlreadyExist": "Kumpulan sumber dengan nama yang sama sudah ada.",
     "SetSchedulerOptions": "Tetapkan Pilihan Penjadual",
-    "SchedulerOptsKey": "kunci",
-    "SchedulerOptsValue": "Nilai",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
-    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
+    "TimeoutSeconds": "Detik",
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Am",

@@ -765,10 +765,9 @@
     "ResourceGroupNameRequired": "需要資源組名稱。",
     "ResourceGroupAlreadyExist": "已存在同名的資源組。",
     "SetSchedulerOptions": "設置調度程序選項",
-    "SchedulerOptsKey": "鑰匙",
-    "SchedulerOptsValue": "價值",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__",
-    "SchedulerOptsKeyOverlap": "__NOT_TRANSLATED__"
+    "TimeoutSeconds": "秒",
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "一般的",
