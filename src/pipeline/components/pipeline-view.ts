@@ -25,7 +25,6 @@ import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-textfield';
 import '../lib/pipeline-flow';
 import './pipeline-list';
-import * as e from 'express';
 
 /**
  Pipeline View
@@ -47,8 +46,8 @@ export default class PipelineView extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: String}) _activeTab = 'pipeline-list';
   @property({type: Boolean}) isNodeSelected = false;
-  @property({type: Object}) selectedNode;
-  @property({type: Object}) pipelineInfo;
+  @property({type: Object}) selectedNode = Object();
+  @property({type: Object}) pipelineInfo = Object();
   @property({type: Object}) taskInfo;
 
   // Elements
@@ -84,28 +83,6 @@ export default class PipelineView extends LitElement {
       'Python': 'python',
     };
     this.languages = [];
-
-    // dummy data for pipeline info
-    this.pipelineInfo = {
-      name: "",
-      scaling_group: "",
-      owner: "",
-      type: "",
-      created_at: "",
-      modified_at: "",
-      data: {},
-    };
-
-    this.selectedNode = {
-      name: '',
-      inputs: 1,
-      outputs: 1,
-      pos_x: 0,
-      pos_y: 0,
-      class: '',
-      data: {},
-      html: '',
-    };
   }
 
   static get styles(): CSSResultGroup | undefined {
@@ -260,13 +237,13 @@ export default class PipelineView extends LitElement {
       this.selectedNode = {};
       this.isNodeSelected = false;
     });
-    document.addEventListener('flow-response', (e:any) => {
+    document.addEventListener('flow-response', (e: any) => {
       if (e.detail) {
         this.pipelineInfo.data = e.detail;
         localStorage.setItem(`pipeline-${this.pipelineInfo.name}`, JSON.stringify(this.pipelineInfo.data));        
       }
     });
-    document.addEventListener('pipeline-view-active-tab-change', (e:any) => {
+    document.addEventListener('pipeline-view-active-tab-change', (e: any) => {
       if (e.detail) {
         const tabGroup = [...this.shadowRoot.querySelector('#pipeline-pane').children];
         this.shadowRoot.querySelector('#pipeline-pane').activeIndex = tabGroup.map(tab => tab.title).indexOf(e.detail.activeTab.title);
@@ -592,7 +569,6 @@ export default class PipelineView extends LitElement {
     const currentFlowData = JSON.parse(localStorage.getItem(`pipeline-${this.pipelineInfo.name}`) || '{}');
     const flowDataReqEvent = new CustomEvent('import-flow', {'detail': currentFlowData});
     document.dispatchEvent(flowDataReqEvent);
-    document.dispatchEvent(flowDataReqEvent);
     this.notification.text = `Pipeline ${this.pipelineInfo.name} loaded.`;
     this.notification.show();
   }
@@ -602,6 +578,12 @@ export default class PipelineView extends LitElement {
     document.dispatchEvent(flowDataReqEvent);
     this.notification.text = `Pipeline ${this.pipelineInfo.name} saved.`;
     this.notification.show();
+  }
+
+  _showRunPipelineDialog() {
+    // automatically save current pipeline info before execute
+    this._saveCurrentFlowData();
+    this._launchDialogById('#run-pipeline');
   }
 
   _showTaskCreateDialog() {
@@ -640,11 +622,8 @@ export default class PipelineView extends LitElement {
           <div class="horizontal layout flex justified">
             <div class="horizontal layout flex center start-justified">
             <span id="pipeline-name"></span>
-            <mwc-select id="pipeline-version" label="Version">
-              <mwc-list-item selected value="Latest">Latest</mwc-list-item>
-            </mwc-select>
             <mwc-icon-button icon="save" @click="${() => this._saveCurrentFlowData()}"></mwc-icon-button>
-            <mwc-icon-button icon="play_arrow" @click="${() => this._launchDialogById('#run-pipeline')}"></mwc-icon-button>
+            <mwc-icon-button icon="play_arrow" @click="${() => this._showRunPipelineDialog()}"></mwc-icon-button>
             <mwc-icon-button icon="settings" @click="${() => this._launchDialogById('#edit-pipeline')}"></mwc-icon-button>
             </div>
             <div class="horizontal layout flex center end-justified">
@@ -661,7 +640,10 @@ export default class PipelineView extends LitElement {
       </lablup-activity-panel>
       <backend-ai-dialog id="run-pipeline" fixed backdrop blockscrolling persistent>
         <span slot="title">Run Pipeline</span>
-        <div slot="content"></div>
+        <div slot="content" class="vertical layout center center-justified flex">
+          <p style="font-weight: bold; font-size:1rem;">Ready to instantiate pipeline</p>
+          <p style="font-size:1rem;">${this.pipelineInfo.name}</p>
+        </div>
         <div slot="footer" class="horizontal layout end-justified flex">
           <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#run-pipeline')}"></mwc-button>
           <mwc-button unelevated label="Proceed"></mwc-button>

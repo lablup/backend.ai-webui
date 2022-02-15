@@ -43,7 +43,7 @@ export default class PipelineList extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Array}) scalingGroups = ['default']; // contains project groups that user can access
   @property({type: Array}) pipelineType = ['from Template', 'YAML', 'Custom'];
-  @property({type: Object}) pipelineInfo;
+  @property({type: Object}) pipelineInfo = Object();
   @property({type: Array}) pipelines = Array();
   @property({type: String}) username;
   @property({type: Object}) _boundNameRenderer = this.nameRenderer.bind(this);
@@ -54,15 +54,6 @@ export default class PipelineList extends LitElement {
 
   constructor() {
     super();
-    this.pipelineInfo = {
-      name: "",
-      scaling_group: "",
-      owner: "",
-      type: "",
-      created_at: "",
-      modified_at: "",
-      data: {},
-    }
 
     const now = new Date().toLocaleString();
 
@@ -74,7 +65,7 @@ export default class PipelineList extends LitElement {
         type: "Custom",
         created_at: now,
         modified_at: now,
-        data: {}
+        data: {},
       },
       {
         name: "LoanPrediction",
@@ -83,7 +74,7 @@ export default class PipelineList extends LitElement {
         type: "Custom",
         created_at: now,
         modified_at: now,
-        data: {}
+        data: {},
       },
       {
         name: "Flow-01",
@@ -92,7 +83,7 @@ export default class PipelineList extends LitElement {
         type: "Custom",
         created_at: now,
         modified_at: now,
-        data: {}
+        data: {},
       }
     ]; // hard-coded dummy data
   }

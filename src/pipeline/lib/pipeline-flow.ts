@@ -303,8 +303,12 @@ export default class PipelineFlow extends LitElement {
    */
   _updateNode(id: number, nodeInfo: DrawflowNode) {
     const moduleName = this.editor.getModuleFromNodeId(id);
-    this.editor.drawflow.drawflow[moduleName].data[id] = nodeInfo;
-    
+    const node = this.editor.drawflow.drawflow[moduleName].data[id];
+    // partially modify data
+    Object.assign(node, {
+      data: nodeInfo.data,
+      html: nodeInfo.html,
+      name: nodeInfo.name});
     // monkeypatch: manually update node name
     const nodeElem = this.shadowRoot.querySelector(`.${nodeInfo.class}.selected`);
     const titleElement = [...nodeElem.children].find(elem => elem.className === 'drawflow_content_node');
