@@ -766,8 +766,7 @@
     "ResourceGroupAlreadyExist": "Eine Ressourcengruppe mit demselben Namen ist bereits vorhanden.",
     "SetSchedulerOptions": "Planer-Optionen festlegen",
     "TimeoutSeconds": "Sekunden",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Allgemeines",

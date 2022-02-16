@@ -766,8 +766,7 @@
     "ResourceGroupAlreadyExist": "Kumpulan sumber dengan nama yang sama sudah ada.",
     "SetSchedulerOptions": "Tetapkan Pilihan Penjadual",
     "TimeoutSeconds": "Detik",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Am",

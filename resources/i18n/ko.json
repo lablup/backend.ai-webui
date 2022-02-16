@@ -322,7 +322,8 @@
     "Generate": "생성하기",
     "Continue": "계속",
     "GoBackToSummaryPage": "요약 페이지로 돌아가기",
-    "ForceTerminate": "강제 종료"
+    "ForceTerminate": "강제 종료",
+    "Reset": "리셋"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -814,8 +815,7 @@
     "WsproxyAddress": "WSProxy 서버 주소",
     "SetSchedulerOptions": "스케쥴러 옵션 설정",
     "TimeoutSeconds": "초",
-    "PendingTimeoutValueError": "Pending timeout의 값은 반드시 양수이거나 0이어야 합니다.",
-    "SchedulerOptsSaveFailed": "스케쥴러 옵션 저장에 실패하였습니다."
+    "PendingTimeoutValueError": "Pending timeout의 값은 반드시 양수이거나 0이어야 합니다."
   },
   "maintenance": {
     "General": "일반",

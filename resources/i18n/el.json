@@ -766,8 +766,7 @@
     "ResourceGroupAlreadyExist": "Υπάρχει ήδη μια ομάδα πόρων με το ίδιο όνομα.",
     "SetSchedulerOptions": "Ορισμός Επιλογών Προγραμματιστή",
     "TimeoutSeconds": "δευτερόλεπτα",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Γενικός",

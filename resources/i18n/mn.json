@@ -301,7 +301,8 @@
     "Generate": "Үүсгэх",
     "Continue": "Үргэлжлүүлэх",
     "GoBackToSummaryPage": "Дүгнэлт хуудас руу буцах",
-    "ForceTerminate": "Хүчээр цуцлах"
+    "ForceTerminate": "Хүчээр цуцлах",
+    "Reset": "дахин тохируулах"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -784,8 +785,7 @@
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Хуваарьлагчийн сонголтыг тохируулна уу",
     "TimeoutSeconds": "Секунд",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Ерөнхий",

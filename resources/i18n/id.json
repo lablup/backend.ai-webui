@@ -301,7 +301,8 @@
     "Generate": "Hasilkan",
     "Continue": "Lanjutkan",
     "GoBackToSummaryPage": "Kembali ke halaman Ringkasan",
-    "ForceTerminate": "Hentikan paksa"
+    "ForceTerminate": "Hentikan paksa",
+    "Reset": "mengatur ulang"
   },
   "agent": {
     "Endpoint": "Titik akhir",
@@ -784,8 +785,7 @@
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Setel Opsi Penjadwal",
     "TimeoutSeconds": "Detik",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Umum",

@@ -301,7 +301,8 @@
     "Generate": "Генерировать",
     "Continue": "Продолжить",
     "GoBackToSummaryPage": "Вернуться на страницу \"Обзор\"",
-    "ForceTerminate": "Принудительно завершить"
+    "ForceTerminate": "Принудительно завершить",
+    "Reset": "перезагрузить"
   },
   "agent": {
     "Endpoint": "Конечная точка",
@@ -784,8 +785,7 @@
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Установить параметры планировщика",
     "TimeoutSeconds": "Секунды",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
-    "SchedulerOptsSaveFailed": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Общий",

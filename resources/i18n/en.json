@@ -322,7 +322,8 @@
     "Generate": "Generate",
     "Continue": "Continue",
     "GoBackToSummaryPage": "Go back to Summary page",
-    "ForceTerminate": "Force Terminate"
+    "ForceTerminate": "Force Terminate",
+    "Reset": "Reset"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -814,8 +815,7 @@
     "WsproxyAddress": "WSProxy Server Address",
     "SetSchedulerOptions": "Set Scheduler Options",
     "TimeoutSeconds": "Seconds",
-    "PendingTimeoutValueError": "Pending timeout's value must be positive number or 0",
-    "SchedulerOptsSaveFailed": "Scheduler options save failed!"
+    "PendingTimeoutValueError": "Pending timeout's value must be positive number or 0"
   },
   "maintenance": {
     "General": "General",
