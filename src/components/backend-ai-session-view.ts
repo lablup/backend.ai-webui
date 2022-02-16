@@ -148,6 +148,10 @@ export default class BackendAiSessionView extends BackendAIPage {
           --mdc-theme-primary: var(--paper-green-600);
         }
 
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+
         backend-ai-resource-monitor {
           margin: 10px 50px;
         }
@@ -442,14 +446,17 @@ export default class BackendAiSessionView extends BackendAIPage {
       <lablup-activity-panel elevation="1" autowidth narrow noheader>
         <div slot="message">
           <h3 class="tab horizontal center layout" style="margin-top:0;margin-bottom:0;">
-            <div class="horizontal layout flex start-justified">
-            <mwc-tab-bar>
-              <mwc-tab title="running" label="${_t('session.Running')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="interactive" label="${_t('session.Interactive')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="batch" label="${_t('session.Batch')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="finished" label="${_t('session.Finished')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="others" label="${_t('session.Others')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-            </mwc-tab-bar>
+            <div class="scroll hide-scrollbar">
+              <div class="horizontal layout flex start-justified" style="width:70%;">
+                <mwc-tab-bar>
+                  <mwc-tab title="running" label="${_t('session.Running')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  <mwc-tab title="interactive" label="${_t('session.Interactive')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  <mwc-tab title="batch" label="${_t('session.Batch')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  <mwc-tab title="finished" label="${_t('session.Finished')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  <mwc-tab title="others" label="${_t('session.Others')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                </mwc-tab-bar>
+              </div>
+            </div>
             ${this.is_admin ? html`
               <div style="position: relative;">
                 <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
@@ -464,9 +471,8 @@ export default class BackendAiSessionView extends BackendAIPage {
                   </mwc-menu>
                 </div>
               ` : html``}
-            </div>
             <div class="horizontal layout flex end-justified" style="margin-right:20px;">
-            <backend-ai-session-launcher location="session" id="session-launcher" ?active="${this.active === true}" isSupportingFab></backend-ai-session-launcher>
+              <backend-ai-session-launcher location="session" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
             </div>
           </h3>
           <div id="running-lists" class="tab-content">
