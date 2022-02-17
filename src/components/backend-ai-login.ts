@@ -538,6 +538,7 @@ export default class BackendAILogin extends BackendAIPage {
    * Open loginPanel.
    * */
   open() {
+    this.login
     if (this.loginPanel.open !== true) {
       this.loginPanel.show();
     }
@@ -568,9 +569,9 @@ export default class BackendAILogin extends BackendAIPage {
     this.blockMessage = message;
     this.blockType = type;
     if (message === _text('login.PleaseWait') && type === _text('login.ConnectingToCluster')) {
-      this.blockPanel.addEventListener('dialog-closed', (e) => {
-        this._cancelLogin(e);
-      });
+      this.blockPanel.escapeKeyAction = '';
+    } else {
+      this.blockPanel.escapeKeyAction = 'close';
     }
     setTimeout(() => {
       if (this.blockPanel.open === false && this.is_connected === false && this.loginPanel.open === false) {
