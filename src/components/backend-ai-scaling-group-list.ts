@@ -592,25 +592,24 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
   /**
    * reset all value to default in scheduler option input form
-   *
-   * @param {String} allowedSessionTypeName - 'allowed session type' string for querySelector
-   * @param {String} pendingTimeoutName - 'pending timeout' string for querySelector
    * */
-  _resetAllValues(allowedSessionTypeName, pendingTimeoutName) {
-    const allowedSessionType = this.shadowRoot.querySelector(allowedSessionTypeName);
-    const pendingTimeout = this.shadowRoot.querySelector(pendingTimeoutName);
+  _resetAllValues() {
+    const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
+    const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
+    const schedulerOptsInputForms = this.shadowRoot.querySelector('#create-scheduler-options-input-form');
 
     allowedSessionType.value= 'both';
+    schedulerOptsInputForms.checked = false;
     if (pendingTimeout?.value) {
       pendingTimeout.value = 0;
     }
   }
 
   /**
-   * save schedulerOptions to schedulerOpts and hide schedulerOptsDialog
+   * verify and save schedulerOptions
    *
-   * @param {String} allowedSessionTypeName - 'allowed session type' string for querySelector
-   * @param {String} pendingTimeoutName - 'pending timeout' string for querySelector
+   * @param {String} allowedSessionTypeName - 'allowed session type' input form element class name string for querySelector
+   * @param {String} pendingTimeoutName - 'pending timeout' input form element class name string for querySelector
    *
    * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
@@ -628,8 +627,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   /**
    * verify schedulerOptions key and value
    *
-   * @param {Element} allowedSessionType - 'allowed session type' element in create or modify dialog
-   * @param {Element} pendingTimeout - 'pending timeout' element in create or modify dialog
+   * @param {Element} allowedSessionType - 'allowed session type' input form element in create or modify dialog
+   * @param {Element} pendingTimeout - 'pending timeout' input form element in create or modify dialog
    *
    * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
@@ -645,8 +644,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   /**
    * save schedulerOptsDialog value to schedulerOpts
    *
-   * @param {Element} allowedSessionType - 'allowed session type' element in create or modify dialog
-   * @param {Element} pendingTimeout - 'pending timeout' element in create or modify dialog
+   * @param {Element} allowedSessionType - 'allowed session type' input form element in create or modify dialog
+   * @param {Element} pendingTimeout - 'pending timeout' input form element in create or modify dialog
    * */
   _parseSchedulerOptsList(allowedSessionType, pendingTimeout) {
     this.schedulerOpts = {};
@@ -672,7 +671,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               icon="add"
               label="${_t('button.Add')}"
               @click=${() => {
-    this._resetAllValues('#create-allowed-session-types', '#create-pending-timeout');
+    this._resetAllValues();
     this._launchDialogById('#create-scaling-group-dialog');
   }}>
           </mwc-button>
@@ -731,31 +730,29 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             label="${_t('resourceGroup.WsproxyAddress')}"
             placeholder="http://localhost:10200"
           ></mwc-textfield>
-          <div class="horizontal layout center justified">
-            <wl-expansion name="schedulerOptions">
-              <span slot="title">${_t('resourceGroup.SchedulerOptions')}</span>
-              <mwc-select
-              id="create-allowed-session-types"
-              label="allowed session types"
-              required>
-                <mwc-list-item value="interactive">interactive</mwc-list-item>
-                <mwc-list-item value="batch">batch</mwc-list-item>
-                <mwc-list-item value="both" selected>both</mwc-list-item>
-              </mwc-select>
-              <mwc-textfield
-                type="text"
-                value="0"
-                id="create-pending-timeout"
-                label="pending timeout"
-                placeholder="0"
-                suffix="${_t('resourceGroup.TimeoutSeconds')}"
-                validationMessage="${_t('data.explorer.ValueRequired')}"
-                required
-                autoValidate
-                @change="${() => this._validatePendingTimeout('#create-pending-timeout')}"
-              ></mwc-textfield>
-            </wl-expansion>
-          </div>
+          <wl-expansion id="create-scheduler-options-input-form">
+            <span slot="title">${_t('resourceGroup.SchedulerOptions')}</span>
+            <mwc-select
+            id="create-allowed-session-types"
+            label="allowed session types"
+            required>
+              <mwc-list-item value="interactive">interactive</mwc-list-item>
+              <mwc-list-item value="batch">batch</mwc-list-item>
+              <mwc-list-item value="both" selected>both</mwc-list-item>
+            </mwc-select>
+            <mwc-textfield
+              type="text"
+              value="0"
+              id="create-pending-timeout"
+              label="pending timeout"
+              placeholder="0"
+              suffix="${_t('resourceGroup.TimeoutSeconds')}"
+              validationMessage="${_t('data.explorer.ValueRequired')}"
+              required
+              autoValidate
+              @change="${() => this._validatePendingTimeout('#create-pending-timeout')}"
+            ></mwc-textfield>
+          </wl-expansion>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
@@ -799,31 +796,29 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             label="${_t('resourceGroup.WsproxyAddress')}"
             value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].wsproxy_addr ?? ''}
           ></mwc-textfield>
-          <div class="horizontal layout center justified">
-            <wl-expansion name="schedulerOptions">
-              <span slot="title">${_t('resourceGroup.SchedulerOptions')}</span>
-              <mwc-select
-              id="modify-allowed-session-types"
-              label="allowed session types"
-              required>
-                <mwc-list-item value="interactive">interactive</mwc-list-item>
-                <mwc-list-item value="batch">batch</mwc-list-item>
-                <mwc-list-item value="both">both</mwc-list-item>
-              </mwc-select>
-              <mwc-textfield
-                type="text"
-                value="0"
-                id="modify-pending-timeout"
-                label="pending timeout"
-                placeholder="0"
-                suffix="${_t('resourceGroup.TimeoutSeconds')}"
-                validationMessage="${_t('data.explorer.ValueRequired')}"
-                required
-                autoValidate
-                @change="${() => this._validatePendingTimeout('#modify-pending-timeout')}"
-              ></mwc-textfield>
-            </wl-expansion>
-          </div>
+          <wl-expansion id="modify-scheduler-options-input-form">
+            <span slot="title">${_t('resourceGroup.SchedulerOptions')}</span>
+            <mwc-select
+            id="modify-allowed-session-types"
+            label="allowed session types"
+            required>
+              <mwc-list-item value="interactive">interactive</mwc-list-item>
+              <mwc-list-item value="batch">batch</mwc-list-item>
+              <mwc-list-item value="both">both</mwc-list-item>
+            </mwc-select>
+            <mwc-textfield
+              type="text"
+              value="0"
+              id="modify-pending-timeout"
+              label="pending timeout"
+              placeholder="0"
+              suffix="${_t('resourceGroup.TimeoutSeconds')}"
+              validationMessage="${_t('data.explorer.ValueRequired')}"
+              required
+              autoValidate
+              @change="${() => this._validatePendingTimeout('#modify-pending-timeout')}"
+            ></mwc-textfield>
+          </wl-expansion>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
