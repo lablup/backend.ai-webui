@@ -538,7 +538,6 @@ export default class BackendAILogin extends BackendAIPage {
    * Open loginPanel.
    * */
   open() {
-    this.login
     if (this.loginPanel.open !== true) {
       this.loginPanel.show();
     }
