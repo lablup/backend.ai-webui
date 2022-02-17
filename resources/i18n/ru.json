@@ -301,8 +301,7 @@
     "Generate": "Генерировать",
     "Continue": "Продолжить",
     "GoBackToSummaryPage": "Вернуться на страницу \"Обзор\"",
-    "ForceTerminate": "Принудительно завершить",
-    "Reset": "перезагрузить"
+    "ForceTerminate": "Принудительно завершить"
   },
   "agent": {
     "Endpoint": "Конечная точка",

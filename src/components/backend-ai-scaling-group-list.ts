@@ -182,6 +182,15 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         .key-value-wrapper {
           margin-bottom: 10px;
         }
+
+        wl-expansion {
+          --expansion-content-padding: 0;
+          --expansion-elevation: 0;
+          --expansion-elevation-open: 0;
+          --expansion-elevation-hover: 0;
+          --expansion-header-padding: 16px;
+          --expansion-margin-open: 0;
+        }
       `
     ];
   }
@@ -745,10 +754,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
                 autoValidate
                 @change="${() => this._validatePendingTimeout('#create-pending-timeout')}"
               ></mwc-textfield>
-              <mwc-button
-              label="${_t('button.DeleteAll')}"
-              @click="${()=>this._resetAllValues('#create-allowed-session-types', '#create-pending-timeout')}"
-              style="width:100%"></mwc-button>
             </wl-expansion>
           </div>
         </div>
@@ -817,10 +822,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
                 autoValidate
                 @change="${() => this._validatePendingTimeout('#modify-pending-timeout')}"
               ></mwc-textfield>
-              <mwc-button
-              label="${_t('button.DeleteAll')}"
-              @click="${()=>this._resetAllValues('#modify-allowed-session-types', '#modify-pending-timeout')}"
-              style="width:100%"></mwc-button>
             </wl-expansion>
           </div>
         </div>

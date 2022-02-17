@@ -301,8 +301,7 @@
     "Generate": "Hasilkan",
     "Continue": "Lanjutkan",
     "GoBackToSummaryPage": "Kembali ke halaman Ringkasan",
-    "ForceTerminate": "Hentikan paksa",
-    "Reset": "mengatur ulang"
+    "ForceTerminate": "Hentikan paksa"
   },
   "agent": {
     "Endpoint": "Titik akhir",

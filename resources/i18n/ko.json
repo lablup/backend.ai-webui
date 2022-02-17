@@ -322,8 +322,7 @@
     "Generate": "생성하기",
     "Continue": "계속",
     "GoBackToSummaryPage": "요약 페이지로 돌아가기",
-    "ForceTerminate": "강제 종료",
-    "Reset": "리셋"
+    "ForceTerminate": "강제 종료"
   },
   "agent": {
     "Endpoint": "엔드포인트",

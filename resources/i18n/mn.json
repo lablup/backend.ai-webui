@@ -301,8 +301,7 @@
     "Generate": "Үүсгэх",
     "Continue": "Үргэлжлүүлэх",
     "GoBackToSummaryPage": "Дүгнэлт хуудас руу буцах",
-    "ForceTerminate": "Хүчээр цуцлах",
-    "Reset": "дахин тохируулах"
+    "ForceTerminate": "Хүчээр цуцлах"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",

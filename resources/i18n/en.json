@@ -322,8 +322,7 @@
     "Generate": "Generate",
     "Continue": "Continue",
     "GoBackToSummaryPage": "Go back to Summary page",
-    "ForceTerminate": "Force Terminate",
-    "Reset": "Reset"
+    "ForceTerminate": "Force Terminate"
   },
   "agent": {
     "Endpoint": "Endpoint",
