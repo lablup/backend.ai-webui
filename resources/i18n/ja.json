@@ -766,7 +766,8 @@
     "ResourceGroupAlreadyExist": "同じ名前のリソースグループがすでに存在します。",
     "SetSchedulerOptions": "スケジューラオプションの設定",
     "TimeoutSeconds": "秒",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "ResourceGroupDetail": "リソースグループの詳細"
   },
   "maintenance": {
     "General": "一般",

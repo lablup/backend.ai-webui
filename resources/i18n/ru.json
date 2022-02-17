@@ -784,7 +784,8 @@
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Установить параметры планировщика",
     "TimeoutSeconds": "Секунды",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "ResourceGroupDetail": "Сведения о группе ресурсов"
   },
   "maintenance": {
     "General": "Общий",

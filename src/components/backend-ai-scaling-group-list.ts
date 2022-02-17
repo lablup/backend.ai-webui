@@ -10,6 +10,7 @@ import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column';
+import '@vaadin/vaadin-item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -102,7 +103,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         backend-ai-dialog mwc-textfield,
         backend-ai-dialog mwc-textarea {
           width: 100%;
-          margin: 10px auto 20px auto;
+          margin: 5px auto 10px auto;
           --mdc-typography-font-family: var(--general-font-family);
           --mdc-theme-primary: var(--general-textfield-selected-color);
         }
@@ -136,7 +137,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         }
 
         mwc-textarea {
-          height: 150px;
+          height: 135px;
         }
 
         mwc-select {
@@ -147,7 +148,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         }
 
         mwc-list-item {
-          --mdc-menu-item-height: 30px;
+          --mdc-menu-item-height: 20px;
         }
 
         backend-ai-dialog {
@@ -162,26 +163,32 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           --component-width: 350px;
         }
 
-        .key-value-key {
-          color: dimgrey;
-          font-size: small;
-        }
-
-        .key-value-value {
-          font-size: small;
-        }
-
-        .key-value-wrapper {
-          margin-bottom: 10px;
-        }
-
         wl-expansion {
-          --expansion-content-padding: 0;
+          --expansion-content-padding: 3px;
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-header-padding: 16px;
           --expansion-margin-open: 0;
+        }
+
+        backend-ai-dialog h4 {
+          font-weight: 700;
+          font-size: 14px;
+          padding: 5px 15px 5px 12px;
+          margin: 0 0 10px 0;
+          display: block;
+          height: 20px;
+          border-bottom: 1px solid #DDD;
+        }
+
+        vaadin-item {
+          font-size: 13px;
+          font-weight: 100;
+        }
+
+        .options-value {
+          font-weight: 200;
         }
       `
     ];
@@ -322,52 +329,40 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     );
   }
 
-  _driverOptionsRenderer(root, column, rowData) {
-    const driver_opts = Object.entries(JSON.parse(rowData.item['driver_opts']));
+  _driverOptionsRenderer() {
+    const driver_opts = Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].driver_opts));
     const _driverKeyValueTemplate = (key, value) => {
       return html`
-      <div class="key-value-wrapper">
-        <div class="key-value-key">
-          ${key}
-        </div>
-        <div class="key-value-value">
-          ${value}
-        </div>
-      </div>`;
+      <vaadin-item>
+        <div><strong>${key}</strong></div>
+        <div class="options-value">${value}</div>
+      </vaadin-item>`;
     };
 
-    render(
-      driver_opts.map((item) => {
-        return _driverKeyValueTemplate(item[0], item[1]);
-      })
-      , root);
+    return driver_opts.map((item) => {
+      return _driverKeyValueTemplate(item[0], item[1]);
+    });
   }
 
-  _schedulerOptionsRenderer(root, column, rowData) {
-    const scheduler_opts = Object.entries(JSON.parse(rowData.item['scheduler_opts']));
+  _schedulerOptionsRenderer() {
+    const scheduler_opts = Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts));
     const _schedulerKeyValueTemplate = (key, value) => {
       return html`
-      <div class="key-value-wrapper">
-        <div class="key-value-key">
-          ${key}
-        </div>
-        <div class="key-value-value">
-          ${value}
-        </div>
-      </div>`;
+      <vaadin-item>
+        <div><strong>${key}</strong></div>
+        <div class="options-value">${value}</div>
+      </vaadin-item>`;
     };
 
-    render(
-      scheduler_opts.map((item: any) => {
-        if (item[0] === 'allowed_session_types') {
-          return _schedulerKeyValueTemplate(item[0].replaceAll('_', ' '), item[1].join(', '));
-        } else if (item[0] === 'pending_timeout') {
-          return _schedulerKeyValueTemplate(item[0].replaceAll('_', ' '), item[1] + ' ' + _text('resourceGroup.TimeoutSeconds'));
-        } else {
-          return '';
-        }
-      })
-      , root);
+    return scheduler_opts.map((item: any) => {
+      if (item[0] === 'allowed_session_types') {
+        return _schedulerKeyValueTemplate(item[0].replaceAll('_', ' '), item[1].join(', '));
+      } else if (item[0] === 'pending_timeout') {
+        return _schedulerKeyValueTemplate(item[0].replaceAll('_', ' '), item[1] + ' ' + _text('resourceGroup.TimeoutSeconds'));
+      } else {
+        return '';
+      }
+    });
   }
 
   _validatePendingTimeout(pendingTimeoutName) {
@@ -730,7 +725,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             required>
               <mwc-list-item value="interactive">interactive</mwc-list-item>
               <mwc-list-item value="batch">batch</mwc-list-item>
-              <mwc-list-item value="both" selected>both</mwc-list-item>
+              <mwc-list-item value="both" selected>both (interactive, batch)</mwc-list-item>
             </mwc-select>
             <mwc-textfield
               type="text"
@@ -796,7 +791,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             required>
               <mwc-list-item value="interactive">interactive</mwc-list-item>
               <mwc-list-item value="batch">batch</mwc-list-item>
-              <mwc-list-item value="both">both</mwc-list-item>
+              <mwc-list-item value="both">both (interactive, batch)</mwc-list-item>
             </mwc-select>
             <mwc-textfield
               type="text"
@@ -844,15 +839,23 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             </mwc-button>
        </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="keypair-detail-dialog" fixed backdrop persistent>
-        <span slot="title">${_t('agent.DetailedInformation')}</span>
-        <div slot="content" id="modify-scheduler-opts-container">
-          <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${[this.scalingGroups[this.selectedIndex]]}">
-            <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.DriverOptions')}" .renderer=${this._driverOptionsRenderer}>
-            </vaadin-grid-column>
-            <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.SchedulerOptions')}" .renderer=${this._schedulerOptionsRenderer}>
-            </vaadin-grid-column>
-          </vaadin-grid>
+      <backend-ai-dialog id="keypair-detail-dialog" fixed backdrop blockscrolling>
+        <span slot="title">${_t('resourceGroup.ResourceGroupDetail')}</span>
+        <div slot="content" class="intro">
+          <div class="horizontal layout">
+            <div style="width:300px;">
+              <h4>${_t('resourceGroup.SchedulerOptions')}</h4>
+              <div role="listbox" style="margin:0;">
+                ${this.scalingGroups[this.selectedIndex] ? this._schedulerOptionsRenderer() : ''}
+              </div>
+            </div>
+            <div style="width:300px;">
+              <h4>${_t('resourceGroup.DriverOptions')}</h4>
+              <div role="listbox" style="margin:0;">
+                ${this.scalingGroups[this.selectedIndex] ? this._driverOptionsRenderer() : ''}
+              </div>
+            </div>
+          </div>
         </div>
       </backend-ai-dialog>
     `;

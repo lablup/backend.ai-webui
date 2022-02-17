@@ -766,7 +766,8 @@
     "ResourceGroupAlreadyExist": "已存在同名的资源组。",
     "SetSchedulerOptions": "设置调度程序选项",
     "TimeoutSeconds": "秒",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "ResourceGroupDetail": "资源组详细信息"
   },
   "maintenance": {
     "General": "一般的",

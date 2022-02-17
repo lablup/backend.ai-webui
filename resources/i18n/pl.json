@@ -766,7 +766,8 @@
     "ResourceGroupAlreadyExist": "Grupa zasobów o tej samej nazwie już istnieje.",
     "SetSchedulerOptions": "Ustaw opcje harmonogramu",
     "TimeoutSeconds": "sekundy",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "ResourceGroupDetail": "Szczegóły grupy zasobów"
   },
   "maintenance": {
     "General": "Generał",

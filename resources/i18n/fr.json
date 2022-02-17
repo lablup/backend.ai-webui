@@ -784,7 +784,8 @@
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Définir les options du planificateur",
     "TimeoutSeconds": "Seconds",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "ResourceGroupDetail": "Détail du groupe de ressources"
   },
   "maintenance": {
     "General": "Général",

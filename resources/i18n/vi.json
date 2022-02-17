@@ -766,7 +766,8 @@
     "ResourceGroupAlreadyExist": "Một nhóm tài nguyên có cùng tên đã tồn tại.",
     "SetSchedulerOptions": "Đặt các tùy chọn của bộ lập lịch biểu",
     "TimeoutSeconds": "Giây",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "ResourceGroupDetail": "Chi tiết Nhóm Tài nguyên"
   },
   "maintenance": {
     "General": "Chung",

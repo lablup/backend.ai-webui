@@ -814,7 +814,8 @@
     "WsproxyAddress": "WSProxy Server Address",
     "SetSchedulerOptions": "Set Scheduler Options",
     "TimeoutSeconds": "Seconds",
-    "PendingTimeoutValueError": "Pending timeout's value must be positive number or 0"
+    "PendingTimeoutValueError": "Pending timeout's value must be positive number or 0",
+    "ResourceGroupDetail": "ResourceGroup Detail"
   },
   "maintenance": {
     "General": "General",

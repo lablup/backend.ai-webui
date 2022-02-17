@@ -766,7 +766,8 @@
     "ResourceGroupAlreadyExist": "Já existe um grupo de recursos com o mesmo nome.",
     "SetSchedulerOptions": "Definir opções do agendador",
     "TimeoutSeconds": "Segundos",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "ResourceGroupDetail": "Detalhe do grupo de recursos"
   },
   "maintenance": {
     "General": "Em geral",

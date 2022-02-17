@@ -766,7 +766,8 @@
     "ResourceGroupAlreadyExist": "Samanniminen resurssiryhmä on jo olemassa.",
     "SetSchedulerOptions": "Aseta ajoitusasetukset",
     "TimeoutSeconds": "Sekuntia",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__"
+    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
+    "ResourceGroupDetail": "Resurssiryhmän tiedot"
   },
   "maintenance": {
     "General": "Kenraali",
