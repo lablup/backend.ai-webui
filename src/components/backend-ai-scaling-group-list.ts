@@ -154,14 +154,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           --component-min-width: 350px;
         }
 
-        .scaling-option-title {
-          font-size: 15px;
-          color: #404040;
-          font-weight: 400;
-          margin: auto;
-          width: 100%;
-        }
-
         #keypair-detail-dialog {
           --component-width: 600px;
         }
