@@ -2,9 +2,10 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
+import {BackendAIPage} from '../../components/backend-ai-page';
 import '../../components/backend-ai-dialog';
 import '../../components/lablup-activity-panel';
 import '../../components/lablup-codemirror';
@@ -42,9 +43,10 @@ import './pipeline-list';
 */
 
 @customElement('pipeline-view')
-export default class PipelineView extends LitElement {
+export default class PipelineView extends BackendAIPage {
   public shadowRoot: any; // ShadowRoot
   @property({type: String}) _activeTab = 'pipeline-list';
+  @property({type: Boolean}) active = false;
   @property({type: Boolean}) isNodeSelected = false;
   @property({type: Object}) selectedNode = Object();
   @property({type: Object}) pipelineInfo = Object();
@@ -59,7 +61,7 @@ export default class PipelineView extends LitElement {
   @property({type: String}) defaultLanguage = '';
   @property({type: Array}) versions = [];
   @property({type: String}) scalingGroup = '';
-  @property({type: Array}) scalingGroups = [];
+  @property({type: Array}) scalingGroups = ['default'];
   @property({type: String}) vhost = '';
   @property({type: Array}) vhosts = [];
   @property({type: Object}) images = Object();
@@ -69,7 +71,6 @@ export default class PipelineView extends LitElement {
   @property({type: Object}) supports = Object();
   @property({type: Object}) aliases = Object();
 
-  @property({type: Array}) projectGroups = ['default']; // contains project groups that user can access
   @property({type: Array}) taskType = ['Import from GitHub', 'Import from GitLab', 'Custom Task'];
 
   constructor() {
@@ -100,7 +101,7 @@ export default class PipelineView extends LitElement {
         }
 
         backend-ai-dialog {
-          --component-min-width: 350px;
+          --component-min-width: 390px;
           --component-max-width: 390px;
         }
 
@@ -110,15 +111,11 @@ export default class PipelineView extends LitElement {
           margin: 0px auto;
         }
 
-        h3.task-tab {
-          background-color: #bbb;
-        }
-
         lablup-codemirror {
           width: 370px;
         }
 
-        mwc-button {
+        mwc-button { 
           margin: 10px;
         }
 
@@ -186,6 +183,29 @@ export default class PipelineView extends LitElement {
     ];
   }
 
+
+  /**
+   * Initialize the admin.
+   *
+   * @param {Boolean} active
+   */
+   async _viewStateChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
+      return;
+    }
+    // If disconnected
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._refreshImageList();
+        this.selectDefaultLanguage();
+      }, true);
+    } else { // already connected
+      this._refreshImageList();
+      this.selectDefaultLanguage();
+    }
+  }
+
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
@@ -212,18 +232,6 @@ export default class PipelineView extends LitElement {
           }
         }
       });
-
-    // If disconnected
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._refreshImageList();
-        this.selectDefaultLanguage();
-      }, true);
-    } else { // already connected
-      this._refreshImageList();
-      this.selectDefaultLanguage();
-    }
-
     this.shadowRoot.querySelector('#task-environment').addEventListener(
       'selected', this.updateLanguage.bind(this));
     
@@ -253,6 +261,17 @@ export default class PipelineView extends LitElement {
         this.shadowRoot.querySelector('#pipeline-name').innerHTML = this.pipelineInfo.name;
       }
     });
+  }
+
+  /**
+   * Enable button only when pipelineInfo is loaded
+   * 
+   */
+  _toggleButtonStatus() {
+    let buttonList = [...this.shadowRoot.querySelectorAll('mwc-icon-button.pipeline-operation'), this.shadowRoot.querySelector('mwc-button#new-task')];
+    for (const elem of buttonList) {
+      elem.disabled = this.pipelineInfo.name ? false : true;
+    }
   }
 
   _showTab(tab, tabClass='') {
@@ -610,28 +629,28 @@ export default class PipelineView extends LitElement {
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal center layout">
-            <mwc-tab-bar id="pipeline-pane">
+            <mwc-tab-bar id="pipeline-pane" @MDCTabBar:activated="${() => this._toggleButtonStatus()}">
               <mwc-tab title="pipeline-list" label="List" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
               <mwc-tab title="pipeline-view" label="View" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
             </mwc-tab-bar>
           </h3>
         <div id="pipeline-list" class="tab-content">
-          <pipeline-list></pipeline-list>
+          <pipeline-list ?active="${this._activeTab === 'pipeline-list'}"></pipeline-list>
         </div>
         <div id="pipeline-view" class="tab-content" style="display:none;">
           <div class="horizontal layout flex justified">
             <div class="horizontal layout flex center start-justified">
             <span id="pipeline-name"></span>
-            <mwc-icon-button icon="save" @click="${() => this._saveCurrentFlowData()}"></mwc-icon-button>
-            <mwc-icon-button icon="play_arrow" @click="${() => this._showRunPipelineDialog()}"></mwc-icon-button>
-            <mwc-icon-button icon="settings" @click="${() => this._launchDialogById('#edit-pipeline')}"></mwc-icon-button>
+            <mwc-icon-button class="pipeline-operation" icon="save" @click="${() => this._saveCurrentFlowData()}"></mwc-icon-button>
+            <mwc-icon-button class="pipeline-operation" icon="play_arrow" @click="${() => this._showRunPipelineDialog()}"></mwc-icon-button>
+            <mwc-icon-button class="pipeline-operation" icon="settings" @click="${() => this._launchDialogById('#edit-pipeline')}"></mwc-icon-button>
             </div>
             <div class="horizontal layout flex center end-justified">
               ${this.isNodeSelected ? html`
                 <mwc-button outlined icon="delete" label="Remove Task" @click="${() => this._removeTask()}"></mwc-button>
                 <mwc-button outlined icon="edit" label="Edit Task" @click="${() => this._showTaskEditDialog()}"></mwc-button>
               ` : html`
-                <mwc-button unelevated icon="add" label="New Task" @click="${() => this._showTaskCreateDialog()}"></mwc-button>
+                <mwc-button id="new-task" unelevated icon="add" label="New Task" @click="${() => this._showTaskCreateDialog()}"></mwc-button>
               `}
             </div>
           </div>
@@ -654,7 +673,7 @@ export default class PipelineView extends LitElement {
         <div slot="content">
           <mwc-textfield id="edit-pipeline-name" label="Pipeline Name" value="${this.pipelineInfo.name}" required></mwc-textfield>
           <mwc-select class="full-width" id="edit-scaling-group" label="ScalingGroup" fixedMenuPosition required>
-            ${this.projectGroups.map((item) => {
+            ${this.scalingGroups.map((item) => {
               return html`<mwc-list-item id="${item}" value="${item}" ?selected="${item === this.pipelineInfo.scaling_group}">${item}</mwc-list-item>`
             })}
           </mwc-select>
@@ -685,7 +704,7 @@ export default class PipelineView extends LitElement {
             `}
           </div>
           <div id="task-resources" class="vertical layout center flex task-tab-content" style="display:none;">
-            <mwc-select class="full-width" id="task-environment" label="Task Environment" required fixedMenuPosition>
+            <mwc-select class="full-width" id="task-environment" label="Task Environment" required fixedMenuPosition value="${this.defaultLanguage}">
                 ${this.languages.map((item) => html`
                   <mwc-list-item id="${item.name}" value="${item.name}" ?selected="${item.name === this.selectedNode?.environment?.kernel ?? this.defaultLanguage }">
                     <div class="horizontal justified center flex layout" style="width:325px;">
