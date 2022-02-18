@@ -45,7 +45,6 @@ export default class PipelineJobView extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: String}) _activeTab = 'job-list';
   @property({type: String}) totalDuration;
-  @property({type: Boolean}) isRunning = false;
   @property({type: Object}) pipelineJob = Object();
   @property({type: Array}) pipelineJobs;
 

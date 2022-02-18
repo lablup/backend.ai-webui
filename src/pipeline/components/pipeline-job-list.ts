@@ -42,118 +42,7 @@ import '../../components/backend-ai-dialog';
 @customElement('pipeline-job-list')
 export default class PipelineJobList extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  // @property({type: Array}) pipelineJobs = [];
-  @property({type: Array}) pipelineJobs = [ // hard coded for demo
-    {
-      id: 1,
-      name: 'test1',
-      version: 1,
-      vfolder: '/home',
-      status: 'RUNNING',
-      created_at: 1644288651967,
-      ownership: 'admin',
-      last_updated: new Date(),
-      tasks: [
-        {
-          name: 'task1',
-          description: 'task1',
-          type: 'github',
-          module_uri: 'github.com/lablup/backend.ai-modules@v2',
-          command: ['ls', '-al'],
-          environment: {
-            'scaling-group': 'default',
-            'image': 'cr.backend.ai/testing/ngc-pytorch:20.11-py3',
-            'envs': '{"ENV1":"hello world"}',
-          },
-          resources: {
-            'cpu': 2,
-            'mem': 4,
-            'cuda.shares': 0.2,
-          },
-          mounts: ['folder1', 'folder2'],
-          depends: ['task3', 'task5'],
-        },
-        {
-          name: 'task2',
-          description: 'task2',
-          type: 'gitlab',
-          module_uri: 'github.com/lablup/backend.ai-modules@v2',
-          command: ['ls', '-al'],
-          environment: {
-            'scaling-group': 'default',
-            'image': 'cr.backend.ai/testing/ngc-pytorch:20.11-py3',
-            'envs': '{"ENV1":"hello world"}',
-          },
-          resources: {
-            'cpu': 2,
-            'mem': 5,
-            'cuda.shares': 0.3,
-          },
-          mounts: ['folder1', 'folder2'],
-          depends: ['task3', 'task5'],
-        },
-        {
-          name: 'task3',
-          description: 'task3',
-          type: 'custom',
-          module_uri: 'github.com/lablup/backend.ai-modules@v2',
-          command: ['ls', '-al'],
-          environment: {
-            'scaling-group': 'default',
-            'image': 'cr.backend.ai/testing/ngc-pytorch:20.11-py3',
-            'envs': '{"ENV1":"hello world"}',
-          },
-          resources: {
-            'cpu': 2,
-            'mem': 4,
-            'cuda.shares': 0.5,
-          },
-          mounts: ['folder1', 'folder2'],
-          depends: ['task3', 'task5'],
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: 'test2',
-      version: 1,
-      vfolder: '/home',
-      status: 'STOPPED',
-      created_at: 1644288491967,
-      last_updated: new Date(),
-    },
-    {
-      id: 3,
-      name: 'test3',
-      version: 1,
-      vfolder: '/home',
-      status: 'WAITING',
-      created_at: 1644188391967,
-      ownership: 'admin',
-      last_updated: new Date(),
-    },
-    {
-      id: 4,
-      name: 'test4',
-      version: 1,
-      vfolder: '/home',
-      status: 'SUCCESS',
-      created_at: 1644088291967,
-      ownership: 'admin',
-      last_updated: new Date(),
-    },
-    {
-      id: 5,
-      name: 'test5',
-      version: 1,
-      vfolder: '/home',
-      status: 'FAILED',
-      created_at: 1643988191967,
-      ownership: 'admin',
-      last_updated: new Date(),
-    },
-  ];
-
+  @property({type: Array}) pipelineJobs = [];
   @property({type: Object}) pipelineJob = Object();
   @property({type: Object}) tasks;
   @property({type: Object}) options;
@@ -258,10 +147,10 @@ export default class PipelineJobList extends LitElement {
    * Create Task Progress Doughnut Chart
    */
   async _createTaskProgressChart() {
-    // number of tasks' status is hard coded for demo
-    const numRunningTasks = 2;
-    const numSuccessTasks = 3;
-    const numFailedTasks = 1;
+    const tasks = this.pipelineJob.tasks;
+    const numRunningTasks = tasks?.filter((task) => ['PENDING', 'PREPARING', 'RUNNING'].includes(task.status)).length?? 0;
+    const numSuccessTasks = tasks?.filter((task) => ['SUCCESS'].includes(task.status)).length?? 0;
+    const numFailedTasks = tasks?.filter((task) => ['FAILED', 'ERROR', 'CANCELLED'].includes(task.status)).length?? 0;
     this.tasks = {
       labels: [
         `${numRunningTasks} RUNNING`,
