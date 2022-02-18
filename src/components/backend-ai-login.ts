@@ -347,6 +347,10 @@ export default class BackendAILogin extends BackendAIPage {
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
     this.signoutPanel = this.shadowRoot.querySelector('#signout-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
+    this.blockPanel.addEventListener('dialog-closing-confirm', (e) => {
+      this.blockPanel.hide(true);
+      this.loginPanel.show();
+    });
     this.notification = globalThis.lablupNotification;
     this.endpoints = globalThis.backendaioptions.get('endpoints', []);
   }
@@ -569,8 +573,10 @@ export default class BackendAILogin extends BackendAIPage {
     this.blockType = type;
     if (message === _text('login.PleaseWait') && type === _text('login.ConnectingToCluster')) {
       this.blockPanel.escapeKeyAction = '';
+      this.blockPanel.closeWithConfirmation = true;
     } else {
       this.blockPanel.escapeKeyAction = 'close';
+      this.blockPanel.closeWithConfirmation = false;
     }
     setTimeout(() => {
       if (this.blockPanel.open === false && this.is_connected === false && this.loginPanel.open === false) {
