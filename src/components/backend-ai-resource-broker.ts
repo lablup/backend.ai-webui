@@ -719,7 +719,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         if (!(supportsKey in this.supports)) {
           this.supports[supportsKey] = [];
         }
-        this.supports[supportsKey].push(item.tag);
+        // check if tag already exists since we can have multiple images with same tag and different architecture
+        if (this.supports[supportsKey].indexOf(item.tag) === -1) {
+          this.supports[supportsKey].push(item.tag);
+        }
         let imageName: string;
         const specs: string[] = item.name.split('/');
         if (specs.length === 1) {
