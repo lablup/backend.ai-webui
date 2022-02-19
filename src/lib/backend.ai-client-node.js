@@ -683,7 +683,7 @@ class Client {
      * @param {object} resources - Per-session resource
      * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
      */
-    async createIfNotExists(kernelType, sessionId, architecture, resources = {}, timeout = 0) {
+    async createIfNotExists(kernelType, sessionId, architecture = undefined, resources = {}, timeout = 0) {
         if (typeof sessionId === 'undefined' || sessionId === null)
             sessionId = this.generateSessionId();
         let params = {
@@ -971,7 +971,7 @@ class Client {
     }
     // legacy aliases (DO NOT USE for new codes)
     createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
-        return this.createIfNotExists(kernelType, sessionId, resources, timeout);
+        return this.createIfNotExists(kernelType, sessionId, 'x86_64', resources, timeout);
     }
     // legacy aliases (DO NOT USE for new codes)
     destroyKernel(sessionId, ownerKey = null) {
@@ -2366,10 +2366,11 @@ class ContainerImage {
      * install specific container images from registry
      *
      * @param {string} name - name to install. it should contain full path with tags. e.g. lablup/python:3.6-ubuntu18.04
+     * @param {string} architecture - architecture to install.
      * @param {object} resource - resource to use for installation.
      * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
      */
-    async install(name, resource = {}, registry = 'index.docker.io') {
+    async install(name, architecture, resource = {}, registry = 'index.docker.io') {
         if (registry != 'index.docker.io') {
             registry = registry + '/';
         }
@@ -2381,7 +2382,7 @@ class ContainerImage {
         if (Object.keys(resource).length === 0) {
             resource = { 'cpu': '1', 'mem': '512m' };
         }
-        return this.client.createIfNotExists(registry + name, sessionId, resource, 600000).then((response) => {
+        return this.client.createIfNotExists(registry + name, sessionId, architecture, resource, 600000).then((response) => {
             return this.client.destroy(sessionId);
         }).catch(err => {
             throw err;

@@ -2544,7 +2544,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     return globalThis.backendaiclient.get_resource_slots().then((response) => {
       indicator.set(200, _text('data.explorer.ExecutingFileBrowser'));
-      return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000);
+      return globalThis.backendaiclient.createIfNotExists(environment, null, undefined, imageResource, 10000);
     }).then(async (res) => {
       const service_info = res.servicePorts;
       appOptions = {

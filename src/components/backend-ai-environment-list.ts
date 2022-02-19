@@ -446,7 +446,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       const indicator = await this.indicator.start('indeterminate');
       indicator.set(10, _text('import.Downloading'));
 
-      globalThis.backendaiclient.image.install(imageName, imageResource).then((response) => {
+      globalThis.backendaiclient.image.install(imageName, image['architecture'], imageResource).then((response) => {
         indicator.set(100, _text('import.Installed'));
         indicator.end(1000);
 
