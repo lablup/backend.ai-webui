@@ -502,7 +502,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
 
     const fields = [
-      'id', 'session_id', 'name', 'image',
+      'id', 'session_id', 'name', 'image', 'architecture',
       'created_at', 'terminated_at', 'status', 'status_info',
       'service_ports', 'mounts',
       'occupied_slots', 'access_key', 'starts_at', 'type'
@@ -2005,6 +2005,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         ` : html``}
         <vaadin-grid-filter-column path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
                                    .renderer="${this._boundSessionInfoRenderer}">
+        </vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="architecture" auto-width header="${_t('session.Architecture')}" resizable>
         </vaadin-grid-filter-column>
         ${this._isIntegratedCondition ? html`
           <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>

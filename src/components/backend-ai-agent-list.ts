@@ -199,18 +199,18 @@ export default class BackendAIAgentList extends BackendAIPage {
     switch (this.condition) {
     case 'running':
       status = 'ALIVE';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'architecture', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
       break;
     case 'terminated':
       status = 'TERMINATED';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'architecture', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
       break;
     case 'archived':
     default:
       status = 'ALIVE';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'architecture', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     }
     if (this.useHardwareMetadata && globalThis.backendaiclient.supports('hardware-metadata')) {
@@ -881,6 +881,8 @@ export default class BackendAIAgentList extends BackendAIPage {
         <vaadin-grid-column width="100px" resizable header="${_t('agent.Region')}"
                             .renderer="${this._boundRegionRenderer}">
         </vaadin-grid-column>
+        <vaadin-grid-sort-column width="40px" resizable path="architecture" header="${_t('agent.Architecture')}">
+        </vaadin-grid-sort-column>
         <vaadin-grid-column resizable header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column resizable width="140px" header="${_t('agent.Resources')}"

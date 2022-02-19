@@ -679,15 +679,17 @@ class Client {
      *
      * @param {string} kernelType - the kernel type (usually language runtimes)
      * @param {string} sessionId - user-defined session ID
+     * @param {string} architecture - image architecture
      * @param {object} resources - Per-session resource
      * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
      */
-    async createIfNotExists(kernelType, sessionId, resources = {}, timeout = 0) {
+    async createIfNotExists(kernelType, sessionId, architecture, resources = {}, timeout = 0) {
         if (typeof sessionId === 'undefined' || sessionId === null)
             sessionId = this.generateSessionId();
         let params = {
             "lang": kernelType,
             "clientSessionToken": sessionId,
+            "architecture": architecture,
         };
         if (resources != {}) {
             let config = {};

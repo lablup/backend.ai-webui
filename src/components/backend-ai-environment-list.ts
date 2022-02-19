@@ -880,6 +880,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </vaadin-grid-sort-column>
         <vaadin-grid-filter-column path="registry" width="80px" resizable
             header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="architecture" width="80px" resizable
+            header="${_t('environment.Architecture')}"></vaadin-grid-filter-column>
         <vaadin-grid-filter-column path="namespace" width="60px" resizable
             header="${_t('environment.Namespace')}"></vaadin-grid-filter-column>
         <vaadin-grid-filter-column path="lang" resizable
@@ -1286,7 +1288,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
-      return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
+      return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'architecture', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
     }).then((response) => {
       const images = response.images;
       const domainImages: any = [];
