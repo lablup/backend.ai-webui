@@ -1190,7 +1190,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // `selecteditem.id` is `null` and raises "id" exception when trying to launch the session.
       // That's why we need if-else block here.
       const selectedItem = this.shadowRoot.querySelector('#environment').selected;
-      console.log(selectedItem);
       kernel = selectedItem.id;
       version = this.shadowRoot.querySelector('#version').selected.value;
       architecture = this.shadowRoot.querySelector('#version').selected.getAttribute('architecture');
@@ -1568,7 +1567,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       versions.reverse(); // New version comes first.
       this.versions = versions;
       this.kernel = kernel;
-      console.log(versions);
     } else {
       return;
     }
@@ -1707,7 +1705,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.metric_updating = false;
       return;
     }
-    console.log(selectedVersionItem)
     const selectedVersionValue = selectedVersionItem.value;
     const selectedVersionArchitecture = selectedVersionItem.getAttribute('architecture');
     this._updateVersionSelectorText(selectedVersionValue, selectedVersionArchitecture);
