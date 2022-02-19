@@ -345,6 +345,9 @@ export default class BackendAILogin extends BackendAIPage {
 
   firstUpdated() {
     this.loginPanel = this.shadowRoot.querySelector('#login-panel');
+    setTimeout(() => {
+      this.loginPanel.escapeKeyAction = '';
+    }, 2000);
     this.signoutPanel = this.shadowRoot.querySelector('#signout-panel');
     this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.blockPanel.addEventListener('dialog-closing-confirm', (e) => {
