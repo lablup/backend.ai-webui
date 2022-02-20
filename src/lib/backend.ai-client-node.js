@@ -1421,7 +1421,10 @@ class VFolder {
     async list(groupId = null) {
         let reqUrl = this.urlPrefix;
         if (groupId) {
-            const params = { group_id: groupId };
+            const params = {
+                group_id: groupId,
+                "all": true
+            };
             const q = querystring.stringify(params);
             reqUrl += `?${q}`;
         }
