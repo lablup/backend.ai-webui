@@ -166,8 +166,6 @@ export default class BackendAiDialog extends LitElement {
 
   /**
    * Hide a dialog.
-   *
-   * @param {Boolean} isRecur - check if this function is called by eventhandler.
    */
   hide() {
     if (this.closeWithConfirmation) {
