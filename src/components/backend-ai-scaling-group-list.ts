@@ -195,7 +195,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           font-weight: 100;
         }
         vaadin-item:hover {
-          background-color: white;
+          background-color: transparent;
         }
 
         .scheduler-option-value {
@@ -208,8 +208,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           margin-bottom: 0px;
           --textarea-height: 100px;
           --input-border-radius-outlined: 0px;
-          --input-bg: white;
-          --input-bg-filled-hover: white;
+          --input-bg: transparent;
+          --input-bg-filled-hover: transparent;
         }
       `
     ];
