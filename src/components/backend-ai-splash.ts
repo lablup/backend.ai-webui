@@ -2,13 +2,12 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-import {get as _text} from 'lit-translate';
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import 'weightless/button';
-import 'weightless/dialog';
-import 'weightless/icon';
+
+import './backend-ai-dialog';
 
 /**
  Backend.AI Splash component
@@ -95,7 +94,7 @@ export default class BackendAISplash extends LitElement {
   }
 
   firstUpdated() {
-    this.dialog = this.shadowRoot.querySelector('wl-dialog');
+    this.dialog = this.shadowRoot.querySelector('backend-ai-dialog');
   }
 
   connectedCallback() {
@@ -126,35 +125,35 @@ export default class BackendAISplash extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="splash-panel" fixed backdrop blockscrolling persistent>
-        <div class="splash-header">
-          <img src="manifest/backend.ai-text.svg" style="height:50px;padding:35px 20px;" />
-          <wl-button style="position:absolute;top:0;right:0;" fab flat inverted @click="${() => this.hide()}">
-            <wl-icon>close</wl-icon>
-          </wl-button>
-        </div>
-        <div class="splash-information">
-          <ul>
-            <li>Backend.AI Web UI <span id="version-detail" class="detail">${globalThis.packageVersion}</span></li>
-            <li><span id="license-detail">${this.edition} Edition</span></li>
-            <li><span id="valid-until" class="detail">
-              ${this.license === 'Subscription' ? html`Subscription is active until ${this.validUntil}` : html``}
-              ${this.license === 'Perpetual' ? html`Perpetual License` : html``}
-              </span></li>
-            <li style="margin-top:15px;"><span id="mode-detail" class="detail">Backend.AI Cluster</span> <span id="manager-build-detail" class="detail">${this.managerVersion}</span></li>
-            <li><span id="mode-detail" class="detail">${globalThis.isElectron ? 'App' : 'WebServer'}</span> <span id="build-detail" class="detail">Build ${globalThis.buildVersion}</span></li>
-          </ul>
-          <ul>
-            <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/master/LICENSE">open-source software</a></li>
-            <li class="copyright">Copyright &copy; 2015-2021 Lablup Inc.</li>
-            <li class="release-note">
-              <a target="_blank" href="https://github.com/lablup/backend.ai-webui/releases/tag/v${this.version}">Release Note</a>
-              <a target="_blank" href="https://github.com/lablup/backend.ai-webui/blob/main/LICENSE">License</a>
-            </li>
+      <backend-ai-dialog id="splash-panel" scrimClickAction="" narrowLayout>
+        <span slot="title">${_t('webui.menu.AboutBackendAI')}</span>
+        <div slot="content">
+          <div class="splash-header">
+            <img src="manifest/backend.ai-text.svg" style="height:50px;padding:35px 20px;" />
+          </div>
+          <div class="splash-information">
+            <ul>
+              <li>Backend.AI Web UI <span id="version-detail" class="detail">${globalThis.packageVersion}</span></li>
+              <li><span id="license-detail">${this.edition} Edition</span></li>
+              <li><span id="valid-until" class="detail">
+                ${this.license === 'Subscription' ? html`Subscription is active until ${this.validUntil}` : html``}
+                ${this.license === 'Perpetual' ? html`Perpetual License` : html``}
+                </span></li>
+              <li style="margin-top:15px;"><span id="mode-detail" class="detail">Backend.AI Cluster</span> <span id="manager-build-detail" class="detail">${this.managerVersion}</span></li>
+              <li><span id="mode-detail" class="detail">${globalThis.isElectron ? 'App' : 'WebServer'}</span> <span id="build-detail" class="detail">Build ${globalThis.buildVersion}</span></li>
             </ul>
-          </ul>
+            <ul>
+              <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/master/LICENSE">open-source software</a></li>
+              <li class="copyright">Copyright &copy; 2015-2022 Lablup Inc.</li>
+              <li class="release-note">
+                <a target="_blank" href="https://github.com/lablup/backend.ai-webui/releases/tag/v${this.version}">Release Note</a>
+                <a target="_blank" href="https://github.com/lablup/backend.ai-webui/blob/main/LICENSE">License</a>
+              </li>
+              </ul>
+            </ul>
+          </div>
         </div>
-      </wl-dialog>
+      </backend-ai-dialog>
     `;
   }
 }
