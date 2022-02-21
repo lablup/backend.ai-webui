@@ -2286,8 +2286,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   async _fetchDelegatedSessionVfolder() {
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
+    const userEmail = this.shadowRoot.querySelector('#owner-email').value;
     if (ownerEnabled && ownerEnabled.checked) {
-      await this.resourceBroker.updateVirtualFolderList(true).then(() => {
+      await this.resourceBroker.updateVirtualFolderList(userEmail).then(() => {
         this.vfolders = this.resourceBroker.vfolders;
       });
     } else {

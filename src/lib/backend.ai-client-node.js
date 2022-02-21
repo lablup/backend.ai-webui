@@ -1418,12 +1418,14 @@ class VFolder {
     /**
      * List Virtual folders that requested accessKey has permission to.
      */
-    async list(groupId = null, all = false) {
+    async list(groupId = null, userEmail = null) {
         let reqUrl = this.urlPrefix;
-        if (groupId) {
-            const params = {
+        if (groupId || userEmail) {
+            let params = {
                 group_id: groupId,
-                "all": all
+            };
+            if (userEmail) {
+                params['user_id'] = userEmail;
             };
             const q = querystring.stringify(params);
             reqUrl += `?${q}`;
