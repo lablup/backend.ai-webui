@@ -58,6 +58,13 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Array}) scalingGroups;
   @property({type: Array}) schedulerTypes;
   @property({type: Object}) schedulerOpts;
+  @property({type: Object}) allowedSessionType;
+  @property({type: Object}) pendingTimeout;
+  @property({type: Object}) allowedSessionTypeObjects = {
+    'interactive': 'interactive',
+    'batch': 'batch',
+    'both': 'both (interactive, batch)'
+  }
 
   constructor() {
     super();
@@ -155,8 +162,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           --component-min-width: 350px;
         }
 
-        #keypair-detail-dialog {
-          --component-width: 600px;
+        #resource-group-detail-dialog {
+          --component-width: 500px;
         }
 
         #modify-scaling-group-dialog {
@@ -183,12 +190,26 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         }
 
         vaadin-item {
-          font-size: 13px;
+          padding: 5px 17px 5px 17px;
+          font-size: 12px;
           font-weight: 100;
         }
+        vaadin-item:hover {
+          background-color: white;
+        }
 
-        .options-value {
-          font-weight: 200;
+        .scheduler-option-value {
+          font-size: 16px;
+          font-weight: 700;
+        }
+
+        #resource-group-detail-dialog wl-textarea {
+          --input-border-width: 0;
+          margin-bottom: 0px;
+          --textarea-height: 100px;
+          --input-border-radius-outlined: 0px;
+          --input-bg: white;
+          --input-bg-filled-hover: white;
         }
       `
     ];
@@ -302,7 +323,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           class="fg green"
           @click=${() => {
     this.selectedIndex = rowData.index;
-    this._launchDialogById('#keypair-detail-dialog');
+    this._launchDialogById('#resource-group-detail-dialog');
   }}
       ><wl-icon>assignment</wl-icon></wl-button>
           <wl-button fab flat inverted
@@ -311,8 +332,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             @click=${() => {
     this.selectedIndex = rowData.index;
     this.shadowRoot.querySelector('#modify-scaling-group-active').selected = this.scalingGroups[rowData.index].is_active;
-    Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts)).map((item: any, index) => {
-      this._initializeSchedulerOpts(item[0], item[1]);
+    Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts)).forEach(([key, value]) => {
+      this._setSchedulerOptsInputForm(key, value);
     });
     this._launchDialogById('#modify-scaling-group-dialog');
   }}
@@ -329,28 +350,13 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     );
   }
 
-  _driverOptionsRenderer() {
-    const driver_opts = Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].driver_opts));
-    const _driverKeyValueTemplate = (key, value) => {
-      return html`
-      <vaadin-item>
-        <div><strong>${key}</strong></div>
-        <div class="options-value">${value}</div>
-      </vaadin-item>`;
-    };
-
-    return driver_opts.map((item) => {
-      return _driverKeyValueTemplate(item[0], item[1]);
-    });
-  }
-
   _schedulerOptionsRenderer() {
     const scheduler_opts = Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts));
     const _schedulerKeyValueTemplate = (key, value) => {
       return html`
       <vaadin-item>
         <div><strong>${key}</strong></div>
-        <div class="options-value">${value}</div>
+        <div class="scheduler-option-value">${value}</div>
       </vaadin-item>`;
     };
 
@@ -363,36 +369,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         return '';
       }
     });
-  }
-
-  _validatePendingTimeout(pendingTimeoutName) {
-    const pendingTimeout = this.shadowRoot.querySelector(pendingTimeoutName);
-    pendingTimeout.validityTransform = (value, nativeValidity) => {
-      if (!nativeValidity.valid) {
-        if (nativeValidity.valueMissing) {
-          pendingTimeout.validationMessage = _text('data.explorer.ValueRequired');
-          return {
-            valid: nativeValidity.valid,
-            valueMissing: !nativeValidity.valid
-          };
-        } else {
-          pendingTimeout.validationMessage = _text('data.explorer.ValueRequired');
-          return {
-            valid: nativeValidity.valid,
-            customError: !nativeValidity.valid
-          };
-        }
-      } else {
-        const isValid = (parseFloat(value) >= 0);
-        if (!isValid) {
-          pendingTimeout.validationMessage = _text('resourceGroup.PendingTimeoutValueError');
-        }
-        return {
-          valid: isValid,
-          customError: !isValid
-        };
-      }
-    };
   }
 
   _validateResourceGroupName() {
@@ -431,7 +407,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * */
   _createScalingGroup() {
     const scalingGroupEl = this.shadowRoot.querySelector('#scaling-group-name');
-    if (scalingGroupEl.checkValidity() && this._saveSchedulerOpts('#create-allowed-session-types', '#create-pending-timeout')) {
+    this._saveOpenedDialogToProperty();
+    if (scalingGroupEl.checkValidity() && this._verifySchedulerOpts()) {
+      this._saveSchedulerOpts();
       const scalingGroup = this.shadowRoot.querySelector('#scaling-group-name').value;
       const description = this.shadowRoot.querySelector('#scaling-group-description').value;
       const domain = this.shadowRoot.querySelector('#scaling-group-domain').value;
@@ -478,9 +456,11 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * Modify scaling group such as description, scheduler, is_active, and name.
    * */
   _modifyScalingGroup() {
-    if (this._saveSchedulerOpts('#modify-allowed-session-types', '#modify-pending-timeout') === false) {
+    this._saveOpenedDialogToProperty();
+    if (this._verifySchedulerOpts() === false) {
       return;
     }
+    this._saveSchedulerOpts();
     const description = this.shadowRoot.querySelector('#modify-scaling-group-description').value;
     const scheduler = this.shadowRoot.querySelector('#modify-scaling-group-scheduler').value;
     const is_active = this.shadowRoot.querySelector('#modify-scaling-group-active').checked;
@@ -554,18 +534,18 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   /**
-   * set selected scaling group's values to input form for scheduler option in modify-dialog.
+   * set selected scaling group's values to scheduler option input form in modify-dialog.
    *
    * @param {String} name - scheduler option key in selected scalingGroup
    * @param {Any} value - scheduler option value in selected scalingGroup
-   */
-  _initializeSchedulerOpts(name = '', value = '') {
+   * */
+  _setSchedulerOptsInputForm(name = '', value: any) {
     const allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
-
+    
     switch (name) {
     case 'allowed_session_types':
-      if (value.length === 2) {
+      if (value.includes('interactive') && value.includes('batch')) {
         allowedSessionType.value = 'both';
       } else {
         allowedSessionType.value = value[0];
@@ -580,11 +560,11 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   /**
    * reset all value to default in scheduler option input form
    * */
-  _resetAllValues() {
+  _resetAllSchedulerOptsValues() {
     const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
     const schedulerOptsInputForms = this.shadowRoot.querySelector('#create-scheduler-options-input-form');
-
+    
     allowedSessionType.value= 'both';
     schedulerOptsInputForms.checked = false;
     if (pendingTimeout?.value) {
@@ -593,57 +573,49 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   /**
-   * verify and save schedulerOptions
-   *
-   * @param {String} allowedSessionTypeName - 'allowed session type' input form element class name string for querySelector
-   * @param {String} pendingTimeoutName - 'pending timeout' input form element class name string for querySelector
-   *
-   * @return {Boolean} key-value is valid => true, key-value is invalid => false
-   * */
-  _saveSchedulerOpts(allowedSessionTypeName, pendingTimeoutName) {
-    const allowedSessionType = this.shadowRoot.querySelector(allowedSessionTypeName);
-    const pendingTimeout = this.shadowRoot.querySelector(pendingTimeoutName);
-
-    if (this._verifySchulerOpts(allowedSessionType, pendingTimeout) === false) {
-      return false;
-    }
-    this._parseSchedulerOptsList(allowedSessionType, pendingTimeout);
-    return true;
-  }
-
-  /**
    * verify schedulerOptions key and value
    *
-   * @param {Element} allowedSessionType - 'allowed session type' input form element in create or modify dialog
-   * @param {Element} pendingTimeout - 'pending timeout' input form element in create or modify dialog
-   *
    * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
-  _verifySchulerOpts(allowedSessionType, pendingTimeout) {
+  _verifySchedulerOpts() {
     let isValid = true;
 
-    if (allowedSessionType.checkValidity() === false || pendingTimeout.checkValidity() === false) {
+    if (this.allowedSessionType.checkValidity() === false || this.pendingTimeout.checkValidity() === false) {
       isValid = false;
     }
     return isValid;
   }
 
   /**
-   * save schedulerOptsDialog value to schedulerOpts
-   *
-   * @param {Element} allowedSessionType - 'allowed session type' input form element in create or modify dialog
-   * @param {Element} pendingTimeout - 'pending timeout' input form element in create or modify dialog
+   * save SchedulerOptsInputForms value to schedulerOpts property
    * */
-  _parseSchedulerOptsList(allowedSessionType, pendingTimeout) {
+  _saveSchedulerOpts() {
     this.schedulerOpts = {};
-
-    if (allowedSessionType.value === 'both') {
+    if (this.allowedSessionType.value === 'both') {
       this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
     } else {
-      this.schedulerOpts['allowed_session_types'] = [allowedSessionType.value];
+      this.schedulerOpts['allowed_session_types'] = [this.allowedSessionType.value];
     }
+    this.schedulerOpts['pending_timeout'] = this.pendingTimeout.value;
+  }
 
-    this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
+  /**
+   * find opened dialog and 
+   * save scheduler option input form element of opened dialog to property.
+   * */
+  _saveOpenedDialogToProperty() {
+    if (this.shadowRoot.querySelector('#create-scaling-group-dialog').open) {
+      this.allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
+      this.pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
+    } else {
+      this.allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
+      this.pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
+    };
+  }
+
+  _launchCreateDialog() {
+    this._resetAllSchedulerOptsValues();
+    this._launchDialogById('#create-scaling-group-dialog');
   }
 
   render() {
@@ -657,10 +629,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               id="add-scaling-group"
               icon="add"
               label="${_t('button.Add')}"
-              @click=${() => {
-    this._resetAllValues();
-    this._launchDialogById('#create-scaling-group-dialog');
-  }}>
+              @click=${this._launchCreateDialog}>
           </mwc-button>
       </h4>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.scalingGroups}">
@@ -723,21 +692,21 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             id="create-allowed-session-types"
             label="allowed session types"
             required>
-              <mwc-list-item value="interactive">interactive</mwc-list-item>
-              <mwc-list-item value="batch">batch</mwc-list-item>
-              <mwc-list-item value="both" selected>both (interactive, batch)</mwc-list-item>
+              ${Object.entries(this.allowedSessionTypeObjects).map(([key, value]) => {
+                return html`<mwc-list-item value="${key}">${value}</mwc-list-item>`
+              })}
             </mwc-select>
             <mwc-textfield
-              type="text"
+              type="number"
               value="0"
               id="create-pending-timeout"
               label="pending timeout"
               placeholder="0"
               suffix="${_t('resourceGroup.TimeoutSeconds')}"
-              validationMessage="${_t('data.explorer.ValueRequired')}"
+              validationMessage="${_t('settings.InvalidValue')}"
               required
               autoValidate
-              @change="${() => this._validatePendingTimeout('#create-pending-timeout')}"
+              min="0"
             ></mwc-textfield>
           </wl-expansion>
         </div>
@@ -789,21 +758,21 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             id="modify-allowed-session-types"
             label="allowed session types"
             required>
-              <mwc-list-item value="interactive">interactive</mwc-list-item>
-              <mwc-list-item value="batch">batch</mwc-list-item>
-              <mwc-list-item value="both">both (interactive, batch)</mwc-list-item>
+              ${Object.entries(this.allowedSessionTypeObjects).map(([key, value]) => {
+                return html`<mwc-list-item value="${key}">${value}</mwc-list-item>`
+              })}
             </mwc-select>
             <mwc-textfield
-              type="text"
+              type="number"
               value="0"
               id="modify-pending-timeout"
               label="pending timeout"
               placeholder="0"
               suffix="${_t('resourceGroup.TimeoutSeconds')}"
-              validationMessage="${_t('data.explorer.ValueRequired')}"
+              validationMessage="${_t('settings.InvalidValue')}"
               required
               autoValidate
-              @change="${() => this._validatePendingTimeout('#modify-pending-timeout')}"
+              min="0"
             ></mwc-textfield>
           </wl-expansion>
         </div>
@@ -839,24 +808,74 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             </mwc-button>
        </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="keypair-detail-dialog" fixed backdrop blockscrolling>
-        <span slot="title">${_t('resourceGroup.ResourceGroupDetail')}</span>
-        <div slot="content" class="intro">
-          <div class="horizontal layout">
-            <div style="width:300px;">
-              <h4>${_t('resourceGroup.SchedulerOptions')}</h4>
-              <div role="listbox" style="margin:0;">
-                ${this.scalingGroups[this.selectedIndex] ? this._schedulerOptionsRenderer() : ''}
+      <backend-ai-dialog id="resource-group-detail-dialog" fixed backdrop blockscrolling>
+        ${this.scalingGroups[this.selectedIndex] ? html`
+          <span slot="title" class="horizontal center layout">
+            <span style="margin-right:15px;">${_text('resourceGroup.ResourceGroupDetail')}</span>
+          </span>
+          <div slot="content" class="intro">
+            <div class="horizontal layout" style="margin-bottom:15px;">
+              <div style="width:250px;">
+                <h4>${_text('credential.Information')}</h4>
+                <div role="listbox" class="vertical layout">
+                  <vaadin-item>
+                    <div><strong>${_text('resourceGroup.Name')}</strong></div>
+                    <div class="scheduler-option-value">${this.scalingGroups[this.selectedIndex].name}</div>
+                  </vaadin-item>
+                  <vaadin-item>
+                    <div><strong>${_text('resourceGroup.ActiveStatus')}</strong></div>
+                    <lablup-shields
+                      app=""
+                      color=${this.scalingGroups[this.selectedIndex].is_active ? 'green' : 'red'}
+                      description=${this.scalingGroups[this.selectedIndex].is_active ? 'active' : 'inactive'}
+                      ui="flat"
+                    ></lablup-shields>
+                  </vaadin-item>
+                  <vaadin-item>
+                    <div><strong>${_text('resourceGroup.Driver')}</strong></div>
+                    <div class="scheduler-option-value">${this.scalingGroups[this.selectedIndex].driver}</div>
+                  </vaadin-item>
+                  <vaadin-item>
+                    <div><strong>${_text('resourceGroup.Scheduler')}</strong></div>
+                    <div class="scheduler-option-value">${this.scalingGroups[this.selectedIndex].scheduler}</div>
+                  </vaadin-item>
+                  <vaadin-item>
+                    <div><strong>${_text('resourceGroup.WsproxyAddress')}</strong></div>
+                    <div class="scheduler-option-value">${this.scalingGroups[this.selectedIndex].wsproxy_addr ? this.scalingGroups[this.selectedIndex].wsproxy_addr : 'none'}</div>
+                  </vaadin-item>
+                </div>
+              </div>
+              <div class="center vertial layout" style="width:250px;">
+                <div>
+                  <h4 class="horizontal center layout">
+                    ${_t('resourceGroup.SchedulerOptions')}
+                  </h4>
+                  <div role="listbox">
+                    ${this._schedulerOptionsRenderer()}
+                  </div>
+                </div>
+                <div>
+                  <h4 class="horizontal center layout">
+                    ${_t('resourceGroup.DriverOptions')}
+                  </h4>
+                  <div role="listbox">
+                  </div>
+                </div>
               </div>
             </div>
-            <div style="width:300px;">
-              <h4>${_t('resourceGroup.DriverOptions')}</h4>
-              <div role="listbox" style="margin:0;">
-                ${this.scalingGroups[this.selectedIndex] ? this._driverOptionsRenderer() : ''}
-              </div>
+            <div>
+              <h4>
+                ${_t('resourceGroup.Description')}
+              </h4>
+              <wl-textarea
+              readonly
+              filled
+              outlined
+              value="${this.scalingGroups[this.selectedIndex].description}">
+              </wl-textarea>
             </div>
-          </div>
-        </div>
+          </div>` : ''
+        }
       </backend-ai-dialog>
     `;
   }
