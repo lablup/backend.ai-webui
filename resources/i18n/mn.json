@@ -784,7 +784,6 @@
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Хуваарьлагчийн сонголтыг тохируулна уу",
     "TimeoutSeconds": "Секунд",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
     "ResourceGroupDetail": "Нөөцийн бүлгийн дэлгэрэнгүй"
   },
   "maintenance": {

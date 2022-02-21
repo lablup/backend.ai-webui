@@ -766,7 +766,6 @@
     "ResourceGroupAlreadyExist": "Ya existe un grupo de recursos con el mismo nombre.",
     "SetSchedulerOptions": "Establecer opciones del programador",
     "TimeoutSeconds": "Segundos",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
     "ResourceGroupDetail": "Detalle del grupo de recursos"
   },
   "maintenance": {

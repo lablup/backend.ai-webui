@@ -766,7 +766,6 @@
     "ResourceGroupAlreadyExist": "Aynı ada sahip bir kaynak grubu zaten var.",
     "SetSchedulerOptions": "Zamanlayıcı Seçeneklerini Ayarla",
     "TimeoutSeconds": "saniye",
-    "PendingTimeoutValueError": "__NOT_TRANSLATED__",
     "ResourceGroupDetail": "Kaynak Grubu Ayrıntısı"
   },
   "maintenance": {
