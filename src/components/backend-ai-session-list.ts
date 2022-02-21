@@ -2045,7 +2045,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
           @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
       </div>
-      <backend-ai-dialog id="work-dialog" narrowLayout scrollable>
+      <backend-ai-dialog id="work-dialog" narrowLayout>
         <span slot="title" id="work-title"></span>
         <div slot="action">
           <mwc-icon-button fab flat inverted icon="refresh" @click="${(e) => this._refreshLogs()}">

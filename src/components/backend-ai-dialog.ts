@@ -34,7 +34,6 @@ export default class BackendAiDialog extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Boolean}) fixed = false;
   @property({type: Boolean}) narrowLayout = false;
-  @property({type: Boolean}) scrollable = false;
   @property({type: Boolean}) backdrop = false;
   @property({type: Boolean}) noclosebutton = false;
   @property({type: String}) scrimClickAction= '';
@@ -181,7 +180,6 @@ export default class BackendAiDialog extends LitElement {
       <link rel="stylesheet" href="resources/custom.css">
       <mwc-dialog id="dialog"
                     ?narrow="${(this.narrowLayout)}"
-                    ?scrollable="${this.scrollable}"
                     hideActions="${this.hideActions}"
                     scrimClickAction="${this.scrimClickAction}"
                     style="padding:0;" class="${this.type}">

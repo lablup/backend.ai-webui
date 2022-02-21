@@ -1027,7 +1027,7 @@ export default class BackendAIAgentList extends BackendAIPage {
             @click="${(e) => this._hideDialog(e)}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="agent-setting" scrimClickAction="" scrollable>
+      <backend-ai-dialog id="agent-setting" scrimClickAction="">
         <span slot="title">${_t('agent.AgentSetting')}</span>
         <div slot="content" class="horizontal layout justified center">
           <span>${_t('agent.Schedulable')}</span>

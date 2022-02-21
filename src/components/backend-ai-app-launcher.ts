@@ -1062,7 +1062,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </div>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="ssh-dialog" >
+      <backend-ai-dialog id="ssh-dialog">
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content" style="padding:15px;">
           <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
@@ -1081,7 +1081,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </a>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="tensorboard-dialog" fixed>
+      <backend-ai-dialog id="tensorboard-dialog">
         <span slot="title">${_t('session.TensorboardPath')}</span>
         <div slot="content" class="vertical layout">
           <div>${_t('session.InputTensorboardPath')}</div>
@@ -1094,7 +1094,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="argument-dialog" fixed>
+      <backend-ai-dialog id="argument-dialog">
         <span slot="title">${_t('session.Arguments')}</span>
         <div slot="content" class="vertical layout" style="padding:15px 10px;">
           <div>${_t('session.ModifyArguments')}</div>
