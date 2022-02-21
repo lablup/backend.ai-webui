@@ -1540,12 +1540,12 @@ class VFolder {
   /**
    * List Virtual folders that requested accessKey has permission to.
    */
-  async list(groupId = null) {
+  async list(groupId = null, all = false) {
     let reqUrl = this.urlPrefix;
     if (groupId) {
       const params = {
         group_id: groupId,
-        "all": true
+        "all": all
       };
       const q = querystring.stringify(params);
       reqUrl += `?${q}`;
