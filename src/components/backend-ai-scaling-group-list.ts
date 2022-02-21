@@ -64,7 +64,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     'interactive': 'interactive',
     'batch': 'batch',
     'both': 'both (interactive, batch)'
-  }
+  };
 
   constructor() {
     super();
@@ -542,7 +542,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   _setSchedulerOptsInputForm(name = '', value: any) {
     const allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
-    
+
     switch (name) {
     case 'allowed_session_types':
       if (value.includes('interactive') && value.includes('batch')) {
@@ -564,7 +564,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
     const schedulerOptsInputForms = this.shadowRoot.querySelector('#create-scheduler-options-input-form');
-    
+
     allowedSessionType.value= 'both';
     schedulerOptsInputForms.checked = false;
     if (pendingTimeout?.value) {
@@ -600,7 +600,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   /**
-   * find opened dialog and 
+   * find opened dialog and
    * save scheduler option input form element of opened dialog to property.
    * */
   _saveOpenedDialogToProperty() {
@@ -610,7 +610,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     } else {
       this.allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
       this.pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
-    };
+    }
   }
 
   _launchCreateDialog() {
@@ -693,8 +693,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             label="allowed session types"
             required>
               ${Object.entries(this.allowedSessionTypeObjects).map(([key, value]) => {
-                return html`<mwc-list-item value="${key}">${value}</mwc-list-item>`
-              })}
+    return html`<mwc-list-item value="${key}">${value}</mwc-list-item>`;
+  })}
             </mwc-select>
             <mwc-textfield
               type="number"
@@ -759,8 +759,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             label="allowed session types"
             required>
               ${Object.entries(this.allowedSessionTypeObjects).map(([key, value]) => {
-                return html`<mwc-list-item value="${key}">${value}</mwc-list-item>`
-              })}
+    return html`<mwc-list-item value="${key}">${value}</mwc-list-item>`;
+  })}
             </mwc-select>
             <mwc-textfield
               type="number"
@@ -875,7 +875,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               </wl-textarea>
             </div>
           </div>` : ''
-        }
+}
       </backend-ai-dialog>
     `;
   }
