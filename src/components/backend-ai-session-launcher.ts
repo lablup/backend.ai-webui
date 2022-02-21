@@ -2284,6 +2284,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
+  async _fetchDelegatedSessionVfolder() {
+    const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
+    if (ownerEnabled && ownerEnabled.checked) {
+      await this.resourceBroker.updateVirtualFolderList(true).then(() => {
+        this.vfolders = this.resourceBroker.vfolders;
+      });
+    } else {
+      await this._updateVirtualFolderList();
+    }
+    this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
+    this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
+  }
+
   _toggleResourceGauge() {
     if (this.resourceGauge.style.display == '' || this.resourceGauge.style.display == 'flex' || this.resourceGauge.style.display == 'block') {
       this.resourceGauge.style.display = 'none';
@@ -3064,6 +3077,55 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                 `}
             </div>
+              <wl-expansion name="ownership" style="--expansion-content-padding:15px 0;">
+              <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
+              <div class="vertical layout">
+                <div class="horizontal center layout">
+                  <mwc-textfield id="owner-email" type="email" class="flex" value=""
+                                pattern="^.+@.+\..+$" icon="mail"
+                                label="${_text('session.launcher.OwnerEmail')}" size="40"></mwc-textfield>
+                  <mwc-icon-button icon="refresh" class="blue"
+                                  @click="${() => this._fetchSessionOwnerGroups()}">
+                  </mwc-icon-button>
+                </div>
+                <mwc-select id="owner-accesskey" label="${_text('session.launcher.OwnerAccessKey')}" icon="vpn_key" fixedMenuPosition naturalMenuWidth>
+                  ${this.ownerKeypairs.map((item) => html`
+                    <mwc-list-item class="owner-group-dropdown"
+                                  id="${item.access_key}"
+                                  value="${item.access_key}">
+                      ${item.access_key}
+                    </mwc-list-item>
+                  `)}
+                </mwc-select>
+                <div class="horizontal center layout">
+                  <mwc-select id="owner-group" label="${_text('session.launcher.OwnerGroup')}" icon="group_work" fixedMenuPosition naturalMenuWidth>
+                    ${this.ownerGroups.map((item) => html`
+                      <mwc-list-item class="owner-group-dropdown"
+                                    id="${item.name}"
+                                    value="${item.name}">
+                        ${item.name}
+                      </mwc-list-item>
+                    `)}
+                  </mwc-select>
+                  <mwc-select id="owner-scaling-group" label="${_text('session.launcher.OwnerResourceGroup')}"
+                              icon="storage" fixedMenuPosition>
+                    ${this.ownerScalingGroups.map((item) => html`
+                      <mwc-list-item class="owner-group-dropdown"
+                                    id="${item.name}"
+                                    value="${item.name}">
+                        ${item.name}
+                      </mwc-list-item>
+                    `)}
+                  </mwc-select>
+                </div>
+                <div class="horizontal layout start-justified center">
+                <mwc-checkbox id="owner-enabled"
+                              @change="${() => this._fetchDelegatedSessionVfolder()}">
+                </mwc-checkbox>
+                <p style="color: rgba(0,0,0,0.6);">${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
+                </div>
+              </div>
+            </wl-expansion>
           </div>
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
           <wl-expansion class="vfolder" name="vfolder" open>
@@ -3348,53 +3410,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._showResourceDescription(e, 'openmp-optimization');
   }}"></mwc-icon-button>
                   </div>
-                </div>
-              </div>
-            </wl-expansion>
-            <wl-expansion name="ownership" style="--expansion-content-padding:15px 0;">
-              <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
-              <div class="vertical layout">
-                <div class="horizontal center layout">
-                  <mwc-textfield id="owner-email" type="email" class="flex" value=""
-                                 pattern="^.+@.+\..+$" icon="mail"
-                                 label="${_text('session.launcher.OwnerEmail')}" size="40"></mwc-textfield>
-                  <mwc-icon-button icon="refresh" class="blue"
-                                   @click="${() => this._fetchSessionOwnerGroups()}">
-                  </mwc-icon-button>
-                </div>
-                <mwc-select id="owner-accesskey" label="${_text('session.launcher.OwnerAccessKey')}" icon="vpn_key" fixedMenuPosition naturalMenuWidth>
-                  ${this.ownerKeypairs.map((item) => html`
-                    <mwc-list-item class="owner-group-dropdown"
-                                   id="${item.access_key}"
-                                   value="${item.access_key}">
-                      ${item.access_key}
-                    </mwc-list-item>
-                  `)}
-                </mwc-select>
-                <div class="horizontal center layout">
-                  <mwc-select id="owner-group" label="${_text('session.launcher.OwnerGroup')}" icon="group_work" fixedMenuPosition naturalMenuWidth>
-                    ${this.ownerGroups.map((item) => html`
-                      <mwc-list-item class="owner-group-dropdown"
-                                     id="${item.name}"
-                                     value="${item.name}">
-                        ${item.name}
-                      </mwc-list-item>
-                    `)}
-                  </mwc-select>
-                  <mwc-select id="owner-scaling-group" label="${_text('session.launcher.OwnerResourceGroup')}"
-                              icon="storage" fixedMenuPosition>
-                    ${this.ownerScalingGroups.map((item) => html`
-                      <mwc-list-item class="owner-group-dropdown"
-                                     id="${item.name}"
-                                     value="${item.name}">
-                        ${item.name}
-                      </mwc-list-item>
-                    `)}
-                  </mwc-select>
-                </div>
-                <div class="horizontal layout start-justified center">
-                <mwc-checkbox id="owner-enabled"></mwc-checkbox>
-                <p style="color: rgba(0,0,0,0.6);">${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
                 </div>
               </div>
             </wl-expansion>
